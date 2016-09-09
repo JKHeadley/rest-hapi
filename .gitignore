@@ -1,0 +1,12 @@
+#api/config.js
+api/node_modules
+*npm-debug.log
+.idea/
+build
+node_modules
+
+# local uploads
+uploads/*
+
+# OSX files
+*.DS_Store

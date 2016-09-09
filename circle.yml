@@ -1,0 +1,19 @@
+machine:
+  node:
+      version: 5.0.0
+  pre:
+    - sudo curl -L -o /usr/bin/docker 'https://s3-external-1.amazonaws.com/circle-downloads/docker-1.9.0-circleci'
+    - sudo chmod 0755 /usr/bin/docker
+  services:
+    - docker
+dependencies:
+  pre:
+    - sudo apt-get update && sudo apt-get install jq
+  override:
+    - docker info
+    - docker build -t tempo-api .
+deployment:
+  staging:
+    branch: develop
+    commands:
+          - ./deploy.sh
