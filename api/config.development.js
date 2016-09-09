@@ -23,17 +23,17 @@ config.server.port = 8124;
 
 // mysql
 
-config.mysql.host = process.env.CLEARDB_DATABASE_URL || 'localhost';
-config.mysql.port = 3306;
-config.mysql.db   = process.env.MYSQL_DB_NAME || 'scalio_frame';
-config.mysql.user = process.env.MYSQL_DB_USER || 'dev';
-config.mysql.pass = process.env.MYSQL_DB_PASSWORD || 'dev';
-
-// config.mysql.host = process.env.CLEARDB_DATABASE_URL || 'tempo-db-dev.cqqimy3gxq4q.us-west-2.rds.amazonaws.com';
+// config.mysql.host = process.env.CLEARDB_DATABASE_URL || 'localhost';
 // config.mysql.port = 3306;
-// config.mysql.db   = process.env.MYSQL_DB_NAME || 'tempo_db_dev';
-// config.mysql.user = process.env.MYSQL_DB_USER || 'scalio';
-// config.mysql.pass = process.env.MYSQL_DB_PASSWORD || 'DEV99dev!';
+// config.mysql.db   = process.env.MYSQL_DB_NAME || 'scalio_frame';
+// config.mysql.user = process.env.MYSQL_DB_USER || 'dev';
+// config.mysql.pass = process.env.MYSQL_DB_PASSWORD || 'dev';
+
+config.mysql.host = process.env.CLEARDB_DATABASE_URL || 'scalio-frame-db.cgczfcpb6493.us-west-2.rds.amazonaws.com';
+config.mysql.port = 3306;
+config.mysql.db   = process.env.MYSQL_DB_NAME || 'scalio_frame_db';
+config.mysql.user = process.env.MYSQL_DB_USER || 'scalio';
+config.mysql.pass = process.env.MYSQL_DB_PASSWORD || 'DEV99dev!';
 
 // aws
 // config.aws.aws_access_key_id = process.env.AWS_ACCESS_KEY_ID || 'AKIAJB6JT7PXOS2TJTDA';

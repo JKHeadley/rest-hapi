@@ -1,10 +1,10 @@
 module.exports = {
   "development": {
-    // "username": process.env.MYSQL_DB_USER || "scalio",
-    // "password": process.env.MYSQL_DB_PASSWORD || "DEV99dev!",
-    // "database": process.env.MYSQL_DB_NAME || "tempo_db_dev",
-    // "host": process.env.CLEARDB_DATABASE_URL || "tempo-db-dev.cqqimy3gxq4q.us-west-2.rds.amazonaws.com",
-    // "dialect": "mysql"
+    "username": process.env.MYSQL_DB_USER || "scalio",
+    "password": process.env.MYSQL_DB_PASSWORD || "DEV99dev!",
+    "database": process.env.MYSQL_DB_NAME || "scalio_frame_db",
+    "host": process.env.CLEARDB_DATABASE_URL || "scalio-frame-db.cgczfcpb6493.us-west-2.rds.amazonaws.com",
+    "dialect": "mysql"
   },
   "local": {
     "username": "dev",
