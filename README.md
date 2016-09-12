@@ -1,17 +1,21 @@
-# Tempo
-Inventory Management System
+# Scalio Frame
+API/User System Framework
+
+This project provides two major frameworks.  The first is a generalized API that dynamically creates CRUD endpoints
+(along with swagger docs) based on sequelize models.  The second is a built in user system that includes login support,
+roles, and permissions.
 
 # Running for Development
-## Running Locally (No Container)
-These instructions can be used to run the API on your local machine (outside of a container).
+## Running Locally
+These instructions can be used to run the API on your local machine.
 
-### Running the Service Locally (No Container)
+### Running the Service Locally
 ```
-gulp serve:dev-local
+gulp serve:local
 ```
 **NOTE: this action will create the database tables if they do not already exist, but it will not run migrations or seeds.**
 
-### Setting up the Database Locally (No Container)
+### Setting up the Database Locally
 Running the API locally requires an installed MySQL instance. These instructions should help you install an instance so that it matches up with the defined local configuration files.
 
 #### MySQL Installation
@@ -42,7 +46,7 @@ GRANT ALL PRIVILEGES ON *.* TO 'dev'@'localhost' WITH GRANT OPTION;
 
 Create the local database:
 ```
-create tempo_dev
+create scalio_frame
 ```
 
 Your database should now be accessible, though there are still no tables or data in it. The app will create the tables automagically when it first runs and successfully connects to the database.
@@ -88,121 +92,18 @@ sequelize db:seed:undo --env=local
 sequelize seed:create --env=local
 ```
 
-
-## Running Locally (In a Docker Container)
-### Running the App Locally (In a Docker Container)
-#### Build the Docker Container:
-This compiles the api code and creates a container as well
-*NOTE: Don't forget the '.' at the end of the command*
-```
-docker build -t "tempo-api" .
-```
-### Setting Up the Database Locally (In a Docker Container)
-#### Run Mysql (In a Docker Container):
-built based on: https://hub.docker.com/_/mysql/
-
-```bash
-docker run --name tempo-dev-mysql -p 3306:3306 -e MYSQL_DATABASE=tempo_dev -e MYSQL_ROOT_PASSWORD=dev -e MYSQL_USER=dev -e MYSQL_PASSWORD=dev -d mysql:5.7
-```
-
-#### Stop Mysql Docker Container
-```bash
-docker stop tempo-dev-mysql
-```
-
-#### Clear Mysql Docker Container
-```bash
-docker rm tempo-dev-mysql
-```
-
-Some Explanations:
-`--name tempo-dev-mysql` - names the image
-`-p 3306:3306` - maps the container's mysql port '3306' to the host's (aka "your dev box's") '3306' port
-`-e MYSQL_DATABASE=tempo_dev -e MYSQL_ROOT_PASSWORD=dev -e MYSQL_USER=dev -e MYSQL_PASSWORD=dev` - sets those environment variables in the container. These values are used by the pre-built `mysql:5.7` image to customize the setup.
-`-d` - runs the image in the background
-`mysql:5.7` - The base image used (this is what's doing most of the work)
-
-#### Migrations
-
-Migrations are required when database changes can't be handled automatically by the Sequelize framework.
-
-*NOTE: You must run the app first to ensure necessary tables are created before migrating or seeding*
-
-##### To migrate an existing database:
-```
-sequelize db:migrate
-```
-
-##### Undo previous migration:
-```
-sequelize db:migrate:undo
-```
-
-##### Create new migration file:
-*TODO: Include a name*
-```
-sequelize migration:create
-```
-
-#### Seeds
-
-##### Seed the database:
-```
-sequelize db:seed
-
-OR (in some versions of sequelize)
-
-sequelize db:seed:all
-```
-##### Undo previous seed file:
-```
-sequelize db:seed:undo
-```
-##### Create new seed file:
-```
-sequelize seed:create
-```
-
-
-#### Run the App Locally (In a Docker Container):
-*NOTE: this assumes the container has been built as specified above. Remember that you'll need to rebuild the container to pick up code changes*
-
-##### Run
-```bash
-docker run --name tempo-api-dev -p 49160:8124 --link tempo-dev-mysql:mysql -d -e ENVIRONMENT=development tempo-api
-```
-
-##### Stop
-```bash
-docker stop tempo-api-dev
-```
-
-##### Clear
-```bash
-docker rm tempo-api-dev
-```
-
-##### Stop, Clear, Run (For your convenience)
-```bash
-docker stop tempo-api-dev; docker rm tempo-api-dev; docker run --name tempo-api-dev -p 49160:8124 --link tempo-dev-mysql:mysql -d -e ENVIRONMENT=development tempo-api
-```
-
-
 ## Github
 ```
-git clone git@github.com:scalio/tempo-api.git
+git clone git@github.com:scalio/scalio-frame.git
 ```
 Move into the newly created directory
 ```
-cd tempo-api/
+cd scalio_frame/
 ```
 
 ## Amazon ECS Deployment
 ###Build and push new image
- Follow instructions here:
-https://us-west-2.console.aws.amazon.com/ecs/home?region=us-west-2#/repositories/tempo-api#images
-
-*if the connection to docker login command fails, try restarting the docker machine with `docker-machine stop; docker-machine start`
+Use terraform
 
 ###Done?
 
@@ -223,12 +124,12 @@ npm install
 
 Populate the database, run:
 ```
-gulp serve:dev-local
+gulp serve:development
 ```
 after gulp finishes close with CTRL-C,
 now run:
 ```
-sequelize db:seed
+sequelize db:seed --env=development
 ```
 Database should now be populated.
 
@@ -251,14 +152,6 @@ change is logged to the console), then fix the error and try again.
 
 -Keep in mind that migrations may invalidate previous seed files.
 
-### Docker
-I was getting `Cannot connect to the Docker daemon. Is the docker daemon running on this host?`
-
-Top answer on this post helped: http://stackoverflow.com/questions/21871479/docker-cant-connect-to-docker-daemon
-
-`docker-machine start default; docker-machine regenerate-certs default; eval "$(docker-machine env default)"`
-
-
 
 ## General Structure
 
@@ -271,21 +164,6 @@ sequelize/migrate
 sequelize/seed
 
 ## Deployments
-
-### Heroku (deprecated)
-
-1. NOTE: This project is hosted on Heroku. Make sure you have the Heroku Toolbelt installed or get it from [here](https://toolbelt.heroku.com/).
-
-1.  If you haven't already, log in to your Heroku account and follow the prompts to create a new SSH public key:
-```heroku login```.
-
-1. Add the Heroku remote branch to your local machine:
-```heroku git:remote -a tempo-api```
-
-1. After updating the git repo with the latest changes, deploy to Heroku:
-```git push heroku develop:master```
-
-
 
 ### RDS
 To Connect to the Database using the guide
