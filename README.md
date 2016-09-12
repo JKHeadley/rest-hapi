@@ -31,6 +31,7 @@ Functionality provided by the User System includes:
 * Permissions
 
 The following describes the flow of the user permissions hierarchy:
+
 Individual permissions can be assigned to Users, Groups, and Roles.  Each instance of an assigned permission comes with an "enabled" flag. 
 This allows for the rejection of permissions that exist lower in the hierarchy, and results in quick and flexible customization of user permissions.
 
