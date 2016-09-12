@@ -7,25 +7,28 @@ roles, groups, and permissions.
 
 ## Generalized API
 Functionality provided by the generalized API includes:
--* Automatic generation of CRUD endpoints with middleware support
--* Automatic generation of association endpoints
--* Joi validation
--* Token authentication for all generated endpoints
--* Swagger docs for all generated endpoints
--* Automatic detailed logs of all endpoint activity as both console output and persisted data
--* Query parameter support for sorting, filtering, pagination, and embedding of associated models
--* Built in support for activity feeds and notifications
--* Soft delete option for retaining data (in progress)
+
+* Automatic generation of CRUD endpoints with middleware support
+* Automatic generation of association endpoints
+* Joi validation
+* Token authentication for all generated endpoints
+* Swagger docs for all generated endpoints
+* Automatic detailed logs of all endpoint activity as both console output and persisted data
+* Query parameter support for sorting, filtering, pagination, and embedding of associated models
+* Built in support for activity feeds and notifications
+* Soft delete option for retaining data (in progress)
+
 
 ## User System
 Functionality provided by the User System includes:
-- Registration support through temporary email links
-- Password encryption and token authentication
-- user/me endpoint
-- Update password endpoint
-- Roles
-- Groups
-- Permissions
+
+* Registration support through temporary email links
+* Password encryption and token authentication
+* user/me endpoint
+* Update password endpoint
+* Roles
+* Groups
+* Permissions
 
 The following describes the flow of the user permissions hierarchy:
 Individual permissions can be assigned to Users, Groups, and Roles.  Each instance of an assigned permission comes with an "enabled" flag. 
@@ -46,6 +49,7 @@ So the hierarchy goes user permissions -> group permissions -> role permissions.
 Here's an example:
 
 Suppose we have the following user:
+
 {
     email: 'test@user.com',
     
