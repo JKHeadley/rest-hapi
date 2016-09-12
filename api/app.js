@@ -7,7 +7,7 @@ var config = require('./config');
 var chalk = require('chalk');
 
 var rootLogger = logging.getLogger(chalk.gray("app"));
-rootLogger.logLevel = "NOTE";
+rootLogger.logLevel = "ERROR";
 
 var logUtil = require('./utilities/log-util');
 
