@@ -7,9 +7,9 @@ var config = require('./config');
 var chalk = require('chalk');
 
 var rootLogger = logging.getLogger(chalk.gray("app"));
-rootLogger.logLevel = "ERROR";
+rootLogger.logLevel = "DEBUG";
 
-var logUtil = require('./utilities/log-util');
+var logUtil = require('./utilities_sequelize/log-util');
 
 function appInit(){
   var logger = logUtil.bindHelper(rootLogger, 'appInit()');
@@ -22,9 +22,11 @@ function appInit(){
   var config = require('./config');
 
   var sql = require('./components/sequelize-init')(logger, config);
+  var mongoose = require('./components/mongoose-init')(logger, config);
+  
   var tokenMaker = require('./components/token-maker');
 
-  var models = require('./models')(sql);
+  var models = require('./models')(sql, mongoose);
 
   server.connection({
     /*
@@ -48,10 +50,12 @@ function appInit(){
   var modules = {
     config: config,
     sql: sql,
+    mongoose: mongoose,
     models: models,
     logger: logging,
     tokenMaker: tokenMaker,
-    restHelperFactory: require('./utilities/rest-helper-factory')
+    restHelperFactory_sequelize: require('./utilities_sequelize/rest-helper-factory'),
+    restHelperFactory_mongoose: require('./utilities_mongoose/rest-helper-factory')
   };
 
   server.register([
@@ -63,18 +67,32 @@ function appInit(){
         }],
       function (err) {
         sql.sync().then(function () {
-          var restHelper = modules.restHelperFactory(logger, modules.sql, server);
+          var restHelper_sequelize = modules.restHelperFactory_sequelize(logger, modules.sql, server);
 
           //TODO: generate routes dynamically
-          restHelper.generateRoutes(server, modules.models.eventLog, {models:models});
-          restHelper.generateRoutes(server, modules.models.user, {models:models});
-          restHelper.generateRoutes(server, modules.models.notification, {models:models});
-          restHelper.generateRoutes(server, modules.models.imageFile, {models:models});
-          restHelper.generateRoutes(server, modules.models.role, {models:models});
-          restHelper.generateRoutes(server, modules.models.group, {models:models});
-          restHelper.generateRoutes(server, modules.models.permission, {models:models});
-          restHelper.generateRoutes(server, modules.models.emailLink, {models:models});
-          restHelper.generateRoutes(server, modules.models.activityFeed, {models:models});
+          // restHelper_sequelize.generateRoutes(server, modules.models.sequelize.eventLog, {models:models.sequelize});
+          // restHelper_sequelize.generateRoutes(server, modules.models.sequelize.user, {models:models.sequelize});
+          // restHelper_sequelize.generateRoutes(server, modules.models.sequelize.notification, {models:models.sequelize});
+          // restHelper_sequelize.generateRoutes(server, modules.models.sequelize.imageFile, {models:models.sequelize});
+          // restHelper_sequelize.generateRoutes(server, modules.models.sequelize.role, {models:models.sequelize});
+          // restHelper_sequelize.generateRoutes(server, modules.models.sequelize.group, {models:models.sequelize});
+          // restHelper_sequelize.generateRoutes(server, modules.models.sequelize.permission, {models:models.sequelize});
+          // restHelper_sequelize.generateRoutes(server, modules.models.sequelize.emailLink, {models:models.sequelize});
+          // restHelper_sequelize.generateRoutes(server, modules.models.sequelize.activityFeed, {models:models.sequelize});
+
+
+          var restHelper_mongoose = modules.restHelperFactory_mongoose(logger, modules.mongoose, server);
+
+          //TODO: generate routes dynamically
+          // restHelper_mongoose.generateRoutes(server, modules.models.mongoose.eventLog, {models:models.mongoose});
+          restHelper_mongoose.generateRoutes(server, modules.models.mongoose.user, {models:models.mongoose});
+          // restHelper_mongoose.generateRoutes(server, modules.models.mongoose.notification, {models:models.mongoose});
+          // restHelper_mongoose.generateRoutes(server, modules.models.mongoose.imageFile, {models:models.mongoose});
+          // restHelper_mongoose.generateRoutes(server, modules.models.mongoose.role, {models:models.mongoose});
+          // restHelper_mongoose.generateRoutes(server, modules.models.mongoose.group, {models:models.mongoose});
+          // restHelper_mongoose.generateRoutes(server, modules.models.mongoose.permission, {models:models.mongoose});
+          // restHelper_mongoose.generateRoutes(server, modules.models.mongoose.emailLink, {models:models.mongoose});
+          // restHelper_mongoose.generateRoutes(server, modules.models.mongoose.activityFeed, {models:models.mongoose});
 
           require('./token/token.routes')(server, modules);
           require('./file-management/file-management.routes')(server, modules);
@@ -92,7 +110,7 @@ function appInit(){
   
   server.register([require('hapi-auth-bearer-token')], function (err) {
     var Log = logUtil.bindHelper(logger, 'token-auth');
-    var UserModel = modules.models.user;
+    var UserModel = modules.models.sequelize.user;
 
     server.auth.strategy('token', 'bearer-access-token', {
       allowQueryToken: true,              // optional, true by default

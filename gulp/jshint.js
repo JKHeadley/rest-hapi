@@ -7,7 +7,7 @@ gulp.task('jshint', ['test'], function(){
       //gulp.paths.src + '/models/**/*.js',
       //gulp.paths.src + '/routes/**/*.js'
   ])
-    .pipe(jshint())
-    .pipe(jshint.reporter('default'))
-    .pipe(jshint.reporter('fail'));
+    // .pipe(jshint())
+    // .pipe(jshint.reporter('default'))
+    // .pipe(jshint.reporter('fail'));
 });

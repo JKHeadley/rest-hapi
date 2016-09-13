@@ -1,5 +1,4 @@
 var Joi = require('joi');
-var Password = require('../utilities/password');
 
 module.exports = function (server, modules) {
   var Handlers = require('./token.handlers')(modules);

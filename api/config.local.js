@@ -2,6 +2,7 @@ var config = {};
 config.server = {};
 config.server.smtp = {};
 config.mysql = {};
+config.mongo = {};
 config.redis = {};
 config.aws = {};
 
@@ -9,11 +10,6 @@ config.app = "scalio_frame";
 
 config.apiVersion = "local";
 // server
-
-/*
-** DANGER: The host is commented out for deployment reasons. 
-** Docker MUST set it's own host ip address. (I think :P)
-*/
 
 //config.server.host =  '127.0.0.1';
 config.server.port = 8124;
@@ -29,17 +25,9 @@ config.mysql.db   = process.env.MYSQL_DB_NAME || 'scalio_frame';
 config.mysql.user = process.env.MYSQL_DB_USER || 'dev';
 config.mysql.pass = process.env.MYSQL_DB_PASSWORD || 'dev';
 
-// config.mysql.host = process.env.CLEARDB_DATABASE_URL || 'tempo-db-dev.cqqimy3gxq4q.us-west-2.rds.amazonaws.com';
-// config.mysql.port = 3306;
-// config.mysql.db   = process.env.MYSQL_DB_NAME || 'tempo_db_dev';
-// config.mysql.user = process.env.MYSQL_DB_USER || 'scalio';
-// config.mysql.pass = process.env.MYSQL_DB_PASSWORD || 'DEV99dev!';
+// mongo
 
-// config.mysql.host = process.env.CLEARDB_DATABASE_URL || 'tempo-db-prod.cqqimy3gxq4q.us-west-2.rds.amazonaws.com';
-// config.mysql.port = 3306;
-// config.mysql.db   = process.env.MYSQL_DB_NAME || 'tempo_db_prod';
-// config.mysql.user = process.env.MYSQL_DB_USER || 'scalio';
-// config.mysql.pass = process.env.MYSQL_DB_PASSWORD || 'PROD99prod!';
+config.mongo.URI =  'mongodb://localhost/scalio_frame';
 
 // aws
 // config.aws.aws_access_key_id = process.env.AWS_ACCESS_KEY_ID || 'AKIAJB6JT7PXOS2TJTDA';

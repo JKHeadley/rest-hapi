@@ -5,7 +5,7 @@ var Log = require('loggin');
 var Q = require('q');
 var config = require('../config.js');
 
-var password = require('../utilities/password.js');
+var password = require('../utilities_sequelize/password.js');
 
 module.exports = function (sql) {
   var Model = sql.define('user', {
@@ -135,8 +135,8 @@ module.exports = function (sql) {
           function (server, model, options, Log) {
             Log = Log.bind("Create No Auth");
             var Boom = require('boom');
-            var QueryHelper = require('../utilities/query-helper');
-            var joiSequelizeHelper = require('../utilities/joi-sequelize-helper')();
+            var QueryHelper = require('../utilities_sequelize/query-helper');
+            var joiSequelizeHelper = require('../utilities_sequelize/joi-sequelize-helper')();
             var tableName = model.tableDisplayName || model.getTableName();
             var createModel = model.createModel || joiSequelizeHelper.generateJoiCreateModel(model);
 
@@ -243,8 +243,8 @@ module.exports = function (sql) {
           //Me Endpoint
           function (server, model, options, Log) {
             Log = Log.bind("me");
-            var QueryHelper = require('../utilities/query-helper');
-            var joiSequelizeHelper = require('../utilities/joi-sequelize-helper')();
+            var QueryHelper = require('../utilities_sequelize/query-helper');
+            var joiSequelizeHelper = require('../utilities_sequelize/joi-sequelize-helper')();
             var Boom = require('boom');
 
             Log.note("Generating me endpoint");
@@ -329,7 +329,7 @@ module.exports = function (sql) {
                   }).then(function (emailLinkData) {
                     if (emailLinkData && !emailLinkData.valid) {//TODO: expire link by date
 
-                      var passwordUtility = require('../../api/utilities/password');
+                      var passwordUtility = require('../../api/utilities_sequelize/password');
                       var hashedPassword = passwordUtility.hash_password(request.payload.password);
 
                       sql.transaction(function (t) {
@@ -887,7 +887,7 @@ module.exports = function (sql) {
         create: {
           pre: function (request, Log) {
             var deferred = Q.defer();
-            var passwordUtility = require('../../api/utilities/password');
+            var passwordUtility = require('../../api/utilities_sequelize/password');
             var hashedPassword = passwordUtility.hash_password(request.payload.password);
 
             request.payload.password = hashedPassword;

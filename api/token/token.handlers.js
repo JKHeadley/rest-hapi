@@ -1,5 +1,5 @@
 var Boom            = require('boom');
-var PasswordUtility = require('../utilities/password');
+var PasswordUtility = require('../utilities_mongoose/password');
 var moment = require('moment');
 
 module.exports = function(modules){

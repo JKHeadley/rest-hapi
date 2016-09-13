@@ -1,6 +1,6 @@
 var Sequelize = require('sequelize');
 var chalk = require('chalk');
-var logUtil = require('../utilities/log-util');
+var logUtil = require('../utilities_sequelize/log-util');
 var _ = require('lodash');
 
 module.exports = function (logger, config) {

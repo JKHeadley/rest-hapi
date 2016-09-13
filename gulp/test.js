@@ -9,7 +9,7 @@ gulp.task('test', function(){
       gulp.paths.src + '/**/*.test.js'
     ])
     .pipe(print())
-    .pipe(tape({
-      reporter: tapColorize()
-    }));
+    // .pipe(tape({
+    //   reporter: tapColorize()
+    // }));
 });
