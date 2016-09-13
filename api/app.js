@@ -89,7 +89,7 @@ function appInit(){
           // restHelper_mongoose.generateRoutes(server, modules.models.mongoose.notification, {models:models.mongoose});
           // restHelper_mongoose.generateRoutes(server, modules.models.mongoose.imageFile, {models:models.mongoose});
           // restHelper_mongoose.generateRoutes(server, modules.models.mongoose.role, {models:models.mongoose});
-          // restHelper_mongoose.generateRoutes(server, modules.models.mongoose.group, {models:models.mongoose});
+          restHelper_mongoose.generateRoutes(server, modules.models.mongoose.group, {models:models.mongoose});
           // restHelper_mongoose.generateRoutes(server, modules.models.mongoose.permission, {models:models.mongoose});
           // restHelper_mongoose.generateRoutes(server, modules.models.mongoose.emailLink, {models:models.mongoose});
           // restHelper_mongoose.generateRoutes(server, modules.models.mongoose.activityFeed, {models:models.mongoose});

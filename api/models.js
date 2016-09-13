@@ -23,7 +23,7 @@ module.exports = function (sql, mongoose) {
     // eventLog: require('./models_mongoose/event-log.model')(mongoose),
     // emailLink: require('./models_mongoose/email-link.model')(mongoose),
     // activityFeed: require('./models_mongoose/activity-feed.model')(mongoose),
-    // group: require('./models_mongoose/group.model')(mongoose),
+    group: require('./models_mongoose/group.model')(mongoose),
     // permission: require('./models_mongoose/permission.model')(mongoose),
     // userPermission: require('./models_mongoose/user_permission.model')(mongoose),
     // rolePermission: require('./models_mongoose/role_permission.model')(mongoose),

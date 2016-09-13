@@ -4,25 +4,25 @@ var moment = require('moment');
 
 module.exports = function(modules){
   var Log = modules.logger.bind('token.handlers');
-  var UserModel = modules.models.user;
+  var UserModel = modules.mongoose.models.user;
   var TokenMaker = modules.tokenMaker;
 
   return {
     create: function (request, reply) {
       Log.log("+ params(%s), query(%s), payload(%s), email(%s)", JSON.stringify(request.params), JSON.stringify(request.query), '/redacted for security/', request.payload.email);
 
-      UserModel.findOne({where:{email:request.payload.email}}).then(function(user){
+      UserModel.findOne({email:request.payload.email}).then(function(user){
         if(user){
           if(PasswordUtility.check_password(request.payload.password, user.password)){
             //TODO: seed the token encoding with current time or something similar
-            var token = TokenMaker.encode(user.id);
+            var token = TokenMaker.encode(user._id);
             if (!token) {
               reply(Boom.badImplementation)
             }else{
-              user.updateAttributes({
+              UserModel.findByIdAndUpdate(user._id, { $set: {
                 token:token,
                 tokenCreatedAt:new Date().toUTCString()
-              }).then(function(user){
+              }}, { new: true }).then(function(user){
                 reply({token:user.token});
               });
             }

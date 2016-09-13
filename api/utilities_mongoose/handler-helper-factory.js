@@ -9,8 +9,6 @@ module.exports = function (mongoose, server) {
 
   return {
     generateListHandler: function (model, options, Log) {
-      options = options || {};
-
       return function (request, reply) {
         Log.log("params(%s), query(%s), payload(%s)", JSON.stringify(request.params), JSON.stringify(request.query), JSON.stringify(request.payload));
         var sequelizeQuery = QueryHelper.createSequelizeQuery(model, request.query, Log);
@@ -77,79 +75,41 @@ module.exports = function (mongoose, server) {
       return function (request, reply) {
         Log.log("params(%s), query(%s), payload(%s)", JSON.stringify(request.params), JSON.stringify(request.query), JSON.stringify(request.payload));
 
-        var tableName = model.tableDisplayName || model.getTableName();
+        var modelMethods = model.schema.methods;
+        var collectionName = modelMethods.collectionDisplayName || model.modelName;
+
         var promise =  {};
-        if(model.routeOptions.create && model.routeOptions.create.pre){
-          promise = model.routeOptions.create.pre(request, Log);
+        if(modelMethods.routeOptions.create && modelMethods.routeOptions.create.pre){
+          promise = modelMethods.routeOptions.create.pre(request, Log);
         } else {
           promise = Q.fcall(function () { return request });
         }
-        promise.then(function (request) {
-          Sequelize.transaction(function (t) {
-            return model.create(request.payload, {transaction: t}).then(function (data) {
-              var idField = model.idField || "id";
-              var nameField = model.nameField || "name";
 
-              return options.models.eventLog.create({
-                userId: request.auth.credentials.user.id,
-                organizationId: request.auth.credentials.user.organizationId,
-                verb: "created",
-                objectId: data[idField] || "unknown",
-                objectName: data[nameField] || "unknown",
-                objectType: model.getTableName(),
-                objectDisplayType: tableName
-              }, {transaction: t}).then(function (eventLog) {
-                options.models.user.findById(eventLog.userId).then(function (user) {
-                  eventLog.user = user;
-                  require('../../api/utilities/refresh-activity-feeds')(request, server, null, options, Log)([eventLog]).then(function(result) {
-                  }).catch(function(error) {
-                    Log.error(error);
-                  });
-                  require('../../api/utilities/refresh-notifications')(request, server, null, options, Log)([eventLog]).then(function(result) {
-                  }).catch(function(error) {
-                    Log.error(error);
-                  });
-                }).catch(function(error) {
-                  Log.error(error);
-                });
+        return promise.then(function (request) {
+          return model.create(request.payload).then(function (data) {
 
-                logImplicitAssociations("associated", request, server, options, data, model, Log);
+            var attributes = QueryHelper.createAttributesFilter(request.query, model, Log);
 
-                var attributes = QueryHelper.createAttributesFilter(request.query, model, Log);
+            return model.findOne({ '_id': data._id }, attributes).then(function(filteredData) {
+              var returnResult = filteredData.toJSON();
 
-                return model.findOne({
-                  attributes: attributes,
-                  where: {id: data.id},
-                  transaction: t
-                }).then(function (filteredData) {
-                  return filteredData;
-                });
+              if (modelMethods.routeOptions.create && modelMethods.routeOptions.create.post) {
+                promise = modelMethods.routeOptions.create.post(request, returnResult, Log);
+              } else {
+                promise = Q.fcall(function () { return returnResult });
+              }
+              promise.then(function (result) {
+                result._id = result._id.toString();
+                Log.debug(result)
+                return reply(result).code(201);
+              }).catch(function (error) {
+                Log.error("error: ", JSON.stringify(error));
+                return reply(Boom.badRequest("There was a postprocessing error creating the resource", error));
               });
-            }).catch(function (error) {
-              Log.error("error: ", JSON.stringify(error));
-              return reply(Boom.badRequest("There was an error creating the resource", error));
-            });
-          }).then(function (data) {
-            var returnResult = data.toJSON();
-
-            if (model.routeOptions.create && model.routeOptions.create.post) {
-              promise = model.routeOptions.create.post(request, returnResult, Log);
-            } else {
-              promise = Q.fcall(function () { return returnResult });
-            }
-            promise.then(function (result) {
-              return reply(returnResult).code(201);
-            }).catch(function (error) {
-              Log.error("error: ", JSON.stringify(error));
-              return reply(Boom.badRequest("There was a postprocessing error creating the resource", error));
             })
           }).catch(function (error) {
             Log.error("error: ", JSON.stringify(error));
-            if (error.name == 'SequelizeUniqueConstraintError') {
-              return reply(Boom.conflict(error.errors));
-            } else {
-              return reply(Boom.badRequest("An error occurred creating the resource.", error));
-            }
+            return reply(Boom.badRequest("There was an error creating the resource", error));
           });
         }).catch(function (error) {
           Log.error("error: ", JSON.stringify(error));
@@ -164,7 +124,7 @@ module.exports = function (mongoose, server) {
       return function (request, reply) {
         Log.log("params(%s), query(%s), payload(%s)", JSON.stringify(request.params), JSON.stringify(request.query), JSON.stringify(request.payload));
 
-        var tableName = model.tableDisplayName || model.getTableName();
+        var collectionName = model.collectionDisplayName || model.modelName;
 
         Sequelize.transaction(function (tr) {
           t = tr;
@@ -189,8 +149,8 @@ module.exports = function (mongoose, server) {
                     verb: "deleted",
                     objectId: objectData[idField] || "unknown",
                     objectName: objectData[nameField] || "unknown",
-                    objectType: model.getTableName(),
-                    objectDisplayType: tableName
+                    objectType: model.modelName,
+                    objectDisplayType: collectionName
                   }, {transaction: t}).then(function (eventLog) {
                     Log.log("Event Log Created: %s", JSON.stringify(eventLog));
                     options.models.user.findById(eventLog.userId).then(function (user) {
@@ -249,7 +209,7 @@ module.exports = function (mongoose, server) {
 
         //TODO: wrap all this in a transaction
 
-        var tableName = model.tableDisplayName || model.getTableName();
+        var collectionName = model.collectionDisplayName || model.modelName;
 
 
         //EXPL: retrieve the old values before updating
@@ -277,7 +237,7 @@ module.exports = function (mongoose, server) {
                 for (var i = 0; i < properties.length; i++) {
                   var property = properties[i];
 
-                  objectDisplayProperty[i] = model.tableAttributes[property].displayName;
+                  objectDisplayProperty[i] = model.collectionAttributes[property].displayName;
 
                   //EXPL: by default the display values and original values are the same
                   objectDisplayOldValue[i] = oldValues[property];
@@ -304,7 +264,7 @@ module.exports = function (mongoose, server) {
                   }
 
                   //EXPL: if the property is an id then grab the objects corresponding to the new and old id values
-                  var propertyAssociation = model.tableAttributes[property].association;
+                  var propertyAssociation = model.collectionAttributes[property].association;
 
                   if (propertyAssociation) {
                     associationModel[i] = options.models[propertyAssociation];
@@ -355,8 +315,8 @@ module.exports = function (mongoose, server) {
                         verb: "updated",
                         objectId: newValues[idField] || "unknown",
                         objectName: newValues[nameField] || "unknown",
-                        objectType: model.getTableName(),
-                        objectDisplayType: tableName,
+                        objectType: model.modelName,
+                        objectDisplayType: collectionName,
                         objectProperty: properties[index],
                         objectDisplayProperty: objectDisplayProperty[index],
                         objectOldValue: oldValues[properties[index]],
@@ -377,8 +337,8 @@ module.exports = function (mongoose, server) {
                       verb: "updated",
                       objectId: newValues[idField] || "unknown",
                       objectName: newValues[nameField] || "unknown",
-                      objectType: model.getTableName(),
-                      objectDisplayType: tableName,
+                      objectType: model.modelName,
+                      objectDisplayType: collectionName,
                       objectProperty: property,
                       objectDisplayProperty: objectDisplayProperty[i],
                       objectOldValue: oldValues[property],
@@ -440,16 +400,18 @@ module.exports = function (mongoose, server) {
       assert(association);
       assert(association.include);
 
-      var ownerTableName = ownerModel.tableDisplayName || ownerModel.getTableName();
+      var ownerMethods = ownerModel.schema.methods;
+      var ownerTableName = ownerMethods.collectionDisplayName || ownerModel.modelName;
       var associationName = association.include.as;
       var childModel = association.include.model;
-      var childTableName = childModel.tableDisplayName || childModel.getTableName();
+      var childMethods = childModel.schema.methods;
+      var childTableName = childMethods.collectionDisplayName || childModel.modelName;
       var removeMethodName = association.removeMethodName || "remove" + associationName[0].toUpperCase() + associationName.slice(1, -1);
 
-      var ownerIdField = ownerModel.idField || "id";
-      var ownerNameField = ownerModel.nameField || "name";
-      var childIdField = childModel.idField || "id";
-      var childNameField = childModel.nameField || "name";
+      var ownerIdField = ownerMethods.idField || "id";
+      var ownerNameField = ownerMethods.nameField || "name";
+      var childIdField = childMethods.idField || "id";
+      var childNameField = childMethods.nameField || "name";
 
       return function (request, reply) {
         Log.log(removeMethodName + " + params(%s), query(%s), payload(%s)", JSON.stringify(request.params), JSON.stringify(request.query), JSON.stringify(request.payload));
@@ -465,11 +427,11 @@ module.exports = function (mongoose, server) {
                     verb: "unassociated",
                     objectId: ownerObject[ownerIdField] || "unknown",
                     objectName: ownerObject[ownerNameField] || "unknown",
-                    objectType: ownerModel.getTableName(),
+                    objectType: ownerModel.modelName,
                     objectDisplayType: ownerTableName,
                     associatedObjectId: childObject[childIdField] || "unknown",
                     associatedObjectName: childObject[childNameField] || "unknown",
-                    associatedObjectType: childModel.getTableName(),
+                    associatedObjectType: childModel.modelName,
                     associatedObjectDisplayType: childTableName
                   }).then(function (eventLog) {
                     options.models.user.findById(eventLog.userId).then(function (user) {
@@ -617,8 +579,8 @@ module.exports = function (mongoose, server) {
 
     var payload = request.payload;
 
-    var ownerTableName = ownerModel.tableDisplayName || ownerModel.getTableName();
-    var childTableName = childModel.tableDisplayName || childModel.getTableName();
+    var ownerTableName = ownerModel.collectionDisplayName || ownerModel.modelName;
+    var childTableName = childModel.collectionDisplayName || childModel.modelName;
 
     var ownerIdField = ownerModel.idField || "id";
     var ownerNameField = ownerModel.nameField || "name";
@@ -648,11 +610,11 @@ module.exports = function (mongoose, server) {
             verb: "associated",
             objectId: ownerObject[ownerIdField] || "unknown",
             objectName: ownerObject[ownerNameField] || "unknown",
-            objectType: ownerModel.getTableName(),
+            objectType: ownerModel.modelName,
             objectDisplayType: ownerTableName,
             associatedObjectId: childObject[childIdField] || "unknown",
             associatedObjectName: childObject[childNameField] || "unknown",
-            associatedObjectType: childModel.getTableName(),
+            associatedObjectType: childModel.modelName,
             associatedObjectDisplayType: childTableName
           }).then(function (eventLog) {
             options.models.user.findById(eventLog.userId).then(function (user) {
@@ -726,11 +688,11 @@ module.exports = function (mongoose, server) {
   function createLog(request, server, options, Log, verb, ownerModel, ownerObject, childModel, childObject) {
     var deferred = Q.defer();
 
-    var ownerTableName = ownerModel.tableDisplayName || ownerModel.getTableName();
+    var ownerTableName = ownerModel.collectionDisplayName || ownerModel.modelName;
     var ownerIdField = ownerModel.idField || "id";
     var ownerNameField = ownerModel.nameField || "name";
 
-    var childTableName = childModel.tableDisplayName || childModel.getTableName();
+    var childTableName = childModel.collectionDisplayName || childModel.modelName;
     var childIdField = childModel.idField || "id";
     var childNameField = childModel.nameField || "name";
 
@@ -740,11 +702,11 @@ module.exports = function (mongoose, server) {
       verb: verb,
       objectId: ownerObject[ownerIdField] || "unknown",
       objectName: ownerObject[ownerNameField] || "unknown",
-      objectType: ownerModel.getTableName(),
+      objectType: ownerModel.modelName,
       objectDisplayType: ownerTableName,
       associatedObjectId: childObject[childIdField] || "unknown",
       associatedObjectName: childObject[childNameField] || "unknown",
-      associatedObjectType: childModel.getTableName(),
+      associatedObjectType: childModel.modelName,
       associatedObjectDisplayType: childTableName
     }).then(function (eventLog) {
       options.models.user.findById(eventLog.userId).then(function (user) {

@@ -52,21 +52,19 @@ module.exports = {
   },
 
   createAttributesFilter: function (query, model, Log) {
-    var attributesFilter = {
-      exclude: []
-    };
+    var attributesFilter = [];
 
     var fields = model.schema.paths;
 
     for (var fieldName in fields) {
-      var field = model.fields[fieldName].options;
-
-      if (field.exclude) {
-        attributesFilter.exclude.push(fieldName);
+      var field = fields[fieldName].options;
+      if (!field.exclude) {
+        attributesFilter.push(fieldName);
       }
     }
 
-    return attributesFilter;
+    attributesFilter.pop();//EXPL: omit the internal version number
+    return attributesFilter.toString().replace(/,/g,' ');
   },
 
   createIncludeArray: function (query, associations, Log) {

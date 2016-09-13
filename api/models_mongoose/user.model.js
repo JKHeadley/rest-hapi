@@ -99,8 +99,8 @@ module.exports = function (mongoose) {
       // Model.methods.routeOptions.associations.role.belongsTo = {foreignKey: "profileImageId", as: "profileImage"};
       // Model.methods.routeOptions.associations.profileImage.include = {model: models.imageFile, as: "profileImage"};
       //
-      // Model.methods.routeOptions.associations.role.belongsToMany = {through: 'userGroup', as: "groups"};
-      // Model.methods.routeOptions.associations.groups.include = {model: models.group, as: "groups"};
+      Model.methods.routeOptions.associations.groups.belongsToMany = {through: 'userGroup', as: "groups"};
+      Model.methods.routeOptions.associations.groups.include = {model: models.group, as: "groups"};
       //
       // Model.methods.routeOptions.associations.role.belongsToMany = {through: 'userPermission', as: "permissions"};
       // Model.methods.routeOptions.associations.permissions.include = {model: models.permission, as: "permissions", through: models.userPermission};
@@ -108,18 +108,18 @@ module.exports = function (mongoose) {
     nameField:"email",
     collectionDisplayName:"User",
     routeOptions: {
-      // associations: {
-      //   role: {},
-      //   profileImage: {},
-      //   groups: {
-      //     type: "MANY",
-      //     alias: "group"
-      //   },
-      //   permissions: {
-      //     type: "MANY",
-      //     alias: "permission"
-      //   }
-      // },
+      associations: {
+        // role: {},
+        // profileImage: {},
+        groups: {
+          type: "MANY",
+          alias: "group"
+        },
+        // permissions: {
+        //   type: "MANY",
+        //   alias: "permission"
+        // }
+      },
       // extraEndpoints: [
       //   //Create No Auth Endpoint
       //   function (server, model, options, Log) {
@@ -874,17 +874,17 @@ module.exports = function (mongoose) {
       //     });
       //   }
       // ],
-      // create: {
-      //   pre: function (request, Log) {
-      //     var deferred = Q.defer();
-      //     var passwordUtility = require('../../api/utilities_mongoose/password');
-      //     var hashedPassword = passwordUtility.hash_password(request.payload.password);
-      //
-      //     request.payload.password = hashedPassword;
-      //     deferred.resolve(request);
-      //     return deferred.promise;
-      //   }
-      // }
+      create: {
+        pre: function (request, Log) {
+          var deferred = Q.defer();
+          var passwordUtility = require('../../api/utilities_mongoose/password');
+          var hashedPassword = passwordUtility.hash_password(request.payload.password);
+
+          request.payload.password = hashedPassword;
+          deferred.resolve(request);
+          return deferred.promise;
+        }
+      }
     },
     extraReadModelAttributes: {
       updatedAt: Joi.date().optional(),
