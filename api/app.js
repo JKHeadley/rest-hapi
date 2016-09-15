@@ -110,7 +110,7 @@ function appInit(){
   
   server.register([require('hapi-auth-bearer-token')], function (err) {
     var Log = logUtil.bindHelper(logger, 'token-auth');
-    var UserModel = modules.models.sequelize.user;
+    var UserModel = modules.models.mongoose.user;
 
     server.auth.strategy('token', 'bearer-access-token', {
       allowQueryToken: true,              // optional, true by default
@@ -121,7 +121,7 @@ function appInit(){
 
         token = decodeURI(token);
 
-        UserModel.findOne({where:{token: token}}).then(function (user) {
+        UserModel.findOne({token: token}).then(function (user) {
           //TODO: check token expiration
           if (user) {
             delete user.password;

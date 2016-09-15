@@ -98,11 +98,13 @@ module.exports = function (logger, mongoose, server) {
           .description('The maximum number of records to return. This is typically used in pagination.')
       };
 
-      var queryableFields = model.queryableFields || queryHelper.getQueryableFields(model, Log);
+      var queryableFields = queryHelper.getQueryableFields(model, Log);
+
+      var readableFields = queryHelper.getReadableFields(model, Log);
 
       if (queryableFields) {
         queryValidation.fields = Joi.string().optional()//TODO: make enumerated array.
-          .description('A list of basic fields to be included in each resource. Valid values include: ' + queryableFields);
+          .description('A list of basic fields to be included in each resource. Valid values include: ' + readableFields);
         queryValidation.term = Joi.string().optional()
           .description('A generic search parameter. This can be refined using the `searchFields` parameter. Valid values include: ' + queryableFields);
         queryValidation.searchFields = Joi.string().optional()//TODO: make enumerated array.
@@ -179,11 +181,11 @@ module.exports = function (logger, mongoose, server) {
 
       var queryValidation = {};
 
-      var queryableFields = modelMethods.queryableFields || queryHelper.getQueryableFields(model, Log);
+      var readableFields = queryHelper.getReadableFields(model, Log);
 
-      if (queryableFields) {
+      if (readableFields) {
         queryValidation.fields = Joi.string().optional()//TODO: make enumerated array.
-          .description('A list of basic fields to be included in each resource. Valid values include: ' + queryableFields);
+          .description('A list of basic fields to be included in each resource. Valid values include: ' + readableFields);
       }
 
       if (modelMethods.routeOptions && modelMethods.routeOptions.associations) {
@@ -205,7 +207,7 @@ module.exports = function (logger, mongoose, server) {
           validate: {
             query: queryValidation,
             params: {
-              id: Joi.string().guid().required()
+              id: Joi.string().required()//TODO: validate that id is an ObjectId
             },
             headers: headersValidation
           },
@@ -416,7 +418,7 @@ module.exports = function (logger, mongoose, server) {
       var ownerAlias = ownerMethods.routeOptions.alias || ownerModel.modelName;
       var childAlias = association.alias || association.include.model.modelName;
 
-      var handler = options.handler ? options.handler : HandlerHelper.generateAssociationAddOneHandler(ownerModel, association, options, Log);
+      var handler = HandlerHelper.generateAssociationAddOneHandler(ownerModel, association, options, Log);
 
       var payloadValidation;
 
@@ -435,8 +437,8 @@ module.exports = function (logger, mongoose, server) {
           tags: ['api', associationName, ownerModelName],
           validate: {
             params: {
-              ownerId: Joi.string().guid().required(),
-              childId: Joi.string().guid().required()
+              ownerId: Joi.string().required(),//TODO: validate that id is an ObjectId
+              childId: Joi.string().required()//TODO: validate that id is an ObjectId
             },
             payload: payloadValidation,
             headers: headersValidation

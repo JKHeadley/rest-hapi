@@ -1,18 +1,11 @@
 var Joi = require('joi');
 
 module.exports = function (mongoose) {
-  var Schema = mongoose.Schema;
-  
-  var Model = new Schema({
-    // id: {
-    //   typeKey: Sequelize.UUID.key,
-    //   type: Sequelize.UUID,
-    //   defaultValue: Sequelize.UUIDV4,
-    //   primaryKey: true,
-    //   displayName: "Id"
-    // },
+  var modelName = "group";
+  var Types = mongoose.Schema.Types;
+  var Schema = new mongoose.Schema({
     name: {
-      type: Schema.Types.String,
+      type: Types.String,
       allowNull: false,
       queryable: true,
       // validate: {
@@ -21,30 +14,62 @@ module.exports = function (mongoose) {
       displayName: "Name"
     },
     description: {
-      type: Schema.Types.String,
+      type: Types.String,
       allowNull: true,
       // validate: {
       //   len: [1, 255]
       // },
       displayName: "Description"
-    }
+    },
+    // groupId: {
+    //   type: Types.ObjectId,
+    // },
   });
   
-  Model.methods = {
-    associate: function (models) {
-      Model.methods.routeOptions.associations.users.belongsToMany = {through: 'userGroup', as: "users"};
-      Model.methods.routeOptions.associations.users.include = {model: models.user, as: "users"};
-
-      // Model.belongsToMany(models.permission, {through: 'groupPermission', as: "permissions"});
-      // Model.routeOptions.associations.permissions.include = {model: models.permission, as: "permissions", through: models.groupPermission};
-    },
-    nameField:"name",
+  Schema.methods = {
+    // createModel: function() {
+    //   return mongoose.model(modelName, Schema);
+    // },
+    // extend1: function (schemas) {
+    //   var extendObject = {};
+    //   extendObject[modelName + "Id"] = Types.String;
+    //
+    //   Schema = Schema.extend(extendObject);
+    //   return Schema;
+    // },
+    // extend2: function (schemas) {
+    //   for (var associationKey in Schema.methods.routeOptions.associations) {
+    //     var association = Schema.methods.routeOptions.associations[associationKey];
+    //     var extendObject = {};
+    //     extendObject[associationKey] = [schemas[association.model]];
+    //     Schema = Schema.extend(extendObject);
+    //   }
+    //   return Schema;
+    // },
+    // associate: function (models) {
+    //   //Schema.methods.routeOptions.associations.users.belongsToMany = {through: 'userGroup', as: "users"};
+    //   // Schema.methods.routeOptions.associations.users.include = {model: models.user, as: "users"};
+    //
+    //   // Schema.belongsToMany(models.permission, {through: 'groupPermission', as: "permissions"});
+    //   // Schema.routeOptions.associations.permissions.include = {model: models.permission, as: "permissions", through: models.groupPermission};
+    //
+    //   for (var associationKey in Schema.methods.routeOptions.associations) {
+    //     var association = Schema.methods.routeOptions.associations[associationKey];
+    //     association.include = {
+    //       model: models[association.model],
+    //       as: associationKey
+    //     };
+    //   }
+    // },
     collectionDisplayName:"Group",
+    collectionName:modelName,
+    nameField:"name",
     routeOptions: {
       associations: {
         users: {
           type: "MANY",
-          alias: "user"
+          alias: "user",
+          model: "user"
         },
         // permissions: {
         //   type: "MANY",
@@ -52,13 +77,13 @@ module.exports = function (mongoose) {
         // }
       }
     },
-    extraReadModelAttributes: {
+    extraReadSchemaAttributes: {
       updatedAt: Joi.date().optional(),
       createdAt: Joi.date().optional(),
     }
   };
   
-  var model = mongoose.model('group', Model);
+  // var model = mongoose.model('group', Schema);
 
-  return model;
+  return Schema;
 };

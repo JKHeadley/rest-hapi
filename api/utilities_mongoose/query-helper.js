@@ -2,30 +2,48 @@ var _ = require('lodash');
 var assert = require("assert");
 
 module.exports = {
-  createSequelizeQuery: function (model, query, Log) {
-    var sequelizeQuery = {};
+  createMongooseQuery: function (model, query, mongooseQuery, Log) {
 
-    var queryableFields = model.queryableFields || this.getQueryableFields(model, Log);
+    var modelMethods = model.schema.methods;
+    
+    var queryableFields = this.getQueryableFields(model, Log);
 
-    sequelizeQuery = this.setOffsetIfExists(query, sequelizeQuery, Log);
+    mongooseQuery = this.setOffsetIfExists(query, mongooseQuery, Log);
 
-    sequelizeQuery = this.setLimitIfExists(query, sequelizeQuery, Log);
+    mongooseQuery = this.setLimitIfExists(query, mongooseQuery, Log);
 
-    sequelizeQuery = this.setReturnedAttributes(query, sequelizeQuery, Log);
+    //mongooseQuery = this.setSortFields(query, mongooseQuery, modelMethods.routeOptions.associations, Log);
 
-    sequelizeQuery = this.setSortFields(query, sequelizeQuery, model.routeOptions.associations, Log);
+    //var defaultWhere = this.createDefaultWhere(query, queryableFields, Log);
 
-    var defaultWhere = this.createDefaultWhere(query, queryableFields, Log);
+    //mongooseQuery = this.setTermSearch(query, mongooseQuery, queryableFields, defaultWhere, Log);
 
-    sequelizeQuery = this.setTermSearch(query, sequelizeQuery, queryableFields, defaultWhere, Log);
-
-    if (model.routeOptions) {
-      sequelizeQuery.include = this.createIncludeArray(query, model.routeOptions.associations, Log);
+    if (modelMethods.routeOptions) {
+      //mongooseQuery.include = this.createIncludeArray(query, modelMethods.routeOptions.associations, Log);
     }
 
-    sequelizeQuery.attributes = this.createAttributesFilter(query, model, Log);
+    var attributesFilter = this.createAttributesFilter(query, model, Log);
+    mongooseQuery.select(attributesFilter);
 
-    return sequelizeQuery;
+    return mongooseQuery;
+  },
+
+  getReadableFields: function (model, Log) {
+    assert(model, "requires `model` parameter");
+
+    var readableFields = [];
+
+    var fields = model.schema.paths;
+
+    for (var fieldName in fields) {
+      var field = fields[fieldName].options;
+      if (!field.exclude) {
+        readableFields.push(fieldName);
+      }
+    }
+
+    readableFields.pop();//EXPL: omit the internal version number
+    return readableFields;
   },
 
   /**
@@ -43,7 +61,7 @@ module.exports = {
     for (var fieldName in fields) {
       var field = fields[fieldName].options;
 
-      if (field.queryable) {
+      if (field.queryable && !field.exclude) {
         queryableFields.push(fieldName);
       }
     }
@@ -51,70 +69,87 @@ module.exports = {
     return queryableFields;
   },
 
-  createAttributesFilter: function (query, model, Log) {
-    var attributesFilter = [];
-
-    var fields = model.schema.paths;
-
-    for (var fieldName in fields) {
-      var field = fields[fieldName].options;
-      if (!field.exclude) {
-        attributesFilter.push(fieldName);
-      }
+  setLimitIfExists: function (query, mongooseQuery, Log) {
+    //TODO: default limit of 20.
+    if (query.limit) {
+      mongooseQuery.limit(query.limit);
     }
-
-    attributesFilter.pop();//EXPL: omit the internal version number
-    return attributesFilter.toString().replace(/,/g,' ');
+    return mongooseQuery;
   },
 
-  createIncludeArray: function (query, associations, Log) {
-    var includeArray = [];
+  setOffsetIfExists: function (query, mongooseQuery, Log) {
+    if (query.offset) {
+      mongooseQuery.skip(query.offset);
+    }
+    return mongooseQuery;
+  },
 
-    if (query.embed && associations) {
-      var embedStrings = query.embed.split(",");
+  setSortFields: function (query, mongooseQuery, modelAssociations, Log) {
+    if (query.sort) {
+      var fieldSorts = [];
 
-      for (var embedStringIndex = 0; embedStringIndex < embedStrings.length; ++embedStringIndex) {
-        var embedString = embedStrings[embedStringIndex];
+      var sortFields = query.sort.split(",");
 
-        var embedTokens = embedString.split('.');
+      for (var sortFieldIndex in sortFields) {
+        var sortField = sortFields[sortFieldIndex];
 
-        var mainIncludeString = embedTokens[0];
-        var subIncludeString = embedTokens[1];
+        var queryAssociations = [];
+        var order = sortField[0];
+        sortField = sortField.substring(1);
+        sortField = sortField.split(".");
 
-        var association = associations[mainIncludeString];
-
-        if (association) {
-          var includeDefinition = {};
-          includeDefinition = includeArray.filter(function( include ) {//EXPL: check if the association has already been included
-            return include.as == association.include.as;
-          });
-          includeDefinition = includeDefinition[0];
-          if (!includeDefinition) {//EXPL: make a copy of the association include
-            includeDefinition = {};
-            includeDefinition.model = association.include.model;
-            includeDefinition.as = association.include.as;
+        //EXPL: support sorting through nested associations
+        if (sortField.length > 1) {
+          var association = null;
+          while (sortField.length > 1) {
+            association = sortField.shift();
+            queryAssociations.push(modelAssociations[association].include);
+            modelAssociations = modelAssociations[association].include.model.schema.methods.routeOptions.associations;
           }
+          sortField = sortField[0];
+        } else {
+          sortField = sortField[0];
+        }
 
-          if (subIncludeString) {
-            if (includeDefinition.model.routeOptions && includeDefinition.model.routeOptions.associations) {
-              embedTokens.shift();
-              if (includeDefinition.include) {//EXPL: recursively build nested includes
-                includeDefinition.include.push(addNestedIncludes(embedTokens, includeDefinition.model.routeOptions.associations, includeDefinition.include, Log));
-              } else {
-                includeDefinition.include = [addNestedIncludes(embedTokens, includeDefinition.model.routeOptions.associations, [], Log)];
-              }
-            } else {
-              Log.warning("Substring provided but no association exists in model.");
-            }
+        var sortQuery = null;
+        if (order == "-") {
+          //EXPL: - means descending.
+          if (queryAssociations) {
+            sortQuery = queryAssociations;
+            sortQuery.push(sortField);
+            sortQuery.push('DESC');
+            fieldSorts.push(sortQuery);
+          } else {
+            fieldSorts.push([sortField, "DESC"]);
           }
-          //EXPL: Add the association if it hasn't already been included
-          if (includeArray.indexOf(includeDefinition) < 0) {
-            includeArray.push(includeDefinition);
+        } else if (order == "+") {
+          //EXPL: + means ascending.
+          if (queryAssociations) {
+            sortQuery = queryAssociations;
+            sortQuery.push(sortField);
+            fieldSorts.push(sortQuery);
+          } else {
+            fieldSorts.push([sortField]);
+          }
+        } else {
+          //EXPL: default to ascending if there is no - or +
+          if (queryAssociations) {
+            sortQuery = queryAssociations;
+            sortQuery.push(sortField);
+            fieldSorts.push(sortQuery);
+          } else {
+            fieldSorts.push([sortField]);
           }
         }
       }
+
+      //EXPL: remove from the query to remove conflicts.
+      delete query.sort;
+
+      mongooseQuery.order = fieldSorts;
     }
-    return includeArray;
+
+    return mongooseQuery;
   },
 
   createDefaultWhere: function (query, defaultSearchFields, Log) {
@@ -236,7 +271,7 @@ module.exports = {
     return defaultWhere;
   },
 
-  setTermSearch: function (query, sequelizeQuery, defaultSearchFields, defaultWhere, Log) {
+  setTermSearch: function (query, mongooseQuery, defaultSearchFields, defaultWhere, Log) {
     //EXPL: add the term as a regex search
     if (query.term) {
       var searchTerm = query.term;
@@ -276,7 +311,7 @@ module.exports = {
         }
       }
 
-      sequelizeQuery.where = {
+      mongooseQuery.where = {
         $and: [{
           $or: fieldSearches
         },
@@ -284,105 +319,85 @@ module.exports = {
         ]
       };
     } else {
-      sequelizeQuery.where = defaultWhere;
+      mongooseQuery.where = defaultWhere;
     }
 
-    return sequelizeQuery;
+    return mongooseQuery;
   },
 
-  setSortFields: function (query, sequelizeQuery, modelAssociations, Log) {
-    if (query.sort) {
-      var fieldSorts = [];
+  createIncludeArray: function (query, associations, Log) {
+    var includeArray = [];
 
-      var sortFields = query.sort.split(",");
+    if (query.embed && associations) {
+      var embedStrings = query.embed.split(",");
 
-      for (var sortFieldIndex in sortFields) {
-        var sortField = sortFields[sortFieldIndex];
+      for (var embedStringIndex = 0; embedStringIndex < embedStrings.length; ++embedStringIndex) {
+        var embedString = embedStrings[embedStringIndex];
 
-        var queryAssociations = [];
-        var order = sortField[0];
-        sortField = sortField.substring(1);
-        sortField = sortField.split(".");
+        var embedTokens = embedString.split('.');
 
-        //EXPL: support sorting through nested associations
-        if (sortField.length > 1) {
-          var association = null;
-          while (sortField.length > 1) {
-            association = sortField.shift();
-            queryAssociations.push(modelAssociations[association].include);
-            modelAssociations = modelAssociations[association].include.model.routeOptions.associations;
+        var mainIncludeString = embedTokens[0];
+        var subIncludeString = embedTokens[1];
+
+        var association = associations[mainIncludeString];
+
+        if (association) {
+          var includeDefinition = {};
+          includeDefinition = includeArray.filter(function( include ) {//EXPL: check if the association has already been included
+            return include.as == association.include.as;
+          });
+          includeDefinition = includeDefinition[0];
+          if (!includeDefinition) {//EXPL: make a copy of the association include
+            includeDefinition = {};
+            includeDefinition.model = association.include.model;
+            includeDefinition.as = association.include.as;
           }
-          sortField = sortField[0];
-        } else {
-          sortField = sortField[0];
-        }
 
-        var sortQuery = null;
-        if (order == "-") {
-          //EXPL: - means descending.
-          if (queryAssociations) {
-            sortQuery = queryAssociations;
-            sortQuery.push(sortField);
-            sortQuery.push('DESC');
-            fieldSorts.push(sortQuery);
-          } else {
-            fieldSorts.push([sortField, "DESC"]);
+          if (subIncludeString) {
+            if (includeDefinition.model.routeOptions && includeDefinition.model.routeOptions.associations) {
+              embedTokens.shift();
+              if (includeDefinition.include) {//EXPL: recursively build nested includes
+                includeDefinition.include.push(addNestedIncludes(embedTokens, includeDefinition.model.routeOptions.associations, includeDefinition.include, Log));
+              } else {
+                includeDefinition.include = [addNestedIncludes(embedTokens, includeDefinition.model.routeOptions.associations, [], Log)];
+              }
+            } else {
+              Log.warning("Substring provided but no association exists in model.");
+            }
           }
-        } else if (order == "+") {
-          //EXPL: + means ascending.
-          if (queryAssociations) {
-            sortQuery = queryAssociations;
-            sortQuery.push(sortField);
-            fieldSorts.push(sortQuery);
-          } else {
-            fieldSorts.push([sortField]);
-          }
-        } else {
-          //EXPL: default to ascending if there is no - or +
-          if (queryAssociations) {
-            sortQuery = queryAssociations;
-            sortQuery.push(sortField);
-            fieldSorts.push(sortQuery);
-          } else {
-            fieldSorts.push([sortField]);
+          //EXPL: Add the association if it hasn't already been included
+          if (includeArray.indexOf(includeDefinition) < 0) {
+            includeArray.push(includeDefinition);
           }
         }
       }
-
-      //EXPL: remove from the query to remove conflicts.
-      delete query.sort;
-
-      sequelizeQuery.order = fieldSorts;
     }
-
-    return sequelizeQuery;
+    return includeArray;
   },
 
-  setReturnedAttributes: function (query, sequelizeQuery, Log) {
+  createAttributesFilter: function (query, model, Log) {
+    var attributesFilter = [];
+    var fields = model.schema.paths;
+    var fieldNames = [];
     if (query.fields) {
-      var fields = query.fields.split(",");
-
-      sequelizeQuery.attributes = fields;
+      fieldNames = query.fields;
+    } else {
+      fieldNames = Object.keys(fields)
     }
 
-    return sequelizeQuery;
-  },
-
-  setLimitIfExists: function (query, sequelizeQuery, Log) {
-    //TODO: default limit of 20.
-    if (query.limit) {
-      sequelizeQuery.limit = query.limit;
+    for (var i = 0; i < fieldNames.length; i++) {
+      var fieldName = fieldNames[i];
+      var field = fields[fieldName].options;
+      if (!field.exclude) {
+        attributesFilter.push(fieldName);
+      }
     }
 
-    return sequelizeQuery;
-  },
-
-  setOffsetIfExists: function (query, sequelizeQuery, Log) {
-    if (query.offset) {
-      sequelizeQuery.offset = query.offset;
+    i = attributesFilter.indexOf("__v");//EXPL: omit the internal version number
+    if(i != -1) {
+      attributesFilter.splice(i, 1);
     }
-
-    return sequelizeQuery;
+    return attributesFilter.toString().replace(/,/g,' ');
   }
 };
 

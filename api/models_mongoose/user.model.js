@@ -4,22 +4,16 @@ var Joi = require('joi');
 var Log = require('loggin');
 var Q = require('q');
 var config = require('../config.js');
+var extend = require('mongoose-schema-extend');
 
 var password = require('../utilities_mongoose/password.js');
 
 module.exports = function (mongoose) {
-  var Schema = mongoose.Schema;
-
-  var Model = new Schema({
-    // id: {
-    //   type: Schema.Types.ObjectId,
-    //   default: new mongoose.Types.ObjectId,
-    //   primaryKey: true,
-    //   queryable: true,
-    //   displayName: "Id"
-    // },
+  var modelName = "user";
+  var Types = mongoose.Schema.Types;
+  var Schema = new mongoose.Schema({
     email: {
-      type: Schema.Types.String,
+      type: Types.String,
       allowNull: false,
       unique: true,
       // validate: {
@@ -29,7 +23,7 @@ module.exports = function (mongoose) {
       displayName: "Email"
     },
     firstName: {
-      type: Schema.Types.String,
+      type: Types.String,
       allowNull: true,
       unique: false,
       // validate: {
@@ -39,7 +33,7 @@ module.exports = function (mongoose) {
       displayName: "First Name"
     },
     lastName: {
-      type: Schema.Types.String,
+      type: Types.String,
       allowNull: true,
       unique: false,
       // validate: {
@@ -49,7 +43,7 @@ module.exports = function (mongoose) {
       displayName: "Last Name"
     },
     password: {
-      type: Schema.Types.String,
+      type: Types.String,
       allowNull: false,
       // validate: {
       //   len: [5, 64]
@@ -58,62 +52,94 @@ module.exports = function (mongoose) {
       displayName: "Password"
     },
     token: {
-      type: Schema.Types.String,
+      type: Types.String,
       allowNull: true,
       exclude: true,
       displayName: "Token"
     },
     tokenCreatedAt: {
-      type: Schema.Types.String,
+      type: Types.String,
       allowNull: true,
       exclude: true
     },
     roleId: {
-      type: Schema.Types.ObjectId,
+      type: Types.ObjectId,
       allowNull: true,
       queryable: true,
       displayName: "Role",
       association: "role"
     },
     profileImageId: {
-      type: Schema.Types.ObjectId,
+      type: Types.ObjectId,
       allowNull: true,
       queryable: true,
       displayName: "Profile Image",
       association: "imageFile"
     },
     accountActivated: {
-      type: Schema.Types.Boolean,
+      type: Types.Boolean,
       defaultValue: false,
       allowNull: true,
       queryable: true,
       displayName: "Account Activated"
-    }
+    },
+    // userId: {
+    //   type: Types.ObjectId,
+    // },
   });
   
-  Model.methods = {
-    associate: function (models) {
-      // Model.methods.routeOptions.associations.role.belongsTo = {foreignKey: "roleId", as: "role"};
-      // Model.methods.routeOptions.associations.role.include = {model: models.role, as: "role"};
-      //
-      // Model.methods.routeOptions.associations.role.belongsTo = {foreignKey: "profileImageId", as: "profileImage"};
-      // Model.methods.routeOptions.associations.profileImage.include = {model: models.imageFile, as: "profileImage"};
-      //
-      Model.methods.routeOptions.associations.groups.belongsToMany = {through: 'userGroup', as: "groups"};
-      Model.methods.routeOptions.associations.groups.include = {model: models.group, as: "groups"};
-      //
-      // Model.methods.routeOptions.associations.role.belongsToMany = {through: 'userPermission', as: "permissions"};
-      // Model.methods.routeOptions.associations.permissions.include = {model: models.permission, as: "permissions", through: models.userPermission};
-    },
-    nameField:"email",
+  Schema.methods = {
+    // createModel: function() {
+    //   return mongoose.model(modelName, Schema);
+    // },
+    // extend1: function (schemas) {//TODO: extend to support through table fields
+    //   var extendObject = {};
+    //   extendObject[modelName + "Id"] = Types.String;
+    //  
+    //   Schema = Schema.extend(extendObject);
+    //   return Schema;
+    // },
+    // extend2: function (schemas) {
+    //   for (var associationKey in Schema.methods.routeOptions.associations) {
+    //     var association = Schema.methods.routeOptions.associations[associationKey];
+    //     var extendObject = {};
+    //     extendObject[associationKey] = [schemas[association.model]];
+    //     Schema = Schema.extend(extendObject);
+    //   }
+    //   return Schema;
+    // },
+    // associate: function (models) {
+    //   // Schema.methods.routeOptions.associations.role.belongsTo = {foreignKey: "roleId", as: "role"};
+    //   // Schema.methods.routeOptions.associations.role.include = {model: models.role, as: "role"};
+    //   //
+    //   // Schema.methods.routeOptions.associations.role.belongsTo = {foreignKey: "profileImageId", as: "profileImage"};
+    //   // Schema.methods.routeOptions.associations.profileImage.include = {model: models.imageFile, as: "profileImage"};
+    //   //
+    //   // Schema.methods.routeOptions.associations.groups.belongsToMany = {through: 'userGroup', as: "groups"};
+    //   // Schema.methods.routeOptions.associations.groups.include = {model: schemas.group, as: "groups"};
+    //   //
+    //   // Schema.methods.routeOptions.associations.role.belongsToMany = {through: 'userPermission', as: "permissions"};
+    //   // Schema.methods.routeOptions.associations.permissions.include = {model: models.permission, as: "permissions", through: models.userPermission};
+    //
+    //   for (var associationKey in Schema.methods.routeOptions.associations) {
+    //     var association = Schema.methods.routeOptions.associations[associationKey];
+    //     association.include = {
+    //       model: models[association.model],
+    //       as: associationKey
+    //     };
+    //   }
+    // },
     collectionDisplayName:"User",
+    collectionName:modelName,
+    nameField:"email",
     routeOptions: {
       associations: {
         // role: {},
         // profileImage: {},
         groups: {
           type: "MANY",
-          alias: "group"
+          alias: "group",
+          model: "group"
         },
         // permissions: {
         //   type: "MANY",
@@ -128,9 +154,9 @@ module.exports = function (mongoose) {
       //     var QueryHelper = require('../utilities_mongoose/query-helper');
       //     var joiSequelizeHelper = require('../utilities_mongoose/joi-sequelize-helper')();
       //     var collectionName = model.collectionDisplayName || model.getTableName();
-      //     var createModel = model.createModel || joiSequelizeHelper.generateJoiCreateModel(model);
+      //     var createSchema = model.createSchema || joiSequelizeHelper.generateJoiCreateSchema(model);
       //
-      //     var readModel = model.readModel || joiSequelizeHelper.generateJoiReadModel(model);
+      //     var readSchema = model.readSchema || joiSequelizeHelper.generateJoiReadSchema(model);
       //
       //     Log.note("Generating Create No Auth endpoint for" + collectionName);
       //
@@ -211,7 +237,7 @@ module.exports = function (mongoose) {
       //         description: 'Create a new ' + collectionName,
       //         tags: ['api', 'User', 'Create'],
       //         validate: {
-      //           payload: createModel
+      //           payload: createSchema
       //         },
       //         plugins: {
       //           'hapi-swagger': {
@@ -224,7 +250,7 @@ module.exports = function (mongoose) {
       //           }
       //         },
       //         response: {
-      //           schema: readModel || Joi.object().unknown().optional()
+      //           schema: readSchema || Joi.object().unknown().optional()
       //         }
       //       }
       //     });
@@ -248,22 +274,22 @@ module.exports = function (mongoose) {
       //       .description('A list of basic fields to be included in each resource. Valid values include: ' + queryableFields);
       //     }
       //
-      //     if (Model.routeOptions && Model.routeOptions.associations) {
+      //     if (Schema.routeOptions && Schema.routeOptions.associations) {
       //       queryValidation.embed = Joi.string().optional()//TODO: make enumerated array.
-      //       .description('A set of complex object properties to populate. Valid values include ' + Object.keys(Model.routeOptions.associations));
+      //       .description('A set of complex object properties to populate. Valid values include ' + Object.keys(Schema.routeOptions.associations));
       //     }
       //
-      //     var readModel = model.readModel || joiSequelizeHelper.generateJoiReadModel(model);
+      //     var readSchema = model.readSchema || joiSequelizeHelper.generateJoiReadSchema(model);
       //
       //     server.route({
       //       method: 'GET',
       //       path: '/user/me',
       //       config: {
       //         handler: function (request, reply) {
-      //           var includeArray = QueryHelper.createIncludeArray(request.query, Model.routeOptions.associations, Log);
-      //           var attributes = QueryHelper.createAttributesFilter(request.query, Model, Log);
+      //           var includeArray = QueryHelper.createIncludeArray(request.query, Schema.routeOptions.associations, Log);
+      //           var attributes = QueryHelper.createAttributesFilter(request.query, Schema, Log);
       //
-      //           return Model.find({attributes: attributes, where: {id: request.auth.credentials.user.id}, include: includeArray}).then(function (user) {
+      //           return Schema.find({attributes: attributes, where: {id: request.auth.credentials.user.id}, include: includeArray}).then(function (user) {
       //             Log.internal("Result: ", user);
       //             user = user.toJSON();
       //             return reply(user);
@@ -292,7 +318,7 @@ module.exports = function (mongoose) {
       //           }
       //         },
       //         response: {
-      //           schema: readModel
+      //           schema: readSchema
       //         }
       //       }
       //     });
@@ -301,8 +327,8 @@ module.exports = function (mongoose) {
       //   //Password Update Endpoint
       //   function (server, model, options, Log) {
       //     Log = Log.bind("Password Update");
-      //     var EventLogModel = require('./event-log.model')(sql);
-      //     var emailLinkModel = require('./email-link.model')(sql);
+      //     var EventLogSchema = require('./event-log.model')(sql);
+      //     var emailLinkSchema = require('./email-link.model')(sql);
       //     var Boom = require('boom');
       //
       //     var collectionName = model.collectionDisplayName || model.getTableName();
@@ -314,7 +340,7 @@ module.exports = function (mongoose) {
       //       path: '/user/{id}/password',
       //       config: {
       //         handler: function (request, reply) {
-      //           emailLinkModel.findOne({
+      //           emailLinkSchema.findOne({
       //             where: {id: request.payload.linkId}
       //           }).then(function (emailLinkData) {
       //             if (emailLinkData && !emailLinkData.valid) {//TODO: expire link by date
@@ -330,7 +356,7 @@ module.exports = function (mongoose) {
       //                       var nameField = model.nameField || "name";
       //
       //                       return true;
-      //                       // return EventLogModel.create({
+      //                       // return EventLogSchema.create({
       //                       //   userId: request.auth.credentials.user.id,
       //                       //   organizationId: request.auth.credentials.user.organizationId,
       //                       //   verb: "updated",
@@ -553,7 +579,7 @@ module.exports = function (mongoose) {
       //   function (server, model, options, Log) {
       //     Log = Log.bind("Email Link");
       //     var Boom = require('boom');
-      //     var emailLinkModel = require('./email-link.model')(sql);
+      //     var emailLinkSchema = require('./email-link.model')(sql);
       //
       //     var collectionName = model.collectionDisplayName || model.getTableName();
       //
@@ -564,7 +590,7 @@ module.exports = function (mongoose) {
       //       path: '/user/email-link/{id}',
       //       config: {
       //         handler: function (request, reply) {
-      //           emailLinkModel.findOne({//NOTE: dont include the user here because sequelize says there's no association
+      //           emailLinkSchema.findOne({//NOTE: dont include the user here because sequelize says there's no association
       //             where: {id: request.params.id}
       //           }).then(function (emailLinkData) {
       //             if (emailLinkData) {
@@ -615,7 +641,7 @@ module.exports = function (mongoose) {
       //   function (server, model, options, Log) {
       //     Log = Log.bind("Email Link");
       //     var Boom = require('boom');
-      //     var emailLinkModel = require('./email-link.model')(sql);
+      //     var emailLinkSchema = require('./email-link.model')(sql);
       //
       //     //var mandrill = require('node-mandrill')('uGKovpfBBIgJClxKwT-vqQ');
       //     var mandrill = require('mandrill-api/mandrill');
@@ -630,9 +656,9 @@ module.exports = function (mongoose) {
       //       path: '/user/email-link',
       //       config: {
       //         handler: function (request, reply) {
-      //           Model.findOne({where:{email: request.payload.email}}).then(function (user) {
+      //           Schema.findOne({where:{email: request.payload.email}}).then(function (user) {
       //             if (user) {
-      //               emailLinkModel.create({
+      //               emailLinkSchema.create({
       //                 userId: user.id
       //               }).then(function (result) {
       //
@@ -831,7 +857,7 @@ module.exports = function (mongoose) {
       //   function (server, model, options, Log) {
       //     Log = Log.bind("Email Link");
       //     var Boom = require('boom');
-      //     var emailLinkModel = require('./email-link.model')(sql);
+      //     var emailLinkSchema = require('./email-link.model')(sql);
       //
       //     var collectionName = model.collectionDisplayName || model.getTableName();
       //
@@ -842,7 +868,7 @@ module.exports = function (mongoose) {
       //       path: '/user/email-link/{id}',
       //       config: {
       //         handler: function (request, reply) {
-      //           emailLinkModel.update({invalid: true}, {where: {id: request.params.id}}).then(function (affectedRows) {
+      //           emailLinkSchema.update({invalid: true}, {where: {id: request.params.id}}).then(function (affectedRows) {
       //             if (affectedRows.length > 0) {
       //               reply().code(204);
       //             } else {
@@ -886,29 +912,29 @@ module.exports = function (mongoose) {
         }
       }
     },
-    extraReadModelAttributes: {
+    extraReadSchemaAttributes: {
       updatedAt: Joi.date().optional(),
       createdAt: Joi.date().optional()
     }
   };
 
-  // // Model.methods = {
-  // Model.associate = function (models) {
-  //   Model.routeOptions.associations.role.belongsTo = {foreignKey: "roleId", as: "role"};
-  //   Model.routeOptions.associations.role.include = {model: models.role, as: "role"};
+  // // Schema.methods = {
+  // Schema.associate = function (models) {
+  //   Schema.routeOptions.associations.role.belongsTo = {foreignKey: "roleId", as: "role"};
+  //   Schema.routeOptions.associations.role.include = {model: models.role, as: "role"};
   //
-  //   Model.routeOptions.associations.role.belongsTo = {foreignKey: "profileImageId", as: "profileImage"};
-  //   Model.routeOptions.associations.profileImage.include = {model: models.imageFile, as: "profileImage"};
+  //   Schema.routeOptions.associations.role.belongsTo = {foreignKey: "profileImageId", as: "profileImage"};
+  //   Schema.routeOptions.associations.profileImage.include = {model: models.imageFile, as: "profileImage"};
   //
-  //   Model.routeOptions.associations.role.belongsToMany = {through: 'userGroup', as: "groups"};
-  //   Model.routeOptions.associations.groups.include = {model: models.group, as: "groups"};
+  //   Schema.routeOptions.associations.role.belongsToMany = {through: 'userGroup', as: "groups"};
+  //   Schema.routeOptions.associations.groups.include = {model: models.group, as: "groups"};
   //
-  //   Model.routeOptions.associations.role.belongsToMany = {through: 'userPermission', as: "permissions"};
-  //   Model.routeOptions.associations.permissions.include = {model: models.permission, as: "permissions", through: models.userPermission};
+  //   Schema.routeOptions.associations.role.belongsToMany = {through: 'userPermission', as: "permissions"};
+  //   Schema.routeOptions.associations.permissions.include = {model: models.permission, as: "permissions", through: models.userPermission};
   // };
-  // Model.nameField = "email";
-  // Model.collectionDisplayName = "User";
-  // Model.routeOptions = {
+  // Schema.nameField = "email";
+  // Schema.collectionDisplayName = "User";
+  // Schema.routeOptions = {
   //   associations: {
   //     role: {},
   //     profileImage: {},
@@ -929,9 +955,9 @@ module.exports = function (mongoose) {
   //   //     var QueryHelper = require('../utilities_mongoose/query-helper');
   //   //     var joiSequelizeHelper = require('../utilities_mongoose/joi-sequelize-helper')();
   //   //     var collectionName = model.collectionDisplayName || model.getTableName();
-  //   //     var createModel = model.createModel || joiSequelizeHelper.generateJoiCreateModel(model);
+  //   //     var createSchema = model.createSchema || joiSequelizeHelper.generateJoiCreateSchema(model);
   //   //
-  //   //     var readModel = model.readModel || joiSequelizeHelper.generateJoiReadModel(model);
+  //   //     var readSchema = model.readSchema || joiSequelizeHelper.generateJoiReadSchema(model);
   //   //
   //   //     Log.note("Generating Create No Auth endpoint for" + collectionName);
   //   //
@@ -1012,7 +1038,7 @@ module.exports = function (mongoose) {
   //   //         description: 'Create a new ' + collectionName,
   //   //         tags: ['api', 'User', 'Create'],
   //   //         validate: {
-  //   //           payload: createModel
+  //   //           payload: createSchema
   //   //         },
   //   //         plugins: {
   //   //           'hapi-swagger': {
@@ -1025,7 +1051,7 @@ module.exports = function (mongoose) {
   //   //           }
   //   //         },
   //   //         response: {
-  //   //           schema: readModel || Joi.object().unknown().optional()
+  //   //           schema: readSchema || Joi.object().unknown().optional()
   //   //         }
   //   //       }
   //   //     });
@@ -1049,22 +1075,22 @@ module.exports = function (mongoose) {
   //   //       .description('A list of basic fields to be included in each resource. Valid values include: ' + queryableFields);
   //   //     }
   //   //
-  //   //     if (Model.routeOptions && Model.routeOptions.associations) {
+  //   //     if (Schema.routeOptions && Schema.routeOptions.associations) {
   //   //       queryValidation.embed = Joi.string().optional()//TODO: make enumerated array.
-  //   //       .description('A set of complex object properties to populate. Valid values include ' + Object.keys(Model.routeOptions.associations));
+  //   //       .description('A set of complex object properties to populate. Valid values include ' + Object.keys(Schema.routeOptions.associations));
   //   //     }
   //   //
-  //   //     var readModel = model.readModel || joiSequelizeHelper.generateJoiReadModel(model);
+  //   //     var readSchema = model.readSchema || joiSequelizeHelper.generateJoiReadSchema(model);
   //   //
   //   //     server.route({
   //   //       method: 'GET',
   //   //       path: '/user/me',
   //   //       config: {
   //   //         handler: function (request, reply) {
-  //   //           var includeArray = QueryHelper.createIncludeArray(request.query, Model.routeOptions.associations, Log);
-  //   //           var attributes = QueryHelper.createAttributesFilter(request.query, Model, Log);
+  //   //           var includeArray = QueryHelper.createIncludeArray(request.query, Schema.routeOptions.associations, Log);
+  //   //           var attributes = QueryHelper.createAttributesFilter(request.query, Schema, Log);
   //   //
-  //   //           return Model.find({attributes: attributes, where: {id: request.auth.credentials.user.id}, include: includeArray}).then(function (user) {
+  //   //           return Schema.find({attributes: attributes, where: {id: request.auth.credentials.user.id}, include: includeArray}).then(function (user) {
   //   //             Log.internal("Result: ", user);
   //   //             user = user.toJSON();
   //   //             return reply(user);
@@ -1093,7 +1119,7 @@ module.exports = function (mongoose) {
   //   //           }
   //   //         },
   //   //         response: {
-  //   //           schema: readModel
+  //   //           schema: readSchema
   //   //         }
   //   //       }
   //   //     });
@@ -1102,8 +1128,8 @@ module.exports = function (mongoose) {
   //   //   //Password Update Endpoint
   //   //   function (server, model, options, Log) {
   //   //     Log = Log.bind("Password Update");
-  //   //     var EventLogModel = require('./event-log.model')(sql);
-  //   //     var emailLinkModel = require('./email-link.model')(sql);
+  //   //     var EventLogSchema = require('./event-log.model')(sql);
+  //   //     var emailLinkSchema = require('./email-link.model')(sql);
   //   //     var Boom = require('boom');
   //   //
   //   //     var collectionName = model.collectionDisplayName || model.getTableName();
@@ -1115,7 +1141,7 @@ module.exports = function (mongoose) {
   //   //       path: '/user/{id}/password',
   //   //       config: {
   //   //         handler: function (request, reply) {
-  //   //           emailLinkModel.findOne({
+  //   //           emailLinkSchema.findOne({
   //   //             where: {id: request.payload.linkId}
   //   //           }).then(function (emailLinkData) {
   //   //             if (emailLinkData && !emailLinkData.valid) {//TODO: expire link by date
@@ -1131,7 +1157,7 @@ module.exports = function (mongoose) {
   //   //                       var nameField = model.nameField || "name";
   //   //
   //   //                       return true;
-  //   //                       // return EventLogModel.create({
+  //   //                       // return EventLogSchema.create({
   //   //                       //   userId: request.auth.credentials.user.id,
   //   //                       //   organizationId: request.auth.credentials.user.organizationId,
   //   //                       //   verb: "updated",
@@ -1354,7 +1380,7 @@ module.exports = function (mongoose) {
   //   //   function (server, model, options, Log) {
   //   //     Log = Log.bind("Email Link");
   //   //     var Boom = require('boom');
-  //   //     var emailLinkModel = require('./email-link.model')(sql);
+  //   //     var emailLinkSchema = require('./email-link.model')(sql);
   //   //
   //   //     var collectionName = model.collectionDisplayName || model.getTableName();
   //   //
@@ -1365,7 +1391,7 @@ module.exports = function (mongoose) {
   //   //       path: '/user/email-link/{id}',
   //   //       config: {
   //   //         handler: function (request, reply) {
-  //   //           emailLinkModel.findOne({//NOTE: dont include the user here because sequelize says there's no association
+  //   //           emailLinkSchema.findOne({//NOTE: dont include the user here because sequelize says there's no association
   //   //             where: {id: request.params.id}
   //   //           }).then(function (emailLinkData) {
   //   //             if (emailLinkData) {
@@ -1416,7 +1442,7 @@ module.exports = function (mongoose) {
   //   //   function (server, model, options, Log) {
   //   //     Log = Log.bind("Email Link");
   //   //     var Boom = require('boom');
-  //   //     var emailLinkModel = require('./email-link.model')(sql);
+  //   //     var emailLinkSchema = require('./email-link.model')(sql);
   //   //
   //   //     //var mandrill = require('node-mandrill')('uGKovpfBBIgJClxKwT-vqQ');
   //   //     var mandrill = require('mandrill-api/mandrill');
@@ -1431,9 +1457,9 @@ module.exports = function (mongoose) {
   //   //       path: '/user/email-link',
   //   //       config: {
   //   //         handler: function (request, reply) {
-  //   //           Model.findOne({where:{email: request.payload.email}}).then(function (user) {
+  //   //           Schema.findOne({where:{email: request.payload.email}}).then(function (user) {
   //   //             if (user) {
-  //   //               emailLinkModel.create({
+  //   //               emailLinkSchema.create({
   //   //                 userId: user.id
   //   //               }).then(function (result) {
   //   //
@@ -1632,7 +1658,7 @@ module.exports = function (mongoose) {
   //   //   function (server, model, options, Log) {
   //   //     Log = Log.bind("Email Link");
   //   //     var Boom = require('boom');
-  //   //     var emailLinkModel = require('./email-link.model')(sql);
+  //   //     var emailLinkSchema = require('./email-link.model')(sql);
   //   //
   //   //     var collectionName = model.collectionDisplayName || model.getTableName();
   //   //
@@ -1643,7 +1669,7 @@ module.exports = function (mongoose) {
   //   //       path: '/user/email-link/{id}',
   //   //       config: {
   //   //         handler: function (request, reply) {
-  //   //           emailLinkModel.update({invalid: true}, {where: {id: request.params.id}}).then(function (affectedRows) {
+  //   //           emailLinkSchema.update({invalid: true}, {where: {id: request.params.id}}).then(function (affectedRows) {
   //   //             if (affectedRows.length > 0) {
   //   //               reply().code(204);
   //   //             } else {
@@ -1687,13 +1713,13 @@ module.exports = function (mongoose) {
   //   //   }
   //   // }
   // };
-  // Model.extraReadModelAttributes = {
+  // Schema.extraReadSchemaAttributes = {
   //   updatedAt: Joi.date().optional(),
   //   createdAt: Joi.date().optional()
   // };
   // // };
 
-  var model = mongoose.model('user', Model);
+  // var model = mongoose.model('user', Schema);
   
-  return model;
+  return Schema;
 };

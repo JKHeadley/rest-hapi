@@ -1,5 +1,8 @@
+var modelHelper = require('./utilities_mongoose/model-helper');
+
 module.exports = function (sql, mongoose) {
   var models = {};
+  var schemas = {};
   models.sequelize = {
     // user: require('./models_sequelize/user.model')(sql),
     // role: require('./models_sequelize/role.model')(sql),
@@ -15,7 +18,7 @@ module.exports = function (sql, mongoose) {
     // groupPermission: require('./models_sequelize/group_permission.model')(sql),
   };
 
-  models.mongoose = {
+  schemas.mongoose = {
     user: require('./models_mongoose/user.model')(mongoose),
     // role: require('./models_mongoose/role.model')(mongoose),
     // imageFile: require('./models_mongoose/image-file.model')(mongoose),
@@ -29,22 +32,44 @@ module.exports = function (sql, mongoose) {
     // rolePermission: require('./models_mongoose/role_permission.model')(mongoose),
     // groupPermission: require('./models_mongoose/group_permission.model')(mongoose),
   };
+  models.mongoose = {};
+  var finalSchemas = {};
 
-  for (var modelKey in models.sequelize) {
+  // for (var modelKey in models.sequelize) {
+  //
+  //   var model = models.sequelize[modelKey];
+  //
+  //   if (model.associate) {
+  //     model.associate(models.sequelize);
+  //   }
+  // }
 
-    var model = models.sequelize[modelKey];
+  for (var schemaKey in schemas.mongoose) {
 
-    if (model.associate) {
-      model.associate(models.sequelize);
-    }
+    var schema = schemas.mongoose[schemaKey];
+    console.log(schemaKey);
+    schemas.mongoose[schemaKey] = modelHelper.extend1(schema);
+  }
+
+  for (var schemaKey in schemas.mongoose) {
+
+    var schema = schemas.mongoose[schemaKey];
+
+    console.log(schemaKey);
+    finalSchemas[schemaKey] = modelHelper.extend2(schema, schemas.mongoose);
+  }
+
+  for (var schemaKey in finalSchemas) {
+    var schema = finalSchemas[schemaKey];
+    models.mongoose[schemaKey] = modelHelper.createModel(schema);
   }
 
   for (var modelKey in models.mongoose) {
 
     var model = models.mongoose[modelKey];
 
-    if (model.schema.methods.associate) {
-      model.schema.methods.associate(models.mongoose);
+    if (modelHelper.associate) {
+      modelHelper.associate(model.schema, models.mongoose);
     }
   }
 
