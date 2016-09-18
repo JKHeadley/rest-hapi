@@ -24,40 +24,6 @@ module.exports = function (mongoose) {
   });
   
   Schema.methods = {
-    // createModel: function() {
-    //   return mongoose.model(modelName, Schema);
-    // },
-    // extend1: function (schemas) {
-    //   var extendObject = {};
-    //   extendObject[modelName + "Id"] = Types.String;
-    //
-    //   Schema = Schema.extend(extendObject);
-    //   return Schema;
-    // },
-    // extend2: function (schemas) {
-    //   for (var associationKey in Schema.methods.routeOptions.associations) {
-    //     var association = Schema.methods.routeOptions.associations[associationKey];
-    //     var extendObject = {};
-    //     extendObject[associationKey] = [schemas[association.model]];
-    //     Schema = Schema.extend(extendObject);
-    //   }
-    //   return Schema;
-    // },
-    // associate: function (models) {
-    //   //Schema.methods.routeOptions.associations.users.belongsToMany = {through: 'userGroup', as: "users"};
-    //   // Schema.methods.routeOptions.associations.users.include = {model: models.user, as: "users"};
-    //
-    //   // Schema.belongsToMany(models.permission, {through: 'groupPermission', as: "permissions"});
-    //   // Schema.routeOptions.associations.permissions.include = {model: models.permission, as: "permissions", through: models.groupPermission};
-    //
-    //   for (var associationKey in Schema.methods.routeOptions.associations) {
-    //     var association = Schema.methods.routeOptions.associations[associationKey];
-    //     association.include = {
-    //       model: models[association.model],
-    //       as: associationKey
-    //     };
-    //   }
-    // },
     collectionDisplayName:"Group",
     collectionName:modelName,
     nameField:"name",
@@ -82,7 +48,5 @@ module.exports = function (mongoose) {
     }
   };
   
-  // var model = mongoose.model('group', Schema);
-
   return Schema;
 };

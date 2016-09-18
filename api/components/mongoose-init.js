@@ -1,4 +1,3 @@
-var Sequelize = require('sequelize');
 var chalk = require('chalk');
 var logUtil = require('../utilities/log-util');
 var _ = require('lodash');

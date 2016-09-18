@@ -25,13 +25,6 @@ module.exports = function (mongoose) {
   }); 
     
     Schema.methods = {
-      // associate: function (models) {
-      //   Model.hasMany(models.user, {as: "users", foreignKey: "roleId"});
-      //   Model.routeOptions.associations.users.include = {model: models.user, as: "users"};
-      //
-      //   Model.belongsToMany(models.permission, {through: 'rolePermission', as: "permissions"});
-      //   Model.routeOptions.associations.permissions.include = {model: models.permission, as: "permissions", through: models.rolePermission};
-      // },
       nameField:"name",
       collectionDisplayName:"Role",
       collectionName:modelName,

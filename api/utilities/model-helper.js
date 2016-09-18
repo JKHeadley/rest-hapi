@@ -14,7 +14,7 @@ module.exports = {
         var dataObject = {};
         dataObject[association.model] = { type: mongoose.Schema.Types.ObjectId, ref: association.model };
         if (association.linkingModel) {//EXPL: if a linking model is defined, add it to the association definition
-          var linkingModelFile = "../models/" + association.linkingModel + ".model";
+          var linkingModelFile = "../models/linking-models/" + association.linkingModel + ".model";
           // console.log(linkingModelFile);
           var linkingModel = require(linkingModelFile)();
           association.include = {

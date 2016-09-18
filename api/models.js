@@ -1,37 +1,45 @@
 var modelHelper = require('./utilities/model-helper');
+var fs = require('fs');
+var path = require('path');
+var Q = require('q');
 
 module.exports = function (mongoose) {
   var models = {};
+  var schemas = {};
+  var deferred = Q.defer();
 
-  //TODO: generate schemas dynamically through list of files
-  var schemas = {
-    user: require('./models/user.model')(mongoose),
-    role: require('./models/role.model')(mongoose),
-    // imageFile: require('./models/image-file.model')(mongoose),
-    // notification: require('./models/notification.model')(mongoose),
-    // eventLog: require('./models/event-log.model')(mongoose),
-    // emailLink: require('./models/email-link.model')(mongoose),
-    // activityFeed: require('./models/activity-feed.model')(mongoose),
-    group: require('./models/group.model')(mongoose),
-    permission: require('./models/permission.model')(mongoose),
-  };
+  fs.readdir(__dirname + '/models', function(err, files) {
+    if (err) {
+      deferred.reject(err);
+    }
+    files.forEach(function(file) {
+      var ext = path.extname(file);
+      if (ext === '.js') {
+        var modelName = path.basename(file,'.js');
+        var model = require(__dirname + '/models/' + modelName)(mongoose);
+        schemas[model.methods.collectionName] = model;
+      }
+    });
+
+    var extendedSchemas = {};
+
+    for (var schemaKey in schemas) {
+      var schema = schemas[schemaKey];
+      extendedSchemas[schemaKey] = modelHelper.extendSchemaAssociations(schema);
+    }
+
+    for (var schemaKey in extendedSchemas) {//EXPL: Create models with final schemas
+      var schema = extendedSchemas[schemaKey];
+      models[schemaKey] = modelHelper.createModel(schema);
+    }
+
+    for (var modelKey in models) {//EXPL: Populate internal model associations
+      var model = models[modelKey];
+      modelHelper.associateModels(model.schema, models);
+    }
+
+    deferred.resolve(models);
+  });
   
-  var extendedSchemas = {};
-
-  for (var schemaKey in schemas) {
-    var schema = schemas[schemaKey];
-    extendedSchemas[schemaKey] = modelHelper.extendSchemaAssociations(schema);
-  }
-
-  for (var schemaKey in extendedSchemas) {//EXPL: Create models with final schemas
-    var schema = extendedSchemas[schemaKey];
-    models[schemaKey] = modelHelper.createModel(schema);
-  }
-
-  for (var modelKey in models) {//EXPL: Populate internal model associations
-    var model = models[modelKey];
-    modelHelper.associateModels(model.schema, models);
-  }
-
-  return models;
+  return deferred.promise;
 };

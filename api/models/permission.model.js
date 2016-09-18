@@ -23,16 +23,6 @@ module.exports = function (mongoose) {
     }
   });
   Schema.methods = {
-    // associate: function (models) {
-    //   Model.belongsToMany(models.user, {through: 'userPermission', as: "users"});
-    //   Model.routeOptions.associations.users.include = {model: models.user, as: "users", through: models.userPermission};
-    //
-    //   Model.belongsToMany(models.role, {through: 'rolePermission', as: "roles"});
-    //   Model.routeOptions.associations.roles.include = {model: models.role, as: "roles", through: models.rolePermission};
-    //
-    //   Model.belongsToMany(models.group, {through: 'groupPermission', as: "groups"});
-    //   Model.routeOptions.associations.groups.include = {model: models.group, as: "groups", through: models.groupPermission};
-    // },
     nameField:"name",
     collectionDisplayName:"Permission",
     collectionName:modelName,
