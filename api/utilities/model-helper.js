@@ -6,25 +6,6 @@ module.exports = {
   createModel: function(Schema) {
     return mongoose.model(Schema.methods.collectionName, Schema);
   },
-  
-  // extendSchemaFields: function (Schema) {//TODO: extend to support through table fields
-  //   var extendObject = {};
-  //   extendObject[Schema.methods.collectionName + "Id"] = mongoose.Schema.Types.ObjectId;
-  //
-  //   Schema = Schema.extend(extendObject);
-  //   return Schema;
-  // },
-  
-  // extendSchemaAssociations: function (Schema, extendedSchemas) {
-  //   for (var associationKey in Schema.methods.routeOptions.associations) {
-  //     var association = Schema.methods.routeOptions.associations[associationKey];
-  //     var extendObject = {};
-  //     extendObject[associationKey] = [extendedSchemas[association.model]];
-  //     Schema = Schema.extend(extendObject);
-  //   }
-  //   return Schema;
-  // },
-
   extendSchemaAssociations: function (Schema) {
     for (var associationKey in Schema.methods.routeOptions.associations) {
       var association = Schema.methods.routeOptions.associations[associationKey];
@@ -33,7 +14,7 @@ module.exports = {
         var dataObject = {};
         dataObject[association.model] = { type: mongoose.Schema.Types.ObjectId, ref: association.model };
         if (association.linkingModel) {//EXPL: if a linking model is defined, add it to the association definition
-          var linkingModelFile = "../models_mongoose/" + association.linkingModel + ".model";
+          var linkingModelFile = "../models/" + association.linkingModel + ".model";
           // console.log(linkingModelFile);
           var linkingModel = require(linkingModelFile)();
           association.include = {

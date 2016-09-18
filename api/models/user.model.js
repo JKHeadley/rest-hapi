@@ -4,7 +4,7 @@ var Log = require('loggin');
 var Q = require('q');
 var config = require('../config.js');
 
-var password = require('../utilities_mongoose/password.js');
+var password = require('../utilities/password.js');
 
 //TODO: should use mongoose virtuals for one-to-many relationships
 
@@ -111,8 +111,8 @@ module.exports = function (mongoose) {
       //   function (server, model, options, Log) {
       //     Log = Log.bind("Create No Auth");
       //     var Boom = require('boom');
-      //     var QueryHelper = require('../utilities_mongoose/query-helper');
-      //     var joiSequelizeHelper = require('../utilities_mongoose/joi-sequelize-helper')();
+      //     var QueryHelper = require('../utilities/query-helper');
+      //     var joiSequelizeHelper = require('../utilities/joi-sequelize-helper')();
       //     var collectionName = model.collectionDisplayName || model.getTableName();
       //     var createSchema = model.createSchema || joiSequelizeHelper.generateJoiCreateSchema(model);
       //
@@ -219,8 +219,8 @@ module.exports = function (mongoose) {
       //   //Me Endpoint
       //   function (server, model, options, Log) {
       //     Log = Log.bind("me");
-      //     var QueryHelper = require('../utilities_mongoose/query-helper');
-      //     var joiSequelizeHelper = require('../utilities_mongoose/joi-sequelize-helper')();
+      //     var QueryHelper = require('../utilities/query-helper');
+      //     var joiSequelizeHelper = require('../utilities/joi-sequelize-helper')();
       //     var Boom = require('boom');
       //
       //     Log.note("Generating me endpoint");
@@ -305,7 +305,7 @@ module.exports = function (mongoose) {
       //           }).then(function (emailLinkData) {
       //             if (emailLinkData && !emailLinkData.valid) {//TODO: expire link by date
       //
-      //               var passwordUtility = require('../../api/utilities_mongoose/password');
+      //               var passwordUtility = require('../../api/utilities/password');
       //               var hashedPassword = passwordUtility.hash_password(request.payload.password);
       //
       //               sql.transaction(function (t) {
@@ -863,7 +863,7 @@ module.exports = function (mongoose) {
       create: {
         pre: function (request, Log) {
           var deferred = Q.defer();
-          var passwordUtility = require('../../api/utilities_mongoose/password');
+          var passwordUtility = require('../../api/utilities/password');
           var hashedPassword = passwordUtility.hash_password(request.payload.password);
 
           request.payload.password = hashedPassword;
@@ -912,8 +912,8 @@ module.exports = function (mongoose) {
   //   //   function (server, model, options, Log) {
   //   //     Log = Log.bind("Create No Auth");
   //   //     var Boom = require('boom');
-  //   //     var QueryHelper = require('../utilities_mongoose/query-helper');
-  //   //     var joiSequelizeHelper = require('../utilities_mongoose/joi-sequelize-helper')();
+  //   //     var QueryHelper = require('../utilities/query-helper');
+  //   //     var joiSequelizeHelper = require('../utilities/joi-sequelize-helper')();
   //   //     var collectionName = model.collectionDisplayName || model.getTableName();
   //   //     var createSchema = model.createSchema || joiSequelizeHelper.generateJoiCreateSchema(model);
   //   //
@@ -1020,8 +1020,8 @@ module.exports = function (mongoose) {
   //   //   //Me Endpoint
   //   //   function (server, model, options, Log) {
   //   //     Log = Log.bind("me");
-  //   //     var QueryHelper = require('../utilities_mongoose/query-helper');
-  //   //     var joiSequelizeHelper = require('../utilities_mongoose/joi-sequelize-helper')();
+  //   //     var QueryHelper = require('../utilities/query-helper');
+  //   //     var joiSequelizeHelper = require('../utilities/joi-sequelize-helper')();
   //   //     var Boom = require('boom');
   //   //
   //   //     Log.note("Generating me endpoint");
@@ -1106,7 +1106,7 @@ module.exports = function (mongoose) {
   //   //           }).then(function (emailLinkData) {
   //   //             if (emailLinkData && !emailLinkData.valid) {//TODO: expire link by date
   //   //
-  //   //               var passwordUtility = require('../../api/utilities_mongoose/password');
+  //   //               var passwordUtility = require('../../api/utilities/password');
   //   //               var hashedPassword = passwordUtility.hash_password(request.payload.password);
   //   //
   //   //               sql.transaction(function (t) {
@@ -1664,7 +1664,7 @@ module.exports = function (mongoose) {
   //   // create: {
   //   //   pre: function (request, Log) {
   //   //     var deferred = Q.defer();
-  //   //     var passwordUtility = require('../../api/utilities_mongoose/password');
+  //   //     var passwordUtility = require('../../api/utilities/password');
   //   //     var hashedPassword = passwordUtility.hash_password(request.payload.password);
   //   //
   //   //     request.payload.password = hashedPassword;

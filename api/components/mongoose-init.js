@@ -1,6 +1,6 @@
 var Sequelize = require('sequelize');
 var chalk = require('chalk');
-var logUtil = require('../utilities_mongoose/log-util');
+var logUtil = require('../utilities/log-util');
 var _ = require('lodash');
 
 require('mongoose-schema-extend');
