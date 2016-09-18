@@ -1,68 +1,65 @@
 var Sequelize = require('sequelize');
 var Joi = require('joi');
 
-module.exports = function (sql) {
-  var Model = sql.define('role', {
+module.exports = function (mongoose) {
+  var modelName = "role";
+  var Types = mongoose.Schema.Types;
+  var Schema = new mongoose.Schema({
     id: {
-      typeKey: Sequelize.UUID.key,
-      type: Sequelize.UUID,
+      type: Types.ObjectId,
       defaultValue: Sequelize.UUIDV4,
       primaryKey: true,
       displayName: "Id"
     },
     //NOTE: base roles = [Account, Admin, SuperAdmin]
     name: {
-      typeKey: Sequelize.STRING.key,
-      type: Sequelize.STRING,
+      type: Types.String,
       allowNull: false,
       queryable: true,
-      validate: {
-        len: [1, 36]
-      },
+      // validate: {
+      //   len: [1, 36]
+      // },
       displayName: "Name"
     },
     description: {
-      typeKey: Sequelize.STRING.key,
-      type: Sequelize.STRING,
+      type: Types.String,
       allowNull: true,
-      validate: {
-        len: [1, 255]
-      },
+      // validate: {
+      //   len: [1, 255]
+      // },
       displayName: "Description"
     }
-  }, {
-    freezeTableName: true,
-    classMethods: {
-      associate: function (models) {
-        Model.hasMany(models.user, {as: "users", foreignKey: "roleId"});
-        Model.routeOptions.associations.users.include = {model: models.user, as: "users"};
-
-        Model.belongsToMany(models.permission, {through: 'rolePermission', as: "permissions"});
-        Model.routeOptions.associations.permissions.include = {model: models.permission, as: "permissions", through: models.rolePermission};
-      },
+  }); 
+    
+    Schema.methods = {
+      // associate: function (models) {
+      //   Model.hasMany(models.user, {as: "users", foreignKey: "roleId"});
+      //   Model.routeOptions.associations.users.include = {model: models.user, as: "users"};
+      //
+      //   Model.belongsToMany(models.permission, {through: 'rolePermission', as: "permissions"});
+      //   Model.routeOptions.associations.permissions.include = {model: models.permission, as: "permissions", through: models.rolePermission};
+      // },
       nameField:"name",
-      //NOTE: was using "tableName" for this property, but apparently
-      // that is a keyword and was somehow causing cyclic dependencies
-      tableDisplayName:"Role",
+      collectionDisplayName:"Role",
+      collectionName:modelName,
       routeOptions: {
         associations: {
           users: {
-            type: "MANY",
-            alias: "user"
+            type: "ONE_MANY",
+            alias: "user",
+            model: "user"
           },
-          permissions: {
-            type: "MANY",
-            alias: "permission"
-          }
+          // permissions: {
+          //   type: "MANY",
+          //   alias: "permission"
+          // }
         }
       },
       extraReadModelAttributes: {
         updatedAt: Joi.date().optional(),
         createdAt: Joi.date().optional(),
-        roleId: Joi.string().allow(null).optional() //HACK: not sure where this comes from.
       }
-    }
-  });
+    };
 
-  return Model;
+  return Schema;
 };

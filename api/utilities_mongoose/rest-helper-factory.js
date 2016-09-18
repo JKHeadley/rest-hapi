@@ -16,7 +16,7 @@ module.exports = function (logger, mongoose, server) {
 
   return {
     defaultHeadersValidation: headersValidation,
-    generateRoutes: function (server, model, options) {
+    generateRoutes: function (server, model, options) { //TODO: generate multiple DELETE routes at /RESOURCE and at /RESOURCE/{ownerId}/ASSOCIATION that take a list of Id's as a payload
       var modelMethods = model.schema.methods;
       var collectionName = modelMethods.collectionDisplayName || model.modelName;
       var Log = logger.bind(chalk.gray(collectionName));
@@ -44,7 +44,7 @@ module.exports = function (logger, mongoose, server) {
         for (var associationName in modelMethods.routeOptions.associations) {
           var association = modelMethods.routeOptions.associations[associationName];
 
-          if (association.type == "MANY") {
+          if (association.type == "MANY_MANY" || association.type == "ONE_MANY") {
             if (association.allowAddOne !== false) {
               this.generateAssociationAddOneEndpoint(server, model, association, options, Log);
             }
@@ -53,8 +53,8 @@ module.exports = function (logger, mongoose, server) {
               this.generateAssociationRemoveOneEndpoint(server, model, association, options, Log);
             }
 
-            if (association.allowSetAll !== false) {
-              this.generateAssociationSetAllEndpoint(server, model, association, options, Log);
+            if (association.allowAddMany !== false) {
+              this.generateAssociationAddManyEndpoint(server, model, association, options, Log);
             }
 
             if (association.allowRead !== false) {
@@ -77,7 +77,6 @@ module.exports = function (logger, mongoose, server) {
       var collectionName = modelMethods.collectionDisplayName || model.modelName;
       Log = Log.bind("List");
       options = options || {};
-      
 
       Log.note("Generating List endpoint for " + collectionName);
 
@@ -127,7 +126,7 @@ module.exports = function (logger, mongoose, server) {
           .description('A set of complex object properties to populate. Valid values include ' + Object.keys(modelMethods.routeOptions.associations));
       }
 
-      var readModel = model.readModel || joiSequelizeHelper.generateJoiReadModel(model);
+      var readModel = joiSequelizeHelper.generateJoiReadModel(model);
 
       server.route({
         method: 'GET',
@@ -158,7 +157,8 @@ module.exports = function (logger, mongoose, server) {
             }
           },
           response: {
-            schema: Joi.array().items(readModel || Joi.object().unknown().optional())
+            // schema: Joi.array().items(readModel || Joi.object().unknown().optional())
+            schema: Joi.array().items(Joi.any())//TODO: proper validation
           }
         }
       });
@@ -316,7 +316,7 @@ module.exports = function (logger, mongoose, server) {
           tags: ['api', collectionName],
           validate: {
             params: {
-              id: Joi.string().guid().required()
+              id: Joi.string().required(),//TODO: validate that id is an ObjectId
             },
             headers: headersValidation
           },
@@ -372,7 +372,7 @@ module.exports = function (logger, mongoose, server) {
           tags: ['api', collectionName],
           validate: {
             params: {
-              id: Joi.string().guid().required()
+              id: Joi.string().required(),//TODO: validate that id is an ObjectId
             },
             payload: updateModel,
             headers: headersValidation
@@ -493,8 +493,8 @@ module.exports = function (logger, mongoose, server) {
           tags: ['api', associationName, ownerModelName],
           validate: {
             params: {
-              ownerId: Joi.string().guid().required(),
-              childId: Joi.string().guid().required()
+              ownerId: Joi.string().required(),//TODO: validate that id is an ObjectId
+              childId: Joi.string().required()//TODO: validate that id is an ObjectId
             },
             headers: headersValidation
           },
@@ -514,12 +514,12 @@ module.exports = function (logger, mongoose, server) {
         }
       });
     },
-    generateAssociationSetAllEndpoint: function (server, ownerModel, association, options, Log) {
+    generateAssociationAddManyEndpoint: function (server, ownerModel, association, options, Log) {
       var ownerMethods = ownerModel.schema.methods;
       var associationName = association.include.as || association.include.model.modelName;
       var ownerModelName = ownerMethods.collectionDisplayName || ownerModel.modelName;
-      Log = Log.bind("SetAll");
-      Log.note("Generating setMany association endpoint for " + ownerModelName + " -> " + associationName);
+      Log = Log.bind("AddMany");
+      Log.note("Generating addMany association endpoint for " + ownerModelName + " -> " + associationName);
 
       assert(ownerMethods.routeOptions);
       assert(ownerMethods.routeOptions.associations);
@@ -531,7 +531,7 @@ module.exports = function (logger, mongoose, server) {
       var ownerAlias = ownerMethods.routeOptions.alias || ownerModel.modelName;
       var childAlias = association.alias || association.include.model.modelName;
 
-      var handler = options.handler ? options.handler : HandlerHelper.generateAssociationSetAllHandler(ownerModel, association, options, Log);
+      var handler = options.handler ? options.handler : HandlerHelper.generateAssociationAddManyHandler(ownerModel, association, options, Log);
 
       var payloadValidation;
       
@@ -542,7 +542,7 @@ module.exports = function (logger, mongoose, server) {
         });
         payloadValidation = Joi.array().items(payloadValidation).required();
       } else {
-        payloadValidation = Joi.array().items(Joi.string().guid());
+        payloadValidation = Joi.array().items(Joi.string());//TODO: validate that id is an ObjectId
       }
 
       server.route({
@@ -552,11 +552,11 @@ module.exports = function (logger, mongoose, server) {
           handler: handler,
           auth: "token",
           cors: true,
-          description: 'Sets all of the ' + associationName + ' for a ' + ownerModelName,
+          description: 'Sets multiple ' + associationName + ' for a ' + ownerModelName,
           tags: ['api', associationName, ownerModelName],
           validate: {
             params: {
-              ownerId: Joi.string().guid().required()
+              ownerId: Joi.string().required()//TODO: validate that id is an ObjectId
             },
             payload: payloadValidation,
             headers: headersValidation
@@ -640,7 +640,7 @@ module.exports = function (logger, mongoose, server) {
           validate: {
             query: queryValidation,
             params: {
-              ownerId: Joi.string().guid().required()
+              ownerId: Joi.string().required()//TODO: validate for ObjectId
             },
             headers: headersValidation
           },

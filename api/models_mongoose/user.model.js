@@ -1,12 +1,12 @@
-var Sequelize = require('sequelize');
 var uuid = require('node-uuid');
 var Joi = require('joi');
 var Log = require('loggin');
 var Q = require('q');
 var config = require('../config.js');
-var extend = require('mongoose-schema-extend');
 
 var password = require('../utilities_mongoose/password.js');
+
+//TODO: should use mongoose virtuals for one-to-many relationships
 
 module.exports = function (mongoose) {
   var modelName = "user";
@@ -67,7 +67,7 @@ module.exports = function (mongoose) {
       allowNull: true,
       queryable: true,
       displayName: "Role",
-      association: "role"
+      ref: "role"
     },
     profileImageId: {
       type: Types.ObjectId,
@@ -82,10 +82,7 @@ module.exports = function (mongoose) {
       allowNull: true,
       queryable: true,
       displayName: "Account Activated"
-    },
-    // userId: {
-    //   type: Types.ObjectId,
-    // },
+    }
   });
   
   Schema.methods = {
@@ -109,7 +106,7 @@ module.exports = function (mongoose) {
     //   return Schema;
     // },
     // associate: function (models) {
-    //   // Schema.methods.routeOptions.associations.role.belongsTo = {foreignKey: "roleId", as: "role"};
+    //   // Schema.methods.routeOptions.associations.role.belongsTo = {foreignKey: "roleId", as: "role"};  //TODO: should use mongoose virtuals for one-to-many relationships
     //   // Schema.methods.routeOptions.associations.role.include = {model: models.role, as: "role"};
     //   //
     //   // Schema.methods.routeOptions.associations.role.belongsTo = {foreignKey: "profileImageId", as: "profileImage"};
@@ -134,10 +131,12 @@ module.exports = function (mongoose) {
     nameField:"email",
     routeOptions: {
       associations: {
-        // role: {},
+        role: {
+          model: "role"
+        },
         // profileImage: {},
         groups: {
-          type: "MANY",
+          type: "MANY_MANY",
           alias: "group",
           model: "group"
         },
@@ -1718,8 +1717,6 @@ module.exports = function (mongoose) {
   //   createdAt: Joi.date().optional()
   // };
   // // };
-
-  // var model = mongoose.model('user', Schema);
   
   return Schema;
 };

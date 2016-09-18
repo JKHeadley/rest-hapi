@@ -20,7 +20,7 @@ module.exports = function (sql, mongoose) {
 
   schemas.mongoose = {
     user: require('./models_mongoose/user.model')(mongoose),
-    // role: require('./models_mongoose/role.model')(mongoose),
+    role: require('./models_mongoose/role.model')(mongoose),
     // imageFile: require('./models_mongoose/image-file.model')(mongoose),
     // notification: require('./models_mongoose/notification.model')(mongoose),
     // eventLog: require('./models_mongoose/event-log.model')(mongoose),
@@ -32,8 +32,6 @@ module.exports = function (sql, mongoose) {
     // rolePermission: require('./models_mongoose/role_permission.model')(mongoose),
     // groupPermission: require('./models_mongoose/group_permission.model')(mongoose),
   };
-  models.mongoose = {};
-  var finalSchemas = {};
 
   // for (var modelKey in models.sequelize) {
   //
@@ -44,33 +42,32 @@ module.exports = function (sql, mongoose) {
   //   }
   // }
 
-  for (var schemaKey in schemas.mongoose) {
 
-    var schema = schemas.mongoose[schemaKey];
+  models.mongoose = {};
+  var originalSchamas = schemas.mongoose;
+  var extendedSchemas = {};
+  var finalSchemas = {};
+
+  // for (var schemaKey in originalSchamas) {//EXPL: Extend original schemas to include fields used with associations
+  //   var schema = originalSchamas[schemaKey];
+  //   console.log(schemaKey);
+  //   extendedSchemas[schemaKey] = modelHelper.extendSchemaFields(schema);
+  // }
+
+  for (var schemaKey in originalSchamas) {//EXPL: Used extended schemas to add associations to original schemas
+    var schema = originalSchamas[schemaKey];
     console.log(schemaKey);
-    schemas.mongoose[schemaKey] = modelHelper.extend1(schema);
+    finalSchemas[schemaKey] = modelHelper.extendSchemaAssociations(schema);
   }
 
-  for (var schemaKey in schemas.mongoose) {
-
-    var schema = schemas.mongoose[schemaKey];
-
-    console.log(schemaKey);
-    finalSchemas[schemaKey] = modelHelper.extend2(schema, schemas.mongoose);
-  }
-
-  for (var schemaKey in finalSchemas) {
+  for (var schemaKey in finalSchemas) {//EXPL: Create models with final schemas
     var schema = finalSchemas[schemaKey];
     models.mongoose[schemaKey] = modelHelper.createModel(schema);
   }
 
-  for (var modelKey in models.mongoose) {
-
+  for (var modelKey in models.mongoose) {//EXPL: Populate internal model associations
     var model = models.mongoose[modelKey];
-
-    if (modelHelper.associate) {
-      modelHelper.associate(model.schema, models.mongoose);
-    }
+    modelHelper.associateModels(model.schema, models.mongoose);
   }
 
   return models;

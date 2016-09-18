@@ -20,10 +20,7 @@ module.exports = function (mongoose) {
       //   len: [1, 255]
       // },
       displayName: "Description"
-    },
-    // groupId: {
-    //   type: Types.ObjectId,
-    // },
+    }
   });
   
   Schema.methods = {
@@ -67,7 +64,7 @@ module.exports = function (mongoose) {
     routeOptions: {
       associations: {
         users: {
-          type: "MANY",
+          type: "MANY_MANY",
           alias: "user",
           model: "user"
         },
