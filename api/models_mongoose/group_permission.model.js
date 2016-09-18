@@ -1,40 +1,20 @@
-var Sequelize = require('sequelize');
+var mongoose = require("mongoose");
 
-module.exports = function (sql) {
+module.exports = function () {
 
-  var Model = sql.define('groupPermission', {
-    id: {
-      typeKey: Sequelize.UUID.key,
-      type: Sequelize.UUID,
-      defaultValue: Sequelize.UUIDV4,
-      primaryKey: true
-    },
-    enabled: {
-      typeKey: Sequelize.BOOLEAN.key,
-      type: Sequelize.BOOLEAN,
-      allowNull: false,
-      defaultValue: true,
-      displayName: "Enabled"
-    },
-    groupId: {
-      typeKey: Sequelize.UUID.key,
-      type: Sequelize.UUID,
-      allowOnUpdate: false,
-      allowNull:false
-    },
-    permissionId: {
-      typeKey: Sequelize.UUID.key,
-      type: Sequelize.UUID,
-      allowOnUpdate: false,
-      allowNull:false
-    }
-  }, {
-    freezeTableName: true,
-    classMethods: {
-      associate: function (models) {
+  var Types = mongoose.Schema.Types;
+
+  var Model = {
+    Schema: {
+      enabled: {
+        type: Types.Boolean,
+        allowNull: false,
+        defaultValue: true,
+        displayName: "Enabled"
       }
-    }
-  });
+    },
+    modelName: "group_permission"
+  };
 
   return Model;
 };

@@ -282,7 +282,8 @@ module.exports = function (logger, mongoose, server) {
             }
           },
           response: {
-            schema: readModel || Joi.object().unknown().optional()
+            // schema: readModel || Joi.object().unknown().optional()
+            schema: Joi.any()
           }
         }
       });
@@ -423,7 +424,7 @@ module.exports = function (logger, mongoose, server) {
       var payloadValidation;
 
       if (association.include && association.include.through) {
-        payloadValidation = joiSequelizeHelper.generateJoiUpdateModel(association.include.through).allow(null);
+        payloadValidation = joiSequelizeHelper.generateJoiAssociationModel(association.include.through).allow(null);
       }
 
       server.route({
@@ -536,9 +537,9 @@ module.exports = function (logger, mongoose, server) {
       var payloadValidation;
       
       if (association.include && association.include.through) {
-        payloadValidation = joiSequelizeHelper.generateJoiUpdateModel(association.include.through);
+        payloadValidation = joiSequelizeHelper.generateJoiAssociationModel(association.include.through);
         payloadValidation = payloadValidation.keys({
-          childId: Joi.string().guid()
+          childId: Joi.string()//TODO: validate that id is an ObjectId
         });
         payloadValidation = Joi.array().items(payloadValidation).required();
       } else {
@@ -606,7 +607,7 @@ module.exports = function (logger, mongoose, server) {
           .description('The maximum number of records to return. This is typically used in pagination.')
       };
 
-      var queryableFields = childModel.queryableFields || queryHelper.getQueryableFields(childModel, Log);
+      var queryableFields = queryHelper.getQueryableFields(childModel, Log);
 
       if (queryableFields) {
         queryValidation.fields = Joi.string().optional()//TODO: make enumerated array.

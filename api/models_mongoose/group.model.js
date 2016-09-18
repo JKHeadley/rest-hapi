@@ -68,10 +68,12 @@ module.exports = function (mongoose) {
           alias: "user",
           model: "user"
         },
-        // permissions: {
-        //   type: "MANY",
-        //   alias: "permission"
-        // }
+        permissions: {
+          type: "MANY_MANY",
+          alias: "permission",
+          model: "permission",
+          linkingModel: "group_permission"
+        }
       }
     },
     extraReadSchemaAttributes: {

@@ -18,6 +18,7 @@ module.exports = function (sql, mongoose) {
     // groupPermission: require('./models_sequelize/group_permission.model')(sql),
   };
 
+  //TODO: generate schemas dynamically through list of files
   schemas.mongoose = {
     user: require('./models_mongoose/user.model')(mongoose),
     role: require('./models_mongoose/role.model')(mongoose),
@@ -27,10 +28,7 @@ module.exports = function (sql, mongoose) {
     // emailLink: require('./models_mongoose/email-link.model')(mongoose),
     // activityFeed: require('./models_mongoose/activity-feed.model')(mongoose),
     group: require('./models_mongoose/group.model')(mongoose),
-    // permission: require('./models_mongoose/permission.model')(mongoose),
-    // userPermission: require('./models_mongoose/user_permission.model')(mongoose),
-    // rolePermission: require('./models_mongoose/role_permission.model')(mongoose),
-    // groupPermission: require('./models_mongoose/group_permission.model')(mongoose),
+    permission: require('./models_mongoose/permission.model')(mongoose),
   };
 
   // for (var modelKey in models.sequelize) {
@@ -56,7 +54,6 @@ module.exports = function (sql, mongoose) {
 
   for (var schemaKey in originalSchamas) {//EXPL: Used extended schemas to add associations to original schemas
     var schema = originalSchamas[schemaKey];
-    console.log(schemaKey);
     finalSchemas[schemaKey] = modelHelper.extendSchemaAssociations(schema);
   }
 

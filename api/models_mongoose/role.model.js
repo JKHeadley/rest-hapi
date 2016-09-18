@@ -1,16 +1,9 @@
-var Sequelize = require('sequelize');
 var Joi = require('joi');
 
 module.exports = function (mongoose) {
   var modelName = "role";
   var Types = mongoose.Schema.Types;
   var Schema = new mongoose.Schema({
-    id: {
-      type: Types.ObjectId,
-      defaultValue: Sequelize.UUIDV4,
-      primaryKey: true,
-      displayName: "Id"
-    },
     //NOTE: base roles = [Account, Admin, SuperAdmin]
     name: {
       type: Types.String,
@@ -49,10 +42,11 @@ module.exports = function (mongoose) {
             alias: "user",
             model: "user"
           },
-          // permissions: {
-          //   type: "MANY",
-          //   alias: "permission"
-          // }
+          permissions: {
+            type: "MANY_MANY",
+            alias: "permission",
+            model: "permission"
+          }
         }
       },
       extraReadModelAttributes: {

@@ -514,8 +514,9 @@ module.exports = function (mongoose, server) {
           var populateQuery = associationName; //TODO: formulate proper mongooseQuery to filter embedded/populated data
         }
 
+        //TODO: allow for customized return data, i.e. a flat array without extra association fields
         var mongooseQuery = ownerModel.findOne({ '_id': request.params.ownerId }).populate(populateQuery).exec().then(function (data) {//TODO: allow for nested populates through "embed" param
-          reply(data[associationName]);
+          return reply(data[associationName]);
         });
 
         // ownerModel.findById(request.params.ownerId).then(function (ownerObject) {

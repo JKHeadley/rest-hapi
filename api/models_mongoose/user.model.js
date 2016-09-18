@@ -86,46 +86,6 @@ module.exports = function (mongoose) {
   });
   
   Schema.methods = {
-    // createModel: function() {
-    //   return mongoose.model(modelName, Schema);
-    // },
-    // extend1: function (schemas) {//TODO: extend to support through table fields
-    //   var extendObject = {};
-    //   extendObject[modelName + "Id"] = Types.String;
-    //  
-    //   Schema = Schema.extend(extendObject);
-    //   return Schema;
-    // },
-    // extend2: function (schemas) {
-    //   for (var associationKey in Schema.methods.routeOptions.associations) {
-    //     var association = Schema.methods.routeOptions.associations[associationKey];
-    //     var extendObject = {};
-    //     extendObject[associationKey] = [schemas[association.model]];
-    //     Schema = Schema.extend(extendObject);
-    //   }
-    //   return Schema;
-    // },
-    // associate: function (models) {
-    //   // Schema.methods.routeOptions.associations.role.belongsTo = {foreignKey: "roleId", as: "role"};  //TODO: should use mongoose virtuals for one-to-many relationships
-    //   // Schema.methods.routeOptions.associations.role.include = {model: models.role, as: "role"};
-    //   //
-    //   // Schema.methods.routeOptions.associations.role.belongsTo = {foreignKey: "profileImageId", as: "profileImage"};
-    //   // Schema.methods.routeOptions.associations.profileImage.include = {model: models.imageFile, as: "profileImage"};
-    //   //
-    //   // Schema.methods.routeOptions.associations.groups.belongsToMany = {through: 'userGroup', as: "groups"};
-    //   // Schema.methods.routeOptions.associations.groups.include = {model: schemas.group, as: "groups"};
-    //   //
-    //   // Schema.methods.routeOptions.associations.role.belongsToMany = {through: 'userPermission', as: "permissions"};
-    //   // Schema.methods.routeOptions.associations.permissions.include = {model: models.permission, as: "permissions", through: models.userPermission};
-    //
-    //   for (var associationKey in Schema.methods.routeOptions.associations) {
-    //     var association = Schema.methods.routeOptions.associations[associationKey];
-    //     association.include = {
-    //       model: models[association.model],
-    //       as: associationKey
-    //     };
-    //   }
-    // },
     collectionDisplayName:"User",
     collectionName:modelName,
     nameField:"email",
@@ -140,10 +100,11 @@ module.exports = function (mongoose) {
           alias: "group",
           model: "group"
         },
-        // permissions: {
-        //   type: "MANY",
-        //   alias: "permission"
-        // }
+        permissions: {
+          type: "MANY_MANY",
+          alias: "permission",
+          model: "permission"
+        }
       },
       // extraEndpoints: [
       //   //Create No Auth Endpoint
