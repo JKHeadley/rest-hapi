@@ -1,6 +1,7 @@
 var assert = require('assert');
 var Boom = require('boom');
 var Q = require('q');
+var extend = require('util')._extend;
 
 //TODO: consolidate eventLog functionality
 
@@ -232,6 +233,7 @@ module.exports = function (mongoose, server) {
             oldValues[property] = data[property];
           }
 
+          //TODO: support eventLogs and log all property updates in one document rather than one document per property update
           model.findByIdAndUpdate(request.params.id, request.payload).then(function (newValues) {
             Log.debug("newValues:", newValues);
             if (newValues) {
@@ -585,10 +587,8 @@ module.exports = function (mongoose, server) {
           childObject[ownerModel.modelName + "Id"] = ownerObject._id;
           promise = childObject.save()
         } else if (associationType === "MANY_MANY") {
-          //TODO: check for duplicate childId's
           if (typeof request.payload[0] === 'string' || request.payload[0] instanceof String) {//EXPL: the payload is an array of Ids. No extra fields
             payload = {};
-            payload[childModel.modelName] = childId;
           } else {
             payload = payload.filter(function(object) {//EXPL: the payload contains extra fields
               return object.childId === childObject.id;
@@ -596,12 +596,26 @@ module.exports = function (mongoose, server) {
 
             payload = payload[0];
             delete payload.childId;
-            payload[childModel.modelName] = childId;
+          }
+          payload[childModel.modelName] = childObject._id;
+
+          var duplicate = ownerObject[associationName].filter(function (associationObject) {
+            return associationObject[childModel.modelName].toString() === childId;
+          });
+          duplicate = duplicate[0];
+
+          var duplicateIndex = ownerObject[associationName].indexOf(duplicate);
+
+          if (duplicateIndex < 0) {//EXPL: if the association doesn't already exist, create it, otherwise update the extra fields
+            ownerObject[associationName].push(payload);
+          } else {
+            payload._id = ownerObject[associationName][duplicateIndex]._id;//EXPL: retain the association instance id for consistency
+            ownerObject[associationName][duplicateIndex] = payload;
           }
 
-          Log.debug(ownerModel);
+          payload = extend({}, payload);//EXPL: break the reference to the original payload
+          delete payload._id;
 
-          ownerObject[associationName].push(payload);
           delete payload[childModel.modelName];
           payload[ownerModel.modelName] = ownerObject._id;
           var childAssociation = {};
@@ -613,7 +627,20 @@ module.exports = function (mongoose, server) {
             }
           }
           var childAssociationName = childAssociation.include.as;
-          childObject[childAssociationName].push(payload);
+
+          duplicate = childObject[childAssociationName].filter(function (associationObject) {
+            return associationObject[ownerModel.modelName].toString() === ownerObject._id.toString();
+          });
+          duplicate = duplicate[0];
+
+          duplicateIndex = childObject[childAssociationName].indexOf(duplicate);
+
+          if (duplicateIndex < 0) {//EXPL: if the association doesn't already exist, create it, otherwise update the extra fields
+            childObject[childAssociationName].push(payload);
+          } else {
+            payload._id = childObject[childAssociationName][duplicateIndex]._id;//EXPL: retain the association instance id for consistency
+            childObject[childAssociationName][duplicateIndex] = payload;
+          }
 
           promise = Q.all(ownerObject.save(), childObject.save());
         } else {
@@ -622,10 +649,12 @@ module.exports = function (mongoose, server) {
         }
 
         promise.then(function(result) {
-          Log.debug(result);
+          // Log.debug(result);
 
 
           //TODO: add eventLogs
+
+          //TODO: allow eventLogs to log/support association extra fields
           deferred.resolve();
         }).catch(function (error) {
           Log.error(error);

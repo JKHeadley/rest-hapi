@@ -25,9 +25,9 @@ function appInit(){
 
   var tokenMaker = require('./components/token-maker');
   
-  var generateModels = require('./models')(mongoose);
+  var generateModels = require('./models');
 
-  generateModels.then(function(models) {
+  generateModels(mongoose).then(function(models) {
 
     server.connection({
       port: config.server.port,

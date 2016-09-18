@@ -1,6 +1,8 @@
 var _ = require('lodash');
 var assert = require("assert");
 
+//TODO: mulit-level/multi-priority sorting (i.e. sort first by lastName, then by firstName) implemented via comma seperated sort list
+
 module.exports = {
   createMongooseQuery: function (model, query, mongooseQuery, Log) {
 

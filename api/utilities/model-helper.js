@@ -1,6 +1,7 @@
 var mongoose = require("mongoose");
 
 //TODO: correctly label "model" and "schema" files and objects throughout project
+//TODO: add "updated_at" and "created_at" to all resources
 
 module.exports = {
   createModel: function(Schema) {
