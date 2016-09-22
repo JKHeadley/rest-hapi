@@ -66,6 +66,7 @@
     "passport-local": "~1.0.0",
     "passport-strategy": "~1.0.0",
     "q": "^1.4.1",
+    "qs": "^6.2.1",
     "query-string": "^4.2.2",
     "rbac2": "~1.0.5",
     "require-dir": "~0.1.0",

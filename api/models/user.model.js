@@ -6,6 +6,8 @@ var config = require('../config.js');
 
 var password = require('../utilities/password.js');
 
+//TODO: assign a unique text index to email field
+
 module.exports = function (mongoose) {
   var modelName = "user";
   var Types = mongoose.Schema.Types;
@@ -49,6 +51,11 @@ module.exports = function (mongoose) {
       exclude: true,
       displayName: "Password"
     },
+    age: {
+      type: Types.Number,
+      allowNull: true,
+      displayName: "Age"
+    },
     token: {
       type: Types.String,
       allowNull: true,
@@ -60,14 +67,28 @@ module.exports = function (mongoose) {
       allowNull: true,
       exclude: true
     },
-    roleId: {
+    title: {
       type: Types.ObjectId,
       allowNull: true,
       queryable: true,
-      displayName: "Role",
+      displayName: "Title",
       ref: "role"
     },
-    profileImageId: {
+    pup: {
+      type: Types.ObjectId,
+      allowNull: true,
+      queryable: true,
+      displayName: "Pup",
+      ref: "dog"
+    },
+    subTitle: {
+      type: Types.ObjectId,
+      allowNull: true,
+      queryable: true,
+      displayName: "Subtitle",
+      ref: "role"
+    },
+    profileImage: {
       type: Types.ObjectId,
       allowNull: true,
       queryable: true,
@@ -89,8 +110,17 @@ module.exports = function (mongoose) {
     nameField:"email",
     routeOptions: {
       associations: {
-        role: {
+        title: {
+          type: "ONE_MANY",
           model: "role"
+        },
+        subTitle: {
+          type: "ONE_MANY",
+          model: "role"
+        },
+        pup: {
+          type: "ONE_ONE",
+          model: "dog"
         },
         // profileImage: {},
         groups: {

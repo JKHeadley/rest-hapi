@@ -8,12 +8,17 @@ var extend = require('util')._extend;
 //TODO: make returns more consistent/return all reply's
 
 //TODO: make sure pre and post is supported for appropriate endpoints
+
+//TODO: handle errors/status responses appropriately
+
+//TODO: include option to set all default fields to NULL so they are returned with queries
 module.exports = function (mongoose, server) {
   var QueryHelper = require('./query-helper');
 
   return {
     generateListHandler: function (model, options, Log) {
       return function (request, reply) {
+        Log.error(request.query);
         Log.log("params(%s), query(%s), payload(%s)", JSON.stringify(request.params), JSON.stringify(request.query), JSON.stringify(request.payload));
 
         var modelMethods = model.schema.methods;
@@ -581,12 +586,14 @@ module.exports = function (mongoose, server) {
     childModel.findOne({ '_id': childId }).then(function (childObject) {
       if (childObject) {
         var promise = {};
-        var associationType = ownerMethods.routeOptions.associations[associationName].type;
-        Log.debug("associationType", associationType);
-        if (associationType === "ONE_MANY") {//EXPL: one-many associations are virtual, so only update the child reference
-          childObject[ownerModel.modelName + "Id"] = ownerObject._id;
+        var association = ownerMethods.routeOptions.associations[associationName];
+        Log.debug("associationType", association.type);
+        if (association.type === "ONE_MANY") {//EXPL: one-many associations are virtual, so only update the child reference
+          //TODO: MAKE THIS RIGHT
+          childObject[association.foreignField] = ownerObject._id;
+
           promise = childObject.save()
-        } else if (associationType === "MANY_MANY") {
+        } else if (association.type === "MANY_MANY") {
           if (typeof request.payload[0] === 'string' || request.payload[0] instanceof String) {//EXPL: the payload is an array of Ids. No extra fields
             payload = {};
           } else {
@@ -730,7 +737,18 @@ module.exports = function (mongoose, server) {
         Log.debug("associationType", associationType);
         if (associationType === "ONE_MANY") {//EXPL: one-many associations are virtual, so only update the child reference
           // childObject[ownerModel.modelName + "Id"] = null; //TODO: set reference to null instead of deleting it?
-          delete hildObject[ownerModel.modelName + "Id"];
+          // delete childObject[ownerModel.modelName + "Id"];
+          var childAssociation = {};
+          var childAssociations = childMethods.routeOptions.associations;
+          for (var childAssociationKey in childAssociations) {
+            var association = childAssociations[childAssociationKey];
+            if (association.model === ownerModel.modelName) {
+              childAssociation = association;
+            }
+          }
+          var childAssociationName = childAssociation.include.as;
+          delete childObject[childAssociationName];
+          
           promise = childObject.save()
         } else if (associationType === "MANY_MANY") {//EXPL: remove references from both models
 

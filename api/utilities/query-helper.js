@@ -1,10 +1,46 @@
 var _ = require('lodash');
 var assert = require("assert");
+var qs = require('qs');
+var extend = require('util')._extend;
 
 //TODO: mulit-level/multi-priority sorting (i.e. sort first by lastName, then by firstName) implemented via comma seperated sort list
+//TODO: support $embed for quick embedding and "populate" for detailed, mongoose specific population
+//TODO: support both $term search and mongoose $text search
 
 module.exports = {
   createMongooseQuery: function (model, query, mongooseQuery, Log) {
+    Log.debug("query before:", query);
+    //(email == 'test@user.com' && (firstName == 'test2@user.com' || firstName == 'test4@user.com')) && (age < 15 || age > 30)
+    //LITERAL
+    //{
+    //  and: {
+    //    email: {
+    //      equal: 'test@user.com',
+    //    },
+    //    or: {
+    //      firstName: {
+    //        equal: ['test2@user.com', 'test4@user.com']
+    //      }
+    //    },
+    //    age: {
+    //      gt: '15',
+    //      lt: '30'
+    //    }
+    //  }
+    //{
+    // and[email][equal]=test@user.com&and[or][firstName][equal]=test2@user.com&and[or][firstName][equal]=test4@user.com&and[age][gt]=15
+    //ABBREVIATED
+    //{
+    //  email:'test@user.com',
+    //  firstName: ['test2@user.com', 'test4@user.com'],
+    //  age: {
+    //    $or: {
+    //      $gt: '15',
+    //      $lt: '30'
+    //    }
+    //  }
+    //}
+    // [email]=test@user.com&[firstName]=test2@user.com&[firstName]=test4@user.com&[age][gt]=15&[age][lt]=30
 
     var modelMethods = model.schema.methods;
     
@@ -14,19 +50,26 @@ module.exports = {
 
     mongooseQuery = this.setLimitIfExists(query, mongooseQuery, Log);
 
-    //mongooseQuery = this.setSortFields(query, mongooseQuery, modelMethods.routeOptions.associations, Log);
-
-    //var defaultWhere = this.createDefaultWhere(query, queryableFields, Log);
+    // var defaultWhere = this.createDefaultWhere(query, queryableFields, Log);
 
     //mongooseQuery = this.setTermSearch(query, mongooseQuery, queryableFields, defaultWhere, Log);
 
+    var attributesFilter = this.createAttributesFilter(query, model, Log);
+
     if (modelMethods.routeOptions) {
-      //mongooseQuery.include = this.createIncludeArray(query, modelMethods.routeOptions.associations, Log);
+      var result = this.populateEmbeddedDocs(query, mongooseQuery, attributesFilter,
+        modelMethods.routeOptions.associations, Log);
+      mongooseQuery = result.mongooseQuery;
+      attributesFilter = result.attributesFilter;
     }
 
-    var attributesFilter = this.createAttributesFilter(query, model, Log);
+    //mongooseQuery = this.setSortFields(query, mongooseQuery, modelMethods.routeOptions.associations, Log);
+
     mongooseQuery.select(attributesFilter);
 
+
+    Log.debug("query after:", query);
+    mongooseQuery.where(query);
     return mongooseQuery;
   },
 
@@ -55,11 +98,9 @@ module.exports = {
    */
   getQueryableFields: function (model, Log) {
     assert(model, "requires `model` parameter");
-
     var queryableFields = [];
-
     var fields = model.schema.paths;
-    
+
     for (var fieldName in fields) {
       var field = fields[fieldName].options;
 
@@ -71,17 +112,19 @@ module.exports = {
     return queryableFields;
   },
 
-  setLimitIfExists: function (query, mongooseQuery, Log) {
-    //TODO: default limit of 20.
-    if (query.limit) {
-      mongooseQuery.limit(query.limit);
+  setOffsetIfExists: function (query, mongooseQuery, Log) {
+    if (query.$skip) {
+      mongooseQuery.skip(query.$skip);
+      delete query.$skip;
     }
     return mongooseQuery;
   },
 
-  setOffsetIfExists: function (query, mongooseQuery, Log) {
-    if (query.offset) {
-      mongooseQuery.skip(query.offset);
+  setLimitIfExists: function (query, mongooseQuery, Log) {
+    //TODO: possible default limit of 20?
+    if (query.$limit) {
+      mongooseQuery.limit(query.$limit);
+      delete query.$limit;
     }
     return mongooseQuery;
   },
@@ -172,43 +215,45 @@ module.exports = {
     //}
     //]
 
+    //query = "or[]
+
     var defaultWhere = {};
 
-    function parseSearchFieldValue(searchFieldValue)
-    {
-      if (_.isString(searchFieldValue)) {
-        switch (searchFieldValue.toLowerCase()) {
-          case "null":
-            return null;
-            break;
-          case "true":
-            return true;
-            break;
-          case "false":
-            return false;
-            break;
-          default:
-            return searchFieldValue;
-        }
-      } else if (_.isArray(searchFieldValue)) {
-        searchFieldValue = _.map(searchFieldValue, function (item) {
-          switch (item.toLowerCase()) {
-            case "null":
-              return null;
-              break;
-            case "true":
-              return true;
-              break;
-            case "false":
-              return false;
-              break;
-            default:
-              return item;
-          }
-        });
-        return {$or: searchFieldValue}; //NOTE: Here searchFieldValue is an array.
-      }
-    }
+    // function parseSearchFieldValue(searchFieldValue)
+    // {
+    //   if (_.isString(searchFieldValue)) {
+    //     switch (searchFieldValue.toLowerCase()) {
+    //       case "null":
+    //         return null;
+    //         break;
+    //       case "true":
+    //         return true;
+    //         break;
+    //       case "false":
+    //         return false;
+    //         break;
+    //       default:
+    //         return searchFieldValue;
+    //     }
+    //   } else if (_.isArray(searchFieldValue)) {
+    //     searchFieldValue = _.map(searchFieldValue, function (item) {
+    //       switch (item.toLowerCase()) {
+    //         case "null":
+    //           return null;
+    //           break;
+    //         case "true":
+    //           return true;
+    //           break;
+    //         case "false":
+    //           return false;
+    //           break;
+    //         default:
+    //           return item;
+    //       }
+    //     });
+    //     return {$or: searchFieldValue}; //NOTE: Here searchFieldValue is an array.
+    //   }
+    // }
 
     if (defaultSearchFields) {
       for (var queryField in query) {
@@ -273,171 +318,142 @@ module.exports = {
     return defaultWhere;
   },
 
-  setTermSearch: function (query, mongooseQuery, defaultSearchFields, defaultWhere, Log) {
-    //EXPL: add the term as a regex search
-    if (query.term) {
-      var searchTerm = query.term;
-      //EXPL: remove the "term" from the query
-      delete query.term;
+  // setTermSearch: function (query, mongooseQuery, defaultSearchFields, defaultWhere, Log) {
+  //   //EXPL: add the term as a regex search
+  //   if (query.term) {
+  //     var searchTerm = query.term;
+  //     //EXPL: remove the "term" from the query
+  //     delete query.term;
+  //
+  //     var fieldSearches = undefined;
+  //
+  //     if (query.searchFields) {
+  //       var searchFields = query.searchFields.split(",");
+  //
+  //       fieldSearches = [];
+  //
+  //       //EXPL: add field searches only for those in the query.fields
+  //       for (var fieldIndex in searchFields) {
+  //         var field = searchFields[fieldIndex];
+  //         var fieldSearch = {}
+  //         fieldSearch[field] = {$like: "%" + searchTerm + "%"}
+  //         fieldSearches.push(fieldSearch)
+  //       }
+  //
+  //       delete query.searchFields; //EXPL: remove to avoid query conflicts.
+  //     } else {
+  //       var fieldSearches = [];
+  //
+  //       //EXPL: add ALL the fields as search fields.
+  //       if (defaultSearchFields) {
+  //         for (var defaultSearchFieldIndex in defaultSearchFields) {
+  //           var defaultSearchField = defaultSearchFields[defaultSearchFieldIndex];
+  //
+  //           var searchObject = {};
+  //
+  //           searchObject[defaultSearchField] = {$like: "%" + searchTerm + "%"}
+  //
+  //           fieldSearches.push(searchObject);
+  //         }
+  //       }
+  //     }
+  //
+  //     mongooseQuery.where = {
+  //       $and: [{
+  //         $or: fieldSearches
+  //       },
+  //         defaultWhere
+  //       ]
+  //     };
+  //   } else {
+  //     mongooseQuery.where = defaultWhere;
+  //   }
+  //
+  //   return mongooseQuery;
+  // },
 
-      var fieldSearches = undefined;
+  populateEmbeddedDocs: function (query, mongooseQuery, attributesFilter, associations, Log) {
+    if (query.$embed) {
+      var embedStrings = query.$embed.split(",");
+      embedStrings.forEach(function(embed) {
+        Log.debug("query embed:", embed);
+        var embeds = embed.split(".");
+        var populate = {};
+        var populatePath = "";
+        var baseLevel = true;
+        var association = {};
+        var path = {};
 
-      if (query.searchFields) {
-        var searchFields = query.searchFields.split(",");
+        populate = nestPopulate(populate, 0, embeds, associations, Log);
+        Log.debug("populate:", populate);
 
-        fieldSearches = [];
+        mongooseQuery.populate(populate);
 
-        //EXPL: add field searches only for those in the query.fields
-        for (var fieldIndex in searchFields) {
-          var field = searchFields[fieldIndex];
-          var fieldSearch = {}
-          fieldSearch[field] = {$like: "%" + searchTerm + "%"}
-          fieldSearches.push(fieldSearch)
-        }
-
-        delete query.searchFields; //EXPL: remove to avoid query conflicts.
-      } else {
-        var fieldSearches = [];
-
-        //EXPL: add ALL the fields as search fields.
-        if (defaultSearchFields) {
-          for (var defaultSearchFieldIndex in defaultSearchFields) {
-            var defaultSearchField = defaultSearchFields[defaultSearchFieldIndex];
-
-            var searchObject = {};
-
-            searchObject[defaultSearchField] = {$like: "%" + searchTerm + "%"}
-
-            fieldSearches.push(searchObject);
-          }
-        }
-      }
-
-      mongooseQuery.where = {
-        $and: [{
-          $or: fieldSearches
-        },
-          defaultWhere
-        ]
-      };
-    } else {
-      mongooseQuery.where = defaultWhere;
+        Log.debug("attributesFilter before:", attributesFilter);
+        attributesFilter = attributesFilter + ' ' + populate.path;
+        Log.debug("attributesFilter after:", attributesFilter);
+      });
+      delete query.$embed;
     }
-
-    return mongooseQuery;
-  },
-
-  createIncludeArray: function (query, associations, Log) {
-    var includeArray = [];
-
-    if (query.embed && associations) {
-      var embedStrings = query.embed.split(",");
-
-      for (var embedStringIndex = 0; embedStringIndex < embedStrings.length; ++embedStringIndex) {
-        var embedString = embedStrings[embedStringIndex];
-
-        var embedTokens = embedString.split('.');
-
-        var mainIncludeString = embedTokens[0];
-        var subIncludeString = embedTokens[1];
-
-        var association = associations[mainIncludeString];
-
-        if (association) {
-          var includeDefinition = {};
-          includeDefinition = includeArray.filter(function( include ) {//EXPL: check if the association has already been included
-            return include.as == association.include.as;
-          });
-          includeDefinition = includeDefinition[0];
-          if (!includeDefinition) {//EXPL: make a copy of the association include
-            includeDefinition = {};
-            includeDefinition.model = association.include.model;
-            includeDefinition.as = association.include.as;
-          }
-
-          if (subIncludeString) {
-            if (includeDefinition.model.routeOptions && includeDefinition.model.routeOptions.associations) {
-              embedTokens.shift();
-              if (includeDefinition.include) {//EXPL: recursively build nested includes
-                includeDefinition.include.push(addNestedIncludes(embedTokens, includeDefinition.model.routeOptions.associations, includeDefinition.include, Log));
-              } else {
-                includeDefinition.include = [addNestedIncludes(embedTokens, includeDefinition.model.routeOptions.associations, [], Log)];
-              }
-            } else {
-              Log.warning("Substring provided but no association exists in model.");
-            }
-          }
-          //EXPL: Add the association if it hasn't already been included
-          if (includeArray.indexOf(includeDefinition) < 0) {
-            includeArray.push(includeDefinition);
-          }
-        }
-      }
-    }
-    return includeArray;
+    return { mongooseQuery: mongooseQuery, attributesFilter: attributesFilter };
   },
 
   createAttributesFilter: function (query, model, Log) {
     var attributesFilter = [];
     var fields = model.schema.paths;
     var fieldNames = [];
+
     if (query.fields) {
       fieldNames = query.fields;
     } else {
       fieldNames = Object.keys(fields)
     }
 
+    var associations = Object.keys(model.schema.methods.routeOptions.associations);
+
     for (var i = 0; i < fieldNames.length; i++) {
       var fieldName = fieldNames[i];
       var field = fields[fieldName].options;
-      if (!field.exclude) {
+      var isAssociation = associations.indexOf(fields[fieldName].path);
+
+      if (!field.exclude && isAssociation < 0) {
         attributesFilter.push(fieldName);
       }
     }
 
     i = attributesFilter.indexOf("__v");//EXPL: omit the internal version number
+
     if(i != -1) {
       attributesFilter.splice(i, 1);
     }
+
     return attributesFilter.toString().replace(/,/g,' ');
   }
 };
 
-
-//EXPL: Recursively add nested includes/embeds
-function addNestedIncludes(embedTokens, associations, includeArray, Log) {
-  var mainIncludeString = embedTokens[0];
-  var subIncludeString = embedTokens[1];
-
-  var association = associations[mainIncludeString];
-
-  if (association) {
-    var includeDefinition = {};
-    includeDefinition = includeArray.filter(function( include ) {//EXPL: check if the association has already been included
-      return include.as == association.include.as;
-    });
-    includeDefinition = includeDefinition[0];
-    if (!includeDefinition) {//EXPL: make a copy of the association include
-      includeDefinition = {};
-      includeDefinition.model = association.include.model;
-      includeDefinition.as = association.include.as;
-    }
-
-    if (subIncludeString) {
-      if (includeDefinition.model.routeOptions && includeDefinition.model.routeOptions.associations) {
-        embedTokens.shift();
-        if (includeDefinition.include) {//EXPL: recursively build nested includes
-          includeDefinition.include.push(addNestedIncludes(embedTokens, includeDefinition.model.routeOptions.associations, includeDefinition.include, Log));
-        } else {
-          includeDefinition.include = [addNestedIncludes(embedTokens, includeDefinition.model.routeOptions.associations, [], Log)];
-        }
-      } else {
-        Log.warning("Substring provided but no association exists in model.");
-        return includeDefinition;
-      }
-    }
-    return includeDefinition;
+function nestPopulate(populate, index, embeds, associations, Log) {
+  Log.debug("populate:", populate);
+  Log.debug("index:", index);
+  Log.debug("embeds:", embeds);
+  Log.debug("associations:", associations);
+  var embed = embeds[index];
+  var association = associations[embed];
+  var populatePath = "";
+  if (association.type === "MANY_MANY") {
+    populatePath = embed + '.' + association.model;
+  } else {
+    populatePath = embed;
   }
-  Log.error("Association does not exist!");
-  return;
+  if (index < embeds.length - 1) {
+    associations = association.include.model.schema.methods.routeOptions.associations;
+    populate = nestPopulate(populate, index + 1, embeds, associations, Log);
+    populate.populate = extend({}, populate);//EXPL: prevent circular reference
+    populate.path = populatePath;
+    Log.debug("populate:", populate);
+    return populate;
+  } else {
+    populate.path = populatePath;
+    Log.debug("populate:", populate);
+    return populate;
+  }
 }

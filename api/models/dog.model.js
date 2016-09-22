@@ -1,10 +1,9 @@
 var Joi = require('joi');
 
 module.exports = function (mongoose) {
-  var modelName = "role";
+  var modelName = "dog";
   var Types = mongoose.Schema.Types;
   var Schema = new mongoose.Schema({
-    //NOTE: base roles = [Account, Admin, SuperAdmin]
     name: {
       type: Types.String,
       allowNull: false,
@@ -14,38 +13,24 @@ module.exports = function (mongoose) {
       // },
       displayName: "Name"
     },
-    description: {
-      type: Types.String,
+    owner: {
+      type: Types.ObjectId,
       allowNull: true,
-      // validate: {
-      //   len: [1, 255]
-      // },
-      displayName: "Description"
+      queryable: true,
+      displayName: "Owner",
+      ref: "user"
     }
   }); 
     
     Schema.methods = {
       nameField:"name",
-      collectionDisplayName:"Role",
+      collectionDisplayName:"Dog",
       collectionName:modelName,
       routeOptions: {
         associations: {
-          people: {
-            type: "ONE_MANY",
-            alias: "people",
-            foreignField: "title",
+          owner: {
+            type: "ONE_ONE",
             model: "user"
-          },
-          subPeople: {
-            type: "ONE_MANY",
-            alias: "sub-people",
-            foreignField: "subTitle",
-            model: "user"
-          },
-          permissions: {
-            type: "MANY_MANY",
-            alias: "permission",
-            model: "permission"
           }
         }
       },

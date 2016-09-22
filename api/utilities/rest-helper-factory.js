@@ -44,7 +44,7 @@ module.exports = function (logger, mongoose, server) {
         for (var associationName in modelMethods.routeOptions.associations) {
           var association = modelMethods.routeOptions.associations[associationName];
 
-          if (association.type == "MANY_MANY" || association.type == "ONE_MANY") {
+          if (association.type == "MANY_MANY" || association.foreignField) {
             if (association.allowAddOne !== false) {
               this.generateAssociationAddOneEndpoint(server, model, association, options, Log);
             }
@@ -137,7 +137,8 @@ module.exports = function (logger, mongoose, server) {
           description: 'Get a list of ' + collectionName,
           tags: ['api', collectionName],
           validate: {
-            query: queryValidation,
+            // query: queryValidation,
+            query: Joi.any(),
             headers: Joi.object({
               'authorization': Joi.string().required()
             }).options({allowUnknown: true})
