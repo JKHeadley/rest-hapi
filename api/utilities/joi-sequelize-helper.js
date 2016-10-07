@@ -65,21 +65,17 @@ module.exports = function () {
 
       var fields = model.schema.paths;
 
-      var associations = Object.keys(model.schema.methods.routeOptions.associations);
-
-      for(var fieldName in fields){
+      for (var fieldName in fields) {
         var field = fields[fieldName].options;
-
-        var isAssociation = associations.indexOf(fields[fieldName].path);
 
         if(field.updateModel){
           updateModelBase[fieldName] = field.updateModel;
-        }else if(!field.primaryKey && field.allowOnUpdate !== false && isAssociation < 0){
+        } else if (!field.primaryKey && field.allowOnUpdate !== false) {
           var attributeUpdateModel = this.generateJoiModelFromAttribute(field);
 
-          if(field.requireOnUpdate === true){
+          if(field.requireOnUpdate === true) {
             attributeUpdateModel = attributeUpdateModel.required();
-          }else{
+          } else {
             attributeUpdateModel = attributeUpdateModel.optional();
           }
 
@@ -89,7 +85,7 @@ module.exports = function () {
 
       var modelMethods = model.schema.methods;
 
-      if(modelMethods.extraUpdateModelAttributes){
+      if (modelMethods.extraUpdateModelAttributes){
         _.extend(updateModelBase, modelMethods.extraUpdateModelAttributes);
       }
 

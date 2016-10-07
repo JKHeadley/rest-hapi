@@ -12,6 +12,10 @@ var extend = require('util')._extend;
 //TODO: handle errors/status responses appropriately
 
 //TODO: include option to set all default fields to NULL so they are returned with queries
+
+//TODO: possibly refactor/remove routeOptions
+
+//TODO: apply .lean() before any exec() to speed up execution time when returning data
 module.exports = function (mongoose, server) {
   var QueryHelper = require('./query-helper');
 
@@ -230,6 +234,7 @@ module.exports = function (mongoose, server) {
         var collectionName = model.collectionDisplayName || model.modelName;
 
         //EXPL: retrieve the old values before updating
+        //NOTE: this is unnecesary since the "findByIdAndUpdate" below returns the old values
         var properties = Object.keys(request.payload);
         var oldValues = [];
         model.findOne({ '_id': request.params.id }).then(function (data) {
@@ -239,9 +244,17 @@ module.exports = function (mongoose, server) {
           }
 
           //TODO: support eventLogs and log all property updates in one document rather than one document per property update
-          model.findByIdAndUpdate(request.params.id, request.payload).then(function (newValues) {
-            Log.debug("newValues:", newValues);
-            if (newValues) {
+          //NOTE: need to do another "find" after the update to grab the new values and log them
+          model.findByIdAndUpdate(request.params.id, request.payload).then(function (object) {
+            Log.debug("object:", object);
+            if (object) {
+              var associations = model.schema.methods.routeOptions.associations;
+              //EXPL: if a reference id was updated/added, we need to update the association
+              //TODO: log all updated/added associations
+              for (var key in request.payload) {
+                var association = associations[key];
+              }
+
               var idField = model.idField || "id";
               var nameField = model.nameField || "name";
 
@@ -373,6 +386,9 @@ module.exports = function (mongoose, server) {
             } else {
               reply(Boom.notFound("No resource was found with that id."));
             }
+          }).catch(function (error) {
+            Log.error("error(%s)", JSON.stringify(error));
+            reply(Boom.badRequest("An error occurred updating the resource.", error));
           });
         }).catch(function (error) {
           Log.error("error(%s)", JSON.stringify(error));
