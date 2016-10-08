@@ -73,7 +73,6 @@ module.exports = {
     mongooseQuery = this.setSort(query, mongooseQuery, Log);
 
     mongooseQuery.select(attributesFilter);
-    // mongooseQuery.select("people.email");
 
 
     Log.debug("query after:", query);
@@ -459,7 +458,7 @@ function nestPopulate(query, populate, index, embeds, associations, Log) {
   // Log.debug("embeds:", embeds);
   // Log.debug("associations:", associations);
   var embed = embeds[index];
-  Log.debug("embed:", embed);
+  // Log.debug("embed:", embed);
   var association = associations[embed];
   var populatePath = "";
   var select = "";
@@ -477,7 +476,7 @@ function nestPopulate(query, populate, index, embeds, associations, Log) {
   Log.debug("populatePath:", populatePath);
   if (index < embeds.length - 1) {
     associations = association.include.model.schema.methods.routeOptions.associations;
-    populate = nestPopulate(populate, index + 1, embeds, associations, Log);
+    populate = nestPopulate(query, populate, index + 1, embeds, associations, Log);
     populate.populate = extend({}, populate);//EXPL: prevent circular reference
     populate.path = populatePath;
     populate.select = select + " " + populate.populate.path;//EXPL: have to add the path to the select to include nested MANY_MANY embeds

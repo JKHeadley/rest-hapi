@@ -34,6 +34,7 @@ module.exports = function (mongoose, server) {
         var mongooseQuery = model.find();
         mongooseQuery = QueryHelper.createMongooseQuery(model, request.query, mongooseQuery, Log);
         mongooseQuery.exec().then(function (result) {
+          Log.debug("result:", result);
 
           var promise = {};
           if (modelMethods.routeOptions.list && modelMethods.routeOptions.list.post) {
@@ -46,10 +47,17 @@ module.exports = function (mongoose, server) {
 
             reply(result.map(function (data) {
               var result = data.toJSON();
+              var associations = modelMethods.routeOptions.associations;
+              for (var associationKey in associations) {
+                var association = associations[associationKey];
+                if (association.type === "ONE_MANY" && data[associationKey]) {//EXPL: we have to manually populate the return value for virtual (e.g. ONE_MANY) associations
+                  result[associationKey] = data[associationKey];
+                }
+              }
 
               Log.log("Result: %s", JSON.stringify(result));
               return result;
-            })).header('X-Total-Count', result.count);
+            })).header('X-Total-Count', result.length);
           }).catch(function (error) {
             Log.error("error: ", JSON.stringify(error));
             reply(Boom.badRequest("There was a postprocessing error.", error));
@@ -71,10 +79,17 @@ module.exports = function (mongoose, server) {
         var mongooseQuery = model.findOne({ '_id': request.params.id });
         mongooseQuery = QueryHelper.createMongooseQuery(model, request.query, mongooseQuery, Log);
         mongooseQuery.exec().then(function (data) {
-
           if (data) {
             var result = data.toJSON();
+            var associations = modelMethods.routeOptions.associations;
+            for (var associationKey in associations) {
+              var association = associations[associationKey];
+              if (association.type === "ONE_MANY" && data[associationKey]) {//EXPL: we have to manually populate the return value for virtual (e.g. ONE_MANY) associations
+                result[associationKey] = data[associationKey];
+              }
+            }
 
+            Log.debug("result:", result);
             var promise = {};
             if (modelMethods.routeOptions.find && modelMethods.routeOptions.find.post) {
               promise = modelMethods.routeOptions.list.post(request, result, Log);
@@ -571,7 +586,7 @@ module.exports = function (mongoose, server) {
             }
             // Log.debug("object:", object);
             return object;
-          })).header('X-Total-Count', result.count);
+          })).header('X-Total-Count', result.length);
         });
 
         // ownerModel.findById(request.params.ownerId).then(function (ownerObject) {

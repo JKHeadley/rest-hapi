@@ -225,7 +225,8 @@ module.exports = function (logger, mongoose, server) {
             }
           },
           response: {
-            schema: readModel || Joi.object().unknown().optional()
+            // schema: readModel || Joi.object().unknown().optional()
+            schema: Joi.any()
           }
         }
       });
