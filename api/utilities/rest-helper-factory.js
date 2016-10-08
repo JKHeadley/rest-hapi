@@ -91,9 +91,9 @@ module.exports = function (logger, mongoose, server) {
       var handler = HandlerHelper.generateListHandler(model, options, Log);
 
       var queryValidation = {
-        offset: Joi.number().integer().min(0).optional()
+        $skip: Joi.number().integer().min(0).optional()
           .description('The number of records to skip in the database. This is typically used in pagination.'),
-        limit: Joi.number().integer().min(0).optional()
+        $limit: Joi.number().integer().min(0).optional()
           .description('The maximum number of records to return. This is typically used in pagination.')
       };
 
@@ -102,27 +102,24 @@ module.exports = function (logger, mongoose, server) {
       var readableFields = queryHelper.getReadableFields(model, Log);
 
       if (queryableFields) {
-        queryValidation.fields = Joi.string().optional()//TODO: make enumerated array.
+        queryValidation.$select = Joi.string().optional()//TODO: make enumerated array.
           .description('A list of basic fields to be included in each resource. Valid values include: ' + readableFields);
-        queryValidation.term = Joi.string().optional()
-          .description('A generic search parameter. This can be refined using the `searchFields` parameter. Valid values include: ' + queryableFields);
-        queryValidation.searchFields = Joi.string().optional()//TODO: make enumerated array.
-          .description('A set of fields to apply the \"term\" search parameter to. If this parameter is not included, the \"term\" search parameter is applied to all searchable fields. Valid values include: ' + queryableFields);
-        queryValidation.sort = Joi.string().optional()//TODO: make enumerated array.
-          .description('A set of sort fields. Prepending \'+\' to the field name indicates it should be sorted ascending, while \'-\' indicates descending. The default sort direction is \'ascending\' (lowest value to highest value).');
+        // queryValidation.$term = Joi.string().optional()
+        //   .description('A generic search parameter. This can be refined using the `searchFields` parameter. Valid values include: ' + queryableFields);
+        // queryValidation.$searchFields = Joi.string().optional()//TODO: make enumerated array.
+        //   .description('A set of fields to apply the \"$term\" search parameter to. If this parameter is not included, the \"$term\" search parameter is applied to all searchable fields. Valid values include: ' + queryableFields);
+        queryValidation.$sort = Joi.string().optional()//TODO: make enumerated array.
+          .description('A set of sort fields. Including field name indicates it should be sorted ascending, while prepending ' +
+            '\'-\' indicates descending. The default sort direction is \'ascending\' (lowest value to highest value).');
 
 
         _.each(queryableFields, function (fieldName) {
           queryValidation[fieldName] = Joi.alternatives().try(Joi.string().optional(), Joi.array().items(Joi.string()));
-          queryValidation["min-" + fieldName] = Joi.alternatives().try(Joi.string().optional(), Joi.array().items(Joi.string()));
-          queryValidation["max-" + fieldName] = Joi.alternatives().try(Joi.string().optional(), Joi.array().items(Joi.string()));
-          queryValidation["not-" + fieldName] = Joi.alternatives().try(Joi.string().optional(), Joi.array().items(Joi.string()));
-          queryValidation["or-" + fieldName] = Joi.alternatives().try(Joi.string().optional(), Joi.array().items(Joi.string()));
         })
       }
 
       if (modelMethods.routeOptions && modelMethods.routeOptions.associations) {
-        queryValidation.embed = Joi.string().optional()//TODO: make enumerated array.
+        queryValidation.$embed = Joi.string().optional()//TODO: make enumerated array.
           .description('A set of complex object properties to populate. Valid values include ' + Object.keys(modelMethods.routeOptions.associations));
       }
 
@@ -137,8 +134,8 @@ module.exports = function (logger, mongoose, server) {
           description: 'Get a list of ' + collectionName,
           tags: ['api', collectionName],
           validate: {
-            // query: queryValidation,
-            query: Joi.any(),
+            query: queryValidation,
+            // query: Joi.any(),
             headers: Joi.object({
               'authorization': Joi.string().required()
             }).options({allowUnknown: true})
@@ -185,12 +182,12 @@ module.exports = function (logger, mongoose, server) {
       var readableFields = queryHelper.getReadableFields(model, Log);
 
       if (readableFields) {
-        queryValidation.fields = Joi.string().optional()//TODO: make enumerated array.
+        queryValidation.$select = Joi.string().optional()//TODO: make enumerated array.
           .description('A list of basic fields to be included in each resource. Valid values include: ' + readableFields);
       }
 
       if (modelMethods.routeOptions && modelMethods.routeOptions.associations) {
-        queryValidation.embed = Joi.string().optional()//TODO: make enumerated array.
+        queryValidation.$embed = Joi.string().optional()//TODO: make enumerated array.
           .description('A set of complex object properties to populate. Valid values include ' + Object.keys(modelMethods.routeOptions.associations));
       }
 
@@ -260,13 +257,13 @@ module.exports = function (logger, mongoose, server) {
         path: '/' + resourceAliasForRoute,
         config: {
           handler: handler,
-          //auth: "token",
+          auth: "token",
           cors: true,
           description: 'Create a new ' + collectionName,
           tags: ['api', collectionName],
           validate: {
             payload: createModel,
-            // headers: headersValidation
+            headers: headersValidation
           },
           plugins: {
             'hapi-swagger': {
@@ -602,32 +599,31 @@ module.exports = function (logger, mongoose, server) {
       var handler = options.handler ? options.handler : HandlerHelper.generateAssociationGetAllHandler(ownerModel, association, options, Log);
 
       var queryValidation = {
-        offset: Joi.number().integer().min(0).optional()
+        $skip: Joi.number().integer().min(0).optional()
           .description('The number of records to skip in the database. This is typically used in pagination.'),
-        limit: Joi.number().integer().min(0).optional()
+        $limit: Joi.number().integer().min(0).optional()
           .description('The maximum number of records to return. This is typically used in pagination.')
       };
 
       var queryableFields = queryHelper.getQueryableFields(childModel, Log);
 
       if (queryableFields) {
-        queryValidation.fields = Joi.string().optional()//TODO: make enumerated array.
+        queryValidation.$select = Joi.string().optional()//TODO: make enumerated array.
           .description('A list of basic fields to be included in each resource. Valid values include: ' + childModel.queryableFields);
-        queryValidation.term = Joi.string().optional()
-          .description('A generic search parameter. This can be refined using the `searchFields` parameter. Valid values include: ' + childModel.queryableFields);
-        queryValidation.searchFields = Joi.string().optional()//TODO: make enumerated array.
-          .description('A set of fields to apply the \"term\" search parameter to. If this parameter is not included, the \"term\" search parameter is applied to all searchable fields. Valid values include: ' + childModel.queryableFields);
-        queryValidation.sort = Joi.string().optional()//TODO: make enumerated array.
+        // queryValidation.$term = Joi.string().optional()
+        //   .description('A generic search parameter. This can be refined using the `searchFields` parameter. Valid values include: ' + childModel.queryableFields);
+        // queryValidation.$searchFields = Joi.string().optional()//TODO: make enumerated array.
+        //   .description('A set of fields to apply the \"$term\" search parameter to. If this parameter is not included, the \"$term\" search parameter is applied to all searchable fields. Valid values include: ' + childModel.queryableFields);
+        queryValidation.$sort = Joi.string().optional()//TODO: make enumerated array.
           .description('A set of sort fields. Prepending \'+\' to the field name indicates it should be sorted ascending, while \'-\' indicates descending. The default sort direction is \'ascending\' (lowest value to highest value).');
 
         _.each(queryableFields, function (fieldName) {
-          queryValidation[fieldName] = Joi.string().optional()
-          queryValidation["not-" + fieldName] = Joi.alternatives().try(Joi.string().optional(), Joi.array().items(Joi.string()));
+          queryValidation[fieldName] = Joi.string().optional();
         })
       }
 
       if (childModel.routeOptions && childModel.routeOptions.associations) {
-        queryValidation.embed = Joi.string().optional()//TODO: make enumerated array.
+        queryValidation.$embed = Joi.string().optional()//TODO: make enumerated array.
           .description('A set of complex object properties to populate. Valid values include ' + Object.keys(childModel.routeOptions.associations));
       }
 
@@ -659,7 +655,8 @@ module.exports = function (logger, mongoose, server) {
             }
           },
           response: {
-            schema: Joi.array().items(childModel.readModel ? childModel.readModel : Joi.object().unknown().optional())
+            // schema: Joi.array().items(childModel.readModel ? childModel.readModel : Joi.object().unknown().optional())
+            schema: Joi.any()
           }
         }
       });

@@ -49,6 +49,7 @@ module.exports = function (mongoose) {
       //   len: [5, 64]
       // },
       exclude: true,
+      allowOnUpdate: false,
       displayName: "Password"
     },
     age: {
@@ -60,12 +61,16 @@ module.exports = function (mongoose) {
       type: Types.String,
       allowNull: true,
       exclude: true,
+      allowOnUpdate: false,
+      allowOnCreate: false,
       displayName: "Token"
     },
     tokenCreatedAt: {
       type: Types.String,
       allowNull: true,
-      exclude: true
+      exclude: true,
+      allowOnUpdate: false,
+      allowOnCreate: false
     },
     title: {
       type: Types.ObjectId,

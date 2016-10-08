@@ -16,6 +16,10 @@ var extend = require('util')._extend;
 //TODO: possibly refactor/remove routeOptions
 
 //TODO: apply .lean() before any exec() to speed up execution time when returning data
+
+//TODO: possibly execute .toJSON() on all return data to reduce data size
+
+//TODO: fix X-Total-Count headers
 module.exports = function (mongoose, server) {
   var QueryHelper = require('./query-helper');
 
@@ -111,7 +115,9 @@ module.exports = function (mongoose, server) {
         }
 
         return promise.then(function (request) {
+          // console.log("here:", model.getIndexes());
           return model.create(request.payload).then(function (data) {
+            console.log("created:", data);
 
             var attributes = QueryHelper.createAttributesFilter(request.query, model, Log);
 
@@ -531,15 +537,41 @@ module.exports = function (mongoose, server) {
 
         var ownerMethods = ownerModel.schema.methods;
         var associationType = ownerMethods.routeOptions.associations[associationName].type;
-        if (associationType === "MANY_MANY") {
-          var populateQuery = associationName + "." + childModel.modelName; //TODO: formulate proper mongooseQuery to filter embedded/populated data
-        } else if (associationType === "ONE_MANY") {
-          var populateQuery = associationName; //TODO: formulate proper mongooseQuery to filter embedded/populated data
-        }
+        var foreignField = ownerMethods.routeOptions.associations[associationName].foreignField;
+        // Log.debug("associationType:", associationType);
+        // Log.debug("foreignField:", foreignField);
+        var returnForeignField = false;
 
+        var populateQuery = associationName; //TODO: formulate proper mongooseQuery to filter embedded/populated data
+
+        request.query.$embed = populateQuery;
+        request.query.populateSelect = request.query.$select;
+        if (foreignField && request.query.$select) {//EXPL: ONE_MANY virtual relationships require the foreignField to be included in the result. We add logic to make it optional.
+          if (request.query.$select.includes(foreignField)) {
+            returnForeignField = true;
+          } else {
+            request.query.populateSelect = request.query.populateSelect + "," + foreignField;
+          }
+        } else {
+          returnForeignField = true;
+        }
+        delete request.query.$select;
+        // Log.debug("returnForeignField:", returnForeignField);
+
+        // Log.debug("populateQuery:", populateQuery);
         //TODO: allow for customized return data, i.e. a flat array without extra association fields
-        var mongooseQuery = ownerModel.findOne({ '_id': request.params.ownerId }).populate(populateQuery).exec().then(function (data) {//TODO: allow for nested populates through "embed" param
-          return reply(data[associationName]);
+        var mongooseQuery = ownerModel.findOne({ '_id': request.params.ownerId });
+        mongooseQuery = QueryHelper.createMongooseQuery(ownerModel, request.query, mongooseQuery, Log);
+        mongooseQuery.exec().then(function (result) {//TODO: allow for nested populates through "embed" param
+          result = result[associationName];
+          return reply(result.map(function(object) {
+            object = object.toJSON();
+            if (!returnForeignField && foreignField) {
+              delete object[foreignField];
+            }
+            // Log.debug("object:", object);
+            return object;
+          })).header('X-Total-Count', result.count);
         });
 
         // ownerModel.findById(request.params.ownerId).then(function (ownerObject) {

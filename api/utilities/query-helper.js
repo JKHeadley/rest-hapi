@@ -3,9 +3,13 @@ var assert = require("assert");
 var qs = require('qs');
 var extend = require('util')._extend;
 
-//TODO: mulit-level/multi-priority sorting (i.e. sort first by lastName, then by firstName) implemented via comma seperated sort list
+//TODO-DONE: mulit-level/multi-priority sorting (i.e. sort first by lastName, then by firstName) implemented via comma seperated sort list
+//TODO: sorting through populate fields (Ex: sort users through role.name)
 //TODO: support $embed for quick embedding and "populate" for detailed, mongoose specific population
 //TODO: support both $term search and mongoose $text search
+//TODO: possibly support both comma separated values and space separated values
+//TODO: define field property options (queryable, exclude, etc).
+//TODO: support "$where" field that allows for raw mongoose queries
 
 module.exports = {
   createMongooseQuery: function (model, query, mongooseQuery, Log) {
@@ -46,15 +50,18 @@ module.exports = {
     
     var queryableFields = this.getQueryableFields(model, Log);
 
-    mongooseQuery = this.setOffsetIfExists(query, mongooseQuery, Log);
+    mongooseQuery = this.setSkip(query, mongooseQuery, Log);
 
-    mongooseQuery = this.setLimitIfExists(query, mongooseQuery, Log);
-
-    // var defaultWhere = this.createDefaultWhere(query, queryableFields, Log);
+    mongooseQuery = this.setLimit(query, mongooseQuery, Log);
 
     //mongooseQuery = this.setTermSearch(query, mongooseQuery, queryableFields, defaultWhere, Log);
 
     var attributesFilter = this.createAttributesFilter(query, model, Log);
+    if (attributesFilter === '') {
+      attributesFilter = "_id";
+    }
+
+    Log.debug("attributesFilter:", attributesFilter);
 
     if (modelMethods.routeOptions) {
       var result = this.populateEmbeddedDocs(query, mongooseQuery, attributesFilter,
@@ -63,9 +70,10 @@ module.exports = {
       attributesFilter = result.attributesFilter;
     }
 
-    //mongooseQuery = this.setSortFields(query, mongooseQuery, modelMethods.routeOptions.associations, Log);
+    mongooseQuery = this.setSort(query, mongooseQuery, Log);
 
     mongooseQuery.select(attributesFilter);
+    // mongooseQuery.select("people.email");
 
 
     Log.debug("query after:", query);
@@ -98,21 +106,30 @@ module.exports = {
    */
   getQueryableFields: function (model, Log) {
     assert(model, "requires `model` parameter");
+
     var queryableFields = [];
     var fields = model.schema.paths;
+    var fieldNames = Object.keys(fields);
 
-    for (var fieldName in fields) {
-      var field = fields[fieldName].options;
+    var associations = model.schema.methods.routeOptions.associations;
 
-      if (field.queryable && !field.exclude) {
-        queryableFields.push(fieldName);
+    for (var i = 0; i < fieldNames.length; i++) {
+      var fieldName = fieldNames[i];
+      if (fields[fieldName] && fieldName !== "__v" && fieldName !== "__t" && fieldName !== "_id") {
+        var field = fields[fieldName].options;
+        var association = associations[fields[fieldName].path] || {};
+
+        //EXPL: by default we don't include MANY_MANY array references
+        if (field.queryable !== false && !field.exclude && association.type !== "MANY_MANY") {
+          queryableFields.push(fieldName);
+        }
       }
     }
 
     return queryableFields;
   },
 
-  setOffsetIfExists: function (query, mongooseQuery, Log) {
+  setSkip: function (query, mongooseQuery, Log) {
     if (query.$skip) {
       mongooseQuery.skip(query.$skip);
       delete query.$skip;
@@ -120,7 +137,7 @@ module.exports = {
     return mongooseQuery;
   },
 
-  setLimitIfExists: function (query, mongooseQuery, Log) {
+  setLimit: function (query, mongooseQuery, Log) {
     //TODO: possible default limit of 20?
     if (query.$limit) {
       mongooseQuery.limit(query.$limit);
@@ -129,194 +146,194 @@ module.exports = {
     return mongooseQuery;
   },
 
-  setSortFields: function (query, mongooseQuery, modelAssociations, Log) {
-    if (query.sort) {
-      var fieldSorts = [];
+  // setSortFields: function (query, mongooseQuery, modelAssociations, Log) {
+  //   if (query.sort) {
+  //     var fieldSorts = [];
+  //
+  //     var sortFields = query.sort.split(",");
+  //
+  //     for (var sortFieldIndex in sortFields) {
+  //       var sortField = sortFields[sortFieldIndex];
+  //
+  //       var queryAssociations = [];
+  //       var order = sortField[0];
+  //       sortField = sortField.substring(1);
+  //       sortField = sortField.split(".");
+  //
+  //       //EXPL: support sorting through nested associations
+  //       if (sortField.length > 1) {
+  //         var association = null;
+  //         while (sortField.length > 1) {
+  //           association = sortField.shift();
+  //           queryAssociations.push(modelAssociations[association].include);
+  //           modelAssociations = modelAssociations[association].include.model.schema.methods.routeOptions.associations;
+  //         }
+  //         sortField = sortField[0];
+  //       } else {
+  //         sortField = sortField[0];
+  //       }
+  //
+  //       var sortQuery = null;
+  //       if (order == "-") {
+  //         //EXPL: - means descending.
+  //         if (queryAssociations) {
+  //           sortQuery = queryAssociations;
+  //           sortQuery.push(sortField);
+  //           sortQuery.push('DESC');
+  //           fieldSorts.push(sortQuery);
+  //         } else {
+  //           fieldSorts.push([sortField, "DESC"]);
+  //         }
+  //       } else if (order == "+") {
+  //         //EXPL: + means ascending.
+  //         if (queryAssociations) {
+  //           sortQuery = queryAssociations;
+  //           sortQuery.push(sortField);
+  //           fieldSorts.push(sortQuery);
+  //         } else {
+  //           fieldSorts.push([sortField]);
+  //         }
+  //       } else {
+  //         //EXPL: default to ascending if there is no - or +
+  //         if (queryAssociations) {
+  //           sortQuery = queryAssociations;
+  //           sortQuery.push(sortField);
+  //           fieldSorts.push(sortQuery);
+  //         } else {
+  //           fieldSorts.push([sortField]);
+  //         }
+  //       }
+  //     }
+  //
+  //     //EXPL: remove from the query to remove conflicts.
+  //     delete query.sort;
+  //
+  //     mongooseQuery.order = fieldSorts;
+  //   }
+  //
+  //   return mongooseQuery;
+  // },
 
-      var sortFields = query.sort.split(",");
-
-      for (var sortFieldIndex in sortFields) {
-        var sortField = sortFields[sortFieldIndex];
-
-        var queryAssociations = [];
-        var order = sortField[0];
-        sortField = sortField.substring(1);
-        sortField = sortField.split(".");
-
-        //EXPL: support sorting through nested associations
-        if (sortField.length > 1) {
-          var association = null;
-          while (sortField.length > 1) {
-            association = sortField.shift();
-            queryAssociations.push(modelAssociations[association].include);
-            modelAssociations = modelAssociations[association].include.model.schema.methods.routeOptions.associations;
-          }
-          sortField = sortField[0];
-        } else {
-          sortField = sortField[0];
-        }
-
-        var sortQuery = null;
-        if (order == "-") {
-          //EXPL: - means descending.
-          if (queryAssociations) {
-            sortQuery = queryAssociations;
-            sortQuery.push(sortField);
-            sortQuery.push('DESC');
-            fieldSorts.push(sortQuery);
-          } else {
-            fieldSorts.push([sortField, "DESC"]);
-          }
-        } else if (order == "+") {
-          //EXPL: + means ascending.
-          if (queryAssociations) {
-            sortQuery = queryAssociations;
-            sortQuery.push(sortField);
-            fieldSorts.push(sortQuery);
-          } else {
-            fieldSorts.push([sortField]);
-          }
-        } else {
-          //EXPL: default to ascending if there is no - or +
-          if (queryAssociations) {
-            sortQuery = queryAssociations;
-            sortQuery.push(sortField);
-            fieldSorts.push(sortQuery);
-          } else {
-            fieldSorts.push([sortField]);
-          }
-        }
-      }
-
-      //EXPL: remove from the query to remove conflicts.
-      delete query.sort;
-
-      mongooseQuery.order = fieldSorts;
-    }
-
-    return mongooseQuery;
-  },
-
-  createDefaultWhere: function (query, defaultSearchFields, Log) {
-
-    //TODO: update this to handle more complex queries
-    //EX: query = {"or-like-title":"Boat","or-not-description":"boat"
-    //should result in
-    //$or: [
-    //{
-    //  title: {
-    //    $like: 'Boat'
-    //  }
-    //},
-    //{
-    //  description: {
-    //    $notIn: 'boat'
-    //  }
-    //}
-    //]
-
-    //query = "or[]
-
-    var defaultWhere = {};
-
-    // function parseSearchFieldValue(searchFieldValue)
-    // {
-    //   if (_.isString(searchFieldValue)) {
-    //     switch (searchFieldValue.toLowerCase()) {
-    //       case "null":
-    //         return null;
-    //         break;
-    //       case "true":
-    //         return true;
-    //         break;
-    //       case "false":
-    //         return false;
-    //         break;
-    //       default:
-    //         return searchFieldValue;
-    //     }
-    //   } else if (_.isArray(searchFieldValue)) {
-    //     searchFieldValue = _.map(searchFieldValue, function (item) {
-    //       switch (item.toLowerCase()) {
-    //         case "null":
-    //           return null;
-    //           break;
-    //         case "true":
-    //           return true;
-    //           break;
-    //         case "false":
-    //           return false;
-    //           break;
-    //         default:
-    //           return item;
-    //       }
-    //     });
-    //     return {$or: searchFieldValue}; //NOTE: Here searchFieldValue is an array.
-    //   }
-    // }
-
-    if (defaultSearchFields) {
-      for (var queryField in query) {
-        var index = defaultSearchFields.indexOf(queryField);
-        if (index >= 0) { //EXPL: queryField is for basic search value
-
-          var defaultSearchField = defaultSearchFields[index];
-
-          var searchFieldValue = query[defaultSearchField];
-
-          defaultWhere[defaultSearchField] = parseSearchFieldValue(searchFieldValue);
-
-        } else { //EXPL: queryField includes options
-
-          var defaultSearchField = null;
-          var searchFieldValue = query[queryField];
-          queryField = queryField.split('-');
-          if (queryField.length > 1) {
-            defaultSearchField = queryField[1];
-          }
-          queryField = queryField[0];
-
-          if (defaultSearchField) {
-            searchFieldValue = parseSearchFieldValue(searchFieldValue);
-            switch (queryField) {
-              case "not": //EXPL: allows for omitting objects
-                if (!defaultWhere[defaultSearchField]) {
-                  defaultWhere[defaultSearchField] = {};
-                }
-                if (_.isArray(searchFieldValue)) {
-                  defaultWhere[defaultSearchField]["$notIn"] = searchFieldValue;
-                } else {
-                  defaultWhere[defaultSearchField]["$notIn"] = [searchFieldValue];
-                }
-                break;
-              case "max": //EXPL: query for max search value
-                if (!defaultWhere[defaultSearchField]) {
-                  defaultWhere[defaultSearchField] = {};
-                }
-                defaultWhere[defaultSearchField]["$gte"] = searchFieldValue;
-                break;
-              case "min": //EXPL: query for min search value
-                if (!defaultWhere[defaultSearchField]) {
-                  defaultWhere[defaultSearchField] = {};
-                }
-                defaultWhere[defaultSearchField]["$lte"] = searchFieldValue;
-                break;
-              case "or":  //EXPL: allows for different properties to be ORed together
-                if (!defaultWhere["$or"]) {
-                  defaultWhere["$or"] = {};
-                }
-                defaultWhere["$or"][defaultSearchField] = searchFieldValue;
-                break;
-              default:
-                break;
-            }
-          }
-        }
-      }
-    }
-
-    return defaultWhere;
-  },
+  // createDefaultWhere: function (query, defaultSearchFields, Log) {
+  //
+  //   //TODO: update this to handle more complex queries
+  //   //EX: query = {"or-like-title":"Boat","or-not-description":"boat"
+  //   //should result in
+  //   //$or: [
+  //   //{
+  //   //  title: {
+  //   //    $like: 'Boat'
+  //   //  }
+  //   //},
+  //   //{
+  //   //  description: {
+  //   //    $notIn: 'boat'
+  //   //  }
+  //   //}
+  //   //]
+  //
+  //   //query = "or[]
+  //
+  //   var defaultWhere = {};
+  //
+  //   // function parseSearchFieldValue(searchFieldValue)
+  //   // {
+  //   //   if (_.isString(searchFieldValue)) {
+  //   //     switch (searchFieldValue.toLowerCase()) {
+  //   //       case "null":
+  //   //         return null;
+  //   //         break;
+  //   //       case "true":
+  //   //         return true;
+  //   //         break;
+  //   //       case "false":
+  //   //         return false;
+  //   //         break;
+  //   //       default:
+  //   //         return searchFieldValue;
+  //   //     }
+  //   //   } else if (_.isArray(searchFieldValue)) {
+  //   //     searchFieldValue = _.map(searchFieldValue, function (item) {
+  //   //       switch (item.toLowerCase()) {
+  //   //         case "null":
+  //   //           return null;
+  //   //           break;
+  //   //         case "true":
+  //   //           return true;
+  //   //           break;
+  //   //         case "false":
+  //   //           return false;
+  //   //           break;
+  //   //         default:
+  //   //           return item;
+  //   //       }
+  //   //     });
+  //   //     return {$or: searchFieldValue}; //NOTE: Here searchFieldValue is an array.
+  //   //   }
+  //   // }
+  //
+  //   if (defaultSearchFields) {
+  //     for (var queryField in query) {
+  //       var index = defaultSearchFields.indexOf(queryField);
+  //       if (index >= 0) { //EXPL: queryField is for basic search value
+  //
+  //         var defaultSearchField = defaultSearchFields[index];
+  //
+  //         var searchFieldValue = query[defaultSearchField];
+  //
+  //         defaultWhere[defaultSearchField] = parseSearchFieldValue(searchFieldValue);
+  //
+  //       } else { //EXPL: queryField includes options
+  //
+  //         var defaultSearchField = null;
+  //         var searchFieldValue = query[queryField];
+  //         queryField = queryField.split('-');
+  //         if (queryField.length > 1) {
+  //           defaultSearchField = queryField[1];
+  //         }
+  //         queryField = queryField[0];
+  //
+  //         if (defaultSearchField) {
+  //           searchFieldValue = parseSearchFieldValue(searchFieldValue);
+  //           switch (queryField) {
+  //             case "not": //EXPL: allows for omitting objects
+  //               if (!defaultWhere[defaultSearchField]) {
+  //                 defaultWhere[defaultSearchField] = {};
+  //               }
+  //               if (_.isArray(searchFieldValue)) {
+  //                 defaultWhere[defaultSearchField]["$notIn"] = searchFieldValue;
+  //               } else {
+  //                 defaultWhere[defaultSearchField]["$notIn"] = [searchFieldValue];
+  //               }
+  //               break;
+  //             case "max": //EXPL: query for max search value
+  //               if (!defaultWhere[defaultSearchField]) {
+  //                 defaultWhere[defaultSearchField] = {};
+  //               }
+  //               defaultWhere[defaultSearchField]["$gte"] = searchFieldValue;
+  //               break;
+  //             case "min": //EXPL: query for min search value
+  //               if (!defaultWhere[defaultSearchField]) {
+  //                 defaultWhere[defaultSearchField] = {};
+  //               }
+  //               defaultWhere[defaultSearchField]["$lte"] = searchFieldValue;
+  //               break;
+  //             case "or":  //EXPL: allows for different properties to be ORed together
+  //               if (!defaultWhere["$or"]) {
+  //                 defaultWhere["$or"] = {};
+  //               }
+  //               defaultWhere["$or"][defaultSearchField] = searchFieldValue;
+  //               break;
+  //             default:
+  //               break;
+  //           }
+  //         }
+  //       }
+  //     }
+  //   }
+  //
+  //   return defaultWhere;
+  // },
 
   // setTermSearch: function (query, mongooseQuery, defaultSearchFields, defaultWhere, Log) {
   //   //EXPL: add the term as a regex search
@@ -332,7 +349,7 @@ module.exports = {
   //
   //       fieldSearches = [];
   //
-  //       //EXPL: add field searches only for those in the query.fields
+  //       //EXPL: add field searches only for those in the query.$select
   //       for (var fieldIndex in searchFields) {
   //         var field = searchFields[fieldIndex];
   //         var fieldSearch = {}
@@ -379,12 +396,8 @@ module.exports = {
         Log.debug("query embed:", embed);
         var embeds = embed.split(".");
         var populate = {};
-        var populatePath = "";
-        var baseLevel = true;
-        var association = {};
-        var path = {};
 
-        populate = nestPopulate(populate, 0, embeds, associations, Log);
+        populate = nestPopulate(query, populate, 0, embeds, associations, Log);
         Log.debug("populate:", populate);
 
         mongooseQuery.populate(populate);
@@ -394,8 +407,18 @@ module.exports = {
         Log.debug("attributesFilter after:", attributesFilter);
       });
       delete query.$embed;
+      delete query.populateSelect;
     }
     return { mongooseQuery: mongooseQuery, attributesFilter: attributesFilter };
+  },
+
+  setSort: function (query, mongooseQuery, Log) {
+    if (query.$sort) {
+      query.$sort = query.$sort.replace(/,/g,' ');
+      mongooseQuery.sort(query.$sort);
+      delete query.$sort;
+    }
+    return mongooseQuery;
   },
 
   createAttributesFilter: function (query, model, Log) {
@@ -403,56 +426,66 @@ module.exports = {
     var fields = model.schema.paths;
     var fieldNames = [];
 
-    if (query.fields) {
-      fieldNames = query.fields;
+    if (query.$select) {
+      fieldNames = query.$select.split(',');
+      delete query.$select;
     } else {
       fieldNames = Object.keys(fields)
     }
 
-    var associations = Object.keys(model.schema.methods.routeOptions.associations);
+    Log.debug("fieldNames:", fieldNames);
+    var associations = model.schema.methods.routeOptions.associations;
 
     for (var i = 0; i < fieldNames.length; i++) {
       var fieldName = fieldNames[i];
-      var field = fields[fieldName].options;
-      var isAssociation = associations.indexOf(fields[fieldName].path);
+      if (fields[fieldName] && fieldName !== "__v") {
+        var field = fields[fieldName].options;
+        var association = associations[fields[fieldName].path] || {};
 
-      if (!field.exclude && isAssociation < 0) {
-        attributesFilter.push(fieldName);
+        //EXPL: by default we don't include MANY_MANY array references
+        if (!field.exclude && association.type !== "MANY_MANY") {
+          attributesFilter.push(fieldName);
+        }
       }
-    }
-
-    i = attributesFilter.indexOf("__v");//EXPL: omit the internal version number
-
-    if(i != -1) {
-      attributesFilter.splice(i, 1);
     }
 
     return attributesFilter.toString().replace(/,/g,' ');
   }
 };
 
-function nestPopulate(populate, index, embeds, associations, Log) {
-  Log.debug("populate:", populate);
-  Log.debug("index:", index);
-  Log.debug("embeds:", embeds);
-  Log.debug("associations:", associations);
+function nestPopulate(query, populate, index, embeds, associations, Log) {
+  // Log.debug("populate:", populate);
+  // Log.debug("index:", index);
+  // Log.debug("embeds:", embeds);
+  // Log.debug("associations:", associations);
   var embed = embeds[index];
+  Log.debug("embed:", embed);
   var association = associations[embed];
   var populatePath = "";
+  var select = "";
+  if (query.populateSelect) {
+    select = query.populateSelect.replace(/,/g,' ') + " _id";
+  } else {
+    select = module.exports.createAttributesFilter({}, association.include.model, Log);
+  }
+  // Log.debug("association:", association);
   if (association.type === "MANY_MANY") {
     populatePath = embed + '.' + association.model;
   } else {
     populatePath = embed;
   }
+  Log.debug("populatePath:", populatePath);
   if (index < embeds.length - 1) {
     associations = association.include.model.schema.methods.routeOptions.associations;
     populate = nestPopulate(populate, index + 1, embeds, associations, Log);
     populate.populate = extend({}, populate);//EXPL: prevent circular reference
     populate.path = populatePath;
+    populate.select = select + " " + populate.populate.path;//EXPL: have to add the path to the select to include nested MANY_MANY embeds
     Log.debug("populate:", populate);
     return populate;
   } else {
     populate.path = populatePath;
+    populate.select = select;
     Log.debug("populate:", populate);
     return populate;
   }
