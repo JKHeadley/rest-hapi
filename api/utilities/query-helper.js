@@ -9,7 +9,8 @@ var extend = require('util')._extend;
 //TODO: support both $term search and mongoose $text search
 //TODO: possibly support both comma separated values and space separated values
 //TODO: define field property options (queryable, exclude, etc).
-//TODO: support "$where" field that allows for raw mongoose queries
+//TODO-DONE: support "$where" field that allows for raw mongoose queries
+//TODO: query validation for $where field
 
 module.exports = {
   createMongooseQuery: function (model, query, mongooseQuery, Log) {
@@ -76,7 +77,12 @@ module.exports = {
 
 
     Log.debug("query after:", query);
-    mongooseQuery.where(query);
+    if (typeof query.$where === 'string') {
+      Log.debug("query string:", query);
+      query.$where = JSON.parse(query.$where);
+    }
+    Log.debug("query after:", query);
+    mongooseQuery.where(query.$where);
     return mongooseQuery;
   },
 

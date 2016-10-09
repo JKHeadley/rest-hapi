@@ -111,7 +111,8 @@ module.exports = function (logger, mongoose, server) {
         queryValidation.$sort = Joi.string().optional()//TODO: make enumerated array.
           .description('A set of sort fields. Including field name indicates it should be sorted ascending, while prepending ' +
             '\'-\' indicates descending. The default sort direction is \'ascending\' (lowest value to highest value).');
-
+        queryValidation.$where = Joi.any().optional()
+        .description('An optional field for raw mongoose queries.');
 
         _.each(queryableFields, function (fieldName) {
           queryValidation[fieldName] = Joi.alternatives().try(Joi.string().optional(), Joi.array().items(Joi.string()));
@@ -617,6 +618,8 @@ module.exports = function (logger, mongoose, server) {
         //   .description('A set of fields to apply the \"$term\" search parameter to. If this parameter is not included, the \"$term\" search parameter is applied to all searchable fields. Valid values include: ' + childModel.queryableFields);
         queryValidation.$sort = Joi.string().optional()//TODO: make enumerated array.
           .description('A set of sort fields. Prepending \'+\' to the field name indicates it should be sorted ascending, while \'-\' indicates descending. The default sort direction is \'ascending\' (lowest value to highest value).');
+        queryValidation.$where = Joi.any().optional()
+        .description('An optional field for raw mongoose queries.');
 
         _.each(queryableFields, function (fieldName) {
           queryValidation[fieldName] = Joi.string().optional();
