@@ -89,5 +89,25 @@ module.exports = {
         t.ok(error.message.indexOf("options") > -1, "assertion message contains 'options' text.");
       }
     });
-  }
+  },
 };
+
+/**
+ * Function to run a single test file using node cli.
+ * Ex: "node api/tests/test-helper.js api/tests/model-helper.tests.js"
+ */
+var runTestFile = function() {
+  var pathToTestFile = process.argv.slice(2)[0];
+  if (pathToTestFile && pathToTestFile !== "test") {
+    var gulp = require('gulp');
+    var tape = require('gulp-tape');
+    var tapColorize = require('tap-colorize');
+
+    gulp.src([
+      pathToTestFile
+    ])
+    .pipe(tape({
+      reporter: tapColorize()
+    }));
+  }
+}();

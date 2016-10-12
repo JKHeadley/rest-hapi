@@ -24,6 +24,11 @@ var mongoose = require("mongoose");
 //TODO: add support for updatedAt and createdAt fields for each model
 
 module.exports = {
+  /**
+   * Create a mongoose model with the given Schema and collectionName
+   * @param Schema: A mongoose schema object.
+   * @returns {*}: The resulting mongoose model.
+   */
   createModel: function(Schema) {
     return mongoose.model(Schema.methods.collectionName, Schema);
   },
