@@ -1,7 +1,7 @@
 var Joi = require('joi');
 var _ = require('lodash');
 var assert = require('assert');
-var joiSequelizeHelper = require('./joi-sequelize-helper')();
+var joiMongooseHelper = require('./joi-mongoose-helper');
 var queryHelper = require('./query-helper');
 var chalk = require('chalk');
 
@@ -124,7 +124,7 @@ module.exports = function (logger, mongoose, server) {
           .description('A set of complex object properties to populate. Valid values include ' + Object.keys(modelMethods.routeOptions.associations));
       }
 
-      var readModel = joiSequelizeHelper.generateJoiReadModel(model);
+      var readModel = joiMongooseHelper.generateJoiReadModel(model);
 
       server.route({
         method: 'GET',
@@ -192,7 +192,7 @@ module.exports = function (logger, mongoose, server) {
           .description('A set of complex object properties to populate. Valid values include ' + Object.keys(modelMethods.routeOptions.associations));
       }
 
-      var readModel = modelMethods.readModel || joiSequelizeHelper.generateJoiReadModel(model);
+      var readModel = modelMethods.readModel || joiMongooseHelper.generateJoiReadModel(model);
 
       server.route({
         method: 'GET',
@@ -250,9 +250,9 @@ module.exports = function (logger, mongoose, server) {
 
       var handler = HandlerHelper.generateCreateHandler(model, options, Log);
 
-      var createModel = modelMethods.createModel || joiSequelizeHelper.generateJoiCreateModel(model);
+      var createModel = modelMethods.createModel || joiMongooseHelper.generateJoiCreateModel(model);
 
-      var readModel = modelMethods.readModel || joiSequelizeHelper.generateJoiReadModel(model);
+      var readModel = modelMethods.readModel || joiMongooseHelper.generateJoiReadModel(model);
 
       server.route({
         method: 'POST',
@@ -360,7 +360,7 @@ module.exports = function (logger, mongoose, server) {
 
       var handler = HandlerHelper.generateUpdateHandler(model, options, Log);
 
-      var updateModel = modelMethods.updateModel || joiSequelizeHelper.generateJoiUpdateModel(model);
+      var updateModel = modelMethods.updateModel || joiMongooseHelper.generateJoiUpdateModel(model);
 
       server.route({
         method: 'PUT',
@@ -424,7 +424,7 @@ module.exports = function (logger, mongoose, server) {
       var payloadValidation;
 
       if (association.include && association.include.through) {
-        payloadValidation = joiSequelizeHelper.generateJoiAssociationModel(association.include.through).allow(null);
+        payloadValidation = joiMongooseHelper.generateJoiAssociationModel(association.include.through).allow(null);
       }
 
       server.route({
@@ -537,7 +537,7 @@ module.exports = function (logger, mongoose, server) {
       var payloadValidation;
       
       if (association.include && association.include.through) {
-        payloadValidation = joiSequelizeHelper.generateJoiAssociationModel(association.include.through);
+        payloadValidation = joiMongooseHelper.generateJoiAssociationModel(association.include.through);
         payloadValidation = payloadValidation.keys({
           childId: Joi.string()//TODO: validate that id is an ObjectId
         });

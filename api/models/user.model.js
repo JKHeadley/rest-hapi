@@ -145,7 +145,7 @@ module.exports = function (mongoose) {
       //     Log = Log.bind("Create No Auth");
       //     var Boom = require('boom');
       //     var QueryHelper = require('../utilities/query-helper');
-      //     var joiSequelizeHelper = require('../utilities/joi-sequelize-helper')();
+      //     var joiSequelizeHelper = require('../utilities/joi-mongoose-helper')();
       //     var collectionName = model.collectionDisplayName || model.getTableName();
       //     var createSchema = model.createSchema || joiSequelizeHelper.generateJoiCreateSchema(model);
       //
@@ -253,7 +253,7 @@ module.exports = function (mongoose) {
       //   function (server, model, options, Log) {
       //     Log = Log.bind("me");
       //     var QueryHelper = require('../utilities/query-helper');
-      //     var joiSequelizeHelper = require('../utilities/joi-sequelize-helper')();
+      //     var joiSequelizeHelper = require('../utilities/joi-mongoose-helper')();
       //     var Boom = require('boom');
       //
       //     Log.note("Generating me endpoint");

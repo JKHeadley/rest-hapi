@@ -1,4 +1,5 @@
 var mongoose = require("mongoose");
+require("mongoose-schema-extend");
 
 //TODO: correctly label "model" and "schema" files and objects throughout project
 //TODO: add "updated_at" and "created_at" to all resources
@@ -32,51 +33,65 @@ module.exports = {
   createModel: function(Schema) {
     return mongoose.model(Schema.methods.collectionName, Schema);
   },
+
+  /**
+   * Takes a mongoose schema and extends the fields to include the model associations.
+   * @param Schema: A mongoose schema.
+   * @returns {*}: The updated schema.
+   */
   extendSchemaAssociations: function (Schema) {
-    for (var associationKey in Schema.methods.routeOptions.associations) {
-      var association = Schema.methods.routeOptions.associations[associationKey];
-      if (association.type === "MANY_MANY") {//EXPL: for many-many relationships, association references should exist on both schemas
-        var extendObject = {};
-        var dataObject = {};
-        dataObject[association.model] = { type: mongoose.Schema.Types.ObjectId, ref: association.model };
-        if (association.linkingModel) {//EXPL: if a linking model is defined, add it to the association definition
-          var linkingModelFile = "../models/linking-models/" + association.linkingModel + ".model";
-          var linkingModel = require(linkingModelFile)();
-          association.include = {
-            through: linkingModel
-          };
-          for (var objectKey in linkingModel.Schema) {
-            var object = linkingModel.Schema[objectKey];
-            dataObject[objectKey] = object;
+    if(Schema.methods.routeOptions){
+      for (var associationKey in Schema.methods.routeOptions.associations) {
+        var association = Schema.methods.routeOptions.associations[associationKey];
+        if (association.type === "MANY_MANY") {//EXPL: for many-many relationships, association references should exist on both schemas
+          var extendObject = {};
+          var dataObject = {};
+          dataObject[association.model] = { type: mongoose.Schema.Types.ObjectId, ref: association.model };
+          if (association.linkingModel) {//EXPL: if a linking model is defined, add it to the association definition
+            var linkingModelFile = "../models/linking-models/" + association.linkingModel + ".model";
+            var linkingModel = require(linkingModelFile)();
+            association.include = {
+              through: linkingModel
+            };
+            for (var objectKey in linkingModel.Schema) {
+              var object = linkingModel.Schema[objectKey];
+              dataObject[objectKey] = object;
+            }
           }
+          extendObject[associationKey] = [dataObject];
+          Schema = Schema.extend(extendObject);
         }
-        extendObject[associationKey] = [dataObject];
-        console.log("dataObject:", dataObject);
-        console.log("extendObject:", extendObject);
-        Schema = Schema.extend(extendObject);
-      } else if (association.type === "ONE_MANY") {//EXPL: for one-many relationships, create a virtual relationship
-        if (association.foreignField) {
-          Schema.virtual(associationKey, {
-            ref: association.model,
-            localField: '_id',
-            foreignField: association.foreignField
-          });
+        else if (association.type === "ONE_MANY") {//EXPL: for one-many relationships, create a virtual relationship
+          if (association.foreignField) {
+            Schema.virtual(associationKey, {
+              ref: association.model,
+              localField: '_id',
+              foreignField: association.foreignField
+            });
+          }
+        } else {
+          //TODO: define ONE_ONE associations
         }
-      } else {
-        //TODO: define ONE_ONE associations
       }
     }
     return Schema;
   },
-  
+
+  /**
+   * Takes a mongoose schema and adds a complete mongoose model to each association in the schema.
+   * @param Schema: A mongoose schema.
+   * @param models: The complete list of existing mongoose models.
+   */
   associateModels: function (Schema, models) {
-    for (var associationKey in Schema.methods.routeOptions.associations) {
-      var association = Schema.methods.routeOptions.associations[associationKey];
-      if (!association.include) {
-        association.include = {};
+    if (Schema.methods.routeOptions) {
+      for (var associationKey in Schema.methods.routeOptions.associations) {
+        var association = Schema.methods.routeOptions.associations[associationKey];
+        if (!association.include) {
+          association.include = {};
+        }
+        association.include.model = models[association.model];
+        association.include.as = associationKey;
       }
-      association.include.model = models[association.model];
-      association.include.as = associationKey;
     }
   }
 };

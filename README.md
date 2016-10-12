@@ -208,7 +208,7 @@ change is logged to the console), then fix the error and try again.
 
 ### Major Points of Interest
 utilities/rest-helper-factory.js
-utilities/joi-sequelize-helper.js
+utilities/joi-mongoose-helper.js
 utilities/handler-helper-factory.js
 models/
 sequelize/migrate
