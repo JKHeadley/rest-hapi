@@ -168,7 +168,7 @@ test('model-helper.associateModels', function(t) {
     };
 
     var title = {
-      type: "ONE_MANY",
+      type: "MANY_ONE",
       model: "role"
     };
 

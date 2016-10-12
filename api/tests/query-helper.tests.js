@@ -219,7 +219,7 @@ test('query-helper.getQueryableFields', function(t) {
       routeOptions: {
         associations: {
           title: {
-            type: "ONE_MANY"
+            type: "MANY_ONE"
           },
           profileImage: {
             type: "ONE_ONE"
@@ -659,7 +659,7 @@ test('query-helper.populateEmbeddedDocs', function(t) {
 
     var associations_one = {
       title: {
-        type: "ONE_MANY",
+        type: "MANY_ONE",
         model: "role",
         include: {
           model: {}
@@ -723,7 +723,7 @@ test('query-helper.populateEmbeddedDocs', function(t) {
 
     var associations_one = {
       title: {
-        type: "ONE_MANY",
+        type: "MANY_ONE",
         model: "role",
         include: {
           model: { schema: { methods: { routeOptions: { associations: associations_two } } } }
@@ -908,7 +908,7 @@ test('query-helper.createAttributesFilter', function(t) {
       routeOptions: {
         associations: {
           title: {
-            type: "ONE_MANY"
+            type: "MANY_ONE"
           },
           profileImage: {
             type: "ONE_ONE"

@@ -70,7 +70,7 @@ module.exports = {
             });
           }
         } else {
-          //TODO: define ONE_ONE associations
+          //TODO: define ONE_ONE and MANY_ONE associations
         }
       }
     }

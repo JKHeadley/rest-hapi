@@ -241,7 +241,7 @@ test('joi-mongoose-helper.generateJoiReadModel', function(t) {
       routeOptions: {
         associations: {
           title: {
-            type: "ONE_MANY"
+            type: "MANY_ONE"
           },
           profileImage: {
             type: "ONE_ONE"
@@ -529,7 +529,7 @@ test('joi-mongoose-helper.generateJoiUpdateModel', function(t) {
       routeOptions: {
         associations: {
           title: {
-            type: "ONE_MANY"
+            type: "MANY_ONE"
           },
           profileImage: {
             type: "ONE_ONE"
@@ -720,7 +720,7 @@ test('joi-mongoose-helper.generateJoiUpdateModel', function(t) {
 //     };
 //
 //     var title = {
-//       type: "ONE_MANY",
+//       type: "MANY_ONE",
 //       model: "role"
 //     };
 //

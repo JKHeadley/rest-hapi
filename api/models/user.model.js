@@ -116,11 +116,11 @@ module.exports = function (mongoose) {
     routeOptions: {
       associations: {
         title: {
-          type: "ONE_MANY",
+          type: "MANY_ONE",
           model: "role"
         },
         subTitle: {
-          type: "ONE_MANY",
+          type: "MANY_ONE",
           model: "role"
         },
         pup: {

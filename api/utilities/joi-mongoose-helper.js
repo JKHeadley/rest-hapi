@@ -50,7 +50,7 @@ module.exports = {
         var association = modelMethods.routeOptions.associations[associationName];
 
         //TODO: possibly add stricter validation for associations
-        if (association.type === "MANY_MANY" || (association.type === "ONE_MANY" && association.foreignField)) {
+        if (association.type === "MANY_MANY" || association.type === "ONE_MANY") {
           readModelBase[associationName] = Joi.array().items(Joi.object().unknown()).optional();
         } else {
           readModelBase[associationName] = Joi.object().unknown().allow(null).optional();
@@ -85,7 +85,7 @@ module.exports = {
 
       var association = associations[fields[fieldName].path] || {};
       //EXPL: Don't allow upd
-      var canUpdateAssocitaion = !(association.type === "MANY_MANY" || (association.type === "ONE_MANY" && association.foreignField));
+      var canUpdateAssocitaion = (association.type === "ONE_ONE" || association.type === "MANY_ONE");
 
       if (fieldName !== "__t" && fieldName !== "__v") {
         if (field.updateModel) {
