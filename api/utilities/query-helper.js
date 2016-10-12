@@ -1,5 +1,6 @@
 var _ = require('lodash');
 var assert = require("assert");
+var validationHelper = require("./validation-helper");
 var qs = require('qs');
 var extend = require('util')._extend;
 
@@ -13,8 +14,17 @@ var extend = require('util')._extend;
 //TODO: query validation for $where field
 
 module.exports = {
+  /**
+   * Create a mongoose query based off of the request query
+   * @param model: A mongoose model object.
+   * @param query: The incoming request query.
+   * @param mongooseQuery: A mongoose query.
+   * @param Log: A logging object.
+   * @returns {*}: A modified mongoose query.
+   */
   createMongooseQuery: function (model, query, mongooseQuery, Log) {
-    Log.debug("query before:", query);
+    validationHelper.validateModel(model, Log);
+    // Log.debug("query before:", query);
     //(email == 'test@user.com' && (firstName == 'test2@user.com' || firstName == 'test4@user.com')) && (age < 15 || age > 30)
     //LITERAL
     //{
@@ -49,7 +59,7 @@ module.exports = {
 
     var modelMethods = model.schema.methods;
     
-    var queryableFields = this.getQueryableFields(model, Log);
+    // var queryableFields = this.getQueryableFields(model, Log);
 
     mongooseQuery = this.setSkip(query, mongooseQuery, Log);
 
@@ -62,7 +72,7 @@ module.exports = {
       attributesFilter = "_id";
     }
 
-    Log.debug("attributesFilter:", attributesFilter);
+    // Log.debug("attributesFilter:", attributesFilter);
 
     if (modelMethods.routeOptions) {
       var result = this.populateEmbeddedDocs(query, mongooseQuery, attributesFilter,
@@ -76,18 +86,24 @@ module.exports = {
     mongooseQuery.select(attributesFilter);
 
 
-    Log.debug("query after:", query);
+    // Log.debug("query after:", query);
     if (typeof query.$where === 'string') {
-      Log.debug("query string:", query);
+      // Log.debug("query string:", query);
       query.$where = JSON.parse(query.$where);
     }
-    Log.debug("query after:", query);
+    // Log.debug("query after:", query);
     mongooseQuery.where(query.$where);
     return mongooseQuery;
   },
 
+  /**
+   * Get a list of fields that can be returned as part of a query result.
+   * @param model: A mongoose model object.
+   * @param Log: A logging object.
+   * @returns {Array}: A list of fields.
+   */
   getReadableFields: function (model, Log) {
-    assert(model, "requires `model` parameter");
+    validationHelper.validateModel(model, Log);
 
     var readableFields = [];
 
@@ -95,34 +111,35 @@ module.exports = {
 
     for (var fieldName in fields) {
       var field = fields[fieldName].options;
-      if (!field.exclude) {
+      if (!field.exclude && fieldName !== "__v") {
         readableFields.push(fieldName);
       }
     }
 
-    readableFields.pop();//EXPL: omit the internal version number
     return readableFields;
   },
 
   /**
-   * Crawls the model's tableAttributes for queryable fields
-   * @param {Object} A sequelize model object, specifically uses the tableAttributes property on that object.
-   * @returns {string[]} An array of queryable field names
+   * Get a list of fields that can be queried against.
+   * @param model: A mongoose model object.
+   * @param Log: A logging object.
+   * @returns {Array}: A list of fields.
    */
   getQueryableFields: function (model, Log) {
-    assert(model, "requires `model` parameter");
+    validationHelper.validateModel(model, Log);
 
     var queryableFields = [];
+
     var fields = model.schema.paths;
     var fieldNames = Object.keys(fields);
 
-    var associations = model.schema.methods.routeOptions.associations;
+    var associations = model.schema.methods.routeOptions ? model.schema.methods.routeOptions.associations : null;
 
     for (var i = 0; i < fieldNames.length; i++) {
       var fieldName = fieldNames[i];
       if (fields[fieldName] && fieldName !== "__v" && fieldName !== "__t" && fieldName !== "_id") {
         var field = fields[fieldName].options;
-        var association = associations[fields[fieldName].path] || {};
+        var association = associations ? (associations[fields[fieldName].path] || {}) : {};
 
         //EXPL: by default we don't include MANY_MANY array references
         if (field.queryable !== false && !field.exclude && association.type !== "MANY_MANY") {
@@ -134,6 +151,13 @@ module.exports = {
     return queryableFields;
   },
 
+  /**
+   * Set the skip amount for the mongoose query. Typically used for paging.
+   * @param query: The incoming request query.
+   * @param mongooseQuery: A mongoose query.
+   * @param Log: A logging object.
+   * @returns {*}: The updated mongoose query.
+   */
   setSkip: function (query, mongooseQuery, Log) {
     if (query.$skip) {
       mongooseQuery.skip(query.$skip);
@@ -142,6 +166,13 @@ module.exports = {
     return mongooseQuery;
   },
 
+  /**
+   * Set the limit amount for the mongoose query. Typically used for paging.
+   * @param query: The incoming request query.
+   * @param mongooseQuery: A mongoose query.
+   * @param Log: A logging object.
+   * @returns {*}: The updated mongoose query.
+   */
   setLimit: function (query, mongooseQuery, Log) {
     //TODO: possible default limit of 20?
     if (query.$limit) {
@@ -394,22 +425,33 @@ module.exports = {
   //   return mongooseQuery;
   // },
 
+  /**
+   * Converts the query "$embed" parameter into a mongoose populate object.
+   * Relies heavily on the recursive "nestPopulate" method.
+   * @param query: The incoming request query.
+   * @param mongooseQuery: A mongoose query.
+   * @param attributesFilter: A filter that lists the fields to be returned.
+   * Must be updated to include the newly embedded fields.
+   * @param associations: The current model associations.
+   * @param Log: A logging object.
+   * @returns {{mongooseQuery: *, attributesFilter: *}}: The updated mongooseQuery and attributesFilter.
+   */
   populateEmbeddedDocs: function (query, mongooseQuery, attributesFilter, associations, Log) {
     if (query.$embed) {
       var embedStrings = query.$embed.split(",");
       embedStrings.forEach(function(embed) {
-        Log.debug("query embed:", embed);
+        // Log.debug("query embed:", embed);
         var embeds = embed.split(".");
         var populate = {};
 
         populate = nestPopulate(query, populate, 0, embeds, associations, Log);
-        Log.debug("populate:", populate);
+        // Log.debug("populate:", populate);
 
         mongooseQuery.populate(populate);
 
-        Log.debug("attributesFilter before:", attributesFilter);
+        // Log.debug("attributesFilter before:", attributesFilter);
         attributesFilter = attributesFilter + ' ' + populate.path;
-        Log.debug("attributesFilter after:", attributesFilter);
+        // Log.debug("attributesFilter after:", attributesFilter);
       });
       delete query.$embed;
       delete query.populateSelect;
@@ -417,6 +459,51 @@ module.exports = {
     return { mongooseQuery: mongooseQuery, attributesFilter: attributesFilter };
   },
 
+//   nestPopulate: function (query, populate, index, embeds, associations, Log) {
+//   // Log.debug("populate:", populate);
+//   // Log.debug("index:", index);
+//   // Log.debug("embeds:", embeds);
+//   // Log.debug("associations:", associations);
+//   var embed = embeds[index];
+//   // Log.debug("embed:", embed);
+//   var association = associations[embed];
+//   var populatePath = "";
+//   var select = "";
+//   if (query.populateSelect) {
+//     select = query.populateSelect.replace(/,/g,' ') + " _id";
+//   } else {
+//     select = module.exports.createAttributesFilter({}, association.include.model, Log);
+//   }
+//   // Log.debug("association:", association);
+//   if (association.type === "MANY_MANY") {
+//     populatePath = embed + '.' + association.model;
+//   } else {
+//     populatePath = embed;
+//   }
+//   Log.debug("populatePath:", populatePath);
+//   if (index < embeds.length - 1) {
+//     associations = association.include.model.schema.methods.routeOptions.associations;
+//     populate = this.nestPopulate(query, populate, index + 1, embeds, associations, Log);
+//     populate.populate = extend({}, populate);//EXPL: prevent circular reference
+//     populate.path = populatePath;
+//     populate.select = select + " " + populate.populate.path;//EXPL: have to add the path to the select to include nested MANY_MANY embeds
+//     Log.debug("populate:", populate);
+//     return populate;
+//   } else {
+//     populate.path = populatePath;
+//     populate.select = select;
+//     Log.debug("populate:", populate);
+//     return populate;
+//   }
+// },
+
+  /**
+   * Set the sort priority for the mongoose query.
+   * @param query: The incoming request query.
+   * @param mongooseQuery: A mongoose query.
+   * @param Log: A logging object.
+   * @returns {*}: The updated mongoose query.
+   */
   setSort: function (query, mongooseQuery, Log) {
     if (query.$sort) {
       query.$sort = query.$sort.replace(/,/g,' ');
@@ -426,7 +513,15 @@ module.exports = {
     return mongooseQuery;
   },
 
+  /**
+   * Create a list of selected fields to be returned based on the '$select' query property.
+   * @param query: The incoming request query.
+   * @param model: A mongoose model object.
+   * @param Log: A logging object.
+   * @returns {string}
+   */
   createAttributesFilter: function (query, model, Log) {
+    validationHelper.validateModel(model, Log);
     var attributesFilter = [];
     var fields = model.schema.paths;
     var fieldNames = [];
@@ -438,14 +533,13 @@ module.exports = {
       fieldNames = Object.keys(fields)
     }
 
-    Log.debug("fieldNames:", fieldNames);
-    var associations = model.schema.methods.routeOptions.associations;
+    var associations = model.schema.methods.routeOptions ? model.schema.methods.routeOptions.associations : null;
 
     for (var i = 0; i < fieldNames.length; i++) {
       var fieldName = fieldNames[i];
       if (fields[fieldName] && fieldName !== "__v") {
         var field = fields[fieldName].options;
-        var association = associations[fields[fieldName].path] || {};
+        var association = associations ? (associations[fields[fieldName].path] || {}) : {};
 
         //EXPL: by default we don't include MANY_MANY array references
         if (!field.exclude && association.type !== "MANY_MANY") {
@@ -458,6 +552,16 @@ module.exports = {
   }
 };
 
+/**
+ * Takes an embed string and recursively constructs a mongoose populate object.
+ * @param query: The incoming request query.
+ * @param populate: The populate object to be constructed/extended.
+ * @param index: The current index of the "embeds" array.
+ * @param embeds: An array of strings representing nested fields to be populated.
+ * @param associations: The current model associations.
+ * @param Log: A logging object.
+ * @returns {*}: The updated populate object.
+ */
 function nestPopulate(query, populate, index, embeds, associations, Log) {
   // Log.debug("populate:", populate);
   // Log.debug("index:", index);
@@ -479,19 +583,19 @@ function nestPopulate(query, populate, index, embeds, associations, Log) {
   } else {
     populatePath = embed;
   }
-  Log.debug("populatePath:", populatePath);
+  // Log.debug("populatePath:", populatePath);
   if (index < embeds.length - 1) {
     associations = association.include.model.schema.methods.routeOptions.associations;
     populate = nestPopulate(query, populate, index + 1, embeds, associations, Log);
     populate.populate = extend({}, populate);//EXPL: prevent circular reference
     populate.path = populatePath;
     populate.select = select + " " + populate.populate.path;//EXPL: have to add the path to the select to include nested MANY_MANY embeds
-    Log.debug("populate:", populate);
+    // Log.debug("populate:", populate);
     return populate;
   } else {
     populate.path = populatePath;
     populate.select = select;
-    Log.debug("populate:", populate);
+    // Log.debug("populate:", populate);
     return populate;
   }
 }

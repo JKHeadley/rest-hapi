@@ -46,6 +46,8 @@ module.exports = {
           }
         }
         extendObject[associationKey] = [dataObject];
+        console.log("dataObject:", dataObject);
+        console.log("extendObject:", extendObject);
         Schema = Schema.extend(extendObject);
       } else if (association.type === "ONE_MANY") {//EXPL: for one-many relationships, create a virtual relationship
         if (association.foreignField) {
