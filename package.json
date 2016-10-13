@@ -46,6 +46,7 @@
     "hbs": "~3.1.0",
     "inert": "^3.1.0",
     "joi": "^6.10.1",
+    "joi-objectid": "^2.0.0",
     "jshint": "~2.9.1",
     "jwt-simple": "^0.3.1",
     "livereload": "^0.4.1",

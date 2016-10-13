@@ -3,10 +3,13 @@ var _ = require('lodash');
 var assert = require('assert');
 var joiMongooseHelper = require('./joi-mongoose-helper');
 var queryHelper = require('./query-helper');
+var validationHelper = require("./validation-helper");
 var chalk = require('chalk');
 
-module.exports = function (logger, mongoose, server) {
-  var logger = logger.bind(chalk.gray('rest-helper-factory'));
+//TODO: remove "options"?
+
+module.exports = function (Log, mongoose, server) {
+  var Log = Log.bind(chalk.gray('rest-helper-factory'));
 
   var HandlerHelper = require('./handler-helper-factory')(mongoose, server);
 
@@ -16,10 +19,19 @@ module.exports = function (logger, mongoose, server) {
 
   return {
     defaultHeadersValidation: headersValidation,
-    generateRoutes: function (server, model, options) { //TODO: generate multiple DELETE routes at /RESOURCE and at /RESOURCE/{ownerId}/ASSOCIATION that take a list of Id's as a payload
+
+    /**
+     * Generates the restful API endpoints.
+     * @param server: A Hapi server.
+     * @param model: A mongoose model.
+     * @param options: options object.
+     */
+    generateRoutes: function (server, model, options) { //TODO: generate multiple DELETE routes at /RESOURCE and at
+                                                        //TODO: /RESOURCE/{ownerId}/ASSOCIATION that take a list of Id's as a payload
+      validationHelper.validateModel(model, Log);
       var modelMethods = model.schema.methods;
       var collectionName = modelMethods.collectionDisplayName || model.modelName;
-      var Log = logger.bind(chalk.gray(collectionName));
+      Log = Log.bind(chalk.gray(collectionName));
 
       options = options || {};
 
