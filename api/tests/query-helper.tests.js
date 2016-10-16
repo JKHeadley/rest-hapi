@@ -490,7 +490,7 @@ test('query-helper.populateEmbeddedDocs', function(t) {
     var attributesFilter = {};
     var mongooseQuery = {};
     mongooseQuery.populate = sinon.spy();
-    var query = { $embed: "title,profileImage,groups" };
+    var query = { $embed: ["title","profileImage","groups"] };
     //</editor-fold>
 
     //<editor-fold desc="Act">
@@ -518,7 +518,7 @@ test('query-helper.populateEmbeddedDocs', function(t) {
     var attributesFilter = {};
     var mongooseQuery = {};
     mongooseQuery.populate = sinon.spy();
-    var query = { $embed: "title,profileImage,groups" };
+    var query = { $embed: ["title","profileImage","groups"] };
     //</editor-fold>
 
     //<editor-fold desc="Act">
@@ -543,7 +543,7 @@ test('query-helper.populateEmbeddedDocs', function(t) {
     var attributesFilter = {};
     var mongooseQuery = {};
     mongooseQuery.populate = sinon.spy();
-    var query = { $embed: "title,profileImage,groups", populateSelect: "" };
+    var query = { $embed: ["title","profileImage","groups"], populateSelect: "" };
     //</editor-fold>
 
     //<editor-fold desc="Act">
@@ -760,7 +760,7 @@ test('query-helper.setSort', function(t) {
 
     t.plan(4);
 
-    var query = { $sort: "email" };
+    var query = { $sort: ["email"] };
     var mongooseQuery = {};
     mongooseQuery.sort = sinon.spy();
     //</editor-fold>
@@ -777,13 +777,13 @@ test('query-helper.setSort', function(t) {
     //</editor-fold>
   });
 
-  t.test('query-helper.setSort replaces "," with " " in the "$sort" parameter.', function (t) {
+  t.test('query-helper.setSort replaces an array with a space separated string in the "$sort" parameter.', function (t) {
     //<editor-fold desc="Arrange">
     var queryHelper = require('../utilities/query-helper');
 
     t.plan(1);
 
-    var query = { $sort: "email,firstName,lastName" };
+    var query = { $sort: ["email","firstName","lastName"] };
     var mongooseQuery = {};
     mongooseQuery.sort = sinon.spy();
     //</editor-fold>
@@ -977,7 +977,7 @@ test('query-helper.createAttributesFilter', function(t) {
       }
     });
 
-    var query = { $select: "email,lastName" };
+    var query = { $select: ["email","lastName"] };
 
     var userModel = mongoose.model("user", userSchema);
     //</editor-fold>

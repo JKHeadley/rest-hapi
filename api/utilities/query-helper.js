@@ -441,8 +441,7 @@ module.exports = {
    */
   populateEmbeddedDocs: function (query, mongooseQuery, attributesFilter, associations, Log) {
     if (query.$embed) {
-      var embedStrings = query.$embed.split(",");
-      embedStrings.forEach(function(embed) {
+      query.$embed.forEach(function(embed) {
         // Log.debug("query embed:", embed);
         var embeds = embed.split(".");
         var populate = {};
@@ -462,44 +461,6 @@ module.exports = {
     return { mongooseQuery: mongooseQuery, attributesFilter: attributesFilter };
   },
 
-//   nestPopulate: function (query, populate, index, embeds, associations, Log) {
-//   // Log.debug("populate:", populate);
-//   // Log.debug("index:", index);
-//   // Log.debug("embeds:", embeds);
-//   // Log.debug("associations:", associations);
-//   var embed = embeds[index];
-//   // Log.debug("embed:", embed);
-//   var association = associations[embed];
-//   var populatePath = "";
-//   var select = "";
-//   if (query.populateSelect) {
-//     select = query.populateSelect.replace(/,/g,' ') + " _id";
-//   } else {
-//     select = module.exports.createAttributesFilter({}, association.include.model, Log);
-//   }
-//   // Log.debug("association:", association);
-//   if (association.type === "MANY_MANY") {
-//     populatePath = embed + '.' + association.model;
-//   } else {
-//     populatePath = embed;
-//   }
-//   Log.debug("populatePath:", populatePath);
-//   if (index < embeds.length - 1) {
-//     associations = association.include.model.schema.methods.routeOptions.associations;
-//     populate = this.nestPopulate(query, populate, index + 1, embeds, associations, Log);
-//     populate.populate = extend({}, populate);//EXPL: prevent circular reference
-//     populate.path = populatePath;
-//     populate.select = select + " " + populate.populate.path;//EXPL: have to add the path to the select to include nested MANY_MANY embeds
-//     Log.debug("populate:", populate);
-//     return populate;
-//   } else {
-//     populate.path = populatePath;
-//     populate.select = select;
-//     Log.debug("populate:", populate);
-//     return populate;
-//   }
-// },
-
   /**
    * Set the sort priority for the mongoose query.
    * @param query: The incoming request query.
@@ -509,7 +470,7 @@ module.exports = {
    */
   setSort: function (query, mongooseQuery, Log) {
     if (query.$sort) {
-      query.$sort = query.$sort.replace(/,/g,' ');
+      query.$sort = query.$sort.join(' ');
       mongooseQuery.sort(query.$sort);
       delete query.$sort;
     }
@@ -530,8 +491,7 @@ module.exports = {
     var fieldNames = [];
 
     if (query.$select) {
-      fieldNames = query.$select.split(',');
-      delete query.$select;
+      fieldNames = query.$select;
     } else {
       fieldNames = Object.keys(fields)
     }
@@ -551,6 +511,7 @@ module.exports = {
       }
     }
 
+    delete query.$select;
     return attributesFilter.toString().replace(/,/g,' ');
   }
 };
