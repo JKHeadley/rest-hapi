@@ -30,7 +30,7 @@ module.exports = {
       if (field.readModel) {
         readModelBase[fieldName] = field.readModel;
       }
-      else if (field.allowOnRead !== false && field.exclude !== true && isAssociation < 0) {
+      else if (field.allowOnRead !== false && field.exclude !== true && isAssociation < 0 && fieldName !== "__v") {
         var attributeReadModel = this.generateJoiModelFromFieldType(field, Log);
 
         if (field.requireOnRead === true) {

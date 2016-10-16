@@ -56,6 +56,9 @@ module.exports = function (mongoose, server) {
                   }
                 }
 
+                if (result._id) {
+                  result._id = result._id.toString();
+                }
                 Log.log("Result: %s", JSON.stringify(result));
                 return result;
               })).header('X-Total-Count', result.length);

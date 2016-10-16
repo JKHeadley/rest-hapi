@@ -12,6 +12,7 @@ var extend = require('util')._extend;
 //TODO: define field property options (queryable, exclude, etc).
 //TODO-DONE: support "$where" field that allows for raw mongoose queries
 //TODO: query validation for $where field
+//TODO: enable/disable option for $where field
 
 module.exports = {
   /**
@@ -86,7 +87,9 @@ module.exports = {
     mongooseQuery.select(attributesFilter);
 
 
-    // Log.debug("query after:", query);
+    // query.firstName = { $in: JSON.parse(query.firstName) };
+
+    //Log.debug("query after:", query);
     if (typeof query.$where === 'string') {
       // Log.debug("query string:", query);
       query.$where = JSON.parse(query.$where);
@@ -95,7 +98,21 @@ module.exports = {
 
     if (query.$where) {
       mongooseQuery.where(query.$where);
+      delete query.$where;
     }
+
+    //EXPL: Support single (string) inputs or multiple "or'd" inputs (arrays) for field queries
+    for (var fieldQueryKey in query) {
+      var fieldQuery = query[fieldQueryKey];
+      if (!Array.isArray(fieldQuery)) {
+        fieldQuery = tryParseJSON(query[fieldQueryKey]);
+      }
+      if (fieldQuery && Array.isArray(fieldQuery)) {
+        query[fieldQueryKey] = { $in: fieldQuery };//EXPL: "or" the inputs
+      }
+    }
+
+    mongooseQuery.where(query);
     return mongooseQuery;
   },
 
@@ -120,6 +137,25 @@ module.exports = {
     }
 
     return readableFields;
+  },
+
+  /**
+   * Get a list of valid query sort inputs.
+   * @param model: A mongoose model object.
+   * @param Log: A logging object.
+   * @returns {Array}: A list of fields.
+   */
+  getSortableFields: function (model, Log) {
+    validationHelper.validateModel(model, Log);
+
+    var sortableFields = this.getReadableFields(model, Log);
+
+    for (var i = sortableFields.length-1; i >= 0; i--) {
+      var descendingField = "-" + sortableFields[i];
+      sortableFields.splice(i,0,descendingField);
+    }
+
+    return sortableFields;
   },
 
   /**
@@ -441,6 +477,9 @@ module.exports = {
    */
   populateEmbeddedDocs: function (query, mongooseQuery, attributesFilter, associations, Log) {
     if (query.$embed) {
+      if (!Array.isArray(query.$embed)) {
+        query.$embed = [query.$embed];
+      }
       query.$embed.forEach(function(embed) {
         // Log.debug("query embed:", embed);
         var embeds = embed.split(".");
@@ -453,7 +492,7 @@ module.exports = {
 
         // Log.debug("attributesFilter before:", attributesFilter);
         attributesFilter = attributesFilter + ' ' + populate.path;
-        // Log.debug("attributesFilter after:", attributesFilter);
+        Log.debug("attributesFilter after:", attributesFilter);
       });
       delete query.$embed;
       delete query.populateSelect;
@@ -470,7 +509,9 @@ module.exports = {
    */
   setSort: function (query, mongooseQuery, Log) {
     if (query.$sort) {
-      query.$sort = query.$sort.join(' ');
+      if (Array.isArray(query.$sort)) {
+        query.$sort = query.$sort.join(' ');
+      }
       mongooseQuery.sort(query.$sort);
       delete query.$sort;
     }
@@ -491,6 +532,9 @@ module.exports = {
     var fieldNames = [];
 
     if (query.$select) {
+      if (!Array.isArray(query.$select)) {
+        query.$select = [query.$select];
+      }
       fieldNames = query.$select;
     } else {
       fieldNames = Object.keys(fields)
@@ -527,12 +571,12 @@ module.exports = {
  * @returns {*}: The updated populate object.
  */
 function nestPopulate(query, populate, index, embeds, associations, Log) {
-  // Log.debug("populate:", populate);
-  // Log.debug("index:", index);
-  // Log.debug("embeds:", embeds);
-  // Log.debug("associations:", associations);
+  Log.debug("populate:", populate);
+  Log.debug("index:", index);
+  Log.debug("embeds:", embeds);
+  Log.debug("associations:", associations);
   var embed = embeds[index];
-  // Log.debug("embed:", embed);
+  Log.debug("embed:", embed);
   var association = associations[embed];
   var populatePath = "";
   var select = "";
@@ -541,25 +585,38 @@ function nestPopulate(query, populate, index, embeds, associations, Log) {
   } else {
     select = module.exports.createAttributesFilter({}, association.include.model, Log);
   }
-  // Log.debug("association:", association);
+  Log.debug("association:", association);
   if (association.type === "MANY_MANY") {
     populatePath = embed + '.' + association.model;
   } else {
     populatePath = embed;
   }
-  // Log.debug("populatePath:", populatePath);
+  Log.debug("populatePath:", populatePath);
   if (index < embeds.length - 1) {
     associations = association.include.model.schema.methods.routeOptions.associations;
     populate = nestPopulate(query, populate, index + 1, embeds, associations, Log);
     populate.populate = extend({}, populate);//EXPL: prevent circular reference
     populate.path = populatePath;
     populate.select = select + " " + populate.populate.path;//EXPL: have to add the path to the select to include nested MANY_MANY embeds
-    // Log.debug("populate:", populate);
+    Log.debug("populate:", populate);
     return populate;
   } else {
     populate.path = populatePath;
     populate.select = select;
-    // Log.debug("populate:", populate);
+    Log.debug("populate:", populate);
     return populate;
   }
+}
+
+function tryParseJSON (jsonString) {
+  try {
+    var o = JSON.parse(jsonString);
+
+    if (o && typeof o === "object") {
+      return o;
+    }
+  }
+  catch (e) { }
+
+  return false;
 }

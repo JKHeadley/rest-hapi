@@ -360,6 +360,69 @@ test('query-helper.getReadableFields', function(t) {
   t.end();
 });
 
+test('query-helper.getSortableFields', function(t) {
+  var queryHelper = require('../utilities/query-helper');
+  testHelper.testModelParameter(t, queryHelper.getSortableFields, "queryHelper.getSortableFields", ["model", "Log"], Log);
+
+  t.test('query-helper.getSortableFields calls getReadableFields.', function (t) {
+    //<editor-fold desc="Arrange">
+    var queryHelper = require('../utilities/query-helper');
+
+    t.plan(1);
+
+    sinon.stub(queryHelper, "getReadableFields", function(){ return [] });
+
+    var userSchema = new mongoose.Schema({});
+
+    var userModel = mongoose.model("user", userSchema);
+    //</editor-fold>
+
+    //<editor-fold desc="Act">
+    queryHelper.getSortableFields(userModel, Log);
+    //</editor-fold>
+
+    //<editor-fold desc="Assert">
+    t.ok(queryHelper.getReadableFields.called, "getReadableFields called");
+    //</editor-fold>
+
+    //<editor-fold desc="Restore">
+    queryHelper.getReadableFields.restore();
+    delete mongoose.models.user;
+    delete mongoose.modelSchemas.user;
+    //</editor-fold>
+  });
+
+  t.test('query-helper.getSortableFields returns valid list.', function (t) {
+    //<editor-fold desc="Arrange">
+    var queryHelper = require('../utilities/query-helper');
+
+    t.plan(1);
+
+    sinon.stub(queryHelper, "getReadableFields", function(){ return ["email","firstName","lastName"]});
+
+    var userSchema = new mongoose.Schema({});
+
+    var userModel = mongoose.model("user", userSchema);
+    //</editor-fold>
+
+    //<editor-fold desc="Act">
+    var sortableFields = queryHelper.getSortableFields(userModel, Log);
+    //</editor-fold>
+
+    //<editor-fold desc="Assert">
+    t.deepEqual(sortableFields, ["-email","email","-firstName","firstName","-lastName","lastName"], "valid values");
+    //</editor-fold>
+
+    //<editor-fold desc="Restore">
+    queryHelper.getReadableFields.restore();
+    delete mongoose.models.user;
+    delete mongoose.modelSchemas.user;
+    //</editor-fold>
+  });
+
+  t.end();
+});
+
 test('query-helper.setSkip', function(t) {
   t.test('query-helper.setSkip calls the "skip" function with the "$skip" query parameter.', function (t) {
     //<editor-fold desc="Arrange">
@@ -944,7 +1007,7 @@ test('query-helper.createAttributesFilter', function(t) {
     //<editor-fold desc="Arrange">
     var queryHelper = require('../utilities/query-helper');
 
-    t.plan(2);
+    t.plan(3);
 
     var userSchema = new mongoose.Schema({
       email: {
@@ -977,18 +1040,21 @@ test('query-helper.createAttributesFilter', function(t) {
       }
     });
 
-    var query = { $select: ["email","lastName"] };
+    var query1 = { $select: ["email","lastName"] };
+    var query2 = { $select: "email" };
 
     var userModel = mongoose.model("user", userSchema);
     //</editor-fold>
 
     //<editor-fold desc="Act">
-    var result = queryHelper.createAttributesFilter(query, userModel, Log);
-    //</editor-fold>
+    var result1 = queryHelper.createAttributesFilter(query1, userModel, Log);
+    var result2 = queryHelper.createAttributesFilter(query2, userModel, Log);
+      //</editor-fold>
 
     //<editor-fold desc="Assert">
-    t.equals(result, "email lastName", "selected fields returned");
-    t.notOk(query.$select, "$select property deleted");
+    t.equals(result1, "email lastName", "selected fields returned");
+    t.equals(result2, "email", "selected fields returned");
+    t.notOk(query1.$select, "$select property deleted");
     //</editor-fold>
 
     //<editor-fold desc="Restore">
@@ -1054,7 +1120,7 @@ test('query-helper.createMongooseQuery', function(t) {
     t.notOk(queryHelper.populateEmbeddedDocs.called, "populateEmbeddedDocs not called when no routeOptions");
     t.ok(queryHelper.setSort.called, "setSort called");
     t.ok(mongooseQuery.select.called, "mongooseQuery.select called");
-    t.notOk(mongooseQuery.where.called, "mongooseQuery.where not called");
+    t.ok(mongooseQuery.where.callCount === 1, "mongooseQuery.where called once");
     //</editor-fold>
 
 
@@ -1069,7 +1135,7 @@ test('query-helper.createMongooseQuery', function(t) {
     //</editor-fold>
   });
 
-  t.test('query-helper.createMongooseQuery calls mongooseQuery.where if "$where" parameter exists.', function (t) {
+  t.test('query-helper.createMongooseQuery transforms field query arrays into mongoose format.', function (t) {
     //<editor-fold desc="Arrange">
     var queryHelper = require('../utilities/query-helper');
 
@@ -1083,7 +1149,55 @@ test('query-helper.createMongooseQuery', function(t) {
     sinon.stub(queryHelper, "populateEmbeddedDocs", function(){ return mongooseQuery });
     sinon.stub(queryHelper, "setSort", function(){ return mongooseQuery });
 
-    t.plan(1);
+    t.plan(2);
+
+    var userSchema = new mongoose.Schema();
+
+    var userModel = mongoose.model("user", userSchema);
+
+    var query1 = {firstName: ["bob","bill"]};
+    var query2 = {firstName: '["bob","bill"]'};
+    //</editor-fold>
+
+    //<editor-fold desc="Act">
+    queryHelper.createMongooseQuery(userModel, query1, mongooseQuery, Log);
+    queryHelper.createMongooseQuery(userModel, query2, mongooseQuery, Log);
+    var call1 = mongooseQuery.where.getCall(0);
+    var call2 = mongooseQuery.where.getCall(1);
+    //</editor-fold>
+
+    //<editor-fold desc="Assert">
+    t.ok(call1.calledWithExactly({ firstName: { $in: ["bob","bill"] }}), "query transformed correctly");
+    t.ok(call2.calledWithExactly({ firstName: { $in: ["bob","bill"] }}), "query transformed correctly");
+    //</editor-fold>
+
+
+    //<editor-fold desc="Restore">
+    queryHelper.setSkip.restore();
+    queryHelper.setLimit.restore();
+    queryHelper.createAttributesFilter.restore();
+    queryHelper.populateEmbeddedDocs.restore();
+    queryHelper.setSort.restore();
+    delete mongoose.models.user;
+    delete mongoose.modelSchemas.user;
+    //</editor-fold>
+  });
+
+  t.test('query-helper.createMongooseQuery calls mongooseQuery.where twice if "$where" parameter exists.', function (t) {
+    //<editor-fold desc="Arrange">
+    var queryHelper = require('../utilities/query-helper');
+
+    var mongooseQuery = {
+      select: sinon.spy(),
+      where: sinon.spy()
+    };
+    sinon.stub(queryHelper, "setSkip", function(){ return mongooseQuery });
+    sinon.stub(queryHelper, "setLimit", function(){ return mongooseQuery });
+    sinon.stub(queryHelper, "createAttributesFilter", function(){ return mongooseQuery });
+    sinon.stub(queryHelper, "populateEmbeddedDocs", function(){ return mongooseQuery });
+    sinon.stub(queryHelper, "setSort", function(){ return mongooseQuery });
+
+    t.plan(2);
 
     var userSchema = new mongoose.Schema({
       email: {
@@ -1106,15 +1220,17 @@ test('query-helper.createMongooseQuery', function(t) {
 
     var userModel = mongoose.model("user", userSchema);
 
+    var query = {$where:{}};
     //</editor-fold>
 
     //<editor-fold desc="Act">
-    var result = queryHelper.createMongooseQuery(userModel, {$where: {}}, mongooseQuery, Log);
+    var result = queryHelper.createMongooseQuery(userModel, query, mongooseQuery, Log);
     //</editor-fold>
 
     //<editor-fold desc="Assert">
-    t.ok(mongooseQuery.where.called, "mongooseQuery.where called");
-    //</editor-fold>
+    t.ok(mongooseQuery.where.callCount == 2, "mongooseQuery.where called twice");
+    t.notOk(query.$where, "query.$where deleted");
+//</editor-fold>
 
 
     //<editor-fold desc="Restore">

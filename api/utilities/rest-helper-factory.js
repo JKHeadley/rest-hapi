@@ -121,18 +121,19 @@ module.exports = function (logger, mongoose, server) {
 
       var readableFields = queryHelper.getReadableFields(model, Log);
 
+      var sortableFields = queryHelper.getSortableFields(model, Log);
+
       if (queryableFields) {
-        queryValidation.$select = Joi.array().items(Joi.string())//TODO: make enumerated array.
-        // queryValidation.$select = Joi.any().only(readableFields)
+        queryValidation.$select = Joi.alternatives().try(Joi.string().valid(readableFields), Joi.array().items(Joi.string().valid(readableFields)))
           .description('A list of basic fields to be included in each resource. Valid values include: ' + readableFields);
         // queryValidation.$term = Joi.string().optional()
         //   .description('A generic search parameter. This can be refined using the `searchFields` parameter. Valid values include: ' + queryableFields);
         // queryValidation.$searchFields = Joi.string().optional()//TODO: make enumerated array.
         //   .description('A set of fields to apply the \"$term\" search parameter to. If this parameter is not included, the \"$term\" search parameter is applied to all searchable fields. Valid values include: ' + queryableFields);
-        queryValidation.$sort = Joi.array().items(Joi.string())//TODO: make enumerated array.
+        queryValidation.$sort = Joi.alternatives().try(Joi.string().valid(sortableFields), Joi.array().items(Joi.string().valid(sortableFields)))
           .description('A set of fields to sort by. Including field name indicates it should be sorted ascending, while prepending ' +
             '\'-\' indicates descending. The default sort direction is \'ascending\' (lowest value to highest value). Listing multiple' +
-            'fields prioritizes the sort starting with the first field listed.');
+            'fields prioritizes the sort starting with the first field listed. Valid values include: ' + sortableFields);
         queryValidation.$where = Joi.any().optional()
         .description('An optional field for raw mongoose queries.');
 
@@ -141,9 +142,10 @@ module.exports = function (logger, mongoose, server) {
         })
       }
 
-      if (modelMethods.routeOptions && modelMethods.routeOptions.associations) {
-        queryValidation.$embed = Joi.array().items(Joi.string())//TODO: make enumerated array.
-          .description('A set of complex object properties to populate. Valid values include ' + Object.keys(modelMethods.routeOptions.associations));
+      var associations = modelMethods.routeOptions ? modelMethods.routeOptions.associations : null;
+      if (associations) {
+        queryValidation.$embed = Joi.alternatives().try(Joi.string(), Joi.array().items(Joi.string()))
+          .description('A set of complex object properties to populate. Valid values include ' + Object.keys(associations));
       }
 
       var readModel = joiMongooseHelper.generateJoiReadModel(model, Log);
@@ -178,8 +180,9 @@ module.exports = function (logger, mongoose, server) {
             }
           },
           response: {
+            schema: Joi.array().items(readModel)
             // schema: Joi.array().items(readModel || Joi.object().unknown().optional())
-            schema: Joi.array().items(Joi.any())//TODO: proper validation
+            // schema: Joi.array().items(Joi.any())//TODO: proper validation
           }
         }
       });
