@@ -24,7 +24,7 @@ module.exports = {
    */
   createMongooseQuery: function (model, query, mongooseQuery, Log) {
     validationHelper.validateModel(model, Log);
-    // Log.debug("query before:", query);
+    Log.debug("query before:", query);
     //(email == 'test@user.com' && (firstName == 'test2@user.com' || firstName == 'test4@user.com')) && (age < 15 || age > 30)
     //LITERAL
     //{
@@ -92,7 +92,10 @@ module.exports = {
       query.$where = JSON.parse(query.$where);
     }
     // Log.debug("query after:", query);
-    mongooseQuery.where(query.$where);
+
+    if (query.$where) {
+      mongooseQuery.where(query.$where);
+    }
     return mongooseQuery;
   },
 

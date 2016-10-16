@@ -598,14 +598,14 @@ test('joi-mongoose-helper.generateJoiUpdateModel', function(t) {
     //</editor-fold>
 
     //<editor-fold desc="Assert">
-    t.ok(joiMongooseHelper.generateJoiModelFromFieldType.calledWithExactly(titleField), "generateJoiModelFromFieldType called on titleField field");
-    t.ok(joiMongooseHelper.generateJoiModelFromFieldType.calledWithExactly(profileImageField), "generateJoiModelFromFieldType called on profileImageField field");
+    t.ok(joiMongooseHelper.generateJoiModelFromFieldType.calledWithExactly(titleField, Log), "generateJoiModelFromFieldType called on titleField field");
+    t.ok(joiMongooseHelper.generateJoiModelFromFieldType.calledWithExactly(profileImageField, Log), "generateJoiModelFromFieldType called on profileImageField field");
     t.ok(Joi.validate({ title: {} }, updateModel).error !== null, "title field not valid format" );
     t.ok(Joi.validate({ title: "test" }, updateModel).error === null, "title field valid format" );
     t.ok(Joi.validate({ profileImage: {} }, updateModel).error !== null, "profileImage field not valid format" );
     t.ok(Joi.validate({ profileImage: "test" }, updateModel).error === null, "profileImage field valid format" );
-    t.ok(Joi.validate({ groups: "test" }, updateModel).error === null, "groups field not allowed" );
-    t.ok(Joi.validate({ permissions: "test" }, updateModel).error === null, "permissions field not allowed" );
+    t.ok(Joi.validate({ groups: "test" }, updateModel).error !== null, "groups field not allowed" );
+    t.ok(Joi.validate({ permissions: "test" }, updateModel).error !== null, "permissions field not allowed" );
     //</editor-fold>
 
     //<editor-fold desc="Restore">
@@ -922,14 +922,14 @@ test('joi-mongoose-helper.generateJoiCreateModel', function(t) {
     //</editor-fold>
 
     //<editor-fold desc="Assert">
-    t.ok(joiMongooseHelper.generateJoiModelFromFieldType.calledWithExactly(titleField), "generateJoiModelFromFieldType called on titleField field");
-    t.ok(joiMongooseHelper.generateJoiModelFromFieldType.calledWithExactly(profileImageField), "generateJoiModelFromFieldType called on profileImageField field");
+    t.ok(joiMongooseHelper.generateJoiModelFromFieldType.calledWithExactly(titleField, Log), "generateJoiModelFromFieldType called on titleField field");
+    t.ok(joiMongooseHelper.generateJoiModelFromFieldType.calledWithExactly(profileImageField, Log), "generateJoiModelFromFieldType called on profileImageField field");
     t.ok(Joi.validate({ title: {} }, createModel).error !== null, "title field not valid format" );
     t.ok(Joi.validate({ title: "test" }, createModel).error === null, "title field valid format" );
     t.ok(Joi.validate({ profileImage: {} }, createModel).error !== null, "profileImage field not valid format" );
     t.ok(Joi.validate({ profileImage: "test" }, createModel).error === null, "profileImage field valid format" );
-    t.ok(Joi.validate({ groups: "test" }, createModel).error === null, "groups field not allowed" );
-    t.ok(Joi.validate({ permissions: "test" }, createModel).error === null, "permissions field not allowed" );
+    t.ok(Joi.validate({ groups: "test" }, createModel).error !== null, "groups field not allowed" );
+    t.ok(Joi.validate({ permissions: "test" }, createModel).error !== null, "permissions field not allowed" );
     //</editor-fold>
 
     //<editor-fold desc="Restore">

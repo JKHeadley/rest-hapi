@@ -1054,6 +1054,65 @@ test('query-helper.createMongooseQuery', function(t) {
     t.notOk(queryHelper.populateEmbeddedDocs.called, "populateEmbeddedDocs not called when no routeOptions");
     t.ok(queryHelper.setSort.called, "setSort called");
     t.ok(mongooseQuery.select.called, "mongooseQuery.select called");
+    t.notOk(mongooseQuery.where.called, "mongooseQuery.where not called");
+    //</editor-fold>
+
+
+    //<editor-fold desc="Restore">
+    queryHelper.setSkip.restore();
+    queryHelper.setLimit.restore();
+    queryHelper.createAttributesFilter.restore();
+    queryHelper.populateEmbeddedDocs.restore();
+    queryHelper.setSort.restore();
+    delete mongoose.models.user;
+    delete mongoose.modelSchemas.user;
+    //</editor-fold>
+  });
+
+  t.test('query-helper.createMongooseQuery calls mongooseQuery.where if "$where" parameter exists.', function (t) {
+    //<editor-fold desc="Arrange">
+    var queryHelper = require('../utilities/query-helper');
+
+    var mongooseQuery = {
+      select: sinon.spy(),
+      where: sinon.spy()
+    };
+    sinon.stub(queryHelper, "setSkip", function(){ return mongooseQuery });
+    sinon.stub(queryHelper, "setLimit", function(){ return mongooseQuery });
+    sinon.stub(queryHelper, "createAttributesFilter", function(){ return mongooseQuery });
+    sinon.stub(queryHelper, "populateEmbeddedDocs", function(){ return mongooseQuery });
+    sinon.stub(queryHelper, "setSort", function(){ return mongooseQuery });
+
+    t.plan(1);
+
+    var userSchema = new mongoose.Schema({
+      email: {
+        type: Types.String,
+        queryable: true
+      },
+      firstName: {
+        type: Types.String,
+        queryable: true
+      },
+      lastName: {
+        type: Types.String
+      },
+      password: {
+        type: Types.String,
+        queryable: true,
+        exclude: true
+      }
+    });
+
+    var userModel = mongoose.model("user", userSchema);
+
+    //</editor-fold>
+
+    //<editor-fold desc="Act">
+    var result = queryHelper.createMongooseQuery(userModel, {$where: {}}, mongooseQuery, Log);
+    //</editor-fold>
+
+    //<editor-fold desc="Assert">
     t.ok(mongooseQuery.where.called, "mongooseQuery.where called");
     //</editor-fold>
 

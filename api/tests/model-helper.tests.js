@@ -7,6 +7,7 @@ var assert = require('assert');
 var mongoose = require('mongoose');
 var Types = mongoose.Schema.Types;
 var logging = require('loggin');
+var Q = require('q');
 var Log = logging.getLogger("tests");
 Log.logLevel = "DEBUG";
 Log = Log.bind("model-helper");
@@ -54,7 +55,7 @@ test('model-helper.createModel', function(t) {
 });
 
 test('model-helper.extendSchemaAssociations', function(t) {
-  t.test('model-helper.extendSchemaAssociations calls Schema.extend with correct args if association is MANY_MANY.', function (t) {
+  t.test('model-helper.extendSchemaAssociations calls Schema.add with correct args if association is MANY_MANY.', function (t) {
     //<editor-fold desc="Arrange">
     var modelHelper = require("../utilities/model-helper");
 
@@ -73,7 +74,7 @@ test('model-helper.extendSchemaAssociations', function(t) {
       }
     };
 
-    userSchema.extend = sinon.spy();
+    userSchema.add = sinon.spy();
 
     var extendObject = {
       groups: [{
@@ -90,9 +91,88 @@ test('model-helper.extendSchemaAssociations', function(t) {
     //</editor-fold>
 
     //<editor-fold desc="Assert">
-    t.ok(userSchema.extend.called, "Schema.extend was called");
-    t.ok(userSchema.extend.calledWithExactly(extendObject), "Schema.extend was called with extendObject");
+    t.ok(userSchema.add.called, "Schema.add was called");
+    t.ok(userSchema.add.calledWithExactly(extendObject), "Schema.add was called with extendObject");
     //</editor-fold>
+  });
+
+  t.test('model-helper.extendSchemaAssociations calls uses linkingModel to extend schema if it exists.', function (t) {
+    //<editor-fold desc="Arrange">
+    var modelHelper = require("../utilities/model-helper");
+
+    t.plan(1);
+
+    var userSchema = {};
+
+    userSchema.methods = {
+      routeOptions: {
+        associations: {
+          groups: {
+            type: "MANY_MANY",
+            model: "group",
+            linkingModel: "test_linking"
+          }
+        }
+      }
+    };
+
+    userSchema.add = sinon.spy();
+
+    var linkingModelFile =
+      "var mongoose = require('mongoose');\n\n" +
+      "module.exports = function () {\n\n" +
+      "  var Types = mongoose.Schema.Types;\n\n" +
+      "  var Model = {\n" +
+      "      Schema: {\n" +
+      "        linkingModelField: {\n" +
+      "          type: Types.String\n" +
+      "        }\n" +
+      "      },\n" +
+      "      modelName: 'test_linking'\n" +
+      "  };\n" +
+      "  return Model;\n" +
+      "};\n";
+
+    var extendObject = {
+      groups: [{
+        group: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "group"
+        },
+        linkingModelField: {
+          type: mongoose.Schema.Types.String
+        }
+      }]
+    };
+
+    var fs = require('fs');
+    var linkingModelPath = __dirname + "/../models/linking-models/test_linking.model.js";
+    fs.openSync(linkingModelPath, 'w');
+
+    var deferred = Q.defer();
+
+    fs.writeFile(linkingModelPath, linkingModelFile, function(err) {
+      if(err) {
+        Log.error(err);
+        deferred.reject(err);
+      }
+      deferred.resolve();
+    });
+    //</editor-fold>
+
+    deferred.promise.then(function() {
+      //<editor-fold desc="Act">
+      modelHelper.extendSchemaAssociations(userSchema);
+      //</editor-fold>
+
+      //<editor-fold desc="Assert">
+      t.ok(userSchema.add.calledWithExactly(extendObject), "Schema.add was called with extendObject");
+      //</editor-fold>
+
+      //<editor-fold desc="Restore">
+      fs.unlinkSync(linkingModelPath);
+      //</editor-fold>
+    });
   });
 
   t.test('model-helper.extendSchemaAssociations calls Schema.virtual with correct args if association is ONE_MANY and has a foreignField.', function (t) {

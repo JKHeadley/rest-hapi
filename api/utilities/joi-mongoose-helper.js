@@ -31,7 +31,7 @@ module.exports = {
         readModelBase[fieldName] = field.readModel;
       }
       else if (field.allowOnRead !== false && field.exclude !== true && isAssociation < 0) {
-        var attributeReadModel = this.generateJoiModelFromFieldType(field);
+        var attributeReadModel = this.generateJoiModelFromFieldType(field, Log);
 
         if (field.requireOnRead === true) {
           attributeReadModel = attributeReadModel.required();
@@ -79,7 +79,7 @@ module.exports = {
 
     var fields = model.schema.paths;
 
-    var associations = model.schema.methods.routeOptions ? Object.keys(model.schema.methods.routeOptions.associations) : [];
+    var associations = model.schema.methods.routeOptions ? model.schema.methods.routeOptions.associations : {};
 
     for (var fieldName in fields) {
       var field = fields[fieldName].options;
@@ -93,7 +93,7 @@ module.exports = {
           updateModelBase[fieldName] = field.updateModel;
         }
         else if (field.allowOnUpdate !== false && (canUpdateAssociation || !association)) {
-          var attributeUpdateModel = this.generateJoiModelFromFieldType(field);
+          var attributeUpdateModel = this.generateJoiModelFromFieldType(field, Log);
 
           if (field.requireOnUpdate === true) {
             attributeUpdateModel = attributeUpdateModel.required();
@@ -126,7 +126,7 @@ module.exports = {
 
     var fields = model.schema.paths;
 
-    var associations = model.schema.methods.routeOptions ? Object.keys(model.schema.methods.routeOptions.associations) : [];
+    var associations = model.schema.methods.routeOptions ? model.schema.methods.routeOptions.associations : {};
 
     for (var fieldName in fields) {
 
@@ -141,7 +141,7 @@ module.exports = {
           createModelBase[fieldName] = field.createModel;
         }
         else if (field.allowOnCreate !== false && (canCreateAssociation || !association)) {
-          var attributeCreateModel = this.generateJoiModelFromFieldType(field);
+          var attributeCreateModel = this.generateJoiModelFromFieldType(field, Log);
 
           if (field.required === true) {
             attributeCreateModel = attributeCreateModel.required();
@@ -180,7 +180,7 @@ module.exports = {
         associationModelBase[fieldName] = field.createModel;
       }
       else {
-        var attributeAssociationModel = this.generateJoiModelFromFieldType(field);
+        var attributeAssociationModel = this.generateJoiModelFromFieldType(field, Log);
 
         if (field.required) {
           attributeAssociationModel = attributeAssociationModel.required();
@@ -208,7 +208,7 @@ module.exports = {
   generateJoiModelFromFieldType: function (field, Log) {
     var model;
 
-    assert(field.type.schemaName, "incorrect field format");
+    assert(field.type, "incorrect field format");
 
     switch (field.type.schemaName) {
       case 'ObjectId':

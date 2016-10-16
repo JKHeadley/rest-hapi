@@ -20,25 +20,25 @@ module.exports = function (mongoose) {
       displayName: "Owner",
       ref: "user"
     }
-  }); 
-    
-    Schema.methods = {
-      nameField:"name",
-      collectionDisplayName:"Dog",
-      collectionName:modelName,
-      routeOptions: {
-        associations: {
-          owner: {
-            type: "ONE_ONE",
-            model: "user"
-          }
+  });
+
+  Schema.methods = {
+    nameField:"name",
+    collectionDisplayName:"Dog",
+    collectionName:modelName,
+    routeOptions: {
+      associations: {
+        owner: {
+          type: "ONE_ONE",
+          model: "user"
         }
-      },
-      extraReadModelAttributes: {
-        updatedAt: Joi.date().optional(),
-        createdAt: Joi.date().optional(),
       }
-    };
+    },
+    extraReadModelAttributes: {
+      updatedAt: Joi.date().optional(),
+      createdAt: Joi.date().optional(),
+    }
+  };
 
   return Schema;
 };

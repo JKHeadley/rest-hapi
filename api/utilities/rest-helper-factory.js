@@ -8,8 +8,8 @@ var chalk = require('chalk');
 
 //TODO: remove "options"?
 
-module.exports = function (Log, mongoose, server) {
-  var Log = Log.bind(chalk.gray('rest-helper-factory'));
+module.exports = function (logger, mongoose, server) {
+  var logger = logger.bind(chalk.gray('rest-helper-factory'));
 
   var HandlerHelper = require('./handler-helper-factory')(mongoose, server);
 
@@ -21,7 +21,7 @@ module.exports = function (Log, mongoose, server) {
     defaultHeadersValidation: headersValidation,
 
     /**
-     * Generates the restful API endpoints.
+     * Generates the restful API endpoints for a single model.
      * @param server: A Hapi server.
      * @param model: A mongoose model.
      * @param options: options object.
@@ -31,7 +31,7 @@ module.exports = function (Log, mongoose, server) {
       validationHelper.validateModel(model, Log);
       var modelMethods = model.schema.methods;
       var collectionName = modelMethods.collectionDisplayName || model.modelName;
-      Log = Log.bind(chalk.gray(collectionName));
+      var Log = logger.bind(chalk.gray(collectionName));
 
       options = options || {};
 
@@ -56,11 +56,10 @@ module.exports = function (Log, mongoose, server) {
         for (var associationName in modelMethods.routeOptions.associations) {
           var association = modelMethods.routeOptions.associations[associationName];
 
-          if (association.type == "MANY_MANY" || association.foreignField) {
+          if (association.type == "MANY_MANY" || association.type == "ONE_MANY") {
             if (association.allowAddOne !== false) {
               this.generateAssociationAddOneEndpoint(server, model, association, options, Log);
             }
-
             if (association.allowRemoveOne !== false) {
               this.generateAssociationRemoveOneEndpoint(server, model, association, options, Log);
             }
@@ -84,7 +83,16 @@ module.exports = function (Log, mongoose, server) {
         }
       }
     },
+
+    /**
+     * Creates an endpoint for GET /RESOURCE.
+     * @param server: A Hapi server.
+     * @param model: A mongoose model.
+     * @param options: Options object.
+     * @param Log: A logging object.
+     */
     generateListEndpoint: function (server, model, options, Log) {
+      validationHelper.validateModel(model, Log);
       var modelMethods = model.schema.methods;
       var collectionName = modelMethods.collectionDisplayName || model.modelName;
       Log = Log.bind("List");
@@ -121,7 +129,7 @@ module.exports = function (Log, mongoose, server) {
         // queryValidation.$searchFields = Joi.string().optional()//TODO: make enumerated array.
         //   .description('A set of fields to apply the \"$term\" search parameter to. If this parameter is not included, the \"$term\" search parameter is applied to all searchable fields. Valid values include: ' + queryableFields);
         queryValidation.$sort = Joi.string().optional()//TODO: make enumerated array.
-          .description('A set of sort fields. Including field name indicates it should be sorted ascending, while prepending ' +
+          .description('A set of fields to sort by. Including field name indicates it should be sorted ascending, while prepending ' +
             '\'-\' indicates descending. The default sort direction is \'ascending\' (lowest value to highest value).');
         queryValidation.$where = Joi.any().optional()
         .description('An optional field for raw mongoose queries.');
@@ -136,7 +144,7 @@ module.exports = function (Log, mongoose, server) {
           .description('A set of complex object properties to populate. Valid values include ' + Object.keys(modelMethods.routeOptions.associations));
       }
 
-      var readModel = joiMongooseHelper.generateJoiReadModel(model);
+      var readModel = joiMongooseHelper.generateJoiReadModel(model, Log);
 
       server.route({
         method: 'GET',
@@ -174,6 +182,7 @@ module.exports = function (Log, mongoose, server) {
         }
       });
     },
+
     generateFindEndpoint: function (server, model, options, Log) {
       var modelMethods = model.schema.methods;
       var collectionName = modelMethods.collectionDisplayName || model.modelName;
@@ -204,7 +213,7 @@ module.exports = function (Log, mongoose, server) {
           .description('A set of complex object properties to populate. Valid values include ' + Object.keys(modelMethods.routeOptions.associations));
       }
 
-      var readModel = modelMethods.readModel || joiMongooseHelper.generateJoiReadModel(model);
+      var readModel = modelMethods.readModel || joiMongooseHelper.generateJoiReadModel(model, Log);
 
       server.route({
         method: 'GET',
@@ -244,6 +253,7 @@ module.exports = function (Log, mongoose, server) {
         }
       });
     },
+
     generateCreateEndpoint: function (server, model, options, Log) {
       var modelMethods = model.schema.methods;
       var collectionName = modelMethods.collectionDisplayName || model.modelName;
@@ -262,9 +272,9 @@ module.exports = function (Log, mongoose, server) {
 
       var handler = HandlerHelper.generateCreateHandler(model, options, Log);
 
-      var createModel = modelMethods.createModel || joiMongooseHelper.generateJoiCreateModel(model);
+      var createModel = modelMethods.createModel || joiMongooseHelper.generateJoiCreateModel(model, Log);
 
-      var readModel = modelMethods.readModel || joiMongooseHelper.generateJoiReadModel(model);
+      var readModel = modelMethods.readModel || joiMongooseHelper.generateJoiReadModel(model, Log);
 
       server.route({
         method: 'POST',
@@ -300,6 +310,7 @@ module.exports = function (Log, mongoose, server) {
         }
       });
     },
+
     generateDeleteEndpoint: function (server, model, options, Log) {
       var modelMethods = model.schema.methods;
       var collectionName = modelMethods.collectionDisplayName || model.modelName;
@@ -354,6 +365,7 @@ module.exports = function (Log, mongoose, server) {
         }
       });
     },
+
     generateUpdateEndpoint: function (server, model, options, Log) {
       var modelMethods = model.schema.methods;
       var collectionName = modelMethods.collectionDisplayName || model.modelName;
@@ -372,7 +384,7 @@ module.exports = function (Log, mongoose, server) {
 
       var handler = HandlerHelper.generateUpdateHandler(model, options, Log);
 
-      var updateModel = modelMethods.updateModel || joiMongooseHelper.generateJoiUpdateModel(model);
+      var updateModel = modelMethods.updateModel || joiMongooseHelper.generateJoiUpdateModel(model, Log);
 
       server.route({
         method: 'PUT',
@@ -411,6 +423,7 @@ module.exports = function (Log, mongoose, server) {
         }
       });
     },
+
     generateAssociationAddOneEndpoint: function (server, ownerModel, association, options, Log) {
       var ownerMethods = ownerModel.schema.methods;
       var associationName = association.include.as || association.include.model.modelName;
@@ -436,7 +449,7 @@ module.exports = function (Log, mongoose, server) {
       var payloadValidation;
 
       if (association.include && association.include.through) {
-        payloadValidation = joiMongooseHelper.generateJoiAssociationModel(association.include.through).allow(null);
+        payloadValidation = joiMongooseHelper.generateJoiAssociationModel(association.include.through, Log).allow(null);
       }
 
       server.route({
@@ -475,6 +488,7 @@ module.exports = function (Log, mongoose, server) {
         }
       });
     },
+
     generateAssociationRemoveOneEndpoint: function (server, ownerModel, association, options, Log) {
       var ownerMethods = ownerModel.schema.methods;
       var associationName = association.include.as || association.include.model.modelName;
@@ -527,6 +541,7 @@ module.exports = function (Log, mongoose, server) {
         }
       });
     },
+
     generateAssociationAddManyEndpoint: function (server, ownerModel, association, options, Log) {
       var ownerMethods = ownerModel.schema.methods;
       var associationName = association.include.as || association.include.model.modelName;
@@ -549,7 +564,7 @@ module.exports = function (Log, mongoose, server) {
       var payloadValidation;
       
       if (association.include && association.include.through) {
-        payloadValidation = joiMongooseHelper.generateJoiAssociationModel(association.include.through);
+        payloadValidation = joiMongooseHelper.generateJoiAssociationModel(association.include.through, Log);
         payloadValidation = payloadValidation.keys({
           childId: Joi.string()//TODO: validate that id is an ObjectId
         });
@@ -590,6 +605,7 @@ module.exports = function (Log, mongoose, server) {
         }
       })
     },
+
     generateAssociationGetAllEndpoint: function (server, ownerModel, association, options, Log) {
       var ownerMethods = ownerModel.schema.methods;
       var associationName = association.include.as || association.include.model.modelName;

@@ -1,5 +1,4 @@
 var mongoose = require("mongoose");
-require("mongoose-schema-extend");
 
 //TODO: correctly label "model" and "schema" files and objects throughout project
 //TODO: add "updated_at" and "created_at" to all resources
@@ -16,7 +15,7 @@ require("mongoose-schema-extend");
 //     favs:  Number
 //   }
 // });
-//TODO: possibly remove "Schema.extend" and use "Schema.add"
+//TODO-DONE: possibly remove "Schema.extend" and use "Schema.add"
 //TODO: look at accessing "model.methods" rather than "model.schema.methods" (NOTE!!! this probably needs to be a switch from model.methods to model.statics)
 //TODO: create a field property that can mark it as "duplicate". i.e. any associated models referencing that model will duplicate those fields along with the reference Id
 //TODO(cont): this will allow for a shallow embed that will return a list of reference ids with their "duplicate" values, and a full embed that will return the fully embedded references
@@ -50,6 +49,7 @@ module.exports = {
           if (association.linkingModel) {//EXPL: if a linking model is defined, add it to the association definition
             var linkingModelFile = "../models/linking-models/" + association.linkingModel + ".model";
             var linkingModel = require(linkingModelFile)();
+            //console.log(linkingModel);
             association.include = {
               through: linkingModel
             };
@@ -59,7 +59,7 @@ module.exports = {
             }
           }
           extendObject[associationKey] = [dataObject];
-          Schema = Schema.extend(extendObject);
+          Schema.add(extendObject);
         }
         else if (association.type === "ONE_MANY") {//EXPL: for one-many relationships, create a virtual relationship
           if (association.foreignField) {

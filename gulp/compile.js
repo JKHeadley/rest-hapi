@@ -13,7 +13,7 @@ gulp.task('compile', ['test', 'jshint', 'clean'], function () {
 
   return gulp.src([
     gulp.paths.src + '/**/*',
-    "!" + gulp.paths.src + '/**/*.test.js',
+    "!" + gulp.paths.src + '/tests/**',
     "!" + gulp.paths.src + "/**/config.local.js",
     "!" + gulp.paths.src + "/**/config.development.js",
     "!" + gulp.paths.src + "/**/config.production.js",
