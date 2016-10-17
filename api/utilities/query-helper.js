@@ -598,11 +598,13 @@ function nestPopulate(query, populate, index, embeds, associations, Log) {
     populate.populate = extend({}, populate);//EXPL: prevent circular reference
     populate.path = populatePath;
     populate.select = select + " " + populate.populate.path;//EXPL: have to add the path to the select to include nested MANY_MANY embeds
+    populate.model = association.include.model;
     Log.debug("populate:", populate);
     return populate;
   } else {
     populate.path = populatePath;
     populate.select = select;
+    populate.model = association.include.model;
     Log.debug("populate:", populate);
     return populate;
   }
