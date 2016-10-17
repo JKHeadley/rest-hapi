@@ -6,6 +6,7 @@ var extend = require('util')._extend;
 
 //TODO-DONE: mulit-level/multi-priority sorting (i.e. sort first by lastName, then by firstName) implemented via comma seperated sort list
 //TODO: sorting through populate fields (Ex: sort users through role.name)
+//TODO: support selecting populated fields
 //TODO: support $embed for quick embedding and "populate" for detailed, mongoose specific population
 //TODO: support both $term search and mongoose $text search
 //TODO: possibly support both comma separated values and space separated values

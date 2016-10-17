@@ -156,7 +156,7 @@ module.exports = function (logger, mongoose, server) {
         config: {
           handler: handler,
           auth: "token",
-          description: 'Get a list of ' + collectionName,
+          description: 'Get a list of ' + collectionName + 's',
           tags: ['api', collectionName],
           validate: {
             query: queryValidation,
