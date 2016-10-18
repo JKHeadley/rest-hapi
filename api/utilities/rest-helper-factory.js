@@ -397,7 +397,15 @@ module.exports = function (logger, mongoose, server) {
       });
     },
 
+    /**
+     * Creates an endpoint for PUT /RESOURCE/{_id}
+     * @param server: A Hapi server.
+     * @param model: A mongoose model.
+     * @param options: Options object.
+     * @param Log: A logging object.
+     */
     generateUpdateEndpoint: function (server, model, options, Log) {
+      validationHelper.validateModel(model, Log);
       var modelMethods = model.schema.methods;
       var collectionName = modelMethods.collectionDisplayName || model.modelName;
       Log = Log.bind("Update");
@@ -415,11 +423,13 @@ module.exports = function (logger, mongoose, server) {
 
       var handler = HandlerHelper.generateUpdateHandler(model, options, Log);
 
-      var updateModel = modelMethods.updateModel || joiMongooseHelper.generateJoiUpdateModel(model, Log);
+      var updateModel = joiMongooseHelper.generateJoiUpdateModel(model, Log);
+
+      var readModel = joiMongooseHelper.generateJoiReadModel(model, Log);
 
       server.route({
         method: 'PUT',
-        path: '/' + resourceAliasForRoute + '/{id}',
+        path: '/' + resourceAliasForRoute + '/{_id}',
         config: {
           handler: handler,
           auth: "token",
@@ -428,7 +438,7 @@ module.exports = function (logger, mongoose, server) {
           tags: ['api', collectionName],
           validate: {
             params: {
-              id: Joi.string().required(),//TODO: validate that id is an ObjectId
+              _id: Joi.objectId().required()
             },
             payload: updateModel,
             headers: headersValidation
@@ -449,7 +459,8 @@ module.exports = function (logger, mongoose, server) {
             }
           },
           response: {
-            //schema: model.readModel ? model.readModel : Joi.object().unknown().optional()
+            schema: readModel
+            // Joi.any();
           }
         }
       });
