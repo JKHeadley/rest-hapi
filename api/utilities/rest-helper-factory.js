@@ -268,7 +268,15 @@ module.exports = function (logger, mongoose, server) {
       });
     },
 
+    /**
+     * Creates an endpoint for POST /RESOURCE
+     * @param server: A Hapi server.
+     * @param model: A mongoose model.
+     * @param options: Options object.
+     * @param Log: A logging object.
+     */
     generateCreateEndpoint: function (server, model, options, Log) {
+      validationHelper.validateModel(model, Log);
       var modelMethods = model.schema.methods;
       var collectionName = modelMethods.collectionDisplayName || model.modelName;
       Log = Log.bind("Create");
@@ -286,9 +294,9 @@ module.exports = function (logger, mongoose, server) {
 
       var handler = HandlerHelper.generateCreateHandler(model, options, Log);
 
-      var createModel = modelMethods.createModel || joiMongooseHelper.generateJoiCreateModel(model, Log);
+      var createModel = joiMongooseHelper.generateJoiCreateModel(model, Log);
 
-      var readModel = modelMethods.readModel || joiMongooseHelper.generateJoiReadModel(model, Log);
+      var readModel = joiMongooseHelper.generateJoiReadModel(model, Log);
 
       server.route({
         method: 'POST',
@@ -318,8 +326,8 @@ module.exports = function (logger, mongoose, server) {
             }
           },
           response: {
-            // schema: readModel || Joi.object().unknown().optional()
-            schema: Joi.any()
+            schema: readModel
+            // schema: Joi.any()
           }
         }
       });
