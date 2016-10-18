@@ -189,7 +189,7 @@ module.exports = function (logger, mongoose, server) {
     },
 
     /**
-     * Creates an endpoint for GET /RESOURCE/{id}
+     * Creates an endpoint for GET /RESOURCE/{_id}
      * @param server: A Hapi server.
      * @param model: A mongoose model.
      * @param options: Options object.
@@ -333,7 +333,15 @@ module.exports = function (logger, mongoose, server) {
       });
     },
 
+    /**
+     * Creates an endpoint for DELETE /RESOURCE/{_id}
+     * @param server: A Hapi server.
+     * @param model: A mongoose model.
+     * @param options: Options object.
+     * @param Log: A logging object.
+     */
     generateDeleteEndpoint: function (server, model, options, Log) {
+      validationHelper.validateModel(model, Log);
       var modelMethods = model.schema.methods;
       var collectionName = modelMethods.collectionDisplayName || model.modelName;
       Log = Log.bind("Delete");
@@ -353,16 +361,16 @@ module.exports = function (logger, mongoose, server) {
 
       server.route({
         method: 'DELETE',
-        path: '/' + resourceAliasForRoute + "/{id}",
+        path: '/' + resourceAliasForRoute + "/{_id}",
         config: {
           handler: handler,
           auth: "token",
           cors: true,
-          description: 'Create a new ' + collectionName,
+          description: 'Delete a ' + collectionName,
           tags: ['api', collectionName],
           validate: {
             params: {
-              id: Joi.string().required(),//TODO: validate that id is an ObjectId
+              _id: Joi.objectId().required()
             },
             headers: headersValidation
           },
@@ -382,6 +390,7 @@ module.exports = function (logger, mongoose, server) {
             }
           },
           response: {
+            //TODO: add a response schema if needed
             //schema: model.readModel ? model.readModel : Joi.object().unknown().optional()
           }
         }
