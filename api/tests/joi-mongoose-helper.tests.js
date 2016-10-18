@@ -266,7 +266,7 @@ test('joi-mongoose-helper.generateJoiReadModel', function(t) {
     //</editor-fold>
 
     //<editor-fold desc="Assert">
-    t.ok(joiMongooseHelper.generateJoiModelFromFieldType.callCount === 2, "generateJoiModelFromFieldType not called on association fields");
+    t.ok(joiMongooseHelper.generateJoiModelFromFieldType.callCount === 1, "generateJoiModelFromFieldType not called on association fields");
     t.ok(Joi.validate({ title: {} }, readModel).error === null, "title field valid" );
     t.ok(Joi.validate({ title: null }, readModel).error === null, "null title field valid" );
     t.ok(Joi.validate({ title: "" }, readModel).error !== null, "non-object title field not valid" );

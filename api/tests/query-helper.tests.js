@@ -640,7 +640,10 @@ test('query-helper.populateEmbeddedDocs', function(t) {
     var associations = {
       title: {
         type: {},
-        model: {}
+        model: {},
+        include: {
+          model: {}
+        }
       }
     };
     //</editor-fold>

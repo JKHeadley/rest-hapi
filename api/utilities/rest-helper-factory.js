@@ -104,7 +104,8 @@ module.exports = function (logger, mongoose, server) {
 
       if (modelMethods.routeOptions) {
         resourceAliasForRoute = modelMethods.routeOptions.alias || model.modelName;
-      } else {
+      }
+      else {
         resourceAliasForRoute = model.modelName;
       }
 
@@ -123,7 +124,7 @@ module.exports = function (logger, mongoose, server) {
 
       var sortableFields = queryHelper.getSortableFields(model, Log);
 
-      if (queryableFields) {
+      if (queryableFields && readableFields) {
         queryValidation.$select = Joi.alternatives().try(Joi.string().valid(readableFields), Joi.array().items(Joi.string().valid(readableFields)))
           .description('A list of basic fields to be included in each resource. Valid values include: ' + readableFields);
         // queryValidation.$term = Joi.string().optional()
@@ -158,12 +159,11 @@ module.exports = function (logger, mongoose, server) {
           auth: "token",
           description: 'Get a list of ' + collectionName + 's',
           tags: ['api', collectionName],
+          cors: true,
           validate: {
             query: queryValidation,
             // query: Joi.any(),
-            headers: Joi.object({
-              'authorization': Joi.string().required()
-            }).options({allowUnknown: true})
+            headers: headersValidation
           },
           plugins: {
             'hapi-swagger': {
@@ -188,7 +188,15 @@ module.exports = function (logger, mongoose, server) {
       });
     },
 
+    /**
+     * Creates an endpoint for GET /RESOURCE/{id}
+     * @param server: A Hapi server.
+     * @param model: A mongoose model.
+     * @param options: Options object.
+     * @param Log: A logging object.
+     */
     generateFindEndpoint: function (server, model, options, Log) {
+      validationHelper.validateModel(model, Log);
       var modelMethods = model.schema.methods;
       var collectionName = modelMethods.collectionDisplayName || model.modelName;
       Log = Log.bind("Find");
@@ -198,7 +206,8 @@ module.exports = function (logger, mongoose, server) {
 
       if (modelMethods.routeOptions) {
         resourceAliasForRoute = modelMethods.routeOptions.alias || model.modelName;
-      } else {
+      }
+      else {
         resourceAliasForRoute = model.modelName;
       }
 
@@ -209,20 +218,20 @@ module.exports = function (logger, mongoose, server) {
       var readableFields = queryHelper.getReadableFields(model, Log);
 
       if (readableFields) {
-        queryValidation.$select = Joi.string().optional()//TODO: make enumerated array.
+        queryValidation.$select = Joi.alternatives().try(Joi.string().valid(readableFields), Joi.array().items(Joi.string().valid(readableFields)))
           .description('A list of basic fields to be included in each resource. Valid values include: ' + readableFields);
       }
 
       if (modelMethods.routeOptions && modelMethods.routeOptions.associations) {
-        queryValidation.$embed = Joi.string().optional()//TODO: make enumerated array.
-          .description('A set of complex object properties to populate. Valid values include ' + Object.keys(modelMethods.routeOptions.associations));
+        queryValidation.$embed = Joi.alternatives().try(Joi.string(), Joi.array().items(Joi.string()))
+          .description('A set of complex object properties to populate. Valid values include ' + Object.keys({test:{}}));
       }
 
       var readModel = modelMethods.readModel || joiMongooseHelper.generateJoiReadModel(model, Log);
 
       server.route({
         method: 'GET',
-        path: '/' + resourceAliasForRoute + '/{id}',
+        path: '/' + resourceAliasForRoute + '/{_id}',
         config: {
           handler: handler,
           auth: "token",
@@ -232,7 +241,7 @@ module.exports = function (logger, mongoose, server) {
           validate: {
             query: queryValidation,
             params: {
-              id: Joi.string().required()//TODO: validate that id is an ObjectId
+              _id: Joi.objectId().required()
             },
             headers: headersValidation
           },
@@ -252,8 +261,8 @@ module.exports = function (logger, mongoose, server) {
             }
           },
           response: {
-            // schema: readModel || Joi.object().unknown().optional()
-            schema: Joi.any()
+            schema: readModel
+            // schema: Joi.any()
           }
         }
       });
@@ -500,7 +509,7 @@ module.exports = function (logger, mongoose, server) {
       var ownerModelName = ownerMethods.collectionDisplayName || ownerModel.modelName;
       Log = Log.bind("RemoveOne");
       Log.note("Generating removeOne association endpoint for " + ownerModelName + " -> " + associationName);
-      
+
 
       assert(ownerMethods.routeOptions);
       assert(ownerMethods.routeOptions.associations);
@@ -567,7 +576,7 @@ module.exports = function (logger, mongoose, server) {
       var handler = options.handler ? options.handler : HandlerHelper.generateAssociationAddManyHandler(ownerModel, association, options, Log);
 
       var payloadValidation;
-      
+
       if (association.include && association.include.through) {
         payloadValidation = joiMongooseHelper.generateJoiAssociationModel(association.include.through, Log);
         payloadValidation = payloadValidation.keys({
