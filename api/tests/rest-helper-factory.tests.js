@@ -5027,3 +5027,813 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
 
   t.end();
 });
+
+test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
+  var server = sinon.spy();
+  var restHelperFactory = require('../utilities/rest-helper-factory')(Log, mongoose, server);
+  testHelper.testModelParameter(t, restHelperFactory.generateAssociationAddManyEndpoint, "restHelperFactory.generateAssociationAddManyEndpoint", ["server", "model", "options", "Log"], Log);
+
+  t.test('rest-helper-factory.generateAssociationAddManyEndpoint asserts routeOptions exist', sinon.test(function (t) {
+    //<editor-fold desc="Arrange">
+    var server = this.stub({route: function(){}});
+
+    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(),server));
+    var handlerHelperStubWrapper = this.stub();
+    handlerHelperStubWrapper.returns(handlerHelperStub);
+    var queryHelperStub = this.stub(require('../utilities/query-helper'));
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});
+    var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
+      './handler-helper-factory': handlerHelperStubWrapper,
+      './query-helper': queryHelperStub,
+      './joi-mongoose-helper': joiMongooseHelperStub
+    })(Log, mongoose, server);
+
+    t.plan(2);
+
+    var userSchema = new mongoose.Schema({});
+
+    var userModel = mongoose.model("user", userSchema);
+
+    var association = { include: {} };
+    //</editor-fold>
+
+    try {
+      //<editor-fold desc="Act">
+      restHelperFactory.generateAssociationAddManyEndpoint(server, userModel, {}, {}, Log);
+      t.fail("No error was thrown.");
+      //</editor-fold>
+    }
+
+    catch (error) {
+      //<editor-fold desc="Assert">
+      t.equal(error.name, "AssertionError", "error is an AssertionError");
+      t.ok(error.message.indexOf("routeOptions") > -1, "assertion message contains 'routeOptions' text.");
+      //</editor-fold>
+    }
+
+    //<editor-fold desc="Restore">
+    delete mongoose.models.user;
+    delete mongoose.modelSchemas.user;
+    //</editor-fold>
+  }));
+
+  t.test('rest-helper-factory.generateAssociationAddManyEndpoint asserts routeOptions.associations exist', sinon.test(function (t) {
+    //<editor-fold desc="Arrange">
+    var server = this.stub({route: function(){}});
+
+    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(),server));
+    var handlerHelperStubWrapper = this.stub();
+    handlerHelperStubWrapper.returns(handlerHelperStub);
+    var queryHelperStub = this.stub(require('../utilities/query-helper'));
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});
+    var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
+      './handler-helper-factory': handlerHelperStubWrapper,
+      './query-helper': queryHelperStub,
+      './joi-mongoose-helper': joiMongooseHelperStub
+    })(Log, mongoose, server);
+
+    t.plan(2);
+
+    var userSchema = new mongoose.Schema({});
+    userSchema.methods = {
+      routeOptions: {}
+    };
+
+    var userModel = mongoose.model("user", userSchema);
+
+    var association = { include: {} };
+    //</editor-fold>
+
+    try {
+      //<editor-fold desc="Act">
+      restHelperFactory.generateAssociationAddManyEndpoint(server, userModel, {}, {}, Log);
+      t.fail("No error was thrown.");
+      //</editor-fold>
+    }
+
+    catch (error) {
+      //<editor-fold desc="Assert">
+      t.equal(error.name, "AssertionError", "error is an AssertionError");
+      t.ok(error.message.indexOf("associations") > -1, "assertion message contains 'associations' text.");
+      //</editor-fold>
+    }
+
+    //<editor-fold desc="Restore">
+    delete mongoose.models.user;
+    delete mongoose.modelSchemas.user;
+    //</editor-fold>
+  }));
+
+  t.test('rest-helper-factory.generateAssociationAddManyEndpoint asserts association input exists', sinon.test(function (t) {
+    //<editor-fold desc="Arrange">
+    var server = this.stub({route: function(){}});
+
+    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(),server));
+    var handlerHelperStubWrapper = this.stub();
+    handlerHelperStubWrapper.returns(handlerHelperStub);
+    var queryHelperStub = this.stub(require('../utilities/query-helper'));
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});
+    var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
+      './handler-helper-factory': handlerHelperStubWrapper,
+      './query-helper': queryHelperStub,
+      './joi-mongoose-helper': joiMongooseHelperStub
+    })(Log, mongoose, server);
+
+    t.plan(2);
+
+    var userSchema = new mongoose.Schema({});
+    userSchema.methods = {
+      routeOptions: {
+        associations: {}
+      }
+    };
+
+    var userModel = mongoose.model("user", userSchema);
+
+    var association = { include: {} };
+    //</editor-fold>
+
+    try {
+      //<editor-fold desc="Act">
+      restHelperFactory.generateAssociationAddManyEndpoint(server, userModel, null, {}, Log);
+      t.fail("No error was thrown.");
+      //</editor-fold>
+    }
+
+    catch (error) {
+      //<editor-fold desc="Assert">
+      t.equal(error.name, "AssertionError", "error is an AssertionError");
+      t.ok(error.message.indexOf("association input") > -1, "assertion message contains 'association input' text.");
+      //</editor-fold>
+    }
+
+    //<editor-fold desc="Restore">
+    delete mongoose.models.user;
+    delete mongoose.modelSchemas.user;
+    //</editor-fold>
+  }));
+
+  t.test('rest-helper-factory.generateAssociationAddManyEndpoint calls handlerHelper.generateAssociationAddManyHandler', sinon.test(function (t) {
+    //<editor-fold desc="Arrange">
+    var server = this.stub({route: function(){}});
+
+    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(),server));
+    var handlerHelperStubWrapper = this.stub();
+    handlerHelperStubWrapper.returns(handlerHelperStub);
+    var queryHelperStub = this.stub(require('../utilities/query-helper'));
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});
+    var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
+      './handler-helper-factory': handlerHelperStubWrapper,
+      './query-helper': queryHelperStub,
+      './joi-mongoose-helper': joiMongooseHelperStub
+    })(Log, mongoose, server);
+
+    t.plan(1);
+
+    var userSchema = new mongoose.Schema({});
+    userSchema.methods = {
+      routeOptions: {
+        associations: {}
+      }
+    };
+
+    var userModel = mongoose.model("user", userSchema);
+
+    var association = { include: { model: {} } };
+    //</editor-fold>
+
+    //<editor-fold desc="Act">
+    restHelperFactory.generateAssociationAddManyEndpoint(server, userModel, association, {}, Log);
+    //</editor-fold>
+
+    //<editor-fold desc="Assert">
+    t.ok(handlerHelperStub.generateAssociationAddManyHandler.called, "generateAssociationAddManyHandler called");
+    //</editor-fold>
+
+
+    //<editor-fold desc="Restore">
+    delete mongoose.models.user;
+    delete mongoose.modelSchemas.user;
+    //</editor-fold>
+  }));
+
+  t.test('rest-helper-factory.generateAssociationAddManyEndpoint calls server.route', sinon.test(function (t) {
+    //<editor-fold desc="Arrange">
+    var server = this.stub({route: function(){}});
+
+    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(),server));
+    var handlerHelperStubWrapper = this.stub();
+    handlerHelperStubWrapper.returns(handlerHelperStub);
+    var queryHelperStub = this.stub(require('../utilities/query-helper'));
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});
+    var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
+      './handler-helper-factory': handlerHelperStubWrapper,
+      './query-helper': queryHelperStub,
+      './joi-mongoose-helper': joiMongooseHelperStub
+    })(Log, mongoose, server);
+
+    t.plan(1);
+
+    var userSchema = new mongoose.Schema({});
+    userSchema.methods = {
+      routeOptions: {
+        associations: {}
+      }
+    };
+
+    var userModel = mongoose.model("user", userSchema);
+
+    var association = { include: { model: {} } };
+    //</editor-fold>
+
+    //<editor-fold desc="Act">
+    restHelperFactory.generateAssociationAddManyEndpoint(server, userModel, association, {}, Log);
+    //</editor-fold>
+
+    //<editor-fold desc="Assert">
+    t.ok(server.route.called, "server.route called");
+    //</editor-fold>
+
+
+    //<editor-fold desc="Restore">
+    delete mongoose.models.user;
+    delete mongoose.modelSchemas.user;
+    //</editor-fold>
+  }));
+
+  t.test('rest-helper-factory.generateAssociationAddManyEndpoint calls server.route with "POST" method', sinon.test(function (t) {
+    //<editor-fold desc="Arrange">
+    var server = this.stub({route: function(){}});
+
+    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(),server));
+    var handlerHelperStubWrapper = this.stub();
+    handlerHelperStubWrapper.returns(handlerHelperStub);
+    var queryHelperStub = this.stub(require('../utilities/query-helper'));
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});
+    var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
+      './handler-helper-factory': handlerHelperStubWrapper,
+      './query-helper': queryHelperStub,
+      './joi-mongoose-helper': joiMongooseHelperStub
+    })(Log, mongoose, server);
+
+    t.plan(1);
+
+    var userSchema = new mongoose.Schema({});
+    userSchema.methods = {
+      routeOptions: {
+        associations: {}
+      }
+    };
+
+    var userModel = mongoose.model("user", userSchema);
+
+    var association = { include: { model: {} } };
+    //</editor-fold>
+
+    //<editor-fold desc="Act">
+    restHelperFactory.generateAssociationAddManyEndpoint(server, userModel, association, {}, Log);
+    //</editor-fold>
+
+    //<editor-fold desc="Assert">
+    var serverObject = server.route.args[0][0];
+    // Log.debug(JSON.stringify(serverObject));
+    t.equal(serverObject.method, "POST", "POST method used");
+    //</editor-fold>
+
+    //<editor-fold desc="Restore">
+    delete mongoose.models.user;
+    delete mongoose.modelSchemas.user;
+    //</editor-fold>
+  }));
+
+  t.test('rest-helper-factory.generateAssociationAddManyEndpoint calls server.route with correct ownerAlias and childAlias', sinon.test(function (t) {
+    //<editor-fold desc="Arrange">
+    var server = this.stub({route: function(){}});
+
+    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(),server));
+    var handlerHelperStubWrapper = this.stub();
+    handlerHelperStubWrapper.returns(handlerHelperStub);
+    var queryHelperStub = this.stub(require('../utilities/query-helper'));
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});
+    joiMongooseHelperStub.generateJoiUpdateModel =function(){return Joi.any()};
+    var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
+      './handler-helper-factory': handlerHelperStubWrapper,
+      './query-helper': queryHelperStub,
+      './joi-mongoose-helper': joiMongooseHelperStub
+    })(Log, mongoose, server);
+
+    t.plan(2);
+
+    var userSchema1 = new mongoose.Schema({});
+    userSchema1.methods = {
+      routeOptions: {
+        associations: {}
+      }
+    };
+
+    var userSchema2 = new mongoose.Schema({});
+    userSchema2.methods = {
+      routeOptions: {
+        associations: {},
+        alias: "PEEPS"
+      }
+    };
+
+    var userModel1 = mongoose.model("user1", userSchema1);
+    var userModel2 = mongoose.model("user2", userSchema2);
+
+    var association1 = { include: { model: { modelName: "TEST1" } } };
+    var association2 = { include: { model: {} }, alias: "TEST2" };
+    //</editor-fold>
+
+    //<editor-fold desc="Act">
+    restHelperFactory.generateAssociationAddManyEndpoint(server, userModel1, association1, {}, Log);
+    restHelperFactory.generateAssociationAddManyEndpoint(server, userModel2, association2, {}, Log);
+    //</editor-fold>
+
+    //<editor-fold desc="Assert">
+    var serverObject1 = server.route.args[0][0];
+    var serverObject2 = server.route.args[1][0];
+    // Log.debug(JSON.stringify(serverObject));
+    t.equal(serverObject1.path, "/user1/{ownerId}/TEST1", "correct route");
+    t.equal(serverObject2.path, "/PEEPS/{ownerId}/TEST2", "correct route alias");
+    //</editor-fold>
+
+    //<editor-fold desc="Restore">
+    delete mongoose.models.user1;
+    delete mongoose.modelSchemas.user1;
+    delete mongoose.models.user2;
+    delete mongoose.modelSchemas.user2;
+    //</editor-fold>
+  }));
+
+  t.test('rest-helper-factory.generateAssociationAddManyEndpoint calls server.route with correct handler', sinon.test(function (t) {
+    //<editor-fold desc="Arrange">
+    var server = this.stub({route: function(){}});
+
+    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(),server));
+    handlerHelperStub.generateAssociationAddManyHandler = this.spy(function(){return "HANDLER"})
+    var handlerHelperStubWrapper = this.stub();
+    handlerHelperStubWrapper.returns(handlerHelperStub);
+    var queryHelperStub = this.stub(require('../utilities/query-helper'));
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});
+    var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
+      './handler-helper-factory': handlerHelperStubWrapper,
+      './query-helper': queryHelperStub,
+      './joi-mongoose-helper': joiMongooseHelperStub
+    })(Log, mongoose, server);
+
+    t.plan(1);
+
+    var userSchema = new mongoose.Schema({});
+    userSchema.methods = {
+      routeOptions: {
+        associations: {}
+      }
+    };
+
+    var userModel = mongoose.model("user", userSchema);
+
+    var association = { include: { model: {} } };
+    //</editor-fold>
+
+    //<editor-fold desc="Act">
+    restHelperFactory.generateAssociationAddManyEndpoint(server, userModel, association, {}, Log);
+    //</editor-fold>
+
+    //<editor-fold desc="Assert">
+    var serverObject = server.route.args[0][0];
+    // Log.debug(JSON.stringify(serverObject));
+    t.equal(serverObject.config.handler, "HANDLER", "correct handler used");
+    //</editor-fold>
+
+
+    //<editor-fold desc="Restore">
+    delete mongoose.models.user;
+    delete mongoose.modelSchemas.user;
+    //</editor-fold>
+  }));
+
+  t.test('rest-helper-factory.generateAssociationAddManyEndpoint calls server.route using token authentication', sinon.test(function (t) {
+    //<editor-fold desc="Arrange">
+    var server = this.stub({route: function(){}});
+
+    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(),server));
+    var handlerHelperStubWrapper = this.stub();
+    handlerHelperStubWrapper.returns(handlerHelperStub);
+    var queryHelperStub = this.stub(require('../utilities/query-helper'));
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});
+    var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
+      './handler-helper-factory': handlerHelperStubWrapper,
+      './query-helper': queryHelperStub,
+      './joi-mongoose-helper': joiMongooseHelperStub
+    })(Log, mongoose, server);
+
+    t.plan(1);
+
+    var userSchema = new mongoose.Schema({});
+    userSchema.methods = {
+      routeOptions: {
+        associations: {}
+      }
+    };
+
+    var userModel = mongoose.model("user", userSchema);
+
+    var association = { include: { model: {} } };
+    //</editor-fold>
+
+    //<editor-fold desc="Act">
+    restHelperFactory.generateAssociationAddManyEndpoint(server, userModel, association, {}, Log);
+    //</editor-fold>
+
+    //<editor-fold desc="Assert">
+    var serverObject = server.route.args[0][0];
+    // Log.debug(JSON.stringify(serverObject));
+    t.equal(serverObject.config.auth, "token", "token auth used");
+    //</editor-fold>
+
+
+    //<editor-fold desc="Restore">
+    delete mongoose.models.user;
+    delete mongoose.modelSchemas.user;
+    //</editor-fold>
+  }));
+
+  t.test('rest-helper-factory.generateAssociationAddManyEndpoint calls server.route with correct associationName and ownerModelName', sinon.test(function (t) {
+    //<editor-fold desc="Arrange">
+    var server = this.stub({route: function(){}});
+
+    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(),server));
+    var handlerHelperStubWrapper = this.stub();
+    handlerHelperStubWrapper.returns(handlerHelperStub);
+    var queryHelperStub = this.stub(require('../utilities/query-helper'));
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});
+    var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
+      './handler-helper-factory': handlerHelperStubWrapper,
+      './query-helper': queryHelperStub,
+      './joi-mongoose-helper': joiMongooseHelperStub
+    })(Log, mongoose, server);
+
+    t.plan(4);
+
+    var userSchema1 = new mongoose.Schema({});
+    userSchema1.methods = {
+      routeOptions: {
+        associations: {}
+      }
+    };
+
+    var userSchema2 = new mongoose.Schema({});
+    userSchema2.methods = {
+      routeOptions: {
+        associations: {}
+      },
+      collectionDisplayName: "User"
+    };
+
+    var userModel1 = mongoose.model("user1", userSchema1);
+    var userModel2 = mongoose.model("user2", userSchema2);
+
+    var association1 = { include: { model: { modelName: "TEST1" } } };
+    var association2 = { include: { model: {}, as: "TEST2" } };
+    //</editor-fold>
+
+    //<editor-fold desc="Act">
+    restHelperFactory.generateAssociationAddManyEndpoint(server, userModel1, association1, {}, Log);
+    restHelperFactory.generateAssociationAddManyEndpoint(server, userModel2, association2, {}, Log);
+    //</editor-fold>
+
+    //<editor-fold desc="Assert">
+    var serverObject1 = server.route.args[0][0];
+    var serverObject2 = server.route.args[1][0];
+    // Log.debug(JSON.stringify(serverObject));
+    t.equal(serverObject1.config.description, "Sets multiple TEST1s for a user1", "correct description");
+    t.equal(serverObject2.config.description, "Sets multiple TEST2s for a User", "correct description");
+    t.deepEqual(serverObject1.config.tags, ['api', 'TEST1', 'user1'], "correct tags");
+    t.deepEqual(serverObject2.config.tags, ['api', 'TEST2', 'User'], "correct tags");
+    //</editor-fold>
+
+    //<editor-fold desc="Restore">
+    delete mongoose.models.user1;
+    delete mongoose.modelSchemas.user1;
+    delete mongoose.models.user2;
+    delete mongoose.modelSchemas.user2;
+    //</editor-fold>
+  }));
+
+  t.test('rest-helper-factory.generateAssociationAddManyEndpoint calls server.route using cors', sinon.test(function (t) {
+    //<editor-fold desc="Arrange">
+    var server = this.stub({route: function(){}});
+
+    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(),server));
+    var handlerHelperStubWrapper = this.stub();
+    handlerHelperStubWrapper.returns(handlerHelperStub);
+    var queryHelperStub = this.stub(require('../utilities/query-helper'));
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});
+    var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
+      './handler-helper-factory': handlerHelperStubWrapper,
+      './query-helper': queryHelperStub,
+      './joi-mongoose-helper': joiMongooseHelperStub
+    })(Log, mongoose, server);
+
+    t.plan(1);
+
+    var userSchema = new mongoose.Schema({});
+    userSchema.methods = {
+      routeOptions: {
+        associations: {}
+      }
+    };
+
+    var userModel = mongoose.model("user", userSchema);
+
+    var association = { include: { model: {} } };
+    //</editor-fold>
+
+    //<editor-fold desc="Act">
+    restHelperFactory.generateAssociationAddManyEndpoint(server, userModel, association, {}, Log);
+    //</editor-fold>
+
+    //<editor-fold desc="Assert">
+    var serverObject = server.route.args[0][0];
+    // Log.debug(JSON.stringify(serverObject));
+    t.equal(serverObject.config.cors, true, "cors used");
+    //</editor-fold>
+
+
+    //<editor-fold desc="Restore">
+    delete mongoose.models.user;
+    delete mongoose.modelSchemas.user;
+    //</editor-fold>
+  }));
+
+  t.test('rest-helper-factory.generateAssociationAddManyEndpoint calls server.route using correct payload validation', sinon.test(function (t) {
+    //<editor-fold desc="Arrange">
+    var server = this.stub({route: function(){}});
+
+    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(),server));
+    var handlerHelperStubWrapper = this.stub();
+    handlerHelperStubWrapper.returns(handlerHelperStub);
+    var queryHelperStub = this.stub(require('../utilities/query-helper'));
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});
+    joiMongooseHelperStub.generateJoiAssociationModel = function(){return Joi.object().unknown()};
+    var joiStub = require('Joi');
+    joiStub.objectId = function() {
+      return Joi.any().valid("objectId");
+    };
+    var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
+      './handler-helper-factory': handlerHelperStubWrapper,
+      './query-helper': queryHelperStub,
+      './joi-mongoose-helper': joiMongooseHelperStub,
+      'joi': joiStub
+    })(Log, mongoose, server);
+
+    t.plan(2);
+
+    var userSchema1 = new mongoose.Schema({});
+    userSchema1.methods = {
+      routeOptions: {
+        associations: {}
+      }
+    };
+
+    var userSchema2 = new mongoose.Schema({});
+    userSchema2.methods = {
+      routeOptions: {
+        associations: {}
+      }
+    };
+
+    var userModel1 = mongoose.model("user1", userSchema1);
+    var userModel2 = mongoose.model("user2", userSchema2);
+
+    var association1 = { include: { model: { } } };
+    var association2 = { include: { model: {}, through: {} } };
+
+    var payloadValidation1 = Joi.array().items(Joi.object().unknown().keys({ childId: Joi.any().valid("objectId") })).required();
+    var payloadValidation2 = Joi.array().items(Joi.any().valid("objectId")).required();
+    //</editor-fold>
+
+    //<editor-fold desc="Act">
+    restHelperFactory.generateAssociationAddManyEndpoint(server, userModel1, association1, {}, Log);
+    restHelperFactory.generateAssociationAddManyEndpoint(server, userModel2, association2, {}, Log);
+    //</editor-fold>
+
+    //<editor-fold desc="Assert">
+    var serverObject1 = server.route.args[0][0];
+    var serverObject2 = server.route.args[1][0];
+    // Log.debug(JSON.stringify(serverObject));
+    t.deepEqual(serverObject1.config.validate.payload, payloadValidation2, "correct payload validation");
+    t.deepEqual(serverObject2.config.validate.payload, payloadValidation1, "correct payload validation");
+    //</editor-fold>
+
+    //<editor-fold desc="Restore">
+    delete mongoose.models.user1;
+    delete mongoose.modelSchemas.user1;
+    delete mongoose.models.user2;
+    delete mongoose.modelSchemas.user2;
+    //</editor-fold>
+  }));
+
+  t.test('rest-helper-factory.generateAssociationAddManyEndpoint calls server.route using correct params validation', sinon.test(function (t) {
+    //<editor-fold desc="Arrange">
+    var server = this.stub({route: function(){}});
+
+    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(),server));
+    var handlerHelperStubWrapper = this.stub();
+    handlerHelperStubWrapper.returns(handlerHelperStub);
+    var queryHelperStub = this.stub(require('../utilities/query-helper'));
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});
+    var joiStub = require('Joi');
+    joiStub.objectId = function() {
+      return Joi.any().valid("objectId");
+    };
+    var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
+      './handler-helper-factory': handlerHelperStubWrapper,
+      './query-helper': queryHelperStub,
+      './joi-mongoose-helper': joiMongooseHelperStub,
+      'joi': joiStub
+    })(Log, mongoose, server);
+
+    t.plan(1);
+
+    var userSchema = new mongoose.Schema({});
+    userSchema.methods = {
+      routeOptions: {
+        associations: {}
+      }
+    };
+
+    var userModel = mongoose.model("user", userSchema);
+
+    var association = { include: { model: {} } };
+
+    var params =  {
+      ownerId: Joi.any().valid("objectId").required()
+    };
+    //</editor-fold>
+
+    //<editor-fold desc="Act">
+    restHelperFactory.generateAssociationAddManyEndpoint(server, userModel, association, {}, Log);
+    //</editor-fold>
+
+    //<editor-fold desc="Assert">
+    var serverObject = server.route.args[0][0];
+    // Log.debug(JSON.stringify(serverObject));
+    t.deepEqual(serverObject.config.validate.params, params, "params validated");
+    //</editor-fold>
+
+
+    //<editor-fold desc="Restore">
+    delete mongoose.models.user;
+    delete mongoose.modelSchemas.user;
+    //</editor-fold>
+  }));
+
+  t.test('rest-helper-factory.generateAssociationAddManyEndpoint calls server.route using correct header validation', sinon.test(function (t) {
+    //<editor-fold desc="Arrange">
+    var server = this.stub({route: function(){}});
+
+    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(),server));
+    var handlerHelperStubWrapper = this.stub();
+    handlerHelperStubWrapper.returns(handlerHelperStub);
+    var queryHelperStub = this.stub(require('../utilities/query-helper'));
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});
+    var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
+      './handler-helper-factory': handlerHelperStubWrapper,
+      './query-helper': queryHelperStub,
+      './joi-mongoose-helper': joiMongooseHelperStub
+    })(Log, mongoose, server);
+
+    t.plan(1);
+
+    var userSchema = new mongoose.Schema({});
+    userSchema.methods = {
+      routeOptions: {
+        associations: {}
+      }
+    };
+
+    var userModel = mongoose.model("user", userSchema);
+
+    var association = { include: { model: {} } };
+
+    var headerValidation = Joi.object({
+      'authorization': Joi.string().required()
+    }).options({allowUnknown: true});
+    //</editor-fold>
+
+    //<editor-fold desc="Act">
+    restHelperFactory.generateAssociationAddManyEndpoint(server, userModel, association, {}, Log);
+    //</editor-fold>
+
+    //<editor-fold desc="Assert">
+    var serverObject = server.route.args[0][0];
+    // Log.debug(JSON.stringify(serverObject));
+    t.deepEqual(serverObject.config.validate.headers, headerValidation, "token auth used");
+    //</editor-fold>
+
+
+    //<editor-fold desc="Restore">
+    delete mongoose.models.user;
+    delete mongoose.modelSchemas.user;
+    //</editor-fold>
+  }));
+
+  t.test('rest-helper-factory.generateAssociationAddManyEndpoint calls server.route using hapi-swagger plugin', sinon.test(function (t) {
+    //<editor-fold desc="Arrange">
+    var server = this.stub({route: function(){}});
+
+    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(),server));
+    var handlerHelperStubWrapper = this.stub();
+    handlerHelperStubWrapper.returns(handlerHelperStub);
+    var queryHelperStub = this.stub(require('../utilities/query-helper'));
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});
+    var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
+      './handler-helper-factory': handlerHelperStubWrapper,
+      './query-helper': queryHelperStub,
+      './joi-mongoose-helper': joiMongooseHelperStub
+    })(Log, mongoose, server);
+
+    t.plan(1);
+
+    var userSchema = new mongoose.Schema({});
+    userSchema.methods = {
+      routeOptions: {
+        associations: {}
+      }
+    };
+
+    var userModel = mongoose.model("user", userSchema);
+
+    var association = { include: { model: {} } };
+    //</editor-fold>
+
+    //<editor-fold desc="Act">
+    restHelperFactory.generateAssociationAddManyEndpoint(server, userModel, association, {}, Log);
+    //</editor-fold>
+
+    //<editor-fold desc="Assert">
+    var serverObject = server.route.args[0][0];
+    // Log.debug(JSON.stringify(serverObject));
+    t.ok(serverObject.config.plugins['hapi-swagger'], "hapi-swagger used");
+    //</editor-fold>
+
+
+    //<editor-fold desc="Restore">
+    delete mongoose.models.user;
+    delete mongoose.modelSchemas.user;
+    //</editor-fold>
+  }));
+
+  t.test('rest-helper-factory.generateAssociationAddManyEndpoint calls server.route with correct response schema validation', sinon.test(function (t) {
+    //<editor-fold desc="Arrange">
+    var server = this.stub({route: function(){}});
+
+    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(),server));
+    var handlerHelperStubWrapper = this.stub();
+    handlerHelperStubWrapper.returns(handlerHelperStub);
+    var queryHelperStub = this.stub(require('../utilities/query-helper'));
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return readModel});
+    var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
+      './handler-helper-factory': handlerHelperStubWrapper,
+      './query-helper': queryHelperStub,
+      './joi-mongoose-helper': joiMongooseHelperStub
+    })(Log, mongoose, server);
+
+    t.plan(1);
+
+    var userSchema = new mongoose.Schema({});
+    userSchema.methods = {
+      routeOptions: {
+        associations: {}
+      }
+    };
+
+    var userModel = mongoose.model("user", userSchema);
+
+    var association = { include: { model: {} } };
+
+    var responseSchema = {};
+    //</editor-fold>
+
+    //<editor-fold desc="Act">
+    restHelperFactory.generateAssociationAddManyEndpoint(server, userModel, association, {}, Log);
+    //</editor-fold>
+
+    //<editor-fold desc="Assert">
+    var serverObject = server.route.args[0][0];
+    // Log.debug(JSON.stringify(serverObject));
+    t.deepEquals(serverObject.config.response, responseSchema, "response schema correct");
+    //</editor-fold>
+
+
+    //<editor-fold desc="Restore">
+    delete mongoose.models.user;
+    delete mongoose.modelSchemas.user;
+    //</editor-fold>
+  }));
+
+  t.end();
+});

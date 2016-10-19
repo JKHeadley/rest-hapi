@@ -601,35 +601,45 @@ module.exports = function (logger, mongoose, server) {
       });
     },
 
+    /**
+     * Creates an endpoint for POST /OWNER_RESOURCE/{ownerId}/CHILD_RESOURCE
+     * @param server: A Hapi server.
+     * @param ownerModel: A mongoose model.
+     * @param association: An object containing the association data/child mongoose model.
+     * @param options: Options object.
+     * @param Log: A logging object.
+     */
     generateAssociationAddManyEndpoint: function (server, ownerModel, association, options, Log) {
+      validationHelper.validateModel(ownerModel, Log);
       var ownerMethods = ownerModel.schema.methods;
+
+      assert(ownerMethods.routeOptions, "routeOptions must exist");
+      assert(ownerMethods.routeOptions.associations, "model associations must exist");
+      assert(association, "association input must exist");
+
       var associationName = association.include.as || association.include.model.modelName;
       var ownerModelName = ownerMethods.collectionDisplayName || ownerModel.modelName;
+
       Log = Log.bind("AddMany");
       Log.note("Generating addMany association endpoint for " + ownerModelName + " -> " + associationName);
-
-      assert(ownerMethods.routeOptions);
-      assert(ownerMethods.routeOptions.associations);
-
-      assert(association);
 
       options = options || {};
 
       var ownerAlias = ownerMethods.routeOptions.alias || ownerModel.modelName;
       var childAlias = association.alias || association.include.model.modelName;
 
-      var handler = options.handler ? options.handler : HandlerHelper.generateAssociationAddManyHandler(ownerModel, association, options, Log);
+      var handler = HandlerHelper.generateAssociationAddManyHandler(ownerModel, association, options, Log);
 
       var payloadValidation;
 
       if (association.include && association.include.through) {
         payloadValidation = joiMongooseHelper.generateJoiAssociationModel(association.include.through, Log);
         payloadValidation = payloadValidation.keys({
-          childId: Joi.string()//TODO: validate that id is an ObjectId
+          childId: Joi.objectId()
         });
         payloadValidation = Joi.array().items(payloadValidation).required();
       } else {
-        payloadValidation = Joi.array().items(Joi.string());//TODO: validate that id is an ObjectId
+        payloadValidation = Joi.array().items(Joi.objectId()).required();
       }
 
       server.route({
@@ -639,11 +649,11 @@ module.exports = function (logger, mongoose, server) {
           handler: handler,
           auth: "token",
           cors: true,
-          description: 'Sets multiple ' + associationName + ' for a ' + ownerModelName,
+          description: 'Sets multiple ' + associationName + 's for a ' + ownerModelName,
           tags: ['api', associationName, ownerModelName],
           validate: {
             params: {
-              ownerId: Joi.string().required()//TODO: validate that id is an ObjectId
+              ownerId: Joi.objectId().required()
             },
             payload: payloadValidation,
             headers: headersValidation
