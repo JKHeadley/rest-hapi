@@ -638,7 +638,8 @@ module.exports = function (logger, mongoose, server) {
           childId: Joi.objectId()
         });
         payloadValidation = Joi.array().items(payloadValidation).required();
-      } else {
+      } 
+      else {
         payloadValidation = Joi.array().items(Joi.objectId()).required();
       }
 
@@ -675,27 +676,37 @@ module.exports = function (logger, mongoose, server) {
       })
     },
 
+    /**
+     * Creates an endpoint for GET /OWNER_RESOURCE/{ownerId}/CHILD_RESOURCE
+     * @param server: A Hapi server.
+     * @param ownerModel: A mongoose model.
+     * @param association: An object containing the association data/child mongoose model.
+     * @param options: Options object.
+     * @param Log: A logging object.
+     */
     generateAssociationGetAllEndpoint: function (server, ownerModel, association, options, Log) {
+      validationHelper.validateModel(ownerModel, Log);
       var ownerMethods = ownerModel.schema.methods;
+
+      assert(ownerMethods.routeOptions, "routeOptions must exist");
+      assert(ownerMethods.routeOptions.associations, "model associations must exist");
+      assert(association, "association input must exist");
+
       var associationName = association.include.as || association.include.model.modelName;
       var ownerModelName = ownerMethods.collectionDisplayName || ownerModel.modelName;
+      
       Log = Log.bind("GetAll");
       Log.note("Generating list association endpoint for " + ownerModelName + " -> " + associationName);
-
-      assert(ownerMethods.routeOptions);
-      assert(ownerMethods.routeOptions.associations);
-
-      assert(association);
-
+      
       options = options || {};
 
       var ownerAlias = ownerMethods.routeOptions.alias || ownerModel.modelName;
       var childAlias = association.alias || association.include.model.modelName;
 
       var childModel = association.include.model;
-      var childModelName = childModel.collectionDisplayName || childModel.modelName;
+      var childMethods = childModel.schema.methods;
 
-      var handler = options.handler ? options.handler : HandlerHelper.generateAssociationGetAllHandler(ownerModel, association, options, Log);
+      var handler = HandlerHelper.generateAssociationGetAllHandler(ownerModel, association, options, Log);
 
       var queryValidation = {
         $skip: Joi.number().integer().min(0).optional()
@@ -706,27 +717,36 @@ module.exports = function (logger, mongoose, server) {
 
       var queryableFields = queryHelper.getQueryableFields(childModel, Log);
 
-      if (queryableFields) {
-        queryValidation.$select = Joi.string().optional()//TODO: make enumerated array.
-        .description('A list of basic fields to be included in each resource. Valid values include: ' + childModel.queryableFields);
+      var readableFields = queryHelper.getReadableFields(childModel, Log);
+
+      var sortableFields = queryHelper.getSortableFields(childModel, Log);
+
+      if (queryableFields && readableFields) {
+        queryValidation.$select = Joi.alternatives().try(Joi.string().valid(readableFields), Joi.array().items(Joi.string().valid(readableFields)))
+        .description('A list of basic fields to be included in each resource. Valid values include: ' + readableFields);
         // queryValidation.$term = Joi.string().optional()
-        //   .description('A generic search parameter. This can be refined using the `searchFields` parameter. Valid values include: ' + childModel.queryableFields);
+        //   .description('A generic search parameter. This can be refined using the `searchFields` parameter. Valid values include: ' + queryableFields);
         // queryValidation.$searchFields = Joi.string().optional()//TODO: make enumerated array.
-        //   .description('A set of fields to apply the \"$term\" search parameter to. If this parameter is not included, the \"$term\" search parameter is applied to all searchable fields. Valid values include: ' + childModel.queryableFields);
-        queryValidation.$sort = Joi.string().optional()//TODO: make enumerated array.
-        .description('A set of sort fields. Prepending \'+\' to the field name indicates it should be sorted ascending, while \'-\' indicates descending. The default sort direction is \'ascending\' (lowest value to highest value).');
+        //   .description('A set of fields to apply the \"$term\" search parameter to. If this parameter is not included, the \"$term\" search parameter is applied to all searchable fields. Valid values include: ' + queryableFields);
+        queryValidation.$sort = Joi.alternatives().try(Joi.string().valid(sortableFields), Joi.array().items(Joi.string().valid(sortableFields)))
+        .description('A set of fields to sort by. Including field name indicates it should be sorted ascending, while prepending ' +
+          '\'-\' indicates descending. The default sort direction is \'ascending\' (lowest value to highest value). Listing multiple' +
+          'fields prioritizes the sort starting with the first field listed. Valid values include: ' + sortableFields);
         queryValidation.$where = Joi.any().optional()
         .description('An optional field for raw mongoose queries.');
 
         _.each(queryableFields, function (fieldName) {
-          queryValidation[fieldName] = Joi.string().optional();
+          queryValidation[fieldName] = Joi.alternatives().try(Joi.string().optional(), Joi.array().items(Joi.string()));
         })
       }
 
-      if (childModel.routeOptions && childModel.routeOptions.associations) {
-        queryValidation.$embed = Joi.string().optional()//TODO: make enumerated array.
-        .description('A set of complex object properties to populate. Valid values include ' + Object.keys(childModel.routeOptions.associations));
+      var associations = childMethods.routeOptions ? childMethods.routeOptions.associations : null;
+      if (associations) {
+        queryValidation.$embed = Joi.alternatives().try(Joi.string(), Joi.array().items(Joi.string()))
+        .description('A set of complex object properties to populate. Valid values include ' + Object.keys(associations));
       }
+
+      var readModel = joiMongooseHelper.generateJoiReadModel(childModel, Log);
 
       server.route({
         method: 'GET',
@@ -734,12 +754,13 @@ module.exports = function (logger, mongoose, server) {
         config: {
           handler: handler,
           auth: "token",
-          description: 'Gets all of the ' + childModelName + ' for a ' + ownerModelName,
-          tags: ['api', childModelName, ownerModelName],
+          cors: true,
+          description: 'Gets all of the ' + associationName + 's for a ' + ownerModelName,
+          tags: ['api', associationName, ownerModelName],
           validate: {
             query: queryValidation,
             params: {
-              ownerId: Joi.string().required()//TODO: validate for ObjectId
+              ownerId: Joi.objectId().required()
             },
             headers: headersValidation
           },
@@ -756,11 +777,12 @@ module.exports = function (logger, mongoose, server) {
             }
           },
           response: {
-            // schema: Joi.array().items(childModel.readModel ? childModel.readModel : Joi.object().unknown().optional())
-            schema: Joi.any()
+            schema: Joi.array().items(readModel)
+            // schema: Joi.array().items(readModel || Joi.object().unknown().optional())
+            // schema: Joi.array().items(Joi.any())//TODO: proper validation
           }
         }
       });
-    },
+    }
   }
 };
