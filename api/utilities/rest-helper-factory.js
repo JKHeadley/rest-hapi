@@ -539,25 +539,34 @@ module.exports = function (logger, mongoose, server) {
       });
     },
 
+    /**
+     * Creates an endpoint for DELETE /OWNER_RESOURCE/{ownerId}/CHILD_RESOURCE/{childId}
+     * @param server: A Hapi server.
+     * @param ownerModel: A mongoose model.
+     * @param association: An object containing the association data/child mongoose model.
+     * @param options: Options object.
+     * @param Log: A logging object.
+     */
     generateAssociationRemoveOneEndpoint: function (server, ownerModel, association, options, Log) {
+      validationHelper.validateModel(ownerModel, Log);
       var ownerMethods = ownerModel.schema.methods;
+
+      assert(ownerMethods.routeOptions, "routeOptions must exist");
+      assert(ownerMethods.routeOptions.associations, "model associations must exist");
+      assert(association, "association input must exist");
+
       var associationName = association.include.as || association.include.model.modelName;
       var ownerModelName = ownerMethods.collectionDisplayName || ownerModel.modelName;
+
       Log = Log.bind("RemoveOne");
       Log.note("Generating removeOne association endpoint for " + ownerModelName + " -> " + associationName);
-
-
-      assert(ownerMethods.routeOptions);
-      assert(ownerMethods.routeOptions.associations);
-
-      assert(association);
 
       options = options || {};
 
       var ownerAlias = ownerMethods.routeOptions.alias || ownerModel.modelName;
       var childAlias = association.alias || association.include.model.modelName;
 
-      var handler = options.handler ? options.handler : HandlerHelper.generateAssociationRemoveOneHandler(ownerModel, association, options, Log);
+      var handler = HandlerHelper.generateAssociationRemoveOneHandler(ownerModel, association, options, Log);
 
       server.route({
         method: 'DELETE',
@@ -566,12 +575,12 @@ module.exports = function (logger, mongoose, server) {
           handler: handler,
           auth: "token",
           cors: true,
-          description: 'Removes a single ' + associationName + ' from a ' + ownerModelName,
+          description: 'Remove a single ' + associationName + ' from a ' + ownerModelName,
           tags: ['api', associationName, ownerModelName],
           validate: {
             params: {
-              ownerId: Joi.string().required(),//TODO: validate that id is an ObjectId
-              childId: Joi.string().required()//TODO: validate that id is an ObjectId
+              ownerId: Joi.objectId().required(),
+              childId: Joi.objectId().required()
             },
             headers: headersValidation
           },
