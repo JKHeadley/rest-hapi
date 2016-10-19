@@ -466,20 +466,27 @@ module.exports = function (logger, mongoose, server) {
       });
     },
 
+    /**
+     * Creates an endpoint for PUT /OWNER_RESOURCE/{ownerId}/CHILD_RESOURCE/{childId}
+     * @param server: A Hapi server.
+     * @param ownerModel: A mongoose model.
+     * @param association: An object containing the association data/child mongoose model.
+     * @param options: Options object.
+     * @param Log: A logging object.
+     */
     generateAssociationAddOneEndpoint: function (server, ownerModel, association, options, Log) {
+      validationHelper.validateModel(ownerModel, Log);
       var ownerMethods = ownerModel.schema.methods;
+
+      assert(ownerMethods.routeOptions, "routeOptions must exist");
+      assert(ownerMethods.routeOptions.associations, "model associations must exist");
+      assert(association, "association input must exist");
+
       var associationName = association.include.as || association.include.model.modelName;
       var ownerModelName = ownerMethods.collectionDisplayName || ownerModel.modelName;
+
       Log = Log.bind("AddOne");
       Log.note("Generating addOne association endpoint for " + ownerModelName + " -> " + associationName);
-
-
-      // Log.debug(association);
-
-      assert(ownerMethods.routeOptions);
-      assert(ownerMethods.routeOptions.associations);
-
-      assert(association);
 
       options = options || {};
 
@@ -488,9 +495,10 @@ module.exports = function (logger, mongoose, server) {
 
       var handler = HandlerHelper.generateAssociationAddOneHandler(ownerModel, association, options, Log);
 
-      var payloadValidation;
+      var payloadValidation = null;
 
-      if (association.include && association.include.through) {
+      //EXPL: A payload is only relevant if a through model is defined
+      if (association.include.through) {
         payloadValidation = joiMongooseHelper.generateJoiAssociationModel(association.include.through, Log).allow(null);
       }
 
@@ -505,8 +513,8 @@ module.exports = function (logger, mongoose, server) {
           tags: ['api', associationName, ownerModelName],
           validate: {
             params: {
-              ownerId: Joi.string().required(),//TODO: validate that id is an ObjectId
-              childId: Joi.string().required()//TODO: validate that id is an ObjectId
+              ownerId: Joi.objectId().required(),
+              childId: Joi.objectId().required()
             },
             payload: payloadValidation,
             headers: headersValidation
@@ -526,7 +534,7 @@ module.exports = function (logger, mongoose, server) {
               ]
             }
           },
-          response: {}
+          response: {}//TODO: verify what response schema is needed here
         }
       });
     },
