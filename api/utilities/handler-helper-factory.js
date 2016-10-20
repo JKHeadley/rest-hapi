@@ -11,7 +11,7 @@ var extend = require('util')._extend;
 
 //TODO: handle errors/status responses appropriately
 
-//TODO: include option to set all default fields to NULL so they are returned with queries
+//TODO: include option to set all default fields to NULL so they exist and are returned with queries
 
 //TODO: possibly refactor/remove routeOptions
 
@@ -24,10 +24,16 @@ module.exports = function (mongoose, server) {
   var QueryHelper = require('./query-helper');
 
   return {
+    /**
+     * Handles incoming GET requests to /RESOURCE
+     * @param model: A mongoose model.
+     * @param options: Options object.
+     * @param Log: A logging object.
+     * @returns {Function} A handler function
+     */
     generateListHandler: function (model, options, Log) {
       return function (request, reply) {
         try {
-          Log.error(request.query);
           Log.log("params(%s), query(%s), payload(%s)", JSON.stringify(request.params), JSON.stringify(request.query), JSON.stringify(request.payload));
 
           var modelMethods = model.schema.methods;
@@ -35,12 +41,13 @@ module.exports = function (mongoose, server) {
           var mongooseQuery = model.find();
           mongooseQuery = QueryHelper.createMongooseQuery(model, request.query, mongooseQuery, Log);
           mongooseQuery.exec().then(function (result) {
-            Log.debug("result:", result);
+            //Log.debug("result:", result);
 
             var promise = {};
             if (modelMethods.routeOptions.list && modelMethods.routeOptions.list.post) {
               promise = modelMethods.routeOptions.list.post(request, result, Log);
-            } else {
+            }
+            else {
               promise = Q.fcall(function () { return result });
             }
 
@@ -59,6 +66,7 @@ module.exports = function (mongoose, server) {
                 if (result._id) {
                   result._id = result._id.toString();
                 }
+
                 Log.log("Result: %s", JSON.stringify(result));
                 return result;
               })).header('X-Total-Count', result.length);
@@ -77,6 +85,7 @@ module.exports = function (mongoose, server) {
         }
       }
     },
+
     generateFindHandler: function (model, options, Log) {
       options = options || {};
 
@@ -128,6 +137,7 @@ module.exports = function (mongoose, server) {
         }
       }
     },
+
     generateCreateHandler: function (model, options, Log) {
       options = options || {};
 
@@ -185,6 +195,7 @@ module.exports = function (mongoose, server) {
         }
       }
     },
+
     generateDeleteHandler: function (model, options, Log) {
       options = options || {};
       var objectData;
@@ -275,6 +286,7 @@ module.exports = function (mongoose, server) {
         }
       }
     },
+
     generateUpdateHandler: function (model, options, Log) {
       return function (request, reply) {
         try {
@@ -450,6 +462,7 @@ module.exports = function (mongoose, server) {
         }
       }
     },
+
     generateAssociationAddOneHandler: function (ownerModel, association, options, Log) {
       assert(association);
       assert(association.include);
@@ -489,6 +502,7 @@ module.exports = function (mongoose, server) {
         }
       }
     },
+
     generateAssociationRemoveOneHandler: function (ownerModel, association, options, Log) {
       assert(association);
       assert(association.include);
@@ -523,6 +537,7 @@ module.exports = function (mongoose, server) {
         }
       }
     },
+
     generateAssociationAddManyHandler: function (ownerModel, association, options, Log) {
       assert(association);
       assert(association.include);
@@ -586,6 +601,7 @@ module.exports = function (mongoose, server) {
         }
       }
     },
+
     generateAssociationGetAllHandler: function (ownerModel, association, options, Log) {
       assert(association);
       assert(association.include);

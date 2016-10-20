@@ -484,6 +484,9 @@ module.exports = function (logger, mongoose, server) {
 
       var associationName = association.include.as || association.include.model.modelName;
       var ownerModelName = ownerMethods.collectionDisplayName || ownerModel.modelName;
+      var childModel = association.include.model;
+      var childMethods = childModel.schema.methods;
+      var childModelName = childMethods.collectionDisplayName || childModel.modelName;
 
       Log = Log.bind("AddOne");
       Log.note("Generating addOne association endpoint for " + ownerModelName + " -> " + associationName);
@@ -499,7 +502,7 @@ module.exports = function (logger, mongoose, server) {
 
       //EXPL: A payload is only relevant if a through model is defined
       if (association.include.through) {
-        payloadValidation = joiMongooseHelper.generateJoiAssociationModel(association.include.through, Log).allow(null);
+        payloadValidation = joiMongooseHelper.generateJoiAssociationModel(association.include.through, Log);
       }
 
       server.route({
@@ -509,7 +512,7 @@ module.exports = function (logger, mongoose, server) {
           handler: handler,
           auth: "token",
           cors: true,
-          description: 'Add a single ' + associationName + ' to a ' + ownerModelName,
+          description: 'Add a single ' + childModelName + ' object to a ' + ownerModelName + '\'s list of ' + associationName,
           tags: ['api', associationName, ownerModelName],
           validate: {
             params: {
@@ -557,6 +560,9 @@ module.exports = function (logger, mongoose, server) {
 
       var associationName = association.include.as || association.include.model.modelName;
       var ownerModelName = ownerMethods.collectionDisplayName || ownerModel.modelName;
+      var childModel = association.include.model;
+      var childMethods = childModel.schema.methods;
+      var childModelName = childMethods.collectionDisplayName || childModel.modelName;
 
       Log = Log.bind("RemoveOne");
       Log.note("Generating removeOne association endpoint for " + ownerModelName + " -> " + associationName);
@@ -575,7 +581,7 @@ module.exports = function (logger, mongoose, server) {
           handler: handler,
           auth: "token",
           cors: true,
-          description: 'Remove a single ' + associationName + ' from a ' + ownerModelName,
+          description: 'Remove a single ' + childModelName + ' object from a ' + ownerModelName + '\'s list of ' + associationName,
           tags: ['api', associationName, ownerModelName],
           validate: {
             params: {
@@ -650,7 +656,7 @@ module.exports = function (logger, mongoose, server) {
           handler: handler,
           auth: "token",
           cors: true,
-          description: 'Sets multiple ' + associationName + 's for a ' + ownerModelName,
+          description: 'Sets multiple ' + associationName + ' for a ' + ownerModelName,
           tags: ['api', associationName, ownerModelName],
           validate: {
             params: {
@@ -755,7 +761,7 @@ module.exports = function (logger, mongoose, server) {
           handler: handler,
           auth: "token",
           cors: true,
-          description: 'Gets all of the ' + associationName + 's for a ' + ownerModelName,
+          description: 'Gets all of the ' + associationName + ' for a ' + ownerModelName,
           tags: ['api', associationName, ownerModelName],
           validate: {
             query: queryValidation,
