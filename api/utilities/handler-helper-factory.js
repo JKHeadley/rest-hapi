@@ -41,10 +41,9 @@ module.exports = function (mongoose, server) {
           var mongooseQuery = model.find();
           mongooseQuery = QueryHelper.createMongooseQuery(model, request.query, mongooseQuery, Log);
           mongooseQuery.exec().then(function (result) {
-            //Log.debug("result:", result);
 
             var promise = {};
-            if (modelMethods.routeOptions.list && modelMethods.routeOptions.list.post) {
+            if (modelMethods.routeOptions && modelMethods.routeOptions.list && modelMethods.routeOptions.list.post) {
               promise = modelMethods.routeOptions.list.post(request, result, Log);
             }
             else {
@@ -52,35 +51,38 @@ module.exports = function (mongoose, server) {
             }
 
             promise.then(function (result) {
-
               reply(result.map(function (data) {
                 var result = data.toJSON();
-                var associations = modelMethods.routeOptions.associations;
-                for (var associationKey in associations) {
-                  var association = associations[associationKey];
-                  if (association.type === "ONE_MANY" && data[associationKey]) {//EXPL: we have to manually populate the return value for virtual (e.g. ONE_MANY) associations
-                    result[associationKey] = data[associationKey];
+                if (modelMethods.routeOptions) {
+                  var associations = modelMethods.routeOptions.associations;
+                  for (var associationKey in associations) {
+                    var association = associations[associationKey];
+                    if (association.type === "ONE_MANY" && data[associationKey]) {//EXPL: we have to manually populate the return value for virtual (e.g. ONE_MANY) associations
+                      result[associationKey] = data[associationKey];
+                    }
                   }
                 }
 
                 if (result._id) {
-                  result._id = result._id.toString();
+                  result._id = result._id.toString();//EXPL: _id must be a string to pass validation
                 }
 
                 Log.log("Result: %s", JSON.stringify(result));
                 return result;
               })).header('X-Total-Count', result.length);
-            }).catch(function (error) {
+            })
+            .catch(function (error) {
               Log.error("error: ", JSON.stringify(error));
               reply(Boom.badRequest("There was a postprocessing error.", error));
             })
-          }).catch(function (error) {
-            Log.error(error);
-            reply(Boom.serverTimeout("There was an error accessing the database."));
+          })
+          .catch(function (error) {
+            Log.error("error: ", JSON.stringify(error));
+            reply(Boom.serverTimeout("There was an error accessing the database.", error));
           });
         }
         catch(error) {
-          Log.error(error);
+          Log.error("error: ", JSON.stringify(error));
           reply(Boom.badRequest("There was an error processing the request.", error));
         }
       }

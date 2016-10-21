@@ -12,6 +12,7 @@
   "dependencies": {
     "aws-sdk": "^2.2.38",
     "bcrypt-nodejs": "latest",
+    "blue-tape": "^1.0.0",
     "body-parser": "~1.13.2",
     "boom": "^2.9.0",
     "chalk": "*",
