@@ -69,7 +69,7 @@ module.exports = function (mongoose, server) {
 
                 Log.log("Result: %s", JSON.stringify(result));
                 return result;
-              })).header('X-Total-Count', result.length);
+              })).header('X-Total-Count', result.length).code(200);;
             })
             .catch(function (error) {
               Log.error("error: ", JSON.stringify(error));
@@ -88,6 +88,13 @@ module.exports = function (mongoose, server) {
       }
     },
 
+    /**
+     * Handles incoming GET requests to /RESOURCE/{_id}
+     * @param model: A mongoose model.
+     * @param options: Options object.
+     * @param Log: A logging object.
+     * @returns {Function} A handler function
+     */
     generateFindHandler: function (model, options, Log) {
       options = options || {};
 
@@ -99,38 +106,48 @@ module.exports = function (mongoose, server) {
 
           var mongooseQuery = model.findOne({ '_id': request.params.id });
           mongooseQuery = QueryHelper.createMongooseQuery(model, request.query, mongooseQuery, Log);
-          mongooseQuery.exec().then(function (data) {
-            if (data) {
-              var result = data.toJSON();
-              var associations = modelMethods.routeOptions.associations;
-              for (var associationKey in associations) {
-                var association = associations[associationKey];
-                if (association.type === "ONE_MANY" && data[associationKey]) {//EXPL: we have to manually populate the return value for virtual (e.g. ONE_MANY) associations
-                  result[associationKey] = data[associationKey];
-                }
-              }
+          mongooseQuery.exec().then(function (result) {
+            if (result) {
 
-              Log.debug("result:", result);
               var promise = {};
-              if (modelMethods.routeOptions.find && modelMethods.routeOptions.find.post) {
-                promise = modelMethods.routeOptions.list.post(request, result, Log);
+              if (modelMethods.routeOptions && modelMethods.routeOptions.find && modelMethods.routeOptions.find.post) {
+                promise = modelMethods.routeOptions.find.post(request, result, Log);
               } else {
                 promise = Q.when(result);
               }
 
               return promise.then(function(result) {
-                result._id = result._id.toString();//TODO: handle this with mongoose/global preware
+                result = result.toJSON();
+                if (modelMethods.routeOptions) {
+                  var associations = modelMethods.routeOptions.associations;
+                  for (var associationKey in associations) {
+                    var association = associations[associationKey];
+                    if (association.type === "ONE_MANY" && data[associationKey]) {//EXPL: we have to manually populate the return value for virtual (e.g. ONE_MANY) associations
+                      result[associationKey] = data[associationKey];
+                    }
+                  }
+                }
+
+                if (result._id) {//TODO: handle this with mongoose/global preware
+                  result._id = result._id.toString();//EXPL: _id must be a string to pass validation
+                }
+
+                Log.log("Result: %s", JSON.stringify(result));
+
                 return reply(result).code(200);
-              }).catch(function (error) {
+              })
+              .catch(function (error) {
                 Log.error("error: ", JSON.stringify(error));
-                return reply(Boom.badRequest("There was a postprocessing error creating the resource", error));
+                return reply(Boom.badRequest("There was a postprocessing error.", error));
               });
-            } else {
+            }
+            else {
               return reply(Boom.notFound("There was no data found with that id.", request.params.id));
             }
-          }).catch(function (error) {
-            Log.error("error(%s)", JSON.stringify(error));
-            return reply(Boom.serverTimeout("There was an error accessing the database."));
+          })
+          .catch(function (error) {
+            Log.error("error: ", JSON.stringify(error));
+            return reply(Boom.serverTimeout("There was an error accessing the database.", error));
           });
         }
         catch(error) {

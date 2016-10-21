@@ -133,12 +133,11 @@ test('handler-helper-factory.generateListHandler', function(t) {
       var handlerHelperFactory = proxyquire('../utilities/handler-helper-factory', {
         './query-helper': queryHelperStub
       })(mongoose, server);
-      // sandbox.stub(Log, 'error', function(){});
+      sandbox.stub(Log, 'error', function(){});
 
       var userSchema = new mongoose.Schema({});
       var postDeferred = Q.defer();
       var postSpy = sandbox.spy(function() {
-        sandbox.stub(Log, 'error', function(){});
         postDeferred.resolve() ;
       });
       userSchema.methods = {
@@ -363,6 +362,406 @@ test('handler-helper-factory.generateListHandler', function(t) {
 
       //<editor-fold desc="Act">
       handlerHelperFactory.generateListHandler(userModel, {}, Log)(request, reply);
+      //</editor-fold>
+
+      //<editor-fold desc="Assert">
+      return replyDeferred.promise.then(function() {
+        t.ok(boomStub.badRequest.calledWithExactly("There was an error processing the request.", error), "reply called with general processing error");
+      })
+      //</editor-fold>
+
+      //<editor-fold desc="Restore">
+      .then(function(){
+        sandbox.restore();
+        delete mongoose.models.user;
+        delete mongoose.modelSchemas.user;
+      });
+      //</editor-fold>
+    });
+  });
+
+});
+
+test('handler-helper-factory.generateFindHandler', function(t) {
+
+  return Q.when()
+
+  //handler-helper-factory.generateFindHandler calls model.findOne()
+  .then(function() {
+    return t.test('handler-helper-factory.generateFindHandler calls model.findOne()', function (t) {
+      //<editor-fold desc="Arrange">
+      var sandbox = sinon.sandbox.create();
+      var Log = logger.bind("handler-helper-factory");
+      var server = sandbox.spy();
+      var queryHelperStub = sandbox.stub(require('../utilities/query-helper'));
+      var handlerHelperFactory = proxyquire('../utilities/handler-helper-factory', {
+        './query-helper': queryHelperStub
+      })(mongoose, server);
+      sandbox.stub(Log, 'error', function(){});
+
+      var userSchema = new mongoose.Schema({});
+
+      var userModel = mongoose.model("user", userSchema);
+
+      userModel.findOne = sandbox.spy();
+
+      var request = { params: { id: "TEST" }};
+      //</editor-fold>
+
+      //<editor-fold desc="Act">
+      handlerHelperFactory.generateFindHandler(userModel, {}, Log)(request, function(){});
+      //</editor-fold>
+
+      //<editor-fold desc="Assert">
+      t.ok(userModel.findOne.calledWithExactly({ '_id': "TEST" }), "findOne called");
+      //</editor-fold>
+
+
+      //<editor-fold desc="Restore">
+      sandbox.restore();
+      delete mongoose.models.user;
+      delete mongoose.modelSchemas.user;
+      return Q.when();
+      //</editor-fold>
+    });
+  })
+
+  //handler-helper-factory.generateFindHandler calls QueryHelper.createMongooseQuery
+  .then(function() {
+    return t.test('handler-helper-factory.generateFindHandler calls QueryHelper.createMongooseQuery', function (t) {
+      //<editor-fold desc="Arrange">
+      var sandbox = sinon.sandbox.create();
+      var Log = logger.bind("handler-helper-factory");
+      var server = sandbox.spy();
+      var queryHelperStub = sandbox.stub(require('../utilities/query-helper'));
+      var handlerHelperFactory = proxyquire('../utilities/handler-helper-factory', {
+        './query-helper': queryHelperStub,
+      })(mongoose, server);
+      sandbox.stub(Log, 'error', function(){});
+
+      var userSchema = new mongoose.Schema({});
+
+      var userModel = mongoose.model("user", userSchema);
+
+      userModel.findOne = sandbox.spy(function(){ return "TEST" });
+
+      var request = { query: {}, params: { id: {}} };
+      var reply = function(){};
+      //</editor-fold>
+
+      //<editor-fold desc="Act">
+      handlerHelperFactory.generateFindHandler(userModel, {}, Log)(request, reply);
+      //</editor-fold>
+
+      //<editor-fold desc="Assert">
+      t.ok(queryHelperStub.createMongooseQuery.calledWithExactly(userModel, request.query, "TEST", Log), "createMongooseQuery called");
+      //</editor-fold>
+
+
+      //<editor-fold desc="Restore">
+      sandbox.restore();
+      delete mongoose.models.user;
+      delete mongoose.modelSchemas.user;
+      return Q.when();
+      //</editor-fold>
+    });
+  })
+
+  //handler-helper-factory.generateFindHandler calls post processing if it exists
+  .then(function() {
+    return t.test('handler-helper-factory.generateFindHandler calls post processing if it exists', function (t) {
+      //<editor-fold desc="Arrange">
+      var sandbox = sinon.sandbox.create();
+      var Log = logger.bind("handler-helper-factory");
+      var server = sandbox.spy();
+      var queryHelperStub = sandbox.stub(require('../utilities/query-helper'));
+      queryHelperStub.createMongooseQuery = function(){ return { exec: function(){ return Q.when("TEST") }}};
+      var handlerHelperFactory = proxyquire('../utilities/handler-helper-factory', {
+        './query-helper': queryHelperStub
+      })(mongoose, server);
+      sandbox.stub(Log, 'error', function(){});
+
+      var userSchema = new mongoose.Schema({});
+      var postDeferred = Q.defer();
+      var postSpy = sandbox.spy(function() {
+        postDeferred.resolve() ;
+      });
+      userSchema.methods = {
+        routeOptions: {
+          find: {
+            post: postSpy
+          }
+        }
+      };
+
+      var userModel = mongoose.model("user", userSchema);
+
+      userModel.findOne = sandbox.spy();
+
+      var request = { query: {}, params: { id: {}} };
+      var reply = function(){};
+      //</editor-fold>
+
+      //<editor-fold desc="Act">
+      handlerHelperFactory.generateFindHandler(userModel, {}, Log)(request, reply);
+      //</editor-fold>
+
+      //<editor-fold desc="Assert">
+      return postDeferred.promise.then(function() {
+        t.ok(postSpy.calledWithExactly(request, "TEST", Log), "list.post called");
+      })
+      //</editor-fold>
+
+
+      //<editor-fold desc="Restore">
+      .then(function(){
+        sandbox.restore();
+        delete mongoose.models.user;
+        delete mongoose.modelSchemas.user;
+      });
+      //</editor-fold>
+    });
+  })
+
+  //handler-helper-factory.generateFindHandler replies with a list of results
+  .then(function() {
+    return t.test('handler-helper-factory.generateFindHandler replies with a single result', function (t) {
+      //<editor-fold desc="Arrange">
+      var sandbox = sinon.sandbox.create();
+      var Log = logger.bind("handler-helper-factory");
+      var server = sandbox.spy();
+      var result = { toJSON: function(){ return "TEST" }}
+      var queryHelperStub = sandbox.stub(require('../utilities/query-helper'));
+      queryHelperStub.createMongooseQuery = function(){ return { exec: function(){ return Q.when(result) }}}
+      var handlerHelperFactory = proxyquire('../utilities/handler-helper-factory', {
+        './query-helper': queryHelperStub,
+      })(mongoose, server);
+      sandbox.stub(Log, 'error', function(){});
+
+      var userSchema = new mongoose.Schema({});
+
+      var userModel = mongoose.model("user", userSchema);
+
+      userModel.findOne = sandbox.spy();
+
+      var request = { query: {}, params: { id: {}} };
+      var replyDeferred = Q.defer();
+      var reply = sandbox.spy(function() { replyDeferred.resolve() });
+      //</editor-fold>
+
+      //<editor-fold desc="Act">
+      handlerHelperFactory.generateFindHandler(userModel, {}, Log)(request, reply);
+      //</editor-fold>
+
+      //<editor-fold desc="Assert">
+      return replyDeferred.promise.then(function() {
+        Log.error(reply.args[0]);
+        t.ok(reply.calledWithExactly("TEST"), "reply called with result");
+      })
+      //</editor-fold>
+
+
+      //<editor-fold desc="Restore">
+      .then(function(){
+        sandbox.restore();
+        delete mongoose.models.user;
+        delete mongoose.modelSchemas.user;
+      });
+      //</editor-fold>
+    });
+  })
+
+  //handler-helper-factory.generateFindHandler replies with a postprocessing error
+  .then(function() {
+    return t.test('handler-helper-factory.generateFindHandler replies with a postprocessing error', function (t) {
+      //<editor-fold desc="Arrange">
+      var sandbox = sinon.sandbox.create();
+      var Log = logger.bind("handler-helper-factory");
+      var server = sandbox.spy();
+      var queryHelperStub = sandbox.stub(require('../utilities/query-helper'));
+      queryHelperStub.createMongooseQuery = function(){ return { exec: function(){ return Q.when("TEST") }}}
+      var boomStub = sandbox.stub(require('boom'));
+      var handlerHelperFactory = proxyquire('../utilities/handler-helper-factory', {
+        './query-helper': queryHelperStub,
+        'boom': boomStub
+      })(mongoose, server);
+      sandbox.stub(Log, 'error', function(){});
+
+      var userSchema = new mongoose.Schema({});
+      var postDeferred = Q.defer();
+      var error = "error message";
+      postDeferred.reject(error);
+      userSchema.methods = {
+        routeOptions: {
+          find: {
+            post: function(){ return postDeferred.promise }
+          }
+        }
+      };
+
+      var userModel = mongoose.model("user", userSchema);
+
+      userModel.findOne = sandbox.spy();
+
+      var request = { query: {}, params: { id: {}} };
+      var replyDeferred = Q.defer();
+      var reply = sandbox.spy(function() { replyDeferred.resolve() });
+      //</editor-fold>
+
+      //<editor-fold desc="Act">
+      handlerHelperFactory.generateFindHandler(userModel, {}, Log)(request, reply);
+      //</editor-fold>
+
+      //<editor-fold desc="Assert">
+      return replyDeferred.promise.then(function() {
+        t.ok(boomStub.badRequest.calledWithExactly("There was a postprocessing error.", error), "reply called with postprocessing error");
+      })
+      //</editor-fold>
+
+      //<editor-fold desc="Restore">
+      .then(function(){
+        sandbox.restore();
+        delete mongoose.models.user;
+        delete mongoose.modelSchemas.user;
+      });
+      //</editor-fold>
+    });
+  })
+
+  //handler-helper-factory.generateFindHandler replies with a not found error
+  .then(function() {
+    return t.test('handler-helper-factory.generateFindHandler replies with a not found error', function (t) {
+      //<editor-fold desc="Arrange">
+      var sandbox = sinon.sandbox.create();
+      var Log = logger.bind("handler-helper-factory");
+      var server = sandbox.spy();
+      var queryHelperStub = sandbox.stub(require('../utilities/query-helper'));
+      queryHelperStub.createMongooseQuery = function(){ return { exec: function(){ return Q.when(null) }}}
+      var boomStub = sandbox.stub(require('boom'));
+      var handlerHelperFactory = proxyquire('../utilities/handler-helper-factory', {
+        './query-helper': queryHelperStub,
+        'boom': boomStub
+      })(mongoose, server);
+      sandbox.stub(Log, 'error', function(){});
+
+      var userSchema = new mongoose.Schema({});
+      var postDeferred = Q.defer();
+      var error = "error message";
+      postDeferred.reject(error);
+      userSchema.methods = {
+        routeOptions: {
+          find: {
+            post: function(){ return postDeferred.promise }
+          }
+        }
+      };
+
+      var userModel = mongoose.model("user", userSchema);
+
+      userModel.findOne = sandbox.spy();
+
+      var request = { query: {}, params: { id: "TEST"} };
+      var replyDeferred = Q.defer();
+      var reply = sandbox.spy(function() { replyDeferred.resolve() });
+      //</editor-fold>
+
+      //<editor-fold desc="Act">
+      handlerHelperFactory.generateFindHandler(userModel, {}, Log)(request, reply);
+      //</editor-fold>
+
+      //<editor-fold desc="Assert">
+      return replyDeferred.promise.then(function() {
+        t.ok(boomStub.notFound.calledWithExactly("There was no data found with that id.", "TEST"), "reply called with not found error");
+      })
+      //</editor-fold>
+
+      //<editor-fold desc="Restore">
+      .then(function(){
+        sandbox.restore();
+        delete mongoose.models.user;
+        delete mongoose.modelSchemas.user;
+      });
+      //</editor-fold>
+    });
+  })
+
+  //handler-helper-factory.generateFindHandler replies with a database error
+  .then(function() {
+    return t.test('handler-helper-factory.generateFindHandler replies with a database error', function (t) {
+      //<editor-fold desc="Arrange">
+      var sandbox = sinon.sandbox.create();
+      var Log = logger.bind("handler-helper-factory");
+      var server = sandbox.spy();
+      var queryHelperStub = sandbox.stub(require('../utilities/query-helper'));
+      var error = "error message";
+      queryHelperStub.createMongooseQuery = function(){ return { exec: function(){ return Q.reject(error) }}};
+      var boomStub = sandbox.stub(require('boom'));
+      var handlerHelperFactory = proxyquire('../utilities/handler-helper-factory', {
+        './query-helper': queryHelperStub,
+        'boom': boomStub
+      })(mongoose, server);
+      sandbox.stub(Log, 'error', function(){});
+
+      var userSchema = new mongoose.Schema({});
+
+      var userModel = mongoose.model("user", userSchema);
+
+      userModel.findOne = sandbox.spy();
+
+      var request = { query: {}, params: { id: "TEST"} };
+      var replyDeferred = Q.defer();
+      var reply = sandbox.spy(function() { replyDeferred.resolve() });
+      //</editor-fold>
+
+      //<editor-fold desc="Act">
+      handlerHelperFactory.generateFindHandler(userModel, {}, Log)(request, reply);
+      //</editor-fold>
+
+      //<editor-fold desc="Assert">
+      return replyDeferred.promise.then(function() {
+        t.ok(boomStub.serverTimeout.calledWithExactly("There was an error accessing the database.", error), "reply called with database error");
+      })
+      //</editor-fold>
+
+      //<editor-fold desc="Restore">
+      .then(function(){
+        sandbox.restore();
+        delete mongoose.models.user;
+        delete mongoose.modelSchemas.user;
+      });
+      //</editor-fold>
+    });
+  })
+
+  //handler-helper-factory.generateFindHandler replies with a general processing error
+  .then(function() {
+    return t.test('handler-helper-factory.generateFindHandler replies with a general processing error', function (t) {
+      //<editor-fold desc="Arrange">
+      var sandbox = sinon.sandbox.create();
+      var Log = logger.bind("handler-helper-factory");
+      var server = sandbox.spy();
+      var queryHelperStub = sandbox.stub(require('../utilities/query-helper'));
+      var boomStub = sandbox.stub(require('boom'));
+      var handlerHelperFactory = proxyquire('../utilities/handler-helper-factory', {
+        './query-helper': queryHelperStub,
+        'boom': boomStub
+      })(mongoose, server);
+      sandbox.stub(Log, 'error', function(){});
+
+      var userSchema = new mongoose.Schema({});
+
+      var userModel = mongoose.model("user", userSchema);
+
+      var error = "error message";
+      userModel.findOne = sandbox.spy(function(){ throw(error) });
+
+      var request = { query: {}, params: { id: "TEST"} };
+      var replyDeferred = Q.defer();
+      var reply = sandbox.spy(function() { replyDeferred.resolve() });
+      //</editor-fold>
+
+      //<editor-fold desc="Act">
+      handlerHelperFactory.generateFindHandler(userModel, {}, Log)(request, reply);
       //</editor-fold>
 
       //<editor-fold desc="Assert">
