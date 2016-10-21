@@ -47,7 +47,7 @@ module.exports = function (mongoose, server) {
               promise = modelMethods.routeOptions.list.post(request, result, Log);
             }
             else {
-              promise = Q.fcall(function () { return result });
+              promise = Q.when(result);
             }
 
             promise.then(function (result) {
@@ -115,7 +115,7 @@ module.exports = function (mongoose, server) {
               if (modelMethods.routeOptions.find && modelMethods.routeOptions.find.post) {
                 promise = modelMethods.routeOptions.list.post(request, result, Log);
               } else {
-                promise = Q.fcall(function () { return result });
+                promise = Q.when(result);
               }
 
               return promise.then(function(result) {
@@ -154,7 +154,7 @@ module.exports = function (mongoose, server) {
           if(modelMethods.routeOptions.create && modelMethods.routeOptions.create.pre){
             promise = modelMethods.routeOptions.create.pre(request, Log);
           } else {
-            promise = Q.fcall(function () { return request });
+            promise = Q.when(request);
           }
 
           return promise.then(function (request) {
@@ -218,7 +218,7 @@ module.exports = function (mongoose, server) {
               if(modelMethods.routeOptions.delete && modelMethods.routeOptions.delete.pre){
                 promise = modelMethods.routeOptions.delete.pre(request.params.id, Log);
               } else {
-                promise = Q.fcall(function () { });
+                promise = Q.when();
               }
 
               return promise.then(function() {
