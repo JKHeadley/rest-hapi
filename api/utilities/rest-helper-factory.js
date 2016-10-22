@@ -288,7 +288,8 @@ module.exports = function (logger, mongoose, server) {
 
       if (modelMethods.routeOptions) {
         resourceAliasForRoute = modelMethods.routeOptions.alias || model.modelName;
-      } else {
+      }
+      else {
         resourceAliasForRoute = model.modelName;
       }
 
@@ -353,7 +354,8 @@ module.exports = function (logger, mongoose, server) {
 
       if (modelMethods.routeOptions) {
         resourceAliasForRoute = modelMethods.routeOptions.alias || model.modelName;
-      } else {
+      }
+      else {
         resourceAliasForRoute = model.modelName;
       }
 
@@ -417,7 +419,8 @@ module.exports = function (logger, mongoose, server) {
 
       if (modelMethods.routeOptions) {
         resourceAliasForRoute = modelMethods.routeOptions.alias || model.modelName;
-      } else {
+      }
+      else {
         resourceAliasForRoute = model.modelName;
       }
 

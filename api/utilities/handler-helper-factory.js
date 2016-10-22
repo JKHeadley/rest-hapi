@@ -197,14 +197,14 @@ module.exports = function (mongoose, server) {
                   promise = modelMethods.routeOptions.create.post(request, result, Log);
                 }
                 else {
-                  promise = Q.fcall(function () { return result });
+                  promise = Q.when(result);
                 }
 
                 return promise.then(function (result) {
                   result._id = result._id.toString();//TODO: handle this with preware
                   return reply(result).code(201);
-                }).
-                catch(function (error) {
+                })
+                .catch(function (error) {
                   Log.error("error: ", JSON.stringify(error));
                   return reply(Boom.badRequest("There was a postprocessing error creating the resource", error));
                 });
@@ -290,178 +290,75 @@ module.exports = function (mongoose, server) {
       }
     },
 
+    /**
+     * Handles incoming UPDATE requests to /RESOURCE/{_id}
+     * @param model: A mongoose model.
+     * @param options: Options object.
+     * @param Log: A logging object.
+     * @returns {Function} A handler function
+     */
     generateUpdateHandler: function (model, options, Log) {
+      options = options || {};
+
       return function (request, reply) {
         try {
           Log.log("params(%s), query(%s), payload(%s)", JSON.stringify(request.params), JSON.stringify(request.query), JSON.stringify(request.payload));
 
-          var collectionName = model.collectionDisplayName || model.modelName;
+          var modelMethods = model.schema.methods;
 
-          //EXPL: retrieve the old values before updating
-          //NOTE: this is unnecesary since the "findByIdAndUpdate" below returns the old values
-          var properties = Object.keys(request.payload);
-          var oldValues = [];
-          model.findOne({ '_id': request.params.id }).then(function (data) {
-            for (var i = 0; i < properties.length; i++) {
-              var property = properties[i];
-              oldValues[property] = data[property];
-            }
+          var promise =  {};
+          if (modelMethods.routeOptions && modelMethods.routeOptions.update && modelMethods.routeOptions.update.pre){
+            promise = modelMethods.routeOptions.update.pre(request, Log);
+          }
+          else {
+            promise = Q.when(request);
+          }
+
+          return promise.then(function (request) {
 
             //TODO: support eventLogs and log all property updates in one document rather than one document per property update
-            //NOTE: need to do another "find" after the update to grab the new values and log them
-            model.findByIdAndUpdate(request.params.id, request.payload).then(function (object) {
-              Log.debug("object:", object);
-              if (object) {
-                var associations = model.schema.methods.routeOptions.associations;
-                //EXPL: if a reference id was updated/added, we need to update the association
+            model.findByIdAndUpdate(request.params._id, request.payload).then(function (result) {
+              if (result) {
                 //TODO: log all updated/added associations
-                for (var key in request.payload) {
-                  var association = associations[key];
-                }
+                var attributes = QueryHelper.createAttributesFilter(request.query, model, Log);
 
-                var idField = model.idField || "id";
-                var nameField = model.nameField || "name";
+                return model.findOne({'_id': result._id}, attributes).then(function (result) {
+                  result = result.toJSON();
 
-                var objectDisplayProperty = [];
-                var objectDisplayOldValue = [];
-                var objectDisplayNewValue = [];
-                var associationModel = [];
-                var params = {};
-                //EXPL: Loop through each property changed and create a log with old and new values
-                // for (var i = 0; i < properties.length; i++) {
-                //   var property = properties[i];
-                //
-                //   objectDisplayProperty[i] = model.collectionAttributes[property].displayName;
-                //
-                //   //EXPL: by default the display values and original values are the same
-                //   objectDisplayOldValue[i] = oldValues[property];
-                //   objectDisplayNewValue[i] = newValues[property];
-                //
-                //   //EXPL: make this a function so it can be invoked later once values have been set
-                //   function createEventLog(params) {
-                //     options.models.eventLog.create(params).then(function (eventLog) {
-                //       options.models.user.findById(eventLog.userId).then(function (user) {
-                //         eventLog.user = user;
-                //         require('../../api/utilities/refresh-activity-feeds')(request, server, null, options, Log)([eventLog]).then(function(result) {
-                //         }).catch(function(error) {
-                //           Log.error(error);
-                //         });
-                //         require('../../api/utilities/refresh-notifications')(request, server, null, options, Log)([eventLog]).then(function(result) {
-                //         }).catch(function(error) {
-                //           Log.error(error);
-                //         });
-                //       }).catch(function(error) {
-                //         Log.error(error);
-                //       });
-                //       Log.log("Event Log Created: %s", JSON.stringify(eventLog));
-                //     });
-                //   }
-                //
-                //   //EXPL: if the property is an id then grab the objects corresponding to the new and old id values
-                //   var propertyAssociation = model.collectionAttributes[property].association;
-                //
-                //   if (propertyAssociation) {
-                //     associationModel[i] = options.models[propertyAssociation];
-                //     associationModel[i].findAndCountAll({where: {id: {$or: [objectDisplayOldValue[i], objectDisplayNewValue[i]]}}}).then(function (valueData) {
-                //       valueData = valueData.rows;
-                //
-                //       if (valueData.length > 0) {
-                //         //EXPL: find the index of the property that's data was returned
-                //         for (var index = 0; index < properties.length; index++) {
-                //           var oldValueObject = valueData.filter(function (valueObject) {
-                //             return valueObject.id === oldValues[properties[index]];
-                //           });
-                //           var newValueObject = valueData.filter(function (valueObject) {
-                //             return valueObject.id === newValues[properties[index]];
-                //           });
-                //           if (oldValueObject[0] || newValueObject[0]) {
-                //             break;
-                //           }
-                //         }
-                //
-                //         var propertyNameField = associationModel[index].nameField || "name";
-                //
-                //         //EXPL: update the display values
-                //         //Ex: role: old -> Admin, new -> Owner
-                //         if (oldValueObject[0]) {
-                //           objectDisplayOldValue[index] = oldValueObject[0][propertyNameField];
-                //         } else {
-                //           objectDisplayOldValue[index] = null;
-                //         }
-                //
-                //         if (newValueObject[0]) {
-                //           objectDisplayNewValue[index] = newValueObject[0][propertyNameField];
-                //         } else {
-                //           objectDisplayNewValue[index] = null;
-                //         }
-                //       } else {
-                //         //EXPL: find the first property with null old and new values that hasn't been logged
-                //         for (index = 0; index < properties.length; index++) {
-                //           if (objectDisplayOldValue[index] == null && objectDisplayNewValue[index] == null && properties[index] != null) {
-                //             break;
-                //           }
-                //         }
-                //       }
-                //
-                //       var associationParams = {
-                //         userId: request.auth.credentials.user.id,
-                //         organizationId: request.auth.credentials.user.organizationId,
-                //         verb: "updated",
-                //         objectId: newValues[idField] || "unknown",
-                //         objectName: newValues[nameField] || "unknown",
-                //         objectType: model.modelName,
-                //         objectDisplayType: collectionName,
-                //         objectProperty: properties[index],
-                //         objectDisplayProperty: objectDisplayProperty[index],
-                //         objectOldValue: oldValues[properties[index]],
-                //         objectDisplayOldValue: objectDisplayOldValue[index],
-                //         objectNewValue: newValues[properties[index]],
-                //         objectDisplayNewValue: objectDisplayNewValue[index]
-                //       };
-                //
-                //       //EXPL: mark this property as logged by setting it to null
-                //       properties[index] = null;
-                //       createEventLog(associationParams);
-                //
-                //     });
-                //   } else {
-                //     params = {
-                //       userId: request.auth.credentials.user.id,
-                //       organizationId: request.auth.credentials.user.organizationId,
-                //       verb: "updated",
-                //       objectId: newValues[idField] || "unknown",
-                //       objectName: newValues[nameField] || "unknown",
-                //       objectType: model.modelName,
-                //       objectDisplayType: collectionName,
-                //       objectProperty: property,
-                //       objectDisplayProperty: objectDisplayProperty[i],
-                //       objectOldValue: oldValues[property],
-                //       objectDisplayOldValue: objectDisplayOldValue[i],
-                //       objectNewValue: newValues[property],
-                //       objectDisplayNewValue: objectDisplayNewValue[i]
-                //     };
-                //
-                //     properties[i] = null;
-                //     createEventLog(params);
-                //   }
-                // }
-                reply().code(204);
+                  if (modelMethods.routeOptions && modelMethods.routeOptions.update && modelMethods.routeOptions.update.post) {
+                    promise = modelMethods.routeOptions.update.post(request, result, Log);
+                  }
+                  else {
+                    promise = Q.when(result);
+                  }
 
-              } else {
-                reply(Boom.notFound("No resource was found with that id."));
+                  return promise.then(function (result) {
+                    result._id = result._id.toString();//TODO: handle this with preware
+                    return reply(result).code(200);
+                  })
+                  .catch(function (error) {
+                    Log.error("error: ", JSON.stringify(error));
+                    return reply(Boom.badRequest("There was a postprocessing error updating the resource", error));
+                  });
+                })
               }
-            }).catch(function (error) {
-              Log.error("error(%s)", JSON.stringify(error));
-              reply(Boom.badRequest("An error occurred updating the resource.", error));
+              else {
+                return reply(Boom.notFound("No resource was found with that id."));
+              }
+            })
+            .catch(function (error) {
+              Log.error("error: ", JSON.stringify(error));
+              return reply(Boom.serverTimeout("There was an error updating the resource", error));
             });
-          }).catch(function (error) {
-            Log.error("error(%s)", JSON.stringify(error));
-            reply(Boom.badRequest("An error occurred updating the resource.", error));
+          })
+          .catch(function (error) {
+            Log.error("error: ", JSON.stringify(error));
+            return reply(Boom.badRequest("There was a preprocessing error updating the resource", error));
           });
         }
         catch(error) {
           Log.error(error);
-          reply(Boom.badRequest("There was an error processing the request.", error));
+          return reply(Boom.badRequest("There was an error processing the request.", error));
         }
       }
     },
