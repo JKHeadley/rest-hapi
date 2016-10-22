@@ -172,7 +172,6 @@ module.exports = function (mongoose, server) {
           Log.log("params(%s), query(%s), payload(%s)", JSON.stringify(request.params), JSON.stringify(request.query), JSON.stringify(request.payload));
 
           var modelMethods = model.schema.methods;
-          // var collectionName = modelMethods.collectionDisplayName || model.modelName;
 
           var promise =  {};
           if (modelMethods.routeOptions && modelMethods.routeOptions.create && modelMethods.routeOptions.create.pre){
@@ -228,93 +227,65 @@ module.exports = function (mongoose, server) {
       }
     },
 
+    /**
+     * Handles incoming DELETE requests to /RESOURCE/{_id}
+     * @param model: A mongoose model.
+     * @param options: Options object.
+     * @param Log: A logging object.
+     * @returns {Function} A handler function
+     */
     generateDeleteHandler: function (model, options, Log) {
       options = options || {};
-      var objectData;
-      var t;
+
       return function (request, reply) {
         try {
           Log.log("params(%s), query(%s), payload(%s)", JSON.stringify(request.params), JSON.stringify(request.query), JSON.stringify(request.payload));
 
           var modelMethods = model.schema.methods;
-          var collectionName = modelMethods.collectionDisplayName || model.modelName;
 
-          return model.findOne({ '_id': request.params.id }).then(function (result) {
-            if (result) {
-              var idField = model.idField || "id";
-              var nameField = model.nameField || "name";
+          var promise = {};
+          if (modelMethods.routeOptions && modelMethods.routeOptions.delete && modelMethods.routeOptions.delete.pre) {
+            promise = modelMethods.routeOptions.delete.pre(request, Log);
+          }
+          else {
+            promise = Q.when();
+          }
 
-              var promise =  {};
-              if(modelMethods.routeOptions.delete && modelMethods.routeOptions.delete.pre){
-                promise = modelMethods.routeOptions.delete.pre(request.params.id, Log);
-              } else {
-                promise = Q.when();
-              }
+          return promise.then(function () {
+            //TODO: implement option for soft delete
+            return model.findByIdAndRemove(request.params._id).then(function (deleted) {//TODO: clean up associations/set rules for ON DELETE CASCADE/etc.
+              if (deleted) {
+                //TODO: add eventLogs
 
-              return promise.then(function() {
-                //TODO: implement option for soft delete
-                return model.findByIdAndRemove(request.params.id).then(function (deleted) {//TODO: clean up associations/set rules for ON DELETE CASCADE/etc.
-                  if (deleted) {
-                    objectData = deleted;
-                    //TODO: add eventLogs
-                    // return options.models.eventLog.create({
-                    //   userId: request.auth.credentials.user.id,
-                    //   organizationId: request.auth.credentials.user.organizationId,
-                    //   verb: "deleted",
-                    //   objectId: objectData[idField] || "unknown",
-                    //   objectName: objectData[nameField] || "unknown",
-                    //   objectType: model.modelName,
-                    //   objectDisplayType: collectionName
-                    // }, {transaction: t}).then(function (eventLog) {
-                    //   Log.log("Event Log Created: %s", JSON.stringify(eventLog));
-                    //   options.models.user.findById(eventLog.userId).then(function (user) {
-                    //     eventLog.user = user;
-                    //     require('../../api/utilities/refresh-activity-feeds')(request, server, null, options, Log)([eventLog]).then(function(result) {
-                    //     }).catch(function(error) {
-                    //       Log.error(error);
-                    //     });
-                    //     require('../../api/utilities/refresh-notifications')(request, server, null, options, Log)([eventLog]).then(function(result) {
-                    //     }).catch(function(error) {
-                    //       Log.error(error);
-                    //     });
-                    //   }).catch(function(error) {
-                    //     Log.error(error);
-                    //   });
-                    //
-                    //   logImplicitAssociations("unassociated", request, server, options, objectData, model, Log);
-                    //
-                    //   return true;
-                    // });
+                var promise = {};
+                if (modelMethods.routeOptions && modelMethods.routeOptions.delete && modelMethods.routeOptions.delete.post) {
+                  promise = modelMethods.routeOptions.delete.post(request, deleted, Log);
+                }
+                else {
+                  promise = Q.when();
+                }
 
-                    var promise =  {};
-                    if (modelMethods.routeOptions.delete && modelMethods.routeOptions.delete.post) {
-                      promise = modelMethods.routeOptions.delete.post(request.params.id, Log, objectData);
-                    } else {
-                      promise = Q.fcall(function () { });
-                    }
-                    promise.then(function () {
-                      reply().code(204);
-                    }).catch(function (error) {
-                      Log.error("error: ", JSON.stringify(error));
-                      return reply(Boom.badRequest("There was a postprocessing error deleting the resource", error));
-                    });
-                  } else {
-                    return reply(Boom.notFound("No resource was found with that id."));
-                  }
+                return promise.then(function () {
+                  return reply().code(204);
+                })
+                .catch(function (error) {
+                  Log.error("error: ", JSON.stringify(error));
+                  return reply(Boom.badRequest("There was a postprocessing error deleting the resource", error));
                 });
-              }).catch(function (error) {
-                Log.error("error: ", JSON.stringify(error));
-                reply(Boom.badRequest("There was a preprocessing error deleting the resource", error));
-              });
-            } else {
-              return reply(Boom.notFound("No resource was found with that id."));
-            }
-
+              }
+              else {
+                return reply(Boom.notFound("No resource was found with that id."));
+              }
+            });
+          })
+          .catch(function (error) {
+            Log.error("error: ", JSON.stringify(error));
+            return reply(Boom.badRequest("There was a preprocessing error deleting the resource", error));
           });
         }
         catch(error) {
-          Log.error(error);
-          reply(Boom.badRequest("There was an error processing the request.", error));
+          Log.error("error: ", JSON.stringify(error));
+          return reply(Boom.badRequest("There was an error processing the request.", error));
         }
       }
     },
