@@ -40,7 +40,7 @@ module.exports = function (mongoose, server) {
 
           var mongooseQuery = model.find();
           mongooseQuery = QueryHelper.createMongooseQuery(model, request.query, mongooseQuery, Log);
-          mongooseQuery.exec().then(function (result) {
+          return mongooseQuery.exec().then(function (result) {
 
             var promise = {};
             if (modelMethods.routeOptions && modelMethods.routeOptions.list && modelMethods.routeOptions.list.post) {
@@ -50,8 +50,8 @@ module.exports = function (mongoose, server) {
               promise = Q.when(result);
             }
 
-            promise.then(function (result) {
-              reply(result.map(function (data) {
+            return promise.then(function (result) {
+              return reply(result.map(function (data) {
                 var result = data.toJSON();
                 if (modelMethods.routeOptions) {
                   var associations = modelMethods.routeOptions.associations;
@@ -73,17 +73,17 @@ module.exports = function (mongoose, server) {
             })
             .catch(function (error) {
               Log.error("error: ", JSON.stringify(error));
-              reply(Boom.badRequest("There was a postprocessing error.", error));
+              return reply(Boom.badRequest("There was a postprocessing error.", error));
             })
           })
           .catch(function (error) {
             Log.error("error: ", JSON.stringify(error));
-            reply(Boom.serverTimeout("There was an error accessing the database.", error));
+            return reply(Boom.serverTimeout("There was an error accessing the database.", error));
           });
         }
         catch(error) {
           Log.error("error: ", JSON.stringify(error));
-          reply(Boom.badRequest("There was an error processing the request.", error));
+          return reply(Boom.badRequest("There was an error processing the request.", error));
         }
       }
     },
@@ -106,7 +106,7 @@ module.exports = function (mongoose, server) {
 
           var mongooseQuery = model.findOne({ '_id': request.params.id });
           mongooseQuery = QueryHelper.createMongooseQuery(model, request.query, mongooseQuery, Log);
-          mongooseQuery.exec().then(function (result) {
+          return mongooseQuery.exec().then(function (result) {
             if (result) {
 
               var promise = {};
@@ -151,12 +151,19 @@ module.exports = function (mongoose, server) {
           });
         }
         catch(error) {
-          Log.error(error);
-          reply(Boom.badRequest("There was an error processing the request.", error));
+          Log.error("error: ", JSON.stringify(error));
+          return reply(Boom.badRequest("There was an error processing the request.", error));
         }
       }
     },
 
+    /**
+     * Handles incoming POST requests to /RESOURCE
+     * @param model: A mongoose model.
+     * @param options: Options object.
+     * @param Log: A logging object.
+     * @returns {Function} A handler function
+     */
     generateCreateHandler: function (model, options, Log) {
       options = options || {};
 
@@ -165,45 +172,51 @@ module.exports = function (mongoose, server) {
           Log.log("params(%s), query(%s), payload(%s)", JSON.stringify(request.params), JSON.stringify(request.query), JSON.stringify(request.payload));
 
           var modelMethods = model.schema.methods;
-          var collectionName = modelMethods.collectionDisplayName || model.modelName;
+          // var collectionName = modelMethods.collectionDisplayName || model.modelName;
 
           var promise =  {};
-          if(modelMethods.routeOptions.create && modelMethods.routeOptions.create.pre){
+          if (modelMethods.routeOptions && modelMethods.routeOptions.create && modelMethods.routeOptions.create.pre){
             promise = modelMethods.routeOptions.create.pre(request, Log);
-          } else {
+          }
+          else {
             promise = Q.when(request);
           }
 
           return promise.then(function (request) {
-            // console.log("here:", model.getIndexes());
-            return model.create(request.payload).then(function (data) {
-              console.log("created:", data);
 
+            return model.create(request.payload).then(function (data) {
+
+              //EXPL: rather than returning the raw "create" data, we filter the data through a separate query
               var attributes = QueryHelper.createAttributesFilter(request.query, model, Log);
 
-              return model.findOne({ '_id': data._id }, attributes).then(function(filteredData) {
-                var returnResult = filteredData.toJSON();
+              return model.findOne({ '_id': data._id }, attributes).then(function(result) {
+                result = result.toJSON();
 
                 //TODO: include eventLogs
 
-                if (modelMethods.routeOptions.create && modelMethods.routeOptions.create.post) {
-                  promise = modelMethods.routeOptions.create.post(request, returnResult, Log);
-                } else {
-                  promise = Q.fcall(function () { return returnResult });
+                if (modelMethods.routeOptions && modelMethods.routeOptions.create && modelMethods.routeOptions.create.post) {
+                  promise = modelMethods.routeOptions.create.post(request, result, Log);
                 }
-                promise.then(function (result) {
+                else {
+                  promise = Q.fcall(function () { return result });
+                }
+
+                return promise.then(function (result) {
                   result._id = result._id.toString();//TODO: handle this with preware
                   return reply(result).code(201);
-                }).catch(function (error) {
+                }).
+                catch(function (error) {
                   Log.error("error: ", JSON.stringify(error));
                   return reply(Boom.badRequest("There was a postprocessing error creating the resource", error));
                 });
               })
-            }).catch(function (error) {
+            })
+            .catch(function (error) {
               Log.error("error: ", JSON.stringify(error));
-              return reply(Boom.badRequest("There was an error creating the resource", error));
+              return reply(Boom.serverTimeout("There was an error creating the resource", error));
             });
-          }).catch(function (error) {
+          })
+          .catch(function (error) {
             Log.error("error: ", JSON.stringify(error));
             return reply(Boom.badRequest("There was a preprocessing error creating the resource", error));
           });
