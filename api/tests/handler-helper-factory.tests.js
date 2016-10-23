@@ -2202,3 +2202,312 @@ test('handler-helper-factory.generateUpdateHandler', function(t) {
   })
 
 });
+
+test('handler-helper-factory.generateAssociationAddOneHandler', function(t) {
+
+  return Q.when()
+
+  //handler-helper-factory.generateAssociationAddOneHandler calls model.findByIdAndUpdate
+  .then(function() {
+    return t.test('handler-helper-factory.generateAssociationAddOneHandler calls model.findOne', function (t) {
+      //<editor-fold desc="Arrange">
+      var sandbox = sinon.sandbox.create();
+      var Log = logger.bind("handler-helper-factory");
+      var server = sandbox.spy();
+      var handlerHelperFactory = proxyquire('../utilities/handler-helper-factory', {
+      })(mongoose, server);
+      sandbox.stub(Log, 'error', function(){});
+
+      var userSchema = new mongoose.Schema({});
+
+      var userModel = mongoose.model("user", userSchema);
+      userModel.findOne = sandbox.spy();
+
+      var childSchema = new mongoose.Schema({});
+
+      var childModel = mongoose.model("child", childSchema);
+
+      var association = { include: { as: "CHILD", model: childModel }};
+
+      var request = { query: {}, params: { ownerId: "_id" } };
+      var reply = function(){};
+      //</editor-fold>
+
+      //<editor-fold desc="Act">
+      handlerHelperFactory.generateAssociationAddOneHandler(userModel, association, {}, Log)(request, reply);
+      //</editor-fold>
+
+      //<editor-fold desc="Assert">
+      t.ok(userModel.findOne.calledWithExactly({'_id': "_id"}), "model.findOne called");
+      //</editor-fold>
+
+      //<editor-fold desc="Restore">
+      sandbox.restore();
+      delete mongoose.models.user;
+      delete mongoose.modelSchemas.user;
+      delete mongoose.models.child;
+      delete mongoose.modelSchemas.child;
+      return Q.when();
+      //</editor-fold>
+    });
+  })
+
+  //handler-helper-factory.generateAssociationAddOneHandler calls setAssociation
+  .then(function() {
+    return t.test('handler-helper-factory.generateAssociationAddOneHandler calls setAssociation', function (t) {
+      //<editor-fold desc="Arrange">
+      var sandbox = sinon.sandbox.create();
+      var Log = logger.bind("handler-helper-factory");
+      var server = sandbox.spy();
+      var deferred = Q.defer();
+      var setAssociation = sandbox.spy(function(){ return deferred.resolve() });
+      var handlerHelperFactory = rewire('../utilities/handler-helper-factory');
+      handlerHelperFactory.__set__("setAssociation", setAssociation);
+      handlerHelperFactory = handlerHelperFactory(mongoose, server);
+      sandbox.stub(Log, 'error', function(){});
+
+      var userSchema = new mongoose.Schema({});
+
+      var userModel = mongoose.model("user", userSchema);
+      userModel.findOne = sandbox.spy(function(){ return Q.when("ownerObject") });
+
+      var childSchema = new mongoose.Schema({});
+
+      var childModel = mongoose.model("child", childSchema);
+
+      var association = { include: { as: "CHILD", model: childModel }};
+
+      var request = { params: { ownerId: "ownerId", childId: "childId" }, payload: "TEST" };
+      var reply = function(){};
+      //</editor-fold>
+
+      //<editor-fold desc="Act">
+      handlerHelperFactory.generateAssociationAddOneHandler(userModel, association, {}, Log)(request, reply);
+      //</editor-fold>
+
+      //<editor-fold desc="Assert">
+      return deferred.promise.then(function() {
+        t.ok(setAssociation.calledWithExactly({ params: { ownerId: "ownerId", childId: "childId" }, payload: [ 'TEST' ] }, server, userModel, "ownerObject", childModel, "childId", "CHILD", {}, Log), "setAssociation called");
+      })
+      //</editor-fold>
+
+      //<editor-fold desc="Restore">
+      .then(function() {
+        sandbox.restore();
+        delete mongoose.models.user;
+        delete mongoose.modelSchemas.user;
+        delete mongoose.models.child;
+        delete mongoose.modelSchemas.child;
+      });
+      //</editor-fold>
+    });
+  })
+
+  //handler-helper-factory.generateAssociationAddOneHandler calls reply
+  .then(function() {
+    return t.test('handler-helper-factory.generateAssociationAddOneHandler calls reply', function (t) {
+      //<editor-fold desc="Arrange">
+      var sandbox = sinon.sandbox.create();
+      var Log = logger.bind("handler-helper-factory");
+      var server = sandbox.spy();
+      var setAssociation = sandbox.spy(function(){ return Q.when() });
+      var handlerHelperFactory = rewire('../utilities/handler-helper-factory');
+      handlerHelperFactory.__set__("setAssociation", setAssociation);
+      handlerHelperFactory = handlerHelperFactory(mongoose, server);
+      sandbox.stub(Log, 'error', function(){});
+
+      var userSchema = new mongoose.Schema({});
+
+      var userModel = mongoose.model("user", userSchema);
+      userModel.findOne = sandbox.spy(function(){ return Q.when("ownerObject") });
+
+      var childSchema = new mongoose.Schema({});
+
+      var childModel = mongoose.model("child", childSchema);
+
+      var association = { include: { as: "CHILD", model: childModel }};
+
+      var request = { params: { ownerId: "ownerId", childId: "childId" }, payload: "TEST" };
+      var deferred = Q.defer();
+      var reply = sandbox.spy(function(){ return deferred.resolve() });
+      //</editor-fold>
+
+      //<editor-fold desc="Act">
+      handlerHelperFactory.generateAssociationAddOneHandler(userModel, association, {}, Log)(request, reply);
+      //</editor-fold>
+
+      //<editor-fold desc="Assert">
+      return deferred.promise.then(function() {
+        t.ok(reply.called, "reply called");
+      })
+      //</editor-fold>
+
+      //<editor-fold desc="Restore">
+      .then(function() {
+        sandbox.restore();
+        delete mongoose.models.user;
+        delete mongoose.modelSchemas.user;
+        delete mongoose.models.child;
+        delete mongoose.modelSchemas.child;
+      });
+      //</editor-fold>
+    });
+  })
+
+  //handler-helper-factory.generateAssociationAddOneHandler calls reply with a child error
+  .then(function() {
+    return t.test('handler-helper-factory.generateAssociationAddOneHandler calls reply with a child error', function (t) {
+      //<editor-fold desc="Arrange">
+      var sandbox = sinon.sandbox.create();
+      var Log = logger.bind("handler-helper-factory");
+      var server = sandbox.spy();
+      var setAssociation = sandbox.spy(function(){ return Q.reject("error message") });
+      var boomStub = sandbox.stub(require('boom'));
+      var handlerHelperFactory = rewire('../utilities/handler-helper-factory');
+      handlerHelperFactory.__set__("setAssociation", setAssociation);
+      handlerHelperFactory.__set__("Boom", boomStub);
+      handlerHelperFactory = handlerHelperFactory(mongoose, server);
+      sandbox.stub(Log, 'error', function(){});
+
+      var userSchema = new mongoose.Schema({});
+
+      var userModel = mongoose.model("user", userSchema);
+      userModel.findOne = sandbox.spy(function(){ return Q.when("ownerObject") });
+
+      var childSchema = new mongoose.Schema({});
+
+      var childModel = mongoose.model("child", childSchema);
+
+      var association = { include: { as: "CHILD", model: childModel }};
+
+      var request = { params: { ownerId: "ownerId", childId: "childId" }, payload: "TEST" };
+      var deferred = Q.defer();
+      var reply = sandbox.spy(function(){ return deferred.resolve() });
+      //</editor-fold>
+
+      //<editor-fold desc="Act">
+      handlerHelperFactory.generateAssociationAddOneHandler(userModel, association, {}, Log)(request, reply);
+      //</editor-fold>
+
+      //<editor-fold desc="Assert">
+      return deferred.promise.then(function() {
+        t.ok(boomStub.gatewayTimeout.calledWithExactly("There was a database error while setting the child object.", "error message"), "reply called with child error");
+      })
+      //</editor-fold>
+
+      //<editor-fold desc="Restore">
+      .then(function() {
+        sandbox.restore();
+        delete mongoose.models.user;
+        delete mongoose.modelSchemas.user;
+        delete mongoose.models.child;
+        delete mongoose.modelSchemas.child;
+      });
+      //</editor-fold>
+    });
+  })
+
+  //handler-helper-factory.generateAssociationAddOneHandler calls reply with a not found error
+  .then(function() {
+    return t.test('handler-helper-factory.generateAssociationAddOneHandler calls reply with a not found error', function (t) {
+      //<editor-fold desc="Arrange">
+      var sandbox = sinon.sandbox.create();
+      var Log = logger.bind("handler-helper-factory");
+      var server = sandbox.spy();
+      var boomStub = sandbox.stub(require('boom'));
+      var handlerHelperFactory = rewire('../utilities/handler-helper-factory');
+      handlerHelperFactory.__set__("Boom", boomStub);
+      handlerHelperFactory = handlerHelperFactory(mongoose, server);
+      sandbox.stub(Log, 'error', function(){});
+
+      var userSchema = new mongoose.Schema({});
+
+      var userModel = mongoose.model("user", userSchema);
+      userModel.findOne = sandbox.spy(function(){ return Q.when() });
+
+      var childSchema = new mongoose.Schema({});
+
+      var childModel = mongoose.model("child", childSchema);
+
+      var association = { include: { as: "CHILD", model: childModel }};
+
+      var request = { params: { ownerId: "ownerId", childId: "childId" }, payload: "TEST" };
+      var deferred = Q.defer();
+      var reply = sandbox.spy(function(){ return deferred.resolve() });
+      //</editor-fold>
+
+      //<editor-fold desc="Act">
+      handlerHelperFactory.generateAssociationAddOneHandler(userModel, association, {}, Log)(request, reply);
+      //</editor-fold>
+
+      //<editor-fold desc="Assert">
+      return deferred.promise.then(function() {
+        t.ok(boomStub.notFound.calledWithExactly("No owner resource was found with that id: ownerId"), "reply called with not found error");
+      })
+      //</editor-fold>
+
+      //<editor-fold desc="Restore">
+      .then(function() {
+        sandbox.restore();
+        delete mongoose.models.user;
+        delete mongoose.modelSchemas.user;
+        delete mongoose.models.child;
+        delete mongoose.modelSchemas.child;
+      });
+      //</editor-fold>
+    });
+  })
+
+
+  //handler-helper-factory.generateAssociationAddOneHandler calls reply with a processing error
+  .then(function() {
+    return t.test('handler-helper-factory.generateAssociationAddOneHandler calls reply with a processing error', function (t) {
+      //<editor-fold desc="Arrange">
+      var sandbox = sinon.sandbox.create();
+      var Log = logger.bind("handler-helper-factory");
+      var server = sandbox.spy();
+      var boomStub = sandbox.stub(require('boom'));
+      var handlerHelperFactory = rewire('../utilities/handler-helper-factory');
+      handlerHelperFactory.__set__("Boom", boomStub);
+      handlerHelperFactory = handlerHelperFactory(mongoose, server);
+      sandbox.stub(Log, 'error', function(){});
+
+      var userSchema = new mongoose.Schema({});
+
+      var userModel = mongoose.model("user", userSchema);
+      userModel.findOne = sandbox.spy(function(){ throw("error message") });
+
+      var childSchema = new mongoose.Schema({});
+
+      var childModel = mongoose.model("child", childSchema);
+
+      var association = { include: { as: "CHILD", model: childModel }};
+
+      var request = { params: { ownerId: "ownerId", childId: "childId" }, payload: "TEST" };
+      var deferred = Q.defer();
+      var reply = sandbox.spy(function(){ return deferred.resolve() });
+      //</editor-fold>
+
+      //<editor-fold desc="Act">
+      handlerHelperFactory.generateAssociationAddOneHandler(userModel, association, {}, Log)(request, reply);
+      //</editor-fold>
+
+      //<editor-fold desc="Assert">
+      return deferred.promise.then(function() {
+        t.ok(boomStub.badRequest.calledWithExactly("There was an error processing the request.", "error message"), "reply called with processing error");
+      })
+      //</editor-fold>
+
+      //<editor-fold desc="Restore">
+      .then(function() {
+        sandbox.restore();
+        delete mongoose.models.user;
+        delete mongoose.modelSchemas.user;
+        delete mongoose.models.child;
+        delete mongoose.modelSchemas.child;
+      });
+      //</editor-fold>
+    });
+  })
+
+});

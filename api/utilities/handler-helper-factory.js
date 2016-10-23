@@ -357,16 +357,21 @@ module.exports = function (mongoose, server) {
           });
         }
         catch(error) {
-          Log.error(error);
+          Log.error("error: ", JSON.stringify(error));
           return reply(Boom.badRequest("There was an error processing the request.", error));
         }
       }
     },
 
+    /**
+     * Handles incoming PUT requests to /OWNER_RESOURCE/{ownerId}/CHILD_RESOURCE/{childId}
+     * @param ownerModel: A mongoose model.
+     * @param association: An object containing the association data/child mongoose model.
+     * @param options: Options object.
+     * @param Log: A logging object.
+     * @returns {Function} A handler function
+     */
     generateAssociationAddOneHandler: function (ownerModel, association, options, Log) {
-      assert(association);
-      assert(association.include);
-
       var associationName = association.include.as;
       var childModel = association.include.model;
       var addMethodName = association.addMethodName || "add" + associationName[0].toUpperCase() + associationName.slice(1, -1);
@@ -384,25 +389,24 @@ module.exports = function (mongoose, server) {
               request.payload = [request.payload];
               setAssociation(request, server, ownerModel, ownerObject, childModel, request.params.childId, associationName, options, Log).then(function(result) {
                 reply().code(204);
-              }).catch(function (error) {
-                Log.error(error);
-                reply(Boom.gatewayTimeout("There was a database error while setting the children."));
+              })
+              .catch(function (error) {
+                Log.error("error: ", JSON.stringify(error));
+                reply(Boom.gatewayTimeout("There was a database error while setting the child object.", error));
               });
-            } else {
-              reply(Boom.notFound("No owner was found with that ID: " + request.params.ownerId));
             }
-          }).catch(function (error) {
-            Log.error(error);
-            reply(Boom.gatewayTimeout("There was a database error while retrieving the owner resource."));
-          });
+            else {
+              reply(Boom.notFound("No owner resource was found with that id: " + request.params.ownerId));
+            }
+          })
         }
         catch(error) {
-          Log.error(error);
+          Log.error("error: ", JSON.stringify(error));
           reply(Boom.badRequest("There was an error processing the request.", error));
         }
       }
     },
-
+    
     generateAssociationRemoveOneHandler: function (ownerModel, association, options, Log) {
       assert(association);
       assert(association.include);
@@ -604,375 +608,294 @@ module.exports = function (mongoose, server) {
     }
   };
 
-  function setAssociation(request, server, ownerModel, ownerObject, childModel, childId, associationName, options, Log) {
-    var deferred = Q.defer();
-
-    var payload = request.payload;
-
-    var ownerMethods = ownerModel.schema.methods;
-    var ownerCollectionName = ownerMethods.collectionDisplayName || ownerModel.modelName;
-    var childMethods = childModel.schema.methods;
-    var childCollectionName = childMethods.collectionDisplayName || childModel.modelName;
-
-    var ownerIdField = ownerMethods.idField || "_id";
-    var ownerNameField = ownerMethods.nameField || "name";
-    var childIdField = ownerMethods.idField || "_id";
-    var childNameField = ownerMethods.nameField || "name";
-
-    childModel.findOne({ '_id': childId }).then(function (childObject) {
-      if (childObject) {
-        var promise = {};
-        var association = ownerMethods.routeOptions.associations[associationName];
-        Log.debug("associationType", association.type);
-        if (association.type === "ONE_MANY") {//EXPL: one-many associations are virtual, so only update the child reference
-          //TODO: MAKE THIS RIGHT
-          childObject[association.foreignField] = ownerObject._id;
-
-          promise = childObject.save()
-        } else if (association.type === "MANY_MANY") {
-          if (typeof request.payload[0] === 'string' || request.payload[0] instanceof String) {//EXPL: the payload is an array of Ids. No extra fields
-            payload = {};
-          } else {
-            payload = payload.filter(function(object) {//EXPL: the payload contains extra fields
-              return object.childId === childObject.id;
-            });
-
-            payload = payload[0];
-            delete payload.childId;
-          }
-          payload[childModel.modelName] = childObject._id;
-
-          var duplicate = ownerObject[associationName].filter(function (associationObject) {
-            return associationObject[childModel.modelName].toString() === childId;
-          });
-          duplicate = duplicate[0];
-
-          var duplicateIndex = ownerObject[associationName].indexOf(duplicate);
-
-          if (duplicateIndex < 0) {//EXPL: if the association doesn't already exist, create it, otherwise update the extra fields
-            ownerObject[associationName].push(payload);
-          } else {
-            payload._id = ownerObject[associationName][duplicateIndex]._id;//EXPL: retain the association instance id for consistency
-            ownerObject[associationName][duplicateIndex] = payload;
-          }
-
-          payload = extend({}, payload);//EXPL: break the reference to the original payload
-          delete payload._id;
-
-          delete payload[childModel.modelName];
-          payload[ownerModel.modelName] = ownerObject._id;
-          var childAssociation = {};
-          var childAssociations = childMethods.routeOptions.associations;
-          for (var childAssociationKey in childAssociations) {
-            var association = childAssociations[childAssociationKey];
-            if (association.model === ownerModel.modelName) {
-              childAssociation = association;
-            }
-          }
-          var childAssociationName = childAssociation.include.as;
-
-          duplicate = childObject[childAssociationName].filter(function (associationObject) {
-            return associationObject[ownerModel.modelName].toString() === ownerObject._id.toString();
-          });
-          duplicate = duplicate[0];
-
-          duplicateIndex = childObject[childAssociationName].indexOf(duplicate);
-
-          if (duplicateIndex < 0) {//EXPL: if the association doesn't already exist, create it, otherwise update the extra fields
-            childObject[childAssociationName].push(payload);
-          } else {
-            payload._id = childObject[childAssociationName][duplicateIndex]._id;//EXPL: retain the association instance id for consistency
-            childObject[childAssociationName][duplicateIndex] = payload;
-          }
-
-          promise = Q.all(ownerObject.save(), childObject.save());
-        } else {
-          deferred.reject("Association type incorrectly defined.");
-          return deferred.promise;
-        }
-
-        promise.then(function(result) {
-          // Log.debug(result);
-
-
-          //TODO: add eventLogs
-
-          //TODO: allow eventLogs to log/support association extra fields
-          deferred.resolve();
-        }).catch(function (error) {
-          Log.error(error);
-          deferred.reject(error);
-        });
-        // ownerObject[addMethodName](childObject, payload).then(function (result) {
-        //   //TODO: eventLogs
-        //   // options.models.eventLog.create({
-        //   //   userId: request.auth.credentials.user.id,
-        //   //   organizationId: request.auth.credentials.user.organizationId,
-        //   //   verb: "associated",
-        //   //   objectId: ownerObject[ownerIdField] || "unknown",
-        //   //   objectName: ownerObject[ownerNameField] || "unknown",
-        //   //   objectType: ownerModel.modelName,
-        //   //   objectDisplayType: ownerCollectionName,
-        //   //   associatedObjectId: childObject[childIdField] || "unknown",
-        //   //   associatedObjectName: childObject[childNameField] || "unknown",
-        //   //   associatedObjectType: childModel.modelName,
-        //   //   associatedObjectDisplayType: childCollectionName
-        //   // }).then(function (eventLog) {
-        //   //   options.models.user.findById(eventLog.userId).then(function (user) {
-        //   //     eventLog.user = user;
-        //   //     require('../../api/utilities/refresh-activity-feeds')(request, server, null, options, Log)([eventLog]).then(function(result) {
-        //   //     }).catch(function(error) {
-        //   //       Log.error(error);
-        //   //     });
-        //   //     require('../../api/utilities/refresh-notifications')(request, server, null, options, Log)([eventLog]).then(function(result) {
-        //   //     }).catch(function(error) {
-        //   //       Log.error(error);
-        //   //     });
-        //   //   }).catch(function(error) {
-        //   //     Log.error(error);
-        //   //   });
-        //   //   deferred.resolve();
-        //   // }).catch(function (error) {
-        //   //   Log.error(error);
-        //   //   deferred.resolve();
-        //   // });
-        // }).catch(function (error) {
-        //   Log.error(error);
-        //   deferred.reject(error);
-        // });
-      } else {
-        deferred.reject("Child object not found.");
-      }
-    }).catch(function (error) {
-      Log.error(error);
-      deferred.reject(error);
-    });
-
-    return deferred.promise;
-  }
-
-  function removeAssociation(request, server, ownerModel, ownerObject, childModel, childId, associationName, options, Log) {
-    var deferred = Q.defer();
-
-    var payload = request.payload;
-
-    var ownerMethods = ownerModel.schema.methods;
-    var ownerCollectionName = ownerMethods.collectionDisplayName || ownerModel.modelName;
-    var childMethods = childModel.schema.methods;
-    var childCollectionName = childMethods.collectionDisplayName || childModel.modelName;
-
-    var ownerIdField = ownerMethods.idField || "_id";
-    var ownerNameField = ownerMethods.nameField || "name";
-    var childIdField = ownerMethods.idField || "_id";
-    var childNameField = ownerMethods.nameField || "name";
-
-    childModel.findOne({ '_id': childId }).then(function (childObject) {
-      if (childObject) {
-        var promise = {};
-        var associationType = ownerMethods.routeOptions.associations[associationName].type;
-        Log.debug("associationType", associationType);
-        if (associationType === "ONE_MANY") {//EXPL: one-many associations are virtual, so only update the child reference
-          // childObject[ownerModel.modelName + "Id"] = null; //TODO: set reference to null instead of deleting it?
-          // delete childObject[ownerModel.modelName + "Id"];
-          var childAssociation = {};
-          var childAssociations = childMethods.routeOptions.associations;
-          for (var childAssociationKey in childAssociations) {
-            var association = childAssociations[childAssociationKey];
-            if (association.model === ownerModel.modelName) {
-              childAssociation = association;
-            }
-          }
-          var childAssociationName = childAssociation.include.as;
-          delete childObject[childAssociationName];
-          
-          promise = childObject.save()
-        } else if (associationType === "MANY_MANY") {//EXPL: remove references from both models
-
-          //EXPL: remove the associated child from the owner
-          var deleteChild = ownerObject[associationName].filter(function(child) {
-            // Log.debug("child[childModel.modelName]:", child[childModel.modelName]);
-            // Log.debug("childObject._id:", childObject._id);
-            return child[childModel.modelName].toString() === childObject._id.toString();
-          });
-          deleteChild = deleteChild[0];
-
-          // Log.debug("deleteChild:", deleteChild);
-          // Log.debug("ownerList before:", ownerObject[associationName]);
-          var index = ownerObject[associationName].indexOf(deleteChild);
-          // Log.debug("index:", index);
-          if (index > -1) {
-            ownerObject[associationName].splice(index, 1);
-          }
-          // Log.debug("ownerList after:", ownerObject[associationName]);
-
-          //EXPL: get the child association name
-          var childAssociation = {};
-          var childAssociations = childMethods.routeOptions.associations;
-          for (var childAssociationKey in childAssociations) {
-            var association = childAssociations[childAssociationKey];
-            if (association.model === ownerModel.modelName) {
-              childAssociation = association;
-            }
-          }
-          var childAssociationName = childAssociation.include.as;
-
-          //EXPL: remove the associated owner from the child
-          var deleteOwner = childObject[childAssociationName].filter(function(owner) {
-            // Log.debug("owner[ownerModel.modelName]:", owner[ownerModel.modelName]);
-            // Log.debug("ownerObject._id:", ownerObject._id);
-            return owner[ownerModel.modelName].toString() === ownerObject._id.toString();
-          });
-          deleteOwner = deleteOwner[0];
-
-          // Log.debug("deleteOwner:", deleteOwner);
-          // Log.debug("childList before:", childObject[childAssociationName]);
-          index = childObject[childAssociationName].indexOf(deleteOwner);
-          // Log.debug("index:", index);
-          if (index > -1) {
-            childObject[childAssociationName].splice(index, 1);
-          }
-          // Log.debug("childList after:", childObject[childAssociationName]);
-
-          promise = Q.all(ownerObject.save(), childObject.save());
-        } else {
-          deferred.reject("Association type incorrectly defined.");
-          return deferred.promise;
-        }
-
-        promise.then(function(result) {
-          //TODO: add eventLogs
-          deferred.resolve();
-        }).catch(function (error) {
-          Log.error(error);
-          deferred.reject(error);
-        });
-        // ownerObject[addMethodName](childObject, payload).then(function (result) {
-        //   //TODO: eventLogs
-        //   // options.models.eventLog.create({
-        //   //   userId: request.auth.credentials.user.id,
-        //   //   organizationId: request.auth.credentials.user.organizationId,
-        //   //   verb: "associated",
-        //   //   objectId: ownerObject[ownerIdField] || "unknown",
-        //   //   objectName: ownerObject[ownerNameField] || "unknown",
-        //   //   objectType: ownerModel.modelName,
-        //   //   objectDisplayType: ownerCollectionName,
-        //   //   associatedObjectId: childObject[childIdField] || "unknown",
-        //   //   associatedObjectName: childObject[childNameField] || "unknown",
-        //   //   associatedObjectType: childModel.modelName,
-        //   //   associatedObjectDisplayType: childCollectionName
-        //   // }).then(function (eventLog) {
-        //   //   options.models.user.findById(eventLog.userId).then(function (user) {
-        //   //     eventLog.user = user;
-        //   //     require('../../api/utilities/refresh-activity-feeds')(request, server, null, options, Log)([eventLog]).then(function(result) {
-        //   //     }).catch(function(error) {
-        //   //       Log.error(error);
-        //   //     });
-        //   //     require('../../api/utilities/refresh-notifications')(request, server, null, options, Log)([eventLog]).then(function(result) {
-        //   //     }).catch(function(error) {
-        //   //       Log.error(error);
-        //   //     });
-        //   //   }).catch(function(error) {
-        //   //     Log.error(error);
-        //   //   });
-        //   //   deferred.resolve();
-        //   // }).catch(function (error) {
-        //   //   Log.error(error);
-        //   //   deferred.resolve();
-        //   // });
-        // }).catch(function (error) {
-        //   Log.error(error);
-        //   deferred.reject(error);
-        // });
-      } else {
-        deferred.reject("Child object not found.");
-      }
-    }).catch(function (error) {
-      Log.error(error);
-      deferred.reject(error);
-    });
-
-    return deferred.promise;
-  }
-
-  //EXPL: log instances when an object is added created or deleted and contains associations
-  function logImplicitAssociations(associationType, request, server, options, childObject, childModel, Log) {
-    var deferred = Q.defer();
-    var attributes = childModel.attributes;
-    var associations = childModel.routeOptions.associations;
-    if (associations) {
-      for (var associationKey in associations) {
-        for (var attributeKey in attributes) {
-          var attribute = attributes[attributeKey];
-          if (attribute.association == associationKey) {//EXPL: find the attribute linking the association
-            if (childObject[attributeKey]) {//EXPL: if an id is present during creation/deletion, log the association
-
-              var ownerModel = options.models[associationKey];
-
-              ownerModel.findById(childObject[attributeKey]).then(function(ownerObject) {
-                var localOwnerModel = options.models[ownerObject["$modelOptions"].name.singular];
-                createLog(request, server, options, Log, associationType, localOwnerModel, ownerObject, childModel, childObject).then(function(result) {
-                  deferred.resolve();
-                }).catch(function (error) {
-                  Log.error(error);
-                  deferred.resolve();
-                });
-              }).catch(function (error) {
-                Log.error(error);
-                deferred.resolve();
-              });
-            }
-          }
-        }
-      }
-    }
-
-    return deferred.promise;
-  }
-
-  function createLog(request, server, options, Log, verb, ownerModel, ownerObject, childModel, childObject) {
-    var deferred = Q.defer();
-
-    var ownerCollectionName = ownerModel.collectionDisplayName || ownerModel.modelName;
-    var ownerIdField = ownerModel.idField || "id";
-    var ownerNameField = ownerModel.nameField || "name";
-
-    var childCollectionName = childModel.collectionDisplayName || childModel.modelName;
-    var childIdField = childModel.idField || "id";
-    var childNameField = childModel.nameField || "name";
-
-    options.models.eventLog.create({
-      userId: request.auth.credentials.user.id,
-      organizationId: request.auth.credentials.user.organizationId,
-      verb: verb,
-      objectId: ownerObject[ownerIdField] || "unknown",
-      objectName: ownerObject[ownerNameField] || "unknown",
-      objectType: ownerModel.modelName,
-      objectDisplayType: ownerCollectionName,
-      associatedObjectId: childObject[childIdField] || "unknown",
-      associatedObjectName: childObject[childNameField] || "unknown",
-      associatedObjectType: childModel.modelName,
-      associatedObjectDisplayType: childCollectionName
-    }).then(function (eventLog) {
-      options.models.user.findById(eventLog.userId).then(function (user) {
-        eventLog.user = user;
-        require('../../api/utilities/refresh-activity-feeds')(request, server, null, options, Log)([eventLog]).then(function(result) {
-        }).catch(function(error) {
-          Log.error(error);
-        });
-        require('../../api/utilities/refresh-notifications')(request, server, null, options, Log)([eventLog]).then(function(result) {
-        }).catch(function(error) {
-          Log.error(error);
-        });
-      }).catch(function(error) {
-        Log.error(error);
-      });
-      deferred.resolve();
-    }).catch(function (error) {
-      Log.error(error);
-      deferred.resolve();
-    });
-
-    return deferred.promise;
-  }
-
 };
+
+function setAssociation(request, server, ownerModel, ownerObject, childModel, childId, associationName, options, Log) {
+  var deferred = Q.defer();
+
+  var payload = request.payload;
+
+  var ownerMethods = ownerModel.schema.methods;
+  var ownerCollectionName = ownerMethods.collectionDisplayName || ownerModel.modelName;
+  var childMethods = childModel.schema.methods;
+  var childCollectionName = childMethods.collectionDisplayName || childModel.modelName;
+
+  var ownerIdField = ownerMethods.idField || "_id";
+  var ownerNameField = ownerMethods.nameField || "name";
+  var childIdField = ownerMethods.idField || "_id";
+  var childNameField = ownerMethods.nameField || "name";
+
+  childModel.findOne({ '_id': childId }).then(function (childObject) {
+    if (childObject) {
+      var promise = {};
+      var association = ownerMethods.routeOptions.associations[associationName];
+      Log.debug("associationType", association.type);
+      if (association.type === "ONE_MANY") {//EXPL: one-many associations are virtual, so only update the child reference
+        //TODO: MAKE THIS RIGHT
+        childObject[association.foreignField] = ownerObject._id;
+
+        promise = childObject.save()
+      } else if (association.type === "MANY_MANY") {
+        if (typeof request.payload[0] === 'string' || request.payload[0] instanceof String) {//EXPL: the payload is an array of Ids. No extra fields
+          payload = {};
+        } else {
+          payload = payload.filter(function(object) {//EXPL: the payload contains extra fields
+            return object.childId === childObject.id;
+          });
+
+          payload = payload[0];
+          delete payload.childId;
+        }
+        payload[childModel.modelName] = childObject._id;
+
+        var duplicate = ownerObject[associationName].filter(function (associationObject) {
+          return associationObject[childModel.modelName].toString() === childId;
+        });
+        duplicate = duplicate[0];
+
+        var duplicateIndex = ownerObject[associationName].indexOf(duplicate);
+
+        if (duplicateIndex < 0) {//EXPL: if the association doesn't already exist, create it, otherwise update the extra fields
+          ownerObject[associationName].push(payload);
+        } else {
+          payload._id = ownerObject[associationName][duplicateIndex]._id;//EXPL: retain the association instance id for consistency
+          ownerObject[associationName][duplicateIndex] = payload;
+        }
+
+        payload = extend({}, payload);//EXPL: break the reference to the original payload
+        delete payload._id;
+
+        delete payload[childModel.modelName];
+        payload[ownerModel.modelName] = ownerObject._id;
+        var childAssociation = {};
+        var childAssociations = childMethods.routeOptions.associations;
+        for (var childAssociationKey in childAssociations) {
+          var association = childAssociations[childAssociationKey];
+          if (association.model === ownerModel.modelName) {
+            childAssociation = association;
+          }
+        }
+        var childAssociationName = childAssociation.include.as;
+
+        duplicate = childObject[childAssociationName].filter(function (associationObject) {
+          return associationObject[ownerModel.modelName].toString() === ownerObject._id.toString();
+        });
+        duplicate = duplicate[0];
+
+        duplicateIndex = childObject[childAssociationName].indexOf(duplicate);
+
+        if (duplicateIndex < 0) {//EXPL: if the association doesn't already exist, create it, otherwise update the extra fields
+          childObject[childAssociationName].push(payload);
+        } else {
+          payload._id = childObject[childAssociationName][duplicateIndex]._id;//EXPL: retain the association instance id for consistency
+          childObject[childAssociationName][duplicateIndex] = payload;
+        }
+
+        promise = Q.all(ownerObject.save(), childObject.save());
+      } else {
+        deferred.reject("Association type incorrectly defined.");
+        return deferred.promise;
+      }
+
+      promise.then(function(result) {
+        // Log.debug(result);
+
+
+        //TODO: add eventLogs
+
+        //TODO: allow eventLogs to log/support association extra fields
+        deferred.resolve();
+      }).catch(function (error) {
+        Log.error(error);
+        deferred.reject(error);
+      });
+      // ownerObject[addMethodName](childObject, payload).then(function (result) {
+      //   //TODO: eventLogs
+      //   // options.models.eventLog.create({
+      //   //   userId: request.auth.credentials.user.id,
+      //   //   organizationId: request.auth.credentials.user.organizationId,
+      //   //   verb: "associated",
+      //   //   objectId: ownerObject[ownerIdField] || "unknown",
+      //   //   objectName: ownerObject[ownerNameField] || "unknown",
+      //   //   objectType: ownerModel.modelName,
+      //   //   objectDisplayType: ownerCollectionName,
+      //   //   associatedObjectId: childObject[childIdField] || "unknown",
+      //   //   associatedObjectName: childObject[childNameField] || "unknown",
+      //   //   associatedObjectType: childModel.modelName,
+      //   //   associatedObjectDisplayType: childCollectionName
+      //   // }).then(function (eventLog) {
+      //   //   options.models.user.findById(eventLog.userId).then(function (user) {
+      //   //     eventLog.user = user;
+      //   //     require('../../api/utilities/refresh-activity-feeds')(request, server, null, options, Log)([eventLog]).then(function(result) {
+      //   //     }).catch(function(error) {
+      //   //       Log.error(error);
+      //   //     });
+      //   //     require('../../api/utilities/refresh-notifications')(request, server, null, options, Log)([eventLog]).then(function(result) {
+      //   //     }).catch(function(error) {
+      //   //       Log.error(error);
+      //   //     });
+      //   //   }).catch(function(error) {
+      //   //     Log.error(error);
+      //   //   });
+      //   //   deferred.resolve();
+      //   // }).catch(function (error) {
+      //   //   Log.error(error);
+      //   //   deferred.resolve();
+      //   // });
+      // }).catch(function (error) {
+      //   Log.error(error);
+      //   deferred.reject(error);
+      // });
+    } else {
+      deferred.reject("Child object not found.");
+    }
+  }).catch(function (error) {
+    Log.error(error);
+    deferred.reject(error);
+  });
+
+  return deferred.promise;
+}
+
+function removeAssociation(request, server, ownerModel, ownerObject, childModel, childId, associationName, options, Log) {
+  var deferred = Q.defer();
+
+  var payload = request.payload;
+
+  var ownerMethods = ownerModel.schema.methods;
+  var ownerCollectionName = ownerMethods.collectionDisplayName || ownerModel.modelName;
+  var childMethods = childModel.schema.methods;
+  var childCollectionName = childMethods.collectionDisplayName || childModel.modelName;
+
+  var ownerIdField = ownerMethods.idField || "_id";
+  var ownerNameField = ownerMethods.nameField || "name";
+  var childIdField = ownerMethods.idField || "_id";
+  var childNameField = ownerMethods.nameField || "name";
+
+  childModel.findOne({ '_id': childId }).then(function (childObject) {
+    if (childObject) {
+      var promise = {};
+      var associationType = ownerMethods.routeOptions.associations[associationName].type;
+      Log.debug("associationType", associationType);
+      if (associationType === "ONE_MANY") {//EXPL: one-many associations are virtual, so only update the child reference
+        // childObject[ownerModel.modelName + "Id"] = null; //TODO: set reference to null instead of deleting it?
+        // delete childObject[ownerModel.modelName + "Id"];
+        var childAssociation = {};
+        var childAssociations = childMethods.routeOptions.associations;
+        for (var childAssociationKey in childAssociations) {
+          var association = childAssociations[childAssociationKey];
+          if (association.model === ownerModel.modelName) {
+            childAssociation = association;
+          }
+        }
+        var childAssociationName = childAssociation.include.as;
+        delete childObject[childAssociationName];
+
+        promise = childObject.save()
+      } else if (associationType === "MANY_MANY") {//EXPL: remove references from both models
+
+        //EXPL: remove the associated child from the owner
+        var deleteChild = ownerObject[associationName].filter(function(child) {
+          // Log.debug("child[childModel.modelName]:", child[childModel.modelName]);
+          // Log.debug("childObject._id:", childObject._id);
+          return child[childModel.modelName].toString() === childObject._id.toString();
+        });
+        deleteChild = deleteChild[0];
+
+        // Log.debug("deleteChild:", deleteChild);
+        // Log.debug("ownerList before:", ownerObject[associationName]);
+        var index = ownerObject[associationName].indexOf(deleteChild);
+        // Log.debug("index:", index);
+        if (index > -1) {
+          ownerObject[associationName].splice(index, 1);
+        }
+        // Log.debug("ownerList after:", ownerObject[associationName]);
+
+        //EXPL: get the child association name
+        var childAssociation = {};
+        var childAssociations = childMethods.routeOptions.associations;
+        for (var childAssociationKey in childAssociations) {
+          var association = childAssociations[childAssociationKey];
+          if (association.model === ownerModel.modelName) {
+            childAssociation = association;
+          }
+        }
+        var childAssociationName = childAssociation.include.as;
+
+        //EXPL: remove the associated owner from the child
+        var deleteOwner = childObject[childAssociationName].filter(function(owner) {
+          // Log.debug("owner[ownerModel.modelName]:", owner[ownerModel.modelName]);
+          // Log.debug("ownerObject._id:", ownerObject._id);
+          return owner[ownerModel.modelName].toString() === ownerObject._id.toString();
+        });
+        deleteOwner = deleteOwner[0];
+
+        // Log.debug("deleteOwner:", deleteOwner);
+        // Log.debug("childList before:", childObject[childAssociationName]);
+        index = childObject[childAssociationName].indexOf(deleteOwner);
+        // Log.debug("index:", index);
+        if (index > -1) {
+          childObject[childAssociationName].splice(index, 1);
+        }
+        // Log.debug("childList after:", childObject[childAssociationName]);
+
+        promise = Q.all(ownerObject.save(), childObject.save());
+      } else {
+        deferred.reject("Association type incorrectly defined.");
+        return deferred.promise;
+      }
+
+      promise.then(function(result) {
+        //TODO: add eventLogs
+        deferred.resolve();
+      }).catch(function (error) {
+        Log.error(error);
+        deferred.reject(error);
+      });
+      // ownerObject[addMethodName](childObject, payload).then(function (result) {
+      //   //TODO: eventLogs
+      //   // options.models.eventLog.create({
+      //   //   userId: request.auth.credentials.user.id,
+      //   //   organizationId: request.auth.credentials.user.organizationId,
+      //   //   verb: "associated",
+      //   //   objectId: ownerObject[ownerIdField] || "unknown",
+      //   //   objectName: ownerObject[ownerNameField] || "unknown",
+      //   //   objectType: ownerModel.modelName,
+      //   //   objectDisplayType: ownerCollectionName,
+      //   //   associatedObjectId: childObject[childIdField] || "unknown",
+      //   //   associatedObjectName: childObject[childNameField] || "unknown",
+      //   //   associatedObjectType: childModel.modelName,
+      //   //   associatedObjectDisplayType: childCollectionName
+      //   // }).then(function (eventLog) {
+      //   //   options.models.user.findById(eventLog.userId).then(function (user) {
+      //   //     eventLog.user = user;
+      //   //     require('../../api/utilities/refresh-activity-feeds')(request, server, null, options, Log)([eventLog]).then(function(result) {
+      //   //     }).catch(function(error) {
+      //   //       Log.error(error);
+      //   //     });
+      //   //     require('../../api/utilities/refresh-notifications')(request, server, null, options, Log)([eventLog]).then(function(result) {
+      //   //     }).catch(function(error) {
+      //   //       Log.error(error);
+      //   //     });
+      //   //   }).catch(function(error) {
+      //   //     Log.error(error);
+      //   //   });
+      //   //   deferred.resolve();
+      //   // }).catch(function (error) {
+      //   //   Log.error(error);
+      //   //   deferred.resolve();
+      //   // });
+      // }).catch(function (error) {
+      //   Log.error(error);
+      //   deferred.reject(error);
+      // });
+    } else {
+      deferred.reject("Child object not found.");
+    }
+  }).catch(function (error) {
+    Log.error(error);
+    deferred.reject(error);
+  });
+
+  return deferred.promise;
+}
