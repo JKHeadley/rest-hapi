@@ -392,7 +392,7 @@ module.exports = function (mongoose, server) {
               })
               .catch(function (error) {
                 Log.error("error: ", JSON.stringify(error));
-                reply(Boom.gatewayTimeout("There was a database error while setting the child object.", error));
+                reply(Boom.gatewayTimeout("There was a database error while setting the association.", error));
               });
             }
             else {
@@ -406,11 +406,16 @@ module.exports = function (mongoose, server) {
         }
       }
     },
-    
-    generateAssociationRemoveOneHandler: function (ownerModel, association, options, Log) {
-      assert(association);
-      assert(association.include);
 
+    /**
+     * Handles incoming DELETE requests to /OWNER_RESOURCE/{ownerId}/CHILD_RESOURCE/{childId}
+     * @param ownerModel: A mongoose model.
+     * @param association: An object containing the association data/child mongoose model.
+     * @param options: Options object.
+     * @param Log: A logging object.
+     * @returns {Function} A handler function
+     */
+    generateAssociationRemoveOneHandler: function (ownerModel, association, options, Log) {
       var associationName = association.include.as;
       var childModel = association.include.model;
       var removeMethodName = association.removeMethodName || "remove" + associationName[0].toUpperCase() + associationName.slice(1, -1);
@@ -423,20 +428,19 @@ module.exports = function (mongoose, server) {
             if (ownerObject) {
               removeAssociation(request, server, ownerModel, ownerObject, childModel, request.params.childId, associationName, options, Log).then(function(result) {
                 reply().code(204);
-              }).catch(function (error) {
-                Log.error(error);
-                reply(Boom.gatewayTimeout("There was a database error while removing the association."));
+              })
+              .catch(function (error) {
+                Log.error("error: ", JSON.stringify(error));
+                reply(Boom.gatewayTimeout("There was a database error while removing the association.", error));
               });
-            } else {
-              reply(Boom.notFound("No owner was found with that ID: " + request.params.ownerId));
             }
-          }).catch(function (error) {
-            Log.error(error);
-            reply(Boom.gatewayTimeout("There was a database error while retrieving the owner resource."));
-          });
+            else {
+              reply(Boom.notFound("No owner resource was found with that id: " + request.params.ownerId));
+            }
+          })
         }
         catch(error) {
-          Log.error(error);
+          Log.error("error: ", JSON.stringify(error));
           reply(Boom.badRequest("There was an error processing the request.", error));
         }
       }
