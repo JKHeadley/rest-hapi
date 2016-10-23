@@ -446,42 +446,46 @@ module.exports = function (mongoose, server) {
       }
     },
 
+    /**
+     * Handles incoming POST requests to /OWNER_RESOURCE/{ownerId}/CHILD_RESOURCE
+     * @param ownerModel: A mongoose model.
+     * @param association: An object containing the association data/child mongoose model.
+     * @param options: Options object.
+     * @param Log: A logging object.
+     * @returns {Function} A handler function
+     */
     generateAssociationAddManyHandler: function (ownerModel, association, options, Log) {
-      assert(association);
-      assert(association.include);
-
       var associationName = association.include.as;
       var childModel = association.include.model;
       var setMethodName = "set" + associationName[0].toUpperCase() + associationName.slice(1);
-      var addMethodName = "add" + associationName[0].toUpperCase() + associationName.slice(1, -1);
-
-      assert(setMethodName);
 
       return function (request, reply) {
         try {
           Log.log(setMethodName + " + params(%s), query(%s), payload(%s)", JSON.stringify(request.params), JSON.stringify(request.query), JSON.stringify(request.payload));
 
-          ownerModel.findById(request.params.ownerId).then(function (ownerObject) {
+          ownerModel.findOne({ '_id': request.params.ownerId }).then(function (ownerObject) {
             if (ownerObject) {
               var childIds = [];
               if (typeof request.payload[0] === 'string' || request.payload[0] instanceof String) {//EXPL: the payload is an array of Ids
                 childIds = request.payload;
-              } else {//EXPL: the payload contains extra fields
+              }
+              else {//EXPL: the payload contains extra fields
                 childIds = request.payload.map(function(object) {
                   return object.childId;
                 });
               }
 
-              var promise_chain = Q.fcall(function(){});
+              var promise_chain = Q.when();
 
               childIds.forEach(function(childId) {
                 var promise_link = function() {
                   var deferred = Q.defer();
                   setAssociation(request, server, ownerModel, ownerObject, childModel, childId, associationName, options, Log).then(function(result) {
                     deferred.resolve(result);
-                  }).catch(function (error) {
-                    Log.error(error);
-                    return reply(Boom.gatewayTimeout("There was a database error while setting the children."));
+                  })
+                  .catch(function (error) {
+                    Log.error("error: ", JSON.stringify(error));
+                    return reply(Boom.gatewayTimeout("There was a database error while setting the associations.", error));
                   });
                   return deferred.promise;
                 };
@@ -489,22 +493,21 @@ module.exports = function (mongoose, server) {
                 promise_chain = promise_chain.then(promise_link);
               });
 
-              promise_chain.then(function(result) {
+              promise_chain.then(function() {
                 return reply().code(204);
-              }).catch(function (error) {
-                Log.error(error);
-                return reply(Boom.gatewayTimeout("There was a database error while setting the children."));
+              })
+              .catch(function (error) {
+                Log.error("error: ", JSON.stringify(error));
+                return reply(Boom.gatewayTimeout("There was a database error while setting the associations.", error));
               });
-            } else {
-              return reply(Boom.notFound("No owner was found with that ID: " + request.params.ownerId));
             }
-          }).catch(function (error) {
-            Log.error(error);
-            return reply(Boom.gatewayTimeout("There was a database error while retrieving the owner resource."));
-          });
+            else {
+              return reply(Boom.notFound("No owner resource was found with that id: " + request.params.ownerId));
+            }
+          })
         }
         catch(error) {
-          Log.error(error);
+          Log.error("error: ", JSON.stringify(error));
           reply(Boom.badRequest("There was an error processing the request.", error));
         }
       }
