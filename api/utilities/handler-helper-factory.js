@@ -148,7 +148,7 @@ function generateListHandler(model, options, Log) {
         }
 
         return promise.then(function (result) {
-          return reply(result.map(function (data) {
+          result = result.map(function (data) {
             var result = data.toJSON();
             if (modelMethods.routeOptions) {
               var associations = modelMethods.routeOptions.associations;
@@ -166,7 +166,14 @@ function generateListHandler(model, options, Log) {
 
             Log.log("Result: %s", JSON.stringify(result));
             return result;
-          })).header('X-Total-Count', result.length).code(200);;
+          });
+
+          if (!request.noReply) {//EXPL: return the result without calling reply
+            return reply(result).header('X-Total-Count', result.length).code(200);
+          }
+          else {
+            return result;
+          }
         })
         .catch(function (error) {
           Log.error("error: ", error);
@@ -640,15 +647,42 @@ function generateAssociationGetAllHandler(ownerModel, association, options, Log)
       var mongooseQuery = ownerModel.findOne({ '_id': request.params.ownerId });
       mongooseQuery = QueryHelper.createMongooseQuery(ownerModel, ownerRequest.query, mongooseQuery, Log);
       mongooseQuery.exec().then(function (result) {//TODO: allow for nested populates through "embed" param
-        result = result[associationName];
+        result = result[associationName]
         Log.debug("result:", result);
-        var childIds = result.map(function(object) {
-          return object._id;
-        });
+
+        var childIds = [];
+        if (association.type === "MANY_MANY") {
+          childIds = result.map(function(object) {
+            return object[association.model]._id;
+          });
+          request.noReply = true;
+        }
+        else {
+          childIds = result.map(function(object) {
+            return object._id;
+          });
+        }
 
         request.query.$where = extend({'_id': { $in: childIds }}, request.query.$where);
 
-        generateListHandler(childModel, options, Log)(request, reply);
+        var promise = generateListHandler(childModel, options, Log)(request, reply);
+
+        if (request.noReply && association.linkingModel) {
+          var extraFieldData = result;
+          return promise.then(function(result) {
+            result.forEach(function(object) {//EXPL: we have to manually insert the extra fields into the result
+              var data = extraFieldData.find(function(data) {
+                return data[association.model]._id.toString() === object._id
+              });
+              var fields = data.toJSON();
+              delete fields._id;
+              delete fields[association.model];
+              object[association.linkingModel] = fields;
+            });
+
+            return reply(result).header('X-Total-Count', result.length).code(200);
+          })
+        }
       });
     }
     catch(error) {

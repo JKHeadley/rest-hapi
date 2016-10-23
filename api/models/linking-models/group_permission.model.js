@@ -11,6 +11,12 @@ module.exports = function () {
         allowNull: false,
         defaultValue: true,
         displayName: "Enabled"
+      },
+      value: {
+        type: Types.String,
+        allowNull: false,
+        defaultValue: "TEST",
+        displayName: "Value"
       }
     },
     modelName: "group_permission"

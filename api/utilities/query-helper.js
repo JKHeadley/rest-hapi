@@ -74,7 +74,7 @@ module.exports = {
       attributesFilter = "_id";
     }
 
-    // // Log.debug("attributesFilter:", attributesFilter);
+    Log.debug("attributesFilter:", attributesFilter);
 
     if (modelMethods.routeOptions) {
       var result = this.populateEmbeddedDocs(query, mongooseQuery, attributesFilter,
@@ -82,6 +82,8 @@ module.exports = {
       mongooseQuery = result.mongooseQuery;
       attributesFilter = result.attributesFilter;
     }
+
+    Log.debug("attributesFilter:", attributesFilter);
 
     mongooseQuery = this.setSort(query, mongooseQuery, Log);
 
@@ -492,7 +494,7 @@ module.exports = {
         mongooseQuery.populate(populate);
 
         // // Log.debug("attributesFilter before:", attributesFilter);
-        attributesFilter = attributesFilter + ' ' + populate.path;
+        attributesFilter = attributesFilter + ' ' + embeds[0];
         // Log.debug("attributesFilter after:", attributesFilter);
       });
       delete query.$embed;
@@ -550,7 +552,7 @@ module.exports = {
         var association = associations ? (associations[fields[fieldName].path] || {}) : {};
 
         //EXPL: by default we don't include MANY_MANY array references
-        if (!field.exclude && association.type !== "MANY_MANY") {
+        if (!field.exclude && (association.type !== "MANY_MANY" || query.$select)) {
           attributesFilter.push(fieldName);
         }
       }
