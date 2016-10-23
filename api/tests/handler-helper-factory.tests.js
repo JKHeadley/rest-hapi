@@ -226,6 +226,52 @@ test('handler-helper-factory.generateListHandler', function(t) {
     });
   })
 
+  //handler-helper-factory.generateListHandler returns results with no reply if request.noReply is truthy
+  .then(function() {
+    return t.test('handler-helper-factory.generateListHandler returns results with no reply if request.noReply is truthy', function (t) {
+      //<editor-fold desc="Arrange">
+      var sandbox = sinon.sandbox.create();
+      var Log = logger.bind("handler-helper-factory");
+      var server = sandbox.spy();
+      var queryHelperStub = sandbox.stub(require('../utilities/query-helper'));
+      var result = [{ toJSON: function(){return "TEST1"} }, { toJSON: function(){return "TEST2"} }];
+      queryHelperStub.createMongooseQuery = function(){ return { exec: function(){ return Q.when(result) }}}
+      var handlerHelperFactory = proxyquire('../utilities/handler-helper-factory', {
+        './query-helper': queryHelperStub,
+      })(mongoose, server);
+      sandbox.stub(Log, 'error', function(){});
+
+      var userSchema = new mongoose.Schema({});
+
+      var userModel = mongoose.model("user", userSchema);
+
+      userModel.find = sandbox.spy();
+
+      var request = { query: {}, noReply: true };
+      var reply = sandbox.spy();
+      //</editor-fold>
+
+      //<editor-fold desc="Act">
+      var promise = handlerHelperFactory.generateListHandler(userModel, {}, Log)(request, reply);
+      //</editor-fold>
+
+      //<editor-fold desc="Assert">
+      return promise.then(function(mappedResult) {
+        t.deepEquals(mappedResult, ["TEST1","TEST2"], "result returned");
+        t.notOk(reply.called, "reply not called");
+      })
+      //</editor-fold>
+
+      //<editor-fold desc="Restore">
+      .then(function(){
+        sandbox.restore();
+        delete mongoose.models.user;
+        delete mongoose.modelSchemas.user;
+      });
+      //</editor-fold>
+    });
+  })
+
   //handler-helper-factory.generateListHandler replies with a postprocessing error
   .then(function() {
     return t.test('handler-helper-factory.generateListHandler replies with a postprocessing error', function (t) {

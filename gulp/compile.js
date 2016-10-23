@@ -9,7 +9,7 @@ gulp.task('compile:development', ['compile', 'config:development'], function () 
 
 gulp.task('compile:production', ['compile', 'config:production'], function () {});
 
-gulp.task('compile', ['test', 'jshint', 'clean'], function () {
+gulp.task('compile', ['jshint', 'clean'], function () {
 
   return gulp.src([
     gulp.paths.src + '/**/*',

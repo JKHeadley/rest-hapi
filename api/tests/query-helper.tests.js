@@ -6,7 +6,7 @@ var mongoose = require('mongoose');
 var Types = mongoose.Schema.Types;
 var logging = require('loggin');
 var Log = logging.getLogger("tests");
-Log.logLevel = "DEBUG";
+Log.logLevel = "ERROR";
 Log = Log.bind("query-helper");
 var testHelper = require("./test-helper");
 

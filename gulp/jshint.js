@@ -1,7 +1,7 @@
 var gulp = require('gulp');
 var jshint = require('gulp-jshint');
 
-gulp.task('jshint', ['test'], function(){
+gulp.task('jshint', [], function(){
   return gulp.src([
       gulp.paths.src + '**/*.js',
       //gulp.paths.src + '/models/**/*.js',

@@ -23,19 +23,19 @@ var gutil = require('gulp-util');
 //   gutil.env.env = 'local';
 // }
 
-gulp.task('config:local', ['clean', 'test'], function () {
+gulp.task('config:local', ['clean'], function () {
   return gulp.src(paths.src + '/config.local.js')
     .pipe(rename("config.js"))
     .pipe(gulp.dest(paths.build))
 });
 
-gulp.task('config:development', ['clean', 'test'], function () {
+gulp.task('config:development', ['clean'], function () {
   return gulp.src(paths.src + '/config.development.js')
   .pipe(rename("config.js"))
   .pipe(gulp.dest(paths.build))
 });
 
-gulp.task('config:production', ['clean', 'test'], function () {
+gulp.task('config:production', ['clean'], function () {
   return gulp.src(paths.src + '/config.production.js')
   .pipe(rename("config.js"))
   .pipe(gulp.dest(paths.build))

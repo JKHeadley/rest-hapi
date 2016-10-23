@@ -231,7 +231,7 @@ test('joi-mongoose-helper.generateJoiReadModel', function(t) {
     //<editor-fold desc="Arrange">
     var joiMongooseHelper = require('../utilities/joi-mongoose-helper');
 
-    t.plan(13);
+    t.plan(16);
 
     sinon.stub(joiMongooseHelper, "generateJoiModelFromFieldType", function() { return Joi.any() });
 
@@ -251,7 +251,8 @@ test('joi-mongoose-helper.generateJoiReadModel', function(t) {
             foreignField: "user"
           },
           permissions: {
-            type: "MANY_MANY"
+            type: "MANY_MANY",
+            linkingModel: "link"
           }
         }
       }
@@ -270,16 +271,19 @@ test('joi-mongoose-helper.generateJoiReadModel', function(t) {
     t.ok(Joi.validate({ title: {} }, readModel).error === null, "title field valid" );
     t.ok(Joi.validate({ title: null }, readModel).error === null, "null title field valid" );
     t.ok(Joi.validate({ title: "" }, readModel).error !== null, "non-object title field not valid" );
-    t.ok(Joi.validate({ profileImage: {} }, readModel).error === null, "profileImage field not valid" );
+    t.ok(Joi.validate({ profileImage: {} }, readModel).error === null, "profileImage field valid" );
     t.ok(Joi.validate({ profileImage: null }, readModel).error === null, "null profileImage field valid" );
     t.ok(Joi.validate({ profileImage: "" }, readModel).error !== null, "non-object profileImage field not valid" );
-    t.ok(Joi.validate({ groups: [{},{}] }, readModel).error === null, "groups field not valid" );
+    t.ok(Joi.validate({ groups: [{},{}] }, readModel).error === null, "groups field valid" );
     t.ok(Joi.validate({ groups: null }, readModel).error !== null, "null groups field not valid" );
     t.ok(Joi.validate({ groups: ["",3,{}] }, readModel).error !== null, "groups field must be array of objects" );
-    t.ok(Joi.validate({ permissions: [{},{}] }, readModel).error === null, "permissions field not valid" );
+    t.ok(Joi.validate({ permissions: [{},{}] }, readModel).error === null, "permissions field valid" );
     t.ok(Joi.validate({ permissions: null }, readModel).error !== null, "null permissions field not valid" );
     t.ok(Joi.validate({ permissions: ["",3,{}] }, readModel).error !== null, "permissions field must be array of objects" );
-    //</editor-fold>
+    t.ok(Joi.validate({ link: {} }, readModel).error === null, "link field valid" );
+    t.ok(Joi.validate({ link: null }, readModel).error === null, "null link field valid" );
+    t.ok(Joi.validate({ link: "" }, readModel).error !== null, "non-object link field not valid" );
+//</editor-fold>
 
     //<editor-fold desc="Restore">
     joiMongooseHelper.generateJoiModelFromFieldType.restore();

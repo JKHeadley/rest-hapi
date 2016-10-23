@@ -74,7 +74,7 @@ module.exports = {
       attributesFilter = "_id";
     }
 
-    Log.debug("attributesFilter:", attributesFilter);
+    // Log.debug("attributesFilter:", attributesFilter);
 
     if (modelMethods.routeOptions) {
       var result = this.populateEmbeddedDocs(query, mongooseQuery, attributesFilter,
@@ -83,7 +83,7 @@ module.exports = {
       attributesFilter = result.attributesFilter;
     }
 
-    Log.debug("attributesFilter:", attributesFilter);
+    // Log.debug("attributesFilter:", attributesFilter);
 
     mongooseQuery = this.setSort(query, mongooseQuery, Log);
 

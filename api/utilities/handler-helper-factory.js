@@ -129,7 +129,6 @@ function generateListHandler(model, options, Log) {
 
   Log.debug("request.query.$where:");
   return function (request, reply) {
-    Log.debug("request.query.$where:", request.query.$where);
     try {
       Log.log("params(%s), query(%s), payload(%s)", JSON.stringify(request.params), JSON.stringify(request.query), JSON.stringify(request.payload));
 
@@ -643,13 +642,14 @@ function generateAssociationGetAllHandler(ownerModel, association, options, Log)
       if (foreignField) {
         ownerRequest.query.populateSelect = ownerRequest.query.populateSelect + "," + foreignField;
       }
-      //TODO: allow for customized return data, i.e. a flat array without extra association fields
+
+      //EXPL: In order to allow for fully querying against the association data, we first embed the
+      //associations to get a list of _ids and extra fields. We then leverage generateListHandler
+      //to perform the full query.  Finally the extra fields (if they exist) are added to the final result
       var mongooseQuery = ownerModel.findOne({ '_id': request.params.ownerId });
       mongooseQuery = QueryHelper.createMongooseQuery(ownerModel, ownerRequest.query, mongooseQuery, Log);
-      mongooseQuery.exec().then(function (result) {//TODO: allow for nested populates through "embed" param
-        result = result[associationName]
-        Log.debug("result:", result);
-
+      mongooseQuery.exec().then(function (result) {
+        result = result[associationName];
         var childIds = [];
         if (association.type === "MANY_MANY") {
           childIds = result.map(function(object) {
@@ -667,10 +667,10 @@ function generateAssociationGetAllHandler(ownerModel, association, options, Log)
 
         var promise = generateListHandler(childModel, options, Log)(request, reply);
 
-        if (request.noReply && association.linkingModel) {
+        if (request.noReply && association.linkingModel) {//EXPL: we have to manually insert the extra fields into the result
           var extraFieldData = result;
           return promise.then(function(result) {
-            result.forEach(function(object) {//EXPL: we have to manually insert the extra fields into the result
+            result.forEach(function(object) {
               var data = extraFieldData.find(function(data) {
                 return data[association.model]._id.toString() === object._id
               });
