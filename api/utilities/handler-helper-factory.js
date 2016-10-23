@@ -2,6 +2,7 @@ var assert = require('assert');
 var Boom = require('boom');
 var Q = require('q');
 var extend = require('util')._extend;
+var QueryHelper = require('./query-helper');
 
 //TODO: consolidate eventLog functionality
 
@@ -20,10 +21,15 @@ var extend = require('util')._extend;
 //TODO: possibly execute .toJSON() on all return data to reduce data size
 
 //TODO: fix X-Total-Count headers
-module.exports = function (mongoose, server) {
-  var QueryHelper = require('./query-helper');
+
+var mongoose, server;
+module.exports = function (_mongoose, _server) {
+
+  mongoose = _mongoose;
+  server = _server;
 
   return {
+
     /**
      * Handles incoming GET requests to /RESOURCE
      * @param model: A mongoose model.
@@ -31,62 +37,7 @@ module.exports = function (mongoose, server) {
      * @param Log: A logging object.
      * @returns {Function} A handler function
      */
-    generateListHandler: function (model, options, Log) {
-      return function (request, reply) {
-        try {
-          Log.log("params(%s), query(%s), payload(%s)", JSON.stringify(request.params), JSON.stringify(request.query), JSON.stringify(request.payload));
-
-          var modelMethods = model.schema.methods;
-
-          var mongooseQuery = model.find();
-          mongooseQuery = QueryHelper.createMongooseQuery(model, request.query, mongooseQuery, Log);
-          return mongooseQuery.exec().then(function (result) {
-
-            var promise = {};
-            if (modelMethods.routeOptions && modelMethods.routeOptions.list && modelMethods.routeOptions.list.post) {
-              promise = modelMethods.routeOptions.list.post(request, result, Log);
-            }
-            else {
-              promise = Q.when(result);
-            }
-
-            return promise.then(function (result) {
-              return reply(result.map(function (data) {
-                var result = data.toJSON();
-                if (modelMethods.routeOptions) {
-                  var associations = modelMethods.routeOptions.associations;
-                  for (var associationKey in associations) {
-                    var association = associations[associationKey];
-                    if (association.type === "ONE_MANY" && data[associationKey]) {//EXPL: we have to manually populate the return value for virtual (e.g. ONE_MANY) associations
-                      result[associationKey] = data[associationKey];
-                    }
-                  }
-                }
-
-                if (result._id) {
-                  result._id = result._id.toString();//EXPL: _id must be a string to pass validation
-                }
-
-                Log.log("Result: %s", JSON.stringify(result));
-                return result;
-              })).header('X-Total-Count', result.length).code(200);;
-            })
-            .catch(function (error) {
-              Log.error("error: ", JSON.stringify(error));
-              return reply(Boom.badRequest("There was a postprocessing error.", error));
-            })
-          })
-          .catch(function (error) {
-            Log.error("error: ", JSON.stringify(error));
-            return reply(Boom.serverTimeout("There was an error accessing the database.", error));
-          });
-        }
-        catch(error) {
-          Log.error("error: ", JSON.stringify(error));
-          return reply(Boom.badRequest("There was an error processing the request.", error));
-        }
-      }
-    },
+    generateListHandler: generateListHandler,
 
     /**
      * Handles incoming GET requests to /RESOURCE/{_id}
@@ -95,67 +46,7 @@ module.exports = function (mongoose, server) {
      * @param Log: A logging object.
      * @returns {Function} A handler function
      */
-    generateFindHandler: function (model, options, Log) {
-      options = options || {};
-
-      return function (request, reply) {
-        try {
-          Log.log("params(%s), query(%s), payload(%s)", JSON.stringify(request.params), JSON.stringify(request.query), JSON.stringify(request.payload));
-
-          var modelMethods = model.schema.methods;
-
-          var mongooseQuery = model.findOne({ '_id': request.params.id });
-          mongooseQuery = QueryHelper.createMongooseQuery(model, request.query, mongooseQuery, Log);
-          return mongooseQuery.exec().then(function (result) {
-            if (result) {
-
-              var promise = {};
-              if (modelMethods.routeOptions && modelMethods.routeOptions.find && modelMethods.routeOptions.find.post) {
-                promise = modelMethods.routeOptions.find.post(request, result, Log);
-              } else {
-                promise = Q.when(result);
-              }
-
-              return promise.then(function(result) {
-                result = result.toJSON();
-                if (modelMethods.routeOptions) {
-                  var associations = modelMethods.routeOptions.associations;
-                  for (var associationKey in associations) {
-                    var association = associations[associationKey];
-                    if (association.type === "ONE_MANY" && data[associationKey]) {//EXPL: we have to manually populate the return value for virtual (e.g. ONE_MANY) associations
-                      result[associationKey] = data[associationKey];
-                    }
-                  }
-                }
-
-                if (result._id) {//TODO: handle this with mongoose/global preware
-                  result._id = result._id.toString();//EXPL: _id must be a string to pass validation
-                }
-
-                Log.log("Result: %s", JSON.stringify(result));
-
-                return reply(result).code(200);
-              })
-              .catch(function (error) {
-                Log.error("error: ", JSON.stringify(error));
-                return reply(Boom.badRequest("There was a postprocessing error.", error));
-              });
-            }
-            else {
-              return reply(Boom.notFound("There was no data found with that id.", request.params.id));
-            }
-          })
-          .catch(function (error) {
-            Log.error("error: ", JSON.stringify(error));
-            return reply(Boom.serverTimeout("There was an error accessing the database.", error));
-          });
-        }
-        catch(error) {
-          Log.error("error: ", JSON.stringify(error));
-          return reply(Boom.badRequest("There was an error processing the request.", error));
-        }
-      }
-    },
+    generateFindHandler: generateFindHandler,
 
     /**
      * Handles incoming POST requests to /RESOURCE
@@ -164,68 +55,7 @@ module.exports = function (mongoose, server) {
      * @param Log: A logging object.
      * @returns {Function} A handler function
      */
-    generateCreateHandler: function (model, options, Log) {
-      options = options || {};
-
-      return function (request, reply) {
-        try {
-          Log.log("params(%s), query(%s), payload(%s)", JSON.stringify(request.params), JSON.stringify(request.query), JSON.stringify(request.payload));
-
-          var modelMethods = model.schema.methods;
-
-          var promise =  {};
-          if (modelMethods.routeOptions && modelMethods.routeOptions.create && modelMethods.routeOptions.create.pre){
-            promise = modelMethods.routeOptions.create.pre(request, Log);
-          }
-          else {
-            promise = Q.when(request);
-          }
-
-          return promise.then(function (request) {
-
-            return model.create(request.payload).then(function (data) {
-
-              //EXPL: rather than returning the raw "create" data, we filter the data through a separate query
-              var attributes = QueryHelper.createAttributesFilter(request.query, model, Log);
-
-              return model.findOne({ '_id': data._id }, attributes).then(function(result) {
-                result = result.toJSON();
-
-                //TODO: include eventLogs
-
-                if (modelMethods.routeOptions && modelMethods.routeOptions.create && modelMethods.routeOptions.create.post) {
-                  promise = modelMethods.routeOptions.create.post(request, result, Log);
-                }
-                else {
-                  promise = Q.when(result);
-                }
-
-                return promise.then(function (result) {
-                  result._id = result._id.toString();//TODO: handle this with preware
-                  return reply(result).code(201);
-                })
-                .catch(function (error) {
-                  Log.error("error: ", JSON.stringify(error));
-                  return reply(Boom.badRequest("There was a postprocessing error creating the resource", error));
-                });
-              })
-            })
-            .catch(function (error) {
-              Log.error("error: ", JSON.stringify(error));
-              return reply(Boom.serverTimeout("There was an error creating the resource", error));
-            });
-          })
-          .catch(function (error) {
-            Log.error("error: ", JSON.stringify(error));
-            return reply(Boom.badRequest("There was a preprocessing error creating the resource", error));
-          });
-        }
-        catch(error) {
-          Log.error(error);
-          reply(Boom.badRequest("There was an error processing the request.", error));
-        }
-      }
-    },
+    generateCreateHandler: generateCreateHandler,
 
     /**
      * Handles incoming DELETE requests to /RESOURCE/{_id}
@@ -234,61 +64,7 @@ module.exports = function (mongoose, server) {
      * @param Log: A logging object.
      * @returns {Function} A handler function
      */
-    generateDeleteHandler: function (model, options, Log) {
-      options = options || {};
-
-      return function (request, reply) {
-        try {
-          Log.log("params(%s), query(%s), payload(%s)", JSON.stringify(request.params), JSON.stringify(request.query), JSON.stringify(request.payload));
-
-          var modelMethods = model.schema.methods;
-
-          var promise = {};
-          if (modelMethods.routeOptions && modelMethods.routeOptions.delete && modelMethods.routeOptions.delete.pre) {
-            promise = modelMethods.routeOptions.delete.pre(request, Log);
-          }
-          else {
-            promise = Q.when();
-          }
-
-          return promise.then(function () {
-            //TODO: implement option for soft delete
-            return model.findByIdAndRemove(request.params._id).then(function (deleted) {//TODO: clean up associations/set rules for ON DELETE CASCADE/etc.
-              if (deleted) {
-                //TODO: add eventLogs
-
-                var promise = {};
-                if (modelMethods.routeOptions && modelMethods.routeOptions.delete && modelMethods.routeOptions.delete.post) {
-                  promise = modelMethods.routeOptions.delete.post(request, deleted, Log);
-                }
-                else {
-                  promise = Q.when();
-                }
-
-                return promise.then(function () {
-                  return reply().code(204);
-                })
-                .catch(function (error) {
-                  Log.error("error: ", JSON.stringify(error));
-                  return reply(Boom.badRequest("There was a postprocessing error deleting the resource", error));
-                });
-              }
-              else {
-                return reply(Boom.notFound("No resource was found with that id."));
-              }
-            });
-          })
-          .catch(function (error) {
-            Log.error("error: ", JSON.stringify(error));
-            return reply(Boom.badRequest("There was a preprocessing error deleting the resource", error));
-          });
-        }
-        catch(error) {
-          Log.error("error: ", JSON.stringify(error));
-          return reply(Boom.badRequest("There was an error processing the request.", error));
-        }
-      }
-    },
+    generateDeleteHandler: generateDeleteHandler,
 
     /**
      * Handles incoming UPDATE requests to /RESOURCE/{_id}
@@ -297,71 +73,7 @@ module.exports = function (mongoose, server) {
      * @param Log: A logging object.
      * @returns {Function} A handler function
      */
-    generateUpdateHandler: function (model, options, Log) {
-      options = options || {};
-
-      return function (request, reply) {
-        try {
-          Log.log("params(%s), query(%s), payload(%s)", JSON.stringify(request.params), JSON.stringify(request.query), JSON.stringify(request.payload));
-
-          var modelMethods = model.schema.methods;
-
-          var promise =  {};
-          if (modelMethods.routeOptions && modelMethods.routeOptions.update && modelMethods.routeOptions.update.pre){
-            promise = modelMethods.routeOptions.update.pre(request, Log);
-          }
-          else {
-            promise = Q.when(request);
-          }
-
-          return promise.then(function (request) {
-
-            //TODO: support eventLogs and log all property updates in one document rather than one document per property update
-            model.findByIdAndUpdate(request.params._id, request.payload).then(function (result) {
-              if (result) {
-                //TODO: log all updated/added associations
-                var attributes = QueryHelper.createAttributesFilter(request.query, model, Log);
-
-                return model.findOne({'_id': result._id}, attributes).then(function (result) {
-                  result = result.toJSON();
-
-                  if (modelMethods.routeOptions && modelMethods.routeOptions.update && modelMethods.routeOptions.update.post) {
-                    promise = modelMethods.routeOptions.update.post(request, result, Log);
-                  }
-                  else {
-                    promise = Q.when(result);
-                  }
-
-                  return promise.then(function (result) {
-                    result._id = result._id.toString();//TODO: handle this with preware
-                    return reply(result).code(200);
-                  })
-                  .catch(function (error) {
-                    Log.error("error: ", JSON.stringify(error));
-                    return reply(Boom.badRequest("There was a postprocessing error updating the resource", error));
-                  });
-                })
-              }
-              else {
-                return reply(Boom.notFound("No resource was found with that id."));
-              }
-            })
-            .catch(function (error) {
-              Log.error("error: ", JSON.stringify(error));
-              return reply(Boom.serverTimeout("There was an error updating the resource", error));
-            });
-          })
-          .catch(function (error) {
-            Log.error("error: ", JSON.stringify(error));
-            return reply(Boom.badRequest("There was a preprocessing error updating the resource", error));
-          });
-        }
-        catch(error) {
-          Log.error("error: ", JSON.stringify(error));
-          return reply(Boom.badRequest("There was an error processing the request.", error));
-        }
-      }
-    },
+    generateUpdateHandler: generateUpdateHandler,
 
     /**
      * Handles incoming PUT requests to /OWNER_RESOURCE/{ownerId}/CHILD_RESOURCE/{childId}
@@ -371,41 +83,7 @@ module.exports = function (mongoose, server) {
      * @param Log: A logging object.
      * @returns {Function} A handler function
      */
-    generateAssociationAddOneHandler: function (ownerModel, association, options, Log) {
-      var associationName = association.include.as;
-      var childModel = association.include.model;
-      var addMethodName = association.addMethodName || "add" + associationName[0].toUpperCase() + associationName.slice(1, -1);
-
-      return function (request, reply) {
-        try {
-          Log.log(addMethodName + " + params(%s), query(%s), payload(%s)", JSON.stringify(request.params), JSON.stringify(request.query), JSON.stringify(request.payload));
-
-          ownerModel.findOne({ '_id': request.params.ownerId }).then(function (ownerObject) {
-            if (ownerObject) {
-              if (!request.payload) {
-                request.payload = {};
-              }
-              request.payload.childId = request.params.childId;
-              request.payload = [request.payload];
-              setAssociation(request, server, ownerModel, ownerObject, childModel, request.params.childId, associationName, options, Log).then(function(result) {
-                reply().code(204);
-              })
-              .catch(function (error) {
-                Log.error("error: ", JSON.stringify(error));
-                reply(Boom.gatewayTimeout("There was a database error while setting the association.", error));
-              });
-            }
-            else {
-              reply(Boom.notFound("No owner resource was found with that id: " + request.params.ownerId));
-            }
-          })
-        }
-        catch(error) {
-          Log.error("error: ", JSON.stringify(error));
-          reply(Boom.badRequest("There was an error processing the request.", error));
-        }
-      }
-    },
+    generateAssociationAddOneHandler: generateAssociationAddOneHandler,
 
     /**
      * Handles incoming DELETE requests to /OWNER_RESOURCE/{ownerId}/CHILD_RESOURCE/{childId}
@@ -415,36 +93,7 @@ module.exports = function (mongoose, server) {
      * @param Log: A logging object.
      * @returns {Function} A handler function
      */
-    generateAssociationRemoveOneHandler: function (ownerModel, association, options, Log) {
-      var associationName = association.include.as;
-      var childModel = association.include.model;
-      var removeMethodName = association.removeMethodName || "remove" + associationName[0].toUpperCase() + associationName.slice(1, -1);
-
-      return function (request, reply) {
-        try {
-          Log.log(removeMethodName + " + params(%s), query(%s), payload(%s)", JSON.stringify(request.params), JSON.stringify(request.query), JSON.stringify(request.payload));
-
-          ownerModel.findOne({ '_id': request.params.ownerId }).then(function (ownerObject) {
-            if (ownerObject) {
-              removeAssociation(request, server, ownerModel, ownerObject, childModel, request.params.childId, associationName, options, Log).then(function(result) {
-                reply().code(204);
-              })
-              .catch(function (error) {
-                Log.error("error: ", JSON.stringify(error));
-                reply(Boom.gatewayTimeout("There was a database error while removing the association.", error));
-              });
-            }
-            else {
-              reply(Boom.notFound("No owner resource was found with that id: " + request.params.ownerId));
-            }
-          })
-        }
-        catch(error) {
-          Log.error("error: ", JSON.stringify(error));
-          reply(Boom.badRequest("There was an error processing the request.", error));
-        }
-      }
-    },
+    generateAssociationRemoveOneHandler: generateAssociationRemoveOneHandler,
 
     /**
      * Handles incoming POST requests to /OWNER_RESOURCE/{ownerId}/CHILD_RESOURCE
@@ -454,168 +103,560 @@ module.exports = function (mongoose, server) {
      * @param Log: A logging object.
      * @returns {Function} A handler function
      */
-    generateAssociationAddManyHandler: function (ownerModel, association, options, Log) {
-      var associationName = association.include.as;
-      var childModel = association.include.model;
-      var setMethodName = "set" + associationName[0].toUpperCase() + associationName.slice(1);
+    generateAssociationAddManyHandler: generateAssociationAddManyHandler,
 
-      return function (request, reply) {
-        try {
-          Log.log(setMethodName + " + params(%s), query(%s), payload(%s)", JSON.stringify(request.params), JSON.stringify(request.query), JSON.stringify(request.payload));
-
-          ownerModel.findOne({ '_id': request.params.ownerId }).then(function (ownerObject) {
-            if (ownerObject) {
-              var childIds = [];
-              if (typeof request.payload[0] === 'string' || request.payload[0] instanceof String) {//EXPL: the payload is an array of Ids
-                childIds = request.payload;
-              }
-              else {//EXPL: the payload contains extra fields
-                childIds = request.payload.map(function(object) {
-                  return object.childId;
-                });
-              }
-
-              var promise_chain = Q.when();
-
-              childIds.forEach(function(childId) {
-                var promise_link = function() {
-                  var deferred = Q.defer();
-                  setAssociation(request, server, ownerModel, ownerObject, childModel, childId, associationName, options, Log).then(function(result) {
-                    deferred.resolve(result);
-                  })
-                  .catch(function (error) {
-                    Log.error("error: ", JSON.stringify(error));
-                    return reply(Boom.gatewayTimeout("There was a database error while setting the associations.", error));
-                  });
-                  return deferred.promise;
-                };
-
-                promise_chain = promise_chain.then(promise_link);
-              });
-
-              promise_chain.then(function() {
-                return reply().code(204);
-              })
-              .catch(function (error) {
-                Log.error("error: ", JSON.stringify(error));
-                return reply(Boom.gatewayTimeout("There was a database error while setting the associations.", error));
-              });
-            }
-            else {
-              return reply(Boom.notFound("No owner resource was found with that id: " + request.params.ownerId));
-            }
-          })
-        }
-        catch(error) {
-          Log.error("error: ", JSON.stringify(error));
-          reply(Boom.badRequest("There was an error processing the request.", error));
-        }
-      }
-    },
-
-    generateAssociationGetAllHandler: function (ownerModel, association, options, Log) {
-      assert(association);
-      assert(association.include);
-
-      var associationName = association.include.as;
-      var childModel = association.include.model;
-      var getAllMethodName = association.getAllMethodName || "get" + associationName[0].toUpperCase() + associationName.slice(1);
-      var countAllMethodName = association.countAllMethodName || "count" + associationName[0].toUpperCase() + associationName.slice(1);
-
-      assert(getAllMethodName);
-      assert(countAllMethodName);
-
-      return function (request, reply) {
-        try {
-          Log.log(getAllMethodName + " + params(%s), query(%s), payload(%s)", JSON.stringify(request.params), JSON.stringify(request.query), JSON.stringify(request.payload));
-
-          var ownerMethods = ownerModel.schema.methods;
-          var associationType = ownerMethods.routeOptions.associations[associationName].type;
-          var foreignField = ownerMethods.routeOptions.associations[associationName].foreignField;
-          // Log.debug("associationType:", associationType);
-          // Log.debug("foreignField:", foreignField);
-          var returnForeignField = false;
-
-          var populateQuery = associationName; //TODO: formulate proper mongooseQuery to filter embedded/populated data
-
-          request.query.$embed = populateQuery;
-          request.query.populateSelect = request.query.$select;
-          if (foreignField && request.query.$select) {//EXPL: ONE_MANY virtual relationships require the foreignField to be included in the result. We add logic to make it optional.
-            if (request.query.$select.includes(foreignField)) {
-              returnForeignField = true;
-            } else {
-              request.query.populateSelect = request.query.populateSelect + "," + foreignField;
-            }
-          } else {
-            returnForeignField = true;
-          }
-          delete request.query.$select;
-          // Log.debug("returnForeignField:", returnForeignField);
-
-          // Log.debug("populateQuery:", populateQuery);
-          //TODO: allow for customized return data, i.e. a flat array without extra association fields
-          var mongooseQuery = ownerModel.findOne({ '_id': request.params.ownerId });
-          mongooseQuery = QueryHelper.createMongooseQuery(ownerModel, request.query, mongooseQuery, Log);
-          mongooseQuery.exec().then(function (result) {//TODO: allow for nested populates through "embed" param
-            result = result[associationName];
-            return reply(result.map(function(object) {
-              object = object.toJSON();
-              if (!returnForeignField && foreignField) {
-                delete object[foreignField];
-              }
-              // Log.debug("object:", object);
-              return object;
-            })).header('X-Total-Count', result.length);
-          });
-
-          // ownerModel.findById(request.params.ownerId).then(function (ownerObject) {
-          //   if (ownerObject) {
-          //     var sequelizeQuery = QueryHelper.createSequelizeQuery(childModel, request.query, Log);
-          //
-          //     ownerObject[getAllMethodName](sequelizeQuery).then(function (results) {
-          //
-          //       delete sequelizeQuery.limit;
-          //       delete sequelizeQuery.offset;
-          //       delete sequelizeQuery.include;
-          //
-          //       ownerObject[countAllMethodName](sequelizeQuery).then(function (count) {
-          //
-          //         var processedResults = results.map(function (data) {
-          //           var result = data.toJSON();
-          //
-          //           if (options.resultProcessor) {
-          //             result = options.resultProcessor(result);
-          //           }
-          //
-          //           return result;
-          //         });
-          //
-          //         reply(processedResults).header('X-Total-Count', count);
-          //       }).catch(function (error) {
-          //         Log.error(error);
-          //         reply(Boom.gatewayTimeout("There was a database error counting the children."));
-          //       });
-          //     }).catch(function (error) {
-          //       Log.error(error);
-          //       reply(Boom.gatewayTimeout("There was a database error while setting the children."));
-          //     });
-          //   } else {
-          //     reply(Boom.notFound("No owner was found with that ID: " + request.params.ownerId));
-          //   }
-          // }).catch(function (error) {
-          //   Log.error(error);
-          //   reply(Boom.gatewayTimeout("There was a database error while retrieving the owner resource."));
-          // });
-        }
-        catch(error) {
-          Log.error(error);
-          reply(Boom.badRequest("There was an error processing the request.", error));
-        }
-      }
-    }
+    /**
+     * Handles incoming GET requests to /OWNER_RESOURCE/{ownerId}/CHILD_RESOURCE
+     * @param ownerModel: A mongoose model.
+     * @param association: An object containing the association data/child mongoose model.
+     * @param options: Options object.
+     * @param Log: A logging object.
+     * @returns {Function} A handler function
+     */
+    generateAssociationGetAllHandler: generateAssociationGetAllHandler
   };
 
 };
+
+/**
+ * Handles incoming GET requests to /RESOURCE
+ * @param model: A mongoose model.
+ * @param options: Options object.
+ * @param Log: A logging object.
+ * @returns {Function} A handler function
+ */
+function generateListHandler(model, options, Log) {
+
+  Log.debug("request.query.$where:");
+  return function (request, reply) {
+    Log.debug("request.query.$where:", request.query.$where);
+    try {
+      Log.log("params(%s), query(%s), payload(%s)", JSON.stringify(request.params), JSON.stringify(request.query), JSON.stringify(request.payload));
+
+      var modelMethods = model.schema.methods;
+
+      var mongooseQuery = model.find();
+      mongooseQuery = QueryHelper.createMongooseQuery(model, request.query, mongooseQuery, Log);
+      return mongooseQuery.exec().then(function (result) {
+
+        var promise = {};
+        if (modelMethods.routeOptions && modelMethods.routeOptions.list && modelMethods.routeOptions.list.post) {
+          promise = modelMethods.routeOptions.list.post(request, result, Log);
+        }
+        else {
+          promise = Q.when(result);
+        }
+
+        return promise.then(function (result) {
+          return reply(result.map(function (data) {
+            var result = data.toJSON();
+            if (modelMethods.routeOptions) {
+              var associations = modelMethods.routeOptions.associations;
+              for (var associationKey in associations) {
+                var association = associations[associationKey];
+                if (association.type === "ONE_MANY" && data[associationKey]) {//EXPL: we have to manually populate the return value for virtual (e.g. ONE_MANY) associations
+                  result[associationKey] = data[associationKey];
+                }
+              }
+            }
+
+            if (result._id) {
+              result._id = result._id.toString();//EXPL: _id must be a string to pass validation
+            }
+
+            Log.log("Result: %s", JSON.stringify(result));
+            return result;
+          })).header('X-Total-Count', result.length).code(200);;
+        })
+        .catch(function (error) {
+          Log.error("error: ", error);
+          return reply(Boom.badRequest("There was a postprocessing error.", error));
+        })
+      })
+      .catch(function (error) {
+        Log.error("error: ", error);
+        return reply(Boom.serverTimeout("There was an error accessing the database.", error));
+      });
+    }
+    catch(error) {
+      Log.error("error: ", error);
+      return reply(Boom.badRequest("There was an error processing the request.", error));
+    }
+  }
+}
+
+/**
+ * Handles incoming GET requests to /RESOURCE/{_id}
+ * @param model: A mongoose model.
+ * @param options: Options object.
+ * @param Log: A logging object.
+ * @returns {Function} A handler function
+ */
+function generateFindHandler(model, options, Log) {
+  options = options || {};
+
+  return function (request, reply) {
+    try {
+      Log.log("params(%s), query(%s), payload(%s)", JSON.stringify(request.params), JSON.stringify(request.query), JSON.stringify(request.payload));
+
+      var modelMethods = model.schema.methods;
+
+      var mongooseQuery = model.findOne({ '_id': request.params.id });
+      mongooseQuery = QueryHelper.createMongooseQuery(model, request.query, mongooseQuery, Log);
+      return mongooseQuery.exec().then(function (result) {
+        if (result) {
+
+          var promise = {};
+          if (modelMethods.routeOptions && modelMethods.routeOptions.find && modelMethods.routeOptions.find.post) {
+            promise = modelMethods.routeOptions.find.post(request, result, Log);
+          } else {
+            promise = Q.when(result);
+          }
+
+          return promise.then(function(result) {
+            result = result.toJSON();
+            if (modelMethods.routeOptions) {
+              var associations = modelMethods.routeOptions.associations;
+              for (var associationKey in associations) {
+                var association = associations[associationKey];
+                if (association.type === "ONE_MANY" && data[associationKey]) {//EXPL: we have to manually populate the return value for virtual (e.g. ONE_MANY) associations
+                  result[associationKey] = data[associationKey];
+                }
+              }
+            }
+
+            if (result._id) {//TODO: handle this with mongoose/global preware
+              result._id = result._id.toString();//EXPL: _id must be a string to pass validation
+            }
+
+            Log.log("Result: %s", JSON.stringify(result));
+
+            return reply(result).code(200);
+          })
+          .catch(function (error) {
+            Log.error("error: ", error);
+            return reply(Boom.badRequest("There was a postprocessing error.", error));
+          });
+        }
+        else {
+          return reply(Boom.notFound("There was no data found with that id.", request.params.id));
+        }
+      })
+      .catch(function (error) {
+        Log.error("error: ", error);
+        return reply(Boom.serverTimeout("There was an error accessing the database.", error));
+      });
+    }
+    catch(error) {
+      Log.error("error: ", error);
+      return reply(Boom.badRequest("There was an error processing the request.", error));
+    }
+  }
+}
+
+/**
+ * Handles incoming POST requests to /RESOURCE
+ * @param model: A mongoose model.
+ * @param options: Options object.
+ * @param Log: A logging object.
+ * @returns {Function} A handler function
+ */
+function generateCreateHandler(model, options, Log) {
+  options = options || {};
+
+  return function (request, reply) {
+    try {
+      Log.log("params(%s), query(%s), payload(%s)", JSON.stringify(request.params), JSON.stringify(request.query), JSON.stringify(request.payload));
+
+      var modelMethods = model.schema.methods;
+
+      var promise =  {};
+      if (modelMethods.routeOptions && modelMethods.routeOptions.create && modelMethods.routeOptions.create.pre){
+        promise = modelMethods.routeOptions.create.pre(request, Log);
+      }
+      else {
+        promise = Q.when(request);
+      }
+
+      return promise.then(function (request) {
+
+        return model.create(request.payload).then(function (data) {
+
+          //EXPL: rather than returning the raw "create" data, we filter the data through a separate query
+          var attributes = QueryHelper.createAttributesFilter(request.query, model, Log);
+
+          return model.findOne({ '_id': data._id }, attributes).then(function(result) {
+            result = result.toJSON();
+
+            //TODO: include eventLogs
+
+            if (modelMethods.routeOptions && modelMethods.routeOptions.create && modelMethods.routeOptions.create.post) {
+              promise = modelMethods.routeOptions.create.post(request, result, Log);
+            }
+            else {
+              promise = Q.when(result);
+            }
+
+            return promise.then(function (result) {
+              result._id = result._id.toString();//TODO: handle this with preware
+              return reply(result).code(201);
+            })
+            .catch(function (error) {
+              Log.error("error: ", error);
+              return reply(Boom.badRequest("There was a postprocessing error creating the resource", error));
+            });
+          })
+        })
+        .catch(function (error) {
+          Log.error("error: ", error);
+          return reply(Boom.serverTimeout("There was an error creating the resource", error));
+        });
+      })
+      .catch(function (error) {
+        Log.error("error: ", error);
+        return reply(Boom.badRequest("There was a preprocessing error creating the resource", error));
+      });
+    }
+    catch(error) {
+      Log.error(error);
+      reply(Boom.badRequest("There was an error processing the request.", error));
+    }
+  }
+}
+
+/**
+ * Handles incoming DELETE requests to /RESOURCE/{_id}
+ * @param model: A mongoose model.
+ * @param options: Options object.
+ * @param Log: A logging object.
+ * @returns {Function} A handler function
+ */
+function generateDeleteHandler(model, options, Log) {
+  options = options || {};
+
+  return function (request, reply) {
+    try {
+      Log.log("params(%s), query(%s), payload(%s)", JSON.stringify(request.params), JSON.stringify(request.query), JSON.stringify(request.payload));
+
+      var modelMethods = model.schema.methods;
+
+      var promise = {};
+      if (modelMethods.routeOptions && modelMethods.routeOptions.delete && modelMethods.routeOptions.delete.pre) {
+        promise = modelMethods.routeOptions.delete.pre(request, Log);
+      }
+      else {
+        promise = Q.when();
+      }
+
+      return promise.then(function () {
+        //TODO: implement option for soft delete
+        return model.findByIdAndRemove(request.params._id).then(function (deleted) {//TODO: clean up associations/set rules for ON DELETE CASCADE/etc.
+          if (deleted) {
+            //TODO: add eventLogs
+
+            var promise = {};
+            if (modelMethods.routeOptions && modelMethods.routeOptions.delete && modelMethods.routeOptions.delete.post) {
+              promise = modelMethods.routeOptions.delete.post(request, deleted, Log);
+            }
+            else {
+              promise = Q.when();
+            }
+
+            return promise.then(function () {
+              return reply().code(204);
+            })
+            .catch(function (error) {
+              Log.error("error: ", error);
+              return reply(Boom.badRequest("There was a postprocessing error deleting the resource", error));
+            });
+          }
+          else {
+            return reply(Boom.notFound("No resource was found with that id."));
+          }
+        });
+      })
+      .catch(function (error) {
+        Log.error("error: ", error);
+        return reply(Boom.badRequest("There was a preprocessing error deleting the resource", error));
+      });
+    }
+    catch(error) {
+      Log.error("error: ", error);
+      return reply(Boom.badRequest("There was an error processing the request.", error));
+    }
+  }
+}
+
+/**
+ * Handles incoming UPDATE requests to /RESOURCE/{_id}
+ * @param model: A mongoose model.
+ * @param options: Options object.
+ * @param Log: A logging object.
+ * @returns {Function} A handler function
+ */
+function generateUpdateHandler(model, options, Log) {
+  options = options || {};
+
+  return function (request, reply) {
+    try {
+      Log.log("params(%s), query(%s), payload(%s)", JSON.stringify(request.params), JSON.stringify(request.query), JSON.stringify(request.payload));
+
+      var modelMethods = model.schema.methods;
+
+      var promise =  {};
+      if (modelMethods.routeOptions && modelMethods.routeOptions.update && modelMethods.routeOptions.update.pre){
+        promise = modelMethods.routeOptions.update.pre(request, Log);
+      }
+      else {
+        promise = Q.when(request);
+      }
+
+      return promise.then(function (request) {
+
+        //TODO: support eventLogs and log all property updates in one document rather than one document per property update
+        model.findByIdAndUpdate(request.params._id, request.payload).then(function (result) {
+          if (result) {
+            //TODO: log all updated/added associations
+            var attributes = QueryHelper.createAttributesFilter(request.query, model, Log);
+
+            return model.findOne({'_id': result._id}, attributes).then(function (result) {
+              result = result.toJSON();
+
+              if (modelMethods.routeOptions && modelMethods.routeOptions.update && modelMethods.routeOptions.update.post) {
+                promise = modelMethods.routeOptions.update.post(request, result, Log);
+              }
+              else {
+                promise = Q.when(result);
+              }
+
+              return promise.then(function (result) {
+                result._id = result._id.toString();//TODO: handle this with preware
+                return reply(result).code(200);
+              })
+              .catch(function (error) {
+                Log.error("error: ", error);
+                return reply(Boom.badRequest("There was a postprocessing error updating the resource", error));
+              });
+            })
+          }
+          else {
+            return reply(Boom.notFound("No resource was found with that id."));
+          }
+        })
+        .catch(function (error) {
+          Log.error("error: ", error);
+          return reply(Boom.serverTimeout("There was an error updating the resource", error));
+        });
+      })
+      .catch(function (error) {
+        Log.error("error: ", error);
+        return reply(Boom.badRequest("There was a preprocessing error updating the resource", error));
+      });
+    }
+    catch(error) {
+      Log.error("error: ", error);
+      return reply(Boom.badRequest("There was an error processing the request.", error));
+    }
+  }
+}
+
+/**
+ * Handles incoming PUT requests to /OWNER_RESOURCE/{ownerId}/CHILD_RESOURCE/{childId}
+ * @param ownerModel: A mongoose model.
+ * @param association: An object containing the association data/child mongoose model.
+ * @param options: Options object.
+ * @param Log: A logging object.
+ * @returns {Function} A handler function
+ */
+function generateAssociationAddOneHandler(ownerModel, association, options, Log) {
+  var associationName = association.include.as;
+  var childModel = association.include.model;
+  var addMethodName = association.addMethodName || "add" + associationName[0].toUpperCase() + associationName.slice(1, -1);
+
+  return function (request, reply) {
+    try {
+      Log.log(addMethodName + " + params(%s), query(%s), payload(%s)", JSON.stringify(request.params), JSON.stringify(request.query), JSON.stringify(request.payload));
+
+      ownerModel.findOne({ '_id': request.params.ownerId }).then(function (ownerObject) {
+        if (ownerObject) {
+          if (!request.payload) {
+            request.payload = {};
+          }
+          request.payload.childId = request.params.childId;
+          request.payload = [request.payload];
+          setAssociation(request, server, ownerModel, ownerObject, childModel, request.params.childId, associationName, options, Log).then(function(result) {
+            reply().code(204);
+          })
+          .catch(function (error) {
+            Log.error("error: ", error);
+            reply(Boom.gatewayTimeout("There was a database error while setting the association.", error));
+          });
+        }
+        else {
+          reply(Boom.notFound("No owner resource was found with that id: " + request.params.ownerId));
+        }
+      })
+    }
+    catch(error) {
+      Log.error("error: ", error);
+      reply(Boom.badRequest("There was an error processing the request.", error));
+    }
+  }
+}
+
+/**
+ * Handles incoming DELETE requests to /OWNER_RESOURCE/{ownerId}/CHILD_RESOURCE/{childId}
+ * @param ownerModel: A mongoose model.
+ * @param association: An object containing the association data/child mongoose model.
+ * @param options: Options object.
+ * @param Log: A logging object.
+ * @returns {Function} A handler function
+ */
+function generateAssociationRemoveOneHandler(ownerModel, association, options, Log) {
+  var associationName = association.include.as;
+  var childModel = association.include.model;
+  var removeMethodName = association.removeMethodName || "remove" + associationName[0].toUpperCase() + associationName.slice(1, -1);
+
+  return function (request, reply) {
+    try {
+      Log.log(removeMethodName + " + params(%s), query(%s), payload(%s)", JSON.stringify(request.params), JSON.stringify(request.query), JSON.stringify(request.payload));
+
+      ownerModel.findOne({ '_id': request.params.ownerId }).then(function (ownerObject) {
+        if (ownerObject) {
+          removeAssociation(request, server, ownerModel, ownerObject, childModel, request.params.childId, associationName, options, Log).then(function(result) {
+            reply().code(204);
+          })
+          .catch(function (error) {
+            Log.error("error: ", error);
+            reply(Boom.gatewayTimeout("There was a database error while removing the association.", error));
+          });
+        }
+        else {
+          reply(Boom.notFound("No owner resource was found with that id: " + request.params.ownerId));
+        }
+      })
+    }
+    catch(error) {
+      Log.error("error: ", error);
+      reply(Boom.badRequest("There was an error processing the request.", error));
+    }
+  }
+}
+
+/**
+ * Handles incoming POST requests to /OWNER_RESOURCE/{ownerId}/CHILD_RESOURCE
+ * @param ownerModel: A mongoose model.
+ * @param association: An object containing the association data/child mongoose model.
+ * @param options: Options object.
+ * @param Log: A logging object.
+ * @returns {Function} A handler function
+ */
+function generateAssociationAddManyHandler(ownerModel, association, options, Log) {
+  var associationName = association.include.as;
+  var childModel = association.include.model;
+  var setMethodName = "set" + associationName[0].toUpperCase() + associationName.slice(1);
+
+  return function (request, reply) {
+    try {
+      Log.log(setMethodName + " + params(%s), query(%s), payload(%s)", JSON.stringify(request.params), JSON.stringify(request.query), JSON.stringify(request.payload));
+
+      ownerModel.findOne({ '_id': request.params.ownerId }).then(function (ownerObject) {
+        if (ownerObject) {
+          var childIds = [];
+          if (typeof request.payload[0] === 'string' || request.payload[0] instanceof String) {//EXPL: the payload is an array of Ids
+            childIds = request.payload;
+          }
+          else {//EXPL: the payload contains extra fields
+            childIds = request.payload.map(function(object) {
+              return object.childId;
+            });
+          }
+
+          var promise_chain = Q.when();
+
+          childIds.forEach(function(childId) {
+            var promise_link = function() {
+              var deferred = Q.defer();
+              setAssociation(request, server, ownerModel, ownerObject, childModel, childId, associationName, options, Log).then(function(result) {
+                deferred.resolve(result);
+              })
+              .catch(function (error) {
+                Log.error("error: ", error);
+                return reply(Boom.gatewayTimeout("There was a database error while setting the associations.", error));
+              });
+              return deferred.promise;
+            };
+
+            promise_chain = promise_chain.then(promise_link);
+          });
+
+          promise_chain.then(function() {
+            return reply().code(204);
+          })
+          .catch(function (error) {
+            Log.error("error: ", error);
+            return reply(Boom.gatewayTimeout("There was a database error while setting the associations.", error));
+          });
+        }
+        else {
+          return reply(Boom.notFound("No owner resource was found with that id: " + request.params.ownerId));
+        }
+      })
+    }
+    catch(error) {
+      Log.error("error: ", error);
+      reply(Boom.badRequest("There was an error processing the request.", error));
+    }
+  }
+}
+
+/**
+ * Handles incoming GET requests to /OWNER_RESOURCE/{ownerId}/CHILD_RESOURCE
+ * @param ownerModel: A mongoose model.
+ * @param association: An object containing the association data/child mongoose model.
+ * @param options: Options object.
+ * @param Log: A logging object.
+ * @returns {Function} A handler function
+ */
+function generateAssociationGetAllHandler(ownerModel, association, options, Log) {
+  var associationName = association.include.as;
+  var childModel = association.include.model;
+  var getAllMethodName = association.getAllMethodName || "get" + associationName[0].toUpperCase() + associationName.slice(1);
+
+  return function (request, reply) {
+    try {
+      Log.log(getAllMethodName + " + params(%s), query(%s), payload(%s)", JSON.stringify(request.params), JSON.stringify(request.query), JSON.stringify(request.payload));
+
+      var ownerMethods = ownerModel.schema.methods;
+      var foreignField = ownerMethods.routeOptions.associations[associationName].foreignField;
+
+      var ownerRequest = { query: {} };
+      ownerRequest.query.$embed = associationName;
+      ownerRequest.query.populateSelect = "_id";
+      if (foreignField) {
+        ownerRequest.query.populateSelect = ownerRequest.query.populateSelect + "," + foreignField;
+      }
+      //TODO: allow for customized return data, i.e. a flat array without extra association fields
+      var mongooseQuery = ownerModel.findOne({ '_id': request.params.ownerId });
+      mongooseQuery = QueryHelper.createMongooseQuery(ownerModel, ownerRequest.query, mongooseQuery, Log);
+      mongooseQuery.exec().then(function (result) {//TODO: allow for nested populates through "embed" param
+        result = result[associationName];
+        Log.debug("result:", result);
+        var childIds = result.map(function(object) {
+          return object._id;
+        });
+
+        request.query.$where = extend({'_id': { $in: childIds }}, request.query.$where);
+
+        generateListHandler(childModel, options, Log)(request, reply);
+      });
+    }
+    catch(error) {
+      Log.error("error: ", error);
+      reply(Boom.badRequest("There was an error processing the request.", error));
+    }
+  }
+}
 
 function setAssociation(request, server, ownerModel, ownerObject, childModel, childId, associationName, options, Log) {
   var deferred = Q.defer();

@@ -26,7 +26,7 @@ module.exports = {
    */
   createMongooseQuery: function (model, query, mongooseQuery, Log) {
     validationHelper.validateModel(model, Log);
-    Log.debug("query before:", query);
+    // Log.debug("query before:", query);
     //(email == 'test@user.com' && (firstName == 'test2@user.com' || firstName == 'test4@user.com')) && (age < 15 || age > 30)
     //LITERAL
     //{
@@ -74,7 +74,7 @@ module.exports = {
       attributesFilter = "_id";
     }
 
-    // Log.debug("attributesFilter:", attributesFilter);
+    // // Log.debug("attributesFilter:", attributesFilter);
 
     if (modelMethods.routeOptions) {
       var result = this.populateEmbeddedDocs(query, mongooseQuery, attributesFilter,
@@ -90,12 +90,12 @@ module.exports = {
 
     // query.firstName = { $in: JSON.parse(query.firstName) };
 
-    //Log.debug("query after:", query);
+    //// Log.debug("query after:", query);
     if (typeof query.$where === 'string') {
-      // Log.debug("query string:", query);
+      // // Log.debug("query string:", query);
       query.$where = JSON.parse(query.$where);
     }
-    // Log.debug("query after:", query);
+    // // Log.debug("query after:", query);
 
     if (query.$where) {
       mongooseQuery.where(query.$where);
@@ -482,18 +482,18 @@ module.exports = {
         query.$embed = [query.$embed];
       }
       query.$embed.forEach(function(embed) {
-        // Log.debug("query embed:", embed);
+        // // Log.debug("query embed:", embed);
         var embeds = embed.split(".");
         var populate = {};
 
         populate = nestPopulate(query, populate, 0, embeds, associations, Log);
-        // Log.debug("populate:", populate);
+        // // Log.debug("populate:", populate);
 
         mongooseQuery.populate(populate);
 
-        // Log.debug("attributesFilter before:", attributesFilter);
+        // // Log.debug("attributesFilter before:", attributesFilter);
         attributesFilter = attributesFilter + ' ' + populate.path;
-        Log.debug("attributesFilter after:", attributesFilter);
+        // Log.debug("attributesFilter after:", attributesFilter);
       });
       delete query.$embed;
       delete query.populateSelect;
@@ -572,12 +572,12 @@ module.exports = {
  * @returns {*}: The updated populate object.
  */
 function nestPopulate(query, populate, index, embeds, associations, Log) {
-  Log.debug("populate:", populate);
-  Log.debug("index:", index);
-  Log.debug("embeds:", embeds);
-  Log.debug("associations:", associations);
+  // Log.debug("populate:", populate);
+  // Log.debug("index:", index);
+  // Log.debug("embeds:", embeds);
+  // Log.debug("associations:", associations);
   var embed = embeds[index];
-  Log.debug("embed:", embed);
+  // Log.debug("embed:", embed);
   var association = associations[embed];
   var populatePath = "";
   var select = "";
@@ -586,13 +586,13 @@ function nestPopulate(query, populate, index, embeds, associations, Log) {
   } else {
     select = module.exports.createAttributesFilter({}, association.include.model, Log);
   }
-  Log.debug("association:", association);
+  // Log.debug("association:", association);
   if (association.type === "MANY_MANY") {
     populatePath = embed + '.' + association.model;
   } else {
     populatePath = embed;
   }
-  Log.debug("populatePath:", populatePath);
+  // Log.debug("populatePath:", populatePath);
   if (index < embeds.length - 1) {
     associations = association.include.model.schema.methods.routeOptions.associations;
     populate = nestPopulate(query, populate, index + 1, embeds, associations, Log);
@@ -600,13 +600,13 @@ function nestPopulate(query, populate, index, embeds, associations, Log) {
     populate.path = populatePath;
     populate.select = select + " " + populate.populate.path;//EXPL: have to add the path to the select to include nested MANY_MANY embeds
     populate.model = association.include.model;
-    Log.debug("populate:", populate);
+    // Log.debug("populate:", populate);
     return populate;
   } else {
     populate.path = populatePath;
     populate.select = select;
     populate.model = association.include.model;
-    Log.debug("populate:", populate);
+    // Log.debug("populate:", populate);
     return populate;
   }
 }
