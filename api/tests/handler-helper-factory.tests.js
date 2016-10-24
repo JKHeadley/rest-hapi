@@ -452,7 +452,7 @@ test('handler-helper-factory.generateFindHandler', function(t) {
 
       userModel.findOne = sandbox.spy();
 
-      var request = { params: { id: "TEST" }};
+      var request = { params: { _id: "TEST" }};
       //</editor-fold>
 
       //<editor-fold desc="Act">
@@ -492,7 +492,7 @@ test('handler-helper-factory.generateFindHandler', function(t) {
 
       userModel.findOne = sandbox.spy(function(){ return "TEST" });
 
-      var request = { query: {}, params: { id: {}} };
+      var request = { query: {}, params: { _id: {}} };
       var reply = function(){};
       //</editor-fold>
 
@@ -545,7 +545,7 @@ test('handler-helper-factory.generateFindHandler', function(t) {
 
       userModel.findOne = sandbox.spy();
 
-      var request = { query: {}, params: { id: {}} };
+      var request = { query: {}, params: { _id: {}} };
       var reply = function(){};
       //</editor-fold>
 
@@ -591,7 +591,7 @@ test('handler-helper-factory.generateFindHandler', function(t) {
 
       userModel.findOne = sandbox.spy();
 
-      var request = { query: {}, params: { id: {}} };
+      var request = { query: {}, params: { _id: {}} };
       var replyDeferred = Q.defer();
       var reply = sandbox.spy(function() { replyDeferred.resolve() });
       //</editor-fold>
@@ -650,7 +650,7 @@ test('handler-helper-factory.generateFindHandler', function(t) {
 
       userModel.findOne = sandbox.spy();
 
-      var request = { query: {}, params: { id: {}} };
+      var request = { query: {}, params: { _id: {}} };
       var replyDeferred = Q.defer();
       var reply = sandbox.spy(function() { replyDeferred.resolve() });
       //</editor-fold>
@@ -707,7 +707,7 @@ test('handler-helper-factory.generateFindHandler', function(t) {
 
       userModel.findOne = sandbox.spy();
 
-      var request = { query: {}, params: { id: "TEST"} };
+      var request = { query: {}, params: { _id: "TEST"} };
       var replyDeferred = Q.defer();
       var reply = sandbox.spy(function() { replyDeferred.resolve() });
       //</editor-fold>
@@ -755,7 +755,7 @@ test('handler-helper-factory.generateFindHandler', function(t) {
 
       userModel.findOne = sandbox.spy();
 
-      var request = { query: {}, params: { id: "TEST"} };
+      var request = { query: {}, params: { _id: "TEST"} };
       var replyDeferred = Q.defer();
       var reply = sandbox.spy(function() { replyDeferred.resolve() });
       //</editor-fold>
@@ -802,7 +802,7 @@ test('handler-helper-factory.generateFindHandler', function(t) {
       var error = "error message";
       userModel.findOne = sandbox.spy(function(){ throw(error) });
 
-      var request = { query: {}, params: { id: "TEST"} };
+      var request = { query: {}, params: { _id: "TEST"} };
       var replyDeferred = Q.defer();
       var reply = sandbox.spy(function() { replyDeferred.resolve() });
       //</editor-fold>
@@ -3572,6 +3572,487 @@ test('handler-helper-factory.generateAssociationGetAllHandler', function(t) {
         delete mongoose.models.child;
         delete mongoose.modelSchemas.child;
       });
+      //</editor-fold>
+    });
+  })
+
+});
+
+test('handler-helper-factory.setAssociation', function(t) {
+
+  return Q.when()
+
+  //handler-helper-factory.setAssociation calls model.findOne
+  .then(function() {
+    return t.test('setAssociation calls model.findOne', function (t) {
+      //<editor-fold desc="Arrange">
+      var sandbox = sinon.sandbox.create();
+      var Log = logger.bind("handler-helper-factory");
+      var server = sandbox.spy();
+      var handlerHelperFactory = rewire('../utilities/handler-helper-factory');
+      var setAssociation = handlerHelperFactory.__get__("setAssociation");
+      // sandbox.stub(Log, 'error', function(){});
+
+      var userSchema = new mongoose.Schema({});
+
+      var userModel = mongoose.model("user", userSchema);
+
+      var userObject = {};
+
+      var childSchema = new mongoose.Schema({});
+
+      var childModel = mongoose.model("child", childSchema);
+      var deferred = Q.defer();
+      childModel.findOne = sandbox.spy(function(){ deferred.resolve(); return Q.when(); });
+
+      var association = { include: { as: "children", model: childModel }, model: "child", type: "MANY_MANY", linkingModel: "link"};
+
+      var associationName = association.include.as;
+
+      var childId = "1";
+
+      var request = { query: {}, params: { ownerId: "_id" } };
+      //</editor-fold>
+
+      //<editor-fold desc="Act">
+      setAssociation(request, server, userModel, userObject, childModel, childId, associationName, {}, Log);
+      //</editor-fold>
+
+      //<editor-fold desc="Assert">
+      return deferred.promise.then(function() {
+        t.ok(childModel.findOne.calledWithExactly({'_id': childId}), "model.findOne called");
+      })
+      //</editor-fold>
+
+      //<editor-fold desc="Restore">
+      .then(function() {
+        sandbox.restore();
+        delete mongoose.models.user;
+        delete mongoose.modelSchemas.user;
+        delete mongoose.models.child;
+        delete mongoose.modelSchemas.child;
+      })
+      //</editor-fold>
+    });
+  })
+
+  //handler-helper-factory.setAssociation handles ONE_MANY relationships
+  .then(function() {
+    return t.test('setAssociation handles ONE_MANY relationships', function (t) {
+      //<editor-fold desc="Arrange">
+      var sandbox = sinon.sandbox.create();
+      var Log = logger.bind("handler-helper-factory");
+      var server = sandbox.spy();
+      var handlerHelperFactory = rewire('../utilities/handler-helper-factory');
+      var setAssociation = handlerHelperFactory.__get__("setAssociation");
+      var Qstub = {};
+      var deferred = Q.defer();
+      var deferredSpy = { resolve: sandbox.spy(function(){ deferred.resolve() }) };
+      Qstub.defer = function(){ return deferredSpy };
+      handlerHelperFactory.__set__("Q", Qstub);
+      // sandbox.stub(Log, 'error', function(){});
+
+      var userSchema = new mongoose.Schema({});
+      userSchema.methods = {
+        routeOptions: {
+          associations: {
+            children: {
+              type: "ONE_MANY",
+              foreignField: "parent"
+            }
+          }
+        }
+      }
+
+      var userModel = mongoose.model("user", userSchema);
+
+      var userObject = { _id: "_id" };
+
+      var childSchema = new mongoose.Schema({});
+
+      var childModel = mongoose.model("child", childSchema);
+
+      var saveChild = sandbox.spy(function(){ return Q.when() });
+      var childObject = { save: saveChild, parent: {} };
+      childModel.findOne = sandbox.spy(function(){ return Q.when(childObject); });
+
+      var association = { include: { as: "children", model: childModel }, model: "child", type: "MANY_MANY", linkingModel: "link"};
+
+      var associationName = association.include.as;
+
+      var childId = "1";
+
+      var request = { query: {}, params: { ownerId: "_id" } };
+      //</editor-fold>
+
+      //<editor-fold desc="Act">
+      setAssociation(request, server, userModel, userObject, childModel, childId, associationName, {}, Log);
+      //</editor-fold>
+
+      //<editor-fold desc="Assert">
+      return deferred.promise.then(function() {
+        t.ok(deferredSpy.resolve.called, "deferred.resolve called");
+        t.ok(childObject.save.called, "childObject.save called");
+        t.equals(childObject.parent, "_id", "childObject updated");
+      })
+      //</editor-fold>
+
+      //<editor-fold desc="Restore">
+      .then(function() {
+        sandbox.restore();
+        delete mongoose.models.user;
+        delete mongoose.modelSchemas.user;
+        delete mongoose.models.child;
+        delete mongoose.modelSchemas.child;
+      })
+      //</editor-fold>
+    });
+  })
+
+  //handler-helper-factory.setAssociation creates a MANY_MANY association instance if it doesn't exist
+  .then(function() {
+    return t.test('setAssociation creates a MANY_MANY association instance if it doesn\'t exist', function (t) {
+      //<editor-fold desc="Arrange">
+      var sandbox = sinon.sandbox.create();
+      var Log = logger.bind("handler-helper-factory");
+      var server = sandbox.spy();
+      var handlerHelperFactory = rewire('../utilities/handler-helper-factory');
+      var setAssociation = handlerHelperFactory.__get__("setAssociation");
+      var Qstub = {};
+      var deferred = Q.defer();
+      var deferredSpy = { resolve: sandbox.spy(function(){ deferred.resolve() }) };
+      Qstub.defer = function(){ return deferredSpy };
+      Qstub.all = function(){ return Q.when() };
+      handlerHelperFactory.__set__("Q", Qstub);
+      // sandbox.stub(Log, 'error', function(){});
+
+      var userSchema = new mongoose.Schema({});
+      userSchema.methods = {
+        routeOptions: {
+          associations: {
+            children: {
+              type: "MANY_MANY",
+            }
+          }
+        }
+      }
+
+      var userModel = mongoose.model("user", userSchema);
+
+      var saveUser = sandbox.spy(function(){ return Q.when() });
+      var userObject = { save: saveUser, _id: "1", children: [] };
+
+      var childSchema = new mongoose.Schema({});
+      childSchema.methods = {
+        routeOptions: {
+          associations: {
+            users: {
+              type: "MANY_MANY",
+              model: "user",
+              include: {
+                as: "users"
+              }
+            }
+          }
+        }
+      }
+
+      var childModel = mongoose.model("child", childSchema);
+
+      var saveChild = sandbox.spy(function(){ return Q.when() });
+      var childObject = { save: saveChild, _id: "2", users: [] };
+      childModel.findOne = sandbox.spy(function(){ return Q.when(childObject); });
+
+      var association = { include: { as: "children", model: childModel }, model: "child", type: "MANY_MANY"};
+
+      var associationName = association.include.as;
+
+      var childId = "1";
+
+      var request = { query: {}, params: { ownerId: "_id" }, payload: [""] };
+      //</editor-fold>
+
+      //<editor-fold desc="Act">
+      setAssociation(request, server, userModel, userObject, childModel, childId, associationName, {}, Log);
+      //</editor-fold>
+
+      //<editor-fold desc="Assert">
+      return deferred.promise.then(function() {
+        t.ok(deferredSpy.resolve.called, "deferred.resolve called");
+        t.ok(childObject.save.called, "childObject.save called");
+        t.ok(userObject.save.called, "userObject.save called");
+        t.deepEqual(userObject.children, [{child: "2"}], "association added to userObject");
+        t.deepEqual(childObject.users, [{user: "1"}], "association added to childObject");
+      })
+      //</editor-fold>
+
+      //<editor-fold desc="Restore">
+      .then(function() {
+        sandbox.restore();
+        delete mongoose.models.user;
+        delete mongoose.modelSchemas.user;
+        delete mongoose.models.child;
+        delete mongoose.modelSchemas.child;
+      })
+      //</editor-fold>
+    });
+  })
+
+  //handler-helper-factory.setAssociation updates a MANY_MANY association instance if it exists
+  .then(function() {
+    return t.test('setAssociation updates a MANY_MANY association instance if it exists', function (t) {
+      //<editor-fold desc="Arrange">
+      var sandbox = sinon.sandbox.create();
+      var Log = logger.bind("handler-helper-factory");
+      var server = sandbox.spy();
+      var handlerHelperFactory = rewire('../utilities/handler-helper-factory');
+      var setAssociation = handlerHelperFactory.__get__("setAssociation");
+      var Qstub = {};
+      var deferred = Q.defer();
+      var deferredSpy = { resolve: sandbox.spy(function(){ deferred.resolve() }) };
+      Qstub.defer = function(){ return deferredSpy };
+      Qstub.all = function(){ return Q.when() };
+      handlerHelperFactory.__set__("Q", Qstub);
+      sandbox.stub(Log, 'error', function(){});
+
+      var userSchema = new mongoose.Schema({});
+      userSchema.methods = {
+        routeOptions: {
+          associations: {
+            children: {
+              type: "MANY_MANY",
+            }
+          }
+        }
+      }
+
+      var userModel = mongoose.model("user", userSchema);
+
+      var saveUser = sandbox.spy(function(){ return Q.when() });
+      var userObject = { save: saveUser, _id: "1", children: [{ _id: "_id", child: "3", value: "yes"}] };
+
+      var childSchema = new mongoose.Schema({});
+      childSchema.methods = {
+        routeOptions: {
+          associations: {
+            users: {
+              type: "MANY_MANY",
+              model: "user",
+              include: {
+                as: "users"
+              }
+            }
+          }
+        }
+      }
+
+      var childModel = mongoose.model("child", childSchema);
+
+      var saveChild = sandbox.spy(function(){ return Q.when() });
+      var childObject = { save: saveChild, _id: "3", users: [{ _id: "_id", user: "1", value: "yes"}] };
+      childModel.findOne = sandbox.spy(function(){ return Q.when(childObject); });
+
+      var association = { include: { as: "children", model: childModel }, model: "child", type: "MANY_MANY"};
+
+      var associationName = association.include.as;
+
+      var childId = "3";
+
+      var request = { query: {}, params: { ownerId: "_id" }, payload: [{ childId: "3", value: "no"}] };
+      //</editor-fold>
+
+      //<editor-fold desc="Act">
+      setAssociation(request, server, userModel, userObject, childModel, childId, associationName, {}, Log);
+      //</editor-fold>
+
+      //<editor-fold desc="Assert">
+      return deferred.promise.then(function() {
+        t.ok(deferredSpy.resolve.called, "deferred.resolve called");
+        t.ok(childObject.save.called, "childObject.save called");
+        t.ok(userObject.save.called, "userObject.save called");
+        t.deepEqual(userObject.children, [{ _id: "_id", child: "3", value: "no"}], "userObject updated");
+        t.deepEqual(childObject.users, [{ _id: "_id", user: "1", value: "no"}], "childObject updated");
+      })
+      //</editor-fold>
+
+      //<editor-fold desc="Restore">
+      .then(function() {
+        sandbox.restore();
+        delete mongoose.models.user;
+        delete mongoose.modelSchemas.user;
+        delete mongoose.models.child;
+        delete mongoose.modelSchemas.child;
+      })
+      //</editor-fold>
+    });
+  })
+
+  //handler-helper-factory.setAssociation rejects a promise if the association type is invalid
+  .then(function() {
+    return t.test('setAssociation rejects a promise if the association type is invalid', function (t) {
+      //<editor-fold desc="Arrange">
+      var sandbox = sinon.sandbox.create();
+      var Log = logger.bind("handler-helper-factory");
+      var server = sandbox.spy();
+      var handlerHelperFactory = rewire('../utilities/handler-helper-factory');
+      var setAssociation = handlerHelperFactory.__get__("setAssociation");
+      var Qstub = {};
+      var deferred = Q.defer();
+      var deferredSpy = { reject: sandbox.spy(function(error){ deferred.resolve(error) }) };
+      Qstub.defer = function(){ return deferredSpy };
+      Qstub.all = function(){ return Q.when() };
+      handlerHelperFactory.__set__("Q", Qstub);
+      // sandbox.stub(Log, 'error', function(){});
+
+      var userSchema = new mongoose.Schema({});
+      userSchema.methods = {
+        routeOptions: {
+          associations: {
+            children: {
+              type: "BAD",
+            }
+          }
+        }
+      }
+
+      var userModel = mongoose.model("user", userSchema);
+
+      var saveUser = sandbox.spy(function(){ return Q.when() });
+      var userObject = { save: saveUser, _id: "1", children: [{ _id: "_id", child: "3", value: "yes"}] };
+
+      var childSchema = new mongoose.Schema({});
+      childSchema.methods = {
+        routeOptions: {
+          associations: {
+            users: {
+              type: "MANY_MANY",
+              model: "user",
+              include: {
+                as: "users"
+              }
+            }
+          }
+        }
+      }
+
+      var childModel = mongoose.model("child", childSchema);
+
+      var saveChild = sandbox.spy(function(){ return Q.when() });
+      var childObject = { save: saveChild, _id: "3", users: [{ _id: "_id", user: "1", value: "yes"}] };
+      childModel.findOne = sandbox.spy(function(){ return Q.when(childObject); });
+
+      var association = { include: { as: "children", model: childModel }, model: "child", type: "BAD"};
+
+      var associationName = association.include.as;
+
+      var childId = "3";
+
+      var request = { query: {}, params: { ownerId: "_id" }, payload: [{ childId: "3", value: "no"}] };
+      //</editor-fold>
+
+      //<editor-fold desc="Act">
+      setAssociation(request, server, userModel, userObject, childModel, childId, associationName, {}, Log);
+      //</editor-fold>
+
+      //<editor-fold desc="Assert">
+      return deferred.promise.then(function(error) {
+        t.equal(error, "Association type incorrectly defined.", "error returned");
+      })
+      //</editor-fold>
+
+      //<editor-fold desc="Restore">
+      .then(function() {
+        sandbox.restore();
+        delete mongoose.models.user;
+        delete mongoose.modelSchemas.user;
+        delete mongoose.models.child;
+        delete mongoose.modelSchemas.child;
+      })
+      //</editor-fold>
+    });
+  })
+
+  //handler-helper-factory.setAssociation rejects a promise if the child isn't found
+  .then(function() {
+    return t.test('setAssociation rejects a promise if the child isn\'t found', function (t) {
+      //<editor-fold desc="Arrange">
+      var sandbox = sinon.sandbox.create();
+      var Log = logger.bind("handler-helper-factory");
+      var server = sandbox.spy();
+      var handlerHelperFactory = rewire('../utilities/handler-helper-factory');
+      var setAssociation = handlerHelperFactory.__get__("setAssociation");
+      var Qstub = {};
+      var deferred = Q.defer();
+      var deferredSpy = { reject: sandbox.spy(function(error){ deferred.resolve(error) }) };
+      Qstub.defer = function(){ return deferredSpy };
+      Qstub.all = function(){ return Q.when() };
+      handlerHelperFactory.__set__("Q", Qstub);
+      // sandbox.stub(Log, 'error', function(){});
+
+      var userSchema = new mongoose.Schema({});
+      userSchema.methods = {
+        routeOptions: {
+          associations: {
+            children: {
+              type: "BAD",
+            }
+          }
+        }
+      }
+
+      var userModel = mongoose.model("user", userSchema);
+
+      var saveUser = sandbox.spy(function(){ return Q.when() });
+      var userObject = { save: saveUser, _id: "1", children: [{ _id: "_id", child: "3", value: "yes"}] };
+
+      var childSchema = new mongoose.Schema({});
+      childSchema.methods = {
+        routeOptions: {
+          associations: {
+            users: {
+              type: "MANY_MANY",
+              model: "user",
+              include: {
+                as: "users"
+              }
+            }
+          }
+        }
+      }
+
+      var childModel = mongoose.model("child", childSchema);
+
+      var saveChild = sandbox.spy(function(){ return Q.when() });
+      var childObject = { save: saveChild, _id: "3", users: [{ _id: "_id", user: "1", value: "yes"}] };
+      childModel.findOne = sandbox.spy(function(){ return Q.when(); });
+
+      var association = { include: { as: "children", model: childModel }, model: "child", type: "BAD"};
+
+      var associationName = association.include.as;
+
+      var childId = "3";
+
+      var request = { query: {}, params: { ownerId: "_id" }, payload: [{ childId: "3", value: "no"}] };
+      //</editor-fold>
+
+      //<editor-fold desc="Act">
+      setAssociation(request, server, userModel, userObject, childModel, childId, associationName, {}, Log);
+      //</editor-fold>
+
+      //<editor-fold desc="Assert">
+      return deferred.promise.then(function(error) {
+        t.equal(error, "Child object not found.", "error returned");
+      })
+      //</editor-fold>
+
+      //<editor-fold desc="Restore">
+      .then(function() {
+        sandbox.restore();
+        delete mongoose.models.user;
+        delete mongoose.modelSchemas.user;
+        delete mongoose.models.child;
+        delete mongoose.modelSchemas.child;
+      })
       //</editor-fold>
     });
   })

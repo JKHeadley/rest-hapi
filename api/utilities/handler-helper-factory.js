@@ -207,7 +207,7 @@ function generateFindHandler(model, options, Log) {
 
       var modelMethods = model.schema.methods;
 
-      var mongooseQuery = model.findOne({ '_id': request.params.id });
+      var mongooseQuery = model.findOne({ '_id': request.params._id });
       mongooseQuery = QueryHelper.createMongooseQuery(model, request.query, mongooseQuery, Log);
       return mongooseQuery.exec().then(function (result) {
         if (result) {
@@ -245,7 +245,7 @@ function generateFindHandler(model, options, Log) {
           });
         }
         else {
-          return reply(Boom.notFound("There was no data found with that id.", request.params.id));
+          return reply(Boom.notFound("There was no data found with that id.", request.params._id));
         }
       })
       .catch(function (error) {
@@ -703,31 +703,23 @@ function setAssociation(request, server, ownerModel, ownerObject, childModel, ch
   var payload = request.payload;
 
   var ownerMethods = ownerModel.schema.methods;
-  var ownerCollectionName = ownerMethods.collectionDisplayName || ownerModel.modelName;
   var childMethods = childModel.schema.methods;
-  var childCollectionName = childMethods.collectionDisplayName || childModel.modelName;
-
-  var ownerIdField = ownerMethods.idField || "_id";
-  var ownerNameField = ownerMethods.nameField || "name";
-  var childIdField = ownerMethods.idField || "_id";
-  var childNameField = ownerMethods.nameField || "name";
 
   childModel.findOne({ '_id': childId }).then(function (childObject) {
     if (childObject) {
       var promise = {};
       var association = ownerMethods.routeOptions.associations[associationName];
-      Log.debug("associationType", association.type);
       if (association.type === "ONE_MANY") {//EXPL: one-many associations are virtual, so only update the child reference
-        //TODO: MAKE THIS RIGHT
         childObject[association.foreignField] = ownerObject._id;
-
-        promise = childObject.save()
-      } else if (association.type === "MANY_MANY") {
+        promise = childObject.save();
+      }
+      else if (association.type === "MANY_MANY") {
         if (typeof request.payload[0] === 'string' || request.payload[0] instanceof String) {//EXPL: the payload is an array of Ids. No extra fields
           payload = {};
-        } else {
+        }
+        else {
           payload = payload.filter(function(object) {//EXPL: the payload contains extra fields
-            return object.childId === childObject.id;
+            return object.childId === childObject._id;
           });
 
           payload = payload[0];
@@ -744,7 +736,8 @@ function setAssociation(request, server, ownerModel, ownerObject, childModel, ch
 
         if (duplicateIndex < 0) {//EXPL: if the association doesn't already exist, create it, otherwise update the extra fields
           ownerObject[associationName].push(payload);
-        } else {
+        }
+        else {
           payload._id = ownerObject[associationName][duplicateIndex]._id;//EXPL: retain the association instance id for consistency
           ownerObject[associationName][duplicateIndex] = payload;
         }
@@ -773,71 +766,37 @@ function setAssociation(request, server, ownerModel, ownerObject, childModel, ch
 
         if (duplicateIndex < 0) {//EXPL: if the association doesn't already exist, create it, otherwise update the extra fields
           childObject[childAssociationName].push(payload);
-        } else {
+        }
+        else {
           payload._id = childObject[childAssociationName][duplicateIndex]._id;//EXPL: retain the association instance id for consistency
           childObject[childAssociationName][duplicateIndex] = payload;
         }
 
         promise = Q.all(ownerObject.save(), childObject.save());
-      } else {
+      }
+      else {
         deferred.reject("Association type incorrectly defined.");
         return deferred.promise;
       }
 
       promise.then(function(result) {
         // Log.debug(result);
-
-
         //TODO: add eventLogs
 
         //TODO: allow eventLogs to log/support association extra fields
         deferred.resolve();
-      }).catch(function (error) {
+      })
+      .catch(function (error) {
         Log.error(error);
         deferred.reject(error);
       });
-      // ownerObject[addMethodName](childObject, payload).then(function (result) {
-      //   //TODO: eventLogs
-      //   // options.models.eventLog.create({
-      //   //   userId: request.auth.credentials.user.id,
-      //   //   organizationId: request.auth.credentials.user.organizationId,
-      //   //   verb: "associated",
-      //   //   objectId: ownerObject[ownerIdField] || "unknown",
-      //   //   objectName: ownerObject[ownerNameField] || "unknown",
-      //   //   objectType: ownerModel.modelName,
-      //   //   objectDisplayType: ownerCollectionName,
-      //   //   associatedObjectId: childObject[childIdField] || "unknown",
-      //   //   associatedObjectName: childObject[childNameField] || "unknown",
-      //   //   associatedObjectType: childModel.modelName,
-      //   //   associatedObjectDisplayType: childCollectionName
-      //   // }).then(function (eventLog) {
-      //   //   options.models.user.findById(eventLog.userId).then(function (user) {
-      //   //     eventLog.user = user;
-      //   //     require('../../api/utilities/refresh-activity-feeds')(request, server, null, options, Log)([eventLog]).then(function(result) {
-      //   //     }).catch(function(error) {
-      //   //       Log.error(error);
-      //   //     });
-      //   //     require('../../api/utilities/refresh-notifications')(request, server, null, options, Log)([eventLog]).then(function(result) {
-      //   //     }).catch(function(error) {
-      //   //       Log.error(error);
-      //   //     });
-      //   //   }).catch(function(error) {
-      //   //     Log.error(error);
-      //   //   });
-      //   //   deferred.resolve();
-      //   // }).catch(function (error) {
-      //   //   Log.error(error);
-      //   //   deferred.resolve();
-      //   // });
-      // }).catch(function (error) {
-      //   Log.error(error);
-      //   deferred.reject(error);
-      // });
-    } else {
+    }
+    else {
       deferred.reject("Child object not found.");
     }
-  }).catch(function (error) {
-    Log.error(error);
+  })
+  .catch(function (error) {
+    Log.error("error: ", error);
     deferred.reject(error);
   });
 
