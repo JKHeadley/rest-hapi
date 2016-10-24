@@ -12,6 +12,7 @@ logger.logLevel = "ERROR";
 var testHelper = require("./test-helper");
 var Joi = require('joi');
 var Q = require('q');
+var extend = require('util')._extend;
 
 test('handler-helper-factory exists and has expected members', function (t) {
   //<editor-fold desc="Arrange">
@@ -3157,6 +3158,404 @@ test('handler-helper-factory.generateAssociationAddManyHandler', function(t) {
 
       //<editor-fold desc="Act">
       handlerHelperFactory.generateAssociationAddManyHandler(userModel, association, {}, Log)(request, reply);
+      //</editor-fold>
+
+      //<editor-fold desc="Assert">
+      return deferred.promise.then(function() {
+        t.ok(boomStub.badRequest.calledWithExactly("There was an error processing the request.", "error message"), "reply called with processing error");
+      })
+      //</editor-fold>
+
+      //<editor-fold desc="Restore">
+      .then(function() {
+        sandbox.restore();
+        delete mongoose.models.user;
+        delete mongoose.modelSchemas.user;
+        delete mongoose.models.child;
+        delete mongoose.modelSchemas.child;
+      });
+      //</editor-fold>
+    });
+  })
+
+});
+
+test('handler-helper-factory.generateAssociationGetAllHandler', function(t) {
+
+  return Q.when()
+
+  //handler-helper-factory.generateAssociationGetAllHandler calls model.findOne
+  .then(function() {
+    return t.test('handler-helper-factory.generateAssociationGetAllHandler calls model.findOne', function (t) {
+      //<editor-fold desc="Arrange">
+      var sandbox = sinon.sandbox.create();
+      var Log = logger.bind("handler-helper-factory");
+      var server = sandbox.spy();
+      var handlerHelperFactory = proxyquire('../utilities/handler-helper-factory', {
+      })(mongoose, server);
+      sandbox.stub(Log, 'error', function(){});
+
+      var userSchema = new mongoose.Schema({});
+      userSchema.methods = {
+        routeOptions: {
+          associations: {
+            CHILD: {
+              foreignField: "foreignField"
+            }
+          }
+        }
+      };
+
+      var userModel = mongoose.model("user", userSchema);
+      userModel.findOne = sandbox.spy();
+
+      var childSchema = new mongoose.Schema({});
+
+      var childModel = mongoose.model("child", childSchema);
+
+      var association = { include: { as: "CHILD", model: childModel }};
+
+      var request = { query: {}, params: { ownerId: "_id" } };
+      var reply = function(){};
+      //</editor-fold>
+
+      //<editor-fold desc="Act">
+      handlerHelperFactory.generateAssociationGetAllHandler(userModel, association, {}, Log)(request, reply);
+      //</editor-fold>
+
+      //<editor-fold desc="Assert">
+      t.ok(userModel.findOne.calledWithExactly({'_id': "_id"}), "model.findOne called");
+      //</editor-fold>
+
+      //<editor-fold desc="Restore">
+      sandbox.restore();
+      delete mongoose.models.user;
+      delete mongoose.modelSchemas.user;
+      delete mongoose.models.child;
+      delete mongoose.modelSchemas.child;
+      return Q.when();
+      //</editor-fold>
+    });
+  })
+    
+  //handler-helper-factory.generateAssociationGetAllHandler calls QueryHelper.createMongooseQuery
+  .then(function() {
+    return t.test('handler-helper-factory.generateAssociationGetAllHandler calls QueryHelper.createMongooseQuery', function (t) {
+      //<editor-fold desc="Arrange">
+      var sandbox = sinon.sandbox.create();
+      var Log = logger.bind("handler-helper-factory");
+      var server = sandbox.spy();
+      var queryHelperStub = sandbox.stub(require('../utilities/query-helper'));
+      var handlerHelperFactory = proxyquire('../utilities/handler-helper-factory', {
+        './query-helper': queryHelperStub,
+      })(mongoose, server);
+      sandbox.stub(Log, 'error', function(){});
+
+      var userSchema = new mongoose.Schema({});
+      userSchema.methods = {
+        routeOptions: {
+          associations: {
+            CHILD: {
+              foreignField: "foreignField"
+            }
+          }
+        }
+      };
+
+      var userModel = mongoose.model("user", userSchema);
+      userModel.findOne = sandbox.spy(function(){return "TEST"});
+
+      var childSchema = new mongoose.Schema({});
+
+      var childModel = mongoose.model("child", childSchema);
+
+      var association = { include: { as: "CHILD", model: childModel }};
+
+      var request = { query: {}, params: { ownerId: "_id" } };
+      var ownerRequest = { query: { $embed: "CHILD", populateSelect: "_id,foreignField" } };
+      var reply = function(){};
+      //</editor-fold>
+
+      //<editor-fold desc="Act">
+      handlerHelperFactory.generateAssociationGetAllHandler(userModel, association, {}, Log)(request, reply);
+      //</editor-fold>
+
+      //<editor-fold desc="Assert">
+      t.ok(queryHelperStub.createMongooseQuery.calledWithExactly(userModel, ownerRequest.query, "TEST", Log), "createMongooseQuery called");
+      //</editor-fold>
+
+
+      //<editor-fold desc="Restore">
+      sandbox.restore();
+      delete mongoose.models.user;
+      delete mongoose.modelSchemas.user;
+      delete mongoose.models.child;
+      delete mongoose.modelSchemas.child;
+      return Q.when();
+      //</editor-fold>
+    });
+  })
+
+  //handler-helper-factory.generateAssociationGetAllHandler calls generateListHandler
+  .then(function() {
+    return t.test('handler-helper-factory.generateAssociationGetAllHandler calls generateListHandler', function (t) {
+      //<editor-fold desc="Arrange">
+      var sandbox = sinon.sandbox.create();
+      var Log = logger.bind("handler-helper-factory");
+      var server = sandbox.spy();
+      var deferred = Q.defer();
+      var handlerSpy1 = sandbox.spy(function(){ deferred.resolve() });
+      var handlerSpy2 = sandbox.spy(function(){ return handlerSpy1 });
+      var queryHelperStub = sandbox.stub(require('../utilities/query-helper'));
+      queryHelperStub.createMongooseQuery = function(){ return { exec: function(){ return Q.when({ "children": [{ _id: "childId1"},{ _id: "childId2"}] }) }}};
+      var handlerHelperFactory = rewire('../utilities/handler-helper-factory');
+      handlerHelperFactory.__set__("QueryHelper", queryHelperStub);
+      handlerHelperFactory.__set__("generateListHandler", handlerSpy2);
+      handlerHelperFactory = handlerHelperFactory(mongoose, server);
+      sandbox.stub(Log, 'error', function(){});
+
+      var userSchema = new mongoose.Schema({});
+      userSchema.methods = {
+        routeOptions: {
+          associations: {
+            children: {
+              foreignField: "foreignField"
+            }
+          }
+        }
+      };
+
+      var userModel = mongoose.model("user", userSchema);
+      userModel.findOne = sandbox.spy(function(){return "TEST"});
+
+      var childSchema = new mongoose.Schema({});
+
+      var childModel = mongoose.model("child", childSchema);
+
+      var association = { include: { as: "children", model: childModel }, model: "child"};
+
+      var request = { query: {}, params: { ownerId: "_id" } };
+      var extendedRequest = extend({}, request);
+      extendedRequest.query.$where = extend({'_id': { $in: ["childId1","childId2"] }}, request.query.$where);
+      var reply = function(){};
+      //</editor-fold>
+
+      //<editor-fold desc="Act">
+      handlerHelperFactory.generateAssociationGetAllHandler(userModel, association, {}, Log)(request, reply);
+      //</editor-fold>
+
+      //<editor-fold desc="Assert">
+      return deferred.promise.then(function() {
+        t.ok(handlerSpy2.calledWithExactly(childModel, {}, Log), "generateListHandler called 1");
+        t.ok(handlerSpy1.calledWithExactly(extendedRequest, reply), "generateListHandler called 2");
+      })
+      //</editor-fold>
+
+      //<editor-fold desc="Restore">
+      .then(function() {
+        sandbox.restore();
+        delete mongoose.models.user;
+        delete mongoose.modelSchemas.user;
+        delete mongoose.models.child;
+        delete mongoose.modelSchemas.child;
+      })
+      //</editor-fold>
+    });
+  })
+
+  //handler-helper-factory.generateAssociationGetAllHandler handles MANY_MANY associations with linkingModels
+  .then(function() {
+    return t.test('handler-helper-factory.generateAssociationGetAllHandler handles MANY_MANY associations with linkingModels', function (t) {
+      //<editor-fold desc="Arrange">
+      var sandbox = sinon.sandbox.create();
+      var Log = logger.bind("handler-helper-factory");
+      var server = sandbox.spy();
+      var deferred = Q.defer();
+      var handlerSpy1 = sandbox.spy(function(){ return Q.when([{_id: "childId1"},{_id: "childId2"}]) });
+      var handlerSpy2 = sandbox.spy(function(){ return handlerSpy1 });
+      var queryHelperStub = sandbox.stub(require('../utilities/query-helper'));
+      queryHelperStub.createMongooseQuery = function(){ return { exec: function(){
+        return Q.when(
+          {
+            "children": [
+              { child: { _id: "childId1"}, value: "value1", toJSON: function(){return { child: { _id: "childId1"}, value: "value1"}}},
+              { child: { _id: "childId2"}, value: "value2", toJSON: function(){return { child: { _id: "childId2"}, value: "value2"}}},
+              ]
+          })
+      }}};
+      var handlerHelperFactory = rewire('../utilities/handler-helper-factory');
+      handlerHelperFactory.__set__("QueryHelper", queryHelperStub);
+      handlerHelperFactory.__set__("generateListHandler", handlerSpy2);
+      handlerHelperFactory = handlerHelperFactory(mongoose, server);
+      sandbox.stub(Log, 'error', function(){});
+
+      var userSchema = new mongoose.Schema({});
+      userSchema.methods = {
+        routeOptions: {
+          associations: {
+            children: {
+              foreignField: "foreignField"
+            }
+          }
+        }
+      };
+
+      var userModel = mongoose.model("user", userSchema);
+      userModel.findOne = sandbox.spy(function(){return "TEST"});
+
+      var childSchema = new mongoose.Schema({});
+
+      var childModel = mongoose.model("child", childSchema);
+
+      var association = { include: { as: "children", model: childModel }, model: "child", type: "MANY_MANY", linkingModel: "link"};
+
+      var request = { query: {}, params: { ownerId: "_id" }, noReply: true };
+      var extendedRequest = extend({}, request);
+      extendedRequest.query.$where = extend({'_id': { $in: ["childId1","childId2"] }}, request.query.$where);
+      var reply = sandbox.spy(function(){ return deferred.resolve() });
+      //</editor-fold>
+
+      //<editor-fold desc="Act">
+      handlerHelperFactory.generateAssociationGetAllHandler(userModel, association, {}, Log)(request, reply);
+      //</editor-fold>
+
+      //<editor-fold desc="Assert">
+      return deferred.promise.then(function() {
+        t.ok(handlerSpy2.calledWithExactly(childModel, {}, Log), "generateListHandler called 1");
+        t.ok(handlerSpy1.calledWithExactly(extendedRequest, reply), "generateListHandler called 2");
+        t.ok(reply.calledWithExactly([{_id: "childId1", link: {value: "value1"}},{_id: "childId2", link: {value: "value2"}}]), "reply called with correct result");
+      })
+      //</editor-fold>
+
+      //<editor-fold desc="Restore">
+      .then(function() {
+        sandbox.restore();
+        delete mongoose.models.user;
+        delete mongoose.modelSchemas.user;
+        delete mongoose.models.child;
+        delete mongoose.modelSchemas.child;
+      })
+      //</editor-fold>
+    });
+  })
+
+  //handler-helper-factory.generateAssociationGetAllHandler handles MANY_MANY associations without linkingModels
+  .then(function() {
+    return t.test('handler-helper-factory.generateAssociationGetAllHandler handles MANY_MANY associations without linkingModels', function (t) {
+      //<editor-fold desc="Arrange">
+      var sandbox = sinon.sandbox.create();
+      var Log = logger.bind("handler-helper-factory");
+      var server = sandbox.spy();
+      var deferred = Q.defer();
+      var handlerSpy1 = sandbox.spy(function(){ return Q.when([{_id: "childId1"},{_id: "childId2"}]) });
+      var handlerSpy2 = sandbox.spy(function(){ return handlerSpy1 });
+      var queryHelperStub = sandbox.stub(require('../utilities/query-helper'));
+      queryHelperStub.createMongooseQuery = function(){ return { exec: function(){
+        return Q.when(
+          {
+            "children": [
+              { child: { _id: "childId1"}, value: "value1", toJSON: function(){return { child: { _id: "childId1"}, value: "value1"}}},
+              { child: { _id: "childId2"}, value: "value2", toJSON: function(){return { child: { _id: "childId2"}, value: "value2"}}},
+            ]
+          })
+      }}};
+      var handlerHelperFactory = rewire('../utilities/handler-helper-factory');
+      handlerHelperFactory.__set__("QueryHelper", queryHelperStub);
+      handlerHelperFactory.__set__("generateListHandler", handlerSpy2);
+      handlerHelperFactory = handlerHelperFactory(mongoose, server);
+      sandbox.stub(Log, 'error', function(){});
+
+      var userSchema = new mongoose.Schema({});
+      userSchema.methods = {
+        routeOptions: {
+          associations: {
+            children: {
+              foreignField: "foreignField"
+            }
+          }
+        }
+      };
+
+      var userModel = mongoose.model("user", userSchema);
+      userModel.findOne = sandbox.spy(function(){return "TEST"});
+
+      var childSchema = new mongoose.Schema({});
+
+      var childModel = mongoose.model("child", childSchema);
+
+      var association = { include: { as: "children", model: childModel }, model: "child", type: "MANY_MANY"};
+
+      var request = { query: {}, params: { ownerId: "_id" }, noReply: true };
+      var extendedRequest = extend({}, request);
+      extendedRequest.query.$where = extend({'_id': { $in: ["childId1","childId2"] }}, request.query.$where);
+      var reply = sandbox.spy(function(){ return deferred.resolve() });
+      //</editor-fold>
+
+      //<editor-fold desc="Act">
+      handlerHelperFactory.generateAssociationGetAllHandler(userModel, association, {}, Log)(request, reply);
+      //</editor-fold>
+
+      //<editor-fold desc="Assert">
+      return deferred.promise.then(function() {
+        t.ok(handlerSpy2.calledWithExactly(childModel, {}, Log), "generateListHandler called 1");
+        t.ok(handlerSpy1.calledWithExactly(extendedRequest, reply), "generateListHandler called 2");
+        t.ok(reply.calledWithExactly([{_id: "childId1"},{_id: "childId2"}]), "reply called with correct result");
+      })
+      //</editor-fold>
+
+      //<editor-fold desc="Restore">
+      .then(function() {
+        sandbox.restore();
+        delete mongoose.models.user;
+        delete mongoose.modelSchemas.user;
+        delete mongoose.models.child;
+        delete mongoose.modelSchemas.child;
+      })
+      //</editor-fold>
+    });
+  })
+
+  //handler-helper-factory.generateAssociationGetAllHandler calls reply with a processing error
+  .then(function() {
+    return t.test('handler-helper-factory.generateAssociationGetAllHandler calls reply with a processing error', function (t) {
+      //<editor-fold desc="Arrange">
+      var sandbox = sinon.sandbox.create();
+      var Log = logger.bind("handler-helper-factory");
+      var server = sandbox.spy();
+      var boomStub = sandbox.stub(require('boom'));
+      var handlerHelperFactory = rewire('../utilities/handler-helper-factory');
+      handlerHelperFactory.__set__("Boom", boomStub);
+      handlerHelperFactory = handlerHelperFactory(mongoose, server);
+      sandbox.stub(Log, 'error', function(){});
+
+      var userSchema = new mongoose.Schema({});
+      userSchema.methods = {
+        routeOptions: {
+          associations: {
+            children: {
+              foreignField: "foreignField"
+            }
+          }
+        }
+      };
+
+      var userModel = mongoose.model("user", userSchema);
+      userModel.findOne = sandbox.spy(function(){ throw("error message") });
+
+      var childSchema = new mongoose.Schema({});
+
+      var childModel = mongoose.model("child", childSchema);
+
+      var association = { include: { as: "children", model: childModel }, model: "child", type: "MANY_MANY"};
+
+      var request = { params: { ownerId: "ownerId", childId: "childId" } };
+      request.payload = ["child1", "child2", "child3"];
+      var deferred = Q.defer();
+      var reply = sandbox.spy(function(){ return deferred.resolve() });
+      //</editor-fold>
+
+      //<editor-fold desc="Act">
+      handlerHelperFactory.generateAssociationGetAllHandler(userModel, association, {}, Log)(request, reply);
       //</editor-fold>
 
       //<editor-fold desc="Assert">

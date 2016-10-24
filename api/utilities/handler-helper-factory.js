@@ -683,6 +683,11 @@ function generateAssociationGetAllHandler(ownerModel, association, options, Log)
             return reply(result).header('X-Total-Count', result.length).code(200);
           })
         }
+        else if (request.noReply) {
+          return promise.then(function(result) {
+            return reply(result).header('X-Total-Count', result.length).code(200);
+          });
+        }
       });
     }
     catch(error) {
