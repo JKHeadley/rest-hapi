@@ -12,7 +12,7 @@ module.exports = function (mongoose) {
     if (err) {
       deferred.reject(err);
     }
-    files.forEach(function(file) {
+    files.forEach(function(file) {//EXPL: Import all the model schemas
       var ext = path.extname(file);
       if (ext === '.js') {
         var modelName = path.basename(file,'.js');

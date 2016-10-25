@@ -28,10 +28,10 @@ module.exports = function (mongoose) {
     collectionName:modelName,
     routeOptions: {
       associations: {
-        owner: {
-          type: "ONE_ONE",
-          model: "user"
-        }
+        // owner: {
+        //   type: "ONE_ONE",
+        //   model: "user"
+        // }
       }
     },
     extraReadModelAttributes: {

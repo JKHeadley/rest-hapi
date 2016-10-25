@@ -28,11 +28,11 @@ module.exports = function (mongoose) {
     collectionName:modelName,
     routeOptions: {
       associations: {
-        users: {
-          type: "MANY_MANY",
-          alias: "user",
-          model: "user"
-        },
+        // users: {
+        //   type: "MANY_MANY",
+        //   alias: "user",
+        //   model: "user"
+        // },
         roles: {
           type: "MANY_MANY",
           alias: "role",

@@ -4,8 +4,6 @@ var Log = require('loggin');
 var Q = require('q');
 var config = require('../config.js');
 
-var password = require('../utilities/password.js');
-
 //TODO: assign a unique text index to email field
 
 module.exports = function (mongoose) {
@@ -896,7 +894,7 @@ module.exports = function (mongoose) {
       create: {
         pre: function (request, Log) {
           var deferred = Q.defer();
-          var passwordUtility = require('../../api/utilities/password');
+          var passwordUtility = require('../../api/utilities/password-helper');
           var hashedPassword = passwordUtility.hash_password(request.payload.password);
 
           request.payload.password = hashedPassword;
@@ -904,10 +902,6 @@ module.exports = function (mongoose) {
           return deferred.promise;
         }
       }
-    },
-    extraReadSchemaAttributes: {
-      updatedAt: Joi.date().optional(),
-      createdAt: Joi.date().optional()
     }
   };
   

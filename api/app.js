@@ -2,10 +2,12 @@ var Hapi = require('hapi'),
   Inert = require('inert'),
   Vision = require('vision'),
   HapiSwagger = require('hapi-swagger');
-var logging = require('loggin');//NOTE: loggin config is handled inside rest-helper-factory.js
+var logging = require('loggin');
 var config = require('./config');
 var chalk = require('chalk');
 var Q = require("q");
+
+//TODO: make sure all functions return errors
 
 var rootLogger = logging.getLogger(chalk.gray("app"));
 rootLogger.logLevel = "DEBUG";
@@ -28,7 +30,6 @@ function appInit(){
   var generateModels = require('./models');
 
   generateModels(mongoose).then(function(models) {
-
     server.connection({
       port: config.server.port,
       routes: {
@@ -73,7 +74,7 @@ function appInit(){
 
               callback(null, true, {token: token, user: user});
             } else {
-              Log.debug("User not found.");
+              Log.error("User not found.");
 
               callback("User not found.", false);
             }
@@ -100,8 +101,8 @@ function appInit(){
           restHelper.generateRoutes(server, model, {models:models})
         }
 
+        //EXPL: register additional endpoints
         require('./token/token.routes')(server, modules);
-        require('./file-management/file-management.routes')(server, modules);
 
         server.start(function (err) {
           if (err) {
@@ -110,13 +111,12 @@ function appInit(){
           server.log('info', 'Server running at: ' + server.info.uri);
         });
       });
-    
-    logUtil.logActionComplete(logger, "Server Initialized", server.info);  
+
+    logUtil.logActionComplete(logger, "Server Initialized", server.info);
   });
-  
+
 
   return server;
 }
-
 
 module.exports = appInit();

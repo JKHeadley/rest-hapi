@@ -6,7 +6,7 @@ var QueryHelper = require('./query-helper');
 
 //TODO: consolidate eventLog functionality
 
-//TODO: make returns more consistent/return all reply's
+//TODO-DONE: make returns more consistent/return all reply's
 
 //TODO: make sure pre and post is supported for appropriate endpoints
 
@@ -126,8 +126,8 @@ module.exports = function (_mongoose, _server) {
  * @returns {Function} A handler function
  */
 function generateListHandler(model, options, Log) {
+  options = options || {};
 
-  Log.debug("request.query.$where:");
   return function (request, reply) {
     try {
       Log.log("params(%s), query(%s), payload(%s)", JSON.stringify(request.params), JSON.stringify(request.query), JSON.stringify(request.payload));
@@ -697,6 +697,19 @@ function generateAssociationGetAllHandler(ownerModel, association, options, Log)
   }
 }
 
+/**
+ * Create an association instance between two resources
+ * @param request
+ * @param server
+ * @param ownerModel
+ * @param ownerObject
+ * @param childModel
+ * @param childId
+ * @param associationName
+ * @param options
+ * @param Log
+ * @returns {*|promise}
+ */
 function setAssociation(request, server, ownerModel, ownerObject, childModel, childId, associationName, options, Log) {
   var deferred = Q.defer();
 
@@ -802,6 +815,19 @@ function setAssociation(request, server, ownerModel, ownerObject, childModel, ch
   return deferred.promise;
 }
 
+/**
+ * Remove an association instance between two resources
+ * @param request
+ * @param server
+ * @param ownerModel
+ * @param ownerObject
+ * @param childModel
+ * @param childId
+ * @param associationName
+ * @param options
+ * @param Log
+ * @returns {*|promise}
+ */
 function removeAssociation(request, server, ownerModel, ownerObject, childModel, childId, associationName, options, Log) {
   var deferred = Q.defer();
 

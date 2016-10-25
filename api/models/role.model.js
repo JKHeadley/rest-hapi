@@ -30,18 +30,18 @@ module.exports = function (mongoose) {
       collectionName:modelName,
       routeOptions: {
         associations: {
-          people: {
-            type: "ONE_MANY",
-            alias: "people",
-            foreignField: "title",
-            model: "user"
-          },
-          subPeople: {
-            type: "ONE_MANY",
-            alias: "sub-people",
-            foreignField: "subTitle",
-            model: "user"
-          },
+          // people: {
+          //   type: "ONE_MANY",
+          //   alias: "people",
+          //   foreignField: "title",
+          //   model: "user"
+          // },
+          // subPeople: {
+          //   type: "ONE_MANY",
+          //   alias: "sub-people",
+          //   foreignField: "subTitle",
+          //   model: "user"
+          // },
           permissions: {
             type: "MANY_MANY",
             alias: "permission",

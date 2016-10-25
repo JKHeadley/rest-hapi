@@ -49,7 +49,6 @@ module.exports = {
           if (association.linkingModel) {//EXPL: if a linking model is defined, add it to the association definition
             var linkingModelFile = "../models/linking-models/" + association.linkingModel + ".model";
             var linkingModel = require(linkingModelFile)();
-            //console.log(linkingModel);
             association.include = {
               through: linkingModel
             };
@@ -70,7 +69,7 @@ module.exports = {
             });
           }
         } else {
-          //TODO: define ONE_ONE and MANY_ONE associations
+          //TODO: define ONE_ONE and MANY_ONE associations if needed
         }
       }
     }
@@ -82,6 +81,7 @@ module.exports = {
    * @param Schema: A mongoose schema.
    * @param models: The complete list of existing mongoose models.
    */
+  //TODO: can probably simplify this to a model string/name reference since mongoose models can be accessed globally
   associateModels: function (Schema, models) {
     if (Schema.methods.routeOptions) {
       for (var associationKey in Schema.methods.routeOptions.associations) {

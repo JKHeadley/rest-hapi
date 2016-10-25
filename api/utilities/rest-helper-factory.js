@@ -5,6 +5,7 @@ var joiMongooseHelper = require('./joi-mongoose-helper');
 var queryHelper = require('./query-helper');
 var validationHelper = require("./validation-helper");
 var chalk = require('chalk');
+var config = require("../config");
 
 //TODO: remove "options"?
 
@@ -13,9 +14,16 @@ module.exports = function (logger, mongoose, server) {
 
   var HandlerHelper = require('./handler-helper-factory')(mongoose, server);
 
-  var headersValidation = Joi.object({
-    'authorization': Joi.string().required()
-  }).options({allowUnknown: true});
+  var headersValidation;
+
+  if (config.auth) {
+    headersValidation = Joi.object({
+      'authorization': Joi.string().required()
+    }).options({allowUnknown: true});
+  }
+  else {
+    headersValidation = Joi.object().options({allowUnknown: true});
+  }
 
   return {
     defaultHeadersValidation: headersValidation,
@@ -156,7 +164,7 @@ module.exports = function (logger, mongoose, server) {
         path: '/' + resourceAliasForRoute,
         config: {
           handler: handler,
-          auth: "token",
+          auth: config.auth,
           description: 'Get a list of ' + collectionName + 's',
           tags: ['api', collectionName],
           cors: true,
@@ -234,7 +242,7 @@ module.exports = function (logger, mongoose, server) {
         path: '/' + resourceAliasForRoute + '/{_id}',
         config: {
           handler: handler,
-          auth: "token",
+          auth: config.auth,
           description: 'Get a specific ' + collectionName,
           tags: ['api', collectionName],
           cors: true,
@@ -304,7 +312,7 @@ module.exports = function (logger, mongoose, server) {
         path: '/' + resourceAliasForRoute,
         config: {
           handler: handler,
-          auth: "token",
+          auth: config.auth,
           cors: true,
           description: 'Create a new ' + collectionName,
           tags: ['api', collectionName],
@@ -366,7 +374,7 @@ module.exports = function (logger, mongoose, server) {
         path: '/' + resourceAliasForRoute + "/{_id}",
         config: {
           handler: handler,
-          auth: "token",
+          auth: config.auth,
           cors: true,
           description: 'Delete a ' + collectionName,
           tags: ['api', collectionName],
@@ -435,7 +443,7 @@ module.exports = function (logger, mongoose, server) {
         path: '/' + resourceAliasForRoute + '/{_id}',
         config: {
           handler: handler,
-          auth: "token",
+          auth: config.auth,
           cors: true,
           description: 'Update a ' + collectionName,
           tags: ['api', collectionName],
@@ -513,7 +521,7 @@ module.exports = function (logger, mongoose, server) {
         path: '/' + ownerAlias + '/{ownerId}/' + childAlias + "/{childId}",
         config: {
           handler: handler,
-          auth: "token",
+          auth: config.auth,
           cors: true,
           description: 'Add a single ' + childModelName + ' object to a ' + ownerModelName + '\'s list of ' + associationName,
           tags: ['api', associationName, ownerModelName],
@@ -582,7 +590,7 @@ module.exports = function (logger, mongoose, server) {
         path: '/' + ownerAlias + '/{ownerId}/' + childAlias + "/{childId}",
         config: {
           handler: handler,
-          auth: "token",
+          auth: config.auth,
           cors: true,
           description: 'Remove a single ' + childModelName + ' object from a ' + ownerModelName + '\'s list of ' + associationName,
           tags: ['api', associationName, ownerModelName],
@@ -657,7 +665,7 @@ module.exports = function (logger, mongoose, server) {
         path: '/' + ownerAlias + '/{ownerId}/' + childAlias,
         config: {
           handler: handler,
-          auth: "token",
+          auth: config.auth,
           cors: true,
           description: 'Sets multiple ' + associationName + ' for a ' + ownerModelName,
           tags: ['api', associationName, ownerModelName],
@@ -762,7 +770,7 @@ module.exports = function (logger, mongoose, server) {
         path: '/' + ownerAlias + '/{ownerId}/' + childAlias,
         config: {
           handler: handler,
-          auth: "token",
+          auth: config.auth,
           cors: true,
           description: 'Gets all of the ' + associationName + ' for a ' + ownerModelName,
           tags: ['api', associationName, ownerModelName],

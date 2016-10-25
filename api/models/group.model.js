@@ -29,11 +29,11 @@ module.exports = function (mongoose) {
     nameField:"name",
     routeOptions: {
       associations: {
-        users: {
-          type: "MANY_MANY",
-          alias: "user",
-          model: "user"
-        },
+        // users: {
+        //   type: "MANY_MANY",
+        //   alias: "user",
+        //   model: "user"
+        // },
         permissions: {
           type: "MANY_MANY",
           alias: "permission",
