@@ -1,5 +1,7 @@
 var assert = require("assert");
 
+//TODO: verify routeOptions exist
+
 module.exports = {
   /**
    * Assert that a given model follows the mongoose model format.

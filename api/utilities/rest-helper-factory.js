@@ -36,59 +36,65 @@ module.exports = function (logger, mongoose, server) {
      */
     generateRoutes: function (server, model, options) { //TODO: generate multiple DELETE routes at /RESOURCE and at
                                                         //TODO: /RESOURCE/{ownerId}/ASSOCIATION that take a list of Id's as a payload
-      validationHelper.validateModel(model, Log);
-      var modelMethods = model.schema.methods;
-      var collectionName = modelMethods.collectionDisplayName || model.modelName;
-      var Log = logger.bind(chalk.gray(collectionName));
+      try {
+        validationHelper.validateModel(model, logger);
 
-      options = options || {};
+        var modelMethods = model.schema.methods;
+        var collectionName = modelMethods.collectionDisplayName || model.modelName;
+        var Log = logger.bind(chalk.gray(collectionName));
 
-      if (modelMethods.routeOptions.allowRead !== false) {
-        this.generateListEndpoint(server, model, options, Log);
-        this.generateFindEndpoint(server, model, options, Log);
-      }
+        options = options || {};
 
-      if (modelMethods.routeOptions.allowCreate !== false) {
-        this.generateCreateEndpoint(server, model, options, Log);
-      }
+        if (modelMethods.routeOptions.allowRead !== false) {
+          this.generateListEndpoint(server, model, options, Log);
+          this.generateFindEndpoint(server, model, options, Log);
+        }
 
-      if (modelMethods.routeOptions.allowUpdate !== false) {
-        this.generateUpdateEndpoint(server, model, options, Log);
-      }
+        if (modelMethods.routeOptions.allowCreate !== false) {
+          this.generateCreateEndpoint(server, model, options, Log);
+        }
 
-      if (modelMethods.routeOptions.allowDelete !== false) {
-        this.generateDeleteEndpoint(server, model, options, Log);
-      }
+        if (modelMethods.routeOptions.allowUpdate !== false) {
+          this.generateUpdateEndpoint(server, model, options, Log);
+        }
 
-      if (modelMethods.routeOptions.associations) {
-        for (var associationName in modelMethods.routeOptions.associations) {
-          var association = modelMethods.routeOptions.associations[associationName];
+        if (modelMethods.routeOptions.allowDelete !== false) {
+          this.generateDeleteEndpoint(server, model, options, Log);
+        }
 
-          if (association.type == "MANY_MANY" || association.type == "ONE_MANY") {
-            if (association.allowAddOne !== false) {
-              this.generateAssociationAddOneEndpoint(server, model, association, options, Log);
-            }
-            if (association.allowRemoveOne !== false) {
-              this.generateAssociationRemoveOneEndpoint(server, model, association, options, Log);
-            }
+        if (modelMethods.routeOptions.associations) {
+          for (var associationName in modelMethods.routeOptions.associations) {
+            var association = modelMethods.routeOptions.associations[associationName];
 
-            if (association.allowAddMany !== false) {
-              this.generateAssociationAddManyEndpoint(server, model, association, options, Log);
-            }
+            if (association.type == "MANY_MANY" || association.type == "ONE_MANY") {
+              if (association.allowAddOne !== false) {
+                this.generateAssociationAddOneEndpoint(server, model, association, options, Log);
+              }
+              if (association.allowRemoveOne !== false) {
+                this.generateAssociationRemoveOneEndpoint(server, model, association, options, Log);
+              }
 
-            if (association.allowRead !== false) {
-              this.generateAssociationGetAllEndpoint(server, model, association, options, Log);
+              if (association.allowAddMany !== false) {
+                this.generateAssociationAddManyEndpoint(server, model, association, options, Log);
+              }
+
+              if (association.allowRead !== false) {
+                this.generateAssociationGetAllEndpoint(server, model, association, options, Log);
+              }
             }
           }
         }
-      }
 
-      if(modelMethods.routeOptions && modelMethods.routeOptions.extraEndpoints){
-        for(var extraEndpointIndex in modelMethods.routeOptions.extraEndpoints){
-          var extraEndpointFunction = modelMethods.routeOptions.extraEndpoints[extraEndpointIndex];
+        if(modelMethods.routeOptions && modelMethods.routeOptions.extraEndpoints){
+          for(var extraEndpointIndex in modelMethods.routeOptions.extraEndpoints){
+            var extraEndpointFunction = modelMethods.routeOptions.extraEndpoints[extraEndpointIndex];
 
-          extraEndpointFunction(server, model, options, Log);
+            extraEndpointFunction(server, model, options, Log);
+          }
         }
+      }
+      catch(error) {
+        logger.error("Error:", error);
       }
     },
 

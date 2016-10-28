@@ -26,7 +26,7 @@ function appInit(){
   var mongoose = require('./components/mongoose-init')(logger, config);
   
   var restHelperFactory = require('./utilities/rest-helper-factory');
-  
+
   var generateModels = require('./models');
 
   generateModels(mongoose).then(function(models) {
@@ -45,37 +45,39 @@ function appInit(){
       documentationPath: '/'
     };
 
-    server.register([require('hapi-auth-bearer-token')], function (err) {
-      var Log = logUtil.bindHelper(logger, 'token-auth');
-      var UserModel = models.user;
+    if (models.user) {
+      server.register([require('hapi-auth-bearer-token')], function (err) {
+        var Log = logUtil.bindHelper(logger, 'token-auth');
+        var UserModel = models.user;
 
-      server.auth.strategy('token', 'bearer-access-token', {
-        allowQueryToken: true,              // optional, true by default
-        allowMultipleHeaders: false,        // optional, false by default
-        //accessTokenName: 'Authorization',    // optional, 'access_token' by default
-        validateFunc: function (token, callback) {
-          var request = this;
+        server.auth.strategy('token', 'bearer-access-token', {
+          allowQueryToken: true,              // optional, true by default
+          allowMultipleHeaders: false,        // optional, false by default
+          //accessTokenName: 'Authorization',    // optional, 'access_token' by default
+          validateFunc: function (token, callback) {
+            var request = this;
 
-          token = decodeURI(token);
+            token = decodeURI(token);
 
-          UserModel.findOne({token: token}).then(function (user) {
-            //TODO: check token expiration
-            if (user) {
-              delete user.password;
+            UserModel.findOne({token: token}).then(function (user) {
+              //TODO: check token expiration
+              if (user) {
+                delete user.password;
 
-              callback(null, true, {token: token, user: user});
-            } else {
-              Log.error("User not found.");
+                callback(null, true, {token: token, user: user});
+              } else {
+                Log.error("User not found.");
 
-              callback("User not found.", false);
-            }
-          }, function (error) {
-            Log.error("Error finding user by token: %s", token);
-            callback(error, false);
-          });
-        }
-      })
-    });
+                callback("User not found.", false);
+              }
+            }, function (error) {
+              Log.error("Error finding user by token: %s", token);
+              callback(error, false);
+            });
+          }
+        })
+      });
+    }
 
     server.register([
         Inert,
@@ -85,6 +87,7 @@ function appInit(){
           options: swaggerOptions
         }],
       function (err) {
+
         var restHelper = restHelperFactory(logger, mongoose, server);
 
         for (var modelKey in models) {//EXPL: generate endpoints for all of the models

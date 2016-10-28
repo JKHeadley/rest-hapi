@@ -37,8 +37,9 @@ module.exports = function (mongoose) {
     });
 
     Schema.methods = {
-        collectionName: //your model name
-    }
+        collectionName: /*your model name*/,
+        routeOptions: {}
+    };
 
     return Schema;
 };
@@ -66,9 +67,20 @@ module.exports = function (mongoose) {
   });
   
   Schema.methods = {
-    collectionName:modelName
+    collectionName: modelName
+    routeOptions: {}
   };
   
   return Schema;
 };
+```
+
+This will generate the following endpoints:
+
+```
+GET /user
+POST /user
+GET /user/{_id}
+PUT /user/{_id}
+DELETE /user/{_id}
 ```

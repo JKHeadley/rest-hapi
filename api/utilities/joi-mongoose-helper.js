@@ -22,7 +22,7 @@ module.exports = {
 
     var fields = model.schema.paths;
 
-    var associations = model.schema.methods.routeOptions ? Object.keys(model.schema.methods.routeOptions.associations) : [];
+    var associations = model.schema.methods.routeOptions.associations ? Object.keys(model.schema.methods.routeOptions.associations) : [];
 
     for (var fieldName in fields) {
       var field = fields[fieldName].options;
@@ -84,7 +84,7 @@ module.exports = {
 
     var fields = model.schema.paths;
 
-    var associations = model.schema.methods.routeOptions ? model.schema.methods.routeOptions.associations : {};
+    var associations = model.schema.methods.routeOptions.associations ? model.schema.methods.routeOptions.associations : {};
 
     for (var fieldName in fields) {
       var field = fields[fieldName].options;
@@ -131,7 +131,7 @@ module.exports = {
 
     var fields = model.schema.paths;
 
-    var associations = model.schema.methods.routeOptions ? model.schema.methods.routeOptions.associations : {};
+    var associations = model.schema.methods.routeOptions.associations ? model.schema.methods.routeOptions.associations : {};
 
     for (var fieldName in fields) {
 

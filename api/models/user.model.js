@@ -17,7 +17,8 @@ module.exports = function (mongoose) {
   });
   
   Schema.methods = {
-    collectionName:modelName
+    collectionName:modelName,
+    routeOptions: {}
   };
   
   return Schema;
