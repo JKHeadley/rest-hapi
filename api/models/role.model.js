@@ -1,57 +1,35 @@
-var Joi = require('joi');
-
 module.exports = function (mongoose) {
   var modelName = "role";
   var Types = mongoose.Schema.Types;
   var Schema = new mongoose.Schema({
-    //NOTE: base roles = [Account, Admin, SuperAdmin]
     name: {
       type: Types.String,
-      allowNull: false,
-      queryable: true,
-      // validate: {
-      //   len: [1, 36]
-      // },
-      displayName: "Name"
+      enum: ["Account", "Admin", "SuperAdmin"],
+      allowNull: false
     },
     description: {
       type: Types.String,
-      allowNull: true,
-      // validate: {
-      //   len: [1, 255]
-      // },
-      displayName: "Description"
+      allowNull: true
     }
   }); 
     
     Schema.methods = {
-      nameField:"name",
-      collectionDisplayName:"Role",
       collectionName:modelName,
       routeOptions: {
         associations: {
-          // people: {
-          //   type: "ONE_MANY",
-          //   alias: "people",
-          //   foreignField: "title",
-          //   model: "user"
-          // },
-          // subPeople: {
-          //   type: "ONE_MANY",
-          //   alias: "sub-people",
-          //   foreignField: "subTitle",
-          //   model: "user"
-          // },
+          users: {
+            type: "ONE_MANY",
+            alias: "user",
+            foreignField: "role",
+            model: "user"
+          },
           permissions: {
             type: "MANY_MANY",
             alias: "permission",
-            model: "permission"
+            model: "permission",
+            linkingModel: "role_permission"
           }
         }
-      },
-      extraReadModelAttributes: {
-        updatedAt: Joi.date().optional(),
-        createdAt: Joi.date().optional(),
       }
     };
 

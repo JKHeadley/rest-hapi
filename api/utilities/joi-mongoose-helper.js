@@ -5,6 +5,8 @@ var assert = require('assert');
 var validationHelper = require("./validation-helper");
 var mongoose = require('mongoose');
 
+//TODO: support "allowNull"
+
 module.exports = {
 
   /**

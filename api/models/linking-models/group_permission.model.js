@@ -9,14 +9,7 @@ module.exports = function () {
       enabled: {
         type: Types.Boolean,
         allowNull: false,
-        defaultValue: true,
-        displayName: "Enabled"
-      },
-      value: {
-        type: Types.String,
-        allowNull: false,
-        defaultValue: "TEST",
-        displayName: "Value"
+        defaultValue: true
       }
     },
     modelName: "group_permission"
