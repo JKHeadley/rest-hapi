@@ -1,11 +1,10 @@
 var Boom            = require('boom');
 var PasswordUtility = require('../utilities/password-helper');
-var moment = require('moment');
+var TokenMaker = require('../components/token-maker');
 
-module.exports = function(modules){
-  var Log = modules.logger.bind('token.handlers');
-  var UserModel = modules.mongoose.models.user;
-  var TokenMaker = modules.tokenMaker;
+module.exports = function(models, Log){
+  var Log = Log.bind('token.handlers');
+  var UserModel = models.user;
 
   return {
     create: function (request, reply) {

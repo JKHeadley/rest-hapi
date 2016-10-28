@@ -24,8 +24,8 @@ function appInit(){
   var config = require('./config');
 
   var mongoose = require('./components/mongoose-init')(logger, config);
-
-  var tokenMaker = require('./components/token-maker');
+  
+  var restHelperFactory = require('./utilities/rest-helper-factory');
   
   var generateModels = require('./models');
 
@@ -45,18 +45,9 @@ function appInit(){
       documentationPath: '/'
     };
 
-    var modules = {
-      config: config,
-      mongoose: mongoose,
-      models: models,
-      logger: logging,
-      tokenMaker: tokenMaker,
-      restHelperFactory: require('./utilities/rest-helper-factory')
-    };
-
     server.register([require('hapi-auth-bearer-token')], function (err) {
       var Log = logUtil.bindHelper(logger, 'token-auth');
-      var UserModel = modules.models.user;
+      var UserModel = models.user;
 
       server.auth.strategy('token', 'bearer-access-token', {
         allowQueryToken: true,              // optional, true by default
@@ -94,7 +85,7 @@ function appInit(){
           options: swaggerOptions
         }],
       function (err) {
-        var restHelper = modules.restHelperFactory(logger, modules.mongoose, server);
+        var restHelper = restHelperFactory(logger, mongoose, server);
 
         for (var modelKey in models) {//EXPL: generate endpoints for all of the models
           var model = models[modelKey];
@@ -102,7 +93,9 @@ function appInit(){
         }
 
         //EXPL: register additional endpoints
-        require('./token/token.routes')(server, modules);
+        if (models.user) {
+          require('./token/token.routes')(server, models, logger);
+        }
 
         server.start(function (err) {
           if (err) {

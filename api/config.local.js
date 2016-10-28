@@ -15,7 +15,7 @@ config.mongo.URI =  'mongodb://localhost/rest_hapi';
 // options
 
 //Type of authentication (set to false for no authentication)
-// config.auth = "token";
-config.auth = false;
+config.auth = "token";
+// config.auth = false;
 
 module.exports = config;

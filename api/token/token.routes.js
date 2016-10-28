@@ -1,7 +1,7 @@
 var Joi = require('joi');
 
-module.exports = function (server, modules) {
-  var Handlers = require('./token.handlers')(modules);
+module.exports = function (server, models, Log) {
+  var Handlers = require('./token.handlers')(models, Log);
 
   server.route({
     method: 'POST',
