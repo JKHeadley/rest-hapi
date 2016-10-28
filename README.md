@@ -6,6 +6,7 @@ A Restful API generator built around the Hapi framework and mongoose ODM.
 * Automatic generation of CRUD endpoints with middleware support
 * Automatic generation of association endpoints
 * Joi validation
+* User password encryption support
 * Optional token authentication for all generated endpoints
 * Swagger docs for all generated endpoints
 * Query parameter support for sorting, filtering, pagination, and embedding of associated models
@@ -43,3 +44,31 @@ module.exports = function (mongoose) {
 };
 ```
 
+As a concrete example, here is a User model:
+
+```javascript
+module.exports = function (mongoose) {
+  var modelName = "user";
+  var Types = mongoose.Schema.Types;
+  var Schema = new mongoose.Schema({
+    email: {
+      type: Types.String,
+      allowNull: false,
+      unique: true
+    },
+    password: {
+      type: Types.String,
+      allowNull: false,
+      required: true,
+      exclude: true,
+      allowOnUpdate: false
+    }
+  });
+  
+  Schema.methods = {
+    collectionName:modelName
+  };
+  
+  return Schema;
+};
+```
