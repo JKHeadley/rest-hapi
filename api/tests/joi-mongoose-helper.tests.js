@@ -49,7 +49,7 @@ test('joi-mongoose-helper.generateJoiReadModel', function(t) {
       }
     });
 
-    var userModel = mongoose.model("user", userSchema);
+    userSchema.statics = { routeOptions: {} };      var userModel = mongoose.model("user", userSchema);
 
     var emailField = userModel.schema.paths["email"].options;
     //</editor-fold>
@@ -85,7 +85,7 @@ test('joi-mongoose-helper.generateJoiReadModel', function(t) {
       }
     });
 
-    var userModel = mongoose.model("user", userSchema);
+    userSchema.statics = { routeOptions: {} };      var userModel = mongoose.model("user", userSchema);
 
     var emailField = userModel.schema.paths["email"].options;
     //</editor-fold>
@@ -126,7 +126,7 @@ test('joi-mongoose-helper.generateJoiReadModel', function(t) {
       }
     });
 
-    var userModel = mongoose.model("user", userSchema);
+    userSchema.statics = { routeOptions: {} };      var userModel = mongoose.model("user", userSchema);
 
     var firstNameField = userModel.schema.paths["firstName"].options;
     var lastNameField = userModel.schema.paths["lastName"].options;
@@ -170,7 +170,7 @@ test('joi-mongoose-helper.generateJoiReadModel', function(t) {
       }
     });
 
-    var userModel = mongoose.model("user", userSchema);
+    userSchema.statics = { routeOptions: {} };      var userModel = mongoose.model("user", userSchema);
 
     //</editor-fold>
 
@@ -207,7 +207,7 @@ test('joi-mongoose-helper.generateJoiReadModel', function(t) {
       }
     });
 
-    var userModel = mongoose.model("user", userSchema);
+    userSchema.statics = { routeOptions: {} };      var userModel = mongoose.model("user", userSchema);
 
     //</editor-fold>
 
@@ -302,7 +302,7 @@ test('joi-mongoose-helper.generateJoiReadModel', function(t) {
 
     var userSchema = new mongoose.Schema({});
 
-    var userModel = mongoose.model("user", userSchema);
+    userSchema.statics = { routeOptions: {} };      var userModel = mongoose.model("user", userSchema);
 
     //</editor-fold>
 
@@ -342,7 +342,7 @@ test('joi-mongoose-helper.generateJoiUpdateModel', function(t) {
       }
     });
 
-    var userModel = mongoose.model("user", userSchema);
+    userSchema.statics = { routeOptions: {} };      var userModel = mongoose.model("user", userSchema);
 
     var emailField = userModel.schema.paths["email"].options;
     //</editor-fold>
@@ -378,7 +378,7 @@ test('joi-mongoose-helper.generateJoiUpdateModel', function(t) {
       }
     });
 
-    var userModel = mongoose.model("user", userSchema);
+    userSchema.statics = { routeOptions: {} };      var userModel = mongoose.model("user", userSchema);
 
     var emailField = userModel.schema.paths["email"].options;
     //</editor-fold>
@@ -415,7 +415,7 @@ test('joi-mongoose-helper.generateJoiUpdateModel', function(t) {
       }
     });
 
-    var userModel = mongoose.model("user", userSchema);
+    userSchema.statics = { routeOptions: {} };      var userModel = mongoose.model("user", userSchema);
 
     var firstNameField = userModel.schema.paths["firstName"].options;
     //</editor-fold>
@@ -452,7 +452,7 @@ test('joi-mongoose-helper.generateJoiUpdateModel', function(t) {
       }
     });
 
-    var userModel = mongoose.model("user", userSchema);
+    userSchema.statics = { routeOptions: {} };      var userModel = mongoose.model("user", userSchema);
 
     var __tField = userModel.schema.paths["__t"].options;
     var __vField = userModel.schema.paths["__v"].options;
@@ -492,7 +492,7 @@ test('joi-mongoose-helper.generateJoiUpdateModel', function(t) {
       }
     });
 
-    var userModel = mongoose.model("user", userSchema);
+    userSchema.statics = { routeOptions: {} };      var userModel = mongoose.model("user", userSchema);
 
     //</editor-fold>
 
@@ -528,7 +528,7 @@ test('joi-mongoose-helper.generateJoiUpdateModel', function(t) {
       }
     });
 
-    var userModel = mongoose.model("user", userSchema);
+    userSchema.statics = { routeOptions: {} };      var userModel = mongoose.model("user", userSchema);
 
     //</editor-fold>
 
@@ -627,7 +627,7 @@ test('joi-mongoose-helper.generateJoiUpdateModel', function(t) {
 
     var userSchema = new mongoose.Schema({});
 
-    var userModel = mongoose.model("user", userSchema);
+    userSchema.statics = { routeOptions: {} };      var userModel = mongoose.model("user", userSchema);
 
     //</editor-fold>
 
@@ -666,7 +666,7 @@ test('joi-mongoose-helper.generateJoiCreateModel', function(t) {
       }
     });
 
-    var userModel = mongoose.model("user", userSchema);
+    userSchema.statics = { routeOptions: {} };      var userModel = mongoose.model("user", userSchema);
 
     var emailField = userModel.schema.paths["email"].options;
     //</editor-fold>
@@ -702,7 +702,7 @@ test('joi-mongoose-helper.generateJoiCreateModel', function(t) {
       }
     });
 
-    var userModel = mongoose.model("user", userSchema);
+    userSchema.statics = { routeOptions: {} };      var userModel = mongoose.model("user", userSchema);
 
     var emailField = userModel.schema.paths["email"].options;
     //</editor-fold>
@@ -739,7 +739,7 @@ test('joi-mongoose-helper.generateJoiCreateModel', function(t) {
       }
     });
 
-    var userModel = mongoose.model("user", userSchema);
+    userSchema.statics = { routeOptions: {} };      var userModel = mongoose.model("user", userSchema);
 
     var firstNameField = userModel.schema.paths["firstName"].options;
     //</editor-fold>
@@ -776,7 +776,7 @@ test('joi-mongoose-helper.generateJoiCreateModel', function(t) {
       }
     });
 
-    var userModel = mongoose.model("user", userSchema);
+    userSchema.statics = { routeOptions: {} };      var userModel = mongoose.model("user", userSchema);
 
     var __tField = userModel.schema.paths["__t"].options;
     var __vField = userModel.schema.paths["__v"].options;
@@ -816,7 +816,7 @@ test('joi-mongoose-helper.generateJoiCreateModel', function(t) {
       }
     });
 
-    var userModel = mongoose.model("user", userSchema);
+    userSchema.statics = { routeOptions: {} };      var userModel = mongoose.model("user", userSchema);
 
     //</editor-fold>
 
@@ -852,7 +852,7 @@ test('joi-mongoose-helper.generateJoiCreateModel', function(t) {
       }
     });
 
-    var userModel = mongoose.model("user", userSchema);
+    userSchema.statics = { routeOptions: {} };      var userModel = mongoose.model("user", userSchema);
 
     //</editor-fold>
 
@@ -951,7 +951,7 @@ test('joi-mongoose-helper.generateJoiCreateModel', function(t) {
 
     var userSchema = new mongoose.Schema({});
 
-    var userModel = mongoose.model("user", userSchema);
+    userSchema.statics = { routeOptions: {} };      var userModel = mongoose.model("user", userSchema);
 
     //</editor-fold>
 

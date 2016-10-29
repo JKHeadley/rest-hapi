@@ -60,7 +60,6 @@ module.exports = {
     // [email]=test@user.com&[firstName]=test2@user.com&[firstName]=test4@user.com&[age][gt]=15&[age][lt]=30
 
 
-    
     // var queryableFields = this.getQueryableFields(model, Log);
 
     mongooseQuery = this.setSkip(query, mongooseQuery, Log);
@@ -76,12 +75,10 @@ module.exports = {
 
     // Log.debug("attributesFilter:", attributesFilter);
 
-    if (model.routeOptions) {
-      var result = this.populateEmbeddedDocs(query, mongooseQuery, attributesFilter,
-        model.routeOptions.associations, Log);
-      mongooseQuery = result.mongooseQuery;
-      attributesFilter = result.attributesFilter;
-    }
+    var result = this.populateEmbeddedDocs(query, mongooseQuery, attributesFilter,
+      model.routeOptions.associations, Log);
+    mongooseQuery = result.mongooseQuery;
+    attributesFilter = result.attributesFilter;
 
     // Log.debug("attributesFilter:", attributesFilter);
 

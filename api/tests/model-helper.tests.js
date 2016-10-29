@@ -38,7 +38,7 @@ test('model-helper.createModel', function(t) {
     t.plan(2);
 
     var collectionName = "user";
-    var Schema = { methods: { collectionName: collectionName } };
+    var Schema = { statics: { collectionName: collectionName } };
     //</editor-fold>
 
     //<editor-fold desc="Act">
@@ -183,7 +183,7 @@ test('model-helper.extendSchemaAssociations', function(t) {
 
     var userSchema_foreignField = {};
 
-    userSchema_foreignField.= {
+    userSchema_foreignField.statics = {
       routeOptions: {
         associations: {
           employees: {
@@ -197,7 +197,7 @@ test('model-helper.extendSchemaAssociations', function(t) {
 
     var userSchema_no_foreignField = {};
 
-    userSchema_no_foreignField.= {
+    userSchema_no_foreignField.statics = {
       routeOptions: {
         associations: {
           employees: {

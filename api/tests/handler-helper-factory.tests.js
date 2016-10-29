@@ -3743,7 +3743,7 @@ test('handler-helper-factory.setAssociation', function(t) {
       var userObject = { save: saveUser, _id: "1", children: [] };
 
       var childSchema = new mongoose.Schema({});
-      childSchema.= {
+      childSchema.statics = {
         routeOptions: {
           associations: {
             users: {
@@ -3832,7 +3832,7 @@ test('handler-helper-factory.setAssociation', function(t) {
       var userObject = { save: saveUser, _id: "1", children: [{ _id: "_id", child: "3", value: "yes"}] };
 
       var childSchema = new mongoose.Schema({});
-      childSchema.= {
+      childSchema.statics = {
         routeOptions: {
           associations: {
             users: {
@@ -3921,7 +3921,7 @@ test('handler-helper-factory.setAssociation', function(t) {
       var userObject = { save: saveUser, _id: "1", children: [{ _id: "_id", child: "3", value: "yes"}] };
 
       var childSchema = new mongoose.Schema({});
-      childSchema.= {
+      childSchema.statics = {
         routeOptions: {
           associations: {
             users: {
@@ -4006,7 +4006,7 @@ test('handler-helper-factory.setAssociation', function(t) {
       var userObject = { save: saveUser, _id: "1", children: [{ _id: "_id", child: "3", value: "yes"}] };
 
       var childSchema = new mongoose.Schema({});
-      childSchema.= {
+      childSchema.statics = {
         routeOptions: {
           associations: {
             users: {
@@ -4150,7 +4150,7 @@ test('handler-helper-factory.removeAssociation', function(t) {
       var userObject = { _id: "_id" };
 
       var childSchema = new mongoose.Schema({});
-      childSchema.= {
+      childSchema.statics = {
         routeOptions: {
           associations: {
             users: {
@@ -4236,7 +4236,7 @@ test('handler-helper-factory.removeAssociation', function(t) {
       var userObject = { _id: "2", save: saveUser, children: [{child: "1"},{child: "2"}] };
 
       var childSchema = new mongoose.Schema({});
-      childSchema.= {
+      childSchema.statics = {
         routeOptions: {
           associations: {
             users: {
@@ -4323,7 +4323,7 @@ test('handler-helper-factory.removeAssociation', function(t) {
       var userObject = { save: saveUser, _id: "1", children: [{ _id: "_id", child: "3", value: "yes"}] };
 
       var childSchema = new mongoose.Schema({});
-      childSchema.= {
+      childSchema.statics = {
         routeOptions: {
           associations: {
             users: {
@@ -4408,7 +4408,7 @@ test('handler-helper-factory.removeAssociation', function(t) {
       var userObject = { save: saveUser, _id: "1", children: [{ _id: "_id", child: "3", value: "yes"}] };
 
       var childSchema = new mongoose.Schema({});
-      childSchema.= {
+      childSchema.statics = {
         routeOptions: {
           associations: {
             users: {

@@ -59,6 +59,7 @@ test('query-helper.getQueryableFields', function(t) {
       }
     });
 
+    userSchema.statics = { routeOptions: {} };
     var userModel = mongoose.model("user", userSchema);
     //</editor-fold>
 
@@ -106,7 +107,7 @@ test('query-helper.getQueryableFields', function(t) {
       }
     });
 
-    var userModel = mongoose.model("user", userSchema);
+    userSchema.statics = { routeOptions: {} };     var userModel = mongoose.model("user", userSchema);
     //</editor-fold>
 
     //<editor-fold desc="Act">
@@ -153,7 +154,7 @@ test('query-helper.getQueryableFields', function(t) {
       }
     });
 
-    var userModel = mongoose.model("user", userSchema);
+    userSchema.statics = { routeOptions: {} };     var userModel = mongoose.model("user", userSchema);
 
     var fields = userModel.schema.paths;
     var fieldNames = Object.keys(fields);
@@ -287,7 +288,7 @@ test('query-helper.getReadableFields', function(t) {
       }
     });
 
-    var userModel = mongoose.model("user", userSchema);
+    userSchema.statics = { routeOptions: {} };     var userModel = mongoose.model("user", userSchema);
     //</editor-fold>
 
     //<editor-fold desc="Act">
@@ -333,7 +334,7 @@ test('query-helper.getReadableFields', function(t) {
       }
     });
 
-    var userModel = mongoose.model("user", userSchema);
+    userSchema.statics = { routeOptions: {} };     var userModel = mongoose.model("user", userSchema);
 
     var fields = userModel.schema.paths;
     var fieldNames = Object.keys(fields);
@@ -374,7 +375,7 @@ test('query-helper.getSortableFields', function(t) {
 
     var userSchema = new mongoose.Schema({});
 
-    var userModel = mongoose.model("user", userSchema);
+    userSchema.statics = { routeOptions: {} };     var userModel = mongoose.model("user", userSchema);
     //</editor-fold>
 
     //<editor-fold desc="Act">
@@ -402,7 +403,7 @@ test('query-helper.getSortableFields', function(t) {
 
     var userSchema = new mongoose.Schema({});
 
-    var userModel = mongoose.model("user", userSchema);
+    userSchema.statics = { routeOptions: {} };     var userModel = mongoose.model("user", userSchema);
     //</editor-fold>
 
     //<editor-fold desc="Act">
@@ -772,7 +773,7 @@ test('query-helper.populateEmbeddedDocs', function(t) {
         type: "MANY_MANY",
         model: "group",
         include: {
-          model: { schema: { methods: { routeOptions: { associations: { } } } } }
+          model: { routeOptions: { associations: { } } }
         }
       }
     };
@@ -782,7 +783,7 @@ test('query-helper.populateEmbeddedDocs', function(t) {
         type: "ONE_MANY",
         model: "user",
         include: {
-          model: { schema: { methods: { routeOptions: { associations: associations_three } } } }
+          model: { routeOptions: { associations: associations_three } }
         }
       }
     };
@@ -792,7 +793,7 @@ test('query-helper.populateEmbeddedDocs', function(t) {
         type: "MANY_ONE",
         model: "role",
         include: {
-          model: { schema: { methods: { routeOptions: { associations: associations_two } } } }
+          model: { routeOptions: { associations: associations_two } }
         }
       }
     };
@@ -859,7 +860,7 @@ test('query-helper.setSort', function(t) {
     //</editor-fold>
 
     //<editor-fold desc="Assert">
-    t.ok(mongooseQuery.sort.calledWith("email firstName lastName"), "the $sort parameter was modified");;
+    t.ok(mongooseQuery.sort.calledWith("email firstName lastName"), "the $sort parameter was modified");
     //</editor-fold>
   });
 
@@ -916,7 +917,7 @@ test('query-helper.createAttributesFilter', function(t) {
       }
     });
 
-    var userModel = mongoose.model("user", userSchema);
+    userSchema.statics = { routeOptions: {} };     var userModel = mongoose.model("user", userSchema);
     //</editor-fold>
 
     //<editor-fold desc="Act">
@@ -1046,7 +1047,7 @@ test('query-helper.createAttributesFilter', function(t) {
     var query1 = { $select: ["email","lastName"] };
     var query2 = { $select: "email" };
 
-    var userModel = mongoose.model("user", userSchema);
+    userSchema.statics = { routeOptions: {} };     var userModel = mongoose.model("user", userSchema);
     //</editor-fold>
 
     //<editor-fold desc="Act">
@@ -1108,7 +1109,7 @@ test('query-helper.createMongooseQuery', function(t) {
       }
     });
 
-    var userModel = mongoose.model("user", userSchema);
+    userSchema.statics = { routeOptions: {} };     var userModel = mongoose.model("user", userSchema);
 
     //</editor-fold>
 
@@ -1120,7 +1121,7 @@ test('query-helper.createMongooseQuery', function(t) {
     t.ok(queryHelper.setSkip.called, "setSkip called");
     t.ok(queryHelper.setLimit.called, "setLimit called");
     t.ok(queryHelper.createAttributesFilter.called, "createAttributesFilter called");
-    t.notOk(queryHelper.populateEmbeddedDocs.called, "populateEmbeddedDocs not called when no routeOptions");
+    t.ok(queryHelper.populateEmbeddedDocs.called, "populateEmbeddedDocs called");
     t.ok(queryHelper.setSort.called, "setSort called");
     t.ok(mongooseQuery.select.called, "mongooseQuery.select called");
     t.ok(mongooseQuery.where.callCount === 1, "mongooseQuery.where called once");
@@ -1156,7 +1157,7 @@ test('query-helper.createMongooseQuery', function(t) {
 
     var userSchema = new mongoose.Schema();
 
-    var userModel = mongoose.model("user", userSchema);
+    userSchema.statics = { routeOptions: {} };     var userModel = mongoose.model("user", userSchema);
 
     var query1 = {firstName: ["bob","bill"]};
     var query2 = {firstName: '["bob","bill"]'};
@@ -1221,7 +1222,7 @@ test('query-helper.createMongooseQuery', function(t) {
       }
     });
 
-    var userModel = mongoose.model("user", userSchema);
+    userSchema.statics = { routeOptions: {} };     var userModel = mongoose.model("user", userSchema);
 
     var query = {$where:{}};
     //</editor-fold>
@@ -1235,65 +1236,6 @@ test('query-helper.createMongooseQuery', function(t) {
     t.notOk(query.$where, "query.$where deleted");
 //</editor-fold>
 
-
-    //<editor-fold desc="Restore">
-    queryHelper.setSkip.restore();
-    queryHelper.setLimit.restore();
-    queryHelper.createAttributesFilter.restore();
-    queryHelper.populateEmbeddedDocs.restore();
-    queryHelper.setSort.restore();
-    delete mongoose.models.user;
-    delete mongoose.modelSchemas.user;
-    //</editor-fold>
-  });
-
-  t.test('query-helper.createMongooseQuery calls populateEmbeddedDocs when routeOptions exist.', function (t) {
-    //<editor-fold desc="Arrange">
-    var queryHelper = require('../utilities/query-helper');
-
-    var mongooseQuery = {
-      select: sinon.spy(),
-      where: sinon.spy()
-    };
-    sinon.stub(queryHelper, "setSkip", function(){ return mongooseQuery });
-    sinon.stub(queryHelper, "setLimit", function(){ return mongooseQuery });
-    sinon.stub(queryHelper, "createAttributesFilter", function(){ return mongooseQuery });
-    sinon.stub(queryHelper, "populateEmbeddedDocs", function(){ return mongooseQuery });
-    sinon.stub(queryHelper, "setSort", function(){ return mongooseQuery });
-
-    t.plan(1);
-
-    var userSchema = new mongoose.Schema({
-      email: {
-        type: Types.String,
-        queryable: true
-      },
-      firstName: {
-        type: Types.String,
-        queryable: true
-      },
-      lastName: {
-        type: Types.String
-      },
-      password: {
-        type: Types.String,
-        queryable: true,
-        exclude: true
-      }
-    });
-
-    var userModel = mongoose.model("user", userSchema);
-    userModel.routeOptions = {};
-
-    //</editor-fold>
-
-    //<editor-fold desc="Act">
-    var result = queryHelper.createMongooseQuery(userModel, {}, mongooseQuery, Log);
-    //</editor-fold>
-
-    //<editor-fold desc="Assert">
-    t.ok(queryHelper.populateEmbeddedDocs.called, "populateEmbeddedDocs called when routeOptions exist");
-    //</editor-fold>
 
     //<editor-fold desc="Restore">
     queryHelper.setSkip.restore();
