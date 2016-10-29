@@ -141,7 +141,7 @@ test('handler-helper-factory.generateListHandler', function(t) {
       var postSpy = sandbox.spy(function() {
         postDeferred.resolve() ;
       });
-      userSchema.= {
+      userSchema.statics = {
         routeOptions: {
           list: {
             post: postSpy
@@ -295,7 +295,7 @@ test('handler-helper-factory.generateListHandler', function(t) {
       var postDeferred = Q.defer();
       var error = "error message";
       postDeferred.reject(error);
-      userSchema.= {
+      userSchema.statics = {
         routeOptions: {
           list: {
             post: function(){ return postDeferred.promise }
@@ -533,7 +533,7 @@ test('handler-helper-factory.generateFindHandler', function(t) {
       var postSpy = sandbox.spy(function() {
         postDeferred.resolve() ;
       });
-      userSchema.= {
+      userSchema.statics = {
         routeOptions: {
           find: {
             post: postSpy
@@ -638,7 +638,7 @@ test('handler-helper-factory.generateFindHandler', function(t) {
       var postDeferred = Q.defer();
       var error = "error message";
       postDeferred.reject(error);
-      userSchema.= {
+      userSchema.statics = {
         routeOptions: {
           find: {
             post: function(){ return postDeferred.promise }
@@ -695,7 +695,7 @@ test('handler-helper-factory.generateFindHandler', function(t) {
       var postDeferred = Q.defer();
       var error = "error message";
       postDeferred.reject(error);
-      userSchema.= {
+      userSchema.statics = {
         routeOptions: {
           find: {
             post: function(){ return postDeferred.promise }
@@ -851,7 +851,7 @@ test('handler-helper-factory.generateCreateHandler', function(t) {
       var preSpy = sandbox.spy(function() {
         preDeferred.resolve() ;
       });
-      userSchema.= {
+      userSchema.statics = {
         routeOptions: {
           create: {
             pre: preSpy
@@ -1034,7 +1034,7 @@ test('handler-helper-factory.generateCreateHandler', function(t) {
       var userSchema = new mongoose.Schema({});
       var deferred = Q.defer();
       var postSpy = sandbox.spy(function(){ return deferred.resolve() });
-      userSchema.= {
+      userSchema.statics = {
         routeOptions: {
           create: {
             post: postSpy
@@ -1132,7 +1132,7 @@ test('handler-helper-factory.generateCreateHandler', function(t) {
       sandbox.stub(Log, 'error', function(){});
 
       var userSchema = new mongoose.Schema({});
-      userSchema.= {
+      userSchema.statics = {
         routeOptions: {
           create: {
             post: function(){ return Q.reject("error message") }
@@ -1186,7 +1186,7 @@ test('handler-helper-factory.generateCreateHandler', function(t) {
       sandbox.stub(Log, 'error', function(){});
 
       var userSchema = new mongoose.Schema({});
-      userSchema.= {
+      userSchema.statics = {
         routeOptions: {
           create: {
             post: function(){ return Q.reject("error message") }
@@ -1239,7 +1239,7 @@ test('handler-helper-factory.generateCreateHandler', function(t) {
       sandbox.stub(Log, 'error', function(){});
 
       var userSchema = new mongoose.Schema({});
-      userSchema.= {
+      userSchema.statics = {
         routeOptions: {
           create: {
             pre: function(){ return Q.reject("error message") }
@@ -1291,7 +1291,7 @@ test('handler-helper-factory.generateCreateHandler', function(t) {
       sandbox.stub(Log, 'error', function(){});
 
       var userSchema = new mongoose.Schema({});
-      userSchema.= {
+      userSchema.statics = {
         routeOptions: {
           create: {
             pre: function(){ throw("error message") }
@@ -1348,7 +1348,7 @@ test('handler-helper-factory.generateDeleteHandler', function(t) {
       var preSpy = sandbox.spy(function() {
         preDeferred.resolve() ;
       });
-      userSchema.= {
+      userSchema.statics = {
         routeOptions: {
           delete: {
             pre: preSpy
@@ -1437,7 +1437,7 @@ test('handler-helper-factory.generateDeleteHandler', function(t) {
       var userSchema = new mongoose.Schema({});
       var deferred = Q.defer();
       var postSpy = sandbox.spy(function(){ return deferred.resolve() });
-      userSchema.= {
+      userSchema.statics = {
         routeOptions: {
           delete: {
             post: postSpy
@@ -1527,7 +1527,7 @@ test('handler-helper-factory.generateDeleteHandler', function(t) {
       sandbox.stub(Log, 'error', function(){});
 
       var userSchema = new mongoose.Schema({});
-      userSchema.= {
+      userSchema.statics = {
         routeOptions: {
           delete: {
             post: function(){ return Q.reject("error message") }
@@ -1623,7 +1623,7 @@ test('handler-helper-factory.generateDeleteHandler', function(t) {
       sandbox.stub(Log, 'error', function(){});
 
       var userSchema = new mongoose.Schema({});
-      userSchema.= {
+      userSchema.statics = {
         routeOptions: {
           delete: {
             pre: function(){ return Q.reject("error message") }
@@ -1675,7 +1675,7 @@ test('handler-helper-factory.generateDeleteHandler', function(t) {
       sandbox.stub(Log, 'error', function(){});
 
       var userSchema = new mongoose.Schema({});
-      userSchema.= {
+      userSchema.statics = {
         routeOptions: {
           delete: {
             pre: function(){ throw("error message") }
@@ -1734,7 +1734,7 @@ test('handler-helper-factory.generateUpdateHandler', function(t) {
       var preSpy = sandbox.spy(function() {
         preDeferred.resolve() ;
       });
-      userSchema.= {
+      userSchema.statics = {
         routeOptions: {
           update: {
             pre: preSpy
@@ -1917,7 +1917,7 @@ test('handler-helper-factory.generateUpdateHandler', function(t) {
       var userSchema = new mongoose.Schema({});
       var deferred = Q.defer();
       var postSpy = sandbox.spy(function(){ return deferred.resolve() });
-      userSchema.= {
+      userSchema.statics = {
         routeOptions: {
           update: {
             post: postSpy
@@ -2015,7 +2015,7 @@ test('handler-helper-factory.generateUpdateHandler', function(t) {
       sandbox.stub(Log, 'error', function(){});
 
       var userSchema = new mongoose.Schema({});
-      userSchema.= {
+      userSchema.statics = {
         routeOptions: {
           update: {
             post: function(){ return Q.reject("error message") }
@@ -2161,7 +2161,7 @@ test('handler-helper-factory.generateUpdateHandler', function(t) {
       sandbox.stub(Log, 'error', function(){});
 
       var userSchema = new mongoose.Schema({});
-      userSchema.= {
+      userSchema.statics = {
         routeOptions: {
           update: {
             pre: function(){ return Q.reject("error message") }
@@ -2213,7 +2213,7 @@ test('handler-helper-factory.generateUpdateHandler', function(t) {
       sandbox.stub(Log, 'error', function(){});
 
       var userSchema = new mongoose.Schema({});
-      userSchema.= {
+      userSchema.statics = {
         routeOptions: {
           update: {
             pre: function(){ throw("error message") }
@@ -3196,7 +3196,7 @@ test('handler-helper-factory.generateAssociationGetAllHandler', function(t) {
       sandbox.stub(Log, 'error', function(){});
 
       var userSchema = new mongoose.Schema({});
-      userSchema.= {
+      userSchema.statics = {
         routeOptions: {
           associations: {
             CHILD: {
@@ -3252,7 +3252,7 @@ test('handler-helper-factory.generateAssociationGetAllHandler', function(t) {
       sandbox.stub(Log, 'error', function(){});
 
       var userSchema = new mongoose.Schema({});
-      userSchema.= {
+      userSchema.statics = {
         routeOptions: {
           associations: {
             CHILD: {
@@ -3315,7 +3315,7 @@ test('handler-helper-factory.generateAssociationGetAllHandler', function(t) {
       sandbox.stub(Log, 'error', function(){});
 
       var userSchema = new mongoose.Schema({});
-      userSchema.= {
+      userSchema.statics = {
         routeOptions: {
           associations: {
             children: {
@@ -3390,7 +3390,7 @@ test('handler-helper-factory.generateAssociationGetAllHandler', function(t) {
       sandbox.stub(Log, 'error', function(){});
 
       var userSchema = new mongoose.Schema({});
-      userSchema.= {
+      userSchema.statics = {
         routeOptions: {
           associations: {
             children: {
@@ -3466,7 +3466,7 @@ test('handler-helper-factory.generateAssociationGetAllHandler', function(t) {
       sandbox.stub(Log, 'error', function(){});
 
       var userSchema = new mongoose.Schema({});
-      userSchema.= {
+      userSchema.statics = {
         routeOptions: {
           associations: {
             children: {
@@ -3529,7 +3529,7 @@ test('handler-helper-factory.generateAssociationGetAllHandler', function(t) {
       sandbox.stub(Log, 'error', function(){});
 
       var userSchema = new mongoose.Schema({});
-      userSchema.= {
+      userSchema.statics = {
         routeOptions: {
           associations: {
             children: {
@@ -3653,7 +3653,7 @@ test('handler-helper-factory.setAssociation', function(t) {
       // sandbox.stub(Log, 'error', function(){});
 
       var userSchema = new mongoose.Schema({});
-      userSchema.= {
+      userSchema.statics = {
         routeOptions: {
           associations: {
             children: {
@@ -3727,7 +3727,7 @@ test('handler-helper-factory.setAssociation', function(t) {
       // sandbox.stub(Log, 'error', function(){});
 
       var userSchema = new mongoose.Schema({});
-      userSchema.= {
+      userSchema.statics = {
         routeOptions: {
           associations: {
             children: {
@@ -3816,7 +3816,7 @@ test('handler-helper-factory.setAssociation', function(t) {
       sandbox.stub(Log, 'error', function(){});
 
       var userSchema = new mongoose.Schema({});
-      userSchema.= {
+      userSchema.statics = {
         routeOptions: {
           associations: {
             children: {
@@ -3905,7 +3905,7 @@ test('handler-helper-factory.setAssociation', function(t) {
       // sandbox.stub(Log, 'error', function(){});
 
       var userSchema = new mongoose.Schema({});
-      userSchema.= {
+      userSchema.statics = {
         routeOptions: {
           associations: {
             children: {
@@ -3990,7 +3990,7 @@ test('handler-helper-factory.setAssociation', function(t) {
       // sandbox.stub(Log, 'error', function(){});
 
       var userSchema = new mongoose.Schema({});
-      userSchema.= {
+      userSchema.statics = {
         routeOptions: {
           associations: {
             children: {
@@ -4134,7 +4134,7 @@ test('handler-helper-factory.removeAssociation', function(t) {
       sandbox.stub(Log, 'error', function(){});
 
       var userSchema = new mongoose.Schema({});
-      userSchema.= {
+      userSchema.statics = {
         routeOptions: {
           associations: {
             children: {
@@ -4220,7 +4220,7 @@ test('handler-helper-factory.removeAssociation', function(t) {
       // sandbox.stub(Log, 'error', function(){});
 
       var userSchema = new mongoose.Schema({});
-      userSchema.= {
+      userSchema.statics = {
         routeOptions: {
           associations: {
             children: {
@@ -4307,7 +4307,7 @@ test('handler-helper-factory.removeAssociation', function(t) {
       // sandbox.stub(Log, 'error', function(){});
 
       var userSchema = new mongoose.Schema({});
-      userSchema.= {
+      userSchema.statics = {
         routeOptions: {
           associations: {
             children: {
@@ -4392,7 +4392,7 @@ test('handler-helper-factory.removeAssociation', function(t) {
       // sandbox.stub(Log, 'error', function(){});
 
       var userSchema = new mongoose.Schema({});
-      userSchema.= {
+      userSchema.statics = {
         routeOptions: {
           associations: {
             children: {

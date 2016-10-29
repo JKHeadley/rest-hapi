@@ -64,8 +64,9 @@ module.exports = {
         t.fail("No error was thrown.");
       } catch (error) {
         t.equal(error.name, "AssertionError", "error is an AssertionError");
-        t.ok(error.message.indexOf("schema.) > -1, "assertion message contains 'schema. text.");
+        t.ok(error.message.indexOf("routeOptions") > -1, "assertion message contains 'routeOptions' text.");
       }
+
 
       model = {
         schema: {
@@ -74,9 +75,9 @@ module.exports = {
             field2: {},
             field3: {},
             field4: {}
-          },
-          methods: {}
-        }
+          }
+        },
+        routeOptions: {}
       };
 
       paramCopy = _.extend([], parameters);

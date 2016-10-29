@@ -215,7 +215,7 @@ test('query-helper.getQueryableFields', function(t) {
       }
     });
 
-    userSchema.= {
+    userSchema.statics = {
       routeOptions: {
         associations: {
           title: {
@@ -970,7 +970,7 @@ test('query-helper.createAttributesFilter', function(t) {
       }
     });
 
-    userSchema.= {
+    userSchema.statics = {
       routeOptions: {
         associations: {
           title: {

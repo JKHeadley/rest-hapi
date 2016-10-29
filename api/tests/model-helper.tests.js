@@ -63,7 +63,7 @@ test('model-helper.extendSchemaAssociations', function(t) {
 
     var userSchema = {};
 
-    userSchema.= {
+    userSchema.statics = {
       routeOptions: {
         associations: {
           groups: {
@@ -104,7 +104,7 @@ test('model-helper.extendSchemaAssociations', function(t) {
 
     var userSchema = {};
 
-    userSchema.= {
+    userSchema.statics = {
       routeOptions: {
         associations: {
           groups: {
@@ -252,7 +252,7 @@ test('model-helper.associateModels', function(t) {
       model: "role"
     };
 
-    userSchema.= {
+    userSchema.statics = {
       routeOptions: {
         associations: {
           groups: groups,

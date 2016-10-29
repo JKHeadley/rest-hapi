@@ -95,7 +95,6 @@ module.exports = function (logger, mongoose, server) {
         }
       }
       catch(error) {
-        logger.error("HDFS:LKDFH:SL");
         logger.error("Error:", error);
         throw(error);
       }
@@ -497,8 +496,6 @@ module.exports = function (logger, mongoose, server) {
     generateAssociationAddOneEndpoint: function (server, ownerModel, association, options, Log) {
       validationHelper.validateModel(ownerModel, Log);
 
-
-      assert(ownerModel.routeOptions, "routeOptions must exist");
       assert(ownerModel.routeOptions.associations, "model associations must exist");
       assert(association, "association input must exist");
 
@@ -573,8 +570,6 @@ module.exports = function (logger, mongoose, server) {
     generateAssociationRemoveOneEndpoint: function (server, ownerModel, association, options, Log) {
       validationHelper.validateModel(ownerModel, Log);
 
-
-      assert(ownerModel.routeOptions, "routeOptions must exist");
       assert(ownerModel.routeOptions.associations, "model associations must exist");
       assert(association, "association input must exist");
 
@@ -638,8 +633,6 @@ module.exports = function (logger, mongoose, server) {
     generateAssociationAddManyEndpoint: function (server, ownerModel, association, options, Log) {
       validationHelper.validateModel(ownerModel, Log);
 
-
-      assert(ownerModel.routeOptions, "routeOptions must exist");
       assert(ownerModel.routeOptions.associations, "model associations must exist");
       assert(association, "association input must exist");
 
@@ -713,8 +706,6 @@ module.exports = function (logger, mongoose, server) {
     generateAssociationGetAllEndpoint: function (server, ownerModel, association, options, Log) {
       validationHelper.validateModel(ownerModel, Log);
 
-
-      assert(ownerModel.routeOptions, "routeOptions must exist");
       assert(ownerModel.routeOptions.associations, "model associations must exist");
       assert(association, "association input must exist");
 

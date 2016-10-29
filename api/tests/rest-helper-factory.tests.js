@@ -125,18 +125,18 @@ test('rest-helper-factory.generateRoutes', function(t) {
   sinon.stub(Log, 'bind', function(){ return Log });
   var restHelperFactory = require('../utilities/rest-helper-factory')(Log, mongoose, server);
   testHelper.testModelParameter(t, restHelperFactory.generateRoutes, "restHelperFactory.generateRoutes", ["server", "model", "options"], Log);
-  // Log.error.restore();
-  // Log.bind.restore();
 
   t.test('rest-helper-factory.generateRoutes calls CRUD endpoint generators by default', function (t) {
     //<editor-fold desc="Arrange">
+    Log.error.restore();
+    Log.bind.restore();
     var server = sinon.spy();
     var restHelperFactory = require('../utilities/rest-helper-factory')(Log, mongoose, server);
 
     t.plan(5);
 
     var userSchema = new mongoose.Schema();
-    userSchema.= {
+    userSchema.statics = {
       routeOptions: {}
     };
     var userModel = mongoose.model("user", userSchema);
@@ -179,7 +179,7 @@ test('rest-helper-factory.generateRoutes', function(t) {
     t.plan(5);
 
     var userSchema = new mongoose.Schema();
-    userSchema.= {
+    userSchema.statics = {
       routeOptions: {
         allowRead: false,
         allowCreate: false,
@@ -227,7 +227,7 @@ test('rest-helper-factory.generateRoutes', function(t) {
     t.plan(16);
 
     var userSchema = new mongoose.Schema();
-    userSchema.= {
+    userSchema.statics = {
       routeOptions: {
         associations: {
           title: {
@@ -311,7 +311,7 @@ test('rest-helper-factory.generateRoutes', function(t) {
     t.plan(4);
 
     var userSchema = new mongoose.Schema();
-    userSchema.= {
+    userSchema.statics = {
       routeOptions: {
         associations: {
           groups: {
@@ -374,7 +374,7 @@ test('rest-helper-factory.generateRoutes', function(t) {
     t.plan(2);
 
     var userSchema = new mongoose.Schema();
-    userSchema.= {
+    userSchema.statics = {
       routeOptions: {
         extraEndpoints: [
           sinon.spy(),
@@ -438,6 +438,7 @@ test('rest-helper-factory.generateListEndpoint', function(t) {
     t.plan(1);
 
     var userSchema = new mongoose.Schema({});
+    userSchema.statics = { routeOptions: {} };
 
     var userModel = mongoose.model("user", userSchema);
     //</editor-fold>
@@ -474,7 +475,7 @@ test('rest-helper-factory.generateListEndpoint', function(t) {
 
     t.plan(3);
 
-    var userSchema = new mongoose.Schema({});
+    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
 
     var userModel = mongoose.model("user", userSchema);
     //</editor-fold>
@@ -513,7 +514,7 @@ test('rest-helper-factory.generateListEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});
+    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
 
     var userModel = mongoose.model("user", userSchema);
     //</editor-fold>
@@ -550,7 +551,7 @@ test('rest-helper-factory.generateListEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});
+    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
 
     var userModel = mongoose.model("user", userSchema);
     //</editor-fold>
@@ -587,7 +588,7 @@ test('rest-helper-factory.generateListEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});
+    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
 
     var userModel = mongoose.model("user", userSchema);
     //</editor-fold>
@@ -626,10 +627,10 @@ test('rest-helper-factory.generateListEndpoint', function(t) {
 
     t.plan(2);
 
-    var userSchema1 = new mongoose.Schema({});
+    var userSchema1 = new mongoose.Schema({});     userSchema1.statics = { routeOptions: {} };
 
     var userSchema2 = new mongoose.Schema({});
-    userSchema2.= {
+    userSchema2.statics = {
       routeOptions: {
         alias: "PEEPS"
       }
@@ -679,7 +680,7 @@ test('rest-helper-factory.generateListEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});
+    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
 
     var userModel = mongoose.model("user", userSchema);
     //</editor-fold>
@@ -720,7 +721,7 @@ test('rest-helper-factory.generateListEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});
+    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
 
     var userModel = mongoose.model("user", userSchema);
     //</editor-fold>
@@ -759,10 +760,11 @@ test('rest-helper-factory.generateListEndpoint', function(t) {
 
     t.plan(4);
 
-    var userSchema1 = new mongoose.Schema({});
+    var userSchema1 = new mongoose.Schema({});     userSchema1.statics = { routeOptions: {} };
 
     var userSchema2 = new mongoose.Schema({});
-    userSchema2.= {
+    userSchema2.statics = {
+      routeOptions: {},
       collectionDisplayName: "User"
     };
 
@@ -811,7 +813,7 @@ test('rest-helper-factory.generateListEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});
+    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
 
     var userModel = mongoose.model("user", userSchema);
     //</editor-fold>
@@ -876,7 +878,7 @@ test('rest-helper-factory.generateListEndpoint', function(t) {
 
     t.plan(6);
 
-    var userSchema = new mongoose.Schema({});
+    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
 
     var userModel = mongoose.model("user", userSchema);
 
@@ -943,10 +945,10 @@ test('rest-helper-factory.generateListEndpoint', function(t) {
 
     t.plan(2);
 
-    var userSchema1 = new mongoose.Schema({});
+    var userSchema1 = new mongoose.Schema({});     userSchema1.statics = { routeOptions: {} };
 
     var userSchema2 = new mongoose.Schema({});
-    userSchema2.= {
+    userSchema2.statics = {
       routeOptions: {
         associations: {
           test: {}
@@ -1003,7 +1005,7 @@ test('rest-helper-factory.generateListEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});
+    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
 
     var userModel = mongoose.model("user", userSchema);
 
@@ -1046,7 +1048,7 @@ test('rest-helper-factory.generateListEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});
+    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
 
     var userModel = mongoose.model("user", userSchema);
     //</editor-fold>
@@ -1086,7 +1088,7 @@ test('rest-helper-factory.generateListEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});
+    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
 
     var userModel = mongoose.model("user", userSchema);
 
@@ -1135,7 +1137,7 @@ test('rest-helper-factory.generateFindEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});
+    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
 
     var userModel = mongoose.model("user", userSchema);
     //</editor-fold>
@@ -1172,7 +1174,7 @@ test('rest-helper-factory.generateFindEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});
+    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
 
     var userModel = mongoose.model("user", userSchema);
     //</editor-fold>
@@ -1209,7 +1211,7 @@ test('rest-helper-factory.generateFindEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});
+    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
 
     var userModel = mongoose.model("user", userSchema);
     //</editor-fold>
@@ -1246,7 +1248,7 @@ test('rest-helper-factory.generateFindEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});
+    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
 
     var userModel = mongoose.model("user", userSchema);
     //</editor-fold>
@@ -1283,7 +1285,7 @@ test('rest-helper-factory.generateFindEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});
+    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
 
     var userModel = mongoose.model("user", userSchema);
     //</editor-fold>
@@ -1322,10 +1324,10 @@ test('rest-helper-factory.generateFindEndpoint', function(t) {
 
     t.plan(2);
 
-    var userSchema1 = new mongoose.Schema({});
+    var userSchema1 = new mongoose.Schema({});     userSchema1.statics = { routeOptions: {} };
 
     var userSchema2 = new mongoose.Schema({});
-    userSchema2.= {
+    userSchema2.statics = {
       routeOptions: {
         alias: "PEEPS"
       }
@@ -1375,7 +1377,7 @@ test('rest-helper-factory.generateFindEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});
+    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
 
     var userModel = mongoose.model("user", userSchema);
     //</editor-fold>
@@ -1416,7 +1418,7 @@ test('rest-helper-factory.generateFindEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});
+    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
 
     var userModel = mongoose.model("user", userSchema);
     //</editor-fold>
@@ -1455,10 +1457,11 @@ test('rest-helper-factory.generateFindEndpoint', function(t) {
 
     t.plan(4);
 
-    var userSchema1 = new mongoose.Schema({});
+    var userSchema1 = new mongoose.Schema({});     userSchema1.statics = { routeOptions: {} };
 
     var userSchema2 = new mongoose.Schema({});
-    userSchema2.= {
+    userSchema2.statics = {
+      routeOptions: {},
       collectionDisplayName: "User"
     };
 
@@ -1507,7 +1510,7 @@ test('rest-helper-factory.generateFindEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});
+    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
 
     var userModel = mongoose.model("user", userSchema);
     //</editor-fold>
@@ -1551,7 +1554,7 @@ test('rest-helper-factory.generateFindEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});
+    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
 
     var userModel = mongoose.model("user", userSchema);
 
@@ -1600,10 +1603,10 @@ test('rest-helper-factory.generateFindEndpoint', function(t) {
 
     t.plan(2);
 
-    var userSchema1 = new mongoose.Schema({});
+    var userSchema1 = new mongoose.Schema({});     userSchema1.statics = { routeOptions: {} };
 
     var userSchema2 = new mongoose.Schema({});
-    userSchema2.= {
+    userSchema2.statics = {
       routeOptions: {
         associations: {
           test: {}
@@ -1667,7 +1670,7 @@ test('rest-helper-factory.generateFindEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});
+    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
 
     var userModel = mongoose.model("user", userSchema);
 
@@ -1712,7 +1715,7 @@ test('rest-helper-factory.generateFindEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});
+    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
 
     var userModel = mongoose.model("user", userSchema);
 
@@ -1755,7 +1758,7 @@ test('rest-helper-factory.generateFindEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});
+    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
 
     var userModel = mongoose.model("user", userSchema);
     //</editor-fold>
@@ -1795,7 +1798,7 @@ test('rest-helper-factory.generateFindEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});
+    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
 
     var userModel = mongoose.model("user", userSchema);
 
@@ -1844,7 +1847,7 @@ test('rest-helper-factory.generateCreateEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});
+    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
 
     var userModel = mongoose.model("user", userSchema);
     //</editor-fold>
@@ -1881,7 +1884,7 @@ test('rest-helper-factory.generateCreateEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});
+    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
 
     var userModel = mongoose.model("user", userSchema);
     //</editor-fold>
@@ -1918,7 +1921,7 @@ test('rest-helper-factory.generateCreateEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});
+    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
 
     var userModel = mongoose.model("user", userSchema);
     //</editor-fold>
@@ -1955,7 +1958,7 @@ test('rest-helper-factory.generateCreateEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});
+    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
 
     var userModel = mongoose.model("user", userSchema);
     //</editor-fold>
@@ -1992,7 +1995,7 @@ test('rest-helper-factory.generateCreateEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});
+    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
 
     var userModel = mongoose.model("user", userSchema);
     //</editor-fold>
@@ -2032,10 +2035,10 @@ test('rest-helper-factory.generateCreateEndpoint', function(t) {
 
     t.plan(2);
 
-    var userSchema1 = new mongoose.Schema({});
+    var userSchema1 = new mongoose.Schema({});     userSchema1.statics = { routeOptions: {} };
 
     var userSchema2 = new mongoose.Schema({});
-    userSchema2.= {
+    userSchema2.statics = {
       routeOptions: {
         alias: "PEEPS"
       }
@@ -2085,7 +2088,7 @@ test('rest-helper-factory.generateCreateEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});
+    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
 
     var userModel = mongoose.model("user", userSchema);
     //</editor-fold>
@@ -2126,7 +2129,7 @@ test('rest-helper-factory.generateCreateEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});
+    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
 
     var userModel = mongoose.model("user", userSchema);
     //</editor-fold>
@@ -2165,10 +2168,11 @@ test('rest-helper-factory.generateCreateEndpoint', function(t) {
 
     t.plan(4);
 
-    var userSchema1 = new mongoose.Schema({});
+    var userSchema1 = new mongoose.Schema({});     userSchema1.statics = { routeOptions: {} };
 
     var userSchema2 = new mongoose.Schema({});
-    userSchema2.= {
+    userSchema2.statics = {
+      routeOptions: {},
       collectionDisplayName: "User"
     };
 
@@ -2217,7 +2221,7 @@ test('rest-helper-factory.generateCreateEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});
+    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
 
     var userModel = mongoose.model("user", userSchema);
     //</editor-fold>
@@ -2257,7 +2261,7 @@ test('rest-helper-factory.generateCreateEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});
+    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
 
     var userModel = mongoose.model("user", userSchema);
     //</editor-fold>
@@ -2297,7 +2301,7 @@ test('rest-helper-factory.generateCreateEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});
+    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
 
     var userModel = mongoose.model("user", userSchema);
 
@@ -2340,7 +2344,7 @@ test('rest-helper-factory.generateCreateEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});
+    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
 
     var userModel = mongoose.model("user", userSchema);
     //</editor-fold>
@@ -2380,7 +2384,7 @@ test('rest-helper-factory.generateCreateEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});
+    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
 
     var userModel = mongoose.model("user", userSchema);
 
@@ -2429,7 +2433,7 @@ test('rest-helper-factory.generateDeleteEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});
+    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
 
     var userModel = mongoose.model("user", userSchema);
     //</editor-fold>
@@ -2466,7 +2470,7 @@ test('rest-helper-factory.generateDeleteEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});
+    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
 
     var userModel = mongoose.model("user", userSchema);
     //</editor-fold>
@@ -2503,7 +2507,7 @@ test('rest-helper-factory.generateDeleteEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});
+    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
 
     var userModel = mongoose.model("user", userSchema);
     //</editor-fold>
@@ -2542,10 +2546,10 @@ test('rest-helper-factory.generateDeleteEndpoint', function(t) {
 
     t.plan(2);
 
-    var userSchema1 = new mongoose.Schema({});
+    var userSchema1 = new mongoose.Schema({});     userSchema1.statics = { routeOptions: {} };
 
     var userSchema2 = new mongoose.Schema({});
-    userSchema2.= {
+    userSchema2.statics = {
       routeOptions: {
         alias: "PEEPS"
       }
@@ -2595,7 +2599,7 @@ test('rest-helper-factory.generateDeleteEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});
+    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
 
     var userModel = mongoose.model("user", userSchema);
     //</editor-fold>
@@ -2636,7 +2640,7 @@ test('rest-helper-factory.generateDeleteEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});
+    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
 
     var userModel = mongoose.model("user", userSchema);
     //</editor-fold>
@@ -2675,10 +2679,11 @@ test('rest-helper-factory.generateDeleteEndpoint', function(t) {
 
     t.plan(4);
 
-    var userSchema1 = new mongoose.Schema({});
+    var userSchema1 = new mongoose.Schema({});     userSchema1.statics = { routeOptions: {} };
 
     var userSchema2 = new mongoose.Schema({});
-    userSchema2.= {
+    userSchema2.statics = {
+      routeOptions: {},
       collectionDisplayName: "User"
     };
 
@@ -2727,7 +2732,7 @@ test('rest-helper-factory.generateDeleteEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});
+    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
 
     var userModel = mongoose.model("user", userSchema);
     //</editor-fold>
@@ -2775,7 +2780,7 @@ test('rest-helper-factory.generateDeleteEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});
+    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
 
     var userModel = mongoose.model("user", userSchema);
 
@@ -2820,7 +2825,7 @@ test('rest-helper-factory.generateDeleteEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});
+    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
 
     var userModel = mongoose.model("user", userSchema);
 
@@ -2863,7 +2868,7 @@ test('rest-helper-factory.generateDeleteEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});
+    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
 
     var userModel = mongoose.model("user", userSchema);
     //</editor-fold>
@@ -2910,7 +2915,7 @@ test('rest-helper-factory.generateUpdateEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});
+    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
 
     var userModel = mongoose.model("user", userSchema);
     //</editor-fold>
@@ -2947,7 +2952,7 @@ test('rest-helper-factory.generateUpdateEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});
+    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
 
     var userModel = mongoose.model("user", userSchema);
     //</editor-fold>
@@ -2984,7 +2989,7 @@ test('rest-helper-factory.generateUpdateEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});
+    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
 
     var userModel = mongoose.model("user", userSchema);
     //</editor-fold>
@@ -3021,7 +3026,7 @@ test('rest-helper-factory.generateUpdateEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});
+    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
 
     var userModel = mongoose.model("user", userSchema);
     //</editor-fold>
@@ -3058,7 +3063,7 @@ test('rest-helper-factory.generateUpdateEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});
+    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
 
     var userModel = mongoose.model("user", userSchema);
     //</editor-fold>
@@ -3098,10 +3103,10 @@ test('rest-helper-factory.generateUpdateEndpoint', function(t) {
 
     t.plan(2);
 
-    var userSchema1 = new mongoose.Schema({});
+    var userSchema1 = new mongoose.Schema({});     userSchema1.statics = { routeOptions: {} };
 
     var userSchema2 = new mongoose.Schema({});
-    userSchema2.= {
+    userSchema2.statics = {
       routeOptions: {
         alias: "PEEPS"
       }
@@ -3151,7 +3156,7 @@ test('rest-helper-factory.generateUpdateEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});
+    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
 
     var userModel = mongoose.model("user", userSchema);
     //</editor-fold>
@@ -3192,7 +3197,7 @@ test('rest-helper-factory.generateUpdateEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});
+    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
 
     var userModel = mongoose.model("user", userSchema);
     //</editor-fold>
@@ -3231,10 +3236,11 @@ test('rest-helper-factory.generateUpdateEndpoint', function(t) {
 
     t.plan(4);
 
-    var userSchema1 = new mongoose.Schema({});
+    var userSchema1 = new mongoose.Schema({});     userSchema1.statics = { routeOptions: {} };
 
     var userSchema2 = new mongoose.Schema({});
-    userSchema2.= {
+    userSchema2.statics = {
+      routeOptions: {},
       collectionDisplayName: "User"
     };
 
@@ -3283,7 +3289,7 @@ test('rest-helper-factory.generateUpdateEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});
+    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
 
     var userModel = mongoose.model("user", userSchema);
     //</editor-fold>
@@ -3323,7 +3329,7 @@ test('rest-helper-factory.generateUpdateEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});
+    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
 
     var userModel = mongoose.model("user", userSchema);
     //</editor-fold>
@@ -3370,7 +3376,7 @@ test('rest-helper-factory.generateUpdateEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});
+    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
 
     var userModel = mongoose.model("user", userSchema);
 
@@ -3415,7 +3421,7 @@ test('rest-helper-factory.generateUpdateEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});
+    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
 
     var userModel = mongoose.model("user", userSchema);
 
@@ -3458,7 +3464,7 @@ test('rest-helper-factory.generateUpdateEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});
+    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
 
     var userModel = mongoose.model("user", userSchema);
     //</editor-fold>
@@ -3498,7 +3504,7 @@ test('rest-helper-factory.generateUpdateEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});
+    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
 
     var userModel = mongoose.model("user", userSchema);
 
@@ -3530,50 +3536,6 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
   var restHelperFactory = require('../utilities/rest-helper-factory')(Log, mongoose, server);
   testHelper.testModelParameter(t, restHelperFactory.generateAssociationAddOneEndpoint, "restHelperFactory.generateAssociationAddOneEndpoint", ["server", "model", "options", "Log"], Log);
 
-  t.test('rest-helper-factory.generateAssociationAddOneEndpoint asserts routeOptions exist', sinon.test(function (t) {
-    //<editor-fold desc="Arrange">
-    var server = this.stub({route: function(){}});
-
-    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(),server));
-    var handlerHelperStubWrapper = this.stub();
-    handlerHelperStubWrapper.returns(handlerHelperStub);
-    var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});
-    var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
-      './handler-helper-factory': handlerHelperStubWrapper,
-      './query-helper': queryHelperStub,
-      './joi-mongoose-helper': joiMongooseHelperStub
-    })(Log, mongoose, server);
-
-    t.plan(2);
-
-    var userSchema = new mongoose.Schema({});
-
-    var userModel = mongoose.model("user", userSchema);
-
-    var association = { include: {} };
-    //</editor-fold>
-
-    try {
-      //<editor-fold desc="Act">
-      restHelperFactory.generateAssociationAddOneEndpoint(server, userModel, {}, {}, Log);
-      t.fail("No error was thrown.");
-      //</editor-fold>
-    }
-
-    catch (error) {
-      //<editor-fold desc="Assert">
-      t.equal(error.name, "AssertionError", "error is an AssertionError");
-      t.ok(error.message.indexOf("routeOptions") > -1, "assertion message contains 'routeOptions' text.");
-      //</editor-fold>
-    }
-
-    //<editor-fold desc="Restore">
-    delete mongoose.models.user;
-    delete mongoose.modelSchemas.user;
-    //</editor-fold>
-  }));
-
   t.test('rest-helper-factory.generateAssociationAddOneEndpoint asserts routeOptions.associations exist', sinon.test(function (t) {
     //<editor-fold desc="Arrange">
     var server = this.stub({route: function(){}});
@@ -3591,8 +3553,8 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
 
     t.plan(2);
 
-    var userSchema = new mongoose.Schema({});
-    userSchema.= {
+    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    userSchema.statics = {
       routeOptions: {}
     };
 
@@ -3638,8 +3600,8 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
 
     t.plan(2);
 
-    var userSchema = new mongoose.Schema({});
-    userSchema.= {
+    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    userSchema.statics = {
       routeOptions: {
         associations: {}
       }
@@ -3687,8 +3649,8 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});
-    userSchema.= {
+    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    userSchema.statics = {
       routeOptions: {
         associations: {}
       }
@@ -3731,8 +3693,8 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});
-    userSchema.= {
+    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    userSchema.statics = {
       routeOptions: {
         associations: {}
       }
@@ -3775,8 +3737,8 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});
-    userSchema.= {
+    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    userSchema.statics = {
       routeOptions: {
         associations: {}
       }
@@ -3822,15 +3784,15 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
 
     t.plan(2);
 
-    var userSchema1 = new mongoose.Schema({});
-    userSchema1.= {
+    var userSchema1 = new mongoose.Schema({});     userSchema1.statics = { routeOptions: {} };
+    userSchema1.statics = {
       routeOptions: {
         associations: {}
       }
     };
 
     var userSchema2 = new mongoose.Schema({});
-    userSchema2.= {
+    userSchema2.statics = {
       routeOptions: {
         associations: {},
         alias: "PEEPS"
@@ -3884,8 +3846,8 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});
-    userSchema.= {
+    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    userSchema.statics = {
       routeOptions: {
         associations: {}
       }
@@ -3932,8 +3894,8 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});
-    userSchema.= {
+    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    userSchema.statics = {
       routeOptions: {
         associations: {}
       }
@@ -3978,15 +3940,15 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
 
     t.plan(4);
 
-    var userSchema1 = new mongoose.Schema({});
-    userSchema1.= {
+    var userSchema1 = new mongoose.Schema({});     userSchema1.statics = { routeOptions: {} };
+    userSchema1.statics = {
       routeOptions: {
         associations: {}
       }
     };
 
     var userSchema2 = new mongoose.Schema({});
-    userSchema2.= {
+    userSchema2.statics = {
       routeOptions: {
         associations: {}
       },
@@ -3997,14 +3959,14 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
     var userModel2 = mongoose.model("user2", userSchema2);
 
     var childSchema1 = new mongoose.Schema({});
-    childSchema1.= {
+    childSchema1.statics = {
       routeOptions: {
         associations: {}
       }
     };
 
     var childSchema2 = new mongoose.Schema({});
-    childSchema2.= {
+    childSchema2.statics = {
       routeOptions: {
         associations: {}
       },
@@ -4063,8 +4025,8 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});
-    userSchema.= {
+    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    userSchema.statics = {
       routeOptions: {
         associations: {}
       }
@@ -4111,14 +4073,14 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
     t.plan(2);
 
     var userSchema1 = new mongoose.Schema({});
-    userSchema1.= {
+    userSchema1.statics = {
       routeOptions: {
         associations: {}
       }
     };
 
     var userSchema2 = new mongoose.Schema({});
-    userSchema2.= {
+    userSchema2.statics = {
       routeOptions: {
         associations: {}
       }
@@ -4141,7 +4103,7 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
     var serverObject2 = server.route.args[1][0];
     // Log.debug(JSON.stringify(serverObject));
     t.deepEqual(serverObject1.config.validate.payload, null, "correct payload validation");
-    t.deepEqual(serverObject2.config.validate.payload, Joi.any().valid("TEST").allow(null), "correct payload validation");
+    t.deepEqual(serverObject2.config.validate.payload, Joi.any().valid("TEST"), "correct payload validation");
     //</editor-fold>
 
     //<editor-fold desc="Restore">
@@ -4178,8 +4140,8 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});
-    userSchema.= {
+    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    userSchema.statics = {
       routeOptions: {
         associations: {}
       }
@@ -4231,8 +4193,8 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});
-    userSchema.= {
+    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    userSchema.statics = {
       routeOptions: {
         associations: {}
       }
@@ -4281,8 +4243,8 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});
-    userSchema.= {
+    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    userSchema.statics = {
       routeOptions: {
         associations: {}
       }
@@ -4327,8 +4289,8 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});
-    userSchema.= {
+    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    userSchema.statics = {
       routeOptions: {
         associations: {}
       }
@@ -4366,50 +4328,6 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
   var restHelperFactory = require('../utilities/rest-helper-factory')(Log, mongoose, server);
   testHelper.testModelParameter(t, restHelperFactory.generateAssociationRemoveOneEndpoint, "restHelperFactory.generateAssociationRemoveOneEndpoint", ["server", "model", "options", "Log"], Log);
 
-  t.test('rest-helper-factory.generateAssociationRemoveOneEndpoint asserts routeOptions exist', sinon.test(function (t) {
-    //<editor-fold desc="Arrange">
-    var server = this.stub({route: function(){}});
-
-    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(),server));
-    var handlerHelperStubWrapper = this.stub();
-    handlerHelperStubWrapper.returns(handlerHelperStub);
-    var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});
-    var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
-      './handler-helper-factory': handlerHelperStubWrapper,
-      './query-helper': queryHelperStub,
-      './joi-mongoose-helper': joiMongooseHelperStub
-    })(Log, mongoose, server);
-
-    t.plan(2);
-
-    var userSchema = new mongoose.Schema({});
-
-    var userModel = mongoose.model("user", userSchema);
-
-    var association = { include: {} };
-    //</editor-fold>
-
-    try {
-      //<editor-fold desc="Act">
-      restHelperFactory.generateAssociationRemoveOneEndpoint(server, userModel, {}, {}, Log);
-      t.fail("No error was thrown.");
-      //</editor-fold>
-    }
-
-    catch (error) {
-      //<editor-fold desc="Assert">
-      t.equal(error.name, "AssertionError", "error is an AssertionError");
-      t.ok(error.message.indexOf("routeOptions") > -1, "assertion message contains 'routeOptions' text.");
-      //</editor-fold>
-    }
-
-    //<editor-fold desc="Restore">
-    delete mongoose.models.user;
-    delete mongoose.modelSchemas.user;
-    //</editor-fold>
-  }));
-
   t.test('rest-helper-factory.generateAssociationRemoveOneEndpoint asserts routeOptions.associations exist', sinon.test(function (t) {
     //<editor-fold desc="Arrange">
     var server = this.stub({route: function(){}});
@@ -4427,8 +4345,8 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
 
     t.plan(2);
 
-    var userSchema = new mongoose.Schema({});
-    userSchema.= {
+    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    userSchema.statics = {
       routeOptions: {}
     };
 
@@ -4474,8 +4392,8 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
 
     t.plan(2);
 
-    var userSchema = new mongoose.Schema({});
-    userSchema.= {
+    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    userSchema.statics = {
       routeOptions: {
         associations: {}
       }
@@ -4523,8 +4441,8 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});
-    userSchema.= {
+    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    userSchema.statics = {
       routeOptions: {
         associations: {}
       }
@@ -4567,8 +4485,8 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});
-    userSchema.= {
+    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    userSchema.statics = {
       routeOptions: {
         associations: {}
       }
@@ -4611,8 +4529,8 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});
-    userSchema.= {
+    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    userSchema.statics = {
       routeOptions: {
         associations: {}
       }
@@ -4658,15 +4576,15 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
 
     t.plan(2);
 
-    var userSchema1 = new mongoose.Schema({});
-    userSchema1.= {
+    var userSchema1 = new mongoose.Schema({});     userSchema1.statics = { routeOptions: {} };
+    userSchema1.statics = {
       routeOptions: {
         associations: {}
       }
     };
 
     var userSchema2 = new mongoose.Schema({});
-    userSchema2.= {
+    userSchema2.statics = {
       routeOptions: {
         associations: {},
         alias: "PEEPS"
@@ -4720,8 +4638,8 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});
-    userSchema.= {
+    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    userSchema.statics = {
       routeOptions: {
         associations: {}
       }
@@ -4768,8 +4686,8 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});
-    userSchema.= {
+    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    userSchema.statics = {
       routeOptions: {
         associations: {}
       }
@@ -4814,15 +4732,15 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
 
     t.plan(4);
 
-    var userSchema1 = new mongoose.Schema({});
-    userSchema1.= {
+    var userSchema1 = new mongoose.Schema({});     userSchema1.statics = { routeOptions: {} };
+    userSchema1.statics = {
       routeOptions: {
         associations: {}
       }
     };
 
     var userSchema2 = new mongoose.Schema({});
-    userSchema2.= {
+    userSchema2.statics = {
       routeOptions: {
         associations: {}
       },
@@ -4833,14 +4751,14 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
     var userModel2 = mongoose.model("user2", userSchema2);
 
     var childSchema1 = new mongoose.Schema({});
-    childSchema1.= {
+    childSchema1.statics = {
       routeOptions: {
         associations: {}
       }
     };
 
     var childSchema2 = new mongoose.Schema({});
-    childSchema2.= {
+    childSchema2.statics = {
       routeOptions: {
         associations: {}
       },
@@ -4898,8 +4816,8 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});
-    userSchema.= {
+    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    userSchema.statics = {
       routeOptions: {
         associations: {}
       }
@@ -4953,8 +4871,8 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});
-    userSchema.= {
+    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    userSchema.statics = {
       routeOptions: {
         associations: {}
       }
@@ -5006,8 +4924,8 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});
-    userSchema.= {
+    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    userSchema.statics = {
       routeOptions: {
         associations: {}
       }
@@ -5056,8 +4974,8 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});
-    userSchema.= {
+    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    userSchema.statics = {
       routeOptions: {
         associations: {}
       }
@@ -5102,8 +5020,8 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});
-    userSchema.= {
+    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    userSchema.statics = {
       routeOptions: {
         associations: {}
       }
@@ -5141,50 +5059,6 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
   var restHelperFactory = require('../utilities/rest-helper-factory')(Log, mongoose, server);
   testHelper.testModelParameter(t, restHelperFactory.generateAssociationAddManyEndpoint, "restHelperFactory.generateAssociationAddManyEndpoint", ["server", "model", "options", "Log"], Log);
 
-  t.test('rest-helper-factory.generateAssociationAddManyEndpoint asserts routeOptions exist', sinon.test(function (t) {
-    //<editor-fold desc="Arrange">
-    var server = this.stub({route: function(){}});
-
-    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(),server));
-    var handlerHelperStubWrapper = this.stub();
-    handlerHelperStubWrapper.returns(handlerHelperStub);
-    var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});
-    var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
-      './handler-helper-factory': handlerHelperStubWrapper,
-      './query-helper': queryHelperStub,
-      './joi-mongoose-helper': joiMongooseHelperStub
-    })(Log, mongoose, server);
-
-    t.plan(2);
-
-    var userSchema = new mongoose.Schema({});
-
-    var userModel = mongoose.model("user", userSchema);
-
-    var association = { include: {} };
-    //</editor-fold>
-
-    try {
-      //<editor-fold desc="Act">
-      restHelperFactory.generateAssociationAddManyEndpoint(server, userModel, {}, {}, Log);
-      t.fail("No error was thrown.");
-      //</editor-fold>
-    }
-
-    catch (error) {
-      //<editor-fold desc="Assert">
-      t.equal(error.name, "AssertionError", "error is an AssertionError");
-      t.ok(error.message.indexOf("routeOptions") > -1, "assertion message contains 'routeOptions' text.");
-      //</editor-fold>
-    }
-
-    //<editor-fold desc="Restore">
-    delete mongoose.models.user;
-    delete mongoose.modelSchemas.user;
-    //</editor-fold>
-  }));
-
   t.test('rest-helper-factory.generateAssociationAddManyEndpoint asserts routeOptions.associations exist', sinon.test(function (t) {
     //<editor-fold desc="Arrange">
     var server = this.stub({route: function(){}});
@@ -5202,8 +5076,8 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
 
     t.plan(2);
 
-    var userSchema = new mongoose.Schema({});
-    userSchema.= {
+    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    userSchema.statics = {
       routeOptions: {}
     };
 
@@ -5249,8 +5123,8 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
 
     t.plan(2);
 
-    var userSchema = new mongoose.Schema({});
-    userSchema.= {
+    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    userSchema.statics = {
       routeOptions: {
         associations: {}
       }
@@ -5298,8 +5172,8 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});
-    userSchema.= {
+    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    userSchema.statics = {
       routeOptions: {
         associations: {}
       }
@@ -5342,8 +5216,8 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});
-    userSchema.= {
+    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    userSchema.statics = {
       routeOptions: {
         associations: {}
       }
@@ -5386,8 +5260,8 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});
-    userSchema.= {
+    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    userSchema.statics = {
       routeOptions: {
         associations: {}
       }
@@ -5432,15 +5306,15 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
 
     t.plan(2);
 
-    var userSchema1 = new mongoose.Schema({});
-    userSchema1.= {
+    var userSchema1 = new mongoose.Schema({});     userSchema1.statics = { routeOptions: {} };
+    userSchema1.statics = {
       routeOptions: {
         associations: {}
       }
     };
 
     var userSchema2 = new mongoose.Schema({});
-    userSchema2.= {
+    userSchema2.statics = {
       routeOptions: {
         associations: {},
         alias: "PEEPS"
@@ -5493,8 +5367,8 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});
-    userSchema.= {
+    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    userSchema.statics = {
       routeOptions: {
         associations: {}
       }
@@ -5541,8 +5415,8 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});
-    userSchema.= {
+    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    userSchema.statics = {
       routeOptions: {
         associations: {}
       }
@@ -5587,15 +5461,15 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
 
     t.plan(4);
 
-    var userSchema1 = new mongoose.Schema({});
-    userSchema1.= {
+    var userSchema1 = new mongoose.Schema({});     userSchema1.statics = { routeOptions: {} };
+    userSchema1.statics = {
       routeOptions: {
         associations: {}
       }
     };
 
     var userSchema2 = new mongoose.Schema({});
-    userSchema2.= {
+    userSchema2.statics = {
       routeOptions: {
         associations: {}
       },
@@ -5649,8 +5523,8 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});
-    userSchema.= {
+    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    userSchema.statics = {
       routeOptions: {
         associations: {}
       }
@@ -5701,15 +5575,15 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
 
     t.plan(2);
 
-    var userSchema1 = new mongoose.Schema({});
-    userSchema1.= {
+    var userSchema1 = new mongoose.Schema({});     userSchema1.statics = { routeOptions: {} };
+    userSchema1.statics = {
       routeOptions: {
         associations: {}
       }
     };
 
     var userSchema2 = new mongoose.Schema({});
-    userSchema2.= {
+    userSchema2.statics = {
       routeOptions: {
         associations: {}
       }
@@ -5768,8 +5642,8 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});
-    userSchema.= {
+    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    userSchema.statics = {
       routeOptions: {
         associations: {}
       }
@@ -5820,8 +5694,8 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});
-    userSchema.= {
+    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    userSchema.statics = {
       routeOptions: {
         associations: {}
       }
@@ -5843,7 +5717,7 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
     //<editor-fold desc="Assert">
     var serverObject = server.route.args[0][0];
     // Log.debug(JSON.stringify(serverObject));
-    t.deepEqual(serverObject.config.validate.headers, headerValidation, "token auth used");
+    t.deepEqual(serverObject.config.validate.headers, headerValidation, "headerValidation correct");
     //</editor-fold>
 
 
@@ -5870,8 +5744,8 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});
-    userSchema.= {
+    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    userSchema.statics = {
       routeOptions: {
         associations: {}
       }
@@ -5916,8 +5790,8 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});
-    userSchema.= {
+    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    userSchema.statics = {
       routeOptions: {
         associations: {}
       }
@@ -5955,50 +5829,6 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
   var restHelperFactory = require('../utilities/rest-helper-factory')(Log, mongoose, server);
   testHelper.testModelParameter(t, restHelperFactory.generateAssociationGetAllEndpoint, "restHelperFactory.generateAssociationGetAllEndpoint", ["server", "model", "options", "Log"], Log);
 
-  t.test('rest-helper-factory.generateAssociationGetAllEndpoint asserts routeOptions exist', sinon.test(function (t) {
-    //<editor-fold desc="Arrange">
-    var server = this.stub({route: function(){}});
-
-    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(),server));
-    var handlerHelperStubWrapper = this.stub();
-    handlerHelperStubWrapper.returns(handlerHelperStub);
-    var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});
-    var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
-      './handler-helper-factory': handlerHelperStubWrapper,
-      './query-helper': queryHelperStub,
-      './joi-mongoose-helper': joiMongooseHelperStub
-    })(Log, mongoose, server);
-
-    t.plan(2);
-
-    var userSchema = new mongoose.Schema({});
-
-    var userModel = mongoose.model("user", userSchema);
-
-    var association = { include: {} };
-    //</editor-fold>
-
-    try {
-      //<editor-fold desc="Act">
-      restHelperFactory.generateAssociationGetAllEndpoint(server, userModel, {}, {}, Log);
-      t.fail("No error was thrown.");
-      //</editor-fold>
-    }
-
-    catch (error) {
-      //<editor-fold desc="Assert">
-      t.equal(error.name, "AssertionError", "error is an AssertionError");
-      t.ok(error.message.indexOf("routeOptions") > -1, "assertion message contains 'routeOptions' text.");
-      //</editor-fold>
-    }
-
-    //<editor-fold desc="Restore">
-    delete mongoose.models.user;
-    delete mongoose.modelSchemas.user;
-    //</editor-fold>
-  }));
-
   t.test('rest-helper-factory.generateAssociationGetAllEndpoint asserts routeOptions.associations exist', sinon.test(function (t) {
     //<editor-fold desc="Arrange">
     var server = this.stub({route: function(){}});
@@ -6016,8 +5846,8 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
 
     t.plan(2);
 
-    var userSchema = new mongoose.Schema({});
-    userSchema.= {
+    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    userSchema.statics = {
       routeOptions: {}
     };
 
@@ -6063,8 +5893,8 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
 
     t.plan(2);
 
-    var userSchema = new mongoose.Schema({});
-    userSchema.= {
+    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    userSchema.statics = {
       routeOptions: {
         associations: {}
       }
@@ -6112,8 +5942,8 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});
-    userSchema.= {
+    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    userSchema.statics = {
       routeOptions: {
         associations: {}
       }
@@ -6159,8 +5989,8 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
 
     t.plan(3);
 
-    var userSchema = new mongoose.Schema({});
-    userSchema.= {
+    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    userSchema.statics = {
       routeOptions: {
         associations: {}
       }
@@ -6208,8 +6038,8 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});
-    userSchema.= {
+    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    userSchema.statics = {
       routeOptions: {
         associations: {}
       }
@@ -6255,8 +6085,8 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});
-    userSchema.= {
+    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    userSchema.statics = {
       routeOptions: {
         associations: {}
       }
@@ -6302,8 +6132,8 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});
-    userSchema.= {
+    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    userSchema.statics = {
       routeOptions: {
         associations: {}
       }
@@ -6352,15 +6182,15 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
 
     t.plan(2);
 
-    var userSchema1 = new mongoose.Schema({});
-    userSchema1.= {
+    var userSchema1 = new mongoose.Schema({});     userSchema1.statics = { routeOptions: {} };
+    userSchema1.statics = {
       routeOptions: {
         associations: {}
       }
     };
 
     var userSchema2 = new mongoose.Schema({});
-    userSchema2.= {
+    userSchema2.statics = {
       routeOptions: {
         associations: {},
         alias: "PEEPS"
@@ -6420,8 +6250,8 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});
-    userSchema.= {
+    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    userSchema.statics = {
       routeOptions: {
         associations: {}
       }
@@ -6461,16 +6291,18 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
     var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});
+    var config = { auth: "TEST_AUTH" };
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
       './handler-helper-factory': handlerHelperStubWrapper,
       './query-helper': queryHelperStub,
-      './joi-mongoose-helper': joiMongooseHelperStub
+      './joi-mongoose-helper': joiMongooseHelperStub,
+      '../config': config
     })(Log, mongoose, server);
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});
-    userSchema.= {
+    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    userSchema.statics = {
       routeOptions: {
         associations: {}
       }
@@ -6518,15 +6350,15 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
 
     t.plan(4);
 
-    var userSchema1 = new mongoose.Schema({});
-    userSchema1.= {
+    var userSchema1 = new mongoose.Schema({});     userSchema1.statics = { routeOptions: {} };
+    userSchema1.statics = {
       routeOptions: {
         associations: {}
       }
     };
 
     var userSchema2 = new mongoose.Schema({});
-    userSchema2.= {
+    userSchema2.statics = {
       routeOptions: {
         associations: {}
       },
@@ -6585,8 +6417,8 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});
-    userSchema.= {
+    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    userSchema.statics = {
       routeOptions: {
         associations: {}
       }
@@ -6660,8 +6492,8 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
 
     t.plan(6);
 
-    var userSchema = new mongoose.Schema({});
-    userSchema.= {
+    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    userSchema.statics = {
       routeOptions: {
         associations: {}
       }
@@ -6737,8 +6569,8 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
 
     t.plan(2);
 
-    var userSchema1 = new mongoose.Schema({});
-    userSchema1.= {
+    var userSchema1 = new mongoose.Schema({});     userSchema1.statics = { routeOptions: {} };
+    userSchema1.statics = {
       routeOptions: {
         associations: {
           test: {}
@@ -6747,7 +6579,7 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
     };
 
     var userSchema2 = new mongoose.Schema({});
-    userSchema2.= {
+    userSchema2.statics = {
       routeOptions: {
         associations: {}
       }
@@ -6802,16 +6634,18 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
     var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});
+    var config = { auth: "TEST_AUTH" };
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
       './handler-helper-factory': handlerHelperStubWrapper,
       './query-helper': queryHelperStub,
-      './joi-mongoose-helper': joiMongooseHelperStub
+      './joi-mongoose-helper': joiMongooseHelperStub,
+      '../config': config
     })(Log, mongoose, server);
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});
-    userSchema.= {
+    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    userSchema.statics = {
       routeOptions: {
         associations: {}
       }
@@ -6834,7 +6668,7 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
     //<editor-fold desc="Assert">
     var serverObject = server.route.args[0][0];
     // Log.debug(JSON.stringify(serverObject));
-    t.deepEqual(serverObject.config.validate.headers, headerValidation, "token auth used");
+    t.deepEqual(serverObject.config.validate.headers, headerValidation, "headerValidation correct");
     //</editor-fold>
 
 
@@ -6863,8 +6697,8 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});
-    userSchema.= {
+    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    userSchema.statics = {
       routeOptions: {
         associations: {}
       }
@@ -6913,8 +6747,8 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});
-    userSchema.= {
+    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    userSchema.statics = {
       routeOptions: {
         associations: {}
       }
