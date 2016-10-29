@@ -55,7 +55,7 @@ test('model-helper.createModel', function(t) {
 });
 
 test('model-helper.extendSchemaAssociations', function(t) {
-  t.test('model-helper.extendSchemaAssociations calls Schema.add with correct args if association is MANY_MANY.', function (t) {
+  t.test('model-helper.extendSchemaAssociations calls Schema.staticsadd with correct args if association is MANY_MANY.', function (t) {
     //<editor-fold desc="Arrange">
     var modelHelper = require("../utilities/model-helper");
 
@@ -63,7 +63,7 @@ test('model-helper.extendSchemaAssociations', function(t) {
 
     var userSchema = {};
 
-    userSchema.methods = {
+    userSchema.= {
       routeOptions: {
         associations: {
           groups: {
@@ -91,8 +91,8 @@ test('model-helper.extendSchemaAssociations', function(t) {
     //</editor-fold>
 
     //<editor-fold desc="Assert">
-    t.ok(userSchema.add.called, "Schema.add was called");
-    t.ok(userSchema.add.calledWithExactly(extendObject), "Schema.add was called with extendObject");
+    t.ok(userSchema.add.called, "Schema.staticsadd was called");
+    t.ok(userSchema.add.calledWithExactly(extendObject), "Schema.staticsadd was called with extendObject");
     //</editor-fold>
   });
 
@@ -104,7 +104,7 @@ test('model-helper.extendSchemaAssociations', function(t) {
 
     var userSchema = {};
 
-    userSchema.methods = {
+    userSchema.= {
       routeOptions: {
         associations: {
           groups: {
@@ -166,7 +166,7 @@ test('model-helper.extendSchemaAssociations', function(t) {
       //</editor-fold>
 
       //<editor-fold desc="Assert">
-      t.ok(userSchema.add.calledWithExactly(extendObject), "Schema.add was called with extendObject");
+      t.ok(userSchema.add.calledWithExactly(extendObject), "Schema.staticsadd was called with extendObject");
       //</editor-fold>
 
       //<editor-fold desc="Restore">
@@ -175,7 +175,7 @@ test('model-helper.extendSchemaAssociations', function(t) {
     });
   });
 
-  t.test('model-helper.extendSchemaAssociations calls Schema.virtual with correct args if association is ONE_MANY and has a foreignField.', function (t) {
+  t.test('model-helper.extendSchemaAssociations calls Schema.staticsvirtual with correct args if association is ONE_MANY and has a foreignField.', function (t) {
     //<editor-fold desc="Arrange">
     var modelHelper = require("../utilities/model-helper");
 
@@ -183,7 +183,7 @@ test('model-helper.extendSchemaAssociations', function(t) {
 
     var userSchema_foreignField = {};
 
-    userSchema_foreignField.methods = {
+    userSchema_foreignField.= {
       routeOptions: {
         associations: {
           employees: {
@@ -197,7 +197,7 @@ test('model-helper.extendSchemaAssociations', function(t) {
 
     var userSchema_no_foreignField = {};
 
-    userSchema_no_foreignField.methods = {
+    userSchema_no_foreignField.= {
       routeOptions: {
         associations: {
           employees: {
@@ -224,9 +224,9 @@ test('model-helper.extendSchemaAssociations', function(t) {
     //</editor-fold>
 
     //<editor-fold desc="Assert">
-    t.ok(userSchema_foreignField.virtual.called, "Schema.virtual was called");
-    t.ok(userSchema_foreignField.virtual.calledWithExactly("employees", virtualObject), "Schema.virtual was called with virtualObject");
-    t.notOk(userSchema_no_foreignField.virtual.called, "Schema.virtual was not called");
+    t.ok(userSchema_foreignField.virtual.called, "Schema.staticsvirtual was called");
+    t.ok(userSchema_foreignField.virtual.calledWithExactly("employees", virtualObject), "Schema.staticsvirtual was called with virtualObject");
+    t.notOk(userSchema_no_foreignField.virtual.called, "Schema.staticsvirtual was not called");
     //</editor-fold>
   });
 
@@ -252,7 +252,7 @@ test('model-helper.associateModels', function(t) {
       model: "role"
     };
 
-    userSchema.methods = {
+    userSchema.= {
       routeOptions: {
         associations: {
           groups: groups,

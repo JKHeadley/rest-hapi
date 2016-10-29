@@ -16,8 +16,8 @@ module.exports = function (mongoose) {
       var ext = path.extname(file);
       if (ext === '.js') {
         var modelName = path.basename(file,'.js');
-        var model = require(__dirname + '/models/' + modelName)(mongoose);
-        schemas[model.methods.collectionName] = model;
+        var schema = require(__dirname + '/models/' + modelName)(mongoose);
+        schemas[schema.statics.collectionName] = schema;
       }
     });
 

@@ -136,7 +136,7 @@ test('rest-helper-factory.generateRoutes', function(t) {
     t.plan(5);
 
     var userSchema = new mongoose.Schema();
-    userSchema.methods = {
+    userSchema.= {
       routeOptions: {}
     };
     var userModel = mongoose.model("user", userSchema);
@@ -179,7 +179,7 @@ test('rest-helper-factory.generateRoutes', function(t) {
     t.plan(5);
 
     var userSchema = new mongoose.Schema();
-    userSchema.methods = {
+    userSchema.= {
       routeOptions: {
         allowRead: false,
         allowCreate: false,
@@ -227,7 +227,7 @@ test('rest-helper-factory.generateRoutes', function(t) {
     t.plan(16);
 
     var userSchema = new mongoose.Schema();
-    userSchema.methods = {
+    userSchema.= {
       routeOptions: {
         associations: {
           title: {
@@ -246,10 +246,10 @@ test('rest-helper-factory.generateRoutes', function(t) {
       }
     };
     var userModel = mongoose.model("user", userSchema);
-    var title = userModel.schema.methods.routeOptions.associations.title;
-    var profileImage = userModel.schema.methods.routeOptions.associations.profileImage;
-    var groups = userModel.schema.methods.routeOptions.associations.groups;
-    var permissions = userModel.schema.methods.routeOptions.associations.permissions;
+    var title = userModel.routeOptions.associations.title;
+    var profileImage = userModel.routeOptions.associations.profileImage;
+    var groups = userModel.routeOptions.associations.groups;
+    var permissions = userModel.routeOptions.associations.permissions;
 
     sinon.stub(restHelperFactory, 'generateListEndpoint', sinon.spy());
     sinon.stub(restHelperFactory, 'generateFindEndpoint', sinon.spy());
@@ -311,7 +311,7 @@ test('rest-helper-factory.generateRoutes', function(t) {
     t.plan(4);
 
     var userSchema = new mongoose.Schema();
-    userSchema.methods = {
+    userSchema.= {
       routeOptions: {
         associations: {
           groups: {
@@ -374,7 +374,7 @@ test('rest-helper-factory.generateRoutes', function(t) {
     t.plan(2);
 
     var userSchema = new mongoose.Schema();
-    userSchema.methods = {
+    userSchema.= {
       routeOptions: {
         extraEndpoints: [
           sinon.spy(),
@@ -383,7 +383,7 @@ test('rest-helper-factory.generateRoutes', function(t) {
       }
     };
     var userModel = mongoose.model("user", userSchema);
-    var extraEndpoints = userModel.schema.methods.routeOptions.extraEndpoints;
+    var extraEndpoints = userModel.routeOptions.extraEndpoints;
 
     sinon.stub(restHelperFactory, 'generateListEndpoint', sinon.spy());
     sinon.stub(restHelperFactory, 'generateFindEndpoint', sinon.spy());
@@ -629,7 +629,7 @@ test('rest-helper-factory.generateListEndpoint', function(t) {
     var userSchema1 = new mongoose.Schema({});
 
     var userSchema2 = new mongoose.Schema({});
-    userSchema2.methods = {
+    userSchema2.= {
       routeOptions: {
         alias: "PEEPS"
       }
@@ -762,7 +762,7 @@ test('rest-helper-factory.generateListEndpoint', function(t) {
     var userSchema1 = new mongoose.Schema({});
 
     var userSchema2 = new mongoose.Schema({});
-    userSchema2.methods = {
+    userSchema2.= {
       collectionDisplayName: "User"
     };
 
@@ -946,7 +946,7 @@ test('rest-helper-factory.generateListEndpoint', function(t) {
     var userSchema1 = new mongoose.Schema({});
 
     var userSchema2 = new mongoose.Schema({});
-    userSchema2.methods = {
+    userSchema2.= {
       routeOptions: {
         associations: {
           test: {}
@@ -1325,7 +1325,7 @@ test('rest-helper-factory.generateFindEndpoint', function(t) {
     var userSchema1 = new mongoose.Schema({});
 
     var userSchema2 = new mongoose.Schema({});
-    userSchema2.methods = {
+    userSchema2.= {
       routeOptions: {
         alias: "PEEPS"
       }
@@ -1458,7 +1458,7 @@ test('rest-helper-factory.generateFindEndpoint', function(t) {
     var userSchema1 = new mongoose.Schema({});
 
     var userSchema2 = new mongoose.Schema({});
-    userSchema2.methods = {
+    userSchema2.= {
       collectionDisplayName: "User"
     };
 
@@ -1603,7 +1603,7 @@ test('rest-helper-factory.generateFindEndpoint', function(t) {
     var userSchema1 = new mongoose.Schema({});
 
     var userSchema2 = new mongoose.Schema({});
-    userSchema2.methods = {
+    userSchema2.= {
       routeOptions: {
         associations: {
           test: {}
@@ -2035,7 +2035,7 @@ test('rest-helper-factory.generateCreateEndpoint', function(t) {
     var userSchema1 = new mongoose.Schema({});
 
     var userSchema2 = new mongoose.Schema({});
-    userSchema2.methods = {
+    userSchema2.= {
       routeOptions: {
         alias: "PEEPS"
       }
@@ -2168,7 +2168,7 @@ test('rest-helper-factory.generateCreateEndpoint', function(t) {
     var userSchema1 = new mongoose.Schema({});
 
     var userSchema2 = new mongoose.Schema({});
-    userSchema2.methods = {
+    userSchema2.= {
       collectionDisplayName: "User"
     };
 
@@ -2545,7 +2545,7 @@ test('rest-helper-factory.generateDeleteEndpoint', function(t) {
     var userSchema1 = new mongoose.Schema({});
 
     var userSchema2 = new mongoose.Schema({});
-    userSchema2.methods = {
+    userSchema2.= {
       routeOptions: {
         alias: "PEEPS"
       }
@@ -2678,7 +2678,7 @@ test('rest-helper-factory.generateDeleteEndpoint', function(t) {
     var userSchema1 = new mongoose.Schema({});
 
     var userSchema2 = new mongoose.Schema({});
-    userSchema2.methods = {
+    userSchema2.= {
       collectionDisplayName: "User"
     };
 
@@ -3101,7 +3101,7 @@ test('rest-helper-factory.generateUpdateEndpoint', function(t) {
     var userSchema1 = new mongoose.Schema({});
 
     var userSchema2 = new mongoose.Schema({});
-    userSchema2.methods = {
+    userSchema2.= {
       routeOptions: {
         alias: "PEEPS"
       }
@@ -3234,7 +3234,7 @@ test('rest-helper-factory.generateUpdateEndpoint', function(t) {
     var userSchema1 = new mongoose.Schema({});
 
     var userSchema2 = new mongoose.Schema({});
-    userSchema2.methods = {
+    userSchema2.= {
       collectionDisplayName: "User"
     };
 
@@ -3592,7 +3592,7 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
     t.plan(2);
 
     var userSchema = new mongoose.Schema({});
-    userSchema.methods = {
+    userSchema.= {
       routeOptions: {}
     };
 
@@ -3639,7 +3639,7 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
     t.plan(2);
 
     var userSchema = new mongoose.Schema({});
-    userSchema.methods = {
+    userSchema.= {
       routeOptions: {
         associations: {}
       }
@@ -3688,7 +3688,7 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
     t.plan(1);
 
     var userSchema = new mongoose.Schema({});
-    userSchema.methods = {
+    userSchema.= {
       routeOptions: {
         associations: {}
       }
@@ -3732,7 +3732,7 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
     t.plan(1);
 
     var userSchema = new mongoose.Schema({});
-    userSchema.methods = {
+    userSchema.= {
       routeOptions: {
         associations: {}
       }
@@ -3776,7 +3776,7 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
     t.plan(1);
 
     var userSchema = new mongoose.Schema({});
-    userSchema.methods = {
+    userSchema.= {
       routeOptions: {
         associations: {}
       }
@@ -3823,14 +3823,14 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
     t.plan(2);
 
     var userSchema1 = new mongoose.Schema({});
-    userSchema1.methods = {
+    userSchema1.= {
       routeOptions: {
         associations: {}
       }
     };
 
     var userSchema2 = new mongoose.Schema({});
-    userSchema2.methods = {
+    userSchema2.= {
       routeOptions: {
         associations: {},
         alias: "PEEPS"
@@ -3885,7 +3885,7 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
     t.plan(1);
 
     var userSchema = new mongoose.Schema({});
-    userSchema.methods = {
+    userSchema.= {
       routeOptions: {
         associations: {}
       }
@@ -3933,7 +3933,7 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
     t.plan(1);
 
     var userSchema = new mongoose.Schema({});
-    userSchema.methods = {
+    userSchema.= {
       routeOptions: {
         associations: {}
       }
@@ -3979,14 +3979,14 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
     t.plan(4);
 
     var userSchema1 = new mongoose.Schema({});
-    userSchema1.methods = {
+    userSchema1.= {
       routeOptions: {
         associations: {}
       }
     };
 
     var userSchema2 = new mongoose.Schema({});
-    userSchema2.methods = {
+    userSchema2.= {
       routeOptions: {
         associations: {}
       },
@@ -3997,14 +3997,14 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
     var userModel2 = mongoose.model("user2", userSchema2);
 
     var childSchema1 = new mongoose.Schema({});
-    childSchema1.methods = {
+    childSchema1.= {
       routeOptions: {
         associations: {}
       }
     };
 
     var childSchema2 = new mongoose.Schema({});
-    childSchema2.methods = {
+    childSchema2.= {
       routeOptions: {
         associations: {}
       },
@@ -4064,7 +4064,7 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
     t.plan(1);
 
     var userSchema = new mongoose.Schema({});
-    userSchema.methods = {
+    userSchema.= {
       routeOptions: {
         associations: {}
       }
@@ -4111,14 +4111,14 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
     t.plan(2);
 
     var userSchema1 = new mongoose.Schema({});
-    userSchema1.methods = {
+    userSchema1.= {
       routeOptions: {
         associations: {}
       }
     };
 
     var userSchema2 = new mongoose.Schema({});
-    userSchema2.methods = {
+    userSchema2.= {
       routeOptions: {
         associations: {}
       }
@@ -4179,7 +4179,7 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
     t.plan(1);
 
     var userSchema = new mongoose.Schema({});
-    userSchema.methods = {
+    userSchema.= {
       routeOptions: {
         associations: {}
       }
@@ -4232,7 +4232,7 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
     t.plan(1);
 
     var userSchema = new mongoose.Schema({});
-    userSchema.methods = {
+    userSchema.= {
       routeOptions: {
         associations: {}
       }
@@ -4282,7 +4282,7 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
     t.plan(1);
 
     var userSchema = new mongoose.Schema({});
-    userSchema.methods = {
+    userSchema.= {
       routeOptions: {
         associations: {}
       }
@@ -4328,7 +4328,7 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
     t.plan(1);
 
     var userSchema = new mongoose.Schema({});
-    userSchema.methods = {
+    userSchema.= {
       routeOptions: {
         associations: {}
       }
@@ -4428,7 +4428,7 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
     t.plan(2);
 
     var userSchema = new mongoose.Schema({});
-    userSchema.methods = {
+    userSchema.= {
       routeOptions: {}
     };
 
@@ -4475,7 +4475,7 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
     t.plan(2);
 
     var userSchema = new mongoose.Schema({});
-    userSchema.methods = {
+    userSchema.= {
       routeOptions: {
         associations: {}
       }
@@ -4524,7 +4524,7 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
     t.plan(1);
 
     var userSchema = new mongoose.Schema({});
-    userSchema.methods = {
+    userSchema.= {
       routeOptions: {
         associations: {}
       }
@@ -4568,7 +4568,7 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
     t.plan(1);
 
     var userSchema = new mongoose.Schema({});
-    userSchema.methods = {
+    userSchema.= {
       routeOptions: {
         associations: {}
       }
@@ -4612,7 +4612,7 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
     t.plan(1);
 
     var userSchema = new mongoose.Schema({});
-    userSchema.methods = {
+    userSchema.= {
       routeOptions: {
         associations: {}
       }
@@ -4659,14 +4659,14 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
     t.plan(2);
 
     var userSchema1 = new mongoose.Schema({});
-    userSchema1.methods = {
+    userSchema1.= {
       routeOptions: {
         associations: {}
       }
     };
 
     var userSchema2 = new mongoose.Schema({});
-    userSchema2.methods = {
+    userSchema2.= {
       routeOptions: {
         associations: {},
         alias: "PEEPS"
@@ -4721,7 +4721,7 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
     t.plan(1);
 
     var userSchema = new mongoose.Schema({});
-    userSchema.methods = {
+    userSchema.= {
       routeOptions: {
         associations: {}
       }
@@ -4769,7 +4769,7 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
     t.plan(1);
 
     var userSchema = new mongoose.Schema({});
-    userSchema.methods = {
+    userSchema.= {
       routeOptions: {
         associations: {}
       }
@@ -4815,14 +4815,14 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
     t.plan(4);
 
     var userSchema1 = new mongoose.Schema({});
-    userSchema1.methods = {
+    userSchema1.= {
       routeOptions: {
         associations: {}
       }
     };
 
     var userSchema2 = new mongoose.Schema({});
-    userSchema2.methods = {
+    userSchema2.= {
       routeOptions: {
         associations: {}
       },
@@ -4833,14 +4833,14 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
     var userModel2 = mongoose.model("user2", userSchema2);
 
     var childSchema1 = new mongoose.Schema({});
-    childSchema1.methods = {
+    childSchema1.= {
       routeOptions: {
         associations: {}
       }
     };
 
     var childSchema2 = new mongoose.Schema({});
-    childSchema2.methods = {
+    childSchema2.= {
       routeOptions: {
         associations: {}
       },
@@ -4899,7 +4899,7 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
     t.plan(1);
 
     var userSchema = new mongoose.Schema({});
-    userSchema.methods = {
+    userSchema.= {
       routeOptions: {
         associations: {}
       }
@@ -4954,7 +4954,7 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
     t.plan(1);
 
     var userSchema = new mongoose.Schema({});
-    userSchema.methods = {
+    userSchema.= {
       routeOptions: {
         associations: {}
       }
@@ -5007,7 +5007,7 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
     t.plan(1);
 
     var userSchema = new mongoose.Schema({});
-    userSchema.methods = {
+    userSchema.= {
       routeOptions: {
         associations: {}
       }
@@ -5057,7 +5057,7 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
     t.plan(1);
 
     var userSchema = new mongoose.Schema({});
-    userSchema.methods = {
+    userSchema.= {
       routeOptions: {
         associations: {}
       }
@@ -5103,7 +5103,7 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
     t.plan(1);
 
     var userSchema = new mongoose.Schema({});
-    userSchema.methods = {
+    userSchema.= {
       routeOptions: {
         associations: {}
       }
@@ -5203,7 +5203,7 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
     t.plan(2);
 
     var userSchema = new mongoose.Schema({});
-    userSchema.methods = {
+    userSchema.= {
       routeOptions: {}
     };
 
@@ -5250,7 +5250,7 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
     t.plan(2);
 
     var userSchema = new mongoose.Schema({});
-    userSchema.methods = {
+    userSchema.= {
       routeOptions: {
         associations: {}
       }
@@ -5299,7 +5299,7 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
     t.plan(1);
 
     var userSchema = new mongoose.Schema({});
-    userSchema.methods = {
+    userSchema.= {
       routeOptions: {
         associations: {}
       }
@@ -5343,7 +5343,7 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
     t.plan(1);
 
     var userSchema = new mongoose.Schema({});
-    userSchema.methods = {
+    userSchema.= {
       routeOptions: {
         associations: {}
       }
@@ -5387,7 +5387,7 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
     t.plan(1);
 
     var userSchema = new mongoose.Schema({});
-    userSchema.methods = {
+    userSchema.= {
       routeOptions: {
         associations: {}
       }
@@ -5433,14 +5433,14 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
     t.plan(2);
 
     var userSchema1 = new mongoose.Schema({});
-    userSchema1.methods = {
+    userSchema1.= {
       routeOptions: {
         associations: {}
       }
     };
 
     var userSchema2 = new mongoose.Schema({});
-    userSchema2.methods = {
+    userSchema2.= {
       routeOptions: {
         associations: {},
         alias: "PEEPS"
@@ -5494,7 +5494,7 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
     t.plan(1);
 
     var userSchema = new mongoose.Schema({});
-    userSchema.methods = {
+    userSchema.= {
       routeOptions: {
         associations: {}
       }
@@ -5542,7 +5542,7 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
     t.plan(1);
 
     var userSchema = new mongoose.Schema({});
-    userSchema.methods = {
+    userSchema.= {
       routeOptions: {
         associations: {}
       }
@@ -5588,14 +5588,14 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
     t.plan(4);
 
     var userSchema1 = new mongoose.Schema({});
-    userSchema1.methods = {
+    userSchema1.= {
       routeOptions: {
         associations: {}
       }
     };
 
     var userSchema2 = new mongoose.Schema({});
-    userSchema2.methods = {
+    userSchema2.= {
       routeOptions: {
         associations: {}
       },
@@ -5650,7 +5650,7 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
     t.plan(1);
 
     var userSchema = new mongoose.Schema({});
-    userSchema.methods = {
+    userSchema.= {
       routeOptions: {
         associations: {}
       }
@@ -5702,14 +5702,14 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
     t.plan(2);
 
     var userSchema1 = new mongoose.Schema({});
-    userSchema1.methods = {
+    userSchema1.= {
       routeOptions: {
         associations: {}
       }
     };
 
     var userSchema2 = new mongoose.Schema({});
-    userSchema2.methods = {
+    userSchema2.= {
       routeOptions: {
         associations: {}
       }
@@ -5769,7 +5769,7 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
     t.plan(1);
 
     var userSchema = new mongoose.Schema({});
-    userSchema.methods = {
+    userSchema.= {
       routeOptions: {
         associations: {}
       }
@@ -5821,7 +5821,7 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
     t.plan(1);
 
     var userSchema = new mongoose.Schema({});
-    userSchema.methods = {
+    userSchema.= {
       routeOptions: {
         associations: {}
       }
@@ -5871,7 +5871,7 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
     t.plan(1);
 
     var userSchema = new mongoose.Schema({});
-    userSchema.methods = {
+    userSchema.= {
       routeOptions: {
         associations: {}
       }
@@ -5917,7 +5917,7 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
     t.plan(1);
 
     var userSchema = new mongoose.Schema({});
-    userSchema.methods = {
+    userSchema.= {
       routeOptions: {
         associations: {}
       }
@@ -6017,7 +6017,7 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
     t.plan(2);
 
     var userSchema = new mongoose.Schema({});
-    userSchema.methods = {
+    userSchema.= {
       routeOptions: {}
     };
 
@@ -6064,7 +6064,7 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
     t.plan(2);
 
     var userSchema = new mongoose.Schema({});
-    userSchema.methods = {
+    userSchema.= {
       routeOptions: {
         associations: {}
       }
@@ -6113,7 +6113,7 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
     t.plan(1);
 
     var userSchema = new mongoose.Schema({});
-    userSchema.methods = {
+    userSchema.= {
       routeOptions: {
         associations: {}
       }
@@ -6160,7 +6160,7 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
     t.plan(3);
 
     var userSchema = new mongoose.Schema({});
-    userSchema.methods = {
+    userSchema.= {
       routeOptions: {
         associations: {}
       }
@@ -6209,7 +6209,7 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
     t.plan(1);
 
     var userSchema = new mongoose.Schema({});
-    userSchema.methods = {
+    userSchema.= {
       routeOptions: {
         associations: {}
       }
@@ -6256,7 +6256,7 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
     t.plan(1);
 
     var userSchema = new mongoose.Schema({});
-    userSchema.methods = {
+    userSchema.= {
       routeOptions: {
         associations: {}
       }
@@ -6303,7 +6303,7 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
     t.plan(1);
 
     var userSchema = new mongoose.Schema({});
-    userSchema.methods = {
+    userSchema.= {
       routeOptions: {
         associations: {}
       }
@@ -6353,14 +6353,14 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
     t.plan(2);
 
     var userSchema1 = new mongoose.Schema({});
-    userSchema1.methods = {
+    userSchema1.= {
       routeOptions: {
         associations: {}
       }
     };
 
     var userSchema2 = new mongoose.Schema({});
-    userSchema2.methods = {
+    userSchema2.= {
       routeOptions: {
         associations: {},
         alias: "PEEPS"
@@ -6421,7 +6421,7 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
     t.plan(1);
 
     var userSchema = new mongoose.Schema({});
-    userSchema.methods = {
+    userSchema.= {
       routeOptions: {
         associations: {}
       }
@@ -6470,7 +6470,7 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
     t.plan(1);
 
     var userSchema = new mongoose.Schema({});
-    userSchema.methods = {
+    userSchema.= {
       routeOptions: {
         associations: {}
       }
@@ -6519,14 +6519,14 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
     t.plan(4);
 
     var userSchema1 = new mongoose.Schema({});
-    userSchema1.methods = {
+    userSchema1.= {
       routeOptions: {
         associations: {}
       }
     };
 
     var userSchema2 = new mongoose.Schema({});
-    userSchema2.methods = {
+    userSchema2.= {
       routeOptions: {
         associations: {}
       },
@@ -6586,7 +6586,7 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
     t.plan(1);
 
     var userSchema = new mongoose.Schema({});
-    userSchema.methods = {
+    userSchema.= {
       routeOptions: {
         associations: {}
       }
@@ -6661,7 +6661,7 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
     t.plan(6);
 
     var userSchema = new mongoose.Schema({});
-    userSchema.methods = {
+    userSchema.= {
       routeOptions: {
         associations: {}
       }
@@ -6738,7 +6738,7 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
     t.plan(2);
 
     var userSchema1 = new mongoose.Schema({});
-    userSchema1.methods = {
+    userSchema1.= {
       routeOptions: {
         associations: {
           test: {}
@@ -6747,7 +6747,7 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
     };
 
     var userSchema2 = new mongoose.Schema({});
-    userSchema2.methods = {
+    userSchema2.= {
       routeOptions: {
         associations: {}
       }
@@ -6811,7 +6811,7 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
     t.plan(1);
 
     var userSchema = new mongoose.Schema({});
-    userSchema.methods = {
+    userSchema.= {
       routeOptions: {
         associations: {}
       }
@@ -6864,7 +6864,7 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
     t.plan(1);
 
     var userSchema = new mongoose.Schema({});
-    userSchema.methods = {
+    userSchema.= {
       routeOptions: {
         associations: {}
       }
@@ -6914,7 +6914,7 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
     t.plan(1);
 
     var userSchema = new mongoose.Schema({});
-    userSchema.methods = {
+    userSchema.= {
       routeOptions: {
         associations: {}
       }

@@ -37,34 +37,35 @@ module.exports = function (logger, mongoose, server) {
     generateRoutes: function (server, model, options) { //TODO: generate multiple DELETE routes at /RESOURCE and at
                                                         //TODO: /RESOURCE/{ownerId}/ASSOCIATION that take a list of Id's as a payload
       try {
+        // logger.error("MODEL:", model);
         validationHelper.validateModel(model, logger);
 
-        var modelMethods = model.schema.methods;
-        var collectionName = modelMethods.collectionDisplayName || model.modelName;
+
+        var collectionName = model.collectionDisplayName || model.modelName;
         var Log = logger.bind(chalk.gray(collectionName));
 
         options = options || {};
 
-        if (modelMethods.routeOptions.allowRead !== false) {
+        if (model.routeOptions.allowRead !== false) {
           this.generateListEndpoint(server, model, options, Log);
           this.generateFindEndpoint(server, model, options, Log);
         }
 
-        if (modelMethods.routeOptions.allowCreate !== false) {
+        if (model.routeOptions.allowCreate !== false) {
           this.generateCreateEndpoint(server, model, options, Log);
         }
 
-        if (modelMethods.routeOptions.allowUpdate !== false) {
+        if (model.routeOptions.allowUpdate !== false) {
           this.generateUpdateEndpoint(server, model, options, Log);
         }
 
-        if (modelMethods.routeOptions.allowDelete !== false) {
+        if (model.routeOptions.allowDelete !== false) {
           this.generateDeleteEndpoint(server, model, options, Log);
         }
 
-        if (modelMethods.routeOptions.associations) {
-          for (var associationName in modelMethods.routeOptions.associations) {
-            var association = modelMethods.routeOptions.associations[associationName];
+        if (model.routeOptions.associations) {
+          for (var associationName in model.routeOptions.associations) {
+            var association = model.routeOptions.associations[associationName];
 
             if (association.type == "MANY_MANY" || association.type == "ONE_MANY") {
               if (association.allowAddOne !== false) {
@@ -85,9 +86,9 @@ module.exports = function (logger, mongoose, server) {
           }
         }
 
-        if(modelMethods.routeOptions && modelMethods.routeOptions.extraEndpoints){
-          for(var extraEndpointIndex in modelMethods.routeOptions.extraEndpoints){
-            var extraEndpointFunction = modelMethods.routeOptions.extraEndpoints[extraEndpointIndex];
+        if(model.routeOptions && model.routeOptions.extraEndpoints){
+          for(var extraEndpointIndex in model.routeOptions.extraEndpoints){
+            var extraEndpointFunction = model.routeOptions.extraEndpoints[extraEndpointIndex];
 
             extraEndpointFunction(server, model, options, Log);
           }
@@ -109,8 +110,8 @@ module.exports = function (logger, mongoose, server) {
      */
     generateListEndpoint: function (server, model, options, Log) {
       validationHelper.validateModel(model, Log);
-      var modelMethods = model.schema.methods;
-      var collectionName = modelMethods.collectionDisplayName || model.modelName;
+
+      var collectionName = model.collectionDisplayName || model.modelName;
       Log = Log.bind("List");
       options = options || {};
 
@@ -118,8 +119,8 @@ module.exports = function (logger, mongoose, server) {
 
       var resourceAliasForRoute;
 
-      if (modelMethods.routeOptions) {
-        resourceAliasForRoute = modelMethods.routeOptions.alias || model.modelName;
+      if (model.routeOptions) {
+        resourceAliasForRoute = model.routeOptions.alias || model.modelName;
       }
       else {
         resourceAliasForRoute = model.modelName;
@@ -159,7 +160,7 @@ module.exports = function (logger, mongoose, server) {
         })
       }
 
-      var associations = modelMethods.routeOptions ? modelMethods.routeOptions.associations : null;
+      var associations = model.routeOptions ? model.routeOptions.associations : null;
       if (associations) {
         queryValidation.$embed = Joi.alternatives().try(Joi.string(), Joi.array().items(Joi.string()))
         .description('A set of complex object properties to populate. Valid values include ' + Object.keys(associations));
@@ -213,15 +214,15 @@ module.exports = function (logger, mongoose, server) {
      */
     generateFindEndpoint: function (server, model, options, Log) {
       validationHelper.validateModel(model, Log);
-      var modelMethods = model.schema.methods;
-      var collectionName = modelMethods.collectionDisplayName || model.modelName;
+
+      var collectionName = model.collectionDisplayName || model.modelName;
       Log = Log.bind("Find");
       Log.note("Generating Find endpoint for " + collectionName);
 
       var resourceAliasForRoute;
 
-      if (modelMethods.routeOptions) {
-        resourceAliasForRoute = modelMethods.routeOptions.alias || model.modelName;
+      if (model.routeOptions) {
+        resourceAliasForRoute = model.routeOptions.alias || model.modelName;
       }
       else {
         resourceAliasForRoute = model.modelName;
@@ -238,12 +239,12 @@ module.exports = function (logger, mongoose, server) {
         .description('A list of basic fields to be included in each resource. Valid values include: ' + readableFields);
       }
 
-      if (modelMethods.routeOptions && modelMethods.routeOptions.associations) {
+      if (model.routeOptions && model.routeOptions.associations) {
         queryValidation.$embed = Joi.alternatives().try(Joi.string(), Joi.array().items(Joi.string()))
         .description('A set of complex object properties to populate. Valid values include ' + Object.keys({test:{}}));
       }
 
-      var readModel = modelMethods.readModel || joiMongooseHelper.generateJoiReadModel(model, Log);
+      var readModel = model.readModel || joiMongooseHelper.generateJoiReadModel(model, Log);
 
       server.route({
         method: 'GET',
@@ -293,8 +294,8 @@ module.exports = function (logger, mongoose, server) {
      */
     generateCreateEndpoint: function (server, model, options, Log) {
       validationHelper.validateModel(model, Log);
-      var modelMethods = model.schema.methods;
-      var collectionName = modelMethods.collectionDisplayName || model.modelName;
+
+      var collectionName = model.collectionDisplayName || model.modelName;
       Log = Log.bind("Create");
       Log.note("Generating Create endpoint for " + collectionName);
 
@@ -302,8 +303,8 @@ module.exports = function (logger, mongoose, server) {
 
       var resourceAliasForRoute;
 
-      if (modelMethods.routeOptions) {
-        resourceAliasForRoute = modelMethods.routeOptions.alias || model.modelName;
+      if (model.routeOptions) {
+        resourceAliasForRoute = model.routeOptions.alias || model.modelName;
       }
       else {
         resourceAliasForRoute = model.modelName;
@@ -359,8 +360,8 @@ module.exports = function (logger, mongoose, server) {
      */
     generateDeleteEndpoint: function (server, model, options, Log) {
       validationHelper.validateModel(model, Log);
-      var modelMethods = model.schema.methods;
-      var collectionName = modelMethods.collectionDisplayName || model.modelName;
+
+      var collectionName = model.collectionDisplayName || model.modelName;
       Log = Log.bind("Delete");
       Log.note("Generating Delete endpoint for " + collectionName);
 
@@ -368,8 +369,8 @@ module.exports = function (logger, mongoose, server) {
 
       var resourceAliasForRoute;
 
-      if (modelMethods.routeOptions) {
-        resourceAliasForRoute = modelMethods.routeOptions.alias || model.modelName;
+      if (model.routeOptions) {
+        resourceAliasForRoute = model.routeOptions.alias || model.modelName;
       }
       else {
         resourceAliasForRoute = model.modelName;
@@ -424,8 +425,8 @@ module.exports = function (logger, mongoose, server) {
      */
     generateUpdateEndpoint: function (server, model, options, Log) {
       validationHelper.validateModel(model, Log);
-      var modelMethods = model.schema.methods;
-      var collectionName = modelMethods.collectionDisplayName || model.modelName;
+
+      var collectionName = model.collectionDisplayName || model.modelName;
       Log = Log.bind("Update");
       Log.note("Generating Update endpoint for " + collectionName);
 
@@ -433,8 +434,8 @@ module.exports = function (logger, mongoose, server) {
 
       var resourceAliasForRoute;
 
-      if (modelMethods.routeOptions) {
-        resourceAliasForRoute = modelMethods.routeOptions.alias || model.modelName;
+      if (model.routeOptions) {
+        resourceAliasForRoute = model.routeOptions.alias || model.modelName;
       }
       else {
         resourceAliasForRoute = model.modelName;
@@ -495,24 +496,24 @@ module.exports = function (logger, mongoose, server) {
      */
     generateAssociationAddOneEndpoint: function (server, ownerModel, association, options, Log) {
       validationHelper.validateModel(ownerModel, Log);
-      var ownerMethods = ownerModel.schema.methods;
 
-      assert(ownerMethods.routeOptions, "routeOptions must exist");
-      assert(ownerMethods.routeOptions.associations, "model associations must exist");
+
+      assert(ownerModel.routeOptions, "routeOptions must exist");
+      assert(ownerModel.routeOptions.associations, "model associations must exist");
       assert(association, "association input must exist");
 
       var associationName = association.include.as || association.include.model.modelName;
-      var ownerModelName = ownerMethods.collectionDisplayName || ownerModel.modelName;
+      var ownerModelName = ownerModel.collectionDisplayName || ownerModel.modelName;
       var childModel = association.include.model;
-      var childMethods = childModel.schema.methods;
-      var childModelName = childMethods.collectionDisplayName || childModel.modelName;
+
+      var childModelName = childModel.collectionDisplayName || childModel.modelName;
 
       Log = Log.bind("AddOne");
       Log.note("Generating addOne association endpoint for " + ownerModelName + " -> " + associationName);
 
       options = options || {};
 
-      var ownerAlias = ownerMethods.routeOptions.alias || ownerModel.modelName;
+      var ownerAlias = ownerModel.routeOptions.alias || ownerModel.modelName;
       var childAlias = association.alias || association.include.model.modelName;
 
       var handler = HandlerHelper.generateAssociationAddOneHandler(ownerModel, association, options, Log);
@@ -571,24 +572,24 @@ module.exports = function (logger, mongoose, server) {
      */
     generateAssociationRemoveOneEndpoint: function (server, ownerModel, association, options, Log) {
       validationHelper.validateModel(ownerModel, Log);
-      var ownerMethods = ownerModel.schema.methods;
 
-      assert(ownerMethods.routeOptions, "routeOptions must exist");
-      assert(ownerMethods.routeOptions.associations, "model associations must exist");
+
+      assert(ownerModel.routeOptions, "routeOptions must exist");
+      assert(ownerModel.routeOptions.associations, "model associations must exist");
       assert(association, "association input must exist");
 
       var associationName = association.include.as || association.include.model.modelName;
-      var ownerModelName = ownerMethods.collectionDisplayName || ownerModel.modelName;
+      var ownerModelName = ownerModel.collectionDisplayName || ownerModel.modelName;
       var childModel = association.include.model;
-      var childMethods = childModel.schema.methods;
-      var childModelName = childMethods.collectionDisplayName || childModel.modelName;
+
+      var childModelName = childModel.collectionDisplayName || childModel.modelName;
 
       Log = Log.bind("RemoveOne");
       Log.note("Generating removeOne association endpoint for " + ownerModelName + " -> " + associationName);
 
       options = options || {};
 
-      var ownerAlias = ownerMethods.routeOptions.alias || ownerModel.modelName;
+      var ownerAlias = ownerModel.routeOptions.alias || ownerModel.modelName;
       var childAlias = association.alias || association.include.model.modelName;
 
       var handler = HandlerHelper.generateAssociationRemoveOneHandler(ownerModel, association, options, Log);
@@ -636,21 +637,21 @@ module.exports = function (logger, mongoose, server) {
      */
     generateAssociationAddManyEndpoint: function (server, ownerModel, association, options, Log) {
       validationHelper.validateModel(ownerModel, Log);
-      var ownerMethods = ownerModel.schema.methods;
 
-      assert(ownerMethods.routeOptions, "routeOptions must exist");
-      assert(ownerMethods.routeOptions.associations, "model associations must exist");
+
+      assert(ownerModel.routeOptions, "routeOptions must exist");
+      assert(ownerModel.routeOptions.associations, "model associations must exist");
       assert(association, "association input must exist");
 
       var associationName = association.include.as || association.include.model.modelName;
-      var ownerModelName = ownerMethods.collectionDisplayName || ownerModel.modelName;
+      var ownerModelName = ownerModel.collectionDisplayName || ownerModel.modelName;
 
       Log = Log.bind("AddMany");
       Log.note("Generating addMany association endpoint for " + ownerModelName + " -> " + associationName);
 
       options = options || {};
 
-      var ownerAlias = ownerMethods.routeOptions.alias || ownerModel.modelName;
+      var ownerAlias = ownerModel.routeOptions.alias || ownerModel.modelName;
       var childAlias = association.alias || association.include.model.modelName;
 
       var handler = HandlerHelper.generateAssociationAddManyHandler(ownerModel, association, options, Log);
@@ -711,25 +712,25 @@ module.exports = function (logger, mongoose, server) {
      */
     generateAssociationGetAllEndpoint: function (server, ownerModel, association, options, Log) {
       validationHelper.validateModel(ownerModel, Log);
-      var ownerMethods = ownerModel.schema.methods;
 
-      assert(ownerMethods.routeOptions, "routeOptions must exist");
-      assert(ownerMethods.routeOptions.associations, "model associations must exist");
+
+      assert(ownerModel.routeOptions, "routeOptions must exist");
+      assert(ownerModel.routeOptions.associations, "model associations must exist");
       assert(association, "association input must exist");
 
       var associationName = association.include.as || association.include.model.modelName;
-      var ownerModelName = ownerMethods.collectionDisplayName || ownerModel.modelName;
+      var ownerModelName = ownerModel.collectionDisplayName || ownerModel.modelName;
       
       Log = Log.bind("GetAll");
       Log.note("Generating list association endpoint for " + ownerModelName + " -> " + associationName);
       
       options = options || {};
 
-      var ownerAlias = ownerMethods.routeOptions.alias || ownerModel.modelName;
+      var ownerAlias = ownerModel.routeOptions.alias || ownerModel.modelName;
       var childAlias = association.alias || association.include.model.modelName;
 
       var childModel = association.include.model;
-      var childMethods = childModel.schema.methods;
+
 
       var handler = HandlerHelper.generateAssociationGetAllHandler(ownerModel, association, options, Log);
 
@@ -765,7 +766,7 @@ module.exports = function (logger, mongoose, server) {
         })
       }
 
-      var associations = childMethods.routeOptions ? childMethods.routeOptions.associations : null;
+      var associations = childModel.routeOptions ? childModel.routeOptions.associations : null;
       if (associations) {
         queryValidation.$embed = Joi.alternatives().try(Joi.string(), Joi.array().items(Joi.string()))
         .description('A set of complex object properties to populate. Valid values include ' + Object.keys(associations));

@@ -215,7 +215,7 @@ test('query-helper.getQueryableFields', function(t) {
       }
     });
 
-    userSchema.methods = {
+    userSchema.= {
       routeOptions: {
         associations: {
           title: {
@@ -970,7 +970,7 @@ test('query-helper.createAttributesFilter', function(t) {
       }
     });
 
-    userSchema.methods = {
+    userSchema.= {
       routeOptions: {
         associations: {
           title: {
@@ -1283,7 +1283,7 @@ test('query-helper.createMongooseQuery', function(t) {
     });
 
     var userModel = mongoose.model("user", userSchema);
-    userModel.schema.methods.routeOptions = {};
+    userModel.routeOptions = {};
 
     //</editor-fold>
 

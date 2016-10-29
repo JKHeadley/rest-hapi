@@ -45,7 +45,7 @@ module.exports = function (mongoose) {
         ...fill in schema fields
     });
 
-    Schema.methods = {
+    Schema.statics= {
         collectionName: /*your model name*/,
         routeOptions: {}
     };
@@ -75,7 +75,7 @@ module.exports = function (mongoose) {
     }
   });
   
-  Schema.methods = {
+  Schema.statics= {
     collectionName: modelName
     routeOptions: {}
   };
@@ -130,7 +130,7 @@ module.exports = function (mongoose) {
 
   });
   
-  Schema.methods = {
+  Schema.statics= {
     collectionName:modelName,
     routeOptions: {
       associations: {
@@ -164,7 +164,7 @@ module.exports = function (mongoose) {
     }
   });
 
-  Schema.methods = {
+  Schema.statics= {
     collectionName:modelName,
     routeOptions: {
       associations: {
@@ -239,7 +239,7 @@ module.exports = function (mongoose) {
     }
   });
   
-  Schema.methods = {
+  Schema.statics= {
     collectionName: modelName
     routeOptions: {
       create: {

@@ -16,7 +16,7 @@ module.exports = {
     var fields = model.schema.paths;
     var fieldNames = Object.keys(fields);
 
-    assert(model.schema.methods, "model not mongoose format. 'schema.methods' property required.");
+    // assert(model. "model not mongoose format. 'schema. property required.");
 
     for (var i = 0; i < fieldNames.length; i++) {
       var fieldName = fieldNames[i];

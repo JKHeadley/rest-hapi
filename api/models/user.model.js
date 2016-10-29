@@ -21,11 +21,11 @@ module.exports = function (mongoose) {
 
   });
   
-  Schema.methods = {
+  Schema.statics = {
     collectionName:modelName,
     routeOptions: {
       associations: {
-        role: {
+        title: {
           type: "MANY_ONE",
           model: "role"
         }

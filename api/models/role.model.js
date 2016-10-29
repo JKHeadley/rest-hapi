@@ -13,7 +13,7 @@ module.exports = function (mongoose) {
     }
   });
 
-  Schema.methods = {
+  Schema.statics = {
     collectionName:modelName,
     routeOptions: {
       associations: {

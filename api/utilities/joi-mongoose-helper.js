@@ -22,7 +22,7 @@ module.exports = {
 
     var fields = model.schema.paths;
 
-    var associations = model.schema.methods.routeOptions.associations ? Object.keys(model.schema.methods.routeOptions.associations) : [];
+    var associations = model.routeOptions.associations ? Object.keys(model.routeOptions.associations) : [];
 
     for (var fieldName in fields) {
       var field = fields[fieldName].options;
@@ -46,11 +46,11 @@ module.exports = {
       }
     }
 
-    var modelMethods = model.schema.methods;
 
-    if (modelMethods.routeOptions && modelMethods.routeOptions.associations) {
-      for (var associationName in modelMethods.routeOptions.associations) {
-        var association = modelMethods.routeOptions.associations[associationName];
+
+    if (model.routeOptions && model.routeOptions.associations) {
+      for (var associationName in model.routeOptions.associations) {
+        var association = model.routeOptions.associations[associationName];
 
         //TODO: possibly add stricter validation for associations
         if (association.type === "MANY_MANY" || association.type === "ONE_MANY") {
@@ -84,7 +84,7 @@ module.exports = {
 
     var fields = model.schema.paths;
 
-    var associations = model.schema.methods.routeOptions.associations ? model.schema.methods.routeOptions.associations : {};
+    var associations = model.routeOptions.associations ? model.routeOptions.associations : {};
 
     for (var fieldName in fields) {
       var field = fields[fieldName].options;
@@ -131,7 +131,7 @@ module.exports = {
 
     var fields = model.schema.paths;
 
-    var associations = model.schema.methods.routeOptions.associations ? model.schema.methods.routeOptions.associations : {};
+    var associations = model.routeOptions.associations ? model.routeOptions.associations : {};
 
     for (var fieldName in fields) {
 

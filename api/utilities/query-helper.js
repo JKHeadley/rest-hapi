@@ -59,7 +59,7 @@ module.exports = {
     //}
     // [email]=test@user.com&[firstName]=test2@user.com&[firstName]=test4@user.com&[age][gt]=15&[age][lt]=30
 
-    var modelMethods = model.schema.methods;
+
     
     // var queryableFields = this.getQueryableFields(model, Log);
 
@@ -76,9 +76,9 @@ module.exports = {
 
     // Log.debug("attributesFilter:", attributesFilter);
 
-    if (modelMethods.routeOptions) {
+    if (model.routeOptions) {
       var result = this.populateEmbeddedDocs(query, mongooseQuery, attributesFilter,
-        modelMethods.routeOptions.associations, Log);
+        model.routeOptions.associations, Log);
       mongooseQuery = result.mongooseQuery;
       attributesFilter = result.attributesFilter;
     }
@@ -175,7 +175,7 @@ module.exports = {
     var fields = model.schema.paths;
     var fieldNames = Object.keys(fields);
 
-    var associations = model.schema.methods.routeOptions ? model.schema.methods.routeOptions.associations : null;
+    var associations = model.routeOptions ? model.routeOptions.associations : null;
 
     for (var i = 0; i < fieldNames.length; i++) {
       var fieldName = fieldNames[i];
@@ -244,7 +244,7 @@ module.exports = {
   //         while (sortField.length > 1) {
   //           association = sortField.shift();
   //           queryAssociations.push(modelAssociations[association].include);
-  //           modelAssociations = modelAssociations[association].include.model.schema.methods.routeOptions.associations;
+  //           modelAssociations = modelAssociations[association].include.model.routeOptions.associations;
   //         }
   //         sortField = sortField[0];
   //       } else {
@@ -543,7 +543,7 @@ module.exports = {
       fieldNames = Object.keys(fields)
     }
 
-    var associations = model.schema.methods.routeOptions ? model.schema.methods.routeOptions.associations : null;
+    var associations = model.routeOptions ? model.routeOptions.associations : null;
 
     for (var i = 0; i < fieldNames.length; i++) {
       var fieldName = fieldNames[i];
@@ -596,7 +596,7 @@ function nestPopulate(query, populate, index, embeds, associations, Log) {
   }
   // Log.debug("populatePath:", populatePath);
   if (index < embeds.length - 1) {
-    associations = association.include.model.schema.methods.routeOptions.associations;
+    associations = association.include.model.routeOptions.associations;
     populate = nestPopulate(query, populate, index + 1, embeds, associations, Log);
     populate.populate = extend({}, populate);//EXPL: prevent circular reference
     populate.path = populatePath;

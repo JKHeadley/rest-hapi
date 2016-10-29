@@ -237,7 +237,7 @@ test('joi-mongoose-helper.generateJoiReadModel', function(t) {
 
     var userSchema = new mongoose.Schema({});
 
-    userSchema.methods = {
+    userSchema.= {
       routeOptions: {
         associations: {
           title: {
@@ -571,7 +571,7 @@ test('joi-mongoose-helper.generateJoiUpdateModel', function(t) {
       }
     });
 
-    userSchema.methods = {
+    userSchema.= {
       routeOptions: {
         associations: {
           title: {
@@ -895,7 +895,7 @@ test('joi-mongoose-helper.generateJoiCreateModel', function(t) {
       }
     });
 
-    userSchema.methods = {
+    userSchema.= {
       routeOptions: {
         associations: {
           title: {

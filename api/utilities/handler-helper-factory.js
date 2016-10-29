@@ -132,15 +132,15 @@ function generateListHandler(model, options, Log) {
     try {
       Log.log("params(%s), query(%s), payload(%s)", JSON.stringify(request.params), JSON.stringify(request.query), JSON.stringify(request.payload));
 
-      var modelMethods = model.schema.methods;
+
 
       var mongooseQuery = model.find();
       mongooseQuery = QueryHelper.createMongooseQuery(model, request.query, mongooseQuery, Log);
       return mongooseQuery.exec().then(function (result) {
 
         var promise = {};
-        if (modelMethods.routeOptions && modelMethods.routeOptions.list && modelMethods.routeOptions.list.post) {
-          promise = modelMethods.routeOptions.list.post(request, result, Log);
+        if (model.routeOptions && model.routeOptions.list && model.routeOptions.list.post) {
+          promise = model.routeOptions.list.post(request, result, Log);
         }
         else {
           promise = Q.when(result);
@@ -149,12 +149,12 @@ function generateListHandler(model, options, Log) {
         return promise.then(function (result) {
           result = result.map(function (data) {
             var result = data.toJSON();
-            if (modelMethods.routeOptions) {
-              var associations = modelMethods.routeOptions.associations;
+            if (model.routeOptions) {
+              var associations = model.routeOptions.associations;
               for (var associationKey in associations) {
                 var association = associations[associationKey];
                 if (association.type === "ONE_MANY" && data[associationKey]) {//EXPL: we have to manually populate the return value for virtual (e.g. ONE_MANY) associations
-                  result[associationKey] = data[associationKey];
+                  result[associationKey] = data[associationKey].toJSON();
                 }
               }
             }
@@ -205,7 +205,7 @@ function generateFindHandler(model, options, Log) {
     try {
       Log.log("params(%s), query(%s), payload(%s)", JSON.stringify(request.params), JSON.stringify(request.query), JSON.stringify(request.payload));
 
-      var modelMethods = model.schema.methods;
+
 
       var mongooseQuery = model.findOne({ '_id': request.params._id });
       mongooseQuery = QueryHelper.createMongooseQuery(model, request.query, mongooseQuery, Log);
@@ -213,16 +213,16 @@ function generateFindHandler(model, options, Log) {
         if (result) {
 
           var promise = {};
-          if (modelMethods.routeOptions && modelMethods.routeOptions.find && modelMethods.routeOptions.find.post) {
-            promise = modelMethods.routeOptions.find.post(request, result, Log);
+          if (model.routeOptions && model.routeOptions.find && model.routeOptions.find.post) {
+            promise = model.routeOptions.find.post(request, result, Log);
           } else {
             promise = Q.when(result);
           }
 
           return promise.then(function(data) {
             var result = data.toJSON();
-            if (modelMethods.routeOptions) {
-              var associations = modelMethods.routeOptions.associations;
+            if (model.routeOptions) {
+              var associations = model.routeOptions.associations;
               for (var associationKey in associations) {
                 var association = associations[associationKey];
                 if (association.type === "ONE_MANY" && data[associationKey]) {//EXPL: we have to manually populate the return value for virtual (e.g. ONE_MANY) associations
@@ -274,11 +274,11 @@ function generateCreateHandler(model, options, Log) {
     try {
       Log.log("params(%s), query(%s), payload(%s)", JSON.stringify(request.params), JSON.stringify(request.query), JSON.stringify(request.payload));
 
-      var modelMethods = model.schema.methods;
+
 
       var promise =  {};
-      if (modelMethods.routeOptions && modelMethods.routeOptions.create && modelMethods.routeOptions.create.pre){
-        promise = modelMethods.routeOptions.create.pre(request, Log);
+      if (model.routeOptions && model.routeOptions.create && model.routeOptions.create.pre){
+        promise = model.routeOptions.create.pre(request, Log);
       }
       else {
         promise = Q.when(request);
@@ -296,8 +296,8 @@ function generateCreateHandler(model, options, Log) {
 
             //TODO: include eventLogs
 
-            if (modelMethods.routeOptions && modelMethods.routeOptions.create && modelMethods.routeOptions.create.post) {
-              promise = modelMethods.routeOptions.create.post(request, result, Log);
+            if (model.routeOptions && model.routeOptions.create && model.routeOptions.create.post) {
+              promise = model.routeOptions.create.post(request, result, Log);
             }
             else {
               promise = Q.when(result);
@@ -344,11 +344,11 @@ function generateDeleteHandler(model, options, Log) {
     try {
       Log.log("params(%s), query(%s), payload(%s)", JSON.stringify(request.params), JSON.stringify(request.query), JSON.stringify(request.payload));
 
-      var modelMethods = model.schema.methods;
+
 
       var promise = {};
-      if (modelMethods.routeOptions && modelMethods.routeOptions.delete && modelMethods.routeOptions.delete.pre) {
-        promise = modelMethods.routeOptions.delete.pre(request, Log);
+      if (model.routeOptions && model.routeOptions.delete && model.routeOptions.delete.pre) {
+        promise = model.routeOptions.delete.pre(request, Log);
       }
       else {
         promise = Q.when();
@@ -361,8 +361,8 @@ function generateDeleteHandler(model, options, Log) {
             //TODO: add eventLogs
 
             var promise = {};
-            if (modelMethods.routeOptions && modelMethods.routeOptions.delete && modelMethods.routeOptions.delete.post) {
-              promise = modelMethods.routeOptions.delete.post(request, deleted, Log);
+            if (model.routeOptions && model.routeOptions.delete && model.routeOptions.delete.post) {
+              promise = model.routeOptions.delete.post(request, deleted, Log);
             }
             else {
               promise = Q.when();
@@ -407,11 +407,11 @@ function generateUpdateHandler(model, options, Log) {
     try {
       Log.log("params(%s), query(%s), payload(%s)", JSON.stringify(request.params), JSON.stringify(request.query), JSON.stringify(request.payload));
 
-      var modelMethods = model.schema.methods;
+
 
       var promise =  {};
-      if (modelMethods.routeOptions && modelMethods.routeOptions.update && modelMethods.routeOptions.update.pre){
-        promise = modelMethods.routeOptions.update.pre(request, Log);
+      if (model.routeOptions && model.routeOptions.update && model.routeOptions.update.pre){
+        promise = model.routeOptions.update.pre(request, Log);
       }
       else {
         promise = Q.when(request);
@@ -428,8 +428,8 @@ function generateUpdateHandler(model, options, Log) {
             return model.findOne({'_id': result._id}, attributes).then(function (result) {
               result = result.toJSON();
 
-              if (modelMethods.routeOptions && modelMethods.routeOptions.update && modelMethods.routeOptions.update.post) {
-                promise = modelMethods.routeOptions.update.post(request, result, Log);
+              if (model.routeOptions && model.routeOptions.update && model.routeOptions.update.post) {
+                promise = model.routeOptions.update.post(request, result, Log);
               }
               else {
                 promise = Q.when(result);
@@ -633,8 +633,7 @@ function generateAssociationGetAllHandler(ownerModel, association, options, Log)
     try {
       Log.log(getAllMethodName + " + params(%s), query(%s), payload(%s)", JSON.stringify(request.params), JSON.stringify(request.query), JSON.stringify(request.payload));
 
-      var ownerMethods = ownerModel.schema.methods;
-      var foreignField = ownerMethods.routeOptions.associations[associationName].foreignField;
+      var foreignField = ownerModel.routeOptions.associations[associationName].foreignField;
 
       var ownerRequest = { query: {} };
       ownerRequest.query.$embed = associationName;
@@ -715,13 +714,10 @@ function setAssociation(request, server, ownerModel, ownerObject, childModel, ch
 
   var payload = request.payload;
 
-  var ownerMethods = ownerModel.schema.methods;
-  var childMethods = childModel.schema.methods;
-
   childModel.findOne({ '_id': childId }).then(function (childObject) {
     if (childObject) {
       var promise = {};
-      var association = ownerMethods.routeOptions.associations[associationName];
+      var association = ownerModel.routeOptions.associations[associationName];
       if (association.type === "ONE_MANY") {//EXPL: one-many associations are virtual, so only update the child reference
         childObject[association.foreignField] = ownerObject._id;
         promise = childObject.save();
@@ -761,7 +757,7 @@ function setAssociation(request, server, ownerModel, ownerObject, childModel, ch
         delete payload[childModel.modelName];
         payload[ownerModel.modelName] = ownerObject._id;
         var childAssociation = {};
-        var childAssociations = childMethods.routeOptions.associations;
+        var childAssociations = childModel.routeOptions.associations;
         for (var childAssociationKey in childAssociations) {
           var association = childAssociations[childAssociationKey];
           if (association.model === ownerModel.modelName) {
@@ -831,13 +827,13 @@ function setAssociation(request, server, ownerModel, ownerObject, childModel, ch
 function removeAssociation(request, server, ownerModel, ownerObject, childModel, childId, associationName, options, Log) {
   var deferred = Q.defer();
 
-  var ownerMethods = ownerModel.schema.methods;
-  var childMethods = childModel.schema.methods;
+
+
 
   childModel.findOne({ '_id': childId }).then(function (childObject) {
     if (childObject) {
       var promise = {};
-      var association = ownerMethods.routeOptions.associations[associationName];
+      var association = ownerModel.routeOptions.associations[associationName];
       var associationType = association.type;
       if (associationType === "ONE_MANY") {//EXPL: one-many associations are virtual, so only update the child reference
         // childObject[association.foreignField] = null; //TODO: set reference to null instead of deleting it?
@@ -859,7 +855,7 @@ function removeAssociation(request, server, ownerModel, ownerObject, childModel,
 
         //EXPL: get the child association name
         var childAssociation = {};
-        var childAssociations = childMethods.routeOptions.associations;
+        var childAssociations = childModel.routeOptions.associations;
         for (var childAssociationKey in childAssociations) {
           var association = childAssociations[childAssociationKey];
           if (association.model === ownerModel.modelName) {
