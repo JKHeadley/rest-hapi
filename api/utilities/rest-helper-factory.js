@@ -94,7 +94,9 @@ module.exports = function (logger, mongoose, server) {
         }
       }
       catch(error) {
+        logger.error("HDFS:LKDFH:SL");
         logger.error("Error:", error);
+        throw(error);
       }
     },
 

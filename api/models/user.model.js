@@ -13,12 +13,24 @@ module.exports = function (mongoose) {
       required: true,
       exclude: true,
       allowOnUpdate: false
+    },
+    title: {
+      type: Types.ObjectId,
+      ref: "role"
     }
+
   });
   
   Schema.methods = {
     collectionName:modelName,
-    routeOptions: {}
+    routeOptions: {
+      associations: {
+        role: {
+          type: "MANY_ONE",
+          model: "role"
+        }
+      }
+    }
   };
   
   return Schema;

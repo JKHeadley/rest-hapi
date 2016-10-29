@@ -219,8 +219,8 @@ function generateFindHandler(model, options, Log) {
             promise = Q.when(result);
           }
 
-          return promise.then(function(result) {
-            result = result.toJSON();
+          return promise.then(function(data) {
+            var result = data.toJSON();
             if (modelMethods.routeOptions) {
               var associations = modelMethods.routeOptions.associations;
               for (var associationKey in associations) {

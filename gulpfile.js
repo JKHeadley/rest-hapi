@@ -5,7 +5,7 @@ var gulp = require('gulp');
 gulp.paths = {
   src: './api',
   build: './build',
-  tmp: '.tmp',
+  tmp: './tmp',
   dev: 'dev'
 };
 
