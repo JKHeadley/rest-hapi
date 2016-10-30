@@ -41,6 +41,12 @@ If you would like to seed your database with some demo models/data, run:
 $ gulp seed
 ```
 
+# Testing
+To run tests:
+```
+$ gulp test
+```
+
 ## Swagger Documentation
 
 Swagger documentation is automatically generated for all endpoints and can be viewed by pointing a browser
