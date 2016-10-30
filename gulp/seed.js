@@ -3,10 +3,11 @@ var exit = require('gulp-exit');
 var Q = require('q');
 var mongoose = require('mongoose');
 var passwordUtility = require('../api/utilities/password-helper');
+var config = require('../api/config.local');
 
 gulp.task('seed', ['models'], function() {
 
-    mongoose.connect('mongodb://localhost/rest_hapi');
+    mongoose.connect(config.mongo.URI);
 
     var generateModels = require('../api/models');
 
