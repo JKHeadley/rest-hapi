@@ -645,3 +645,10 @@ module.exports = function (mongoose) {
   return Schema;
 };
 ```
+
+## Future work
+This project is still in its 
+
+
+## Contributing
+Please reference the contributing doc: 
