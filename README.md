@@ -61,7 +61,7 @@ module.exports = function (mongoose) {
 };
 ```
 
-As a concrete example, here is a User model (```/api/models/user.model.js```):
+As a concrete example, here is a ``user`` model (```/api/models/user.model.js```):
 
 ```javascript
 module.exports = function (mongoose) {
@@ -347,6 +347,7 @@ module.exports = function (mongoose) {
 
 ```/api/models/group.model.js```:
 
+```javascript
 module.exports = function (mongoose) {
   var modelName = "group";
   var Types = mongoose.Schema.Types;
@@ -374,6 +375,8 @@ module.exports = function (mongoose) {
 
   return Schema;
 };
+```
+
 
 Along with the normal CRUD endpoints, the following association 
 endpoints will be generated for the ``user`` model:
@@ -385,8 +388,27 @@ PUT /user/{ownerId}/group/{childId}     Add a single group object to a user's li
 DELETE /user/{ownerId}/group/{childId}  Remove a single group object from a user's list of groups
 ```
 
-and the following 
+and for the ``group`` model:
 
+```
+GET /group/{ownerId}/user               Gets all of the users for a group
+POST /group/{ownerId}/user              Sets multiple users for a group
+PUT /group/{ownerId}/user/{childId}     Add a single user object to a group's list of users
+DELETE /group/{ownerId}/user/{childId}  Remove a single user object from a group's list of users
+```
+
+#### MANY_MANY linking models
+
+Many-many relationships can include extra fields that contain data specific
+to each association instance.  This is accomplished through linking models which
+behave similar to pivot tables in a relational database.  Linking model files are
+stored in the ```/api/models/linking-models``` directory and follow the same 
+```{name}.model.js``` format as normal models.  Below is an example of a many-many
+relationship between the ``user`` model and itself.  This also displays how models
+can contain a reference to themselves.
+
+
+```/api/models/user.model.js```:
 
 ```javascript
 module.exports = function (mongoose) {
@@ -425,6 +447,29 @@ module.exports = function (mongoose) {
 };
 ```
 
+
+```/api/models/linking-models/user_user.model.js```:
+
+```javascript
+var mongoose = require("mongoose");
+
+module.exports = function () {
+
+  var Types = mongoose.Schema.Types;
+
+  var Model = {
+    Schema: {
+      friendsSince: {
+        type: Types.Date,
+        allowNull: false
+      }
+    },
+    modelName: "user_user"
+  };
+
+  return Model;
+};
+```
 
 ## Middleware
 Models can support middleware functions for CRUD operations. These
