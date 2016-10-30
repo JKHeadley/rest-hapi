@@ -728,8 +728,10 @@ function setAssociation(request, server, ownerModel, ownerObject, childModel, ch
         }
         else {
           payload = payload.filter(function(object) {//EXPL: the payload contains extra fields
-            return object.childId === childObject._id;
+            return object.childId === childObject._id.toString();
           });
+
+          Log.debug(childObject);
 
           payload = payload[0];
           delete payload.childId;

@@ -52,8 +52,6 @@ module.exports = {
       for (var associationName in model.routeOptions.associations) {
         var association = model.routeOptions.associations[associationName];
 
-        Log.error(associationName);
-
         //TODO: possibly add stricter validation for associations
         if (association.type === "MANY_MANY" || association.type === "ONE_MANY") {
           readModelBase[associationName] = Joi.array().items(Joi.object().unknown()).optional();

@@ -33,6 +33,13 @@ $ gulp
 Edit the config file relevant to your environment (local, development, production).  The default config
 file is ```/api/config.local.js```.  Here you can set the server port, mongodb URI, and authentication.
 
+
+## Swagger Documentation
+
+Swagger documentation is automatically generated for all endpoints and can be viewed by pointing a browser
+at the server URL.  By default this will be ``http://localhost:8124/``.  The swagger docs provide quick 
+access to testing your endpoints along with model schema descriptions and query options.
+
 ## Creating Endpoints
 
 Restful endpoints are automatically generated based off of any mongoose models that you add to the 
@@ -84,7 +91,7 @@ module.exports = function (mongoose) {
 };
 ```
 
-This will generate the following endpoints:
+This will generate the following CRUD endpoints:
 
 ```
 GET /user           Get a list of users
@@ -99,10 +106,109 @@ DELETE /user/{_id}  Delete a user
 The rest-hapi framework supports model associations that mimic associations in 
 a relational database.  This includes one-one, one-many, many-one, and many-many
 relationships.  Associations are created by adding the relevant schema fields
-and populating the ``associations`` object within ``routeOptions``. 
+and populating the ``associations`` object within ``routeOptions``.  Associations
+exists as references to a documents ``_id`` field, and can be populated to return 
+the associated object.  See ``Querying`` for more details.
+
+### ONE_ONE
+
+Below is an example of a one-one relationship between a ``user`` model and a
+``dog`` model. Notice the ``dog`` and ``owner`` fields in the schemas.  A schema
+field is required for associations of type ``ONE_ONE`` or ``MANY_ONE``.  This
+field must match the association name, include a type of ``ObjectId``, and
+include a ``ref`` property with the associated model name.
+
+Each association must be added to an ``associations`` object within the
+``routeOptions`` object. The ``type`` and ``model`` fields are
+required for all associations.
+
+```/api/models/user.model.js```:
+```javascript
+module.exports = function (mongoose) {
+  var modelName = "user";
+  var Types = mongoose.Schema.Types;
+  var Schema = new mongoose.Schema({
+    email: {
+      type: Types.String,
+      allowNull: false,
+      unique: true
+    },
+    password: {
+      type: Types.String,
+      allowNull: false,
+      required: true,
+      exclude: true,
+      allowOnUpdate: false
+    },
+    dog: {
+      type: Types.ObjectId,
+      ref: "dog"
+    }
+  });
+  
+  Schema.statics = {
+    collectionName:modelName,
+    routeOptions: {
+      associations: {
+        dog: {
+          type: "ONE_ONE",
+          model: "dog"
+        }
+      }
+    }
+  };
+  
+  return Schema;
+};
+```
+
+```/api/models/dog.model.js```:
+```javascript
+module.exports = function (mongoose) {
+  var modelName = "dog";
+  var Types = mongoose.Schema.Types;
+  var Schema = new mongoose.Schema({
+    name: {
+      type: Types.String,
+      enum: ["Account", "Admin", "SuperAdmin"],
+      allowNull: false
+    },
+    breed: {
+      type: Types.String,
+    },
+    description: {
+      type: Types.String,
+      allowNull: true
+    },
+    owner: {
+      type: Types.ObjectId,
+      ref: "user"
+    }
+  });
+
+  Schema.statics = {
+    collectionName:modelName,
+    routeOptions: {
+      associations: {
+        owner: {
+          type: "ONE_ONE",
+          model: "user"
+        }
+      }
+    }
+  };
+
+  return Schema;
+};
+```
+
+### ONE_MANY/MANY_ONE
 
 Below is an example of a one-many/many-one relationship between the ``user``
-and ``role`` models.
+and ``role`` models.  Notice the ``title`` field in the schema.  A schema
+field is required for associations of type ``ONE_ONE`` or ``MANY_ONE``.  This
+field must match the association name, include a type of ``ObjectId``, and
+include a ``ref`` property with the associated model name.
 
 ```/api/models/user.model.js```:
 
@@ -134,7 +240,7 @@ module.exports = function (mongoose) {
     collectionName:modelName,
     routeOptions: {
       associations: {
-        role: {
+        title: {
           type: "MANY_ONE",
           model: "role"
         }
@@ -145,7 +251,6 @@ module.exports = function (mongoose) {
   return Schema;
 };
 ```
-
 
 ```/api/models/role.model.js```:
 
@@ -187,7 +292,7 @@ required for all associations, and the ``foreignField`` field is
 required for ``ONE_MANY`` type associations.  
 
 Along with the normal CRUD endpoints, the following association 
-endpoints will be generated for the ``role`` model.
+endpoints will be generated for the ``role`` model:
 
 ```
 GET /role/{ownerId}/user                Gets all of the users for a role
@@ -195,6 +300,131 @@ POST /role/{ownerId}/user               Sets multiple users for a role
 PUT /role/{ownerId}/user/{childId}      Add a single user object to a role's list of users
 DELETE /role/{ownerId}/user/{childId}   Remove a single user object from a role's list of users
 ```
+
+### MANY_MANY
+
+Below is an example of a many-many relationship between the ``user`` and
+``group`` models. In this relationship a single ``user`` instance can belong
+to multiple ``group`` instances and vice versa.
+
+```/api/models/user.model.js```:
+
+```javascript
+module.exports = function (mongoose) {
+  var modelName = "user";
+  var Types = mongoose.Schema.Types;
+  var Schema = new mongoose.Schema({
+    email: {
+      type: Types.String,
+      allowNull: false,
+      unique: true
+    },
+    password: {
+      type: Types.String,
+      allowNull: false,
+      required: true,
+      exclude: true,
+      allowOnUpdate: false
+    }
+  });
+  
+  Schema.statics = {
+    collectionName:modelName,
+    routeOptions: {
+      associations: {
+        groups: {
+          type: "MANY_MANY",
+          model: "group"
+        }
+      }
+    }
+  };
+  
+  return Schema;
+};
+```
+
+
+```/api/models/group.model.js```:
+
+module.exports = function (mongoose) {
+  var modelName = "group";
+  var Types = mongoose.Schema.Types;
+  var Schema = new mongoose.Schema({
+    name: {
+      type: Types.String,
+      allowNull: false
+    },
+    description: {
+      type: Types.String
+    }
+  });
+
+  Schema.statics = {
+    collectionName:modelName,
+    routeOptions: {
+      associations: {
+        users: {
+          type: "MANY_MANY",
+          model: "user"
+        }
+      }
+    }
+  };
+
+  return Schema;
+};
+
+Along with the normal CRUD endpoints, the following association 
+endpoints will be generated for the ``user`` model:
+
+```
+GET /user/{ownerId}/group               Gets all of the groups for a user
+POST /user/{ownerId}/group              Sets multiple groups for a user
+PUT /user/{ownerId}/group/{childId}     Add a single group object to a user's list of groups
+DELETE /user/{ownerId}/group/{childId}  Remove a single group object from a user's list of groups
+```
+
+and the following 
+
+
+```javascript
+module.exports = function (mongoose) {
+  var modelName = "user";
+  var Types = mongoose.Schema.Types;
+  var Schema = new mongoose.Schema({
+    email: {
+      type: Types.String,
+      allowNull: false,
+      unique: true
+    },
+    password: {
+      type: Types.String,
+      allowNull: false,
+      required: true,
+      exclude: true,
+      allowOnUpdate: false
+    }
+  });
+  
+  Schema.statics = {
+    collectionName:modelName,
+    routeOptions: {
+      associations: {
+        friends: {
+          type: "MANY_MANY",
+          model: "user",
+          alias: "friend",
+          linkingModel: "user_user"
+        }
+      }
+    }
+  };
+  
+  return Schema;
+};
+```
+
 
 ## Middleware
 Models can support middleware functions for CRUD operations. These

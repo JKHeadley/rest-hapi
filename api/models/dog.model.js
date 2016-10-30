@@ -1,5 +1,5 @@
 module.exports = function (mongoose) {
-  var modelName = "role";
+  var modelName = "dog";
   var Types = mongoose.Schema.Types;
   var Schema = new mongoose.Schema({
     name: {
@@ -7,9 +7,16 @@ module.exports = function (mongoose) {
       enum: ["Account", "Admin", "SuperAdmin"],
       allowNull: false
     },
+    breed: {
+      type: Types.String,
+    },
     description: {
       type: Types.String,
       allowNull: true
+    },
+    owner: {
+      type: Types.ObjectId,
+      ref: "user"
     }
   });
 
@@ -17,6 +24,10 @@ module.exports = function (mongoose) {
     collectionName:modelName,
     routeOptions: {
       associations: {
+        owner: {
+          type: "ONE_ONE",
+          model: "user"
+        }
       }
     }
   };

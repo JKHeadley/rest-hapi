@@ -1,15 +1,13 @@
 module.exports = function (mongoose) {
-  var modelName = "role";
+  var modelName = "group";
   var Types = mongoose.Schema.Types;
   var Schema = new mongoose.Schema({
     name: {
       type: Types.String,
-      enum: ["Account", "Admin", "SuperAdmin"],
       allowNull: false
     },
     description: {
-      type: Types.String,
-      allowNull: true
+      type: Types.String
     }
   });
 
@@ -17,6 +15,10 @@ module.exports = function (mongoose) {
     collectionName:modelName,
     routeOptions: {
       associations: {
+        users: {
+          type: "MANY_MANY",
+          model: "user"
+        }
       }
     }
   };

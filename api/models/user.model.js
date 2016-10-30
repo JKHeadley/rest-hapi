@@ -14,20 +14,29 @@ module.exports = function (mongoose) {
       exclude: true,
       allowOnUpdate: false
     },
-    title: {
+    dog: {
       type: Types.ObjectId,
-      ref: "role"
+      ref: "dog"
     }
-
   });
   
   Schema.statics = {
     collectionName:modelName,
     routeOptions: {
       associations: {
-        title: {
-          type: "MANY_ONE",
-          model: "role"
+        friends: {
+          type: "MANY_MANY",
+          model: "user",
+          alias: "friend",
+          linkingModel: "user_user"
+        },
+        dog: {
+          type: "ONE_ONE",
+          model: "dog"
+        },
+        groups: {
+          type: "MANY_MANY",
+          model: "group"
         }
       }
     }
