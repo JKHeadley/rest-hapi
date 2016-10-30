@@ -65,7 +65,6 @@ As a concrete example, here is a ``user`` model:
 
 ``/api/models/user.model.js``:
 
-
 ```javascript
 module.exports = function (mongoose) {
   var modelName = "user";
@@ -125,7 +124,8 @@ Each association must be added to an ``associations`` object within the
 ``routeOptions`` object. The ``type`` and ``model`` fields are
 required for all associations.
 
-```/api/models/user.model.js```:
+``/api/models/user.model.js``:
+
 ```javascript
 module.exports = function (mongoose) {
   var modelName = "user";
@@ -165,7 +165,8 @@ module.exports = function (mongoose) {
 };
 ```
 
-```/api/models/dog.model.js```:
+``/api/models/dog.model.js``:
+
 ```javascript
 module.exports = function (mongoose) {
   var modelName = "dog";
@@ -208,7 +209,7 @@ field is required for associations of type ``ONE_ONE`` or ``MANY_ONE``.  This
 field must match the association name, include a type of ``ObjectId``, and
 include a ``ref`` property with the associated model name.
 
-```/api/models/user.model.js```:
+``/api/models/user.model.js``:
 
 ```javascript
 module.exports = function (mongoose) {
@@ -250,7 +251,7 @@ module.exports = function (mongoose) {
 };
 ```
 
-```/api/models/role.model.js```:
+``/api/models/role.model.js``:
 
 ```javascript
 module.exports = function (mongoose) {
@@ -305,7 +306,7 @@ Below is an example of a many-many relationship between the ``user`` and
 ``group`` models. In this relationship a single ``user`` instance can belong
 to multiple ``group`` instances and vice versa.
 
-```/api/models/user.model.js```:
+``/api/models/user.model.js``:
 
 ```javascript
 module.exports = function (mongoose) {
@@ -343,7 +344,7 @@ module.exports = function (mongoose) {
 ```
 
 
-```/api/models/group.model.js```:
+``/api/models/group.model.js``:
 
 ```javascript
 module.exports = function (mongoose) {
@@ -408,7 +409,7 @@ associated users have known each other.  This example also displays how models c
 reference to themselves.  
 
 
-```/api/models/user.model.js```:
+``/api/models/user.model.js``:
 
 ```javascript
 module.exports = function (mongoose) {
@@ -448,7 +449,7 @@ module.exports = function (mongoose) {
 ```
 
 
-```/api/models/linking-models/user_user.model.js```:
+``/api/models/linking-models/user_user.model.js``:
 
 ```javascript
 var mongoose = require("mongoose");
