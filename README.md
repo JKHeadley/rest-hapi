@@ -498,7 +498,7 @@ supported parameters:
     - An optional field for raw mongoose queries.
 
 * (field "where" queries)
-    - Ex: ``email=test@user.com``
+    - Ex: ``/user?email=test@user.com``
     
 Query parameters can either be passed in as a single string, or an array of strings.
 
