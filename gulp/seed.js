@@ -11,7 +11,7 @@ gulp.task('seed', ['models'], function() {
 
     var generateModels = require('../api/models');
 
-    var hashedPassword = passwordUtility.hash_password('devdev');
+    var hashedPassword = passwordUtility.hash_password('1234');
 
     return generateModels(mongoose).then(function(models) {
 
