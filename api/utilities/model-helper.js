@@ -15,8 +15,8 @@ var mongoose = require("mongoose");
 //     favs:  Number
 //   }
 // });
-//TODO-DONE: possibly remove "Schema.staticsextend" and use "Schema.staticsadd"
-//TODO: look at accessing "model. rather than "model. (NOTE!!! this probably needs to be a switch from model.to model.
+//TODO-DONE: possibly remove "Schema.extend" and use "Schema.add"
+//TODO: look at accessing "model.statics rather than "model
 //TODO: create a field property that can mark it as "duplicate". i.e. any associated models referencing that model will duplicate those fields along with the reference Id
 //TODO(cont): this will allow for a shallow embed that will return a list of reference ids with their "duplicate" values, and a full embed that will return the fully embedded references
 //TODO: add option for TTL index on eventLogs so they can expire after a certain length of time
