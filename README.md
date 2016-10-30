@@ -61,7 +61,9 @@ module.exports = function (mongoose) {
 };
 ```
 
-As a concrete example, here is a ``user`` model (```/api/models/user.model.js```):
+As a concrete example, here is a ``user`` model:
+
+```/api/models/user.model.js```:
 
 ```javascript
 module.exports = function (mongoose) {
@@ -170,15 +172,10 @@ module.exports = function (mongoose) {
   var Schema = new mongoose.Schema({
     name: {
       type: Types.String,
-      enum: ["Account", "Admin", "SuperAdmin"],
       allowNull: false
     },
     breed: {
-      type: Types.String,
-    },
-    description: {
-      type: Types.String,
-      allowNull: true
+      type: Types.String
     },
     owner: {
       type: Types.ObjectId,
@@ -404,8 +401,10 @@ to each association instance.  This is accomplished through linking models which
 behave similar to pivot tables in a relational database.  Linking model files are
 stored in the ```/api/models/linking-models``` directory and follow the same 
 ```{name}.model.js``` format as normal models.  Below is an example of a many-many
-relationship between the ``user`` model and itself.  This also displays how models
-can contain a reference to themselves.
+relationship between the ``user`` model and itself through the ``friends`` association.
+The extra field ``friendsSince`` could contain a date representing how long the two
+associated users have known each other.  This example also displays how models can contain a 
+reference to themselves.  
 
 
 ```/api/models/user.model.js```:
@@ -460,8 +459,7 @@ module.exports = function () {
   var Model = {
     Schema: {
       friendsSince: {
-        type: Types.Date,
-        allowNull: false
+        type: Types.Date
       }
     },
     modelName: "user_user"
@@ -492,8 +490,9 @@ are available:
     - post(request, result, Log)
 
 
-For example, a ``create: pre`` function can be set to encrypt a users password
-using the built-in ``password-helper`` utility:
+For example, a ``create: pre`` function can be defined to encrypt a users password
+using the built-in ``password-helper`` utility.  Notice the use of the ``Q`` library
+to return a promise.
  
 ```javascript
 module.exports = function (mongoose) {
