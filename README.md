@@ -499,6 +499,74 @@ supported parameters:
 
 * (field "where" queries)
     - Ex: ``email=test@user.com``
+    
+Query parameters can either be passed in as a single string, or an array of strings.
+
+## Nested populating
+Associations can be populated through the ``$embed`` parameter.  To populate nested associations,
+simply chain a parameter with ``.``.  For example, consider the MANY_MANY group-user association
+from the example above.  If we populate the users of a group with ``/group?$embed=users`` we might get a 
+response like so:
+
+```json
+{
+    "_id": "58155f1a071468d3bda0fc6e",
+    "name": "A-team",
+    "users": [
+      {
+        "user": {
+          "_id": "580fc1a0e2d3308609470bc6",
+          "email": "test@user.com",
+          "title": "580fc1e2e2d3308609470bc8"
+        },
+        "_id": "58155f6a071468d3bda0fc6f"
+      },
+      {
+        "user": {
+          "_id": "5813ad3d0d4e5c822d2f05bd",
+          "email": "test2@user.com",
+          "title": "580fc1eee2d3308609470bc9"
+        },
+        "_id": "58155f6a071468d3bda0fc71"
+      }
+    ]
+}
+```
+
+However we can further populate each user's ``title`` field with a nested ``$embed``
+parameter: ``/group?$embed=users.title`` which could result in the following response:
+
+```json
+{
+    "_id": "58155f1a071468d3bda0fc6e",
+    "name": "A-team",
+    "users": [
+      {
+        "user": {
+          "_id": "580fc1a0e2d3308609470bc6",
+          "email": "test@user.com",
+          "title": {
+            "_id": "580fc1e2e2d3308609470bc8",
+            "name": "Admin"
+          }
+        },
+        "_id": "58155f6a071468d3bda0fc6f"
+      },
+      {
+        "user": {
+          "_id": "5813ad3d0d4e5c822d2f05bd",
+          "email": "test2@user.com",
+          "title": {
+            "_id": "580fc1eee2d3308609470bc9",
+            "name": "SuperAdmin"
+          }
+        },
+        "_id": "58155f6a071468d3bda0fc71"
+      }
+    ]
+}
+```
+
 
 ## Middleware
 Models can support middleware functions for CRUD operations. These

@@ -14,9 +14,9 @@ module.exports = function (mongoose) {
       exclude: true,
       allowOnUpdate: false
     },
-    dog: {
+    title: {
       type: Types.ObjectId,
-      ref: "dog"
+      ref: "role"
     }
   });
   
@@ -30,9 +30,9 @@ module.exports = function (mongoose) {
           alias: "friend",
           linkingModel: "user_user"
         },
-        dog: {
-          type: "ONE_ONE",
-          model: "dog"
+        title: {
+          type: "MANY_ONE",
+          model: "role"
         },
         groups: {
           type: "MANY_MANY",
