@@ -1,5 +1,5 @@
 module.exports = function (mongoose) {
-  var modelName = "dog";
+  var modelName = "role";
   var Types = mongoose.Schema.Types;
   var Schema = new mongoose.Schema({
     name: {
@@ -7,26 +7,27 @@ module.exports = function (mongoose) {
       enum: ["Account", "Admin", "SuperAdmin"],
       allowNull: false
     },
-    breed: {
-      type: Types.String,
-    },
     description: {
       type: Types.String,
       allowNull: true
-    },
-    owner: {
-      type: Types.ObjectId,
-      ref: "user"
     }
-  });
-
+  }); 
+    
   Schema.statics = {
     collectionName:modelName,
     routeOptions: {
       associations: {
-        owner: {
-          type: "ONE_ONE",
+        users: {
+          type: "ONE_MANY",
+          alias: "user",
+          foreignField: "role",
           model: "user"
+        },
+        permissions: {
+          type: "MANY_MANY",
+          alias: "permission",
+          model: "permission",
+          linkingModel: "role_permission"
         }
       }
     }

@@ -1,46 +1,42 @@
 module.exports = function (mongoose) {
-  var modelName = "user";
+  var modelName = "permission";
   var Types = mongoose.Schema.Types;
   var Schema = new mongoose.Schema({
-    email: {
+    name: {
       type: Types.String,
       allowNull: false,
-      unique: true
+      queryable: true
     },
-    password: {
+    description: {
       type: Types.String,
-      allowNull: false,
-      required: true,
-      exclude: true,
-      allowOnUpdate: false
-    },
-    title: {
-      type: Types.ObjectId,
-      ref: "role"
+      allowNull: true
     }
   });
-  
   Schema.statics = {
     collectionName:modelName,
     routeOptions: {
       associations: {
-        friends: {
+        users: {
           type: "MANY_MANY",
+          alias: "user",
           model: "user",
-          alias: "friend",
-          linkingModel: "user_user"
+          linkingModel: "user_permission"
         },
-        title: {
-          type: "MANY_ONE",
-          model: "role"
+        roles: {
+          type: "MANY_MANY",
+          alias: "role",
+          model: "role",
+          linkingModel: "role_permission"
         },
         groups: {
           type: "MANY_MANY",
-          model: "group"
+          alias: "group",
+          model: "group",
+          linkingModel: "group_permission"
         }
       }
     }
   };
-  
+
   return Schema;
 };

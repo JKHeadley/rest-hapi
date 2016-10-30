@@ -6,12 +6,13 @@ module.exports = function () {
 
   var Model = {
     Schema: {
-      friendsSince: {
-        type: Types.Date,
-        allowNull: false
+      enabled: {
+        type: Types.Boolean,
+        allowNull: false,
+        defaultValue: true
       }
     },
-    modelName: "user_user"
+    modelName: "user_permission"
   };
 
   return Model;
