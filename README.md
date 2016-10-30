@@ -48,8 +48,7 @@ Restful endpoints are automatically generated based off of any mongoose models t
 ```javascript
 module.exports = function (mongoose) {
     var Schema = new mongoose.Schema({
-        ...
-        ...fill in schema fields
+        /*fill in schema fields*/
     });
 
     Schema.statics = {
