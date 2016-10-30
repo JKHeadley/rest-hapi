@@ -33,7 +33,7 @@ $ gulp
 Edit the config file relevant to your environment (local, development, production).  The default config
 file is ```/api/config.local.js```.  Here you can set the server port, mongodb URI, and authentication.
 
-## Seeding the Database
+## Seeding the database
 **WARNING**: This will clear all data in the following MongoDB collections (in the db defined in ``config.local``) if they exist: ``users``, ``roles``.
 
 If you would like to seed your database with some demo models/data, run:
@@ -48,13 +48,13 @@ To run tests:
 $ gulp test
 ```
 
-## Swagger Documentation
+## Swagger documentation
 
 Swagger documentation is automatically generated for all endpoints and can be viewed by pointing a browser
 at the server URL.  By default this will be ``http://localhost:8124/``.  The swagger docs provide quick 
 access to testing your endpoints along with model schema descriptions and query options.
 
-## Creating Endpoints
+## Creating endpoints
 
 Restful endpoints are automatically generated based off of any mongoose models that you add to the 
 ``/api/models`` folder with the file structure of ``{model name}.model.js``.  These models must adhere to the following format:
@@ -515,7 +515,7 @@ supported parameters:
     
 Query parameters can either be passed in as a single string, or an array of strings.
 
-### Nested populating
+### Populate nested associations
 Associations can be populated through the ``$embed`` parameter.  To populate nested associations,
 simply chain a parameter with ``.``.  For example, consider the MANY_MANY group-user association
 from the example above.  If we populate the users of a group with ``/group?$embed=users`` we might get a 
@@ -644,11 +644,4 @@ module.exports = function (mongoose) {
   
   return Schema;
 };
-```
- 
-## Testing
-
-To run tests:
-```
-$ gulp test
 ```
