@@ -43,7 +43,7 @@ access to testing your endpoints along with model schema descriptions and query 
 ## Creating Endpoints
 
 Restful endpoints are automatically generated based off of any mongoose models that you add to the 
-```/api/models``` folder with the file structure of ```{model name}.model.js```.  These models must adhere to the following format:
+``/api/models`` folder with the file structure of ``{model name}.model.js``.  These models must adhere to the following format:
 
 ```javascript
 module.exports = function (mongoose) {
@@ -63,7 +63,8 @@ module.exports = function (mongoose) {
 
 As a concrete example, here is a ``user`` model:
 
-```/api/models/user.model.js```:
+``/api/models/user.model.js``:
+
 
 ```javascript
 module.exports = function (mongoose) {
