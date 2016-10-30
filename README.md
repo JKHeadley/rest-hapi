@@ -110,7 +110,8 @@ a relational database.  This includes one-one, one-many, many-one, and many-many
 relationships.  Associations are created by adding the relevant schema fields
 and populating the ``associations`` object within ``routeOptions``.  Associations
 exists as references to a documents ``_id`` field, and can be populated to return 
-the associated object.  See [Querying](#querying) for more details.
+the associated object.  See [Querying](#querying) for more details on how to populate
+associations.
 
 ### ONE_ONE
 
@@ -473,7 +474,31 @@ module.exports = function () {
 
 ## Querying
 
-TODO
+Query parameters can be added to GET requests to filter responses.  These parameters
+are structured and function similar to mongoose queries.  Below is a list of currently 
+supported parameters:
+
+* $skip
+    - The number of records to skip in the database. This is typically used in pagination.
+
+* $limit
+    - The maximum number of records to return. This is typically used in pagination.
+* $select
+    - A list of basic fields to be included in each resource.
+
+* $sort
+    - A set of fields to sort by. Including field name indicates it should be sorted ascending, 
+    while prepending '-' indicates descending. The default sort direction is 'ascending' 
+    (lowest value to highest value). Listing multiple fields prioritizes the sort starting with the first field listed. 
+
+* $embed
+    - A set of associations to populate. 
+
+* $where
+    - An optional field for raw mongoose queries.
+
+* (field "where" queries)
+    - Ex: ``email=test@user.com``
 
 ## Middleware
 Models can support middleware functions for CRUD operations. These
