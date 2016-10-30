@@ -651,4 +651,4 @@ This project is still in its
 
 
 ## Contributing
-Please reference the contributing doc: 
+Please reference the contributing doc: https://github.com/JKHeadley/rest-hapi/blob/master/CONTRIBUTING.md
