@@ -33,6 +33,13 @@ $ gulp
 Edit the config file relevant to your environment (local, development, production).  The default config
 file is ```/api/config.local.js```.  Here you can set the server port, mongodb URI, and authentication.
 
+## Seeding the Database
+**WARNING**: This will clear all data in the following MongoDB collections (in the db defined in ``config.local``) if they exist: ``users``, ``roles``.
+
+If you would like to seed your database with some demo models/data, run:
+```
+$ gulp seed
+```
 
 ## Swagger Documentation
 
