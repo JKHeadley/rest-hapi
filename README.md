@@ -40,6 +40,7 @@ If you would like to seed your database with some demo models/data, run:
 ```
 $ gulp seed
 ```
+NOTE: The password for all seed users is ``1234``.
 
 # Testing
 To run tests:
