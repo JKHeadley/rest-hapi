@@ -502,7 +502,7 @@ supported parameters:
     
 Query parameters can either be passed in as a single string, or an array of strings.
 
-## Nested populating
+### Nested populating
 Associations can be populated through the ``$embed`` parameter.  To populate nested associations,
 simply chain a parameter with ``.``.  For example, consider the MANY_MANY group-user association
 from the example above.  If we populate the users of a group with ``/group?$embed=users`` we might get a 
