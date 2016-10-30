@@ -24,6 +24,7 @@
     "fs": "0.0.2",
     "gulp": "^3.9.1",
     "gulp-exec": "latest",
+    "gulp-exit": "0.0.2",
     "gulp-filesize": "latest",
     "gulp-filter": "latest",
     "gulp-ignore": "^1.2.1",

@@ -10,7 +10,8 @@ var Q = require("q");
 //TODO: make sure all functions return errors
 
 var rootLogger = logging.getLogger(chalk.gray("app"));
-rootLogger.logLevel = "DEBUG";
+
+rootLogger.logLevel = "ERROR";
 
 var logUtil = require('./utilities/log-util');
 
