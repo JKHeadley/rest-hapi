@@ -11,6 +11,10 @@ A Restful API generator built around the Hapi framework and mongoose ODM.
 * Swagger docs for all generated endpoints
 * Query parameter support for sorting, filtering, pagination, and embedding of associated models
 
+## Requirements
+
+You need ``Node.js`` installed and you'll need ``MongoDB`` installed and running.
+
 ## Installation
 
 ```
@@ -645,9 +649,22 @@ module.exports = function (mongoose) {
   return Schema;
 };
 ```
+## License
+MIT
+
+## Questions?
+If you have any questions/issues/feature requests, please feel free to open an issue.
 
 ## Future work
-This project is still in its 
+This project is still in its infancy, and there are many features I would still like to add.  Below is a list of some possible future updates:
+
+- support mongoose ``$text`` search query parameter
+- sorting through populate fields (Ex: sort users through role.name)
+- have built in ``created_at`` and ``updated_at`` fields for each model
+- support marking fields as ``duplicate`` i.e. any associated models referencing that model will duplicate those fields along with the reference Id. This could allow for a shallow embed that will return a list of reference ids with their "duplicate" values, and a full embed that will return the fully embedded references
+- support automatic logging of all operations via a ``eventLogs`` collection
+- (LONG TERM) support mysql as well as mongodb
+
 
 
 ## Contributing
