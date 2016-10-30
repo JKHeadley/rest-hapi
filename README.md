@@ -633,3 +633,9 @@ module.exports = function (mongoose) {
 };
 ```
  
+## Testing
+
+To run tests:
+```
+$ gulp test
+```
