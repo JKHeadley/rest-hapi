@@ -110,7 +110,7 @@ a relational database.  This includes one-one, one-many, many-one, and many-many
 relationships.  Associations are created by adding the relevant schema fields
 and populating the ``associations`` object within ``routeOptions``.  Associations
 exists as references to a documents ``_id`` field, and can be populated to return 
-the associated object.  See ``Querying`` for more details.
+the associated object.  See [Querying](#querying) for more details.
 
 ### ONE_ONE
 
@@ -401,8 +401,8 @@ DELETE /group/{ownerId}/user/{childId}  Remove a single user object from a group
 Many-many relationships can include extra fields that contain data specific
 to each association instance.  This is accomplished through linking models which
 behave similar to pivot tables in a relational database.  Linking model files are
-stored in the ```/api/models/linking-models``` directory and follow the same 
-```{name}.model.js``` format as normal models.  Below is an example of a many-many
+stored in the ``/api/models/linking-models`` directory and follow the same 
+``{name}.model.js`` format as normal models.  Below is an example of a many-many
 relationship between the ``user`` model and itself through the ``friends`` association.
 The extra field ``friendsSince`` could contain a date representing how long the two
 associated users have known each other.  This example also displays how models can contain a 
@@ -470,6 +470,10 @@ module.exports = function () {
   return Model;
 };
 ```
+
+## Querying
+
+TODO
 
 ## Middleware
 Models can support middleware functions for CRUD operations. These
