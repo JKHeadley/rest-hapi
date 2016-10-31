@@ -11,6 +11,12 @@ A Restful API generator built around the Hapi framework and mongoose ODM.
 * Swagger docs for all generated endpoints
 * Query parameter support for sorting, filtering, pagination, and embedding of associated models
 
+## Live demo
+
+View the swagger docs for the live demo:
+
+http://ec2-35-162-67-113.us-west-2.compute.amazonaws.com:8124/
+
 ## Requirements
 
 You need ``Node.js`` installed and you'll need ``MongoDB`` installed and running.  You will also need the ``gulp`` node package installed.
@@ -584,6 +590,8 @@ parameter: ``/group?$embed=users.title`` which could result in the following res
 }
 ```
 
+## Validation
+TODO
 
 ## Middleware
 Models can support middleware functions for CRUD operations. These
