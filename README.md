@@ -41,7 +41,7 @@ http://ec2-35-162-67-113.us-west-2.compute.amazonaws.com:8124/
 
 You need ``Node.js`` installed and you'll need ``MongoDB`` installed and running.  You will also need the ``gulp`` node package installed.
 
-[Back to top](#rest-hapi)
+[Back to top](#readme-contents)
 
 ## Installation
 
@@ -51,7 +51,7 @@ $ cd rest-hapi
 $ npm install
 ```
 
-[Back to top](#rest-hapi)
+[Back to top](#readme-contents)
 
 ## Running the app
 ```
@@ -62,7 +62,7 @@ or just
 $ gulp
 ```
 
-[Back to top](#rest-hapi)
+[Back to top](#readme-contents)
 
 ## Configuration
 
@@ -80,7 +80,7 @@ $ gulp seed
 ```
 NOTE: The password for all seed users is ``1234``.
 
-[Back to top](#rest-hapi)
+[Back to top](#readme-contents)
 
 # Testing
 To run tests:
@@ -88,7 +88,7 @@ To run tests:
 $ gulp test
 ```
 
-[Back to top](#rest-hapi)
+[Back to top](#readme-contents)
 
 ## Swagger documentation
 
@@ -96,7 +96,7 @@ Swagger documentation is automatically generated for all endpoints and can be vi
 at the server URL.  By default this will be ``http://localhost:8124/``.  The swagger docs provide quick 
 access to testing your endpoints along with model schema descriptions and query options.
 
-[Back to top](#rest-hapi)
+[Back to top](#readme-contents)
 
 ## Creating endpoints
 
@@ -160,7 +160,7 @@ PUT /user/{_id}     Update a user
 DELETE /user/{_id}  Delete a user
 ```
 
-[Back to top](#rest-hapi)
+[Back to top](#readme-contents)
 
 ## Associations
 
@@ -531,7 +531,7 @@ module.exports = function () {
 };
 ```
 
-[Back to top](#rest-hapi)
+[Back to top](#readme-contents)
 
 ## Querying
 
@@ -628,12 +628,12 @@ parameter: ``/group?$embed=users.title`` which could result in the following res
 }
 ```
 
-[Back to top](#rest-hapi)
+[Back to top](#readme-contents)
 
 ## Validation
 TODO
 
-[Back to top](#rest-hapi)
+[Back to top](#readme-contents)
 
 ## Middleware
 Models can support middleware functions for CRUD operations. These
@@ -702,7 +702,7 @@ module.exports = function (mongoose) {
 };
 ```
 
-[Back to top](#rest-hapi)
+[Back to top](#readme-contents)
 
 ## Additional endpoints
 If endpoints beyond the generated CRUD endpoints are needed, they can easily be added 
@@ -802,17 +802,17 @@ module.exports = function (mongoose) {
 
 ```
 
-[Back to top](#rest-hapi)
+[Back to top](#readme-contents)
 
 ## License
 MIT
 
-[Back to top](#rest-hapi)
+[Back to top](#readme-contents)
 
 ## Questions?
 If you have any questions/issues/feature requests, please feel free to open an issue.
 
-[Back to top](#rest-hapi)
+[Back to top](#readme-contents)
 
 ## Future work
 This project is still in its infancy, and there are many features I would still like to add.  Below is a list of some possible future updates:
@@ -824,9 +824,9 @@ This project is still in its infancy, and there are many features I would still 
 - support automatic logging of all operations via a ``eventLogs`` collection
 - (LONG TERM) support mysql as well as mongodb
 
-[Back to top](#rest-hapi)
+[Back to top](#readme-contents)
 
 ## Contributing
 Please reference the contributing doc: https://github.com/JKHeadley/rest-hapi/blob/master/CONTRIBUTING.md
 
-[Back to top](#rest-hapi)
+[Back to top](#readme-contents)
