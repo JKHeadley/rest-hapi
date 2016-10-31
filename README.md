@@ -880,6 +880,8 @@ This endpoint takes a user email and password as a payload and returns an authen
 Authorization: Bearer USER_TOKEN
 ```
 
+[Back to top](#readme-contents)
+
 ## License
 MIT
 
