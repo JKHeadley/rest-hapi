@@ -1,4 +1,5 @@
 var Q = require('q');
+var Joi = require('joi');
 //TODO: assign a unique text index to email field
 
 module.exports = function (mongoose) {
@@ -75,7 +76,64 @@ module.exports = function (mongoose) {
           linkingModel: "user_permission"
         }
       },
-      extraEndpoints: [],
+      extraEndpoints: [
+        //Password Update Endpoint
+        function (server, model, options, Log) {
+          Log = Log.bind("Password Update");
+          var Boom = require('boom');
+
+          var collectionName = model.collectionDisplayName || model.modelName;
+
+          Log.note("Generating Password Update endpoint for " + collectionName);
+
+          var handler = function (request, reply) {
+            var passwordUtility = require('../../api/utilities/password-helper');
+            var hashedPassword = passwordUtility.hash_password(request.payload.password);
+            return model.findByIdAndUpdate(request.params._id, {password: hashedPassword}).then(function (result) {
+              if (result) {
+                return reply("Password updated.").code(200);
+              }
+              else {
+                return reply(Boom.notFound("No resource was found with that id."));
+              }
+            })
+            .catch(function (error) {
+              Log.error("error: ", error);
+              return reply(Boom.badImplementation("An error occurred updating the resource.", error));
+            });
+          }
+
+          server.route({
+            method: 'PUT',
+            path: '/user/{_id}/password',
+            config: {
+              handler: handler,
+              auth: null,
+              description: 'Update a user\'s password.',
+              tags: ['api', 'User', 'Password'],
+              validate: {
+                params: {
+                  _id: Joi.objectId().required()
+                },
+                payload: {
+                  password: Joi.string().required()
+                  .description('The user\'s new password')
+                }
+              },
+              plugins: {
+                'hapi-swagger': {
+                  responseMessages: [
+                    {code: 200, message: 'Success'},
+                    {code: 400, message: 'Bad Request'},
+                    {code: 404, message: 'Not Found'},
+                    {code: 500, message: 'Internal Server Error'}
+                  ]
+                }
+              }
+            }
+          });
+        }
+      ],
       create: {
         pre: function (request, Log) {
           var deferred = Q.defer();
