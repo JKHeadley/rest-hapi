@@ -25,7 +25,16 @@ http://ec2-35-162-67-113.us-west-2.compute.amazonaws.com:8124/
 - [Seeding the database](#seeding-the-database)
 - [Testing](#testing)
 - [Swagger documentation](#swagger-documentation)
-- [installation](#installation)
+- [Creating endpoints](#creating-endpoints)
+- [Associations](#associations)
+- [Querying](#querying)
+- [Validation](#validation)
+- [Middleware](#middleware)
+- [Additional endpoints](#additional-endpoints)
+- [License](#license)
+- [Questions](#questions?)
+- [Future work](#future-work)
+- [Contributing](#contributing)
 
 
 ## Requirements
@@ -784,7 +793,6 @@ This project is still in its infancy, and there are many features I would still 
 - support marking fields as ``duplicate`` i.e. any associated models referencing that model will duplicate those fields along with the reference Id. This could allow for a shallow embed that will return a list of reference ids with their "duplicate" values, and a full embed that will return the fully embedded references
 - support automatic logging of all operations via a ``eventLogs`` collection
 - (LONG TERM) support mysql as well as mongodb
-
 
 
 ## Contributing
