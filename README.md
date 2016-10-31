@@ -611,6 +611,8 @@ using the built-in ``password-helper`` utility.  Notice the use of the ``Q`` lib
 to return a promise.
  
 ```javascript
+var Q = require('q');
+
 module.exports = function (mongoose) {
   var modelName = "user";
   var Types = mongoose.Schema.Types;
@@ -649,6 +651,105 @@ module.exports = function (mongoose) {
   return Schema;
 };
 ```
+
+## Additional endpoints
+If endpoints beyond the generated CRUD endpoints are needed, they can easily be added 
+to a model as an item in the ``routeOptions.extraEndpoints`` array.  Then endpoint
+logic should be contained within a function with the footprint: ``function (server, model, options, Log)``
+. For example, if we wanted to add a ``Password Update`` endpoint to the ``user`` model, it could
+look like this:
+
+```javascript
+var Joi = require('joi');
+Joi.objectId = require('joi-objectid')(Joi);
+var Boom = require('boom');
+
+module.exports = function (mongoose) {
+  var modelName = "user";
+  var Types = mongoose.Schema.Types;
+  var Schema = new mongoose.Schema({
+    email: {
+      type: Types.String,
+      allowNull: false,
+      unique: true
+    },
+    password: {
+      type: Types.String,
+      allowNull: false,
+      required: true,
+      exclude: true,
+      allowOnUpdate: false
+    }
+  });
+  
+  Schema.statics = {
+    collectionName:modelName,
+    routeOptions: {
+      extraEndpoints: [
+        //Password Update Endpoint
+        function (server, model, options, Log) {
+          Log = Log.bind("Password Update");
+
+          var collectionName = model.collectionDisplayName || model.modelName;
+
+          Log.note("Generating Password Update endpoint for " + collectionName);
+
+          var handler = function (request, reply) {
+            var passwordUtility = require('../../api/utilities/password-helper');
+            var hashedPassword = passwordUtility.hash_password(request.payload.password);
+            return model.findByIdAndUpdate(request.params._id, {password: hashedPassword}).then(function (result) {
+              if (result) {
+                return reply("Password updated.").code(200);
+              }
+              else {
+                return reply(Boom.notFound("No resource was found with that id."));
+              }
+            })
+            .catch(function (error) {
+              Log.error("error: ", error);
+              return reply(Boom.badImplementation("An error occurred updating the resource.", error));
+            });
+          }
+
+          server.route({
+            method: 'PUT',
+            path: '/user/{_id}/password',
+            config: {
+              handler: handler,
+              auth: null,
+              description: 'Update a user\'s password.',
+              tags: ['api', 'User', 'Password'],
+              validate: {
+                params: {
+                  _id: Joi.objectId().required()
+                },
+                payload: {
+                  password: Joi.string().required()
+                  .description('The user\'s new password')
+                }
+              },
+              plugins: {
+                'hapi-swagger': {
+                  responseMessages: [
+                    {code: 200, message: 'Success'},
+                    {code: 400, message: 'Bad Request'},
+                    {code: 404, message: 'Not Found'},
+                    {code: 500, message: 'Internal Server Error'}
+                  ]
+                }
+              }
+            }
+          });
+        }
+      ]
+    }
+  };
+  
+  return Schema;
+};
+
+```
+
 ## License
 MIT
 
