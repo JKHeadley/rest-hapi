@@ -13,7 +13,8 @@ A Restful API generator built around the Hapi framework and mongoose ODM.
 
 ## Live demo
 
-View the swagger docs for the live demo by pointing to the URL:
+View the swagger docs for the live demo:
+
 http://ec2-35-162-67-113.us-west-2.compute.amazonaws.com:8124/
 
 ## Requirements
