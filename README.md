@@ -32,7 +32,7 @@ http://ec2-35-162-67-113.us-west-2.compute.amazonaws.com:8124/
 - [Middleware](#middleware)
 - [Additional endpoints](#additional-endpoints)
 - [License](#license)
-- [Questions](#questions?)
+- [Questions](#questions)
 - [Future work](#future-work)
 - [Contributing](#contributing)
 
@@ -40,6 +40,8 @@ http://ec2-35-162-67-113.us-west-2.compute.amazonaws.com:8124/
 ## Requirements
 
 You need ``Node.js`` installed and you'll need ``MongoDB`` installed and running.  You will also need the ``gulp`` node package installed.
+
+[Back to top](#rest-hapi)
 
 ## Installation
 
@@ -797,3 +799,6 @@ This project is still in its infancy, and there are many features I would still 
 
 ## Contributing
 Please reference the contributing doc: https://github.com/JKHeadley/rest-hapi/blob/master/CONTRIBUTING.md
+
+
+[Back to top](#rest-hapi)
