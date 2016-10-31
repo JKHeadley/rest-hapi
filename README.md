@@ -13,7 +13,7 @@ A Restful API generator built around the Hapi framework and mongoose ODM.
 
 ## Requirements
 
-You need ``Node.js`` installed and you'll need ``MongoDB`` installed and running.
+You need ``Node.js`` installed and you'll need ``MongoDB`` installed and running.  You will also need the ``gulp`` node package installed.
 
 ## Installation
 
