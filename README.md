@@ -706,8 +706,8 @@ module.exports = function (mongoose) {
 
 ## Additional endpoints
 If endpoints beyond the generated CRUD endpoints are needed, they can easily be added 
-to a model as an item in the ``routeOptions.extraEndpoints`` array.  Then endpoint
-logic should be contained within a function with the footprint: ``function (server, model, options, Log)``
+to a model as an item in the ``routeOptions.extraEndpoints`` array.  The endpoint
+logic should be contained within a function using the footprint: ``function (server, model, options, Log)``
 . For example, if we wanted to add a ``Password Update`` endpoint to the ``user`` model, it could
 look like this:
 
