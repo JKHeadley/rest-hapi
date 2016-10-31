@@ -31,6 +31,7 @@ http://ec2-35-162-67-113.us-west-2.compute.amazonaws.com:8124/
 - [Validation](#validation)
 - [Middleware](#middleware)
 - [Additional endpoints](#additional-endpoints)
+- [Token authentication](#token-authentication)
 - [License](#license)
 - [Questions](#questions)
 - [Future work](#future-work)
@@ -803,6 +804,81 @@ module.exports = function (mongoose) {
 ```
 
 [Back to top](#readme-contents)
+
+## Token authentication
+The Rest Hapi framework supports built in token authentication for all generated endpoints given the following requirements are fulfilled:
+
+- A ``user`` model exists with at least the following properties:
+
+```javascript
+var Q = require('q');
+
+module.exports = function (mongoose) {
+  var modelName = "user";
+  var Types = mongoose.Schema.Types;
+  var Schema = new mongoose.Schema({
+    email: {
+      type: Types.String,
+      allowNull: false,
+      unique: true
+    },
+    password: {
+      type: Types.String,
+      allowNull: false,
+      exclude: true,
+      allowOnUpdate: false
+    },
+    token: {
+      type: Types.String,
+      allowNull: true,
+      exclude: true,
+      allowOnUpdate: false,
+      allowOnCreate: false
+    },
+    tokenCreatedAt: {
+      type: Types.String,
+      allowNull: true,
+      exclude: true,
+      allowOnUpdate: false,
+      allowOnCreate: false
+    }
+  });
+  
+  Schema.statics = {
+    collectionName:modelName,
+    routeOptions: {
+      create: {
+        pre: function (request, Log) {
+          var deferred = Q.defer();
+          var passwordUtility = require('../../api/utilities/password-helper');
+          var hashedPassword = passwordUtility.hash_password(request.payload.password);
+
+          request.payload.password = hashedPassword;
+          deferred.resolve(request);
+          return deferred.promise;
+        }
+      }
+    }
+  };
+  
+  return Schema;
+};
+```
+**NOTE:** Token authentication requires that passwords are encrypted using the password helper as above.
+
+- The ``auth`` property in the config file is set to ``token``.
+
+Given these conditions, a new endpoint will be generated:
+
+```
+POST /token     Create a token for a user.
+```
+
+This endpoint takes a user email and password as a payload and returns an authentication token.  When token authentication is enabled, all generated enpoints require an Authentication header:
+
+```
+Authorization: Bearer USER_TOKEN
+```
 
 ## License
 MIT
