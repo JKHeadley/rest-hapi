@@ -17,6 +17,17 @@ View the swagger docs for the live demo:
 
 http://ec2-35-162-67-113.us-west-2.compute.amazonaws.com:8124/
 
+## Readme contents
+- [Requirements](#requirements)
+- [Installation](#installation)
+- [Running the app](#running-the-app)
+- [Configuration](#configuration)
+- [Seeding the database](#seeding-the-database)
+- [Testing](#testing)
+- [Swagger documentation](#swagger-documentation)
+- [installation](#installation)
+
+
 ## Requirements
 
 You need ``Node.js`` installed and you'll need ``MongoDB`` installed and running.  You will also need the ``gulp`` node package installed.
