@@ -866,7 +866,7 @@ module.exports = function (mongoose) {
 ```
 **NOTE:** Token authentication requires that passwords are encrypted using the password helper as above.
 
-- The ``auth`` property in the config file is set to ``token``.
+- The ``auth`` property in the config file is set to ``"token"``.
 
 Given these conditions, a new endpoint will be generated:
 
