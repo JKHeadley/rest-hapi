@@ -2,9 +2,6 @@
   "name": "rest-hapi",
   "version": "0.1.0",
   "private": true,
-  "scripts": {
-    "start": "node ./bin/www"
-  },
   "engines": {
     "node": "5.0.0",
     "npm": "3.8.1"
@@ -23,11 +20,11 @@
     "gulp-rename": "latest",
     "gulp-tape": "latest",
     "gulp-util": "latest",
-    "hapi": "^11.1.4",
+    "hapi": "^15.2.0",
     "hapi-auth-bearer-token": "^3.1.1",
     "hapi-swagger": "^2.2.4",
     "inert": "^3.1.0",
-    "joi": "^6.10.1",
+    "joi": "^9.2.0",
     "joi-objectid": "^2.0.0",
     "jshint": "~2.9.1",
     "jwt-simple": "^0.3.1",
