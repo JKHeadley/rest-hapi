@@ -1,4 +1,5 @@
 var Joi = require('joi');
+Joi.objectId = require('joi-objectid')(Joi);
 var _ = require('lodash');
 var assert = require('assert');
 var joiMongooseHelper = require('./joi-mongoose-helper');

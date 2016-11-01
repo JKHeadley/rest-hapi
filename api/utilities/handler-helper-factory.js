@@ -22,6 +22,10 @@ var QueryHelper = require('./query-helper');
 
 //TODO: fix X-Total-Count headers
 
+//TODO: update hapi version
+
+//TODO: look into using glue
+
 var mongoose, server;
 module.exports = function (_mongoose, _server) {
 

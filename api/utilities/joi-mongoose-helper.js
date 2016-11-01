@@ -38,9 +38,6 @@ module.exports = {
         if (field.requireOnRead === true) {
           attributeReadModel = attributeReadModel.required();
         }
-        else {
-          attributeReadModel = attributeReadModel.optional();
-        }
 
         readModelBase[fieldName] = attributeReadModel;
       }
@@ -54,12 +51,12 @@ module.exports = {
 
         //TODO: possibly add stricter validation for associations
         if (association.type === "MANY_MANY" || association.type === "ONE_MANY") {
-          readModelBase[associationName] = Joi.array().items(Joi.object().unknown()).optional();
+          readModelBase[associationName] = Joi.array().items(Joi.object().unknown());
           if (association.linkingModel) {
-            readModelBase[association.linkingModel] = Joi.object().unknown().allow(null).optional();
+            readModelBase[association.linkingModel] = Joi.object().unknown().allow(null);
           }
         } else {
-          readModelBase[associationName] = Joi.object().unknown().allow(null).optional();
+          readModelBase[associationName] = Joi.object().unknown().allow(null);
         }
       }
     }
@@ -102,8 +99,6 @@ module.exports = {
 
           if (field.requireOnUpdate === true) {
             attributeUpdateModel = attributeUpdateModel.required();
-          } else {
-            attributeUpdateModel = attributeUpdateModel.optional();
           }
 
           updateModelBase[fieldName] = attributeUpdateModel;
@@ -113,7 +108,7 @@ module.exports = {
 
     var updateModel = Joi.object(updateModelBase).meta({
       className: model.modelName + "UpdateModel"
-    }).optional();
+    });
 
     return updateModel;
   },
@@ -150,8 +145,6 @@ module.exports = {
 
           if (field.required === true) {
             attributeCreateModel = attributeCreateModel.required();
-          } else {
-            attributeCreateModel = attributeCreateModel.optional();
           }
 
           createModelBase[fieldName] = attributeCreateModel;
@@ -189,9 +182,6 @@ module.exports = {
 
         if (field.required) {
           attributeAssociationModel = attributeAssociationModel.required();
-        }
-        else {
-          attributeAssociationModel = attributeAssociationModel.optional();
         }
         associationModelBase[fieldName] = attributeAssociationModel;
       }
