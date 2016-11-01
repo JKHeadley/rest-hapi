@@ -27,6 +27,7 @@ http://ec2-35-162-67-113.us-west-2.compute.amazonaws.com:8124/
 - [Swagger documentation](#swagger-documentation)
 - [Creating endpoints](#creating-endpoints)
 - [Associations](#associations)
+- [Route customization](#route-customization)
 - [Querying](#querying)
 - [Validation](#validation)
 - [Middleware](#middleware)
@@ -530,6 +531,64 @@ module.exports = function () {
 
   return Model;
 };
+```
+
+[Back to top](#readme-contents)
+
+## Route customizations
+By default route paths are constructed using model names, however aliases can be provided to customize the route paths.
+``routeOptions.alias`` can be set to alter the base path name, and an ``alias`` property for an association can be set 
+to alter the association path name.  For example:
+
+```javascript
+module.exports = function (mongoose) {
+  var modelName = "user";
+  var Types = mongoose.Schema.Types;
+  var Schema = new mongoose.Schema({
+    email: {
+      type: Types.String,
+      allowNull: false,
+      unique: true
+    },
+    password: {
+      type: Types.String,
+      allowNull: false,
+      required: true,
+      exclude: true,
+      allowOnUpdate: false
+    }
+  });
+  
+  Schema.statics = {
+    collectionName: modelName
+    routeOptions: {
+      alias: "person"
+      associations: {
+        groups: {
+          type: "MANY_MANY",
+          model: "group",
+          alias: "team"
+        }
+      }
+    }
+  };
+  
+  return Schema;
+};
+```
+
+will result in the following endpoints:
+
+```
+GET /person 
+POST /person
+DELETE /person/{_id} 
+PUT /person/{_id} 
+GET /person/{_id} 
+POST /person/{ownerId}/team 
+GET /person/{ownerId}/team 
+PUT /person/{ownerId}/team/{childId} 
+DELETE /person/{ownerId}/team/{childId}
 ```
 
 [Back to top](#readme-contents)
