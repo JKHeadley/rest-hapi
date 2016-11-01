@@ -5,10 +5,10 @@ A RESTful API generator built around the [hapi](https://github.com/hapijs/hapi) 
 
 * Automatic generation of CRUD endpoints with middleware support
 * Automatic generation of association endpoints
-* Joi validation
+* [joi](https://github.com/hapijs/joi) validation
 * User password encryption support
 * Optional token authentication for all generated endpoints
-* Swagger docs for all generated endpoints
+* Swagger docs for all generated endpoints via [hapi-swagger](https://github.com/glennjones/hapi-swagger)
 * Query parameter support for sorting, filtering, pagination, and embedding of associated models
 
 ## Live demo
@@ -632,10 +632,10 @@ parameter: ``/group?$embed=users.title`` which could result in the following res
 [Back to top](#readme-contents)
 
 ## Validation
-Query validation in the rest-hapi framework is implemented with [Joi](https://github.com/hapijs/joi).  
-This includes validation of headers, query parameters, payloads, and responses.  Joi validation models
+Query validation in the rest-hapi framework is implemented with [joi](https://github.com/hapijs/joi).  
+This includes validation of headers, query parameters, payloads, and responses.  joi validation models
 are based primarily off of each model's field properties.  Below is a list of mongoose field properties 
-and their Joi equivalent within rest-hapi:
+and their joi equivalent within rest-hapi:
 
 - type: ObjectId    ::      Joi.objectId() (via [joi-objectid](https://www.npmjs.com/package/joi-objectid))
 - type: Boolean     ::      Joi.bool()
@@ -644,6 +644,16 @@ and their Joi equivalent within rest-hapi:
 - type: String      ::      Joi.string()
     - enum: [items] ::      Joi.any().only([items]);
 - other types       ::      Joi.any()
+
+Model Property | joi validation
+--- | --- 
+type: ObjectId    |      Joi.objectId() (via [joi-objectid](https://www.npmjs.com/package/joi-objectid))
+type: Boolean     |      Joi.bool()
+type: Number      |      Joi.number()
+type: Date        |      Joi.date()
+type: String      |      Joi.string()
+enum: [items]     |      Joi.any().only([items]);
+other types       |      Joi.any()
 
 [Back to top](#readme-contents)
 
