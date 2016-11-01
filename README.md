@@ -632,7 +632,18 @@ parameter: ``/group?$embed=users.title`` which could result in the following res
 [Back to top](#readme-contents)
 
 ## Validation
-TODO
+Query validation in the Rest Hapi framework is implemented with [Joi](https://github.com/hapijs/joi).  
+This includes validation of headers, query parameters, payloads, and responses.  Joi validation models
+are based primarily off of each model's field properties.  Below is a list of mongoose field properties 
+and their Joi equivalent within Rest Hapi:
+
+- type: ObjectId    ::      Joi.objectId() (via [joi-objectid](https://www.npmjs.com/package/joi-objectid))
+- type: Boolean     ::      Joi.bool()
+- type: Number      ::      Joi.number()
+- type: Date        ::      Joi.date()
+- type: String      ::      Joi.string()
+    - enum: [items] ::      Joi.any().only([items]);
+- other types       ::      Joi.any()
 
 [Back to top](#readme-contents)
 
