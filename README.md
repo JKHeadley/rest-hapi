@@ -535,7 +535,7 @@ module.exports = function () {
 
 [Back to top](#readme-contents)
 
-## Route customizations
+## Route customization
 By default route paths are constructed using model names, however aliases can be provided to customize the route paths.
 ``routeOptions.alias`` can be set to alter the base path name, and an ``alias`` property for an association can be set 
 to alter the association path name.  For example:
