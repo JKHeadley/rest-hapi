@@ -545,6 +545,7 @@ supported parameters:
 
 * $limit
     - The maximum number of records to return. This is typically used in pagination.
+    
 * $select
     - A list of basic fields to be included in each resource.
 
@@ -634,26 +635,34 @@ parameter: ``/group?$embed=users.title`` which could result in the following res
 ## Validation
 Query validation in the rest-hapi framework is implemented with [joi](https://github.com/hapijs/joi).  
 This includes validation of headers, query parameters, payloads, and responses.  joi validation models
-are based primarily off of each model's field properties.  Below is a list of mongoose field properties 
+are based primarily off of each model's field properties.  Below is a list of mongoose schema types 
 and their joi equivalent within rest-hapi:
 
-- type: ObjectId    ::      Joi.objectId() (via [joi-objectid](https://www.npmjs.com/package/joi-objectid))
-- type: Boolean     ::      Joi.bool()
-- type: Number      ::      Joi.number()
-- type: Date        ::      Joi.date()
-- type: String      ::      Joi.string()
-    - enum: [items] ::      Joi.any().only([items]);
-- other types       ::      Joi.any()
-
-Model Property | joi validation
+Schema Type | joi validation
 --- | --- 
-type: ObjectId    |      Joi.objectId() (via [joi-objectid](https://www.npmjs.com/package/joi-objectid))
-type: Boolean     |      Joi.bool()
-type: Number      |      Joi.number()
-type: Date        |      Joi.date()
-type: String      |      Joi.string()
-enum: [items]     |      Joi.any().only([items]);
-other types       |      Joi.any()
+ObjectId    |      Joi.objectId() (via [joi-objectid](https://www.npmjs.com/package/joi-objectid))
+Boolean     |      Joi.bool()
+Number      |      Joi.number()
+Date        |      Joi.date()
+String      |      Joi.string()
+types       |      Joi.any()
+
+Fields of type ``String`` that include an ``enum`` property result in the following joi validation:
+
+enum: [items] | Joi.any().only([items])
+
+rest-hapi generates joi validation models for create, read, and update events as well as association events with linking models.  By default these validation models include all the fields of the mongoose models and list them as optional.  However additional field properties can be included to customize the validation models.  Below is a list of currently supported field properties and their effect on the validation models.
+
+Field Property | validation model
+--- | ---
+required: true | field required on create
+requireOnRead: true | field required on read/response
+requireOnUpdate: true | field required on update
+allowOnRead: false | field excluded from read model
+allowOnUpdate: false | field excluded from update model
+allowOnUpdate: false | field excluded from create model
+queryable: false | field cannot be included as a query parameter
+exclude: true | field cannot be included in a response or as part of a query
 
 [Back to top](#readme-contents)
 
@@ -921,6 +930,7 @@ This project is still in its infancy, and there are many features I would still 
 - have built in ``created_at`` and ``updated_at`` fields for each model
 - support marking fields as ``duplicate`` i.e. any associated models referencing that model will duplicate those fields along with the reference Id. This could allow for a shallow embed that will return a list of reference ids with their "duplicate" values, and a full embed that will return the fully embedded references
 - support automatic logging of all operations via a ``eventLogs`` collection
+- support "soft" delete of mongo documents, i.e. documents are marked as "deleted" but remain in the db.
 - (LONG TERM) support mysql as well as mongodb
 
 [Back to top](#readme-contents)
