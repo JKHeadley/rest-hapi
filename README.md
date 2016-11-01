@@ -1,6 +1,8 @@
 # rest-hapi
 A RESTful API generator built around the [hapi](https://github.com/hapijs/hapi) framework and [mongoose](https://github.com/Automattic/mongoose) ODM.
 
+The project is intended to abstract the work involved in setting up API routes/validation/handlers/etc. for the purpose of rapid app development.
+
 ## Features
 
 * Automatic generation of CRUD endpoints with middleware support
