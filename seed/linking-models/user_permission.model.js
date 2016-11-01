@@ -8,8 +8,7 @@ module.exports = function () {
     Schema: {
       enabled: {
         type: Types.Boolean,
-        allowNull: false,
-        defaultValue: true
+        default: true
       }
     },
     modelName: "user_permission"

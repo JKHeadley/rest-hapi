@@ -8,31 +8,22 @@ module.exports = function (mongoose) {
   var Schema = new mongoose.Schema({
     email: {
       type: Types.String,
-      allowNull: false,
       unique: true
     },
     password: {
       type: Types.String,
-      allowNull: false,
       required: true,
-      // validate: {
-      //   len: [5, 64]
-      // },
       exclude: true,
-      allowOnUpdate: false,
+      allowOnUpdate: false
     },
     firstName: {
-      type: Types.String,
-      allowNull: true
+      type: Types.String
     },
     lastName: {
-      type: Types.String,
-      allowNull: true
+      type: Types.String
     },
     role: {
       type: Types.ObjectId,
-      allowNull: true,
-      queryable: true,
       ref: "role"
     },
     token: {
@@ -51,8 +42,7 @@ module.exports = function (mongoose) {
     },
     accountActivated: {
       type: Types.Boolean,
-      defaultValue: false,
-      allowNull: true
+      default: false
     }
   });
   

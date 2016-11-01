@@ -5,11 +5,10 @@ module.exports = function (mongoose) {
     name: {
       type: Types.String,
       enum: ["Account", "Admin", "SuperAdmin"],
-      allowNull: false
+      required: true
     },
     description: {
-      type: Types.String,
-      allowNull: true
+      type: Types.String
     }
   }); 
     

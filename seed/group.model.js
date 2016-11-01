@@ -4,12 +4,10 @@ module.exports = function (mongoose) {
   var Schema = new mongoose.Schema({
     name: {
       type: Types.String,
-      allowNull: false,
-      queryable: true
+      required: true
     },
     description: {
-      type: Types.String,
-      allowNull: true
+      type: Types.String
     }
   });
   
