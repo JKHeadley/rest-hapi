@@ -1,5 +1,5 @@
-# Rest Hapi
-A Restful API generator built around the Hapi framework and mongoose ODM.
+# rest-hapi
+A RESTful API generator built around the [hapi](https://github.com/hapijs/hapi) framework and [mongoose](https://github.com/Automattic/mongoose) ODM.
 
 ## Features
 
@@ -632,10 +632,10 @@ parameter: ``/group?$embed=users.title`` which could result in the following res
 [Back to top](#readme-contents)
 
 ## Validation
-Query validation in the Rest Hapi framework is implemented with [Joi](https://github.com/hapijs/joi).  
+Query validation in the rest-hapi framework is implemented with [Joi](https://github.com/hapijs/joi).  
 This includes validation of headers, query parameters, payloads, and responses.  Joi validation models
 are based primarily off of each model's field properties.  Below is a list of mongoose field properties 
-and their Joi equivalent within Rest Hapi:
+and their Joi equivalent within rest-hapi:
 
 - type: ObjectId    ::      Joi.objectId() (via [joi-objectid](https://www.npmjs.com/package/joi-objectid))
 - type: Boolean     ::      Joi.bool()
@@ -817,7 +817,7 @@ module.exports = function (mongoose) {
 [Back to top](#readme-contents)
 
 ## Token authentication
-The Rest Hapi framework supports built in token authentication for all generated endpoints given the following requirements are fulfilled:
+The rest-hapi framework supports built in token authentication for all generated endpoints given the following requirements are fulfilled:
 
 - A ``user`` model exists with at least the following properties:
 
