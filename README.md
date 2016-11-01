@@ -633,7 +633,7 @@ parameter: ``/group?$embed=users.title`` which could result in the following res
 [Back to top](#readme-contents)
 
 ## Validation
-Query validation in the rest-hapi framework is implemented with [joi](https://github.com/hapijs/joi).  
+Validation in the rest-hapi framework is implemented with [joi](https://github.com/hapijs/joi).  
 This includes validation of headers, query parameters, payloads, and responses.  joi validation models
 are based primarily off of each model's field properties.  Below is a list of mongoose schema types 
 and their joi equivalent within rest-hapi:
@@ -649,6 +649,7 @@ types       |      Joi.any()
 
 Fields of type ``String`` that include an ``enum`` property result in the following joi validation:
 
+Field Property | joi Validation
 --- | ---
 enum: [items] | Joi.any().only([items])
 
