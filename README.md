@@ -638,7 +638,7 @@ This includes validation of headers, query parameters, payloads, and responses. 
 are based primarily off of each model's field properties.  Below is a list of mongoose schema types 
 and their joi equivalent within rest-hapi:
 
-Schema Type | joi validation
+Schema Type | joi Validation
 --- | --- 
 ObjectId    |      Joi.objectId() (via [joi-objectid](https://www.npmjs.com/package/joi-objectid))
 Boolean     |      Joi.bool()
@@ -649,11 +649,13 @@ types       |      Joi.any()
 
 Fields of type ``String`` that include an ``enum`` property result in the following joi validation:
 
+--- | ---
 enum: [items] | Joi.any().only([items])
+
 
 rest-hapi generates joi validation models for create, read, and update events as well as association events with linking models.  By default these validation models include all the fields of the mongoose models and list them as optional.  However additional field properties can be included to customize the validation models.  Below is a list of currently supported field properties and their effect on the validation models.
 
-Field Property | validation model
+Field Property | Validation Model
 --- | ---
 required: true | field required on create
 requireOnRead: true | field required on read/response
