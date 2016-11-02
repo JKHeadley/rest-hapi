@@ -3,7 +3,7 @@ A RESTful API generator built around the [hapi](https://github.com/hapijs/hapi) 
 
 [![Build Status](https://travis-ci.org/JKHeadley/rest-hapi.svg?branch=master)](https://travis-ci.org/JKHeadley/rest-hapi)
 
-The project is intended to abstract the work involved in setting up API routes/validation/handlers/etc. for the purpose of rapid app development.  At the same time it provides a powerful combination of relational structure with NoSQL flexibility.
+rest-hapi is intended to abstract the work involved in setting up API routes/validation/handlers/etc. for the purpose of rapid app development.  At the same time it provides a powerful combination of relational structure with NoSQL flexibility.
 
 ## Features
 
