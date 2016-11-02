@@ -5,6 +5,4 @@ node_js:
 before_script:
   - npm install -g gulp
 script:
-  - gulp seed
   - gulp test
-  - gulp
