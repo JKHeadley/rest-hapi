@@ -1,7 +1,7 @@
 var Hapi = require('hapi'),
-  Inert = require('inert'),
-  Vision = require('vision'),
-  HapiSwagger = require('hapi-swagger');
+    Inert = require('inert'),
+    Vision = require('vision'),
+    HapiSwagger = require('hapi-swagger');
 var logging = require('loggin');
 var config = require('./config');
 var chalk = require('chalk');
@@ -11,7 +11,7 @@ var Q = require("q");
 
 var rootLogger = logging.getLogger(chalk.gray("app"));
 
-rootLogger.logLevel = "ERROR";
+rootLogger.logLevel = "NOTE";
 
 var logUtil = require('./utilities/log-util');
 
@@ -25,7 +25,7 @@ function appInit(){
   var config = require('./config');
 
   var mongoose = require('./components/mongoose-init')(logger, config);
-  
+
   var restHelperFactory = require('./utilities/rest-helper-factory');
 
   var generateModels = require('./models');
@@ -69,7 +69,7 @@ function appInit(){
               } else {
                 Log.error("User not found.");
 
-                callback("User not found.", false);
+                callback("Invalid token.", false);
               }
             }, function (error) {
               Log.error("Error finding user by token: %s", token);
@@ -81,35 +81,37 @@ function appInit(){
     }
 
     server.register([
-        Inert,
-        Vision,
-        {
-          register: HapiSwagger,
-          options: swaggerOptions
-        }],
-      function (err) {
+          Inert,
+          Vision,
+          {
+            register: HapiSwagger,
+            options: swaggerOptions
+          }],
+        function (err) {
 
-        var restHelper = restHelperFactory(logger, mongoose, server);
+          var restHelper = restHelperFactory(logger, mongoose, server);
 
-        for (var modelKey in models) {//EXPL: generate endpoints for all of the models
-          var model = models[modelKey];
-          restHelper.generateRoutes(server, model, {models:models})
-        }
-
-        //EXPL: register additional endpoints
-        if (models.user) {
-          require('./token/token.routes')(server, models, logger);
-        }
-
-        server.start(function (err) {
-          if (err) {
-            console.log('error', err);
+          for (var modelKey in models) {//EXPL: generate endpoints for all of the models
+            var model = models[modelKey];
+            restHelper.generateRoutes(server, model, {models:models})
           }
-          server.log('info', 'Server running at: ' + server.info.uri);
-        });
-      });
 
-    logUtil.logActionComplete(logger, "Server Initialized", server.info);
+          //EXPL: register additional endpoints
+          if (models.user) {
+            require('./token/token.routes')(server, models, logger);
+          }
+
+
+          server.start(function (err) {
+            if (err) {
+              console.log('error', err);
+            }
+
+            server.log('info', 'Server running at: ' + server.info.uri);
+
+            logUtil.logActionComplete(logger, "Server Initialized", server.info);
+          });
+        });
   });
 
 
