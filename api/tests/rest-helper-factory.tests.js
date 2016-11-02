@@ -1654,10 +1654,12 @@ test('rest-helper-factory.generateFindEndpoint', function(t) {
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
     var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});
     var joiStub = require('joi');
-    joiStub.objectId = function () {
-      return {
-        required: function () {
-          return "TEST";
+    var joiObjectIdStub = function() {
+      return function () {
+        return {
+          required: function () {
+            return "TEST";
+          }
         }
       }
     };
@@ -1665,7 +1667,8 @@ test('rest-helper-factory.generateFindEndpoint', function(t) {
       './handler-helper-factory': handlerHelperStubWrapper,
       './query-helper': queryHelperStub,
       './joi-mongoose-helper': joiMongooseHelperStub,
-      'joi': joiStub
+      'joi': joiStub,
+      'joi-objectid': joiObjectIdStub
     })(Log, mongoose, server);
 
     t.plan(1);
@@ -4150,10 +4153,12 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
     var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiAssociationModel', function(){return Joi.any()});
     var joiStub = require('joi');
-    joiStub.objectId = function () {
-      return {
-        required: function () {
-          return "TEST";
+    var joiObjectIdStub = function() {
+      return function () {
+        return {
+          required: function () {
+            return "TEST";
+          }
         }
       }
     };
@@ -4161,7 +4166,8 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
       './handler-helper-factory': handlerHelperStubWrapper,
       './query-helper': queryHelperStub,
       './joi-mongoose-helper': joiMongooseHelperStub,
-      'joi': joiStub
+      'joi': joiStub,
+      'joi-objectid': joiObjectIdStub
     })(Log, mongoose, server);
 
     t.plan(1);
@@ -4881,10 +4887,12 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
     var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});
     var joiStub = require('joi');
-    joiStub.objectId = function () {
-      return {
-        required: function () {
-          return "TEST";
+    var joiObjectIdStub = function() {
+      return function () {
+        return {
+          required: function () {
+            return "TEST";
+          }
         }
       }
     };
@@ -4892,7 +4900,8 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
       './handler-helper-factory': handlerHelperStubWrapper,
       './query-helper': queryHelperStub,
       './joi-mongoose-helper': joiMongooseHelperStub,
-      'joi': joiStub
+      'joi': joiStub,
+      'joi-objectid': joiObjectIdStub
     })(Log, mongoose, server);
 
     t.plan(1);
@@ -5589,14 +5598,18 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
     var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});
     joiMongooseHelperStub.generateJoiAssociationModel = function(){return Joi.object().unknown()};
     var joiStub = require('joi');
-    joiStub.objectId = function() {
-      return Joi.any().valid("objectId");
+
+    var joiObjectIdStub = function() {
+      return function () {
+        return Joi.any().valid("objectId");
+      }
     };
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
       './handler-helper-factory': handlerHelperStubWrapper,
       './query-helper': queryHelperStub,
       './joi-mongoose-helper': joiMongooseHelperStub,
-      'joi': joiStub
+      'joi': joiStub,
+      'joi-objectid': joiObjectIdStub
     })(Log, mongoose, server);
 
     t.plan(2);
@@ -5656,17 +5669,21 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
     var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});
     var joiStub = require('joi');
-    joiStub.objectId = function() {
-      return Joi.any().valid("objectId");
+
+    var joiObjectIdStub = function() {
+      return function () {
+        return Joi.any().valid("objectId");
+      }
     };
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
       './handler-helper-factory': handlerHelperStubWrapper,
       './query-helper': queryHelperStub,
       './joi-mongoose-helper': joiMongooseHelperStub,
-      'joi': joiStub
+      'joi': joiStub,
+      'joi-objectid': joiObjectIdStub
     })(Log, mongoose, server);
 
-    t.plan(1);
+    t.plan(3);
 
     var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
     userSchema.statics = {
@@ -5690,8 +5707,10 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
 
     //<editor-fold desc="Assert">
     var serverObject = server.route.args[0][0];
-    // Log.debug(JSON.stringify(serverObject));
-    t.deepEqual(serverObject.config.validate.params, params, "params validated");
+    var validParam = serverObject.config.validate.params.ownerId;
+    t.ok(Joi.validate("objectId", validParam).error === null, "params accept valid input");
+    t.ok(Joi.validate("object", validParam).error !== null, "params reject invalid input");
+    t.ok(Joi.validate("", validParam).error !== null, "params require input");
     //</editor-fold>
 
 
