@@ -133,12 +133,11 @@ module.exports = function (mongoose) {
   var Schema = new mongoose.Schema({
     email: {
       type: Types.String,
-      allowNull: false,
+      required: true,
       unique: true
     },
     password: {
       type: Types.String,
-      allowNull: false,
       required: true,
       exclude: true,
       allowOnUpdate: false
@@ -197,12 +196,11 @@ module.exports = function (mongoose) {
   var Schema = new mongoose.Schema({
     email: {
       type: Types.String,
-      allowNull: false,
+      required: true,
       unique: true
     },
     password: {
       type: Types.String,
-      allowNull: false,
       required: true,
       exclude: true,
       allowOnUpdate: false
@@ -238,7 +236,7 @@ module.exports = function (mongoose) {
   var Schema = new mongoose.Schema({
     name: {
       type: Types.String,
-      allowNull: false
+      required: true
     },
     breed: {
       type: Types.String
@@ -282,12 +280,11 @@ module.exports = function (mongoose) {
   var Schema = new mongoose.Schema({
     email: {
       type: Types.String,
-      allowNull: false,
+      required: true,
       unique: true
     },
     password: {
       type: Types.String,
-      allowNull: false,
       required: true,
       exclude: true,
       allowOnUpdate: false
@@ -324,8 +321,8 @@ module.exports = function (mongoose) {
   var Schema = new mongoose.Schema({
     name: {
       type: Types.String,
-      enum: ["Account", "Admin", "SuperAdmin"],
-      allowNull: false
+      required: true,
+      enum: ["Account", "Admin", "SuperAdmin"]
     },
     description: {
       type: Types.String
@@ -379,12 +376,11 @@ module.exports = function (mongoose) {
   var Schema = new mongoose.Schema({
     email: {
       type: Types.String,
-      allowNull: false,
+      required: true,
       unique: true
     },
     password: {
       type: Types.String,
-      allowNull: false,
       required: true,
       exclude: true,
       allowOnUpdate: false
@@ -417,7 +413,7 @@ module.exports = function (mongoose) {
   var Schema = new mongoose.Schema({
     name: {
       type: Types.String,
-      allowNull: false
+      required: true,
     },
     description: {
       type: Types.String
@@ -482,12 +478,11 @@ module.exports = function (mongoose) {
   var Schema = new mongoose.Schema({
     email: {
       type: Types.String,
-      allowNull: false,
+      required: true,
       unique: true
     },
     password: {
       type: Types.String,
-      allowNull: false,
       required: true,
       exclude: true,
       allowOnUpdate: false
@@ -549,12 +544,11 @@ module.exports = function (mongoose) {
   var Schema = new mongoose.Schema({
     email: {
       type: Types.String,
-      allowNull: false,
+      required: true,
       unique: true
     },
     password: {
       type: Types.String,
-      allowNull: false,
       required: true,
       exclude: true,
       allowOnUpdate: false
@@ -765,12 +759,11 @@ module.exports = function (mongoose) {
   var Schema = new mongoose.Schema({
     email: {
       type: Types.String,
-      allowNull: false,
+      required: true,
       unique: true
     },
     password: {
       type: Types.String,
-      allowNull: false,
       required: true,
       exclude: true,
       allowOnUpdate: false
@@ -818,12 +811,11 @@ module.exports = function (mongoose) {
   var Schema = new mongoose.Schema({
     email: {
       type: Types.String,
-      allowNull: false,
+      required: true,
       unique: true
     },
     password: {
       type: Types.String,
-      allowNull: false,
       required: true,
       exclude: true,
       allowOnUpdate: false
@@ -914,12 +906,12 @@ module.exports = function (mongoose) {
   var Schema = new mongoose.Schema({
     email: {
       type: Types.String,
-      allowNull: false,
+      required: true,
       unique: true
     },
     password: {
       type: Types.String,
-      allowNull: false,
+      required: true,
       exclude: true,
       allowOnUpdate: false
     },
