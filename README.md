@@ -67,6 +67,9 @@ or just
 ```
 $ gulp
 ```
+Then point your browser to [http://localhost:8124/](http://localhost:8124/) to view the swagger docs.
+
+[gulp-nodemon](https://www.npmjs.com/package/gulp-nodemon) watches for changes in server code and restarts the app automatically.
 
 [Back to top](#readme-contents)
 
@@ -99,7 +102,7 @@ $ gulp test
 ## Swagger documentation
 
 Swagger documentation is automatically generated for all endpoints and can be viewed by pointing a browser
-at the server URL.  By default this will be ``http://localhost:8124/``.  The swagger docs provide quick 
+at the server URL.  By default this will be [http://localhost:8124/](http://localhost:8124/).  The swagger docs provide quick 
 access to testing your endpoints along with model schema descriptions and query options.
 
 [Back to top](#readme-contents)
