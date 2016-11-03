@@ -56,6 +56,16 @@ $ git clone https://github.com/JKHeadley/rest-hapi.git
 $ cd rest-hapi
 $ npm install
 ```
+### First time setup/Demo
+**WARNING**: This will clear all data in the following MongoDB collections (in the db defined in ``config.local.js``) if they exist: ``users``, ``roles``.
+
+If you would like to seed your database with some demo models/data, run:
+```
+$ gulp seed
+```
+NOTE: The password for all seed users is ``1234``.
+
+You can use these models as templates for your models or delete them later if you wish.
 
 [Back to top](#readme-contents)
 
@@ -79,17 +89,6 @@ Edit the config file relevant to your environment (local, development, productio
 file is ```/api/config.local.js```.  Here you can set the server port, mongodb URI, and authentication.
 
 [Back to top](#rest-hapi)
-
-## Seeding the database
-**WARNING**: This will clear all data in the following MongoDB collections (in the db defined in ``config.local``) if they exist: ``users``, ``roles``.
-
-If you would like to seed your database with some demo models/data, run:
-```
-$ gulp seed
-```
-NOTE: The password for all seed users is ``1234``.
-
-[Back to top](#readme-contents)
 
 # Testing
 To run tests:
