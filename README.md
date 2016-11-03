@@ -3,7 +3,7 @@ A RESTful API generator built around the [hapi](https://github.com/hapijs/hapi) 
 
 [![Build Status](https://travis-ci.org/JKHeadley/rest-hapi.svg?branch=master)](https://travis-ci.org/JKHeadley/rest-hapi)
 
-rest-hapi is a framework intended to abstract the work involved in setting up API routes/validation/handlers/etc. for the purpose of rapid app development.  At the same time it provides a powerful combination of [relational](#associations) structure with [NoSQL](#creating-endpoints) flexibility.
+rest-hapi is a framework intended to abstract the work involved in setting up API routes/validation/handlers/etc. for the purpose of rapid app development.  At the same time it provides a powerful combination of [relational](#associations) structure with [NoSQL](#creating-endpoints) flexibility.  You define your models and the rest is done for you!  Have your own API server up and running in minutes!
 
 ## Features
 
