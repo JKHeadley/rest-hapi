@@ -26,7 +26,6 @@ http://ec2-35-162-67-113.us-west-2.compute.amazonaws.com:8124/
 - [Installation](#installation)
 - [Running the app](#running-the-app)
 - [Configuration](#configuration)
-- [Seeding the database](#seeding-the-database)
 - [Testing](#testing)
 - [Swagger documentation](#swagger-documentation)
 - [Creating endpoints](#creating-endpoints)
