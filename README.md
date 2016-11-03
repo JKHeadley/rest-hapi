@@ -44,7 +44,7 @@ http://ec2-35-162-67-113.us-west-2.compute.amazonaws.com:8124/
 
 ## Requirements
 
-You need ``Node.js`` installed and you'll need ``MongoDB`` installed and running.  You will also need the ``gulp`` node package installed.
+You need [Node.js](https://nodejs.org/en/) installed and you'll need [MongoDB](https://docs.mongodb.com/manual/installation/) installed and running.  You will also need the [gulp](https://www.npmjs.com/package/gulp) node package installed.
 
 [Back to top](#readme-contents)
 
