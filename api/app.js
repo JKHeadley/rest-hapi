@@ -11,7 +11,7 @@ var Q = require("q");
 
 var rootLogger = logging.getLogger(chalk.gray("app"));
 
-rootLogger.logLevel = "NOTE";
+rootLogger.logLevel = config.loglevel;
 
 var logUtil = require('./utilities/log-util');
 
