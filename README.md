@@ -19,7 +19,7 @@ rest-hapi is a framework intended to abstract the work involved in setting up AP
 
 View the swagger docs for the live demo:
 
-http://ec2-35-162-67-113.us-west-2.compute.amazonaws.com:8124/
+http://ec2-35-164-131-1.us-west-2.compute.amazonaws.com:8124
 
 ## Readme contents
 - [Requirements](#requirements)
