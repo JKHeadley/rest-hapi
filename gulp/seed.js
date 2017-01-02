@@ -2,16 +2,17 @@ var gulp = require('gulp');
 var exit = require('gulp-exit');
 var Q = require('q');
 var mongoose = require('mongoose');
-var passwordUtility = require('../api/utilities/password-helper');
-var config = require('../api/config.local');
+// var passwordUtility = require('../api/utilities/password-helper');
+var config = require('../config');
 
 gulp.task('seed', ['models'], function() {
 
     mongoose.connect(config.mongo.URI);
 
-    var generateModels = require('../api/models');
+    var generateModels = require('../utilities/model-generator');
 
-    var hashedPassword = passwordUtility.hash_password('1234');
+    // var hashedPassword = passwordUtility.hash_password('1234');
+    var hashedPassword = '1234';
 
     return generateModels(mongoose).then(function(models) {
 
@@ -75,5 +76,5 @@ function dropCollections(models) {
 
 gulp.task('models', function() {
     return gulp.src('./seed/**/*.*')
-    .pipe(gulp.dest('api/models'));
+    .pipe(gulp.dest(__dirname + '/../../' + config.modelDirectory));
 });

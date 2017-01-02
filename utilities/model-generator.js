@@ -3,20 +3,29 @@ var fs = require('fs');
 var path = require('path');
 var Q = require('q');
 
-module.exports = function (mongoose) {
+module.exports = function (mongoose, Log, config) {
   var models = {};
   var schemas = {};
   var deferred = Q.defer();
 
-  fs.readdir(__dirname + '/models', function(err, files) {
+  fs.readdir(__dirname + '/../../' + config.modelDirectory, function(err, files) {
     if (err) {
-      deferred.reject(err);
+      if (err.message.includes('no such file')) {
+        Log.error(err);
+        deferred.reject("The model directory provided is either empty or does not exist. " +
+            "Try setting the 'modelDirectory' property of the config file.");
+      }
+      else {
+        deferred.reject(err);
+      }
+      return;
     }
+
     files.forEach(function(file) {//EXPL: Import all the model schemas
       var ext = path.extname(file);
       if (ext === '.js') {
         var modelName = path.basename(file,'.js');
-        var schema = require(__dirname + '/models/' + modelName)(mongoose);
+        var schema = require(__dirname + '/../../' + config.modelDirectory + '/' + modelName)(mongoose);
         schemas[schema.statics.collectionName] = schema;
       }
     });
@@ -40,6 +49,6 @@ module.exports = function (mongoose) {
 
     deferred.resolve(models);
   });
-  
+
   return deferred.promise;
 };

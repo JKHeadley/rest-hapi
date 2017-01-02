@@ -9,6 +9,7 @@ var chalk = require('chalk');
 var config = require("../config");
 
 //TODO: remove "options"?
+//TODO: allow config var to turn off query validation (helps use swagger docs)
 
 module.exports = function (logger, mongoose, server) {
   var logger = logger.bind(chalk.gray('rest-helper-factory'));
@@ -178,8 +179,7 @@ module.exports = function (logger, mongoose, server) {
           tags: ['api', collectionName],
           cors: true,
           validate: {
-            query: queryValidation,
-            // query: Joi.any(),
+            query: config.enableQueryValidation ? queryValidation : Joi.any(),
             headers: headersValidation
           },
           plugins: {
@@ -197,7 +197,8 @@ module.exports = function (logger, mongoose, server) {
             }
           },
           response: {
-            schema: Joi.array().items(readModel)
+            schema: config.enableResponseValidation ? Joi.array().items(readModel) : Joi.array().items(Joi.any())
+            // schema: Joi.array().items(readModel)
             // schema: Joi.array().items(readModel || Joi.object().unknown().optional())
             // schema: Joi.array().items(Joi.any())//TODO: proper validation
           }
@@ -239,9 +240,10 @@ module.exports = function (logger, mongoose, server) {
         .description('A list of basic fields to be included in each resource. Valid values include: ' + readableFields);
       }
 
-      if (model.routeOptions && model.routeOptions.associations) {
+      var associations = model.routeOptions ? model.routeOptions.associations : null;
+      if (associations) {
         queryValidation.$embed = Joi.alternatives().try(Joi.string(), Joi.array().items(Joi.string()))
-        .description('A set of complex object properties to populate. Valid values include ' + Object.keys({test:{}}));
+        .description('A set of complex object properties to populate. Valid values include ' + Object.keys(associations));
       }
 
       var readModel = model.readModel || joiMongooseHelper.generateJoiReadModel(model, Log);
@@ -256,7 +258,7 @@ module.exports = function (logger, mongoose, server) {
           tags: ['api', collectionName],
           cors: true,
           validate: {
-            query: queryValidation,
+            query: config.enableQueryValidation ? queryValidation : Joi.any(),
             params: {
               _id: Joi.objectId().required()
             },
@@ -278,8 +280,7 @@ module.exports = function (logger, mongoose, server) {
             }
           },
           response: {
-            schema: readModel
-            // schema: Joi.any()
+            schema: config.enableResponseValidation ? readModel : Joi.any()
           }
         }
       });
@@ -326,7 +327,7 @@ module.exports = function (logger, mongoose, server) {
           description: 'Create a new ' + collectionName,
           tags: ['api', collectionName],
           validate: {
-            payload: createModel,
+            payload: config.enablePayloadValidation ? createModel : Joi.any(),
             headers: headersValidation
           },
           plugins: {
@@ -344,8 +345,7 @@ module.exports = function (logger, mongoose, server) {
             }
           },
           response: {
-            schema: readModel
-            // schema: Joi.any()
+            schema: config.enableResponseValidation ? readModel : Joi.any()
           }
         }
       });
@@ -460,7 +460,7 @@ module.exports = function (logger, mongoose, server) {
             params: {
               _id: Joi.objectId().required()
             },
-            payload: updateModel,
+            payload: config.enablePayloadValidation ? updateModel : Joi.any(),
             headers: headersValidation
           },
           plugins: {
@@ -479,8 +479,7 @@ module.exports = function (logger, mongoose, server) {
             }
           },
           response: {
-            schema: readModel
-            // Joi.any();
+            schema: config.enableResponseValidation ? readModel : Joi.any()
           }
         }
       });
@@ -537,7 +536,7 @@ module.exports = function (logger, mongoose, server) {
               ownerId: Joi.objectId().required(),
               childId: Joi.objectId().required()
             },
-            payload: payloadValidation,
+            payload: config.enablePayloadValidation ? payloadValidation : Joi.any(),
             headers: headersValidation
           },
           plugins: {
@@ -676,7 +675,7 @@ module.exports = function (logger, mongoose, server) {
             params: {
               ownerId: Joi.objectId().required()
             },
-            payload: payloadValidation,
+            payload: config.enablePayloadValidation ? payloadValidation : Joi.any(),
             headers: headersValidation
           },
           plugins: {
@@ -776,7 +775,7 @@ module.exports = function (logger, mongoose, server) {
           description: 'Gets all of the ' + associationName + ' for a ' + ownerModelName,
           tags: ['api', associationName, ownerModelName],
           validate: {
-            query: queryValidation,
+            query: config.enableQueryValidation ? queryValidation : Joi.any(),
             params: {
               ownerId: Joi.objectId().required()
             },
@@ -795,7 +794,8 @@ module.exports = function (logger, mongoose, server) {
             }
           },
           response: {
-            schema: Joi.array().items(readModel)
+            schema: config.enableResponseValidation ? Joi.array().items(readModel) : Joi.array().items(Joi.any())
+            // schema: Joi.array().items(readModel)
             // schema: Joi.array().items(readModel || Joi.object().unknown().optional())
             // schema: Joi.array().items(Joi.any())//TODO: proper validation
           }

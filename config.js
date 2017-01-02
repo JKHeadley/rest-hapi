@@ -8,12 +8,14 @@ config.mongo = {};
 /**
  * Your app name goes here
  */
-config.app = "rest_hapi";
+config.app = "rest-hapi-app";
+
+config.modelDirectory = 'models';
 
 /**
  * Running the local environment
  */
-config.apiVersion = "development";
+config.apiVersion = "local";
 
 /**
  * Server settings:
@@ -31,9 +33,21 @@ config.mongo.URI = 'mongodb://localhost/rest_hapi';
  * Authentication options:
  * - false (no authentication, default)
  * - "token" (token authentication)
+ * - "jwt" (token authentication)
  * @type {boolean}
  */
 config.auth = false;
+
+/**
+ * Validation options:
+ * default: true
+ * NOTE: It is useful to disable query validation while testing with the hapi-swagger-docs
+ *       as long as you open the docs with validation enabled first
+ * @type {boolean}
+ */
+config.enableQueryValidation = true;
+config.enablePayloadValidation = true;
+config.enableResponseValidation = true;
 
 /**
  * Log level options:
@@ -46,6 +60,6 @@ config.auth = false;
  * - ERROR application business logic error condition
  * - FATAL system error condition
  */
-config.loglevel = "LOG";
+config.loglevel = "DEBUG";
 
 module.exports = config;

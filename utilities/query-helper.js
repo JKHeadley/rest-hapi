@@ -60,6 +60,8 @@ module.exports = {
     // [email]=test@user.com&[firstName]=test2@user.com&[firstName]=test4@user.com&[age][gt]=15&[age][lt]=30
 
 
+    delete query[""]; //EXPL: hack due to bug in hapi-swagger-docs
+
     // var queryableFields = this.getQueryableFields(model, Log);
 
     mongooseQuery = this.setSkip(query, mongooseQuery, Log);
@@ -478,7 +480,7 @@ module.exports = {
   populateEmbeddedDocs: function (query, mongooseQuery, attributesFilter, associations, Log) {
     if (query.$embed) {
       if (!Array.isArray(query.$embed)) {
-        query.$embed = [query.$embed];
+        query.$embed = query.$embed.split(",");
       }
       query.$embed.forEach(function(embed) {
         // // Log.debug("query embed:", embed);
@@ -533,7 +535,7 @@ module.exports = {
 
     if (query.$select) {
       if (!Array.isArray(query.$select)) {
-        query.$select = [query.$select];
+        query.$select = query.$select.split(",");
       }
       fieldNames = query.$select;
     } else {

@@ -15,7 +15,7 @@ var Joi = require('joi');
 var fs = require('fs');
 
 //EXPL: Temporarily create config file for testing.
-fs.createReadStream(__dirname + '/../config.local.js').pipe(fs.createWriteStream(__dirname + '/../config.js'));
+// fs.createReadStream(__dirname + '/../config.js').pipe(fs.createWriteStream(__dirname + '/../config.js'));
 
 test('rest-helper-factory exists and has expected members', function (t) {
   //<editor-fold desc="Arrange">
@@ -6829,8 +6829,8 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
   t.end();
 });
 
-test('remove config', function(t) {
-  fs.unlinkSync(__dirname + '/../config.js');
-  t.end();
-});
+// test('remove config', function(t) {
+//   fs.unlinkSync(__dirname + '/../config.js');
+//   t.end();
+// });
 

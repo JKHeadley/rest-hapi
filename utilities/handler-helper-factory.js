@@ -158,7 +158,12 @@ function generateListHandler(model, options, Log) {
               for (var associationKey in associations) {
                 var association = associations[associationKey];
                 if (association.type === "ONE_MANY" && data[associationKey]) {//EXPL: we have to manually populate the return value for virtual (e.g. ONE_MANY) associations
-                  result[associationKey] = data[associationKey].toJSON();
+                  if (data[associationKey].toJSON) {//TODO: look into .toJSON and see why it appears sometimes and not other times
+                    result[associationKey] = data[associationKey].toJSON();
+                  }
+                  else {
+                    result[associationKey] = data[associationKey];
+                  }
                 }
               }
             }
@@ -722,6 +727,7 @@ function setAssociation(request, server, ownerModel, ownerObject, childModel, ch
     if (childObject) {
       var promise = {};
       var association = ownerModel.routeOptions.associations[associationName];
+      var extraFields = false;
       if (association.type === "ONE_MANY") {//EXPL: one-many associations are virtual, so only update the child reference
         childObject[association.foreignField] = ownerObject._id;
         promise = childObject.save();
@@ -729,16 +735,18 @@ function setAssociation(request, server, ownerModel, ownerObject, childModel, ch
       else if (association.type === "MANY_MANY") {
         if (typeof request.payload[0] === 'string' || request.payload[0] instanceof String) {//EXPL: the payload is an array of Ids. No extra fields
           payload = {};
+
+          extraFields = false;
         }
         else {
           payload = payload.filter(function(object) {//EXPL: the payload contains extra fields
             return object.childId === childObject._id.toString();
           });
 
-          Log.debug(childObject);
-
           payload = payload[0];
           delete payload.childId;
+
+          extraFields = true;
         }
         payload[childModel.modelName] = childObject._id;
 
@@ -752,7 +760,7 @@ function setAssociation(request, server, ownerModel, ownerObject, childModel, ch
         if (duplicateIndex < 0) {//EXPL: if the association doesn't already exist, create it, otherwise update the extra fields
           ownerObject[associationName].push(payload);
         }
-        else {
+        else if (extraFields) {//EXPL: only update if there are extra fields TODO: reference MANY_MANY bug where updating association that's just an id (i.e. no extra fields) causes an error and reference this as the fix
           payload._id = ownerObject[associationName][duplicateIndex]._id;//EXPL: retain the association instance id for consistency
           ownerObject[associationName][duplicateIndex] = payload;
         }
@@ -766,11 +774,15 @@ function setAssociation(request, server, ownerModel, ownerObject, childModel, ch
         var childAssociations = childModel.routeOptions.associations;
         for (var childAssociationKey in childAssociations) {
           var association = childAssociations[childAssociationKey];
-          if (association.model === ownerModel.modelName) {
+          if (association.model === ownerModel.modelName && association.type === "MANY_MANY") {//TODO: Add issue referencing a conflict when a model has two associations of the same model and one is a MANY_MANY, and reference this change as the fix
             childAssociation = association;
           }
         }
         var childAssociationName = childAssociation.include.as;
+
+        if (!childObject[childAssociationName]) {
+          throw childAssociationName + " association does not exist.";
+        }
 
         duplicate = childObject[childAssociationName].filter(function (associationObject) {
           return associationObject[ownerModel.modelName].toString() === ownerObject._id.toString();
