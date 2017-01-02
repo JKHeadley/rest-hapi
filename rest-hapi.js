@@ -10,12 +10,18 @@ const _ = require('lodash'),
     chalk = require('chalk'),
     Q = require("q"),
     restHelperFactory = require('./utilities/rest-helper-factory'),
-    generateModels = require('./utilities/model-generator'),
+    modelGenerator = require('./utilities/model-generator'),
     defaultConfig = require('./config');
+
+let modelsGenerated = false;
+let globalModels = {};
 
 module.exports = {
     config: {},
     register: register,
+    generateModels: generateModels,
+    logger: {},
+    logUtil: logUtil
 };
 
 function register(server, options, next) {
@@ -24,17 +30,28 @@ function register(server, options, next) {
 
     extend(true, config, module.exports.config);
 
-    let rootLogger = logging.getLogger(chalk.gray("app"));
+    let rootLogger = logging.getLogger(chalk.gray("api"));
 
     rootLogger.logLevel = config.loglevel;
 
     var logger = logUtil.bindHelper(rootLogger, 'appInit()');
 
-    let mongoose = require('./components/mongoose-init')(logger, config);
+    module.exports.logger = logger;
+
+    let mongoose = require('./components/mongoose-init')(options.mongoose, logger, config);
 
     logUtil.logActionStart(logger, "Initializing Server");
 
-    generateModels(mongoose, logger, config)
+    let promise = {};
+
+    if (modelsGenerated) {
+        promise = Q.when(globalModels);
+    }
+    else {
+        promise = modelGenerator(mongoose, logger, config);
+    }
+
+    promise
         .then(function(models) {
 
             let swaggerOptions = {
@@ -70,6 +87,33 @@ function register(server, options, next) {
             next(error);
         })
 }
+
+/**
+ * Allows the user to pre-generate the models before the routes in case the models are needed
+ * in other plugins (ex: auth plugin might require user model)
+ * @param mongoose
+ * @returns {*}
+ */
+function generateModels(mongoose) {
+    modelsGenerated = true;
+
+    let config = defaultConfig;
+
+    extend(true, config, module.exports.config);
+
+    let rootLogger = logging.getLogger(chalk.gray("app"));
+
+    rootLogger.logLevel = config.loglevel;
+
+    var logger = logUtil.bindHelper(rootLogger, 'appInit()');
+
+    return modelGenerator(mongoose, logger, config)
+        .then(function(models) {
+            globalModels = models;
+            return models;
+        });
+}
+
 
 register.attributes = {
     name: 'rest-hapi',

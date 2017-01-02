@@ -1,4 +1,6 @@
-var modelHelper = require('./utilities/model-helper');
+'use strict';
+
+var modelHelper = require('./model-helper');
 var fs = require('fs');
 var path = require('path');
 var Q = require('q');
@@ -7,8 +9,16 @@ module.exports = function (mongoose, Log, config) {
   var models = {};
   var schemas = {};
   var deferred = Q.defer();
+  let modelPath = "";
 
-  fs.readdir(__dirname + '/../../' + config.modelDirectory, function(err, files) {
+  if (config.absoluteModelPath === true) {
+    modelPath = config.modelPath;
+  }
+  else {
+    modelPath = __dirname + '/../../' + config.modelPath;
+  }
+
+  fs.readdir(modelPath, function(err, files) {
     if (err) {
       if (err.message.includes('no such file')) {
         Log.error(err);
@@ -25,7 +35,7 @@ module.exports = function (mongoose, Log, config) {
       var ext = path.extname(file);
       if (ext === '.js') {
         var modelName = path.basename(file,'.js');
-        var schema = require(__dirname + '/../../' + config.modelDirectory + '/' + modelName)(mongoose);
+        var schema = require(modelPath + '/' + modelName)(mongoose);
         schemas[schema.statics.collectionName] = schema;
       }
     });
@@ -34,12 +44,12 @@ module.exports = function (mongoose, Log, config) {
 
     for (var schemaKey in schemas) {
       var schema = schemas[schemaKey];
-      extendedSchemas[schemaKey] = modelHelper.extendSchemaAssociations(schema);
+      extendedSchemas[schemaKey] = modelHelper.extendSchemaAssociations(schema, mongoose);
     }
 
     for (var schemaKey in extendedSchemas) {//EXPL: Create models with final schemas
       var schema = extendedSchemas[schemaKey];
-      models[schemaKey] = modelHelper.createModel(schema);
+      models[schemaKey] = modelHelper.createModel(schema, mongoose);
     }
 
     for (var modelKey in models) {//EXPL: Populate internal model associations

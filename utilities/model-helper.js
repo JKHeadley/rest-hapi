@@ -1,4 +1,4 @@
-var mongoose = require("mongoose");
+'use strict';
 
 //TODO: correctly label "model" and "schema" files and objects throughout project
 //TODO: add "updated_at" and "created_at" to all resources
@@ -29,7 +29,7 @@ module.exports = {
    * @param Schema: A mongoose schema object.
    * @returns {*}: The resulting mongoose model.
    */
-  createModel: function(Schema) {
+  createModel: function(Schema, mongoose) {
     return mongoose.model(Schema.statics.collectionName, Schema);
   },
 
@@ -38,7 +38,7 @@ module.exports = {
    * @param Schema: A mongoose schema.
    * @returns {*}: The updated schema.
    */
-  extendSchemaAssociations: function (Schema) {
+  extendSchemaAssociations: function (Schema, mongoose) {
     if(Schema.statics.routeOptions){
       for (var associationKey in Schema.statics.routeOptions.associations) {
         var association = Schema.statics.routeOptions.associations[associationKey];

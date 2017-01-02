@@ -10,7 +10,9 @@ config.mongo = {};
  */
 config.app = "rest-hapi-app";
 
-config.modelDirectory = 'models';
+config.absoluteModelPath = false;
+
+config.modelPath = 'models';
 
 /**
  * Running the local environment

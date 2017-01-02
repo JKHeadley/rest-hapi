@@ -2,9 +2,9 @@ var chalk = require('chalk');
 var logUtil = require('../utilities/log-util');
 var _ = require('lodash');
 
-var mongoose = require('mongoose');
+// var mongoose = require('mongoose');
 
-module.exports = function (logger, config) {
+module.exports = function (mongoose, logger, config) {
   mongoose.Promise = require('q').Promise;
   
   logger = logUtil.bindHelper(logger, "mongoose");
