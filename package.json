@@ -35,13 +35,11 @@
   },
   "homepage": "https://github.com/JKHeadley/rest-hapi#readme",
   "dependencies": {
-    "blue-tape": "^1.0.0",
     "boom": "^2.9.0",
     "chalk": "*",
     "extend": "^3.0.0",
     "gulp": "^3.9.1",
     "gulp-exit": "0.0.2",
-    "gulp-tape": "latest",
     "hapi": "^15.2.0",
     "hapi-swagger": "^2.2.4",
     "inert": "^3.1.0",
@@ -51,17 +49,19 @@
     "lodash": "~3.10.1",
     "loggin": "^3.0.1",
     "mongoose": "^4.6.3",
-    "proxyquire": "^1.7.10",
     "q": "^1.4.1",
     "qs": "^6.2.1",
     "require-dir": "~0.1.0",
-    "rewire": "^2.5.2",
-    "sinon": "^1.17.6",
-    "tap-colorize": "latest",
-    "tape": "latest",
     "vision": "^3.0.0"
   },
   "devDependencies": {
+    "proxyquire": "^1.7.10",
+    "rewire": "^2.5.2",
+    "sinon": "^1.17.6",
+    "tap-colorize": "latest",
+    "gulp-tape": "latest",
+    "tape": "latest",
+    "blue-tape": "^1.0.0",
     "mkdirp": "0.5.1",
     "rmdir": "^1.2.0"
   }
