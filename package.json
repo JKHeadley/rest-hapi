@@ -53,6 +53,7 @@
     "qs": "^6.2.1",
     "require-dir": "~0.1.0",
     "vision": "^3.0.0",
+    "tape": "latest",
     "tap-colorize": "latest",
     "gulp-tape": "latest"
   },
@@ -60,7 +61,6 @@
     "proxyquire": "^1.7.10",
     "rewire": "^2.5.2",
     "sinon": "^1.17.6",
-    "tape": "latest",
     "blue-tape": "^1.0.0",
     "mkdirp": "0.5.1",
     "rmdir": "^1.2.0"
