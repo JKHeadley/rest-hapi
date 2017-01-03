@@ -3,6 +3,9 @@
   "version": "0.1.12",
   "description": "A RESTful API generator for hapi",
   "main": "rest-hapi.js",
+  "bin": {
+    "rest-hapi-seed": "./rest-hapi-seed.js"
+  },
   "engines": {
     "node": "5.0.0",
     "npm": "3.8.1"
