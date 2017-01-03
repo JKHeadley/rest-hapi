@@ -42,7 +42,7 @@ test('model-helper.createModel', function(t) {
     //</editor-fold>
 
     //<editor-fold desc="Act">
-    var result = modelHelper.createModel(Schema);
+    var result = modelHelper.createModel(Schema, mongooseStub);
     //</editor-fold>
 
     //<editor-fold desc="Assert">
@@ -87,7 +87,7 @@ test('model-helper.extendSchemaAssociations', function(t) {
     //</editor-fold>
 
     //<editor-fold desc="Act">
-    modelHelper.extendSchemaAssociations(userSchema);
+    modelHelper.extendSchemaAssociations(userSchema, mongoose, "testPath");
     //</editor-fold>
 
     //<editor-fold desc="Assert">
@@ -96,7 +96,7 @@ test('model-helper.extendSchemaAssociations', function(t) {
     //</editor-fold>
   });
 
-  t.test('model-helper.extendSchemaAssociations calls uses linkingModel to extend schema if it exists.', function (t) {
+  t.test('model-helper.extendSchemaAssociations uses linkingModel to extend schema if it exists.', function (t) {
     //<editor-fold desc="Arrange">
     var modelHelper = require("../utilities/model-helper");
 
@@ -152,9 +152,14 @@ test('model-helper.extendSchemaAssociations', function(t) {
     var linkingModelfileName = linkingModelPath + "test_linking.model.js";
 
     mkdirp(linkingModelPath, function(err) {
-      fs.openSync(linkingModelfileName, 'w');
-
       var deferred = Q.defer();
+
+      if(err) {
+        Log.error(err);
+        deferred.reject(err);
+      }
+
+      fs.openSync(linkingModelfileName, 'w');
 
       fs.writeFile(linkingModelfileName, linkingModelFile, function(err) {
         if(err) {
@@ -167,7 +172,7 @@ test('model-helper.extendSchemaAssociations', function(t) {
 
       deferred.promise.then(function() {
         //<editor-fold desc="Act">
-        modelHelper.extendSchemaAssociations(userSchema);
+        modelHelper.extendSchemaAssociations(userSchema, mongoose, "../models");
         //</editor-fold>
 
         //<editor-fold desc="Assert">
