@@ -4,7 +4,7 @@
   "description": "A RESTful API generator for hapi",
   "main": "rest-hapi.js",
   "bin": {
-    "rest-hapi-seed": "./rest-hapi-seed.js"
+    "rest-hapi-cli": "./rest-hapi-cli.js"
   },
   "engines": {
     "node": "5.0.0",
