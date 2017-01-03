@@ -3,6 +3,9 @@
   "version": "0.1.8",
   "description": "A RESTful API generator for hapi",
   "main": "rest-hapi.js",
+  "bin": {
+    "rest-hapi-seed": "gulp seed"
+  },
   "engines": {
     "node": "5.0.0",
     "npm": "3.8.1"
@@ -11,7 +14,8 @@
     "test": "tests"
   },
   "scripts": {
-    "test": "gulp test"
+    "test": "gulp test",
+    "patch-release": "npm version patch && npm publish"
   },
   "repository": {
     "type": "git",
