@@ -54,7 +54,7 @@
     "require-dir": "~0.1.0",
     "vision": "^3.0.0",
     "tap-colorize": "latest",
-    "gulp-tape": "latest",
+    "gulp-tape": "latest"
   },
   "devDependencies": {
     "proxyquire": "^1.7.10",
