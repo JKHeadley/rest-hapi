@@ -4,7 +4,7 @@
   "description": "A RESTful API generator for hapi",
   "main": "rest-hapi.js",
   "bin": {
-    "rest-hapi-seed": "./node_modules/gulp/bin/gulp.js seed"
+    "rest-hapi-seed": "../../node_modules/gulp/bin/gulp.js seed"
   },
   "engines": {
     "node": "5.0.0",
