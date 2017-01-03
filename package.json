@@ -1,6 +1,6 @@
 {
   "name": "rest-hapi",
-  "version": "0.1.18",
+  "version": "0.1.17",
   "description": "A RESTful API generator for hapi",
   "main": "rest-hapi.js",
   "bin": {
@@ -42,6 +42,7 @@
     "gulp": "^3.9.1",
     "gulp-exit": "0.0.2",
     "gulp-tape": "latest",
+    "hapi": "^15.2.0",
     "hapi-swagger": "^2.2.4",
     "inert": "^3.1.0",
     "joi": "^9.2.0",
