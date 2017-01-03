@@ -17,7 +17,7 @@ let modelsGenerated = false;
 let globalModels = {};
 
 module.exports = {
-    config: {},
+    config: defaultConfig,
     register: register,
     generateModels: generateModels,
     logger: {},

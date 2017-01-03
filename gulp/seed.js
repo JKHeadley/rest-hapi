@@ -1,11 +1,20 @@
+'use strict';
+
 var gulp = require('gulp');
 var exit = require('gulp-exit');
 var Q = require('q');
 var mongoose = require('mongoose');
 // var passwordUtility = require('../api/utilities/password-helper');
 var config = require('../config');
+var logging = require('loggin');
+var logUtil = require('../utilities/log-util');
+
 
 gulp.task('seed', ['models'], function() {
+
+    let rootLogger = logging.getLogger("seed");
+    rootLogger.logLevel = config.loglevel;
+    var logger = logUtil.bindHelper(rootLogger, 'seed');
 
     mongoose.connect(config.mongo.URI);
 
@@ -14,7 +23,7 @@ gulp.task('seed', ['models'], function() {
     // var hashedPassword = passwordUtility.hash_password('1234');
     var hashedPassword = '1234';
 
-    return generateModels(mongoose).then(function(models) {
+    return generateModels(mongoose, logger, config).then(function(models) {
 
         return dropCollections(models).then(function() {
             console.log("seeding roles");
@@ -53,7 +62,7 @@ gulp.task('seed', ['models'], function() {
                 ];
                 return models.user.create(users, function (error, users) {
                     return gulp.src("")
-                    .pipe(exit());
+                        .pipe(exit());
                 })
             })
 
@@ -76,5 +85,5 @@ function dropCollections(models) {
 
 gulp.task('models', function() {
     return gulp.src('./seed/**/*.*')
-    .pipe(gulp.dest(__dirname + '/../../' + config.modelDirectory));
+        .pipe(gulp.dest(__dirname + '/../../../' + config.modelPath));
 });

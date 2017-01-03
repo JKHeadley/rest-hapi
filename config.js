@@ -25,6 +25,18 @@ config.apiVersion = "local";
  */
 config.server.port = 8124;
 
+config.server.routes = {
+    cors: {
+        additionalHeaders: ['X-Total-Count'],
+        additionalExposedHeaders: ['X-Total-Count']
+    }
+};
+
+config.server.connection = {
+    port: config.server.port,
+    routes: config.server.routes
+};
+
 /**
  * Mongo settings
  * - config.mongo.URI = 'mongodb://localhost/rest_hapi'; (local db, default)

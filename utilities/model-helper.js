@@ -38,7 +38,7 @@ module.exports = {
    * @param Schema: A mongoose schema.
    * @returns {*}: The updated schema.
    */
-  extendSchemaAssociations: function (Schema, mongoose) {
+  extendSchemaAssociations: function (Schema, mongoose, modelPath) {
     if(Schema.statics.routeOptions){
       for (var associationKey in Schema.statics.routeOptions.associations) {
         var association = Schema.statics.routeOptions.associations[associationKey];
@@ -47,7 +47,7 @@ module.exports = {
           var dataObject = {};
           dataObject[association.model] = { type: mongoose.Schema.Types.ObjectId, ref: association.model };
           if (association.linkingModel) {//EXPL: if a linking model is defined, add it to the association definition
-            var linkingModelFile = "../models/linking-models/" + association.linkingModel + ".model";
+            var linkingModelFile = modelPath + "/linking-models/" + association.linkingModel + ".model";
             var linkingModel = require(linkingModelFile)();
             association.include = {
               through: linkingModel

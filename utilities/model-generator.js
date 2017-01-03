@@ -15,7 +15,7 @@ module.exports = function (mongoose, Log, config) {
     modelPath = config.modelPath;
   }
   else {
-    modelPath = __dirname + '/../../' + config.modelPath;
+    modelPath = __dirname + '/../../../' + config.modelPath;
   }
 
   fs.readdir(modelPath, function(err, files) {
@@ -44,7 +44,7 @@ module.exports = function (mongoose, Log, config) {
 
     for (var schemaKey in schemas) {
       var schema = schemas[schemaKey];
-      extendedSchemas[schemaKey] = modelHelper.extendSchemaAssociations(schema, mongoose);
+      extendedSchemas[schemaKey] = modelHelper.extendSchemaAssociations(schema, mongoose, modelPath);
     }
 
     for (var schemaKey in extendedSchemas) {//EXPL: Create models with final schemas
