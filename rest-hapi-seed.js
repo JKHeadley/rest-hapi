@@ -2,9 +2,9 @@
 
 var exec = require('child_process').exec;
 
-console.log(__dirname);
+// console.log($PWD);
 
-exec('echo $PWD', function(err, stdout, stderr) {
+exec('gulp seed --gulpfile $PWD/node_modules/rest-hapi/gulpfile.js', function(err, stdout, stderr) {
     console.log(stdout);
     console.log(stderr);
 });
