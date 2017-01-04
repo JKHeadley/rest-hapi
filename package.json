@@ -55,7 +55,8 @@
     "vision": "^3.0.0",
     "tape": "latest",
     "tap-colorize": "latest",
-    "gulp-tape": "latest"
+    "gulp-tape": "latest",
+    "bcrypt": "^0.8.7"
   },
   "devDependencies": {
     "proxyquire": "^1.7.10",

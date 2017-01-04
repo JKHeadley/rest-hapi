@@ -1,5 +1,7 @@
 var Q = require('q');
 var Joi = require('joi');
+var bcrypt = require('bcrypt');
+
 //TODO: assign a unique text index to email field
 
 module.exports = function (mongoose) {
@@ -77,8 +79,7 @@ module.exports = function (mongoose) {
           Log.note("Generating Password Update endpoint for " + collectionName);
 
           var handler = function (request, reply) {
-            var passwordUtility = require('../../api/utilities/password-helper');
-            var hashedPassword = passwordUtility.hash_password(request.payload.password);
+            var hashedPassword = model.generatePasswordHash(request.payload.password);
             return model.findByIdAndUpdate(request.params._id, {password: hashedPassword}).then(function (result) {
               if (result) {
                 return reply("Password updated.").code(200);
@@ -127,15 +128,20 @@ module.exports = function (mongoose) {
       create: {
         pre: function (request, Log) {
           var deferred = Q.defer();
-          var passwordUtility = require('../../api/utilities/password-helper');
-          var hashedPassword = passwordUtility.hash_password(request.payload.password);
+          var hashedPassword = mongoose.model('user').generatePasswordHash(request.payload.password);
 
           request.payload.password = hashedPassword;
           deferred.resolve(request);
           return deferred.promise;
         }
       }
-    }
+    },
+
+    generatePasswordHash: function(password) {
+      var salt = bcrypt.genSaltSync(10);
+      var hash = bcrypt.hashSync(password, salt);
+      return hash;
+    },
   };
   
   return Schema;
