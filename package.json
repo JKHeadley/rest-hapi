@@ -15,7 +15,7 @@
   },
   "scripts": {
     "test": "gulp test",
-    "patch-release": "npm version patch && npm publish"
+    "patch-release": "git add . && git commit -a -m 'patch release' && git push && npm version patch && npm publish"
   },
   "repository": {
     "type": "git",
@@ -28,10 +28,14 @@
     "mongoose",
     "generator"
   ],
-  "author": "Justin Headley",
-  "license": "ISC",
+  "author": {
+    "name": "Justin Headley",
+    "email": "headley.justin@gmail.com"
+  },
+  "license": "MIT",
   "bugs": {
-    "url": "https://github.com/JKHeadley/rest-hapi/issues"
+    "url": "https://github.com/JKHeadley/rest-hapi/issues/new",
+    "email": "headley.justin@gmail.com"
   },
   "homepage": "https://github.com/JKHeadley/rest-hapi#readme",
   "dependencies": {
