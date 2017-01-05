@@ -7,7 +7,7 @@
     "rest-hapi-cli": "./rest-hapi-cli.js"
   },
   "engines": {
-    "node": "6.9.3",
+    "node": "5.0.0",
     "npm": "4.0.5"
   },
   "directories": {
@@ -56,7 +56,7 @@
     "tape": "latest",
     "tap-colorize": "latest",
     "gulp-tape": "latest",
-    "bcrypt": "0.8.7",
+    "bcrypt": "^0.8.7",
     "rmdir": "^1.2.0"
   },
   "devDependencies": {

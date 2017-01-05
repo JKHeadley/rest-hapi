@@ -1,6 +1,6 @@
 language: node_js
 node_js:
-  - 6.9.3
+  - 5.0.0
 
 before_script:
   - npm install npm@latest -g
