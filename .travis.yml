@@ -3,6 +3,7 @@ node_js:
   - 7.4.0
 
 before_script:
+  - npm install npm@latest -g
   - npm install -g gulp
 script:
   - gulp test
