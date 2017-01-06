@@ -145,6 +145,8 @@ module.exports = function (logger, mongoose, server) {
       if (queryableFields && readableFields) {
         queryValidation.$select = Joi.alternatives().try(Joi.string().valid(readableFields), Joi.array().items(Joi.string().valid(readableFields)))
         .description('A list of basic fields to be included in each resource. Valid values include: ' + readableFields);
+        queryValidation.$text = Joi.any().optional()
+          .description('A generic text search parameter.');
         // queryValidation.$term = Joi.string().optional()
         //   .description('A generic search parameter. This can be refined using the `searchFields` parameter. Valid values include: ' + queryableFields);
         // queryValidation.$searchFields = Joi.string().optional()//TODO: make enumerated array.
@@ -741,6 +743,8 @@ module.exports = function (logger, mongoose, server) {
       if (queryableFields && readableFields) {
         queryValidation.$select = Joi.alternatives().try(Joi.string().valid(readableFields), Joi.array().items(Joi.string().valid(readableFields)))
         .description('A list of basic fields to be included in each resource. Valid values include: ' + readableFields);
+        queryValidation.$text = Joi.any().optional()
+            .description('A generic text search parameter.');
         // queryValidation.$term = Joi.string().optional()
         //   .description('A generic search parameter. This can be refined using the `searchFields` parameter. Valid values include: ' + queryableFields);
         // queryValidation.$searchFields = Joi.string().optional()//TODO: make enumerated array.

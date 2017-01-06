@@ -10,14 +10,17 @@ config.mongo = {};
  */
 config.app = "rest-hapi-app";
 
+/**
+ * Flag signifying whether the absolute path to the models directory is provided
+ * @type {boolean}
+ */
 config.absoluteModelPath = false;
 
-config.modelPath = 'models';
-
 /**
- * Running the local environment
+ * Path to the models directory (default 'models')
+ * @type {string}
  */
-config.apiVersion = "local";
+config.modelPath = 'models';
 
 /**
  * Server settings:
@@ -44,11 +47,9 @@ config.server.connection = {
 config.mongo.URI = 'mongodb://localhost/rest_hapi';
 
 /**
- * Authentication options:
- * - false (no authentication, default)
- * - "token" (token authentication)
- * - "jwt" (token authentication)
- * @type {boolean}
+ * Authentication strategy to be used for all generated endpoints.
+ * Set to false for no authentication (default).
+ * @type {boolean/string}
  */
 config.auth = false;
 
@@ -62,6 +63,14 @@ config.auth = false;
 config.enableQueryValidation = true;
 config.enablePayloadValidation = true;
 config.enableResponseValidation = true;
+
+/**
+ * Flag specifying whether to text index all string fields for all models to enable text search.
+ * WARNING: enabling this adds overhead to add inserts and updates, as well as added storage requirements.
+ * Default is false.
+ * @type {boolean}
+ */
+config.enableTextSearch = false;
 
 /**
  * Log level options:

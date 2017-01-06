@@ -36,6 +36,11 @@ module.exports = function (mongoose, Log, config) {
       if (ext === '.js') {
         var modelName = path.basename(file,'.js');
         var schema = require(modelPath + '/' + modelName)(mongoose);
+
+        //EXPL: Add text index if enabled
+        if (config.enableTextSearch) {
+          schema.index({'$**': 'text'});
+        }
         schemas[schema.statics.collectionName] = schema;
       }
     });

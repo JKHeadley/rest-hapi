@@ -88,7 +88,6 @@ module.exports = {
 
     mongooseQuery.select(attributesFilter);
 
-
     // query.firstName = { $in: JSON.parse(query.firstName) };
 
     //// Log.debug("query after:", query);
@@ -112,6 +111,11 @@ module.exports = {
       if (fieldQuery && Array.isArray(fieldQuery)) {
         query[fieldQueryKey] = { $in: fieldQuery };//EXPL: "or" the inputs
       }
+    }
+
+    //EXPL: handle text search
+    if (query.$text) {
+      query.$text = {$search: query.$text};
     }
 
     mongooseQuery.where(query);
