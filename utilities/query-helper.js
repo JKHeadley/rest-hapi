@@ -200,6 +200,23 @@ module.exports = {
     return queryableFields;
   },
 
+  getStringFields: function (model, Log) {
+    validationHelper.validateModel(model, Log);
+
+    var stringFields = [];
+
+    var fields = model.schema.paths;
+
+    for (var fieldName in fields) {
+      var field = fields[fieldName].options;
+      if (field.type.schemaName === "String") {
+        stringFields.push(fieldName);
+      }
+    }
+
+    return stringFields;
+  },
+
   /**
    * Set the skip amount for the mongoose query. Typically used for paging.
    * @param query: The incoming request query.
@@ -241,6 +258,12 @@ module.exports = {
     if (query.$term) {
       query.$or = [];//TODO: allow option to choose ANDing or ORing of searchFields/queryableFields
       var queryableFields = this.getQueryableFields(model, Log);
+      var stringFields = this.getStringFields(model, Log);
+
+      //EXPL: we can only search fields that are a string type
+      queryableFields = queryableFields.filter(function(field) {
+        return stringFields.indexOf(field) > -1;
+      });
 
       //EXPL: search only specified fields if included
       if (query.$searchFields) {
