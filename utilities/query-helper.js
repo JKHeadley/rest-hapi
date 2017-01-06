@@ -111,7 +111,7 @@ module.exports = {
       if (!Array.isArray(fieldQuery)) {
         fieldQuery = tryParseJSON(query[fieldQueryKey]);
       }
-      if (fieldQuery && Array.isArray(fieldQuery)) {
+      if (fieldQuery && Array.isArray(fieldQuery) && fieldQueryKey !== '$searchFields') {
         query[fieldQueryKey] = { $in: fieldQuery };//EXPL: "or" the inputs
       }
     }
@@ -292,14 +292,17 @@ module.exports = {
         if (!Array.isArray(query.$searchFields)) {
           query.$searchFields = query.$searchFields.split(",");
         }
-        query.$searchFields.forEach(function(field) {
-          // if (queryableFields.indexOf(field) > -1) {
-            var obj = {};
-            obj[field] = new RegExp(query.$term, "i");
-            query.$or.push(obj);
-          // }
+
+        //EXPL: we can only search fields that are a string type
+        query.$searchFields = query.$searchFields.filter(function(field) {
+          return stringFields.indexOf(field) > -1;
         });
-        delete query.$searchFields;
+
+        query.$searchFields.forEach(function(field) {
+          var obj = {};
+          obj[field] = new RegExp(query.$term, "i");
+          query.$or.push(obj);
+        });
       }
       else {
         queryableFields.forEach(function(field) {
@@ -308,9 +311,10 @@ module.exports = {
           query.$or.push(obj);
         });
       }
-
-      delete query.$term;
     }
+
+    delete query.$searchFields;
+    delete query.$term;
   },
 
   /**
