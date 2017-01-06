@@ -122,8 +122,6 @@ module.exports = {
     //EXPL: handle regex search
     this.setTermSearch(query, model, Log);
 
-    Log.debug(query);
-
     mongooseQuery.where(query);
     return mongooseQuery;
   },
@@ -267,7 +265,6 @@ module.exports = {
       }
 
       delete query.$term;
-      Log.debug(query);
     }
   },
 
