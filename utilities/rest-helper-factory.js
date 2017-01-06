@@ -158,6 +158,8 @@ module.exports = function (logger, mongoose, server) {
             .description('A set of fields to sort by. Including field name indicates it should be sorted ascending, while prepending ' +
                 '\'-\' indicates descending. The default sort direction is \'ascending\' (lowest value to highest value). Listing multiple' +
                 'fields prioritizes the sort starting with the first field listed. Valid values include: ' + sortableFields);
+        queryValidation.$exclude = Joi.alternatives().try(Joi.objectId(), Joi.array().items(Joi.objectId()))
+            .description('A list of objectIds to exclude in the result.');
         queryValidation.$where = Joi.any().optional()
             .description('An optional field for raw mongoose queries.');
 
@@ -759,6 +761,8 @@ module.exports = function (logger, mongoose, server) {
             .description('A set of fields to sort by. Including field name indicates it should be sorted ascending, while prepending ' +
                 '\'-\' indicates descending. The default sort direction is \'ascending\' (lowest value to highest value). Listing multiple' +
                 'fields prioritizes the sort starting with the first field listed. Valid values include: ' + sortableFields);
+        queryValidation.$exclude = Joi.alternatives().try(Joi.objectId(), Joi.array().items(Joi.objectId()))
+            .description('A list of objectIds to exclude in the result.');
         queryValidation.$where = Joi.any().optional()
             .description('An optional field for raw mongoose queries.');
 

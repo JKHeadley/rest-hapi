@@ -71,6 +71,8 @@ module.exports = {
 
     mongooseQuery = this.setLimit(query, mongooseQuery, Log);
 
+    mongooseQuery = this.setExclude(query, mongooseQuery, Log);
+
     var attributesFilter = this.createAttributesFilter(query, model, Log);
     if (attributesFilter === '') {
       attributesFilter = "_id";
@@ -244,6 +246,26 @@ module.exports = {
     if (query.$limit) {
       mongooseQuery.limit(query.$limit);
       delete query.$limit;
+    }
+    return mongooseQuery;
+  },
+
+  /**
+   * Set the list of objectIds to exclude.
+   * @param query: The incoming request query.
+   * @param mongooseQuery: A mongoose query.
+   * @param Log: A logging object.
+   * @returns {*}: The updated mongoose query.
+   */
+  setExclude: function (query, mongooseQuery, Log) {
+    if (query.$exclude) {
+
+      if (!Array.isArray(query.$exclude)) {
+        query.$exclude = query.$exclude.split(",");
+      }
+
+      mongooseQuery.where({'_id': { $nin: query.$exclude}});
+      delete query.$exclude;
     }
     return mongooseQuery;
   },
