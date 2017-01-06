@@ -19,8 +19,9 @@
 //TODO: look at accessing "model.statics rather than "model
 //TODO: create a field property that can mark it as "duplicate". i.e. any associated models referencing that model will duplicate those fields along with the reference Id
 //TODO(cont): this will allow for a shallow embed that will return a list of reference ids with their "duplicate" values, and a full embed that will return the fully embedded references
+//TODO(cont): Limiting the populated fields could also be accomplished with the "select" parameter of the "populate" function.
 //TODO: add option for TTL index on eventLogs so they can expire after a certain length of time
-//TODO: make sure field default values are supported
+//TODO-DONE: make sure field default values are supported
 //TODO: add support for updatedAt and createdAt fields for each model
 
 module.exports = {

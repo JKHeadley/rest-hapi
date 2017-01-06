@@ -8,7 +8,10 @@ var extend = require('util')._extend;
 //TODO: sorting through populate fields (Ex: sort users through role.name)
 //TODO: support selecting populated fields
 //TODO: support $embed for quick embedding and "populate" for detailed, mongoose specific population
-//TODO: support both $term search and mongoose $text search
+//TODO-DONE: $term search
+//TODO-DONE: support mongoose $text search
+//TODO: support searching populated fields
+//TODO: support easy AND and OR operations (i.e. search for "foo" AND "bar" or "foo" OR "bar"
 //TODO: possibly support both comma separated values and space separated values
 //TODO: define field property options (queryable, exclude, etc).
 //TODO-DONE: support "$where" field that allows for raw mongoose queries
@@ -68,8 +71,6 @@ module.exports = {
 
     mongooseQuery = this.setLimit(query, mongooseQuery, Log);
 
-    //mongooseQuery = this.setTermSearch(query, mongooseQuery, queryableFields, defaultWhere, Log);
-
     var attributesFilter = this.createAttributesFilter(query, model, Log);
     if (attributesFilter === '') {
       attributesFilter = "_id";
@@ -113,10 +114,15 @@ module.exports = {
       }
     }
 
-    //EXPL: handle text search
+    //EXPL: handle full text search
     if (query.$text) {
       query.$text = {$search: query.$text};
     }
+
+    //EXPL: handle regex search
+    this.setTermSearch(query, model, Log);
+
+    Log.debug(query);
 
     mongooseQuery.where(query);
     return mongooseQuery;
@@ -227,248 +233,43 @@ module.exports = {
     return mongooseQuery;
   },
 
-  // setSortFields: function (query, mongooseQuery, modelAssociations, Log) {
-  //   if (query.sort) {
-  //     var fieldSorts = [];
-  //
-  //     var sortFields = query.sort.split(",");
-  //
-  //     for (var sortFieldIndex in sortFields) {
-  //       var sortField = sortFields[sortFieldIndex];
-  //
-  //       var queryAssociations = [];
-  //       var order = sortField[0];
-  //       sortField = sortField.substring(1);
-  //       sortField = sortField.split(".");
-  //
-  //       //EXPL: support sorting through nested associations
-  //       if (sortField.length > 1) {
-  //         var association = null;
-  //         while (sortField.length > 1) {
-  //           association = sortField.shift();
-  //           queryAssociations.push(modelAssociations[association].include);
-  //           modelAssociations = modelAssociations[association].include.model.routeOptions.associations;
-  //         }
-  //         sortField = sortField[0];
-  //       } else {
-  //         sortField = sortField[0];
-  //       }
-  //
-  //       var sortQuery = null;
-  //       if (order == "-") {
-  //         //EXPL: - means descending.
-  //         if (queryAssociations) {
-  //           sortQuery = queryAssociations;
-  //           sortQuery.push(sortField);
-  //           sortQuery.push('DESC');
-  //           fieldSorts.push(sortQuery);
-  //         } else {
-  //           fieldSorts.push([sortField, "DESC"]);
-  //         }
-  //       } else if (order == "+") {
-  //         //EXPL: + means ascending.
-  //         if (queryAssociations) {
-  //           sortQuery = queryAssociations;
-  //           sortQuery.push(sortField);
-  //           fieldSorts.push(sortQuery);
-  //         } else {
-  //           fieldSorts.push([sortField]);
-  //         }
-  //       } else {
-  //         //EXPL: default to ascending if there is no - or +
-  //         if (queryAssociations) {
-  //           sortQuery = queryAssociations;
-  //           sortQuery.push(sortField);
-  //           fieldSorts.push(sortQuery);
-  //         } else {
-  //           fieldSorts.push([sortField]);
-  //         }
-  //       }
-  //     }
-  //
-  //     //EXPL: remove from the query to remove conflicts.
-  //     delete query.sort;
-  //
-  //     mongooseQuery.order = fieldSorts;
-  //   }
-  //
-  //   return mongooseQuery;
-  // },
+  /**
+   * Perform a regex search on the models immediate fields
+   * @param query:The incoming request query.
+   * @param model: A mongoose model object
+   * @param Log: A logging object
+   */
+  setTermSearch: function(query, model, Log) {
+    if (query.$term) {
+      query.$or = [];//TODO: allow option to choose ANDing or ORing of searchFields/queryableFields
+      var queryableFields = this.getQueryableFields(model, Log);
 
-  // createDefaultWhere: function (query, defaultSearchFields, Log) {
-  //
-  //   //TODO: update this to handle more complex queries
-  //   //EX: query = {"or-like-title":"Boat","or-not-description":"boat"
-  //   //should result in
-  //   //$or: [
-  //   //{
-  //   //  title: {
-  //   //    $like: 'Boat'
-  //   //  }
-  //   //},
-  //   //{
-  //   //  description: {
-  //   //    $notIn: 'boat'
-  //   //  }
-  //   //}
-  //   //]
-  //
-  //   //query = "or[]
-  //
-  //   var defaultWhere = {};
-  //
-  //   // function parseSearchFieldValue(searchFieldValue)
-  //   // {
-  //   //   if (_.isString(searchFieldValue)) {
-  //   //     switch (searchFieldValue.toLowerCase()) {
-  //   //       case "null":
-  //   //         return null;
-  //   //         break;
-  //   //       case "true":
-  //   //         return true;
-  //   //         break;
-  //   //       case "false":
-  //   //         return false;
-  //   //         break;
-  //   //       default:
-  //   //         return searchFieldValue;
-  //   //     }
-  //   //   } else if (_.isArray(searchFieldValue)) {
-  //   //     searchFieldValue = _.map(searchFieldValue, function (item) {
-  //   //       switch (item.toLowerCase()) {
-  //   //         case "null":
-  //   //           return null;
-  //   //           break;
-  //   //         case "true":
-  //   //           return true;
-  //   //           break;
-  //   //         case "false":
-  //   //           return false;
-  //   //           break;
-  //   //         default:
-  //   //           return item;
-  //   //       }
-  //   //     });
-  //   //     return {$or: searchFieldValue}; //NOTE: Here searchFieldValue is an array.
-  //   //   }
-  //   // }
-  //
-  //   if (defaultSearchFields) {
-  //     for (var queryField in query) {
-  //       var index = defaultSearchFields.indexOf(queryField);
-  //       if (index >= 0) { //EXPL: queryField is for basic search value
-  //
-  //         var defaultSearchField = defaultSearchFields[index];
-  //
-  //         var searchFieldValue = query[defaultSearchField];
-  //
-  //         defaultWhere[defaultSearchField] = parseSearchFieldValue(searchFieldValue);
-  //
-  //       } else { //EXPL: queryField includes options
-  //
-  //         var defaultSearchField = null;
-  //         var searchFieldValue = query[queryField];
-  //         queryField = queryField.split('-');
-  //         if (queryField.length > 1) {
-  //           defaultSearchField = queryField[1];
-  //         }
-  //         queryField = queryField[0];
-  //
-  //         if (defaultSearchField) {
-  //           searchFieldValue = parseSearchFieldValue(searchFieldValue);
-  //           switch (queryField) {
-  //             case "not": //EXPL: allows for omitting objects
-  //               if (!defaultWhere[defaultSearchField]) {
-  //                 defaultWhere[defaultSearchField] = {};
-  //               }
-  //               if (_.isArray(searchFieldValue)) {
-  //                 defaultWhere[defaultSearchField]["$notIn"] = searchFieldValue;
-  //               } else {
-  //                 defaultWhere[defaultSearchField]["$notIn"] = [searchFieldValue];
-  //               }
-  //               break;
-  //             case "max": //EXPL: query for max search value
-  //               if (!defaultWhere[defaultSearchField]) {
-  //                 defaultWhere[defaultSearchField] = {};
-  //               }
-  //               defaultWhere[defaultSearchField]["$gte"] = searchFieldValue;
-  //               break;
-  //             case "min": //EXPL: query for min search value
-  //               if (!defaultWhere[defaultSearchField]) {
-  //                 defaultWhere[defaultSearchField] = {};
-  //               }
-  //               defaultWhere[defaultSearchField]["$lte"] = searchFieldValue;
-  //               break;
-  //             case "or":  //EXPL: allows for different properties to be ORed together
-  //               if (!defaultWhere["$or"]) {
-  //                 defaultWhere["$or"] = {};
-  //               }
-  //               defaultWhere["$or"][defaultSearchField] = searchFieldValue;
-  //               break;
-  //             default:
-  //               break;
-  //           }
-  //         }
-  //       }
-  //     }
-  //   }
-  //
-  //   return defaultWhere;
-  // },
+      //EXPL: search only specified fields if included
+      if (query.$searchFields) {
+        if (!Array.isArray(query.$searchFields)) {
+          query.$searchFields = query.$searchFields.split(",");
+        }
+        query.$searchFields.forEach(function(field) {
+          // if (queryableFields.indexOf(field) > -1) {
+            var obj = {};
+            obj[field] = new RegExp(query.$term, "i");
+            query.$or.push(obj);
+          // }
+        });
+        delete query.$searchFields;
+      }
+      else {
+        queryableFields.forEach(function(field) {
+          var obj = {};
+          obj[field] = new RegExp(query.$term, "i");
+          query.$or.push(obj);
+        });
+      }
 
-  // setTermSearch: function (query, mongooseQuery, defaultSearchFields, defaultWhere, Log) {
-  //   //EXPL: add the term as a regex search
-  //   if (query.term) {
-  //     var searchTerm = query.term;
-  //     //EXPL: remove the "term" from the query
-  //     delete query.term;
-  //
-  //     var fieldSearches = undefined;
-  //
-  //     if (query.searchFields) {
-  //       var searchFields = query.searchFields.split(",");
-  //
-  //       fieldSearches = [];
-  //
-  //       //EXPL: add field searches only for those in the query.$select
-  //       for (var fieldIndex in searchFields) {
-  //         var field = searchFields[fieldIndex];
-  //         var fieldSearch = {}
-  //         fieldSearch[field] = {$like: "%" + searchTerm + "%"}
-  //         fieldSearches.push(fieldSearch)
-  //       }
-  //
-  //       delete query.searchFields; //EXPL: remove to avoid query conflicts.
-  //     } else {
-  //       var fieldSearches = [];
-  //
-  //       //EXPL: add ALL the fields as search fields.
-  //       if (defaultSearchFields) {
-  //         for (var defaultSearchFieldIndex in defaultSearchFields) {
-  //           var defaultSearchField = defaultSearchFields[defaultSearchFieldIndex];
-  //
-  //           var searchObject = {};
-  //
-  //           searchObject[defaultSearchField] = {$like: "%" + searchTerm + "%"}
-  //
-  //           fieldSearches.push(searchObject);
-  //         }
-  //       }
-  //     }
-  //
-  //     mongooseQuery.where = {
-  //       $and: [{
-  //         $or: fieldSearches
-  //       },
-  //         defaultWhere
-  //       ]
-  //     };
-  //   } else {
-  //     mongooseQuery.where = defaultWhere;
-  //   }
-  //
-  //   return mongooseQuery;
-  // },
+      delete query.$term;
+      Log.debug(query);
+    }
+  },
 
   /**
    * Converts the query "$embed" parameter into a mongoose populate object.

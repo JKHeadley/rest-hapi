@@ -144,19 +144,22 @@ module.exports = function (logger, mongoose, server) {
 
       if (queryableFields && readableFields) {
         queryValidation.$select = Joi.alternatives().try(Joi.string().valid(readableFields), Joi.array().items(Joi.string().valid(readableFields)))
-        .description('A list of basic fields to be included in each resource. Valid values include: ' + readableFields);
-        queryValidation.$text = Joi.any().optional()
-          .description('A generic text search parameter.');
-        // queryValidation.$term = Joi.string().optional()
-        //   .description('A generic search parameter. This can be refined using the `searchFields` parameter. Valid values include: ' + queryableFields);
-        // queryValidation.$searchFields = Joi.string().optional()//TODO: make enumerated array.
-        //   .description('A set of fields to apply the \"$term\" search parameter to. If this parameter is not included, the \"$term\" search parameter is applied to all searchable fields. Valid values include: ' + queryableFields);
+            .description('A list of basic fields to be included in each resource. Valid values include: ' + readableFields);
+        queryValidation.$text = Joi.string().optional()
+            .description('A full text search parameter. Takes advantage of indexes for efficient searching. Also implements stemming ' +
+                'with searches. Prefixing search terms with a "-" will exclude results that match that term.');
+        queryValidation.$term = Joi.string().optional()
+            .description('A regex search parameter. Slower than "$text" search but supports partial matches and doesn\'t require' +
+                'indexing. This can be refined using the `searchFields` parameter.');
+        queryValidation.$searchFields = Joi.alternatives().try(Joi.string().valid(queryableFields), Joi.array().items(Joi.string().valid(queryableFields)))
+            .description('A set of fields to apply the \"$term\" search parameter to. If this parameter is not included, the \"$term\" ' +
+                'search parameter is applied to all searchable fields. Valid values include: ' + queryableFields);
         queryValidation.$sort = Joi.alternatives().try(Joi.string().valid(sortableFields), Joi.array().items(Joi.string().valid(sortableFields)))
-        .description('A set of fields to sort by. Including field name indicates it should be sorted ascending, while prepending ' +
-          '\'-\' indicates descending. The default sort direction is \'ascending\' (lowest value to highest value). Listing multiple' +
-          'fields prioritizes the sort starting with the first field listed. Valid values include: ' + sortableFields);
+            .description('A set of fields to sort by. Including field name indicates it should be sorted ascending, while prepending ' +
+                '\'-\' indicates descending. The default sort direction is \'ascending\' (lowest value to highest value). Listing multiple' +
+                'fields prioritizes the sort starting with the first field listed. Valid values include: ' + sortableFields);
         queryValidation.$where = Joi.any().optional()
-        .description('An optional field for raw mongoose queries.');
+            .description('An optional field for raw mongoose queries.');
 
         _.each(queryableFields, function (fieldName) {
           queryValidation[fieldName] = Joi.alternatives().try(Joi.string().optional(), Joi.array().items(Joi.string()));
@@ -742,19 +745,22 @@ module.exports = function (logger, mongoose, server) {
 
       if (queryableFields && readableFields) {
         queryValidation.$select = Joi.alternatives().try(Joi.string().valid(readableFields), Joi.array().items(Joi.string().valid(readableFields)))
-        .description('A list of basic fields to be included in each resource. Valid values include: ' + readableFields);
-        queryValidation.$text = Joi.any().optional()
-            .description('A generic text search parameter.');
-        // queryValidation.$term = Joi.string().optional()
-        //   .description('A generic search parameter. This can be refined using the `searchFields` parameter. Valid values include: ' + queryableFields);
-        // queryValidation.$searchFields = Joi.string().optional()//TODO: make enumerated array.
-        //   .description('A set of fields to apply the \"$term\" search parameter to. If this parameter is not included, the \"$term\" search parameter is applied to all searchable fields. Valid values include: ' + queryableFields);
+            .description('A list of basic fields to be included in each resource. Valid values include: ' + readableFields);
+        queryValidation.$text = Joi.string().optional()
+            .description('A full text search parameter. Takes advantage of indexes for efficient searching. Also implements stemming ' +
+                'with searches. Prefixing search terms with a "-" will exclude results that match that term.');
+        queryValidation.$term = Joi.string().optional()
+            .description('A regex search parameter. Slower than "$text" search but supports partial matches and doesn\'t require' +
+                'indexing. This can be refined using the `searchFields` parameter.');
+        queryValidation.$searchFields = Joi.alternatives().try(Joi.string().valid(queryableFields), Joi.array().items(Joi.string().valid(queryableFields)))
+            .description('A set of fields to apply the \"$term\" search parameter to. If this parameter is not included, the \"$term\" ' +
+                'search parameter is applied to all searchable fields. Valid values include: ' + queryableFields);
         queryValidation.$sort = Joi.alternatives().try(Joi.string().valid(sortableFields), Joi.array().items(Joi.string().valid(sortableFields)))
-        .description('A set of fields to sort by. Including field name indicates it should be sorted ascending, while prepending ' +
-          '\'-\' indicates descending. The default sort direction is \'ascending\' (lowest value to highest value). Listing multiple' +
-          'fields prioritizes the sort starting with the first field listed. Valid values include: ' + sortableFields);
+            .description('A set of fields to sort by. Including field name indicates it should be sorted ascending, while prepending ' +
+                '\'-\' indicates descending. The default sort direction is \'ascending\' (lowest value to highest value). Listing multiple' +
+                'fields prioritizes the sort starting with the first field listed. Valid values include: ' + sortableFields);
         queryValidation.$where = Joi.any().optional()
-        .description('An optional field for raw mongoose queries.');
+            .description('An optional field for raw mongoose queries.');
 
         _.each(queryableFields, function (fieldName) {
           queryValidation[fieldName] = Joi.alternatives().try(Joi.string().optional(), Joi.array().items(Joi.string()));
