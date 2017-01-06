@@ -10,6 +10,7 @@ Log.logLevel = "ERROR";
 Log = Log.bind("query-helper");
 var testHelper = require("./test-helper");
 
+//TODO: add tests for text search functions
 
 test('query-helper exists and has expected members', function (t) {
   //<editor-fold desc="Arrange">
