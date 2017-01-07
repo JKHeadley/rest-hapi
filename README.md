@@ -1,9 +1,11 @@
 # rest-hapi
-A RESTful API generator built around the [hapi](https://github.com/hapijs/hapi) framework and [mongoose](https://github.com/Automattic/mongoose) ODM.
+A RESTful API generator plugin for the [hapi](https://github.com/hapijs/hapi) framework utilizing the [mongoose](https://github.com/Automattic/mongoose) ODM.
+
+# NOTE: rest-hapi has recently undergone a major update from a boilerplate code project to a hapi plugin npm module. Parts of this readme are still out of date but are in the process of updating to reflect the new functionality.
 
 [![Build Status](https://travis-ci.org/JKHeadley/rest-hapi.svg?branch=master)](https://travis-ci.org/JKHeadley/rest-hapi)
 
-rest-hapi is a framework intended to abstract the work involved in setting up API routes/validation/handlers/etc. for the purpose of rapid app development.  At the same time it provides a powerful combination of [relational](#associations) structure with [NoSQL](#creating-endpoints) flexibility.  You define your models and the rest is done for you.  Have your own API server up and running in minutes!
+rest-hapi is a hapi plugin intended to abstract the work involved in setting up API routes/validation/handlers/etc. for the purpose of rapid app development.  At the same time it provides a powerful combination of [relational](#associations) structure with [NoSQL](#creating-endpoints) flexibility.  You define your models and the rest is done for you.  Have your own API server up and running in minutes!
 
 ## Features
 
@@ -44,23 +46,21 @@ http://ec2-35-164-131-1.us-west-2.compute.amazonaws.com:8124
 
 ## Requirements
 
-You need [Node.js](https://nodejs.org/en/) installed and you'll need [MongoDB](https://docs.mongodb.com/manual/installation/) installed and running.  You will also need the [gulp](https://www.npmjs.com/package/gulp) node package installed.
+You need [Node.js](https://nodejs.org/en/) installed and you'll need [MongoDB](https://docs.mongodb.com/manual/installation/) installed and running.
 
 [Back to top](#readme-contents)
 
 ## Installation
 
 ```
-$ git clone https://github.com/JKHeadley/rest-hapi.git
-$ cd rest-hapi
-$ npm install
+npm install rest-hapi
 ```
 ### First time setup/Demo
 **WARNING**: This will clear all data in the following MongoDB collections (in the db defined in ``config.local.js``) if they exist: ``users``, ``roles``.
 
 If you would like to seed your database with some demo models/data, run:
 ```
-$ gulp seed
+$ ./node_modules/.bin rest-hapi-cli seed
 ```
 NOTE: The password for all seed users is ``1234``.
 
