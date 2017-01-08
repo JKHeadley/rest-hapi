@@ -16,5 +16,6 @@ before_script:
   - npm install mkdirp
   - npm install gulp-exit
   - npm install q
+  - npm install mongoose
 script:
   - gulp test
