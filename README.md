@@ -62,7 +62,7 @@ npm install rest-hapi
 
 If you would like to seed your database with some demo models/data, run:
 ```
-$ ./node_modules/.bin rest-hapi-cli seed
+$ ./node_modules/.bin/rest-hapi-cli seed
 ```
 NOTE: The password for all seed users is ``1234``.
 
