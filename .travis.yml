@@ -14,5 +14,6 @@ before_script:
   - npm install sinon
   - npm install blue-tape
   - npm install mkdirp
+  - npm install gulp-exit
 script:
   - gulp test
