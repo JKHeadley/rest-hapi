@@ -15,5 +15,6 @@ before_script:
   - npm install blue-tape
   - npm install mkdirp
   - npm install gulp-exit
+  - npm install q
 script:
   - gulp test
