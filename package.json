@@ -15,7 +15,8 @@
   },
   "scripts": {
     "test": "gulp test",
-    "patch-release": "git add . && git commit -a -m 'patch release' && git push && npm version patch && npm publish"
+    "patch-release-git": "git add . && git commit -a -m 'patch release' && git push && npm version patch && npm publish",
+    "patch-release": "npm version patch && npm publish"
   },
   "repository": {
     "type": "git",
