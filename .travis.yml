@@ -19,5 +19,8 @@ before_script:
   - npm install mongoose
   - npm install loggin
   - npm install lodash
+  - npm install chalk
+  - npm install joi
+
 script:
   - gulp test
