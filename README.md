@@ -23,6 +23,10 @@ View the swagger docs for the live demo:
 
 http://ec2-35-164-131-1.us-west-2.compute.amazonaws.com:8124
 
+## Demo Project
+
+[rest-hapi-demo](https://github.com/JKHeadley/rest-hapi-demo): A simple demo project implementing rest-hapi in a hapi server.
+
 ## Readme contents
 - [Requirements](#requirements)
 - [Installation](#installation)
