@@ -72,15 +72,39 @@ You can use these models as templates for your models or delete them later if yo
 
 [Back to top](#readme-contents)
 
-## Running the app
+## Using the plugin
+
+As rest-hapi is a hapi plugin, you'll need to set up a hapi server to use it.  You'll also need to set up a [mongoose](https://github.com/Automattic/mongoose) instance and include it in the plugin's options when you register. Below is an expample nodejs script ``api.js`` with the minimum requirements to set up an API with rest-hapi:
+
+```javascript
+'use strict';
+
+let Hapi = require('hapi');
+let mongoose = require('mongoose');
+let restHapi = require('rest-hapi');
+
+function api(){
+
+    let server = new Hapi.Server();
+
+    server.connection(restHapi.config.server.connection);
+
+    server.register({
+            register: restHapi,
+            options: {
+                mongoose: mongoose
+            }
+        },
+        function() {
+            server.start();
+        });
+
+    return server;
+}
+
+module.exports = api();
 ```
-$ gulp serve:local
-```
-or just
-```
-$ gulp
-```
-Then point your browser to [http://localhost:8124/](http://localhost:8124/) to view the swagger docs.
+You can then run ``$ node api.js`` and point your browser to [http://localhost:8124/](http://localhost:8124/) to view the swagger docs (NOTE: API endpoints will only be generated if you have provided models. See [First time setup/Demo](#running-the-app) or [Creating endpoints](#creating-endpoints).
 
 [gulp-nodemon](https://www.npmjs.com/package/gulp-nodemon) watches for changes in server code and restarts the app automatically.
 
@@ -111,8 +135,8 @@ access to testing your endpoints along with model schema descriptions and query 
 
 ## Creating endpoints
 
-Restful endpoints are automatically generated based off of any mongoose models that you add to the 
-``/api/models`` folder with the file structure of ``{model name}.model.js``.  These models must adhere to the following format:
+Restful endpoints are automatically generated based off of any mongoose models that you add to your ``models`` folder
+with the file structure of ``{model name}.model.js``.  These models must adhere to the following format:
 
 ```javascript
 module.exports = function (mongoose) {
@@ -131,7 +155,7 @@ module.exports = function (mongoose) {
 
 As a concrete example, here is a ``user`` model:
 
-``/api/models/user.model.js``:
+``/models/user.model.js``:
 
 ```javascript
 module.exports = function (mongoose) {
@@ -194,7 +218,7 @@ Each association must be added to an ``associations`` object within the
 ``routeOptions`` object. The ``type`` and ``model`` fields are
 required for all associations.
 
-``/api/models/user.model.js``:
+``/models/user.model.js``:
 
 ```javascript
 module.exports = function (mongoose) {
@@ -234,7 +258,7 @@ module.exports = function (mongoose) {
 };
 ```
 
-``/api/models/dog.model.js``:
+``/models/dog.model.js``:
 
 ```javascript
 module.exports = function (mongoose) {
@@ -278,7 +302,7 @@ field is required for associations of type ``ONE_ONE`` or ``MANY_ONE``.  This
 field must match the association name, include a type of ``ObjectId``, and
 include a ``ref`` property with the associated model name.
 
-``/api/models/user.model.js``:
+``/models/user.model.js``:
 
 ```javascript
 module.exports = function (mongoose) {
@@ -319,7 +343,7 @@ module.exports = function (mongoose) {
 };
 ```
 
-``/api/models/role.model.js``:
+``/models/role.model.js``:
 
 ```javascript
 module.exports = function (mongoose) {
@@ -374,7 +398,7 @@ Below is an example of a many-many relationship between the ``user`` and
 ``group`` models. In this relationship a single ``user`` instance can belong
 to multiple ``group`` instances and vice versa.
 
-``/api/models/user.model.js``:
+``/models/user.model.js``:
 
 ```javascript
 module.exports = function (mongoose) {
@@ -411,7 +435,7 @@ module.exports = function (mongoose) {
 ```
 
 
-``/api/models/group.model.js``:
+``/models/group.model.js``:
 
 ```javascript
 module.exports = function (mongoose) {
@@ -476,7 +500,7 @@ associated users have known each other.  This example also displays how models c
 reference to themselves.  
 
 
-``/api/models/user.model.js``:
+``/models/user.model.js``:
 
 ```javascript
 module.exports = function (mongoose) {
@@ -515,7 +539,7 @@ module.exports = function (mongoose) {
 ```
 
 
-``/api/models/linking-models/user_user.model.js``:
+``/models/linking-models/user_user.model.js``:
 
 ```javascript
 var mongoose = require("mongoose");
