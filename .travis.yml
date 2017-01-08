@@ -17,5 +17,6 @@ before_script:
   - npm install gulp-exit
   - npm install q
   - npm install mongoose
+  - npm install loggin
 script:
   - gulp test
