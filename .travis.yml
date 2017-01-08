@@ -18,5 +18,6 @@ before_script:
   - npm install q
   - npm install mongoose
   - npm install loggin
+  - npm install lodash
 script:
   - gulp test
