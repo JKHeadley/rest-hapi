@@ -23,5 +23,7 @@ before_script:
   - npm install joi
   - npm install tape
   - npm install joi-objectid
+  - npm install qs
+  - npm install boom
 script:
   - gulp test
