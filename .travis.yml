@@ -5,5 +5,14 @@ node_js:
 install: true
 before_script:
   - npm install gulp
+  - npm install require-dir
+  - npm install gulp-tape
+  - npm install tap-colorize
+  - npm install rmdir
+  - npm install proxyquire
+  - npm install rewire
+  - npm install sinon
+  - npm install blue-tape
+  - npm install mkdirp
 script:
   - gulp test
