@@ -22,5 +22,6 @@ before_script:
   - npm install chalk
   - npm install joi
   - npm install tape
+  - npm install joi-objectid
 script:
   - gulp test
