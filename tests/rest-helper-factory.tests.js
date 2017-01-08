@@ -884,20 +884,21 @@ test('rest-helper-factory.generateListEndpoint', function(t) {
 
     var queryValidation = {};
 
-    queryValidation.$select = Joi.alternatives().try(Joi.string().valid(readableFields), Joi.array().items(Joi.string().valid(readableFields)))
-    .description('A list of basic fields to be included in each resource. Valid values include: ' + readableFields);
+    queryValidation.$select = Joi.alternatives().try(Joi.array().items(Joi.string().valid(readableFields))
+        .description('A list of basic fields to be included in each resource. Valid values include: ' + readableFields.toString().replace(/,/g,', ')), Joi.string().valid(readableFields));
     // queryValidation.$term = Joi.string().optional()
     //   .description('A generic search parameter. This can be refined using the `searchFields` parameter. Valid values include: ' + queryableFields);
     // queryValidation.$searchFields = Joi.string().optional()//TODO: make enumerated array.
     //   .description('A set of fields to apply the \"$term\" search parameter to. If this parameter is not included, the \"$term\" search parameter is applied to all searchable fields. Valid values include: ' + queryableFields);
-    queryValidation.$sort = Joi.alternatives().try(Joi.string().valid(sortableFields), Joi.array().items(Joi.string().valid(sortableFields)))
-    .description('A set of fields to sort by. Including field name indicates it should be sorted ascending, while prepending ' +
-      '\'-\' indicates descending. The default sort direction is \'ascending\' (lowest value to highest value). Listing multiple' +
-      'fields prioritizes the sort starting with the first field listed. Valid values include: ' + sortableFields);
+    queryValidation.$sort = Joi.alternatives().try(Joi.array().items(Joi.string().valid(sortableFields))
+        .description('A set of fields to sort by. Including field name indicates it should be sorted ascending, while prepending ' +
+            '\'-\' indicates descending. The default sort direction is \'ascending\' (lowest value to highest value). Listing multiple' +
+            'fields prioritizes the sort starting with the first field listed. Valid values include: ' + sortableFields.toString().replace(/,/g,', ')), Joi.string().valid(sortableFields));
     queryValidation.$where = Joi.any().optional()
     .description('An optional field for raw mongoose queries.');
 
-    queryValidation["test"] = Joi.alternatives().try(Joi.string().optional(), Joi.array().items(Joi.string()));
+    queryValidation["test"] = Joi.alternatives().try(Joi.array().items(Joi.string())
+        .description('Match values for the ' + "test" + ' property.'), Joi.string().optional());
 
     //</editor-fold>
 
@@ -960,8 +961,8 @@ test('rest-helper-factory.generateListEndpoint', function(t) {
     var userModel2 = mongoose.model("user2", userSchema2);
 
     var queryValidation = {};
-    queryValidation.$embed = Joi.alternatives().try(Joi.string(), Joi.array().items(Joi.string()))
-    .description('A set of complex object properties to populate. Valid values include ' + Object.keys({test:{}}));
+    queryValidation.$embed = Joi.alternatives().try(Joi.array().items(Joi.string())
+        .description('A set of complex object properties to populate. Valid first level values include ' + Object.keys({test:{}}).toString().replace(/,/g,', ')), Joi.string());
     //</editor-fold>
 
     //<editor-fold desc="Act">
@@ -1560,8 +1561,8 @@ test('rest-helper-factory.generateFindEndpoint', function(t) {
 
     var queryValidation = {};
 
-    queryValidation.$select = Joi.alternatives().try(Joi.string().valid(readableFields), Joi.array().items(Joi.string().valid(readableFields)))
-    .description('A list of basic fields to be included in each resource. Valid values include: ' + readableFields);
+    queryValidation.$select = Joi.alternatives().try(Joi.array().items(Joi.string().valid(readableFields))
+        .description('A list of basic fields to be included in each resource. Valid values include: ' + readableFields.toString().replace(/,/g,', ')), Joi.string().valid(readableFields));
 
     //</editor-fold>
 
@@ -1618,8 +1619,8 @@ test('rest-helper-factory.generateFindEndpoint', function(t) {
     var userModel2 = mongoose.model("user2", userSchema2);
 
     var queryValidation = {};
-    queryValidation.$embed = Joi.alternatives().try(Joi.string(), Joi.array().items(Joi.string()))
-    .description('A set of complex object properties to populate. Valid values include ' + Object.keys({test:{}}));
+    queryValidation.$embed = Joi.alternatives().try(Joi.array().items(Joi.string())
+        .description('A set of complex object properties to populate. Valid first level values include ' + Object.keys({test:{}}).toString().replace(/,/g,', ')), Joi.string());
     //</editor-fold>
 
     //<editor-fold desc="Act">
@@ -6551,20 +6552,21 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
 
     var queryValidation = {};
 
-    queryValidation.$select = Joi.alternatives().try(Joi.string().valid(readableFields), Joi.array().items(Joi.string().valid(readableFields)))
-    .description('A list of basic fields to be included in each resource. Valid values include: ' + readableFields);
+    queryValidation.$select = Joi.alternatives().try(Joi.array().items(Joi.string().valid(readableFields))
+        .description('A list of basic fields to be included in each resource. Valid values include: ' + readableFields.toString().replace(/,/g,', ')), Joi.string().valid(readableFields));
     // queryValidation.$term = Joi.string().optional()
     //   .description('A generic search parameter. This can be refined using the `searchFields` parameter. Valid values include: ' + queryableFields);
     // queryValidation.$searchFields = Joi.string().optional()//TODO: make enumerated array.
     //   .description('A set of fields to apply the \"$term\" search parameter to. If this parameter is not included, the \"$term\" search parameter is applied to all searchable fields. Valid values include: ' + queryableFields);
-    queryValidation.$sort = Joi.alternatives().try(Joi.string().valid(sortableFields), Joi.array().items(Joi.string().valid(sortableFields)))
-    .description('A set of fields to sort by. Including field name indicates it should be sorted ascending, while prepending ' +
-      '\'-\' indicates descending. The default sort direction is \'ascending\' (lowest value to highest value). Listing multiple' +
-      'fields prioritizes the sort starting with the first field listed. Valid values include: ' + sortableFields);
+    queryValidation.$sort = Joi.alternatives().try(Joi.array().items(Joi.string().valid(sortableFields))
+        .description('A set of fields to sort by. Including field name indicates it should be sorted ascending, while prepending ' +
+            '\'-\' indicates descending. The default sort direction is \'ascending\' (lowest value to highest value). Listing multiple' +
+            'fields prioritizes the sort starting with the first field listed. Valid values include: ' + sortableFields.toString().replace(/,/g,', ')), Joi.string().valid(sortableFields));
     queryValidation.$where = Joi.any().optional()
-    .description('An optional field for raw mongoose queries.');
+        .description('An optional field for raw mongoose queries.');
 
-    queryValidation["test"] = Joi.alternatives().try(Joi.string().optional(), Joi.array().items(Joi.string()));
+    queryValidation["test"] = Joi.alternatives().try(Joi.array().items(Joi.string())
+        .description('Match values for the ' + "test" + ' property.'), Joi.string().optional());
 
     //</editor-fold>
 
@@ -6642,8 +6644,8 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
     var userModel2 = mongoose.model("user2", userSchema2);
 
     var queryValidation = {};
-    queryValidation.$embed = Joi.alternatives().try(Joi.string(), Joi.array().items(Joi.string()))
-    .description('A set of complex object properties to populate. Valid values include ' + Object.keys({test:{}}));
+    queryValidation.$embed = Joi.alternatives().try(Joi.array().items(Joi.string())
+        .description('A set of complex object properties to populate. Valid first level values include ' + Object.keys({test:{}}).toString().replace(/,/g,', ')), Joi.string());
     //</editor-fold>
 
     //<editor-fold desc="Act">

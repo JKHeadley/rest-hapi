@@ -4,7 +4,6 @@ var gulp = require('gulp');
 var exit = require('gulp-exit');
 var Q = require('q');
 var mongoose = require('mongoose');
-// var passwordUtility = require('../api/utilities/password-helper');
 var config = require('../config');
 var logging = require('loggin');
 var logUtil = require('../utilities/log-util');
@@ -20,10 +19,9 @@ gulp.task('seed', ['models'], function() {
 
     var generateModels = require('../utilities/model-generator');
 
-    // var hashedPassword = passwordUtility.hash_password('1234');
-    var hashedPassword = '1234';
-
     return generateModels(mongoose, logger, config).then(function(models) {
+
+        var hashedPassword = models.user.generatePasswordHash('1234');
 
         return dropCollections(models).then(function() {
             console.log("seeding roles");

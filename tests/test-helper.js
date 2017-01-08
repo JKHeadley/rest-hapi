@@ -95,7 +95,7 @@ module.exports = {
 
 /**
  * Function to run a single test file using node cli.
- * Ex: "node api/tests/test-helper.js api/tests/model-helper.tests.js"
+ * Ex: "node tests/test-helper.js tests/model-helper.tests.js"
  */
 var runTestFile = function() {
   var pathToTestFile = process.argv.slice(2)[0];
