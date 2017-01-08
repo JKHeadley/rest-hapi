@@ -61,7 +61,6 @@
     "tap-colorize": "latest",
     "gulp-tape": "latest",
     "bcrypt-nodejs": "latest",
-    "bcrypt": "latest",
     "rmdir": "^1.2.0"
   },
   "devDependencies": {
@@ -69,6 +68,7 @@
     "rewire": "^2.5.2",
     "sinon": "^1.17.6",
     "blue-tape": "^1.0.0",
-    "mkdirp": "0.5.1"
+    "mkdirp": "0.5.1",
+    "bcrypt": "latest"
   }
 }
