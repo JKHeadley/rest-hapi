@@ -60,7 +60,7 @@ You need [Node.js](https://nodejs.org/en/) installed and you'll need [MongoDB](h
 npm install rest-hapi
 ```
 ### First time setup/Demo
-**WARNING**: This will clear all data in the following MongoDB collections (in the db defined in ``config.local.js``) if they exist: ``users``, ``roles``.
+**WARNING**: This will clear all data in the following MongoDB collections (in the db defined in ``restHapi.config.``, default ``mongodb://localhost/rest_hapi``) if they exist: ``users``, ``roles``.
 
 If you would like to seed your database with some demo models/data, run:
 ```
@@ -104,7 +104,7 @@ function api(){
 
 module.exports = api();
 ```
-You can then run ``$ node api.js`` and point your browser to [http://localhost:8124/](http://localhost:8124/) to view the swagger docs (NOTE: API endpoints will only be generated if you have provided models. See [First time setup/Demo](#running-the-app) or [Creating endpoints](#creating-endpoints).
+You can then run ``$ node api.js`` and point your browser to [http://localhost:8124/](http://localhost:8124/) to view the swagger docs (NOTE: API endpoints will only be generated if you have provided models. See [First time setup/Demo](#first-time-setup/demo) or [Creating endpoints](#creating-endpoints).
 
 [gulp-nodemon](https://www.npmjs.com/package/gulp-nodemon) watches for changes in server code and restarts the app automatically.
 
