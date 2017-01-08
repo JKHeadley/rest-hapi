@@ -21,6 +21,6 @@ before_script:
   - npm install lodash
   - npm install chalk
   - npm install joi
-
+  - npm install tape
 script:
   - gulp test
