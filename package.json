@@ -61,6 +61,7 @@
     "tap-colorize": "latest",
     "gulp-tape": "latest",
     "bcrypt-nodejs": "latest",
+    "bcrypt": "latest",
     "rmdir": "^1.2.0"
   },
   "devDependencies": {

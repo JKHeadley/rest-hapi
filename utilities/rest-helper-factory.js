@@ -9,7 +9,7 @@ var chalk = require('chalk');
 var config = require("../config");
 
 //TODO: remove "options"?
-//TODO: allow config var to turn off query validation (helps use swagger docs)
+//TODO-DONE: allow config var to turn off query validation (helps use swagger docs)
 
 module.exports = function (logger, mongoose, server) {
   var logger = logger.bind(chalk.gray('rest-helper-factory'));

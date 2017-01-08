@@ -4,6 +4,8 @@ var Q = require('q');
 var extend = require('util')._extend;
 var QueryHelper = require('./query-helper');
 
+//TODO: add bulk delete/delete many
+
 //TODO: consolidate eventLog functionality
 
 //TODO-DONE: make returns more consistent/return all reply's
