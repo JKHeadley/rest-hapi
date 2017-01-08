@@ -12,10 +12,8 @@ rest-hapi is a hapi plugin intended to abstract the work involved in setting up 
 * Automatic generation of CRUD endpoints with middleware support
 * Automatic generation of association endpoints
 * [joi](https://github.com/hapijs/joi) validation
-* User password encryption support
-* Optional token authentication for all generated endpoints
 * Swagger docs for all generated endpoints via [hapi-swagger](https://github.com/glennjones/hapi-swagger)
-* Query parameter support for sorting, filtering, pagination, and embedding of associated models
+* Query parameter support for searching, sorting, filtering, pagination, and embedding of associated models
 
 ## Live demo
 
@@ -60,7 +58,7 @@ You need [Node.js](https://nodejs.org/en/) installed and you'll need [MongoDB](h
 npm install rest-hapi
 ```
 ### First time setup/Demo
-**WARNING**: This will clear all data in the following MongoDB collections (in the db defined in ``restHapi.config.``, default ``mongodb://localhost/rest_hapi``) if they exist: ``users``, ``roles``.
+**WARNING**: This will clear all data in the following MongoDB collections (in the db defined in ``restHapi.config``, default ``mongodb://localhost/rest_hapi``) if they exist: ``users``, ``roles``.
 
 If you would like to seed your database with some demo models/data, run:
 ```
@@ -104,7 +102,7 @@ function api(){
 
 module.exports = api();
 ```
-You can then run ``$ node api.js`` and point your browser to [http://localhost:8124/](http://localhost:8124/) to view the swagger docs (NOTE: API endpoints will only be generated if you have provided models. See [First time setup/Demo](#first-time-setup/demo) or [Creating endpoints](#creating-endpoints).
+You can then run ``$ node api.js`` and point your browser to [http://localhost:8124/](http://localhost:8124/) to view the swagger docs (NOTE: API endpoints will only be generated if you have provided models. See [First time setup/Demo](#first-time-setupdemo) or [Creating endpoints](#creating-endpoints).
 
 [gulp-nodemon](https://www.npmjs.com/package/gulp-nodemon) watches for changes in server code and restarts the app automatically.
 
