@@ -55,8 +55,11 @@ function register(server, options, next) {
         .then(function(models) {
 
             let swaggerOptions = {
-                apiVersion: '1.0',
-                documentationPath: '/'
+                documentationPath: '/',
+                info: {
+                    title: config.appTitle,
+                    version: config.version
+                }
             };
 
             server.register([

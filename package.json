@@ -45,7 +45,7 @@
     "gulp": "^3.9.1",
     "gulp-exit": "0.0.2",
     "hapi": "^15.2.0",
-    "hapi-swagger": "^2.2.4",
+    "hapi-swagger": "7.5.0",
     "inert": "^3.1.0",
     "joi": "^9.2.0",
     "joi-objectid": "^2.0.0",

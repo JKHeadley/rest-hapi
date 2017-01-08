@@ -6,6 +6,7 @@ var validationHelper = require("./validation-helper");
 var mongoose = require('mongoose');
 
 //TODO: support "allowNull"
+//TODO: add ".default()" to paths that have a default value
 
 module.exports = {
 

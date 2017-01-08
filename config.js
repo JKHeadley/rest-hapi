@@ -6,9 +6,16 @@ config.server = {};
 config.mongo = {};
 
 /**
- * Your app name goes here
+ * Your app title goes here.
+ * @type {string}
  */
-config.app = "rest-hapi-app";
+config.appTitle = "rest-hapi API";
+
+/**
+ * Your app version goes here.
+ * @type {string}
+ */
+config.version = '1.0.0';
 
 /**
  * Flag signifying whether the absolute path to the models directory is provided
@@ -56,8 +63,6 @@ config.auth = false;
 /**
  * Validation options:
  * default: true
- * NOTE: It is useful to disable query validation while testing with the hapi-swagger-docs
- *       as long as you open the docs with validation enabled first
  * @type {boolean}
  */
 config.enableQueryValidation = true;
