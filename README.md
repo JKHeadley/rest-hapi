@@ -102,19 +102,105 @@ function api(){
 
 module.exports = api();
 ```
-You can then run ``$ node api.js`` and point your browser to [http://localhost:8124/](http://localhost:8124/) to view the swagger docs (NOTE: API endpoints will only be generated if you have provided models. See [First time setup/Demo](#first-time-setupdemo) or [Creating endpoints](#creating-endpoints).
+You can then run ``$ node api.js`` and point your browser to [http://localhost:8124/](http://localhost:8124/) to view the swagger docs (NOTE: API endpoints will only be generated if you have provided models. See [First time setup/Demo](#first-time-setupdemo) or [Creating endpoints](#creating-endpoints).)
 
 [Back to top](#readme-contents)
 
 ## Configuration
 
-Edit the config file relevant to your environment (local, development, production).  The default config
-file is ```/api/config.local.js```.  Here you can set the server port, mongodb URI, and authentication.
+Configuration of the generated API is handled through the ``restHapi.config`` object.  Below is a description of the current configuration options/properties.
+
+```javascript
+/**
+ * Your app title goes here.
+ * @type {string}
+ */
+config.appTitle = "rest-hapi API";
+
+/**
+ * Your app version goes here.
+ * @type {string}
+ */
+config.version = '1.0.0';
+
+/**
+ * Flag signifying whether the absolute path to the models directory is provided
+ * @type {boolean}
+ */
+config.absoluteModelPath = false;
+
+/**
+ * Path to the models directory (default 'models')
+ * @type {string}
+ */
+config.modelPath = 'models';
+
+/**
+ * Server settings:
+ * - config.server.port = 8124; (default)
+ */
+config.server.port = 8124;
+
+config.server.routes = {
+    cors: {
+        additionalHeaders: ['X-Total-Count'],
+        additionalExposedHeaders: ['X-Total-Count']
+    }
+};
+
+config.server.connection = {
+    port: config.server.port,
+    routes: config.server.routes
+};
+
+/**
+ * Mongo settings
+ * - config.mongo.URI = 'mongodb://localhost/rest_hapi'; (local db, default)
+ */
+config.mongo.URI = 'mongodb://localhost/rest_hapi';
+
+/**
+ * Authentication strategy to be used for all generated endpoints.
+ * Set to false for no authentication (default).
+ * @type {boolean/string}
+ */
+config.auth = false;
+
+/**
+ * Validation options:
+ * default: true
+ * @type {boolean}
+ */
+config.enableQueryValidation = true;
+config.enablePayloadValidation = true;
+config.enableResponseValidation = true;
+
+/**
+ * Flag specifying whether to text index all string fields for all models to enable text search.
+ * WARNING: enabling this adds overhead to add inserts and updates, as well as added storage requirements.
+ * Default is false.
+ * @type {boolean}
+ */
+config.enableTextSearch = false;
+
+/**
+ * Log level options:
+ * - INTERNAL use it for logging calls and other internal stuff
+ * - DEBUG recommended to use it for debugging applications
+ * - NOTE development verbose information (default)
+ * - INFO minor information
+ * - LOG significant messages
+ * - WARNING really important stuff
+ * - ERROR application business logic error condition
+ * - FATAL system error condition
+ */
+config.loglevel = "DEBUG";
+```
 
 [Back to top](#rest-hapi)
 
 # Testing
-To run tests:
+If you have downloaded the source you can run the tests with:
 ```
 $ gulp test
 ```
