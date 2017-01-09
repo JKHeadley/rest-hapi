@@ -574,7 +574,7 @@ DELETE /group/{ownerId}/user/{childId}  Remove a single user object from a group
 Many-many relationships can include extra fields that contain data specific
 to each association instance.  This is accomplished through linking models which
 behave similar to pivot tables in a relational database.  Linking model files are
-stored in the ``/api/models/linking-models`` directory and follow the same 
+stored in the ``/models/linking-models`` directory and follow the same 
 ``{name}.model.js`` format as normal models.  Below is an example of a many-many
 relationship between the ``user`` model and itself through the ``friends`` association.
 The extra field ``friendsSince`` could contain a date representing how long the two
@@ -721,6 +721,18 @@ supported parameters:
     - A set of fields to sort by. Including field name indicates it should be sorted ascending, 
     while prepending '-' indicates descending. The default sort direction is 'ascending' 
     (lowest value to highest value). Listing multiple fields prioritizes the sort starting with the first field listed. 
+
+* $text
+    - A full text search parameter. Takes advantage of indexes for efficient searching. Also implements stemming with        
+    searches. Prefixing search terms with a "-" will exclude results that match that term.
+    
+* $term
+    - A regex search parameter. Slower than $text search but supports partial matches and doesn't require indexing. 
+    This can be refined using the $searchFields parameter.
+    
+* $searchFields
+    - A set of fields to apply the $term search parameter to. If this parameter is not included, 
+    the $term search parameter is applied to all searchable fields.
 
 * $embed
     - A set of associations to populate. 
