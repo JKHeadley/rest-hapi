@@ -838,7 +838,7 @@ requireOnRead: true | field required on read/response
 requireOnUpdate: true | field required on update
 allowOnRead: false | field excluded from read model
 allowOnUpdate: false | field excluded from update model
-allowOnUpdate: false | field excluded from create model
+allowOnCreate: false | field excluded from create model
 queryable: false | field cannot be included as a query parameter
 exclude: true | field cannot be included in a response or as part of a query
 allowNull: true | field accepts ``null`` as a valid value
