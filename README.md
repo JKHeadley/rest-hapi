@@ -718,21 +718,16 @@ supported parameters:
     - A list of basic fields to be included in each resource.
 
 * $sort
-    - A set of fields to sort by. Including field name indicates it should be sorted ascending, 
-    while prepending '-' indicates descending. The default sort direction is 'ascending' 
-    (lowest value to highest value). Listing multiple fields prioritizes the sort starting with the first field listed. 
+    - A set of fields to sort by. Including field name indicates it should be sorted ascending, while prepending '-' indicates descending. The default sort direction is 'ascending' (lowest value to highest value). Listing multiple fields prioritizes the sort starting with the first field listed. 
 
 * $text
-    - A full text search parameter. Takes advantage of indexes for efficient searching. Also implements stemming with        
-    searches. Prefixing search terms with a "-" will exclude results that match that term.
+    - A full text search parameter. Takes advantage of indexes for efficient searching. Also implements stemming with   searches. Prefixing search terms with a "-" will exclude results that match that term.
     
 * $term
-    - A regex search parameter. Slower than $text search but supports partial matches and doesn't require indexing. 
-    This can be refined using the $searchFields parameter.
+    - A regex search parameter. Slower than $text search but supports partial matches and doesn't require indexing. This can be refined using the $searchFields parameter.
     
 * $searchFields
-    - A set of fields to apply the $term search parameter to. If this parameter is not included, 
-    the $term search parameter is applied to all searchable fields.
+    - A set of fields to apply the $term search parameter to. If this parameter is not included, the $term search parameter is applied to all searchable fields.
 
 * $embed
     - A set of associations to populate. 
@@ -872,11 +867,12 @@ are available:
 
 
 For example, a ``create: pre`` function can be defined to encrypt a users password
-using the built-in ``password-helper`` utility.  Notice the use of the ``Q`` library
+using a static method ``generatePasswordHash``.  Notice the use of the ``Q`` library
 to return a promise.
  
 ```javascript
 var Q = require('q');
+var bcrypt = require('bcrypt');
 
 module.exports = function (mongoose) {
   var modelName = "user";
@@ -884,7 +880,6 @@ module.exports = function (mongoose) {
   var Schema = new mongoose.Schema({
     email: {
       type: Types.String,
-      required: true,
       unique: true
     },
     password: {
@@ -895,20 +890,25 @@ module.exports = function (mongoose) {
     }
   });
   
-  Schema.statics= {
-    collectionName: modelName
+  Schema.statics = {
+    collectionName:modelName,
     routeOptions: {
       create: {
         pre: function (request, Log) {
           var deferred = Q.defer();
-          var passwordUtility = require('../../api/utilities/password-helper');
-          var hashedPassword = passwordUtility.hash_password(request.payload.password);
+          var hashedPassword = mongoose.model('user').generatePasswordHash(request.payload.password);
 
           request.payload.password = hashedPassword;
           deferred.resolve(request);
           return deferred.promise;
         }
       }
+    },
+
+    generatePasswordHash: function(password) {
+      var salt = bcrypt.genSaltSync(10);
+      var hash = bcrypt.hashSync(password, salt);
+      return hash;
     }
   };
   
@@ -954,14 +954,14 @@ module.exports = function (mongoose) {
         //Password Update Endpoint
         function (server, model, options, Log) {
           Log = Log.bind("Password Update");
+          var Boom = require('boom');
 
           var collectionName = model.collectionDisplayName || model.modelName;
 
           Log.note("Generating Password Update endpoint for " + collectionName);
 
           var handler = function (request, reply) {
-            var passwordUtility = require('../../api/utilities/password-helper');
-            var hashedPassword = passwordUtility.hash_password(request.payload.password);
+            var hashedPassword = model.generatePasswordHash(request.payload.password);
             return model.findByIdAndUpdate(request.params._id, {password: hashedPassword}).then(function (result) {
               if (result) {
                 return reply("Password updated.").code(200);
@@ -1007,6 +1007,12 @@ module.exports = function (mongoose) {
           });
         }
       ]
+    },
+    
+    generatePasswordHash: function(password) {
+      var salt = bcrypt.genSaltSync(10);
+      var hash = bcrypt.hashSync(password, salt);
+      return hash;
     }
   };
   
@@ -1017,79 +1023,34 @@ module.exports = function (mongoose) {
 
 [Back to top](#readme-contents)
 
-## Token authentication
-The rest-hapi framework supports built in token authentication for all generated endpoints given the following requirements are fulfilled:
-
-- A ``user`` model exists with at least the following properties:
+## Authentication/Additional Plugins
+Some hapi plugins, such as authentication plugins, may require models to exist before the routes are registered. In this case rest-hapi provides a ``generateModels`` function that can be called before any plugins are registered.  See below for example usage:
 
 ```javascript
-var Q = require('q');
+restHapi.generateModels(mongoose)
+        .then(function() {
+            server.register(require('hapi-auth-jwt2'), (err) => {
+                require('./utilities/auth').applyJwtStrategy(server);
 
-module.exports = function (mongoose) {
-  var modelName = "user";
-  var Types = mongoose.Schema.Types;
-  var Schema = new mongoose.Schema({
-    email: {
-      type: Types.String,
-      required: true,
-      unique: true
-    },
-    password: {
-      type: Types.String,
-      required: true,
-      exclude: true,
-      allowOnUpdate: false
-    },
-    token: {
-      type: Types.String,
-      allowNull: true,
-      exclude: true,
-      allowOnUpdate: false,
-      allowOnCreate: false
-    },
-    tokenCreatedAt: {
-      type: Types.String,
-      allowNull: true,
-      exclude: true,
-      allowOnUpdate: false,
-      allowOnCreate: false
-    }
-  });
-  
-  Schema.statics = {
-    collectionName:modelName,
-    routeOptions: {
-      create: {
-        pre: function (request, Log) {
-          var deferred = Q.defer();
-          var passwordUtility = require('../../api/utilities/password-helper');
-          var hashedPassword = passwordUtility.hash_password(request.payload.password);
+                server.register({
+                    register: restHapi,
+                    options: {
+                        mongoose: mongoose
+                    }
+                }, function(err) {
 
-          request.payload.password = hashedPassword;
-          deferred.resolve(request);
-          return deferred.promise;
-        }
-      }
-    }
-  };
-  
-  return Schema;
-};
-```
-**NOTE:** Token authentication requires that passwords are encrypted using the password helper as above.
+                    server.start(function (err) {
 
-- The ``auth`` property in the config file is set to ``"token"``.
+                        server.log('info', 'Server initialized: ' + server.info);
 
-Given these conditions, a new endpoint will be generated:
-
-```
-POST /token     Create a token for a user.
-```
-
-This endpoint takes a user email and password as a payload and returns an authentication token.  When token authentication is enabled, all generated enpoints require an Authentication header:
-
-```
-Authorization: Bearer USER_TOKEN
+                        restHapi.logUtil.logActionComplete(restHapi.logger, "Server Initialized", server.info);
+                    });
+                });
+            });
+        })
+        .catch(function(error) {
+            console.log("There was an error generating the models: ", error)
+        });
 ```
 
 [Back to top](#readme-contents)
@@ -1107,7 +1068,6 @@ If you have any questions/issues/feature requests, please feel free to open an i
 ## Future work
 This project is still in its infancy, and there are many features I would still like to add.  Below is a list of some possible future updates:
 
-- support mongoose ``$text`` search query parameter
 - sorting through populate fields (Ex: sort users through role.name)
 - have built in ``created_at`` and ``updated_at`` fields for each model
 - support marking fields as ``duplicate`` i.e. any associated models referencing that model will duplicate those fields along with the reference Id. This could allow for a shallow embed that will return a list of reference ids with their "duplicate" values, and a full embed that will return the fully embedded references
