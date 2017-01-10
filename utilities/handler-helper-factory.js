@@ -3,6 +3,8 @@ var Boom = require('boom');
 var Q = require('q');
 var extend = require('util')._extend;
 var QueryHelper = require('./query-helper');
+var handlerHelper = require('./handler-helper');
+var errorHelper = require('./error-helper');
 let config = require("../config");
 
 //TODO: add bulk delete/delete many
@@ -220,53 +222,14 @@ function generateFindHandler(model, options, Log) {
     try {
       Log.log("params(%s), query(%s), payload(%s)", JSON.stringify(request.params), JSON.stringify(request.query), JSON.stringify(request.payload));
 
-
-
-      var mongooseQuery = model.findOne({ '_id': request.params._id });
-      mongooseQuery = QueryHelper.createMongooseQuery(model, request.query, mongooseQuery, Log);
-      return mongooseQuery.exec().then(function (result) {
-        if (result) {
-
-          var promise = {};
-          if (model.routeOptions && model.routeOptions.find && model.routeOptions.find.post) {
-            promise = model.routeOptions.find.post(request, result, Log);
-          } else {
-            promise = Q.when(result);
-          }
-
-          return promise.then(function(data) {
-            var result = data.toJSON();
-            if (model.routeOptions) {
-              var associations = model.routeOptions.associations;
-              for (var associationKey in associations) {
-                var association = associations[associationKey];
-                if (association.type === "ONE_MANY" && data[associationKey]) {//EXPL: we have to manually populate the return value for virtual (e.g. ONE_MANY) associations
-                  result[associationKey] = data[associationKey];
-                }
-              }
-            }
-
-            if (result._id) {//TODO: handle this with mongoose/global preware
-              result._id = result._id.toString();//EXPL: _id must be a string to pass validation
-            }
-
-            Log.log("Result: %s", JSON.stringify(result));
-
+      handlerHelper.find(model, request.params._id, request.query, Log)
+          .then(function(result) {
             return reply(result).code(200);
           })
-          .catch(function (error) {
-            Log.error("error: ", error);
-            return reply(Boom.badRequest("There was a postprocessing error.", error));
-          });
-        }
-        else {
-          return reply(Boom.notFound("There was no data found with that id.", request.params._id));
-        }
-      })
-      .catch(function (error) {
-        Log.error("error: ", error);
-        return reply(Boom.serverTimeout("There was an error accessing the database.", error));
-      });
+          .catch(function(error) {
+            var response = errorHelper.formatResponse(error, Log);
+            return reply(response);
+          })
     }
     catch(error) {
       Log.error("error: ", error);
@@ -289,131 +252,17 @@ function generateCreateHandler(model, options, Log) {
     try {
       Log.log("params(%s), query(%s), payload(%s)", JSON.stringify(request.params), JSON.stringify(request.query), JSON.stringify(request.payload));
 
-
-
-      var promise =  {};
-      if (model.routeOptions && model.routeOptions.create && model.routeOptions.create.pre){
-        promise = model.routeOptions.create.pre(request, Log);
-      }
-      else {
-        promise = Q.when(request);
-      }
-
-      return promise.then(function (request) {
-
-        if (config.enableCreatedAt) {
-          request.payload.createdAt = new Date();
-          request.payload.updatedAt = new Date();
-        }
-
-        return model.create(request.payload).then(function (data) {
-
-          //EXPL: rather than returning the raw "create" data, we filter the data through a separate query
-          var attributes = QueryHelper.createAttributesFilter(request.query, model, Log);
-
-          return model.findOne({ '_id': data._id }, attributes).then(function(result) {
-            result = result.toJSON();
-
-            //TODO: include eventLogs
-
-            if (model.routeOptions && model.routeOptions.create && model.routeOptions.create.post) {
-              promise = model.routeOptions.create.post(request, result, Log);
-            }
-            else {
-              promise = Q.when(result);
-            }
-
-            return promise.then(function (result) {
-              result._id = result._id.toString();//TODO: handle this with preware
-              return reply(result).code(201);
-            })
-            .catch(function (error) {
-              Log.error("error: ", error);
-              return reply(Boom.badRequest("There was a postprocessing error creating the resource", error));
-            });
+      handlerHelper.create(model, request.payload, Log)
+          .then(function(result) {
+            return reply(result).code(201);
           })
-        })
-        .catch(function (error) {
-          Log.error("error: ", error);
-          return reply(Boom.serverTimeout("There was an error creating the resource", error));
-        });
-      })
-      .catch(function (error) {
-        Log.error("error: ", error);
-        return reply(Boom.badRequest("There was a preprocessing error creating the resource", error));
-      });
+          .catch(function(error) {
+            var response = errorHelper.formatResponse(error, Log);
+            return reply(response);
+          })
     }
     catch(error) {
       Log.error(error);
-      reply(Boom.badRequest("There was an error processing the request.", error));
-    }
-  }
-}
-
-/**
- * Handles incoming DELETE requests to /RESOURCE/{_id}
- * @param model: A mongoose model.
- * @param options: Options object.
- * @param Log: A logging object.
- * @returns {Function} A handler function
- */
-function generateDeleteHandler(model, options, Log) {
-  options = options || {};
-
-  return function (request, reply) {
-    try {
-      Log.log("params(%s), query(%s), payload(%s)", JSON.stringify(request.params), JSON.stringify(request.query), JSON.stringify(request.payload));
-
-
-
-      var promise = {};
-      if (model.routeOptions && model.routeOptions.delete && model.routeOptions.delete.pre) {
-        promise = model.routeOptions.delete.pre(request, Log);
-      }
-      else {
-        promise = Q.when();
-      }
-
-      return promise.then(function () {
-
-        if (config.enableSoftDelete && !(request.payload && request.payload.hardDelete)) {
-          promise = model.findByIdAndUpdate(request.params._id, { isDeleted: true, deletedAt: new Date() });
-        }
-        else {
-          promise = model.findByIdAndRemove(request.params._id);
-        }
-        return promise.then(function (deleted) {//TODO: clean up associations/set rules for ON DELETE CASCADE/etc.
-          if (deleted) {
-            //TODO: add eventLogs
-
-            var promise = {};
-            if (model.routeOptions && model.routeOptions.delete && model.routeOptions.delete.post) {
-              promise = model.routeOptions.delete.post(request, deleted, Log);
-            }
-            else {
-              promise = Q.when();
-            }
-
-            return promise.then(function () {
-              return reply().code(204);
-            })
-                .catch(function (error) {
-                  Log.error("error: ", error);
-                  return reply(Boom.badRequest("There was a postprocessing error deleting the resource", error));
-                });
-          }
-          else {
-            return reply(Boom.notFound("No resource was found with that id."));
-          }
-        });
-      })
-      .catch(function (error) {
-        Log.error("error: ", error);
-        return reply(Boom.badRequest("There was a preprocessing error deleting the resource", error));
-      });
-    }
-    catch(error) {
-      Log.error("error: ", error);
       return reply(Boom.badRequest("There was an error processing the request.", error));
     }
   }
@@ -433,61 +282,44 @@ function generateUpdateHandler(model, options, Log) {
     try {
       Log.log("params(%s), query(%s), payload(%s)", JSON.stringify(request.params), JSON.stringify(request.query), JSON.stringify(request.payload));
 
+      handlerHelper.update(model, request.params._id, request.payload, Log)
+          .then(function(result) {
+            return reply(result).code(200);
+          })
+          .catch(function(error) {
+            var response = errorHelper.formatResponse(error, Log);
+            return reply(response);
+          })
+    }
+    catch(error) {
+      Log.error("error: ", error);
+      return reply(Boom.badRequest("There was an error processing the request.", error));
+    }
+  }
+}
 
+/**
+ * Handles incoming DELETE requests to /RESOURCE/{_id}
+ * @param model: A mongoose model.
+ * @param options: Options object.
+ * @param Log: A logging object.
+ * @returns {Function} A handler function
+ */
+function generateDeleteHandler(model, options, Log) {
+  options = options || {};
 
-      var promise =  {};
-      if (model.routeOptions && model.routeOptions.update && model.routeOptions.update.pre){
-        promise = model.routeOptions.update.pre(request, Log);
-      }
-      else {
-        promise = Q.when(request);
-      }
+  return function (request, reply) {
+    try {
+      Log.log("params(%s), query(%s), payload(%s)", JSON.stringify(request.params), JSON.stringify(request.query), JSON.stringify(request.payload));
 
-      return promise.then(function (request) {
-
-        if (config.enableUpdatedAt) {
-          request.payload.updatedAt = new Date();
-        }
-
-        //TODO: support eventLogs and log all property updates in one document rather than one document per property update
-        return model.findByIdAndUpdate(request.params._id, request.payload).then(function (result) {
-          if (result) {
-            //TODO: log all updated/added associations
-            var attributes = QueryHelper.createAttributesFilter(request.query, model, Log);
-
-            return model.findOne({'_id': result._id}, attributes).then(function (result) {
-              result = result.toJSON();
-
-              if (model.routeOptions && model.routeOptions.update && model.routeOptions.update.post) {
-                promise = model.routeOptions.update.post(request, result, Log);
-              }
-              else {
-                promise = Q.when(result);
-              }
-
-              return promise.then(function (result) {
-                result._id = result._id.toString();//TODO: handle this with preware
-                return reply(result).code(200);
-              })
-              .catch(function (error) {
-                Log.error("error: ", error);
-                return reply(Boom.badRequest("There was a postprocessing error updating the resource", error));
-              });
-            })
-          }
-          else {
-            return reply(Boom.notFound("No resource was found with that id."));
-          }
-        })
-        .catch(function (error) {
-          Log.error("error: ", error);
-          return reply(Boom.serverTimeout("There was an error updating the resource", error));
-        });
-      })
-      .catch(function (error) {
-        Log.error("error: ", error);
-        return reply(Boom.badRequest("There was a preprocessing error updating the resource", error));
-      });
+      handlerHelper.update(model, request.params._id, request.payload, Log)
+          .then(function(result) {
+            return reply().code(204);
+          })
+          .catch(function(error) {
+            var response = errorHelper.formatResponse(error, Log);
+            return reply(response);
+          })
     }
     catch(error) {
       Log.error("error: ", error);
