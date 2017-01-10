@@ -3,6 +3,7 @@ var Boom = require('boom');
 var Q = require('q');
 var extend = require('util')._extend;
 var QueryHelper = require('./query-helper');
+let config = require("../config");
 
 //TODO: add bulk delete/delete many
 
@@ -24,9 +25,12 @@ var QueryHelper = require('./query-helper');
 
 //TODO: fix X-Total-Count headers
 
-//TODO: update hapi version
+//TODO-DONE: update hapi version
 
 //TODO: look into using glue
+
+//TODO: abstract mongoose logic into CRUD utility methods that can be called directly with rest-hapi plugin
+//TODO:(cont) This will allow users to CRUD data in extra endpoints using rest-hapi functions.
 
 var mongoose, server;
 module.exports = function (_mongoose, _server) {
@@ -297,6 +301,11 @@ function generateCreateHandler(model, options, Log) {
 
       return promise.then(function (request) {
 
+        if (config.enableCreatedAt) {
+          request.payload.createdAt = new Date();
+          request.payload.updatedAt = new Date();
+        }
+
         return model.create(request.payload).then(function (data) {
 
           //EXPL: rather than returning the raw "create" data, we filter the data through a separate query
@@ -366,8 +375,14 @@ function generateDeleteHandler(model, options, Log) {
       }
 
       return promise.then(function () {
-        //TODO: implement option for soft delete
-        return model.findByIdAndRemove(request.params._id).then(function (deleted) {//TODO: clean up associations/set rules for ON DELETE CASCADE/etc.
+
+        if (config.enableSoftDelete && !(request.payload && request.payload.hardDelete)) {
+          promise = model.findByIdAndUpdate(request.params._id, { isDeleted: true, deletedAt: new Date() });
+        }
+        else {
+          promise = model.findByIdAndRemove(request.params._id);
+        }
+        return promise.then(function (deleted) {//TODO: clean up associations/set rules for ON DELETE CASCADE/etc.
           if (deleted) {
             //TODO: add eventLogs
 
@@ -382,10 +397,10 @@ function generateDeleteHandler(model, options, Log) {
             return promise.then(function () {
               return reply().code(204);
             })
-            .catch(function (error) {
-              Log.error("error: ", error);
-              return reply(Boom.badRequest("There was a postprocessing error deleting the resource", error));
-            });
+                .catch(function (error) {
+                  Log.error("error: ", error);
+                  return reply(Boom.badRequest("There was a postprocessing error deleting the resource", error));
+                });
           }
           else {
             return reply(Boom.notFound("No resource was found with that id."));
@@ -430,8 +445,12 @@ function generateUpdateHandler(model, options, Log) {
 
       return promise.then(function (request) {
 
+        if (config.enableUpdatedAt) {
+          request.payload.updatedAt = new Date();
+        }
+
         //TODO: support eventLogs and log all property updates in one document rather than one document per property update
-        model.findByIdAndUpdate(request.params._id, request.payload).then(function (result) {
+        return model.findByIdAndUpdate(request.params._id, request.payload).then(function (result) {
           if (result) {
             //TODO: log all updated/added associations
             var attributes = QueryHelper.createAttributesFilter(request.query, model, Log);
