@@ -10,6 +10,72 @@ var config = require('../config');
 //TODO: add ".default()" to paths that have a default value
 
 module.exports = {
+  /**
+   * Finds a list of model documents
+   * @param model: A mongoose model.
+   * @param query: query parameters to be converted to a mongoose query.
+   * @param Log: A logging object.
+   * @returns {object} A promise for the resulting model documents.
+   */
+  list: function (model, query, Log) {
+    try {
+      var mongooseQuery = model.find();
+      mongooseQuery = QueryHelper.createMongooseQuery(model, query, mongooseQuery, Log);
+      return mongooseQuery.exec()
+          .then(function (result) {
+
+            var promise = {};
+            if (model.routeOptions && model.routeOptions.list && model.routeOptions.list.post) {
+              promise = model.routeOptions.list.post(query, result, Log);
+            }
+            else {
+              promise = Q.when(result);
+            }
+
+            return promise
+                .then(function (result) {
+                  result = result.map(function (data) {
+                    var result = data.toJSON();
+                    if (model.routeOptions) {
+                      var associations = model.routeOptions.associations;
+                      for (var associationKey in associations) {
+                        var association = associations[associationKey];
+                        if (association.type === "ONE_MANY" && data[associationKey]) {//EXPL: we have to manually populate the return value for virtual (e.g. ONE_MANY) associations
+                          if (data[associationKey].toJSON) {//TODO: look into .toJSON and see why it appears sometimes and not other times
+                            result[associationKey] = data[associationKey].toJSON();
+                          }
+                          else {
+                            result[associationKey] = data[associationKey];
+                          }
+                        }
+                      }
+                    }
+
+                    if (result._id) {
+                      result._id = result._id.toString();//EXPL: _id must be a string to pass validation
+                    }
+
+                    Log.log("Result: %s", JSON.stringify(result));
+                    return result;
+                  });
+
+                  return result;
+                })
+                .catch(function (error) {
+                  const message = "There was a postprocessing error.";
+                  errorHelper.handleError(error, message, errorHelper.types.BAD_REQUEST, Log);
+                })
+          })
+          .catch(function (error) {
+            const message = "There was an error accessing the database.";
+            errorHelper.handleError(error, message, errorHelper.types.SERVER_TIMEOUT, Log);
+          });
+    }
+    catch(error) {
+      const message = "There was an error processing the request.";
+      errorHelper.handleError(error, message, errorHelper.types.BAD_REQUEST, Log);
+    }
+  },
 
   /**
    * Finds a model document
@@ -20,7 +86,8 @@ module.exports = {
    * @returns {object} A promise for the resulting model document.
    */
   find: function (model, _id, query, Log) {
-    try {var mongooseQuery = model.findOne({ '_id': _id });
+    try {
+      var mongooseQuery = model.findOne({ '_id': _id });
       mongooseQuery = QueryHelper.createMongooseQuery(model, query, mongooseQuery, Log);
       return mongooseQuery.exec()
           .then(function (result) {

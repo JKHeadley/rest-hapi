@@ -144,62 +144,14 @@ function generateListHandler(model, options, Log) {
     try {
       Log.log("params(%s), query(%s), payload(%s)", JSON.stringify(request.params), JSON.stringify(request.query), JSON.stringify(request.payload));
 
-
-
-      var mongooseQuery = model.find();
-      mongooseQuery = QueryHelper.createMongooseQuery(model, request.query, mongooseQuery, Log);
-      return mongooseQuery.exec().then(function (result) {
-
-        var promise = {};
-        if (model.routeOptions && model.routeOptions.list && model.routeOptions.list.post) {
-          promise = model.routeOptions.list.post(request, result, Log);
-        }
-        else {
-          promise = Q.when(result);
-        }
-
-        return promise.then(function (result) {
-          result = result.map(function (data) {
-            var result = data.toJSON();
-            if (model.routeOptions) {
-              var associations = model.routeOptions.associations;
-              for (var associationKey in associations) {
-                var association = associations[associationKey];
-                if (association.type === "ONE_MANY" && data[associationKey]) {//EXPL: we have to manually populate the return value for virtual (e.g. ONE_MANY) associations
-                  if (data[associationKey].toJSON) {//TODO: look into .toJSON and see why it appears sometimes and not other times
-                    result[associationKey] = data[associationKey].toJSON();
-                  }
-                  else {
-                    result[associationKey] = data[associationKey];
-                  }
-                }
-              }
-            }
-
-            if (result._id) {
-              result._id = result._id.toString();//EXPL: _id must be a string to pass validation
-            }
-
-            Log.log("Result: %s", JSON.stringify(result));
-            return result;
-          });
-
-          if (!request.noReply) {//EXPL: return the result without calling reply
+      handlerHelper.list(model, request.query, Log)
+          .then(function(result) {
             return reply(result).header('X-Total-Count', result.length).code(200);
-          }
-          else {
-            return result;
-          }
-        })
-        .catch(function (error) {
-          Log.error("error: ", error);
-          return reply(Boom.badRequest("There was a postprocessing error.", error));
-        })
-      })
-      .catch(function (error) {
-        Log.error("error: ", error);
-        return reply(Boom.serverTimeout("There was an error accessing the database.", error));
-      });
+          })
+          .catch(function(error) {
+            var response = errorHelper.formatResponse(error, Log);
+            return reply(response);
+          })
     }
     catch(error) {
       Log.error("error: ", error);
@@ -312,7 +264,7 @@ function generateDeleteHandler(model, options, Log) {
     try {
       Log.log("params(%s), query(%s), payload(%s)", JSON.stringify(request.params), JSON.stringify(request.query), JSON.stringify(request.payload));
 
-      handlerHelper.update(model, request.params._id, request.payload, Log)
+      handlerHelper.delete(model, request.params._id, request.payload, Log)
           .then(function(result) {
             return reply().code(204);
           })

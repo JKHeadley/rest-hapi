@@ -18,19 +18,13 @@ module.exports = {
    * @param type: The response type.
    */
   handleError: function(error, message, type, Log) {
-    try {
-      if (error.type) {
-        throw error;
-      }
-      else {
-        Log.error("error: ", error);
-        message = message || error;
-        throw { message: message, type: type };
-      }
+    if (error.type) {
+      throw error;
     }
-    catch(error) {
-      Log.error("error:", error);
-      return error;
+    else {
+      Log.error("error: ", error);
+      message = message || error;
+      throw { message: message, type: type };
     }
   },
 
