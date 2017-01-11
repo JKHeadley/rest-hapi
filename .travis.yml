@@ -5,26 +5,6 @@ node_js:
 install: true
 before_script:
   - npm install gulp
-  - npm install require-dir
-  - npm install gulp-tape
-  - npm install tap-colorize
-  - npm install rmdir
-  - npm install proxyquire
-  - npm install rewire
-  - npm install sinon
-  - npm install blue-tape
-  - npm install mkdirp
-  - npm install gulp-exit
-  - npm install q
-  - npm install mongoose
-  - npm install loggin
-  - npm install lodash
-  - npm install chalk
-  - npm install joi
-  - npm install tape
-  - npm install joi-objectid
-  - npm install qs
-  - npm install boom
-  - npm install extend
+  - npm install
 script:
   - gulp test
