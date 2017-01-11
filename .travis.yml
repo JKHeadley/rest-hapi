@@ -25,5 +25,6 @@ before_script:
   - npm install joi-objectid
   - npm install qs
   - npm install boom
+  - npm install extend
 script:
   - gulp test
