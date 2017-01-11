@@ -62,7 +62,12 @@
     "tap-colorize": "latest",
     "gulp-tape": "latest",
     "bcrypt-nodejs": "latest",
-    "rmdir": "^1.2.0"
+    "rmdir": "^1.2.0",
+    "proxyquire": "^1.7.10",
+    "rewire": "^2.5.2",
+    "sinon": "^1.17.6",
+    "blue-tape": "^1.0.0",
+    "mkdirp": "0.5.1"
   },
   "devDependencies": {
     "proxyquire": "^1.7.10",
