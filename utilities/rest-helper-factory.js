@@ -386,6 +386,11 @@ module.exports = function (logger, mongoose, server) {
 
       var handler = HandlerHelper.generateDeleteHandler(model, options, Log);
 
+      var payloadModel = null;
+      if (config.enableSoftDelete) {
+        payloadModel = Joi.object({ hardDelete: Joi.bool() }).allow(null);
+      }
+
       server.route({
         method: 'DELETE',
         path: '/' + resourceAliasForRoute + "/{_id}",
@@ -399,6 +404,7 @@ module.exports = function (logger, mongoose, server) {
             params: {
               _id: Joi.objectId().required()
             },
+            payload: config.enablePayloadValidation ? payloadModel : Joi.any(),
             headers: headersValidation
           },
           plugins: {

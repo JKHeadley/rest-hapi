@@ -1,5 +1,8 @@
 'use strict';
 
+let config = require("../config");
+
+//TODO: allow "unique" field to be rest-hapi specific if soft deletes are enabled (i.e. implement a unique constraint based on the required field and the "isDeleted" flag)
 //TODO: correctly label "model" and "schema" files and objects throughout project
 //TODO: add "updated_at" and "created_at" to all resources
 //TODO: make sure complex fields are supported for models. Ex:
@@ -16,7 +19,6 @@
 //   }
 // });
 //TODO-DONE: possibly remove "Schema.extend" and use "Schema.add"
-//TODO: look at accessing "model.statics rather than "model
 //TODO: create a field property that can mark it as "duplicate". i.e. any associated models referencing that model will duplicate those fields along with the reference Id
 //TODO(cont): this will allow for a shallow embed that will return a list of reference ids with their "duplicate" values, and a full embed that will return the fully embedded references
 //TODO(cont): Limiting the populated fields could also be accomplished with the "select" parameter of the "populate" function.
@@ -26,11 +28,51 @@
 
 module.exports = {
   /**
-   * Create a mongoose model with the given Schema and collectionName
+   * Create a mongoose model with the given Schema and collectionName after adding optional metadata fields
    * @param Schema: A mongoose schema object.
    * @returns {*}: The resulting mongoose model.
    */
   createModel: function(Schema, mongoose) {
+    //TODO: require createdAt and updatedAt
+    if (config.enableCreatedAt) {
+      let createdAt = {
+        createdAt: {
+          type: mongoose.Schema.Types.Date,
+          allowOnCreate: false,
+          allowOnUpdate: false
+        }
+      };
+      Schema.add(createdAt);
+    }
+    if (config.enableUpdatedAt) {
+      let updatedAt = {
+        updatedAt: {
+          type: mongoose.Schema.Types.Date,
+          allowOnCreate: false,
+          allowOnUpdate: false
+        }
+      };
+      Schema.add(updatedAt);
+    }
+    if (config.enableSoftDelete) {
+      let deletedAt = {
+        deletedAt: {
+          type: mongoose.Schema.Types.Date,
+          allowOnCreate: false,
+          allowOnUpdate: false,
+        }
+      };
+      Schema.add(deletedAt);
+      let isDeleted = {
+        isDeleted: {
+          type: mongoose.Schema.Types.Boolean,
+          allowOnCreate: false,
+          allowOnUpdate: false,
+          default: false
+        }
+      };
+      Schema.add(isDeleted);
+    }
     return mongoose.model(Schema.statics.collectionName, Schema);
   },
 

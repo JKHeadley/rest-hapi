@@ -1,5 +1,5 @@
 /**
- * config.local.js - Configuration settings for the local environment
+ * config.js - Configuration settings for the generated API
  */
 var config = {};
 config.server = {};
@@ -59,6 +59,15 @@ config.mongo.URI = 'mongodb://localhost/rest_hapi';
  * @type {boolean/string}
  */
 config.auth = false;
+
+/**
+ * MetaData options:
+ * default: true
+ * @type {boolean}
+ */
+config.enableCreatedAt = true;
+config.enableUpdatedAt = true;
+config.enableSoftDelete = true;
 
 /**
  * Validation options:
