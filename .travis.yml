@@ -4,6 +4,6 @@ node_js:
 
 install: true
 before_script:
-  - npm install --only=dev
+  - npm install --production
 script:
   - gulp test
