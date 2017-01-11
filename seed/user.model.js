@@ -126,12 +126,12 @@ module.exports = function (mongoose) {
         }
       ],
       create: {
-        pre: function (request, Log) {
+        pre: function (payload, Log) {
           var deferred = Q.defer();
-          var hashedPassword = mongoose.model('user').generatePasswordHash(request.payload.password);
+          var hashedPassword = mongoose.model('user').generatePasswordHash(payload.password);
 
-          request.payload.password = hashedPassword;
-          deferred.resolve(request);
+          payload.password = hashedPassword;
+          deferred.resolve(payload);
           return deferred.promise;
         }
       }

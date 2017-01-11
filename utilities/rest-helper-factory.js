@@ -323,7 +323,12 @@ module.exports = function (logger, mongoose, server) {
 
       var createModel = joiMongooseHelper.generateJoiCreateModel(model, Log);
 
+      //EXPL: support bulk creates
+      createModel = Joi.alternatives().try(Joi.array().items(createModel), createModel);
+
       var readModel = joiMongooseHelper.generateJoiReadModel(model, Log);
+
+      readModel = Joi.alternatives().try(Joi.array().items(readModel), readModel);
 
       server.route({
         method: 'POST',

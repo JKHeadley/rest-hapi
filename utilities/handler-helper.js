@@ -3,6 +3,7 @@ var Q = require('q');
 var errorHelper = require('./error-helper');
 var extend = require('util')._extend;
 var config = require('../config');
+var _ = require('lodash');
 
 module.exports = {
 
@@ -248,6 +249,7 @@ function _find(model, _id, query, Log) {
 
 }
 
+//TODO: make sure errors are catching in correct order
 /**
  * Creates a model document
  * @param model: A mongoose model.
@@ -257,20 +259,27 @@ function _find(model, _id, query, Log) {
  */
 function _create(model, payload, Log) {
   try {
-    var promise =  {};
+    if (!_.isArray(payload)) {
+      payload = [payload];
+    }
+
+    var promises =  [];
     if (model.routeOptions && model.routeOptions.create && model.routeOptions.create.pre){
-      promise = model.routeOptions.create.pre(payload, Log);
+      payload.forEach(function(item) {
+        promises.push(model.routeOptions.create.pre(item, Log));
+      });
     }
     else {
-      promise = Q.when(payload);
+      promises = Q.when(payload);
     }
 
-    return promise
+    return Q.all(promises)
         .then(function (payload) {
-
           if (config.enableCreatedAt) {
-            payload.createdAt = new Date();
-            payload.updatedAt = new Date();
+            payload.forEach(function(item) {
+              item.createdAt = new Date();
+              item.updatedAt = new Date();
+            });
           }
 
           return model.create(payload)
@@ -279,22 +288,35 @@ function _create(model, payload, Log) {
                 //EXPL: rather than returning the raw "create" data, we filter the data through a separate query
                 var attributes = QueryHelper.createAttributesFilter({}, model, Log);
 
-                return model.findOne({ '_id': data._id }, attributes)
+                data = data.map(function(item) {
+                  return item._id;
+                });
+
+                return model.find().where({'_id': { $in: data } }).select(attributes).exec()
                     .then(function(result) {
-                      result = result.toJSON();
+                      result = result.map(function(item) {
+                        return item.toJSON();
+                      });
+
 
                       //TODO: include eventLogs
 
+                      var promises = [];
                       if (model.routeOptions && model.routeOptions.create && model.routeOptions.create.post) {
-                        promise = model.routeOptions.create.post(payload, result, Log);
+                        payload.forEach(function(item) {
+                          promises.push(model.routeOptions.create.post(item, result, Log));
+                        });
                       }
                       else {
-                        promise = Q.when(result);
+                        promises = Q.when(result);
                       }
 
-                      return promise
+                      return Q.all(promises)
                           .then(function (result) {
-                            result._id = result._id.toString();//TODO: handle this with preware
+                            result = result.map(function(item) {
+                              item._id = item._id.toString();//TODO: handle this with preware
+                              return item;
+                            });
                             return result;
                           })
                           .catch(function (error) {

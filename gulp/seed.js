@@ -5,79 +5,92 @@ var exit = require('gulp-exit');
 var Q = require('q');
 var mongoose = require('mongoose');
 var config = require('../config');
-var logging = require('loggin');
-var logUtil = require('../utilities/log-util');
+var restHapi = require('../rest-hapi');
 
 
 gulp.task('seed', ['models'], function() {
 
-    let rootLogger = logging.getLogger("seed");
-    rootLogger.logLevel = config.loglevel;
-    var logger = logUtil.bindHelper(rootLogger, 'seed');
+    mongoose.Promise = Q.Promise;
 
-    mongoose.connect(config.mongo.URI);
+    mongoose.connect(restHapi.config.mongo.URI);
 
-    var generateModels = require('../utilities/model-generator');
+    restHapi.generateModels(mongoose).then(function (models) {
+        restHapi.config.loglevel = "DEBUG";
+        let Log = restHapi.getLogger("seed");
 
-    return generateModels(mongoose, logger, config).then(function(models) {
+        let roles = [],
+            users = [];
 
-        var hashedPassword = models.user.generatePasswordHash('1234');
+        var password = "root";
 
-        return dropCollections(models).then(function() {
-            console.log("seeding roles");
-            var roles = [
-                {
-                    name: "Account",
-                    description: "A standard user account."
-                },
-                {
-                    name: "Admin",
-                    description: "A user with advanced permissions."
-                },
-                {
-                    name: "SuperAdmin",
-                    description: "A user with full permissions."
-                }
-            ];
-            return models.role.create(roles, function (error, roles) {
-                console.log("seeding users");
+        return dropCollections(models)
+            .then(function() {
+                Log.log("seeding roles");
+                var roles = [
+                    {
+                        name: "Account",
+                        description: "A standard user account."
+                    },
+                    {
+                        name: "Admin",
+                        description: "A user with advanced permissions."
+                    },
+                    {
+                        name: "SuperAdmin",
+                        description: "A user with full permissions."
+                    }
+                ];
+                return restHapi.create(models.role, roles, Log);
+            })
+            .then(function(result) {
+                roles = result;
+                Log.log("seeding users");
                 var users = [
                     {
                         email: 'test@account.com',
-                        password: hashedPassword,
+                        password: password,
                         role: roles[0]._id
                     },
                     {
                         email: 'test@admin.com',
-                        password: hashedPassword,
+                        password: password,
                         role: roles[1]._id
                     },
                     {
                         email: 'test@superadmin.com',
-                        password: hashedPassword,
+                        password: password,
                         role: roles[2]._id
                     }
                 ];
-                return models.user.create(users, function (error, users) {
-                    return gulp.src("")
-                        .pipe(exit());
-                })
+                return restHapi.create(models.user, users, Log);
             })
-
-        })
+            .then(function(result) {
+                users = result;
+                return gulp.src("")
+                    .pipe(exit());
+            })
+            .catch(function (error) {
+                Log.error(error);
+            });
     })
-
 });
 
 function dropCollections(models) {
+    restHapi.config.loglevel = "LOG";
+    let Log = restHapi.getLogger("unseed");
     var deferred = Q.defer();
-    models.user.remove({}, function(err) {
-        console.log('roles removed');
-        models.role.remove({}, function(err) {
-            console.log('users removed');
+    models.user.remove({})
+        .then(function() {
+            Log.log('roles removed');
+            return models.role.remove({});
+        })
+        .then(function() {
+            Log.log('users removed');
             deferred.resolve();
+        })
+        .catch(function (error) {
+            Log.error(error);
         });
-    });
     return deferred.promise;
 }
 

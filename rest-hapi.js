@@ -10,6 +10,7 @@ const _ = require('lodash'),
     chalk = require('chalk'),
     Q = require("q"),
     restHelperFactory = require('./utilities/rest-helper-factory'),
+    handlerHelper = require('./utilities/handler-helper'),
     modelGenerator = require('./utilities/model-generator'),
     defaultConfig = require('./config');
 
@@ -20,7 +21,17 @@ module.exports = {
     config: defaultConfig,
     register: register,
     generateModels: generateModels,
+    list: handlerHelper.list,
+    find: handlerHelper.find,
+    create: handlerHelper.create,
+    update: handlerHelper.update,
+    delete: handlerHelper.delete,
+    addOne: handlerHelper.addOne,
+    removeOne: handlerHelper.removeOne,
+    addMany: handlerHelper.addMany,
+    getAll: handlerHelper.getAll,
     logger: {},
+    getLogger: getLogger,
     logUtil: logUtil
 };
 
@@ -30,11 +41,7 @@ function register(server, options, next) {
 
     extend(true, config, module.exports.config);
 
-    let rootLogger = logging.getLogger(chalk.gray("api"));
-
-    rootLogger.logLevel = config.loglevel;
-
-    var logger = logUtil.bindHelper(rootLogger, 'appInit()');
+    var logger = getLogger();
 
     module.exports.logger = logger;
 
@@ -98,23 +105,36 @@ function register(server, options, next) {
  * @returns {*}
  */
 function generateModels(mongoose) {
+
     modelsGenerated = true;
 
     let config = defaultConfig;
 
     extend(true, config, module.exports.config);
 
-    let rootLogger = logging.getLogger(chalk.gray("app"));
+    var logger = getLogger();
 
-    rootLogger.logLevel = config.loglevel;
-
-    var logger = logUtil.bindHelper(rootLogger, 'appInit()');
+    module.exports.logger = logger;
 
     return modelGenerator(mongoose, logger, config)
         .then(function(models) {
             globalModels = models;
             return models;
         });
+}
+
+function getLogger(label) {
+    let config = defaultConfig;
+
+    extend(true, config, module.exports.config);
+
+    let rootLogger = logging.getLogger(chalk.gray(label));
+
+    rootLogger.logLevel = config.loglevel;
+
+    var logger = logUtil.bindHelper(rootLogger, '');
+
+    return logger;
 }
 
 
