@@ -169,7 +169,12 @@ function _list(model, query, Log) {
   }
   catch(error) {
     const message = "There was an error processing the request.";
-    errorHelper.handleError(error, message, errorHelper.types.BAD_REQUEST, Log);
+    try {
+      errorHelper.handleError(error, message, errorHelper.types.BAD_REQUEST, Log)
+    }
+    catch(error) {
+      return Q.reject(error);
+    }
   }
 }
 
@@ -233,7 +238,12 @@ function _find(model, _id, query, Log) {
   }
   catch(error) {
     const message = "There was an error processing the request.";
-    errorHelper.handleError(error, message, errorHelper.types.BAD_REQUEST, Log);
+    try {
+      errorHelper.handleError(error, message, errorHelper.types.BAD_REQUEST, Log)
+    }
+    catch(error) {
+      return Q.reject(error);
+    }
   }
 
 }
@@ -305,7 +315,12 @@ function _create(model, payload, Log) {
   }
   catch(error) {
     const message = "There was an error processing the request.";
-    errorHelper.handleError(error, message, errorHelper.types.BAD_REQUEST, Log);
+    try {
+      errorHelper.handleError(error, message, errorHelper.types.BAD_REQUEST, Log)
+    }
+    catch(error) {
+      return Q.reject(error);
+    }
   }
 }
 
@@ -380,7 +395,12 @@ function _update(model, _id, payload, Log) {
   }
   catch(error) {
     const message = "There was an error processing the request.";
-    errorHelper.handleError(error, message, errorHelper.types.BAD_REQUEST, Log);
+    try {
+      errorHelper.handleError(error, message, errorHelper.types.BAD_REQUEST, Log)
+    }
+    catch(error) {
+      return Q.reject(error);
+    }
   }
 }
 
@@ -450,7 +470,12 @@ function _delete(model, _id, payload, Log) {
   }
   catch(error) {
     const message = "There was an error processing the request.";
-    errorHelper.handleError(error, message, errorHelper.types.BAD_REQUEST, Log);
+    try {
+      errorHelper.handleError(error, message, errorHelper.types.BAD_REQUEST, Log)
+    }
+    catch(error) {
+      return Q.reject(error);
+    }
   }
 }
 
@@ -492,7 +517,12 @@ function _addOne(ownerModel, ownerId, childModel, childId, associationName, payl
   }
   catch(error) {
     const message = "There was an error processing the request.";
-    errorHelper.handleError(error, message, errorHelper.types.BAD_REQUEST, Log);
+    try {
+      errorHelper.handleError(error, message, errorHelper.types.BAD_REQUEST, Log)
+    }
+    catch(error) {
+      return Q.reject(error);
+    }
   }
 }
 
@@ -528,7 +558,12 @@ function _removeOne(ownerModel, ownerId, childModel, childId, associationName, L
   }
   catch(error) {
     const message = "There was an error processing the request.";
-    errorHelper.handleError(error, message, errorHelper.types.BAD_REQUEST, Log);
+    try {
+      errorHelper.handleError(error, message, errorHelper.types.BAD_REQUEST, Log)
+    }
+    catch(error) {
+      return Q.reject(error);
+    }
   }
 }
 
@@ -593,7 +628,12 @@ function _addMany(ownerModel, ownerId, childModel, associationName, payload, Log
   }
   catch(error) {
     const message = "There was an error processing the request.";
-    errorHelper.handleError(error, message, errorHelper.types.BAD_REQUEST, Log);
+    try {
+      errorHelper.handleError(error, message, errorHelper.types.BAD_REQUEST, Log)
+    }
+    catch(error) {
+      return Q.reject(error);
+    }
   }
 }
 
@@ -682,7 +722,12 @@ function _getAll(ownerModel, ownerId, childModel, associationName, query, Log) {
   }
   catch(error) {
     const message = "There was an error processing the request.";
-    errorHelper.handleError(error, message, errorHelper.types.BAD_REQUEST, Log);
+    try {
+      errorHelper.handleError(error, message, errorHelper.types.BAD_REQUEST, Log)
+    }
+    catch(error) {
+      return Q.reject(error);
+    }
   }
 }
 
