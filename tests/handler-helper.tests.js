@@ -133,13 +133,13 @@ test('handler-helper.list', function(t) {
       var queryHelperStub = sandbox.stub(require('../utilities/query-helper'));
       var deferred = Q.defer();
       deferred.resolve("TEST");
-      queryHelperStub.createMongooseQuery = function(){ return { exec: function(){ return deferred.promise }}};
+      queryHelperStub.createMongooseQuery = function(){ return { lean: function(){ return { exec: function(){ return deferred.promise }} }}};
       var errorHelperStub = sandbox.stub(require('../utilities/error-helper'));
       var handlerHelper = proxyquire('../utilities/handler-helper', {
         './query-helper': queryHelperStub,
         './error-helper': errorHelperStub
       });
-      sandbox.stub(Log, 'error', function(){});
+      // sandbox.stub(Log, 'error', function(){});
 
       var userSchema = new mongoose.Schema({});
       var postDeferred = Q.defer();
@@ -191,9 +191,9 @@ test('handler-helper.list', function(t) {
       var server = sandbox.spy();
       var queryHelperStub = sandbox.stub(require('../utilities/query-helper'));
       var deferred = Q.defer();
-      var result = [{ toJSON: function(){return "TEST1"} }, { toJSON: function(){return "TEST2"} }];
+      var result = ["TEST1","TEST2"];
       deferred.resolve(result);
-      queryHelperStub.createMongooseQuery = function(){ return { exec: function(){ return deferred.promise }}}
+      queryHelperStub.createMongooseQuery = function(){ return { lean: function(){ return { exec: function(){ return deferred.promise }} }}};
       var errorHelperStub = sandbox.stub(require('../utilities/error-helper'));
       var handlerHelper = proxyquire('../utilities/handler-helper', {
         './query-helper': queryHelperStub,
@@ -242,7 +242,7 @@ test('handler-helper.list', function(t) {
       var queryHelperStub = sandbox.stub(require('../utilities/query-helper'));
       var deferred = Q.defer();
       deferred.resolve("");
-      queryHelperStub.createMongooseQuery = function(){ return { exec: function(){ return deferred.promise }}}
+      queryHelperStub.createMongooseQuery = function(){ return { lean: function(){ return { exec: function(){ return deferred.promise }} }}};
       var boomStub = sandbox.stub(require('boom'));
       var handlerHelper = proxyquire('../utilities/handler-helper', {
         './query-helper': queryHelperStub,
@@ -299,7 +299,7 @@ test('handler-helper.list', function(t) {
       var server = sandbox.spy();
       var queryHelperStub = sandbox.stub(require('../utilities/query-helper'));
       var error = "error message";
-      queryHelperStub.createMongooseQuery = function(){ return { exec: function(){ return Q.reject(error) }}};
+      queryHelperStub.createMongooseQuery = function(){ return { lean: function(){ return { exec: function(){ return Q.reject(error) }} }}};
       var boomStub = sandbox.stub(require('boom'));
       var handlerHelper = proxyquire('../utilities/handler-helper', {
         './query-helper': queryHelperStub,
@@ -348,7 +348,7 @@ test('handler-helper.list', function(t) {
         './query-helper': queryHelperStub,
         'boom': boomStub
       });
-      // sandbox.stub(Log, 'error', function(){});
+      sandbox.stub(Log, 'error', function(){});
 
       var userSchema = new mongoose.Schema({});
 
