@@ -66,7 +66,8 @@ function register(server, options, next) {
                 info: {
                     title: config.appTitle,
                     version: config.version
-                }
+                },
+                expanded: config.docExpansion
             };
 
             server.register([

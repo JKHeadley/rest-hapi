@@ -109,4 +109,11 @@ config.enableTextSearch = false;
  */
 config.loglevel = "DEBUG";
 
+/**
+ * Determines the initial expansion state of the swagger docs
+ * - options: 'none', 'list', 'full' (default: 'none')
+ * @type {string}
+ */
+config.docExpansion = 'none';
+
 module.exports = config;
