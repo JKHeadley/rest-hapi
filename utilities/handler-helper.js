@@ -117,7 +117,7 @@ module.exports = {
 function _list(model, query, Log) {
   try {
     var mongooseQuery = model.find();
-    mongooseQuery = QueryHelper.createMongooseQuery(model, query, mongooseQuery, Log);
+    mongooseQuery = QueryHelper.createMongooseQuery(model, query, mongooseQuery, Log).lean();
     return mongooseQuery.exec()
         .then(function (result) {
 
@@ -132,7 +132,7 @@ function _list(model, query, Log) {
           return promise
               .then(function (result) {
                 result = result.map(function (data) {
-                  var result = data.toJSON();
+                  var result = data;
                   if (model.routeOptions) {
                     var associations = model.routeOptions.associations;
                     for (var associationKey in associations) {
@@ -146,6 +146,10 @@ function _list(model, query, Log) {
                         }
                       }
                     }
+                  }
+
+                  if (config.enableSoftDelete && config.filterDeletedEmbeds) {//EXPL: remove soft deleted documents from populated properties
+                    filterDeletedEmbeds(result, {}, "", 0, Log);
                   }
 
                   if (result._id) {
@@ -190,7 +194,7 @@ function _list(model, query, Log) {
 function _find(model, _id, query, Log) {
   try {
     var mongooseQuery = model.findOne({ '_id': _id });
-    mongooseQuery = QueryHelper.createMongooseQuery(model, query, mongooseQuery, Log);
+    mongooseQuery = QueryHelper.createMongooseQuery(model, query, mongooseQuery, Log).lean();
     return mongooseQuery.exec()
         .then(function (result) {
           if (result) {
@@ -203,7 +207,6 @@ function _find(model, _id, query, Log) {
 
             return promise
                 .then(function(data) {
-                  var result = data.toJSON();
                   if (model.routeOptions) {
                     var associations = model.routeOptions.associations;
                     for (var associationKey in associations) {
@@ -212,6 +215,10 @@ function _find(model, _id, query, Log) {
                         result[associationKey] = data[associationKey];
                       }
                     }
+                  }
+
+                  if (config.enableSoftDelete && config.filterDeletedEmbeds) {//EXPL: remove soft deleted documents from populated properties
+                    filterDeletedEmbeds(result, {}, "", 0, Log);
                   }
 
                   if (result._id) {//TODO: handle this with mongoose/global preware
@@ -259,8 +266,10 @@ function _find(model, _id, query, Log) {
  */
 function _create(model, payload, Log) {
   try {
+    var isArray = true;
     if (!_.isArray(payload)) {
       payload = [payload];
+      isArray = false;
     }
 
     var promises =  [];
@@ -317,7 +326,12 @@ function _create(model, payload, Log) {
                               item._id = item._id.toString();//TODO: handle this with preware
                               return item;
                             });
-                            return result;
+                            if (isArray) {
+                              return result;
+                            }
+                            else {
+                              return result[0];
+                            }
                           })
                           .catch(function (error) {
                             const message = "There was a postprocessing error creating the resource.";
@@ -508,7 +522,7 @@ function _delete(model, _id, payload, Log) {
  * @param childModel: The model that is being added.
  * @param childId: The id of the child document.
  * @param associationName: The name of the association from the ownerModel's perspective.
- * @param payload: Either an id or an object containing an id and extra linking-model fields.
+ * @param payload: An object containing an extra linking-model fields.
  * @param Log: A logging object
  * @returns {object} A promise returning true if the add succeeds.
  */
@@ -964,4 +978,50 @@ function _removeAssociation(ownerModel, ownerObject, childModel, childId, associ
       });
 
   return deferred.promise;
+}
+
+/**
+ * This function is called after embedded associations have been populated so that any associations
+ * that have been soft deleted are removed.
+ * @param result: the object that is being inspected
+ * @param parent: the parent of the result object
+ * @param parentkey: the parents key for the result object
+ * @param depth: the current recursion depth
+ * @param Log: a logging object
+ * @returns {boolean}: returns false if the result object should be removed from the parent
+ */
+function filterDeletedEmbeds(result, parent, parentkey, depth, Log) {
+  if (_.isArray(result)) {
+    result = result.filter(function(obj) {
+      var keep = filterDeletedEmbeds(obj, result, parentkey, depth + 1, Log);
+      // Log.log("KEEP:", keep);
+      return keep;
+    });
+    // Log.log("UPDATED:", parentkey);
+    // Log.note("AFTER:", result);
+    parent[parentkey] = result;
+  }
+  else {
+    for (var key in result) {
+      // Log.debug("KEY:", key);
+      // Log.debug("VALUE:", result[key]);
+      if (_.isArray(result[key])) {
+        // Log.log("JUMPING IN ARRAY");
+        filterDeletedEmbeds(result[key], result, key, depth + 1, Log);
+      }
+      else if (_.isObject(result[key]) && result[key]._id) {
+        // Log.log("JUMPING IN OBJECT");
+        var keep = filterDeletedEmbeds(result[key], result, key, depth + 1, Log);
+        if (!keep) {
+          return false;
+        }
+      }
+      else if (key === 'isDeleted' && result[key] === true && depth > 0) {
+        // Log.log("DELETED", depth);
+        return false;
+      }
+    }
+    // Log.log("JUMPING OUT");
+    return true;
+  }
 }

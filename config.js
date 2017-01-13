@@ -67,7 +67,17 @@ config.auth = false;
  */
 config.enableCreatedAt = true;
 config.enableUpdatedAt = true;
-config.enableSoftDelete = true;
+
+/**
+ * Soft delete options
+ * - enableSoftDelete: adds "isDeleted" property to each model. Delete endpoints set "isDeleted" to true
+ * unless the payload contains { hardDelete: true }, in which case the document is actually deleted (default false)
+ * - filterDeletedEmbeds: if enabled, associations with "isDeleted" set to true will not populate (default false)
+ * NOTE: this option is known to be buggy
+ * @type {boolean}
+ */
+config.enableSoftDelete = false;
+config.filterDeletedEmbeds = false;
 
 /**
  * Validation options:
