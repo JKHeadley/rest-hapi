@@ -12,8 +12,6 @@ var config = require("../config");
 //TODO-DONE: allow config var to turn off query validation (helps use swagger docs)
 
 module.exports = function (logger, mongoose, server) {
-  var logger = logger.bind(chalk.gray('rest-helper-factory'));
-
   var HandlerHelper = require('./handler-helper-factory')(mongoose, server);
 
   var headersValidation;
@@ -39,12 +37,10 @@ module.exports = function (logger, mongoose, server) {
     generateRoutes: function (server, model, options) { //TODO: generate multiple DELETE routes at /RESOURCE and at
                                                         //TODO: /RESOURCE/{ownerId}/ASSOCIATION that take a list of Id's as a payload
       try {
-        // logger.error("MODEL:", model);
         validationHelper.validateModel(model, logger);
 
-
         var collectionName = model.collectionDisplayName || model.modelName;
-        var Log = logger.bind(chalk.gray(collectionName));
+        var Log = logger.bind(chalk.blue(collectionName));
 
         options = options || {};
 
@@ -113,7 +109,7 @@ module.exports = function (logger, mongoose, server) {
       validationHelper.validateModel(model, Log);
 
       var collectionName = model.collectionDisplayName || model.modelName;
-      Log = Log.bind("List");
+      Log = Log.bind(chalk.yellow("List"));
       options = options || {};
 
       Log.note("Generating List endpoint for " + collectionName);
@@ -225,7 +221,7 @@ module.exports = function (logger, mongoose, server) {
       validationHelper.validateModel(model, Log);
 
       var collectionName = model.collectionDisplayName || model.modelName;
-      Log = Log.bind("Find");
+      Log = Log.bind(chalk.yellow("Find"));
       Log.note("Generating Find endpoint for " + collectionName);
 
       var resourceAliasForRoute;
@@ -305,7 +301,7 @@ module.exports = function (logger, mongoose, server) {
       validationHelper.validateModel(model, Log);
 
       var collectionName = model.collectionDisplayName || model.modelName;
-      Log = Log.bind("Create");
+      Log = Log.bind(chalk.yellow("Create"));
       Log.note("Generating Create endpoint for " + collectionName);
 
       options = options || {};
@@ -375,7 +371,7 @@ module.exports = function (logger, mongoose, server) {
       validationHelper.validateModel(model, Log);
 
       var collectionName = model.collectionDisplayName || model.modelName;
-      Log = Log.bind("Delete");
+      Log = Log.bind(chalk.yellow("Delete"));
       Log.note("Generating Delete endpoint for " + collectionName);
 
       options = options || {};
@@ -446,7 +442,7 @@ module.exports = function (logger, mongoose, server) {
       validationHelper.validateModel(model, Log);
 
       var collectionName = model.collectionDisplayName || model.modelName;
-      Log = Log.bind("Update");
+      Log = Log.bind(chalk.yellow("Update"));
       Log.note("Generating Update endpoint for " + collectionName);
 
       options = options || {};
@@ -524,7 +520,7 @@ module.exports = function (logger, mongoose, server) {
 
       var childModelName = childModel.collectionDisplayName || childModel.modelName;
 
-      Log = Log.bind("AddOne");
+      Log = Log.bind(chalk.yellow("AddOne"));
       Log.note("Generating addOne association endpoint for " + ownerModelName + " -> " + associationName);
 
       options = options || {};
@@ -598,7 +594,7 @@ module.exports = function (logger, mongoose, server) {
 
       var childModelName = childModel.collectionDisplayName || childModel.modelName;
 
-      Log = Log.bind("RemoveOne");
+      Log = Log.bind(chalk.yellow("RemoveOne"));
       Log.note("Generating removeOne association endpoint for " + ownerModelName + " -> " + associationName);
 
       options = options || {};
@@ -658,7 +654,7 @@ module.exports = function (logger, mongoose, server) {
       var associationName = association.include.as || association.include.model.modelName;
       var ownerModelName = ownerModel.collectionDisplayName || ownerModel.modelName;
 
-      Log = Log.bind("AddMany");
+      Log = Log.bind(chalk.yellow("AddMany"));
       Log.note("Generating addMany association endpoint for " + ownerModelName + " -> " + associationName);
 
       options = options || {};
@@ -731,7 +727,7 @@ module.exports = function (logger, mongoose, server) {
       var associationName = association.include.as || association.include.model.modelName;
       var ownerModelName = ownerModel.collectionDisplayName || ownerModel.modelName;
       
-      Log = Log.bind("GetAll");
+      Log = Log.bind(chalk.yellow("GetAll"));
       Log.note("Generating list association endpoint for " + ownerModelName + " -> " + associationName);
       
       options = options || {};

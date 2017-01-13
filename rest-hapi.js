@@ -41,7 +41,7 @@ function register(server, options, next) {
 
     extend(true, config, module.exports.config);
 
-    var logger = getLogger();
+    var logger = getLogger("api");
 
     module.exports.logger = logger;
 
@@ -112,7 +112,7 @@ function generateModels(mongoose) {
 
     extend(true, config, module.exports.config);
 
-    var logger = getLogger();
+    var logger = getLogger("models");
 
     module.exports.logger = logger;
 
@@ -132,9 +132,7 @@ function getLogger(label) {
 
     rootLogger.logLevel = config.loglevel;
 
-    var logger = logUtil.bindHelper(rootLogger, '');
-
-    return logger;
+    return rootLogger;
 }
 
 
