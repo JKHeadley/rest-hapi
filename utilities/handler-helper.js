@@ -53,7 +53,16 @@ module.exports = {
    * @param Log: A logging object.
    * @returns {object} A promise returning true if the delete succeeds.
    */
-  delete: _delete,
+  deleteOne: _deleteOne,
+
+  /**
+   * Deletes multiple documents
+   * @param model: A mongoose model.
+   * @param payload: Either an array of ids or an array of objects containing an id and a "hardDelete" flag.
+   * @param Log: A logging object.
+   * @returns {object} A promise returning true if the delete succeeds.
+   */
+  deleteMany: _deleteMany,
 
   /**
    * Adds an association to a document
@@ -113,6 +122,7 @@ module.exports = {
  * @param query: query parameters to be converted to a mongoose query.
  * @param Log: A logging object.
  * @returns {object} A promise for the resulting model documents.
+ * @private
  */
 function _list(model, query, Log) {
   try {
@@ -190,6 +200,7 @@ function _list(model, query, Log) {
  * @param query: query parameters to be converted to a mongoose query.
  * @param Log: A logging object.
  * @returns {object} A promise for the resulting model document.
+ * @private
  */
 function _find(model, _id, query, Log) {
   try {
@@ -263,6 +274,7 @@ function _find(model, _id, query, Log) {
  * @param payload: Data used to create the model document.
  * @param Log: A logging object.
  * @returns {object} A promise for the resulting model document.
+ * @private
  */
 function _create(model, payload, Log) {
   try {
@@ -367,6 +379,7 @@ function _create(model, payload, Log) {
  * @param payload: Data used to update the model document.
  * @param Log: A logging object.
  * @returns {object} A promise for the resulting model document.
+ * @private
  */
 function _update(model, _id, payload, Log) {
   try {
@@ -392,9 +405,9 @@ function _update(model, _id, payload, Log) {
                   //TODO: log all updated/added associations
                   var attributes = QueryHelper.createAttributesFilter({}, model, Log);
 
-                  return model.findOne({'_id': result._id}, attributes)
+                  return model.findOne({'_id': result._id}, attributes).lean()
                       .then(function (result) {
-                        result = result.toJSON();
+                        // result = result.toJSON();
 
                         if (model.routeOptions && model.routeOptions.update && model.routeOptions.update.post) {
                           promise = model.routeOptions.update.post(payload, result, Log);
@@ -441,18 +454,61 @@ function _update(model, _id, payload, Log) {
 }
 
 /**
+ * Deletes multiple documents
+ * @param model: A mongoose model.
+ * @param payload: Either an array of ids or an array of objects containing an id and a "hardDelete" flag.
+ * @param Log: A logging object.
+ * @returns {object} A promise returning true if the delete succeeds.
+ * @private
+ */
+//TODO: prevent Q.all from catching first error and returning early. Catch individual errors and return a list
+//TODO(cont) of ids that failed
+function _deleteMany(model, payload, Log) {
+  try {
+    let promises = [];
+    payload.forEach(function(arg) {
+      if (_.isString(arg)) {
+        promises.push(_deleteOne(model, arg, false, Log));
+      }
+      else {
+        promises.push(_deleteOne(model, arg._id, arg.hardDelete, Log));
+      }
+    });
+
+    return Q.all(promises)
+        .then(function(result) {
+          return true;
+        })
+        .catch(function(error) {
+          throw error;
+        })
+  }
+
+  catch(error) {
+    const message = "There was an error processing the request.";
+    try {
+      errorHelper.handleError(error, message, errorHelper.types.BAD_REQUEST, Log)
+    }
+    catch(error) {
+      return Q.reject(error);
+    }
+  }
+}
+
+/**
  * Deletes a model document
  * @param model: A mongoose model.
  * @param _id: The document id.
- * @param payload: Data used to determine a soft or hard delete.
+ * @param hardDelete: Flag used to determine a soft or hard delete.
  * @param Log: A logging object.
  * @returns {object} A promise returning true if the delete succeeds.
+ * @private
  */
-function _delete(model, _id, payload, Log) {
+function _deleteOne(model, _id, hardDelete, Log) {
   try {
     var promise = {};
     if (model.routeOptions && model.routeOptions.delete && model.routeOptions.delete.pre) {
-      promise = model.routeOptions.delete.pre(payload, Log);
+      promise = model.routeOptions.delete.pre(_id, hardDelete, Log);
     }
     else {
       promise = Q.when();
@@ -460,8 +516,7 @@ function _delete(model, _id, payload, Log) {
 
     return promise
         .then(function () {
-
-          if (config.enableSoftDelete && !(payload && payload.hardDelete)) {
+          if (config.enableSoftDelete && !hardDelete) {
             promise = model.findByIdAndUpdate(_id, { isDeleted: true, deletedAt: new Date() });
           }
           else {
@@ -474,7 +529,7 @@ function _delete(model, _id, payload, Log) {
 
                   var promise = {};
                   if (model.routeOptions && model.routeOptions.delete && model.routeOptions.delete.post) {
-                    promise = model.routeOptions.delete.post(payload, deleted, Log);
+                    promise = model.routeOptions.delete.post(hardDelete, deleted, Log);
                   }
                   else {
                     promise = Q.when();
@@ -525,6 +580,7 @@ function _delete(model, _id, payload, Log) {
  * @param payload: An object containing an extra linking-model fields.
  * @param Log: A logging object
  * @returns {object} A promise returning true if the add succeeds.
+ * @private
  */
 function _addOne(ownerModel, ownerId, childModel, childId, associationName, payload, Log) {
   try {
@@ -571,6 +627,7 @@ function _addOne(ownerModel, ownerId, childModel, childId, associationName, payl
  * @param associationName: The name of the association from the ownerModel's perspective.
  * @param Log: A logging object
  * @returns {object} A promise returning true if the add succeeds.
+ * @private
  */
 function _removeOne(ownerModel, ownerId, childModel, childId, associationName, Log) {
   try {
@@ -612,6 +669,7 @@ function _removeOne(ownerModel, ownerId, childModel, childId, associationName, L
  * @param payload: Either a list of id's or a list of id's along with extra linking-model fields.
  * @param Log: A logging object
  * @returns {object} A promise returning true if the add succeeds.
+ * @private
  */
 function _addMany(ownerModel, ownerId, childModel, associationName, payload, Log) {
   try {
@@ -682,6 +740,7 @@ function _addMany(ownerModel, ownerId, childModel, associationName, payload, Log
  * @param query: query parameters to be converted to a mongoose query.
  * @param Log: A logging object
  * @returns {object} A promise returning true if the add succeeds.
+ * @private
  */
 function _getAll(ownerModel, ownerId, childModel, associationName, query, Log) {
   try {
@@ -901,6 +960,7 @@ function _setAssociation(ownerModel, ownerObject, childModel, childId, associati
  * @param options
  * @param Log
  * @returns {*|promise}
+ * @private
  */
 function _removeAssociation(ownerModel, ownerObject, childModel, childId, associationName, Log) {
   var deferred = Q.defer();
@@ -989,6 +1049,7 @@ function _removeAssociation(ownerModel, ownerObject, childModel, childId, associ
  * @param depth: the current recursion depth
  * @param Log: a logging object
  * @returns {boolean}: returns false if the result object should be removed from the parent
+ * @private
  */
 function filterDeletedEmbeds(result, parent, parentkey, depth, Log) {
   if (_.isArray(result)) {

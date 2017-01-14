@@ -9,7 +9,7 @@ var chalk = require('chalk');
 var config = require("../config");
 
 //TODO: remove "options"?
-//TODO-DONE: allow config var to turn off query validation (helps use swagger docs)
+//TODO: change model "alias" to "routeAlias" (or remove the option)
 
 module.exports = function (logger, mongoose, server) {
   var HandlerHelper = require('./handler-helper-factory')(mongoose, server);
@@ -58,7 +58,8 @@ module.exports = function (logger, mongoose, server) {
         }
 
         if (model.routeOptions.allowDelete !== false) {
-          this.generateDeleteEndpoint(server, model, options, Log);
+          this.generateDeleteOneEndpoint(server, model, options, Log);
+          this.generateDeleteManyEndpoint(server, model, options, Log);
         }
 
         if (model.routeOptions.associations) {
@@ -367,12 +368,12 @@ module.exports = function (logger, mongoose, server) {
      * @param options: Options object.
      * @param Log: A logging object.
      */
-    generateDeleteEndpoint: function (server, model, options, Log) {
+    generateDeleteOneEndpoint: function (server, model, options, Log) {
       validationHelper.validateModel(model, Log);
 
       var collectionName = model.collectionDisplayName || model.modelName;
-      Log = Log.bind(chalk.yellow("Delete"));
-      Log.note("Generating Delete endpoint for " + collectionName);
+      Log = Log.bind(chalk.yellow("DeleteOne"));
+      Log.note("Generating Delete One endpoint for " + collectionName);
 
       options = options || {};
 
@@ -405,6 +406,78 @@ module.exports = function (logger, mongoose, server) {
             params: {
               _id: Joi.objectId().required()
             },
+            payload: config.enablePayloadValidation ? payloadModel : Joi.any(),
+            headers: headersValidation
+          },
+          plugins: {
+            'hapi-swagger': {
+              responseMessages: [
+                {code: 200, message: 'The resource was deleted successfully.'},
+                {code: 400, message: 'The request was malformed.'},
+                {
+                  code: 401,
+                  message: 'The authentication header was missing/malformed, or the token has expired.'
+                },
+                {code: 404, message: 'There was no resource found with that ID.'},
+                {code: 500, message: 'There was an unknown error.'},
+                {code: 503, message: 'There was a problem with the database.'}
+              ]
+            }
+          },
+          response: {
+            //TODO: add a response schema if needed
+            //schema: model.readModel ? model.readModel : Joi.object().unknown().optional()
+          }
+        }
+      });
+    },
+
+    /**
+     * Creates an endpoint for DELETE /RESOURCE/
+     * @param server: A Hapi server.
+     * @param model: A mongoose model.
+     * @param options: Options object.
+     * @param Log: A logging object.
+     */
+    //TODO: handle partial deletes (return list of ids that failed/were not found)
+    generateDeleteManyEndpoint: function (server, model, options, Log) {
+      validationHelper.validateModel(model, Log);
+
+      var collectionName = model.collectionDisplayName || model.modelName;
+      Log = Log.bind(chalk.yellow("DeleteMany"));
+      Log.note("Generating Delete Many endpoint for " + collectionName);
+
+      options = options || {};
+
+      var resourceAliasForRoute;
+
+      if (model.routeOptions) {
+        resourceAliasForRoute = model.routeOptions.alias || model.modelName;
+      }
+      else {
+        resourceAliasForRoute = model.modelName;
+      }
+
+      var handler = HandlerHelper.generateDeleteHandler(model, options, Log);
+
+      var payloadModel = null;
+      if (config.enableSoftDelete) {
+        payloadModel = Joi.alternatives().try(Joi.array().items(Joi.object({ _id: Joi.objectId(), hardDelete: Joi.bool().default(false) })), Joi.array().items(Joi.objectId()));
+      }
+      else {
+        payloadModel = Joi.array().items(Joi.objectId());
+      }
+
+      server.route({
+        method: 'DELETE',
+        path: '/' + resourceAliasForRoute,
+        config: {
+          handler: handler,
+          auth: config.auth,
+          cors: true,
+          description: 'Delete multiple ' + collectionName + 's',
+          tags: ['api', collectionName],
+          validate: {
             payload: config.enablePayloadValidation ? payloadModel : Joi.any(),
             headers: headersValidation
           },

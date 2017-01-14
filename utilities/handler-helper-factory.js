@@ -249,7 +249,7 @@ function generateUpdateHandler(model, options, Log) {
 }
 
 /**
- * Handles incoming DELETE requests to /RESOURCE/{_id}
+ * Handles incoming DELETE requests to /RESOURCE/{_id} or /RESOURCE
  * @param model: A mongoose model.
  * @param options: Options object.
  * @param Log: A logging object.
@@ -262,7 +262,15 @@ function generateDeleteHandler(model, options, Log) {
     try {
       Log.log("params(%s), query(%s), payload(%s)", JSON.stringify(request.params), JSON.stringify(request.query), JSON.stringify(request.payload));
 
-      handlerHelper.delete(model, request.params._id, request.payload, Log)
+      let promise = {};
+      if (request.params._id) {
+        promise = handlerHelper.deleteOne(model, request.params._id, request.payload.hardDelete, Log);
+      }
+      else {
+        promise = handlerHelper.deleteMany(model, request.payload, Log);
+      }
+
+      promise
           .then(function(result) {
             return reply().code(204);
           })

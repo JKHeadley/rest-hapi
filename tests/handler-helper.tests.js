@@ -20,7 +20,7 @@ test('handler-helper exists and has expected members', function (t) {
   var Log = logger.bind("handler-helper");
   var handlerHelper = require('../utilities/handler-helper');
 
-  t.plan(10);
+  t.plan(11);
   //</editor-fold>
 
   //<editor-fold desc="Assert">
@@ -28,7 +28,8 @@ test('handler-helper exists and has expected members', function (t) {
   t.ok(handlerHelper.list, "handler-helper.list exists.");
   t.ok(handlerHelper.find, "handler-helper.find exists.");
   t.ok(handlerHelper.create, "handler-helper.create exists.");
-  t.ok(handlerHelper.delete, "handler-helper.delete exists.");
+  t.ok(handlerHelper.deleteOne, "handler-helper.deleteOne exists.");
+  t.ok(handlerHelper.deleteMany, "handler-helper.deleteMany exists.");
   t.ok(handlerHelper.update, "handler-helper.update exists.");
   t.ok(handlerHelper.addOne, "handler-helper.addOne exists.");
   t.ok(handlerHelper.removeOne, "handler-helper.removeOne exists.");

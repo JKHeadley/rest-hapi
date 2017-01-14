@@ -17,12 +17,14 @@ var fs = require('fs');
 //EXPL: Temporarily create config file for testing.
 // fs.createReadStream(__dirname + '/../config.js').pipe(fs.createWriteStream(__dirname + '/../config.js'));
 
+//TODO: test DeleteMany endpoint
+
 test('rest-helper-factory exists and has expected members', function (t) {
   //<editor-fold desc="Arrange">
   var server = sinon.spy();
   var restHelperFactory = require('../utilities/rest-helper-factory')(Log, mongoose, server);
 
-  t.plan(11);
+  t.plan(12);
   //</editor-fold>
 
   //<editor-fold desc="Assert">
@@ -31,7 +33,8 @@ test('rest-helper-factory exists and has expected members', function (t) {
   t.ok(restHelperFactory.generateListEndpoint, "rest-helper-factory.generateListEndpoint exists.");
   t.ok(restHelperFactory.generateFindEndpoint, "rest-helper-factory.generateFindEndpoint exists.");
   t.ok(restHelperFactory.generateCreateEndpoint, "rest-helper-factory.generateCreateEndpoint exists.");
-  t.ok(restHelperFactory.generateDeleteEndpoint, "rest-helper-factory.generateDeleteEndpoint exists.");
+  t.ok(restHelperFactory.generateDeleteOneEndpoint, "rest-helper-factory.generateDeleteOneEndpoint exists.");
+  t.ok(restHelperFactory.generateDeleteManyEndpoint, "rest-helper-factory.generateDeleteManyEndpoint exists.");
   t.ok(restHelperFactory.generateUpdateEndpoint, "rest-helper-factory.generateUpdateEndpoint exists.");
   t.ok(restHelperFactory.generateAssociationAddOneEndpoint, "rest-helper-factory.generateAssociationAddOneEndpoint exists.");
   t.ok(restHelperFactory.generateAssociationRemoveOneEndpoint, "rest-helper-factory.generateAssociationRemoveOneEndpoint exists.");
@@ -133,7 +136,7 @@ test('rest-helper-factory.generateRoutes', function(t) {
     var server = sinon.spy();
     var restHelperFactory = require('../utilities/rest-helper-factory')(Log, mongoose, server);
 
-    t.plan(5);
+    t.plan(6);
 
     var userSchema = new mongoose.Schema();
     userSchema.statics = {
@@ -145,7 +148,8 @@ test('rest-helper-factory.generateRoutes', function(t) {
     sinon.stub(restHelperFactory, 'generateFindEndpoint', sinon.spy());
     sinon.stub(restHelperFactory, 'generateCreateEndpoint', sinon.spy());
     sinon.stub(restHelperFactory, 'generateUpdateEndpoint', sinon.spy());
-    sinon.stub(restHelperFactory, 'generateDeleteEndpoint', sinon.spy());
+    sinon.stub(restHelperFactory, 'generateDeleteOneEndpoint', sinon.spy());
+    sinon.stub(restHelperFactory, 'generateDeleteManyEndpoint', sinon.spy());
     //</editor-fold>
 
     //<editor-fold desc="Act">
@@ -157,7 +161,8 @@ test('rest-helper-factory.generateRoutes', function(t) {
     t.ok(restHelperFactory.generateFindEndpoint.called, "generateFindEndpoint called");
     t.ok(restHelperFactory.generateCreateEndpoint.called, "generateCreateEndpoint called");
     t.ok(restHelperFactory.generateUpdateEndpoint.called, "generateUpdateEndpoint called");
-    t.ok(restHelperFactory.generateDeleteEndpoint.called, "generateDeleteEndpoint called");
+    t.ok(restHelperFactory.generateDeleteOneEndpoint.called, "generateDeleteOneEndpoint called");
+    t.ok(restHelperFactory.generateDeleteManyEndpoint.called, "generateDeleteManyEndpoint called");
     //</editor-fold>
 
     //<editor-fold desc="Restore">
@@ -165,7 +170,8 @@ test('rest-helper-factory.generateRoutes', function(t) {
     restHelperFactory.generateFindEndpoint.restore();
     restHelperFactory.generateCreateEndpoint.restore();
     restHelperFactory.generateUpdateEndpoint.restore();
-    restHelperFactory.generateDeleteEndpoint.restore();
+    restHelperFactory.generateDeleteOneEndpoint.restore();
+    restHelperFactory.generateDeleteManyEndpoint.restore();
     delete mongoose.models.user;
     delete mongoose.modelSchemas.user;
     //</editor-fold>
@@ -176,7 +182,7 @@ test('rest-helper-factory.generateRoutes', function(t) {
     var server = sinon.spy();
     var restHelperFactory = require('../utilities/rest-helper-factory')(Log, mongoose, server);
 
-    t.plan(5);
+    t.plan(6);
 
     var userSchema = new mongoose.Schema();
     userSchema.statics = {
@@ -193,7 +199,8 @@ test('rest-helper-factory.generateRoutes', function(t) {
     sinon.stub(restHelperFactory, 'generateFindEndpoint', sinon.spy());
     sinon.stub(restHelperFactory, 'generateCreateEndpoint', sinon.spy());
     sinon.stub(restHelperFactory, 'generateUpdateEndpoint', sinon.spy());
-    sinon.stub(restHelperFactory, 'generateDeleteEndpoint', sinon.spy());
+    sinon.stub(restHelperFactory, 'generateDeleteOneEndpoint', sinon.spy());
+    sinon.stub(restHelperFactory, 'generateDeleteManyEndpoint', sinon.spy());
     //</editor-fold>
 
     //<editor-fold desc="Act">
@@ -205,7 +212,8 @@ test('rest-helper-factory.generateRoutes', function(t) {
     t.notOk(restHelperFactory.generateFindEndpoint.called, "generateFindEndpoint not called");
     t.notOk(restHelperFactory.generateCreateEndpoint.called, "generateCreateEndpoint not called");
     t.notOk(restHelperFactory.generateUpdateEndpoint.called, "generateUpdateEndpoint not called");
-    t.notOk(restHelperFactory.generateDeleteEndpoint.called, "generateDeleteEndpoint not called");
+    t.notOk(restHelperFactory.generateDeleteOneEndpoint.called, "generateDeleteOneEndpoint not called");
+    t.notOk(restHelperFactory.generateDeleteManyEndpoint.called, "generateDeleteManyEndpoint not called");
     //</editor-fold>
 
     //<editor-fold desc="Restore">
@@ -213,7 +221,8 @@ test('rest-helper-factory.generateRoutes', function(t) {
     restHelperFactory.generateFindEndpoint.restore();
     restHelperFactory.generateCreateEndpoint.restore();
     restHelperFactory.generateUpdateEndpoint.restore();
-    restHelperFactory.generateDeleteEndpoint.restore();
+    restHelperFactory.generateDeleteOneEndpoint.restore();
+    restHelperFactory.generateDeleteManyEndpoint.restore();
     delete mongoose.models.user;
     delete mongoose.modelSchemas.user;
     //</editor-fold>
@@ -255,7 +264,8 @@ test('rest-helper-factory.generateRoutes', function(t) {
     sinon.stub(restHelperFactory, 'generateFindEndpoint', sinon.spy());
     sinon.stub(restHelperFactory, 'generateCreateEndpoint', sinon.spy());
     sinon.stub(restHelperFactory, 'generateUpdateEndpoint', sinon.spy());
-    sinon.stub(restHelperFactory, 'generateDeleteEndpoint', sinon.spy());
+    sinon.stub(restHelperFactory, 'generateDeleteOneEndpoint', sinon.spy());
+    sinon.stub(restHelperFactory, 'generateDeleteManyEndpoint', sinon.spy());
 
     sinon.stub(restHelperFactory, 'generateAssociationAddOneEndpoint', sinon.spy());
     sinon.stub(restHelperFactory, 'generateAssociationRemoveOneEndpoint', sinon.spy());
@@ -291,7 +301,8 @@ test('rest-helper-factory.generateRoutes', function(t) {
     restHelperFactory.generateFindEndpoint.restore();
     restHelperFactory.generateCreateEndpoint.restore();
     restHelperFactory.generateUpdateEndpoint.restore();
-    restHelperFactory.generateDeleteEndpoint.restore();
+    restHelperFactory.generateDeleteOneEndpoint.restore();
+    restHelperFactory.generateDeleteManyEndpoint.restore();
 
 
     restHelperFactory.generateAssociationAddOneEndpoint.restore();
@@ -330,7 +341,8 @@ test('rest-helper-factory.generateRoutes', function(t) {
     sinon.stub(restHelperFactory, 'generateFindEndpoint', sinon.spy());
     sinon.stub(restHelperFactory, 'generateCreateEndpoint', sinon.spy());
     sinon.stub(restHelperFactory, 'generateUpdateEndpoint', sinon.spy());
-    sinon.stub(restHelperFactory, 'generateDeleteEndpoint', sinon.spy());
+    sinon.stub(restHelperFactory, 'generateDeleteOneEndpoint', sinon.spy());
+    sinon.stub(restHelperFactory, 'generateDeleteManyEndpoint', sinon.spy());
 
     sinon.stub(restHelperFactory, 'generateAssociationAddOneEndpoint', sinon.spy());
     sinon.stub(restHelperFactory, 'generateAssociationRemoveOneEndpoint', sinon.spy());
@@ -354,7 +366,8 @@ test('rest-helper-factory.generateRoutes', function(t) {
     restHelperFactory.generateFindEndpoint.restore();
     restHelperFactory.generateCreateEndpoint.restore();
     restHelperFactory.generateUpdateEndpoint.restore();
-    restHelperFactory.generateDeleteEndpoint.restore();
+    restHelperFactory.generateDeleteOneEndpoint.restore();
+    restHelperFactory.generateDeleteManyEndpoint.restore();
 
 
     restHelperFactory.generateAssociationAddOneEndpoint.restore();
@@ -389,7 +402,8 @@ test('rest-helper-factory.generateRoutes', function(t) {
     sinon.stub(restHelperFactory, 'generateFindEndpoint', sinon.spy());
     sinon.stub(restHelperFactory, 'generateCreateEndpoint', sinon.spy());
     sinon.stub(restHelperFactory, 'generateUpdateEndpoint', sinon.spy());
-    sinon.stub(restHelperFactory, 'generateDeleteEndpoint', sinon.spy());
+    sinon.stub(restHelperFactory, 'generateDeleteOneEndpoint', sinon.spy());
+    sinon.stub(restHelperFactory, 'generateDeleteManyEndpoint', sinon.spy());
     //</editor-fold>
 
     //<editor-fold desc="Act">
@@ -406,7 +420,8 @@ test('rest-helper-factory.generateRoutes', function(t) {
     restHelperFactory.generateFindEndpoint.restore();
     restHelperFactory.generateCreateEndpoint.restore();
     restHelperFactory.generateUpdateEndpoint.restore();
-    restHelperFactory.generateDeleteEndpoint.restore();
+    restHelperFactory.generateDeleteOneEndpoint.restore();
+    restHelperFactory.generateDeleteManyEndpoint.restore();
     delete mongoose.models.user;
     delete mongoose.modelSchemas.user;
     //</editor-fold>
@@ -2427,12 +2442,12 @@ test('rest-helper-factory.generateFindEndpoint', function(t) {
 //   t.end();
 // });
 
-test('rest-helper-factory.generateDeleteEndpoint', function(t) {
+test('rest-helper-factory.generateDeleteOneEndpoint', function(t) {
   var server = sinon.spy();
   var restHelperFactory = require('../utilities/rest-helper-factory')(Log, mongoose, server);
-  testHelper.testModelParameter(t, restHelperFactory.generateDeleteEndpoint, "restHelperFactory.generateDeleteEndpoint", ["server", "model", "options", "Log"], Log);
+  testHelper.testModelParameter(t, restHelperFactory.generateDeleteOneEndpoint, "restHelperFactory.generateDeleteOneEndpoint", ["server", "model", "options", "Log"], Log);
 
-  t.test('rest-helper-factory.generateDeleteEndpoint calls handlerHelper.generateDeleteHandler', sinon.test(function (t) {
+  t.test('rest-helper-factory.generateDeleteOneEndpoint calls handlerHelper.generateDeleteOneHandler', sinon.test(function (t) {
     //<editor-fold desc="Arrange">
     var server = this.stub({route: function(){}});
 
@@ -2455,7 +2470,7 @@ test('rest-helper-factory.generateDeleteEndpoint', function(t) {
     //</editor-fold>
 
     //<editor-fold desc="Act">
-    restHelperFactory.generateDeleteEndpoint(server, userModel, {}, Log);
+    restHelperFactory.generateDeleteOneEndpoint(server, userModel, {}, Log);
     //</editor-fold>
 
     //<editor-fold desc="Assert">
@@ -2469,7 +2484,7 @@ test('rest-helper-factory.generateDeleteEndpoint', function(t) {
     //</editor-fold>
   }));
 
-  t.test('rest-helper-factory.generateDeleteEndpoint calls server.route', sinon.test(function (t) {
+  t.test('rest-helper-factory.generateDeleteOneEndpoint calls server.route', sinon.test(function (t) {
     //<editor-fold desc="Arrange">
     var server = this.stub({route: function(){}});
 
@@ -2492,7 +2507,7 @@ test('rest-helper-factory.generateDeleteEndpoint', function(t) {
     //</editor-fold>
 
     //<editor-fold desc="Act">
-    restHelperFactory.generateDeleteEndpoint(server, userModel, {}, Log);
+    restHelperFactory.generateDeleteOneEndpoint(server, userModel, {}, Log);
     //</editor-fold>
 
     //<editor-fold desc="Assert">
@@ -2506,7 +2521,7 @@ test('rest-helper-factory.generateDeleteEndpoint', function(t) {
     //</editor-fold>
   }));
 
-  t.test('rest-helper-factory.generateDeleteEndpoint calls server.route with "DELETE" method', sinon.test(function (t) {
+  t.test('rest-helper-factory.generateDeleteOneEndpoint calls server.route with "DELETE" method', sinon.test(function (t) {
     //<editor-fold desc="Arrange">
     var server = this.stub({route: function(){}});
 
@@ -2529,7 +2544,7 @@ test('rest-helper-factory.generateDeleteEndpoint', function(t) {
     //</editor-fold>
 
     //<editor-fold desc="Act">
-    restHelperFactory.generateDeleteEndpoint(server, userModel, {}, Log);
+    restHelperFactory.generateDeleteOneEndpoint(server, userModel, {}, Log);
     //</editor-fold>
 
     //<editor-fold desc="Assert">
@@ -2545,7 +2560,7 @@ test('rest-helper-factory.generateDeleteEndpoint', function(t) {
     //</editor-fold>
   }));
 
-  t.test('rest-helper-factory.generateDeleteEndpoint calls server.route with correct resourceAliasForRoute', sinon.test(function (t) {
+  t.test('rest-helper-factory.generateDeleteOneEndpoint calls server.route with correct resourceAliasForRoute', sinon.test(function (t) {
     //<editor-fold desc="Arrange">
     var server = this.stub({route: function(){}});
 
@@ -2576,8 +2591,8 @@ test('rest-helper-factory.generateDeleteEndpoint', function(t) {
     //</editor-fold>
 
     //<editor-fold desc="Act">
-    restHelperFactory.generateDeleteEndpoint(server, userModel1, {}, Log);
-    restHelperFactory.generateDeleteEndpoint(server, userModel2, {}, Log);
+    restHelperFactory.generateDeleteOneEndpoint(server, userModel1, {}, Log);
+    restHelperFactory.generateDeleteOneEndpoint(server, userModel2, {}, Log);
     //</editor-fold>
 
     //<editor-fold desc="Assert">
@@ -2597,7 +2612,7 @@ test('rest-helper-factory.generateDeleteEndpoint', function(t) {
     //</editor-fold>
   }));
 
-  t.test('rest-helper-factory.generateDeleteEndpoint calls server.route with correct handler', sinon.test(function (t) {
+  t.test('rest-helper-factory.generateDeleteOneEndpoint calls server.route with correct handler', sinon.test(function (t) {
     //<editor-fold desc="Arrange">
     var server = this.stub({route: function(){}});
 
@@ -2621,7 +2636,7 @@ test('rest-helper-factory.generateDeleteEndpoint', function(t) {
     //</editor-fold>
 
     //<editor-fold desc="Act">
-    restHelperFactory.generateDeleteEndpoint(server, userModel, {}, Log);
+    restHelperFactory.generateDeleteOneEndpoint(server, userModel, {}, Log);
     //</editor-fold>
 
     //<editor-fold desc="Assert">
@@ -2637,7 +2652,7 @@ test('rest-helper-factory.generateDeleteEndpoint', function(t) {
     //</editor-fold>
   }));
 
-  t.test('rest-helper-factory.generateDeleteEndpoint calls server.route using authentication defined by config', sinon.test(function (t) {
+  t.test('rest-helper-factory.generateDeleteOneEndpoint calls server.route using authentication defined by config', sinon.test(function (t) {
     //<editor-fold desc="Arrange">
     var server = this.stub({route: function(){}});
 
@@ -2662,7 +2677,7 @@ test('rest-helper-factory.generateDeleteEndpoint', function(t) {
     //</editor-fold>
 
     //<editor-fold desc="Act">
-    restHelperFactory.generateDeleteEndpoint(server, userModel, {}, Log);
+    restHelperFactory.generateDeleteOneEndpoint(server, userModel, {}, Log);
     //</editor-fold>
 
     //<editor-fold desc="Assert">
@@ -2678,7 +2693,7 @@ test('rest-helper-factory.generateDeleteEndpoint', function(t) {
     //</editor-fold>
   }));
 
-  t.test('rest-helper-factory.generateDeleteEndpoint calls server.route with correct collectionName', sinon.test(function (t) {
+  t.test('rest-helper-factory.generateDeleteOneEndpoint calls server.route with correct collectionName', sinon.test(function (t) {
     //<editor-fold desc="Arrange">
     var server = this.stub({route: function(){}});
 
@@ -2708,8 +2723,8 @@ test('rest-helper-factory.generateDeleteEndpoint', function(t) {
     //</editor-fold>
 
     //<editor-fold desc="Act">
-    restHelperFactory.generateDeleteEndpoint(server, userModel1, {}, Log);
-    restHelperFactory.generateDeleteEndpoint(server, userModel2, {}, Log);
+    restHelperFactory.generateDeleteOneEndpoint(server, userModel1, {}, Log);
+    restHelperFactory.generateDeleteOneEndpoint(server, userModel2, {}, Log);
     //</editor-fold>
 
     //<editor-fold desc="Assert">
@@ -2731,7 +2746,7 @@ test('rest-helper-factory.generateDeleteEndpoint', function(t) {
     //</editor-fold>
   }));
 
-  t.test('rest-helper-factory.generateDeleteEndpoint calls server.route using cors', sinon.test(function (t) {
+  t.test('rest-helper-factory.generateDeleteOneEndpoint calls server.route using cors', sinon.test(function (t) {
     //<editor-fold desc="Arrange">
     var server = this.stub({route: function(){}});
 
@@ -2754,7 +2769,7 @@ test('rest-helper-factory.generateDeleteEndpoint', function(t) {
     //</editor-fold>
 
     //<editor-fold desc="Act">
-    restHelperFactory.generateDeleteEndpoint(server, userModel, {}, Log);
+    restHelperFactory.generateDeleteOneEndpoint(server, userModel, {}, Log);
     //</editor-fold>
 
     //<editor-fold desc="Assert">
@@ -2770,7 +2785,7 @@ test('rest-helper-factory.generateDeleteEndpoint', function(t) {
     //</editor-fold>
   }));
 
-  t.test('rest-helper-factory.generateDeleteEndpoint calls server.route using correct params validation', sinon.test(function (t) {
+  t.test('rest-helper-factory.generateDeleteOneEndpoint calls server.route using correct params validation', sinon.test(function (t) {
     //<editor-fold desc="Arrange">
     var server = this.stub({route: function(){}});
 
@@ -2814,7 +2829,7 @@ test('rest-helper-factory.generateDeleteEndpoint', function(t) {
     //</editor-fold>
 
     //<editor-fold desc="Act">
-    restHelperFactory.generateDeleteEndpoint(server, userModel, {}, Log);
+    restHelperFactory.generateDeleteOneEndpoint(server, userModel, {}, Log);
     //</editor-fold>
 
     //<editor-fold desc="Assert">
@@ -2830,7 +2845,7 @@ test('rest-helper-factory.generateDeleteEndpoint', function(t) {
     //</editor-fold>
   }));
 
-  t.test('rest-helper-factory.generateDeleteEndpoint calls server.route using correct header validation', sinon.test(function (t) {
+  t.test('rest-helper-factory.generateDeleteOneEndpoint calls server.route using correct header validation', sinon.test(function (t) {
     //<editor-fold desc="Arrange">
     var server = this.stub({route: function(){}});
 
@@ -2859,7 +2874,7 @@ test('rest-helper-factory.generateDeleteEndpoint', function(t) {
     //</editor-fold>
 
     //<editor-fold desc="Act">
-    restHelperFactory.generateDeleteEndpoint(server, userModel, {}, Log);
+    restHelperFactory.generateDeleteOneEndpoint(server, userModel, {}, Log);
     //</editor-fold>
 
     //<editor-fold desc="Assert">
@@ -2875,7 +2890,7 @@ test('rest-helper-factory.generateDeleteEndpoint', function(t) {
     //</editor-fold>
   }));
 
-  t.test('rest-helper-factory.generateDeleteEndpoint calls server.route using hapi-swagger plugin', sinon.test(function (t) {
+  t.test('rest-helper-factory.generateDeleteOneEndpoint calls server.route using hapi-swagger plugin', sinon.test(function (t) {
     //<editor-fold desc="Arrange">
     var server = this.stub({route: function(){}});
 
@@ -2898,7 +2913,7 @@ test('rest-helper-factory.generateDeleteEndpoint', function(t) {
     //</editor-fold>
 
     //<editor-fold desc="Act">
-    restHelperFactory.generateDeleteEndpoint(server, userModel, {}, Log);
+    restHelperFactory.generateDeleteOneEndpoint(server, userModel, {}, Log);
     //</editor-fold>
 
     //<editor-fold desc="Assert">
