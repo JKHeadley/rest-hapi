@@ -696,13 +696,16 @@ function _addMany(ownerModel, ownerId, childModel, associationName, payload, Log
                       deferred.resolve(result);
                     })
                     .catch(function (error) {
-                      const message = "There was a database error while setting the associations.";
-                      errorHelper.handleError(error, message, errorHelper.types.GATEWAY_TIMEOUT, Log);
+                      deferred.reject(error);
                     });
                 return deferred.promise;
               };
 
-              promise_chain = promise_chain.then(promise_link);
+              promise_chain = promise_chain
+                  .then(promise_link)
+                  .catch(function(error) {
+                    throw error;
+                  });
             });
 
             return promise_chain
@@ -710,7 +713,7 @@ function _addMany(ownerModel, ownerId, childModel, associationName, payload, Log
                   return true;
                 })
                 .catch(function (error) {
-                  const message = "There was a database error while setting the associations.";
+                  const message = "There was an internal error while setting the associations.";
                   errorHelper.handleError(error, message, errorHelper.types.GATEWAY_TIMEOUT, Log);
                 });
           }
@@ -897,6 +900,11 @@ function _setAssociation(ownerModel, ownerObject, childModel, childId, associati
                 childAssociation = association;
               }
             }
+
+            if (!childAssociation.include) {
+              throw "Missing association between " + ownerModel.modelName + " and " + childModel.modelName + ".";
+            }
+
             var childAssociationName = childAssociation.include.as;
 
             if (!childObject[childAssociationName]) {
