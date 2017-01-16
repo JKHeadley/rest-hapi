@@ -1,3 +1,5 @@
+'use strict';
+
 var QueryHelper = require('./query-helper');
 var Q = require('q');
 var errorHelper = require('./error-helper');

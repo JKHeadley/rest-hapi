@@ -1,3 +1,5 @@
+'use strict';
+
 var Boom = require('boom');
 var Q = require('q');
 var extend = require('util')._extend;

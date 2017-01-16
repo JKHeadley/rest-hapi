@@ -1,3 +1,5 @@
+'use strict';
+
 var _ = require('lodash');
 var assert = require("assert");
 var validationHelper = require("./validation-helper");
