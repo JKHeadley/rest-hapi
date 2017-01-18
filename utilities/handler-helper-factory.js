@@ -118,6 +118,16 @@ module.exports = function (_mongoose, _server) {
     generateAssociationAddManyHandler: generateAssociationAddManyHandler,
 
     /**
+     * Handles incoming DELETE requests to /OWNER_RESOURCE/{ownerId}/CHILD_RESOURCE
+     * @param ownerModel: A mongoose model.
+     * @param association: An object containing the association data/child mongoose model.
+     * @param options: Options object.
+     * @param Log: A logging object.
+     * @returns {Function} A handler function
+     */
+    generateAssociationRemoveManyHandler: generateAssociationRemoveManyHandler,
+
+    /**
      * Handles incoming GET requests to /OWNER_RESOURCE/{ownerId}/CHILD_RESOURCE
      * @param ownerModel: A mongoose model.
      * @param association: An object containing the association data/child mongoose model.
@@ -266,7 +276,8 @@ function generateDeleteHandler(model, options, Log) {
 
       let promise = {};
       if (request.params._id) {
-        promise = handlerHelper.deleteOne(model, request.params._id, request.payload.hardDelete, Log);
+        var hardDelete = request.payload ? request.payload.hardDelete : false;
+        promise = handlerHelper.deleteOne(model, request.params._id, hardDelete, Log);
       }
       else {
         promise = handlerHelper.deleteMany(model, request.payload, Log);
@@ -299,7 +310,7 @@ function generateDeleteHandler(model, options, Log) {
 function generateAssociationAddOneHandler(ownerModel, association, options, Log) {
   var associationName = association.include.as;
   var childModel = association.include.model;
-  var addMethodName = association.addMethodName || "add" + associationName[0].toUpperCase() + associationName.slice(1, -1);
+  var addMethodName = "addOne" + associationName[0].toUpperCase() + associationName.slice(1, -1);
 
   return function (request, reply) {
     try {
@@ -332,7 +343,7 @@ function generateAssociationAddOneHandler(ownerModel, association, options, Log)
 function generateAssociationRemoveOneHandler(ownerModel, association, options, Log) {
   var associationName = association.include.as;
   var childModel = association.include.model;
-  var removeMethodName = association.removeMethodName || "remove" + associationName[0].toUpperCase() + associationName.slice(1, -1);
+  var removeMethodName = "removeOne" + associationName[0].toUpperCase() + associationName.slice(1, -1);
 
   return function (request, reply) {
     try {
@@ -355,7 +366,7 @@ function generateAssociationRemoveOneHandler(ownerModel, association, options, L
 }
 
 /**
- * Handles incoming POST requests to /OWNER_RESOURCE/{ownerId}/CHILD_RESOURCE
+ * Handles incoming DELETE requests to /OWNER_RESOURCE/{ownerId}/CHILD_RESOURCE
  * @param ownerModel: A mongoose model.
  * @param association: An object containing the association data/child mongoose model.
  * @param options: Options object.
@@ -365,14 +376,49 @@ function generateAssociationRemoveOneHandler(ownerModel, association, options, L
 function generateAssociationAddManyHandler(ownerModel, association, options, Log) {
   var associationName = association.include.as;
   var childModel = association.include.model;
-  var setMethodName = "set" + associationName[0].toUpperCase() + associationName.slice(1);
+  var addMethodName = "addMany" + associationName[0].toUpperCase() + associationName.slice(1);
 
   return function (request, reply) {
     try {
-      Log.log(setMethodName + " + params(%s), query(%s), payload(%s)", JSON.stringify(request.params), JSON.stringify(request.query), JSON.stringify(request.payload));
+      Log.log(addMethodName + " + params(%s), query(%s), payload(%s)", JSON.stringify(request.params), JSON.stringify(request.query), JSON.stringify(request.payload));
 
       handlerHelper.addMany(ownerModel, request.params.ownerId, childModel, associationName, request.payload, Log)
           .then(function(result) {
+            return reply().code(204);
+          })
+          .catch(function(error) {
+            var response = errorHelper.formatResponse(error, Log);
+            return reply(response);
+          })
+    }
+    catch(error) {
+      Log.error("error: ", error);
+      reply(Boom.badRequest("There was an error processing the request.", error));
+    }
+  }
+}
+
+//TODO: need to make sure removeMany calls are sequential, otherwise errors occur
+/**
+ * Handles incoming POST requests to /OWNER_RESOURCE/{ownerId}/CHILD_RESOURCE
+ * @param ownerModel: A mongoose model.
+ * @param association: An object containing the association data/child mongoose model.
+ * @param options: Options object.
+ * @param Log: A logging object.
+ * @returns {Function} A handler function
+ */
+function generateAssociationRemoveManyHandler(ownerModel, association, options, Log) {
+  var associationName = association.include.as;
+  var childModel = association.include.model;
+  var removeMethodName = "removeMany" + associationName[0].toUpperCase() + associationName.slice(1);
+
+  return function (request, reply) {
+    try {
+      Log.log(removeMethodName + " + params(%s), query(%s), payload(%s)", JSON.stringify(request.params), JSON.stringify(request.query), JSON.stringify(request.payload));
+
+      handlerHelper.removeMany(ownerModel, request.params.ownerId, childModel, associationName, request.payload, Log)
+          .then(function(result) {
+            Log.debug("result:", result);
             return reply().code(204);
           })
           .catch(function(error) {

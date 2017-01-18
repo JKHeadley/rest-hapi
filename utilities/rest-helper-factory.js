@@ -69,15 +69,13 @@ module.exports = function (logger, mongoose, server) {
             var association = model.routeOptions.associations[associationName];
 
             if (association.type == "MANY_MANY" || association.type == "ONE_MANY") {
-              if (association.allowAddOne !== false) {
+              if (association.allowAdd !== false) {
                 this.generateAssociationAddOneEndpoint(server, model, association, options, Log);
-              }
-              if (association.allowRemoveOne !== false) {
-                this.generateAssociationRemoveOneEndpoint(server, model, association, options, Log);
-              }
-
-              if (association.allowAddMany !== false) {
                 this.generateAssociationAddManyEndpoint(server, model, association, options, Log);
+              }
+              if (association.allowRemove !== false) {
+                this.generateAssociationRemoveOneEndpoint(server, model, association, options, Log);
+                this.generateAssociationRemoveManyEndpoint(server, model, association, options, Log);
               }
 
               if (association.allowRead !== false) {
@@ -619,7 +617,7 @@ module.exports = function (logger, mongoose, server) {
           handler: handler,
           auth: config.auth,
           cors: true,
-          description: 'Add a single ' + childModelName + ' object to a ' + ownerModelName + '\'s list of ' + associationName,
+          description: 'Add a single ' + childModelName + ' to a ' + ownerModelName + '\'s list of ' + associationName,
           tags: ['api', associationName, ownerModelName],
           validate: {
             params: {
@@ -686,7 +684,7 @@ module.exports = function (logger, mongoose, server) {
           handler: handler,
           auth: config.auth,
           cors: true,
-          description: 'Remove a single ' + childModelName + ' object from a ' + ownerModelName + '\'s list of ' + associationName,
+          description: 'Remove a single ' + childModelName + ' from a ' + ownerModelName + '\'s list of ' + associationName,
           tags: ['api', associationName, ownerModelName],
           validate: {
             params: {
@@ -728,6 +726,9 @@ module.exports = function (logger, mongoose, server) {
 
       var associationName = association.include.as || association.include.model.modelName;
       var ownerModelName = ownerModel.collectionDisplayName || ownerModel.modelName;
+      var childModel = association.include.model;
+
+      var childModelName = childModel.collectionDisplayName || childModel.modelName;
 
       Log = Log.bind(chalk.yellow("AddMany"));
       Log.note("Generating addMany association endpoint for " + ownerModelName + " -> " + associationName);
@@ -759,7 +760,72 @@ module.exports = function (logger, mongoose, server) {
           handler: handler,
           auth: config.auth,
           cors: true,
-          description: 'Sets multiple ' + associationName + ' for a ' + ownerModelName,
+          description: 'Add multiple ' + childModelName + 's to a ' + ownerModelName + '\'s list of ' + associationName,
+          tags: ['api', associationName, ownerModelName],
+          validate: {
+            params: {
+              ownerId: Joi.objectId().required()
+            },
+            payload: config.enablePayloadValidation ? payloadValidation : Joi.any(),
+            headers: headersValidation
+          },
+          plugins: {
+            'hapi-swagger': {
+              responseMessages: [
+                {code: 204, message: 'The association was set successfully.'},
+                {code: 400, message: 'The request was malformed.'},
+                {code: 401, message: 'The authentication header was missing/malformed, or the token has expired.'},
+                {code: 404, message: 'There was no resource found with that ID.'},
+                {code: 500, message: 'There was an unknown error.'},
+                {code: 503, message: 'There was a problem with the database.'}
+              ]
+            }
+          },
+          response: {}
+        }
+      })
+    },
+
+    /**
+     * Creates an endpoint for DELETE /OWNER_RESOURCE/{ownerId}/CHILD_RESOURCE
+     * @param server: A Hapi server.
+     * @param ownerModel: A mongoose model.
+     * @param association: An object containing the association data/child mongoose model.
+     * @param options: Options object.
+     * @param Log: A logging object.
+     */
+    generateAssociationRemoveManyEndpoint: function (server, ownerModel, association, options, Log) {
+      validationHelper.validateModel(ownerModel, Log);
+
+      assert(ownerModel.routeOptions.associations, "model associations must exist");
+      assert(association, "association input must exist");
+
+      var associationName = association.include.as || association.include.model.modelName;
+      var ownerModelName = ownerModel.collectionDisplayName || ownerModel.modelName;
+      var childModel = association.include.model;
+
+      var childModelName = childModel.collectionDisplayName || childModel.modelName;
+
+      Log = Log.bind(chalk.yellow("RemoveMany"));
+      Log.note("Generating removeMany association endpoint for " + ownerModelName + " -> " + associationName);
+
+      options = options || {};
+
+      var ownerAlias = ownerModel.routeOptions.alias || ownerModel.modelName;
+      var childAlias = association.alias || association.include.model.modelName;
+
+      var handler = HandlerHelper.generateAssociationRemoveManyHandler(ownerModel, association, options, Log);
+
+      var payloadValidation = Joi.array().items(Joi.objectId()).required();
+
+      server.route({
+        method: 'DELETE',
+        path: '/' + ownerAlias + '/{ownerId}/' + childAlias,
+        config: {
+          handler: handler,
+          auth: config.auth,
+          cors: true,
+          description: 'Remove multiple ' + childModelName + 's from a ' + ownerModelName + '\'s list of ' + associationName,
           tags: ['api', associationName, ownerModelName],
           validate: {
             params: {
@@ -870,7 +936,7 @@ module.exports = function (logger, mongoose, server) {
           handler: handler,
           auth: config.auth,
           cors: true,
-          description: 'Gets all of the ' + associationName + ' for a ' + ownerModelName,
+          description: 'Get all of the ' + associationName + ' for a ' + ownerModelName,
           tags: ['api', associationName, ownerModelName],
           validate: {
             query: config.enableQueryValidation ? queryValidation : Joi.any(),

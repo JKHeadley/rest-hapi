@@ -24,7 +24,7 @@ test('rest-helper-factory exists and has expected members', function (t) {
   var server = sinon.spy();
   var restHelperFactory = require('../utilities/rest-helper-factory')(Log, mongoose, server);
 
-  t.plan(12);
+  t.plan(13);
   //</editor-fold>
 
   //<editor-fold desc="Assert">
@@ -39,6 +39,7 @@ test('rest-helper-factory exists and has expected members', function (t) {
   t.ok(restHelperFactory.generateAssociationAddOneEndpoint, "rest-helper-factory.generateAssociationAddOneEndpoint exists.");
   t.ok(restHelperFactory.generateAssociationRemoveOneEndpoint, "rest-helper-factory.generateAssociationRemoveOneEndpoint exists.");
   t.ok(restHelperFactory.generateAssociationAddManyEndpoint, "rest-helper-factory.generateAssociationAddManyEndpoint exists.");
+  t.ok(restHelperFactory.generateAssociationRemoveManyEndpoint, "rest-helper-factory.generateAssociationRemoveManyEndpoint exists.");
   t.ok(restHelperFactory.generateAssociationGetAllEndpoint, "rest-helper-factory.generateAssociationGetAllEndpoint exists.");
   //</editor-fold>
 });
@@ -233,7 +234,7 @@ test('rest-helper-factory.generateRoutes', function(t) {
     var server = sinon.spy();
     var restHelperFactory = require('../utilities/rest-helper-factory')(Log, mongoose, server);
 
-    t.plan(16);
+    t.plan(20);
 
     var userSchema = new mongoose.Schema();
     userSchema.statics = {
@@ -270,6 +271,7 @@ test('rest-helper-factory.generateRoutes', function(t) {
     sinon.stub(restHelperFactory, 'generateAssociationAddOneEndpoint', sinon.spy());
     sinon.stub(restHelperFactory, 'generateAssociationRemoveOneEndpoint', sinon.spy());
     sinon.stub(restHelperFactory, 'generateAssociationAddManyEndpoint', sinon.spy());
+    sinon.stub(restHelperFactory, 'generateAssociationRemoveManyEndpoint', sinon.spy());
     sinon.stub(restHelperFactory, 'generateAssociationGetAllEndpoint', sinon.spy());
     //</editor-fold>
 
@@ -290,6 +292,10 @@ test('rest-helper-factory.generateRoutes', function(t) {
     t.notOk(restHelperFactory.generateAssociationAddManyEndpoint.calledWith(server, userModel, profileImage, {}), "generateAssociationAddManyEndpoint not called");
     t.ok(restHelperFactory.generateAssociationAddManyEndpoint.calledWith(server, userModel, groups, {}), "generateAssociationAddManyEndpoint called");
     t.ok(restHelperFactory.generateAssociationAddManyEndpoint.calledWith(server, userModel, permissions, {}), "generateAssociationAddManyEndpoint called");
+    t.notOk(restHelperFactory.generateAssociationRemoveManyEndpoint.calledWith(server, userModel, title, {}), "generateAssociationRemoveManyEndpoint not called");
+    t.notOk(restHelperFactory.generateAssociationRemoveManyEndpoint.calledWith(server, userModel, profileImage, {}), "generateAssociationRemoveManyEndpoint not called");
+    t.ok(restHelperFactory.generateAssociationRemoveManyEndpoint.calledWith(server, userModel, groups, {}), "generateAssociationRemoveManyEndpoint called");
+    t.ok(restHelperFactory.generateAssociationRemoveManyEndpoint.calledWith(server, userModel, permissions, {}), "generateAssociationRemoveManyEndpoint called");
     t.notOk(restHelperFactory.generateAssociationGetAllEndpoint.calledWith(server, userModel, title, {}), "generateAssociationGetAllEndpoint not called");
     t.notOk(restHelperFactory.generateAssociationGetAllEndpoint.calledWith(server, userModel, profileImage, {}), "generateAssociationGetAllEndpoint not called");
     t.ok(restHelperFactory.generateAssociationGetAllEndpoint.calledWith(server, userModel, groups, {}), "generateAssociationGetAllEndpoint called");
@@ -308,6 +314,7 @@ test('rest-helper-factory.generateRoutes', function(t) {
     restHelperFactory.generateAssociationAddOneEndpoint.restore();
     restHelperFactory.generateAssociationRemoveOneEndpoint.restore();
     restHelperFactory.generateAssociationAddManyEndpoint.restore();
+    restHelperFactory.generateAssociationRemoveManyEndpoint.restore();
     restHelperFactory.generateAssociationGetAllEndpoint.restore();
     delete mongoose.models.user;
     delete mongoose.modelSchemas.user;
@@ -319,7 +326,7 @@ test('rest-helper-factory.generateRoutes', function(t) {
     var server = sinon.spy();
     var restHelperFactory = require('../utilities/rest-helper-factory')(Log, mongoose, server);
 
-    t.plan(4);
+    t.plan(5);
 
     var userSchema = new mongoose.Schema();
     userSchema.statics = {
@@ -327,9 +334,8 @@ test('rest-helper-factory.generateRoutes', function(t) {
         associations: {
           groups: {
             type: "MANY_MANY",
-            allowAddOne: false,
-            allowRemoveOne: false,
-            allowAddMany: false,
+            allowAdd: false,
+            allowRemove: false,
             allowRead: false
           }
         }
@@ -347,6 +353,7 @@ test('rest-helper-factory.generateRoutes', function(t) {
     sinon.stub(restHelperFactory, 'generateAssociationAddOneEndpoint', sinon.spy());
     sinon.stub(restHelperFactory, 'generateAssociationRemoveOneEndpoint', sinon.spy());
     sinon.stub(restHelperFactory, 'generateAssociationAddManyEndpoint', sinon.spy());
+    sinon.stub(restHelperFactory, 'generateAssociationRemoveManyEndpoint', sinon.spy());
     sinon.stub(restHelperFactory, 'generateAssociationGetAllEndpoint', sinon.spy());
     //</editor-fold>
 
@@ -358,6 +365,7 @@ test('rest-helper-factory.generateRoutes', function(t) {
     t.notOk(restHelperFactory.generateAssociationAddOneEndpoint.called, "generateAssociationAddOneEndpoint not called");
     t.notOk(restHelperFactory.generateAssociationRemoveOneEndpoint.called, "generateAssociationRemoveOneEndpoint not called");
     t.notOk(restHelperFactory.generateAssociationAddManyEndpoint.called, "generateAssociationAddManyEndpoint not called");
+    t.notOk(restHelperFactory.generateAssociationAddManyEndpoint.called, "generateAssociationRemoveManyEndpoint not called");
     t.notOk(restHelperFactory.generateAssociationGetAllEndpoint.called, "generateAssociationGetAllEndpoint not called");
     //</editor-fold>
 
@@ -373,6 +381,7 @@ test('rest-helper-factory.generateRoutes', function(t) {
     restHelperFactory.generateAssociationAddOneEndpoint.restore();
     restHelperFactory.generateAssociationRemoveOneEndpoint.restore();
     restHelperFactory.generateAssociationAddManyEndpoint.restore();
+    restHelperFactory.generateAssociationRemoveManyEndpoint.restore();
     restHelperFactory.generateAssociationGetAllEndpoint.restore();
     delete mongoose.models.user;
     delete mongoose.modelSchemas.user;
@@ -4034,8 +4043,8 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
     var serverObject1 = server.route.args[0][0];
     var serverObject2 = server.route.args[1][0];
     // Log.debug(JSON.stringify(serverObject));
-    t.equal(serverObject1.config.description, "Add a single child1 object to a user1's list of child1", "correct description");
-    t.equal(serverObject2.config.description, "Add a single Child object to a User's list of Children", "correct description");
+    t.equal(serverObject1.config.description, "Add a single child1 to a user1's list of child1", "correct description");
+    t.equal(serverObject2.config.description, "Add a single Child to a User's list of Children", "correct description");
     t.deepEqual(serverObject1.config.tags, ['api', 'child1', 'user1'], "correct tags");
     t.deepEqual(serverObject2.config.tags, ['api', 'Children', 'User'], "correct tags");
 //</editor-fold>
@@ -4829,8 +4838,8 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
     var serverObject1 = server.route.args[0][0];
     var serverObject2 = server.route.args[1][0];
     // Log.debug(JSON.stringify(serverObject));
-    t.equal(serverObject1.config.description, "Remove a single child1 object from a user1's list of child1", "correct description");
-    t.equal(serverObject2.config.description, "Remove a single Child object from a User's list of Children", "correct description");
+    t.equal(serverObject1.config.description, "Remove a single child1 from a user1's list of child1", "correct description");
+    t.equal(serverObject2.config.description, "Remove a single Child from a User's list of Children", "correct description");
     t.deepEqual(serverObject1.config.tags, ['api', 'child1', 'user1'], "correct tags");
     t.deepEqual(serverObject2.config.tags, ['api', 'Children', 'User'], "correct tags");
     //</editor-fold>
@@ -5531,7 +5540,7 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
     var userModel2 = mongoose.model("user2", userSchema2);
 
     var association1 = { include: { model: { modelName: "TEST1" } } };
-    var association2 = { include: { model: {}, as: "TEST2" } };
+    var association2 = { include: { model: { modelName: "test2" }, as: "TEST2" } };
     //</editor-fold>
 
     //<editor-fold desc="Act">
@@ -5543,8 +5552,8 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
     var serverObject1 = server.route.args[0][0];
     var serverObject2 = server.route.args[1][0];
     // Log.debug(JSON.stringify(serverObject));
-    t.equal(serverObject1.config.description, "Sets multiple TEST1 for a user1", "correct description");
-    t.equal(serverObject2.config.description, "Sets multiple TEST2 for a User", "correct description");
+    t.equal(serverObject1.config.description, "Add multiple TEST1s to a user1's list of TEST1", "correct description");
+    t.equal(serverObject2.config.description, "Add multiple test2s to a User's list of TEST2", "correct description");
     t.deepEqual(serverObject1.config.tags, ['api', 'TEST1', 'user1'], "correct tags");
     t.deepEqual(serverObject2.config.tags, ['api', 'TEST2', 'User'], "correct tags");
     //</editor-fold>
@@ -6445,8 +6454,8 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
     var serverObject1 = server.route.args[0][0];
     var serverObject2 = server.route.args[1][0];
     // Log.debug(JSON.stringify(serverObject));
-    t.equal(serverObject1.config.description, "Gets all of the child1 for a user1", "correct description");
-    t.equal(serverObject2.config.description, "Gets all of the TEST2 for a User", "correct description");
+    t.equal(serverObject1.config.description, "Get all of the child1 for a user1", "correct description");
+    t.equal(serverObject2.config.description, "Get all of the TEST2 for a User", "correct description");
     t.deepEqual(serverObject1.config.tags, ['api', 'child1', 'user1'], "correct tags");
     t.deepEqual(serverObject2.config.tags, ['api', 'TEST2', 'User'], "correct tags");
     //</editor-fold>

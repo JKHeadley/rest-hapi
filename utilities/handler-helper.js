@@ -80,14 +80,14 @@ module.exports = {
   addOne: _addOne,
 
   /**
-   * Adds an association to a document
-   * @param ownerModel: The model that is being added to.
+   * Removes an association to a document
+   * @param ownerModel: The model that is being removed from.
    * @param ownerId: The id of the owner document.
-   * @param childModel: The model that is being added.
+   * @param childModel: The model that is being removed.
    * @param childId: The id of the child document.
    * @param associationName: The name of the association from the ownerModel's perspective.
    * @param Log: A logging object
-   * @returns {object} A promise returning true if the add succeeds.
+   * @returns {object} A promise returning true if the remove succeeds.
    */
   removeOne: _removeOne,
 
@@ -97,11 +97,23 @@ module.exports = {
    * @param ownerId: The id of the owner document.
    * @param childModel: The model that is being added.
    * @param associationName: The name of the association from the ownerModel's perspective.
-   * @param payload: Either a list of id's or a list of id's along with extra linking-model fields.
+   * @param payload: Either a list of ids or a list of id's along with extra linking-model fields.
    * @param Log: A logging object
    * @returns {object} A promise returning true if the add succeeds.
    */
   addMany: _addMany,
+
+  /**
+   * Removes multiple associations from a document
+   * @param ownerModel: The model that is being removed from.
+   * @param ownerId: The id of the owner document.
+   * @param childModel: The model that is being removed.
+   * @param associationName: The name of the association from the ownerModel's perspective.
+   * @param payload: A list of ids
+   * @param Log: A logging object
+   * @returns {object} A promise returning true if the remove succeeds.
+   */
+   removeMany: _removeMany,
 
   /**
    * Get all of the associations for a document
@@ -621,15 +633,14 @@ function _addOne(ownerModel, ownerId, childModel, childId, associationName, payl
 }
 
 /**
- * Adds an association to a document
- * @param ownerModel: The model that is being added to.
+ * Removes an association to a document
+ * @param ownerModel: The model that is being removed from.
  * @param ownerId: The id of the owner document.
- * @param childModel: The model that is being added.
+ * @param childModel: The model that is being removed.
  * @param childId: The id of the child document.
  * @param associationName: The name of the association from the ownerModel's perspective.
  * @param Log: A logging object
- * @returns {object} A promise returning true if the add succeeds.
- * @private
+ * @returns {object} A promise returning true if the remove succeeds.
  */
 function _removeOne(ownerModel, ownerId, childModel, childId, associationName, Log) {
   try {
@@ -716,6 +727,71 @@ function _addMany(ownerModel, ownerId, childModel, associationName, payload, Log
                 })
                 .catch(function (error) {
                   const message = "There was an internal error while setting the associations.";
+                  errorHelper.handleError(error, message, errorHelper.types.GATEWAY_TIMEOUT, Log);
+                });
+          }
+          else {
+            const message = "No owner resource was found with that id.";
+            errorHelper.handleError(message, message, errorHelper.types.NOT_FOUND, Log);
+          }
+        })
+  }
+  catch(error) {
+    const message = "There was an error processing the request.";
+    try {
+      errorHelper.handleError(error, message, errorHelper.types.BAD_REQUEST, Log)
+    }
+    catch(error) {
+      return Q.reject(error);
+    }
+  }
+}
+
+/**
+ * Removes multiple associations from a document
+ * @param ownerModel: The model that is being removed from.
+ * @param ownerId: The id of the owner document.
+ * @param childModel: The model that is being removed.
+ * @param associationName: The name of the association from the ownerModel's perspective.
+ * @param payload: A list of ids
+ * @param Log: A logging object
+ * @returns {object} A promise returning true if the remove succeeds.
+ */
+function _removeMany(ownerModel, ownerId, childModel, associationName, payload, Log) {
+  try {
+    return ownerModel.findOne({ '_id': ownerId })
+        .then(function (ownerObject) {
+          if (ownerObject) {
+            var childIds = payload;
+
+            var promise_chain = Q.when();
+
+            childIds.forEach(function(childId) {
+              var promise_link = function() {
+                var deferred = Q.defer();
+                _removeAssociation(ownerModel, ownerObject, childModel, childId, associationName, Log)
+                    .then(function(result) {
+                      deferred.resolve(result);
+                    })
+                    .catch(function (error) {
+                      deferred.reject(error);
+                    });
+                return deferred.promise;
+              };
+
+              promise_chain = promise_chain
+                  .then(promise_link)
+                  .catch(function(error) {
+                    throw error;
+                  });
+            });
+
+            return promise_chain
+                .then(function() {
+                  return true;
+                })
+                .catch(function (error) {
+                  const message = "There was an internal error while removing the associations.";
                   errorHelper.handleError(error, message, errorHelper.types.GATEWAY_TIMEOUT, Log);
                 });
           }
