@@ -7,6 +7,9 @@ var extend = require('util')._extend;
 var config = require('../config');
 var _ = require('lodash');
 
+//TODO: add a "clean" method that clears out all soft-deleted docs
+//TODO: add an optional TTL config setting that determines how long soft-deleted docs remain in the system
+
 module.exports = {
 
   /**
