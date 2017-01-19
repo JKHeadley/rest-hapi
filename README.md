@@ -1,8 +1,6 @@
 # rest-hapi
 A RESTful API generator plugin for the [hapi](https://github.com/hapijs/hapi) framework utilizing the [mongoose](https://github.com/Automattic/mongoose) ODM.
 
-# NOTE: rest-hapi has recently undergone a major update from a boilerplate code project to a hapi plugin npm module. Parts of this readme are still out of date but are in the process of updating to reflect the new functionality.
-
 [![Build Status](https://travis-ci.org/JKHeadley/rest-hapi.svg?branch=master)](https://travis-ci.org/JKHeadley/rest-hapi) [![npm](https://img.shields.io/npm/dt/rest-hapi.svg)](https://www.npmjs.com/package/rest-hapi) [![npm](https://img.shields.io/npm/v/rest-hapi.svg)](https://www.npmjs.com/package/rest-hapi)
 
 rest-hapi is a hapi plugin intended to abstract the work involved in setting up API routes/validation/handlers/etc. for the purpose of rapid app development.  At the same time it provides a powerful combination of [relational](#associations) structure with [NoSQL](#creating-endpoints) flexibility.  You define your models and the rest is done for you.  Have your own API server up and running in minutes!
@@ -31,7 +29,8 @@ http://ec2-35-164-131-1.us-west-2.compute.amazonaws.com:8124
 ## Readme contents
 - [Requirements](#requirements)
 - [Installation](#installation)
-- [Running the app](#running-the-app)
+- [First time setup/Demo](#first-time-setupdemo)
+- [Using the plugin](#using-the-plugin)
 - [Configuration](#configuration)
 - [Testing](#testing)
 - [Swagger documentation](#swagger-documentation)
@@ -42,7 +41,10 @@ http://ec2-35-164-131-1.us-west-2.compute.amazonaws.com:8124
 - [Validation](#validation)
 - [Middleware](#middleware)
 - [Additional endpoints](#additional-endpoints)
-- [Token authentication](#token-authentication)
+- [Exposed handler methods](#exposed-handler-methods)
+- [Soft delete](#soft-delete)
+- [Metadata](#metadata)
+- [Authentication/Additional Plugins](#authenticationadditional-plugins)
 - [License](#license)
 - [Questions](#questions)
 - [Future work](#future-work)
@@ -79,7 +81,7 @@ You can use these models as templates for your models or delete them later if yo
 
 ## Using the plugin
 
-As rest-hapi is a hapi plugin, you'll need to set up a hapi server to use it.  You'll also need to set up a [mongoose](https://github.com/Automattic/mongoose) instance and include it in the plugin's options when you register. Below is an expample nodejs script ``api.js`` with the minimum requirements to set up an API with rest-hapi:
+As rest-hapi is a hapi plugin, you'll need to set up a hapi server to generate API endpoints.  You'll also need to set up a [mongoose](https://github.com/Automattic/mongoose) instance and include it in the plugin's options when you register. Below is an expample nodejs script ``api.js`` with the minimum requirements to set up an API with rest-hapi:
 
 ```javascript
 'use strict';
@@ -1208,11 +1210,22 @@ function getAll(ownerModel, ownerId, childModel, associationName, query, Log) {.
 
 [Back to top](#readme-contents)
 
+## Soft delete
+rest-hapi supports soft delete functionality for documents.  When the ``enableSoftDelete`` config property is set to ``true``, documents will gain an ``isDeleted`` property when they are created that will be set to ``false``.  Whenever that document is deleted (via a rest-hapi endpoint or method), the document will remain in the collection, its ``isDeleted`` property will be set to ``true``, and the ``deletedAt`` property will be populated.  
+
+"Hard" deletion is still possible when soft delete is enabled. In order to hard delete a document (i.e. remove a document from it's collection) via the api, a payload must be sent with the ``hardDelete`` property set to ``true``. 
+
+The rest-hapi delete methods include a ``hardDelete`` flag as a parameter. The following is an example of a hard delete using a rest-hapi method: 
+
+``restHapi.deleteOne(model, _id, true, Log);``
+
+[Back to top](#readme-contents)
+
 ## Metadata
 rest-hapi supports the following optional metadata:
-- createdAt
-- updatedAt
-- deletedAt (see soft deletes)
+- createdAt (default enabled)
+- updatedAt (default enabled)
+- deletedAt (default disabled) (see [Soft delete](#soft-delete))
 
 When enabled, these properties will automatically be populated during CRUD operations. For example, say I create a user with a payload of:
 
@@ -1245,14 +1258,14 @@ If I later update that user's email the document could then look like:
  }
 ```
 
-The ``deletedAt`` property marks when a document was soft deleted.
+The ``deletedAt`` property marks when a document was [soft deleted](#soft-delete).
 
 **NOTE**: Metadata properties are only set/updated if the document is created/modified using rest-hapi endpoints/methods.
 Ex: 
 
 ``mongoose.model('user').findByIdAndUpdate(_id, payload)`` will not modify ``updatedAt`` whereas
 
-``restHapi.update(mongoose.model('user'), _id, payload)`` will. (see Exposed handler methods)
+``restHapi.update(mongoose.model('user'), _id, payload)`` will. (see [Exposed handler methods](#exposed-handler-methods))
 
 [Back to top](#readme-contents)
 
@@ -1302,10 +1315,8 @@ If you have any questions/issues/feature requests, please feel free to open an i
 This project is still in its infancy, and there are many features I would still like to add.  Below is a list of some possible future updates:
 
 - sorting through populate fields (Ex: sort users through role.name)
-- have built in ``created_at`` and ``updated_at`` fields for each model
 - support marking fields as ``duplicate`` i.e. any associated models referencing that model will duplicate those fields along with the reference Id. This could allow for a shallow embed that will return a list of reference ids with their "duplicate" values, and a full embed that will return the fully embedded references
-- support automatic logging of all operations via a ``eventLogs`` collection
-- support "soft" delete of mongo documents, i.e. documents are marked as "deleted" but remain in the db.
+- support automatic logging/auditing of all operations
 - (LONG TERM) support mysql as well as mongodb
 
 [Back to top](#readme-contents)
