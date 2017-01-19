@@ -12,7 +12,7 @@ module.exports = {
   /**
    * Finds a list of model documents
    * @param model: A mongoose model.
-   * @param query: query parameters to be converted to a mongoose query.
+   * @param query: rest-hapi query parameters to be converted to a mongoose query.
    * @param Log: A logging object.
    * @returns {object} A promise for the resulting model documents.
    */
@@ -22,7 +22,7 @@ module.exports = {
    * Finds a model document
    * @param model: A mongoose model.
    * @param _id: The document id.
-   * @param query: query parameters to be converted to a mongoose query.
+   * @param query: rest-hapi query parameters to be converted to a mongoose query.
    * @param Log: A logging object.
    * @returns {object} A promise for the resulting model document.
    */
@@ -121,9 +121,10 @@ module.exports = {
    * @param ownerId: The id of the owner document.
    * @param childModel: The model that is being added.
    * @param associationName: The name of the association from the ownerModel's perspective.
-   * @param query: query parameters to be converted to a mongoose query.
+   * @param query: rest-hapi query parameters to be converted to a mongoose query.
    * @param Log: A logging object
    * @returns {object} A promise returning true if the add succeeds.
+   * @private
    */
   getAll: _getAll
 
@@ -133,7 +134,7 @@ module.exports = {
 /**
  * Finds a list of model documents
  * @param model: A mongoose model.
- * @param query: query parameters to be converted to a mongoose query.
+ * @param query: rest-hapi query parameters to be converted to a mongoose query.
  * @param Log: A logging object.
  * @returns {object} A promise for the resulting model documents.
  * @private
@@ -211,7 +212,7 @@ function _list(model, query, Log) {
  * Finds a model document
  * @param model: A mongoose model.
  * @param _id: The document id.
- * @param query: query parameters to be converted to a mongoose query.
+ * @param query: rest-hapi query parameters to be converted to a mongoose query.
  * @param Log: A logging object.
  * @returns {object} A promise for the resulting model document.
  * @private
@@ -300,8 +301,8 @@ function _create(model, payload, Log) {
 
     var promises =  [];
     if (model.routeOptions && model.routeOptions.create && model.routeOptions.create.pre){
-      payload.forEach(function(item) {
-        promises.push(model.routeOptions.create.pre(item, Log));
+      payload.forEach(function(document) {
+        promises.push(model.routeOptions.create.pre(document, Log));
       });
     }
     else {
@@ -338,8 +339,8 @@ function _create(model, payload, Log) {
 
                       var promises = [];
                       if (model.routeOptions && model.routeOptions.create && model.routeOptions.create.post) {
-                        payload.forEach(function(item) {
-                          promises.push(model.routeOptions.create.post(item, result, Log));
+                        payload.forEach(function(document) {
+                          promises.push(model.routeOptions.create.post(document, result, Log));
                         });
                       }
                       else {
@@ -518,6 +519,7 @@ function _deleteMany(model, payload, Log) {
  * @returns {object} A promise returning true if the delete succeeds.
  * @private
  */
+//TODO: only update "deleteAt" the first time a document is deleted
 function _deleteOne(model, _id, hardDelete, Log) {
   try {
     var promise = {};
@@ -641,6 +643,7 @@ function _addOne(ownerModel, ownerId, childModel, childId, associationName, payl
  * @param associationName: The name of the association from the ownerModel's perspective.
  * @param Log: A logging object
  * @returns {object} A promise returning true if the remove succeeds.
+ * @private
  */
 function _removeOne(ownerModel, ownerId, childModel, childId, associationName, Log) {
   try {
@@ -756,6 +759,7 @@ function _addMany(ownerModel, ownerId, childModel, associationName, payload, Log
  * @param payload: A list of ids
  * @param Log: A logging object
  * @returns {object} A promise returning true if the remove succeeds.
+ * @private
  */
 function _removeMany(ownerModel, ownerId, childModel, associationName, payload, Log) {
   try {
@@ -818,7 +822,7 @@ function _removeMany(ownerModel, ownerId, childModel, associationName, payload, 
  * @param ownerId: The id of the owner document.
  * @param childModel: The model that is being added.
  * @param associationName: The name of the association from the ownerModel's perspective.
- * @param query: query parameters to be converted to a mongoose query.
+ * @param query: rest-hapi query parameters to be converted to a mongoose query.
  * @param Log: A logging object
  * @returns {object} A promise returning true if the add succeeds.
  * @private
