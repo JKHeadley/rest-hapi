@@ -14,6 +14,9 @@ rest-hapi is a hapi plugin intended to abstract the work involved in setting up 
 * [joi](https://github.com/hapijs/joi) validation
 * Swagger docs for all generated endpoints via [hapi-swagger](https://github.com/glennjones/hapi-swagger)
 * Query parameter support for searching, sorting, filtering, pagination, and embedding of associated models
+* Support for "soft" delete
+* Built in metadata
+* Exposed handler methods
 
 ## Live demo
 
@@ -116,6 +119,13 @@ Configuration of the generated API is handled through the ``restHapi.config`` ob
 
 ```javascript
 /**
+ * config.js - Configuration settings for the generated API
+ */
+var config = {};
+config.server = {};
+config.mongo = {};
+
+/**
  * Your app title goes here.
  * @type {string}
  */
@@ -171,6 +181,25 @@ config.mongo.URI = 'mongodb://localhost/rest_hapi';
 config.auth = false;
 
 /**
+ * MetaData options:
+ * default: true
+ * @type {boolean}
+ */
+config.enableCreatedAt = true;
+config.enableUpdatedAt = true;
+
+/**
+ * Soft delete options
+ * - enableSoftDelete: adds "isDeleted" property to each model. Delete endpoints set "isDeleted" to true
+ * unless the payload contains { hardDelete: true }, in which case the document is actually deleted (default false)
+ * - filterDeletedEmbeds: if enabled, associations with "isDeleted" set to true will not populate (default false)
+ * NOTE: this option is known to be buggy
+ * @type {boolean}
+ */
+config.enableSoftDelete = false;
+config.filterDeletedEmbeds = false;
+
+/**
  * Validation options:
  * default: true
  * @type {boolean}
@@ -199,11 +228,20 @@ config.enableTextSearch = false;
  * - FATAL system error condition
  */
 config.loglevel = "DEBUG";
+
+/**
+ * Determines the initial expansion state of the swagger docs
+ * - options: 'none', 'list', 'full' (default: 'none')
+ * @type {string}
+ */
+config.docExpansion = 'none';
+
+module.exports = config;
 ```
 
 [Back to top](#rest-hapi)
 
-# Testing
+## Testing
 If you have downloaded the source you can run the tests with:
 ```
 $ gulp test
@@ -273,11 +311,12 @@ module.exports = function (mongoose) {
 This will generate the following CRUD endpoints:
 
 ```
+DELETE /user        Delete multiple users
+POST /user          Create one or more new users
 GET /user           Get a list of users
-POST /user          Create a new user
+DELETE /user/{_id}  Delete a user
 GET /user/{_id}     Get a specific user
 PUT /user/{_id}     Update a user
-DELETE /user/{_id}  Delete a user
 ```
 
 [Back to top](#readme-contents)
@@ -474,6 +513,7 @@ endpoints will be generated for the ``role`` model:
 ```
 GET /role/{ownerId}/user                Gets all of the users for a role
 POST /role/{ownerId}/user               Sets multiple users for a role
+DELETE /role/{ownerId}/user             Remove multiple users from a role's list of users
 PUT /role/{ownerId}/user/{childId}      Add a single user object to a role's list of users
 DELETE /role/{ownerId}/user/{childId}   Remove a single user object from a role's list of users
 ```
@@ -560,6 +600,7 @@ endpoints will be generated for the ``user`` model:
 ```
 GET /user/{ownerId}/group               Gets all of the groups for a user
 POST /user/{ownerId}/group              Sets multiple groups for a user
+DELETE /user/{ownerId}/group            Remove multiple groups from a user's list of groups
 PUT /user/{ownerId}/group/{childId}     Add a single group object to a user's list of groups
 DELETE /user/{ownerId}/group/{childId}  Remove a single group object from a user's list of groups
 ```
@@ -569,6 +610,7 @@ and for the ``group`` model:
 ```
 GET /group/{ownerId}/user               Gets all of the users for a group
 POST /group/{ownerId}/user              Sets multiple users for a group
+DELETE /group/{ownerId}/user            Remove multiple users from a group's list of users
 PUT /group/{ownerId}/user/{childId}     Add a single user object to a group's list of users
 DELETE /group/{ownerId}/user/{childId}  Remove a single user object from a group's list of users
 ```
@@ -577,7 +619,7 @@ DELETE /group/{ownerId}/user/{childId}  Remove a single user object from a group
 
 Many-many relationships can include extra fields that contain data specific
 to each association instance.  This is accomplished through linking models which
-behave similar to pivot tables in a relational database.  Linking model files are
+behave similar to pivot/through tables in a relational database.  Linking model files are
 stored in the ``/models/linking-models`` directory and follow the same 
 ``{name}.model.js`` format as normal models.  Below is an example of a many-many
 relationship between the ``user`` model and itself through the ``friends`` association.
@@ -693,15 +735,17 @@ module.exports = function (mongoose) {
 will result in the following endpoints:
 
 ```
+DELETE /person 
+POST /person 
 GET /person 
-POST /person
 DELETE /person/{_id} 
-PUT /person/{_id} 
 GET /person/{_id} 
-POST /person/{ownerId}/team 
+PUT /person/{_id}
 GET /person/{ownerId}/team 
+DELETE /person/{ownerId}/team 
+POST /person/{ownerId}/team 
+DELETE /person/{ownerId}/team/{childId} 
 PUT /person/{ownerId}/team/{childId} 
-DELETE /person/{ownerId}/team/{childId}
 ```
 
 [Back to top](#readme-contents)
@@ -856,18 +900,18 @@ exist under the ``routeOptions`` object. Middleware functions must return
 are available:
 
 * list: 
-    - post(request, result, Log)
+    - post(query, result, Log)
 * find: 
-    - post(request, result, Log)
+    - post(query, result, Log)
 * create:
-    - pre(request, Log)
-    - post(request, result, Log)
+    - pre(payload, Log)
+    - post(payload, result, Log)
 * update: 
-    - pre(request, Log)
-    - post(request, result, Log)
+    - pre(payload, Log)
+    - post(payload, result, Log)
 * delete: 
-    - pre(request, Log)
-    - post(request, result, Log)
+    - pre(\_id, hardDelete, Log)
+    - post(hardDelete, deleted, Log)
 
 
 For example, a ``create: pre`` function can be defined to encrypt a users password
@@ -898,12 +942,12 @@ module.exports = function (mongoose) {
     collectionName:modelName,
     routeOptions: {
       create: {
-        pre: function (request, Log) {
+        pre: function (payload, Log) {
           var deferred = Q.defer();
-          var hashedPassword = mongoose.model('user').generatePasswordHash(request.payload.password);
+          var hashedPassword = mongoose.model('user').generatePasswordHash(payload.password);
 
-          request.payload.password = hashedPassword;
-          deferred.resolve(request);
+          payload.password = hashedPassword;
+          deferred.resolve(payload);
           return deferred.promise;
         }
       }
@@ -931,8 +975,8 @@ look like this:
 
 ```javascript
 var Joi = require('joi');
-Joi.objectId = require('joi-objectid')(Joi);
-var Boom = require('boom');
+var bcrypt = require('bcrypt');
+var restHapi = require('rest-hapi');
 
 module.exports = function (mongoose) {
   var modelName = "user";
@@ -966,7 +1010,7 @@ module.exports = function (mongoose) {
 
           var handler = function (request, reply) {
             var hashedPassword = model.generatePasswordHash(request.payload.password);
-            return model.findByIdAndUpdate(request.params._id, {password: hashedPassword}).then(function (result) {
+            return restHapi.update(model, request.params._id, {password: hashedPassword}, Log).then(function (result) {
               if (result) {
                 return reply("Password updated.").code(200);
               }
@@ -1024,6 +1068,191 @@ module.exports = function (mongoose) {
 };
 
 ```
+
+[Back to top](#readme-contents)
+
+## Exposed handler methods
+rest-hapi exposes the handler methods used in the generated endpoints for the user to take advantage of in their server code. These methods provide several advantages including:
+
+- middleware functionality
+- metadata support
+- soft delete support
+- association/relational management
+- rest-hapi query support
+
+The available methods are:
+
+- list
+- find
+- create
+- update
+- deleteOne
+- deleteMany
+- addOne
+- removeOne
+- removeMany
+
+See [Additional endpoints](#additional-endpoints) for an example using a rest-hapi handler method.
+
+A more detailed description of each method can be found below:
+
+```javascript
+/**
+ * Finds a list of model documents
+ * @param model: A mongoose model.
+ * @param query: rest-hapi query parameters to be converted to a mongoose query.
+ * @param Log: A logging object.
+ * @returns {object} A promise for the resulting model documents.
+ */
+function list(model, query, Log)
+
+/**
+ * Finds a model document
+ * @param model: A mongoose model.
+ * @param _id: The document id.
+ * @param query: rest-hapi query parameters to be converted to a mongoose query.
+ * @param Log: A logging object.
+ * @returns {object} A promise for the resulting model document.
+ */
+function find(model, _id, query, Log) {...}
+
+/**
+ * Creates a model document
+ * @param model: A mongoose model.
+ * @param payload: Data used to create the model document.
+ * @param Log: A logging object.
+ * @returns {object} A promise for the resulting model document.
+ */
+function create(model, payload, Log) {...}
+
+/**
+ * Updates a model document
+ * @param model: A mongoose model.
+ * @param _id: The document id.
+ * @param payload: Data used to update the model document.
+ * @param Log: A logging object.
+ * @returns {object} A promise for the resulting model document.
+ */
+function update(model, _id, payload, Log) {...}
+
+/**
+ * Deletes multiple documents
+ * @param model: A mongoose model.
+ * @param payload: Either an array of ids or an array of objects containing an id and a "hardDelete" flag.
+ * @param Log: A logging object.
+ * @returns {object} A promise returning true if the delete succeeds.
+ */
+function deleteMany(model, payload, Log) {...}
+
+/**
+ * Adds an association to a document
+ * @param ownerModel: The model that is being added to.
+ * @param ownerId: The id of the owner document.
+ * @param childModel: The model that is being added.
+ * @param childId: The id of the child document.
+ * @param associationName: The name of the association from the ownerModel's perspective.
+ * @param payload: An object containing an extra linking-model fields.
+ * @param Log: A logging object
+ * @returns {object} A promise returning true if the add succeeds.
+ */
+function addOne(ownerModel, ownerId, childModel, childId, associationName, payload, Log) {...}
+
+/**
+ * Removes an association to a document
+ * @param ownerModel: The model that is being removed from.
+ * @param ownerId: The id of the owner document.
+ * @param childModel: The model that is being removed.
+ * @param childId: The id of the child document.
+ * @param associationName: The name of the association from the ownerModel's perspective.
+ * @param Log: A logging object
+ * @returns {object} A promise returning true if the remove succeeds.
+ */
+function removeOne(ownerModel, ownerId, childModel, childId, associationName, Log) {...}
+
+/**
+ * Adds multiple associations to a document
+ * @param ownerModel: The model that is being added to.
+ * @param ownerId: The id of the owner document.
+ * @param childModel: The model that is being added.
+ * @param associationName: The name of the association from the ownerModel's perspective.
+ * @param payload: Either a list of id's or a list of id's along with extra linking-model fields.
+ * @param Log: A logging object
+ * @returns {object} A promise returning true if the add succeeds.
+ */
+function addMany(ownerModel, ownerId, childModel, associationName, payload, Log) {...}
+
+/**
+ * Removes multiple associations from a document
+ * @param ownerModel: The model that is being removed from.
+ * @param ownerId: The id of the owner document.
+ * @param childModel: The model that is being removed.
+ * @param associationName: The name of the association from the ownerModel's perspective.
+ * @param payload: A list of ids
+ * @param Log: A logging object
+ * @returns {object} A promise returning true if the remove succeeds.
+ */
+function removeMany(ownerModel, ownerId, childModel, associationName, payload, Log) {...}
+
+/**
+ * Get all of the associations for a document
+ * @param ownerModel: The model that is being added to.
+ * @param ownerId: The id of the owner document.
+ * @param childModel: The model that is being added.
+ * @param associationName: The name of the association from the ownerModel's perspective.
+ * @param query: rest-hapi query parameters to be converted to a mongoose query.
+ * @param Log: A logging object
+ * @returns {object} A promise returning true if the add succeeds.
+ */
+function getAll(ownerModel, ownerId, childModel, associationName, query, Log) {...}
+```
+
+[Back to top](#readme-contents)
+
+## Metadata
+rest-hapi supports the following optional metadata:
+- createdAt
+- updatedAt
+- deletedAt (see soft deletes)
+
+When enabled, these properties will automatically be populated during CRUD operations. For example, say I create a user with a payload of:
+
+```json
+ {
+    "email": "test@email.com",
+    "password": "1234"
+ }
+```
+
+This could result in the following document:
+
+```json
+ {
+    "_id": "588077dfe8b75a830dc53e8b",
+    "email": "test@email.com",
+    "createdAt": "2017-01-19T08:25:03.577Z",
+    "updatedAt": "2017-01-19T08:25:03.577Z"
+ }
+```
+
+If I later update that user's email the document could then look like:
+
+```json
+ {
+    "_id": "588077dfe8b75a830dc53e8b",
+    "email": "test2@email.com",
+    "createdAt": "2017-01-19T08:25:03.577Z",
+    "updatedAt": "2017-01-19T08:30:46.676Z"
+ }
+```
+
+The ``deletedAt`` property marks when a document was soft deleted.
+
+**NOTE**: Metadata properties are only set/updated if the document is created/modified using rest-hapi endpoints/methods.
+Ex: 
+
+``mongoose.model('user').findByIdAndUpdate(_id, payload)`` will not modify ``updatedAt`` whereas
+
+``restHapi.update(mongoose.model('user'), _id, payload)`` will. (see Exposed handler methods)
 
 [Back to top](#readme-contents)
 
