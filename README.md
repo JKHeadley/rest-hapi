@@ -899,18 +899,18 @@ exist under the ``routeOptions`` object. Middleware functions must return
 are available:
 
 * list: 
-    - post(request, result, Log)
+    - post(query, result, Log)
 * find: 
-    - post(request, result, Log)
+    - post(query, result, Log)
 * create:
-    - pre(request, Log)
-    - post(request, result, Log)
+    - pre(payload, Log)
+    - post(payload, result, Log)
 * update: 
-    - pre(request, Log)
-    - post(request, result, Log)
+    - pre(payload, Log)
+    - post(payload, result, Log)
 * delete: 
-    - pre(request, Log)
-    - post(request, result, Log)
+    - pre(\_id, hardDelete, Log)
+    - post(hardDelete, deleted, Log)
 
 
 For example, a ``create: pre`` function can be defined to encrypt a users password
@@ -941,12 +941,12 @@ module.exports = function (mongoose) {
     collectionName:modelName,
     routeOptions: {
       create: {
-        pre: function (request, Log) {
+        pre: function (payload, Log) {
           var deferred = Q.defer();
-          var hashedPassword = mongoose.model('user').generatePasswordHash(request.payload.password);
+          var hashedPassword = mongoose.model('user').generatePasswordHash(payload.password);
 
-          request.payload.password = hashedPassword;
-          deferred.resolve(request);
+          payload.password = hashedPassword;
+          deferred.resolve(payload);
           return deferred.promise;
         }
       }
@@ -1067,6 +1067,52 @@ module.exports = function (mongoose) {
 };
 
 ```
+
+[Back to top](#readme-contents)
+
+## Metadata
+rest-hapi supports the following optional metadata:
+- createdAt
+- updatedAt
+- deletedAt (see soft deletes)
+
+When enabled, these properties will automatically be populated during CRUD operations. For example, say I create a user with a payload of:
+
+```json
+ {
+    "email": "test@email.com",
+    "password": "1234"
+ }
+```
+
+This could result in the following document:
+
+```json
+ {
+    "_id": "588077dfe8b75a830dc53e8b",
+    "email": "test@email.com",
+    "createdAt": "2017-01-19T08:25:03.577Z",
+    "updatedAt": "2017-01-19T08:25:03.577Z"
+ }
+```
+
+If I later update that user's email the document could then look like:
+
+```json
+ {
+    "_id": "588077dfe8b75a830dc53e8b",
+    "email": "test2@email.com",
+    "createdAt": "2017-01-19T08:25:03.577Z",
+    "updatedAt": "2017-01-19T08:30:46.676Z"
+ }
+```
+
+The ``deletedAt`` property marks when a document was soft deleted.
+
+NOTE: Metadata properties are only set/updated if the document is created/modified using rest-hapi endpoints/methods.
+Ex: 
+``mongoose.model('user').findByIdAndUpdate(_id, payload)`` will not modify ``updatedAt`` whereas
+``restHapi.update(mongoose.model('user'), _id, payload)`` will.
 
 [Back to top](#readme-contents)
 
