@@ -14,6 +14,8 @@ rest-hapi is a hapi plugin intended to abstract the work involved in setting up 
 * [joi](https://github.com/hapijs/joi) validation
 * Swagger docs for all generated endpoints via [hapi-swagger](https://github.com/glennjones/hapi-swagger)
 * Query parameter support for searching, sorting, filtering, pagination, and embedding of associated models
+* Support for "soft" delete
+* Built in metadata
 
 ## Live demo
 
@@ -116,6 +118,13 @@ Configuration of the generated API is handled through the ``restHapi.config`` ob
 
 ```javascript
 /**
+ * config.js - Configuration settings for the generated API
+ */
+var config = {};
+config.server = {};
+config.mongo = {};
+
+/**
  * Your app title goes here.
  * @type {string}
  */
@@ -171,6 +180,25 @@ config.mongo.URI = 'mongodb://localhost/rest_hapi';
 config.auth = false;
 
 /**
+ * MetaData options:
+ * default: true
+ * @type {boolean}
+ */
+config.enableCreatedAt = true;
+config.enableUpdatedAt = true;
+
+/**
+ * Soft delete options
+ * - enableSoftDelete: adds "isDeleted" property to each model. Delete endpoints set "isDeleted" to true
+ * unless the payload contains { hardDelete: true }, in which case the document is actually deleted (default false)
+ * - filterDeletedEmbeds: if enabled, associations with "isDeleted" set to true will not populate (default false)
+ * NOTE: this option is known to be buggy
+ * @type {boolean}
+ */
+config.enableSoftDelete = false;
+config.filterDeletedEmbeds = false;
+
+/**
  * Validation options:
  * default: true
  * @type {boolean}
@@ -199,6 +227,15 @@ config.enableTextSearch = false;
  * - FATAL system error condition
  */
 config.loglevel = "DEBUG";
+
+/**
+ * Determines the initial expansion state of the swagger docs
+ * - options: 'none', 'list', 'full' (default: 'none')
+ * @type {string}
+ */
+config.docExpansion = 'none';
+
+module.exports = config;
 ```
 
 [Back to top](#rest-hapi)
@@ -273,11 +310,12 @@ module.exports = function (mongoose) {
 This will generate the following CRUD endpoints:
 
 ```
+DELETE /user        Delete multiple users
+POST /user          Create one or more new users
 GET /user           Get a list of users
-POST /user          Create a new user
+DELETE /user/{_id}  Delete a user
 GET /user/{_id}     Get a specific user
 PUT /user/{_id}     Update a user
-DELETE /user/{_id}  Delete a user
 ```
 
 [Back to top](#readme-contents)
@@ -474,6 +512,7 @@ endpoints will be generated for the ``role`` model:
 ```
 GET /role/{ownerId}/user                Gets all of the users for a role
 POST /role/{ownerId}/user               Sets multiple users for a role
+DELETE /role/{ownerId}/user             Remove multiple users from a role's list of users
 PUT /role/{ownerId}/user/{childId}      Add a single user object to a role's list of users
 DELETE /role/{ownerId}/user/{childId}   Remove a single user object from a role's list of users
 ```
@@ -560,6 +599,7 @@ endpoints will be generated for the ``user`` model:
 ```
 GET /user/{ownerId}/group               Gets all of the groups for a user
 POST /user/{ownerId}/group              Sets multiple groups for a user
+DELETE /user/{ownerId}/group            Remove multiple groups from a user's list of groups
 PUT /user/{ownerId}/group/{childId}     Add a single group object to a user's list of groups
 DELETE /user/{ownerId}/group/{childId}  Remove a single group object from a user's list of groups
 ```
@@ -569,6 +609,7 @@ and for the ``group`` model:
 ```
 GET /group/{ownerId}/user               Gets all of the users for a group
 POST /group/{ownerId}/user              Sets multiple users for a group
+DELETE /group/{ownerId}/user            Remove multiple users from a group's list of users
 PUT /group/{ownerId}/user/{childId}     Add a single user object to a group's list of users
 DELETE /group/{ownerId}/user/{childId}  Remove a single user object from a group's list of users
 ```
@@ -577,7 +618,7 @@ DELETE /group/{ownerId}/user/{childId}  Remove a single user object from a group
 
 Many-many relationships can include extra fields that contain data specific
 to each association instance.  This is accomplished through linking models which
-behave similar to pivot tables in a relational database.  Linking model files are
+behave similar to pivot/through tables in a relational database.  Linking model files are
 stored in the ``/models/linking-models`` directory and follow the same 
 ``{name}.model.js`` format as normal models.  Below is an example of a many-many
 relationship between the ``user`` model and itself through the ``friends`` association.
@@ -693,15 +734,17 @@ module.exports = function (mongoose) {
 will result in the following endpoints:
 
 ```
+DELETE /person 
+POST /person 
 GET /person 
-POST /person
 DELETE /person/{_id} 
-PUT /person/{_id} 
 GET /person/{_id} 
-POST /person/{ownerId}/team 
+PUT /person/{_id}
 GET /person/{ownerId}/team 
+DELETE /person/{ownerId}/team 
+POST /person/{ownerId}/team 
+DELETE /person/{ownerId}/team/{childId} 
 PUT /person/{ownerId}/team/{childId} 
-DELETE /person/{ownerId}/team/{childId}
 ```
 
 [Back to top](#readme-contents)
