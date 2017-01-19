@@ -334,7 +334,7 @@ module.exports = function (logger, mongoose, server) {
           handler: handler,
           auth: config.auth,
           cors: true,
-          description: 'Create one or more new ' + collectionName + ' s',
+          description: 'Create one or more new ' + collectionName + 's',
           tags: ['api', collectionName],
           validate: {
             payload: config.enablePayloadValidation ? createModel : Joi.any(),
