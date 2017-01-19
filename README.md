@@ -241,7 +241,7 @@ module.exports = config;
 
 [Back to top](#rest-hapi)
 
-# Testing
+## Testing
 If you have downloaded the source you can run the tests with:
 ```
 $ gulp test
