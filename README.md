@@ -16,6 +16,7 @@ rest-hapi is a hapi plugin intended to abstract the work involved in setting up 
 * Query parameter support for searching, sorting, filtering, pagination, and embedding of associated models
 * Support for "soft" delete
 * Built in metadata
+* Exposed handler methods
 
 ## Live demo
 
@@ -1091,6 +1092,8 @@ The available methods are:
 - removeOne
 - removeMany
 
+See [Additional endpoints](#additional-endpoints) for an example using a rest-hapi handler method.
+
 A more detailed description of each method can be found below:
 
 ```javascript
@@ -1100,7 +1103,6 @@ A more detailed description of each method can be found below:
  * @param query: rest-hapi query parameters to be converted to a mongoose query.
  * @param Log: A logging object.
  * @returns {object} A promise for the resulting model documents.
- * @private
  */
 function list(model, query, Log)
 
@@ -1111,7 +1113,6 @@ function list(model, query, Log)
  * @param query: rest-hapi query parameters to be converted to a mongoose query.
  * @param Log: A logging object.
  * @returns {object} A promise for the resulting model document.
- * @private
  */
 function find(model, _id, query, Log) {...}
 
@@ -1121,7 +1122,6 @@ function find(model, _id, query, Log) {...}
  * @param payload: Data used to create the model document.
  * @param Log: A logging object.
  * @returns {object} A promise for the resulting model document.
- * @private
  */
 function create(model, payload, Log) {...}
 
@@ -1132,7 +1132,6 @@ function create(model, payload, Log) {...}
  * @param payload: Data used to update the model document.
  * @param Log: A logging object.
  * @returns {object} A promise for the resulting model document.
- * @private
  */
 function update(model, _id, payload, Log) {...}
 
@@ -1142,7 +1141,6 @@ function update(model, _id, payload, Log) {...}
  * @param payload: Either an array of ids or an array of objects containing an id and a "hardDelete" flag.
  * @param Log: A logging object.
  * @returns {object} A promise returning true if the delete succeeds.
- * @private
  */
 function deleteMany(model, payload, Log) {...}
 
@@ -1156,7 +1154,6 @@ function deleteMany(model, payload, Log) {...}
  * @param payload: An object containing an extra linking-model fields.
  * @param Log: A logging object
  * @returns {object} A promise returning true if the add succeeds.
- * @private
  */
 function addOne(ownerModel, ownerId, childModel, childId, associationName, payload, Log) {...}
 
@@ -1181,7 +1178,6 @@ function removeOne(ownerModel, ownerId, childModel, childId, associationName, Lo
  * @param payload: Either a list of id's or a list of id's along with extra linking-model fields.
  * @param Log: A logging object
  * @returns {object} A promise returning true if the add succeeds.
- * @private
  */
 function addMany(ownerModel, ownerId, childModel, associationName, payload, Log) {...}
 
@@ -1206,7 +1202,6 @@ function removeMany(ownerModel, ownerId, childModel, associationName, payload, L
  * @param query: rest-hapi query parameters to be converted to a mongoose query.
  * @param Log: A logging object
  * @returns {object} A promise returning true if the add succeeds.
- * @private
  */
 function getAll(ownerModel, ownerId, childModel, associationName, query, Log) {...}
 ```
