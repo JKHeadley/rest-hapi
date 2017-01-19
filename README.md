@@ -1109,9 +1109,11 @@ If I later update that user's email the document could then look like:
 
 The ``deletedAt`` property marks when a document was soft deleted.
 
-NOTE: Metadata properties are only set/updated if the document is created/modified using rest-hapi endpoints/methods.
+**NOTE**: Metadata properties are only set/updated if the document is created/modified using rest-hapi endpoints/methods.
 Ex: 
+
 ``mongoose.model('user').findByIdAndUpdate(_id, payload)`` will not modify ``updatedAt`` whereas
+
 ``restHapi.update(mongoose.model('user'), _id, payload)`` will.
 
 [Back to top](#readme-contents)
