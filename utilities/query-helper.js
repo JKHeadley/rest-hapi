@@ -5,6 +5,7 @@ var assert = require("assert");
 var validationHelper = require("./validation-helper");
 var qs = require('qs');
 var extend = require('util')._extend;
+let globals = require('../components/globals');
 
 //TODO-DONE: mulit-level/multi-priority sorting (i.e. sort first by lastName, then by firstName) implemented via comma seperated sort list
 //TODO: sorting through populate fields (Ex: sort users through role.name)
@@ -19,6 +20,14 @@ var extend = require('util')._extend;
 //TODO-DONE: support "$where" field that allows for raw mongoose queries
 //TODO: query validation for $where field
 //TODO: enable/disable option for $where field
+//TODO: populating "implied" associations through $embed property, EX:
+/**
+ facilitiesPerFloor: [[{
+      type: Types.ObjectId,
+      ref: "facility"
+    }]]
+ */
+//TODO: support parallel embeds, Ex: { $embed: ['facilitiesPerFloor.categories','facilitiesPerFloor.items'] } //NOTE: this seems to work for some queries
 
 module.exports = {
   /**
@@ -31,7 +40,6 @@ module.exports = {
    */
   createMongooseQuery: function (model, query, mongooseQuery, Log) {
     validationHelper.validateModel(model, Log);
-    // Log.debug("query before:", query);
     //(email == 'test@user.com' && (firstName == 'test2@user.com' || firstName == 'test4@user.com')) && (age < 15 || age > 30)
     //LITERAL
     //{
@@ -67,8 +75,6 @@ module.exports = {
 
     delete query[""]; //EXPL: hack due to bug in hapi-swagger-docs
 
-    // var queryableFields = this.getQueryableFields(model, Log);
-
     mongooseQuery = this.setSkip(query, mongooseQuery, Log);
 
     mongooseQuery = this.setLimit(query, mongooseQuery, Log);
@@ -80,27 +86,17 @@ module.exports = {
       attributesFilter = "_id";
     }
 
-    // Log.debug("attributesFilter:", attributesFilter);
-
-    var result = this.populateEmbeddedDocs(query, mongooseQuery, attributesFilter,
-      model.routeOptions.associations, Log);
+    var result = this.populateEmbeddedDocs(query, mongooseQuery, attributesFilter, model.routeOptions.associations, model, Log);
     mongooseQuery = result.mongooseQuery;
     attributesFilter = result.attributesFilter;
-
-    // Log.debug("attributesFilter:", attributesFilter);
 
     mongooseQuery = this.setSort(query, mongooseQuery, Log);
 
     mongooseQuery.select(attributesFilter);
 
-    // query.firstName = { $in: JSON.parse(query.firstName) };
-
-    //// Log.debug("query after:", query);
     if (typeof query.$where === 'string') {
-      // // Log.debug("query string:", query);
       query.$where = JSON.parse(query.$where);
     }
-    // // Log.debug("query after:", query);
 
     if (query.$where) {
       mongooseQuery.where(query.$where);
@@ -330,24 +326,20 @@ module.exports = {
    * @param Log: A logging object.
    * @returns {{mongooseQuery: *, attributesFilter: *}}: The updated mongooseQuery and attributesFilter.
    */
-  populateEmbeddedDocs: function (query, mongooseQuery, attributesFilter, associations, Log) {
+  populateEmbeddedDocs: function (query, mongooseQuery, attributesFilter, associations, model, Log) {
     if (query.$embed) {
       if (!Array.isArray(query.$embed)) {
         query.$embed = query.$embed.split(",");
       }
       query.$embed.forEach(function(embed) {
-        // // Log.debug("query embed:", embed);
         var embeds = embed.split(".");
         var populate = {};
 
-        populate = nestPopulate(query, populate, 0, embeds, associations, Log);
-        // // Log.debug("populate:", populate);
+        populate = nestPopulate(query, populate, 0, embeds, associations, model, Log);
 
         mongooseQuery.populate(populate);
 
-        // // Log.debug("attributesFilter before:", attributesFilter);
         attributesFilter = attributesFilter + ' ' + embeds[0];
-        // Log.debug("attributesFilter after:", attributesFilter);
       });
       delete query.$embed;
       delete query.populateSelect;
@@ -425,47 +417,71 @@ module.exports = {
  * @param Log: A logging object.
  * @returns {*}: The updated populate object.
  */
-function nestPopulate(query, populate, index, embeds, associations, Log) {
-  // Log.debug("populate:", populate);
-  // Log.debug("index:", index);
-  // Log.debug("embeds:", embeds);
-  // Log.debug("associations:", associations);
+function nestPopulate(query, populate, index, embeds, associations, model, Log) {
   var embed = embeds[index];
-  // Log.debug("embed:", embed);
   var association = associations[embed];
+
+  if (!association) {
+    association = getReference(model, embed, Log);
+    if (!association) {
+      throw "Association not found.";
+    }
+  }
+
   var populatePath = "";
   var select = "";
   if (query.populateSelect) {
     select = query.populateSelect.replace(/,/g,' ') + " _id";
-  } else {
+  }
+  else {
     select = module.exports.createAttributesFilter({}, association.include.model, Log);
   }
-  // Log.debug("association:", association);
+
   if (association.type === "MANY_MANY") {
     populatePath = embed + '.' + association.model;
-  } else {
+  }
+  else {
     populatePath = embed;
   }
-  // Log.debug("populatePath:", populatePath);
+
   if (index < embeds.length - 1) {
     associations = association.include.model.routeOptions.associations;
-    populate = nestPopulate(query, populate, index + 1, embeds, associations, Log);
+    populate = nestPopulate(query, populate, index + 1, embeds, associations, association.include.model, Log);
     populate.populate = extend({}, populate);//EXPL: prevent circular reference
     populate.path = populatePath;
     populate.select = select + " " + populate.populate.path;//EXPL: have to add the path to the select to include nested MANY_MANY embeds
     populate.model = association.include.model;
-    // Log.debug("populate:", populate);
     return populate;
-  } else {
+  }
+  else {
     populate.path = populatePath;
     populate.select = select;
     populate.model = association.include.model;
-    // Log.debug("populate:", populate);
     return populate;
   }
 }
 
-function tryParseJSON (jsonString) {
+/**
+ * Creates an association object from a model property if the property is a reference id
+ * @param model
+ * @param embed
+ * @param Log
+ * @returns {*} The association object or null if no reference is found
+ */
+function getReference(model, embed, Log) {
+  let property = model.schema.obj[embed];
+  while (_.isArray(property)) {
+    property = property[0];
+  }
+  if (property && property.ref) {
+    return { model: property.ref, include: { model: globals.mongoose.model(property.ref), as: embed }  }
+  }
+  else {
+    return null;
+  }
+}
+
+function tryParseJSON(jsonString) {
   try {
     var o = JSON.parse(jsonString);
 
