@@ -32,7 +32,6 @@ http://ec2-35-164-131-1.us-west-2.compute.amazonaws.com:8124
 - [First time setup/Demo](#first-time-setupdemo)
 - [Using the plugin](#using-the-plugin)
 - [Configuration](#configuration)
-- [Testing](#testing)
 - [Swagger documentation](#swagger-documentation)
 - [Creating endpoints](#creating-endpoints)
 - [Associations](#associations)
@@ -45,6 +44,7 @@ http://ec2-35-164-131-1.us-west-2.compute.amazonaws.com:8124
 - [Soft delete](#soft-delete)
 - [Metadata](#metadata)
 - [Authentication/Additional Plugins](#authenticationadditional-plugins)
+- [Testing](#testing)
 - [License](#license)
 - [Questions](#questions)
 - [Future work](#future-work)
@@ -242,14 +242,6 @@ module.exports = config;
 ```
 
 [Back to top](#rest-hapi)
-
-## Testing
-If you have downloaded the source you can run the tests with:
-```
-$ gulp test
-```
-
-[Back to top](#readme-contents)
 
 ## Swagger documentation
 
@@ -1297,6 +1289,14 @@ restHapi.generateModels(mongoose)
         .catch(function(error) {
             console.log("There was an error generating the models: ", error)
         });
+```
+
+[Back to top](#readme-contents)
+
+## Testing
+If you have downloaded the source you can run the tests with:
+```
+$ gulp test
 ```
 
 [Back to top](#readme-contents)
