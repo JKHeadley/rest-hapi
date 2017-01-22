@@ -81,7 +81,7 @@ You can use these models as templates for your models or delete them later if yo
 
 ## Using the plugin
 
-As rest-hapi is a hapi plugin, you'll need to set up a hapi server to generate API endpoints.  You'll also need to set up a [mongoose](https://github.com/Automattic/mongoose) instance and include it in the plugin's options when you register. Below is an expample nodejs script ``api.js`` with the minimum requirements to set up an API with rest-hapi:
+As rest-hapi is a hapi plugin, you'll need to set up a hapi server to generate API endpoints.  You'll also need to set up a [mongoose](https://github.com/Automattic/mongoose) instance and include it in the plugin's options when you register. Below is an example nodejs script ``api.js`` with the minimum requirements to set up an API with rest-hapi:
 
 ```javascript
 'use strict';
