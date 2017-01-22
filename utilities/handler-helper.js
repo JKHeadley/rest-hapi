@@ -472,48 +472,6 @@ function _update(model, _id, payload, Log) {
 }
 
 /**
- * Deletes multiple documents
- * @param model: A mongoose model.
- * @param payload: Either an array of ids or an array of objects containing an id and a "hardDelete" flag.
- * @param Log: A logging object.
- * @returns {object} A promise returning true if the delete succeeds.
- * @private
- */
-//TODO: prevent Q.all from catching first error and returning early. Catch individual errors and return a list
-//TODO(cont) of ids that failed
-function _deleteMany(model, payload, Log) {
-  try {
-    let promises = [];
-    payload.forEach(function(arg) {
-      if (_.isString(arg)) {
-        promises.push(_deleteOne(model, arg, false, Log));
-      }
-      else {
-        promises.push(_deleteOne(model, arg._id, arg.hardDelete, Log));
-      }
-    });
-
-    return Q.all(promises)
-        .then(function(result) {
-          return true;
-        })
-        .catch(function(error) {
-          throw error;
-        })
-  }
-
-  catch(error) {
-    const message = "There was an error processing the request.";
-    try {
-      errorHelper.handleError(error, message, errorHelper.types.BAD_REQUEST, Log)
-    }
-    catch(error) {
-      return Q.reject(error);
-    }
-  }
-}
-
-/**
  * Deletes a model document
  * @param model: A mongoose model.
  * @param _id: The document id.
@@ -578,6 +536,48 @@ function _deleteOne(model, _id, hardDelete, Log) {
           errorHelper.handleError(error, message, errorHelper.types.BAD_REQUEST, Log);
         });
   }
+  catch(error) {
+    const message = "There was an error processing the request.";
+    try {
+      errorHelper.handleError(error, message, errorHelper.types.BAD_REQUEST, Log)
+    }
+    catch(error) {
+      return Q.reject(error);
+    }
+  }
+}
+
+/**
+ * Deletes multiple documents
+ * @param model: A mongoose model.
+ * @param payload: Either an array of ids or an array of objects containing an id and a "hardDelete" flag.
+ * @param Log: A logging object.
+ * @returns {object} A promise returning true if the delete succeeds.
+ * @private
+ */
+//TODO: prevent Q.all from catching first error and returning early. Catch individual errors and return a list
+//TODO(cont) of ids that failed
+function _deleteMany(model, payload, Log) {
+  try {
+    let promises = [];
+    payload.forEach(function(arg) {
+      if (_.isString(arg)) {
+        promises.push(_deleteOne(model, arg, false, Log));
+      }
+      else {
+        promises.push(_deleteOne(model, arg._id, arg.hardDelete, Log));
+      }
+    });
+
+    return Q.all(promises)
+        .then(function(result) {
+          return true;
+        })
+        .catch(function(error) {
+          throw error;
+        })
+  }
+
   catch(error) {
     const message = "There was an error processing the request.";
     try {
