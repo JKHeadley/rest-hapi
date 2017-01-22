@@ -81,7 +81,7 @@ You can use these models as templates for your models or delete them later if yo
 
 ## Using the plugin
 
-As rest-hapi is a hapi plugin, you'll need to set up a hapi server to generate API endpoints.  You'll also need to set up a [mongoose](https://github.com/Automattic/mongoose) instance and include it in the plugin's options when you register. Below is an expample nodejs script ``api.js`` with the minimum requirements to set up an API with rest-hapi:
+As rest-hapi is a hapi plugin, you'll need to set up a hapi server to generate API endpoints.  You'll also need to set up a [mongoose](https://github.com/Automattic/mongoose) instance and include it in the plugin's options when you register. Below is an example nodejs script ``api.js`` with the minimum requirements to set up an API with rest-hapi:
 
 ```javascript
 'use strict';
@@ -505,8 +505,8 @@ Along with the normal CRUD endpoints, the following association
 endpoints will be generated for the ``role`` model:
 
 ```
-GET /role/{ownerId}/user                Gets all of the users for a role
-POST /role/{ownerId}/user               Sets multiple users for a role
+GET /role/{ownerId}/user                Get all of the users for a role
+POST /role/{ownerId}/user               Add multiple users to a role
 DELETE /role/{ownerId}/user             Remove multiple users from a role's list of users
 PUT /role/{ownerId}/user/{childId}      Add a single user object to a role's list of users
 DELETE /role/{ownerId}/user/{childId}   Remove a single user object from a role's list of users
@@ -592,8 +592,8 @@ Along with the normal CRUD endpoints, the following association
 endpoints will be generated for the ``user`` model:
 
 ```
-GET /user/{ownerId}/group               Gets all of the groups for a user
-POST /user/{ownerId}/group              Sets multiple groups for a user
+GET /user/{ownerId}/group               Get all of the groups for a user
+POST /user/{ownerId}/group              Add multiple groups for a user
 DELETE /user/{ownerId}/group            Remove multiple groups from a user's list of groups
 PUT /user/{ownerId}/group/{childId}     Add a single group object to a user's list of groups
 DELETE /user/{ownerId}/group/{childId}  Remove a single group object from a user's list of groups
@@ -602,8 +602,8 @@ DELETE /user/{ownerId}/group/{childId}  Remove a single group object from a user
 and for the ``group`` model:
 
 ```
-GET /group/{ownerId}/user               Gets all of the users for a group
-POST /group/{ownerId}/user              Sets multiple users for a group
+GET /group/{ownerId}/user               Get all of the users for a group
+POST /group/{ownerId}/user              Add multiple users for a group
 DELETE /group/{ownerId}/user            Remove multiple users from a group's list of users
 PUT /group/{ownerId}/user/{childId}     Add a single user object to a group's list of users
 DELETE /group/{ownerId}/user/{childId}  Remove a single user object from a group's list of users
@@ -1068,11 +1068,11 @@ module.exports = function (mongoose) {
 ## Exposed handler methods
 rest-hapi exposes the handler methods used in the generated endpoints for the user to take advantage of in their server code. These methods provide several advantages including:
 
-- middleware functionality
-- metadata support
-- soft delete support
-- association/relational management
-- rest-hapi query support
+- [middleware](#middleware) functionality
+- [metadata](#metadata) support
+- [soft delete](#soft-delete) support
+- [association/relational](#associations) management
+- rest-hapi [query](#querying) support
 
 The available methods are:
 
@@ -1084,7 +1084,9 @@ The available methods are:
 - deleteMany
 - addOne
 - removeOne
+- addMany
 - removeMany
+- getAll
 
 See [Additional endpoints](#additional-endpoints) for an example using a rest-hapi handler method.
 
@@ -1128,6 +1130,16 @@ function create(model, payload, Log) {...}
  * @returns {object} A promise for the resulting model document.
  */
 function update(model, _id, payload, Log) {...}
+
+/**
+ * Deletes a model document
+ * @param model: A mongoose model.
+ * @param _id: The document id.
+ * @param hardDelete: Flag used to determine a soft or hard delete.
+ * @param Log: A logging object.
+ * @returns {object} A promise returning true if the delete succeeds.
+ */
+function deleteOne(model, _id, hardDelete, Log) {...}
 
 /**
  * Deletes multiple documents
@@ -1207,7 +1219,7 @@ rest-hapi supports soft delete functionality for documents.  When the ``enableSo
 
 "Hard" deletion is still possible when soft delete is enabled. In order to hard delete a document (i.e. remove a document from it's collection) via the api, a payload must be sent with the ``hardDelete`` property set to ``true``. 
 
-The rest-hapi delete methods include a ``hardDelete`` flag as a parameter. The following is an example of a hard delete using a rest-hapi method: 
+The rest-hapi delete methods include a ``hardDelete`` flag as a parameter. The following is an example of a hard delete using a [rest-hapi method](#exposed-handler-methods): 
 
 ``restHapi.deleteOne(model, _id, true, Log);``
 
@@ -1228,7 +1240,7 @@ When enabled, these properties will automatically be populated during CRUD opera
  }
 ```
 
-This could result in the following document:
+If I then query for this document I might get:
 
 ```json
  {
@@ -1239,7 +1251,7 @@ This could result in the following document:
  }
 ```
 
-If I later update that user's email the document could then look like:
+If I later update that user's email then an additional query might return:
 
 ```json
  {
@@ -1307,7 +1319,7 @@ MIT
 [Back to top](#readme-contents)
 
 ## Questions?
-If you have any questions/issues/feature requests, please feel free to open an issue.
+If you have any questions/issues/feature requests, please feel free to open an [issue](https://github.com/JKHeadley/rest-hapi/issues/new).
 
 [Back to top](#readme-contents)
 
