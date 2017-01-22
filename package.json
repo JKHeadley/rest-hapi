@@ -1,6 +1,6 @@
 {
   "name": "rest-hapi",
-  "version": "0.8.1",
+  "version": "0.8.2",
   "description": "A RESTful API generator for hapi",
   "main": "rest-hapi.js",
   "bin": {
@@ -69,6 +69,5 @@
     "mkdirp": "0.5.1",
     "bcryptjs": "latest"
   },
-  "devDependencies": {
-  }
+  "devDependencies": {}
 }
