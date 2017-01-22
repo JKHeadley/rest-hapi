@@ -1132,6 +1132,16 @@ function create(model, payload, Log) {...}
 function update(model, _id, payload, Log) {...}
 
 /**
+ * Deletes a model document
+ * @param model: A mongoose model.
+ * @param _id: The document id.
+ * @param hardDelete: Flag used to determine a soft or hard delete.
+ * @param Log: A logging object.
+ * @returns {object} A promise returning true if the delete succeeds.
+ */
+function deleteOne(model, _id, hardDelete, Log) {...}
+
+/**
  * Deletes multiple documents
  * @param model: A mongoose model.
  * @param payload: Either an array of ids or an array of objects containing an id and a "hardDelete" flag.
@@ -1209,7 +1219,7 @@ rest-hapi supports soft delete functionality for documents.  When the ``enableSo
 
 "Hard" deletion is still possible when soft delete is enabled. In order to hard delete a document (i.e. remove a document from it's collection) via the api, a payload must be sent with the ``hardDelete`` property set to ``true``. 
 
-The rest-hapi delete methods include a ``hardDelete`` flag as a parameter. The following is an example of a hard delete using a rest-hapi method: 
+The rest-hapi delete methods include a ``hardDelete`` flag as a parameter. The following is an example of a hard delete using a [rest-hapi method](#exposed-handler-methods): 
 
 ``restHapi.deleteOne(model, _id, true, Log);``
 
