@@ -505,8 +505,8 @@ Along with the normal CRUD endpoints, the following association
 endpoints will be generated for the ``role`` model:
 
 ```
-GET /role/{ownerId}/user                Gets all of the users for a role
-POST /role/{ownerId}/user               Sets multiple users for a role
+GET /role/{ownerId}/user                Get all of the users for a role
+POST /role/{ownerId}/user               Add multiple users to a role
 DELETE /role/{ownerId}/user             Remove multiple users from a role's list of users
 PUT /role/{ownerId}/user/{childId}      Add a single user object to a role's list of users
 DELETE /role/{ownerId}/user/{childId}   Remove a single user object from a role's list of users
