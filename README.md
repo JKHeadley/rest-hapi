@@ -1319,7 +1319,7 @@ MIT
 [Back to top](#readme-contents)
 
 ## Questions?
-If you have any questions/issues/feature requests, please feel free to open an issue.
+If you have any questions/issues/feature requests, please feel free to open an [issue](https://github.com/JKHeadley/rest-hapi/issues/new).
 
 [Back to top](#readme-contents)
 
