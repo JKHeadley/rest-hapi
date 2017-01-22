@@ -1,6 +1,6 @@
 var Q = require('q');
 var Joi = require('joi');
-var bcrypt = require('bcrypt');
+var bcrypt = require('bcryptjs');
 
 //TODO: assign a unique text index to email field
 
