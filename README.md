@@ -1240,7 +1240,7 @@ When enabled, these properties will automatically be populated during CRUD opera
  }
 ```
 
-This could result in the following document:
+If I then query for this document I might get:
 
 ```json
  {
@@ -1251,7 +1251,7 @@ This could result in the following document:
  }
 ```
 
-If I later update that user's email the document could then look like:
+If I later update that user's email then an additional query might return:
 
 ```json
  {
