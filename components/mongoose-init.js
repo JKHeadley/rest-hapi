@@ -1,3 +1,5 @@
+'use strict';
+
 var chalk = require('chalk');
 var logUtil = require('../utilities/log-util');
 var _ = require('lodash');
