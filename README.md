@@ -592,8 +592,8 @@ Along with the normal CRUD endpoints, the following association
 endpoints will be generated for the ``user`` model:
 
 ```
-GET /user/{ownerId}/group               Gets all of the groups for a user
-POST /user/{ownerId}/group              Sets multiple groups for a user
+GET /user/{ownerId}/group               Get all of the groups for a user
+POST /user/{ownerId}/group              Add multiple groups for a user
 DELETE /user/{ownerId}/group            Remove multiple groups from a user's list of groups
 PUT /user/{ownerId}/group/{childId}     Add a single group object to a user's list of groups
 DELETE /user/{ownerId}/group/{childId}  Remove a single group object from a user's list of groups
@@ -602,8 +602,8 @@ DELETE /user/{ownerId}/group/{childId}  Remove a single group object from a user
 and for the ``group`` model:
 
 ```
-GET /group/{ownerId}/user               Gets all of the users for a group
-POST /group/{ownerId}/user              Sets multiple users for a group
+GET /group/{ownerId}/user               Get all of the users for a group
+POST /group/{ownerId}/user              Add multiple users for a group
 DELETE /group/{ownerId}/user            Remove multiple users from a group's list of users
 PUT /group/{ownerId}/user/{childId}     Add a single user object to a group's list of users
 DELETE /group/{ownerId}/user/{childId}  Remove a single user object from a group's list of users
