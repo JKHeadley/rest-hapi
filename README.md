@@ -1068,11 +1068,11 @@ module.exports = function (mongoose) {
 ## Exposed handler methods
 rest-hapi exposes the handler methods used in the generated endpoints for the user to take advantage of in their server code. These methods provide several advantages including:
 
-- middleware functionality
-- metadata support
-- soft delete support
-- association/relational management
-- rest-hapi query support
+- [middleware](#middleware) functionality
+- [metadata](#metadata) support
+- [soft delete](#soft-delete) support
+- [association/relational](#associations) management
+- rest-hapi [query](#querying) support
 
 The available methods are:
 
@@ -1084,7 +1084,9 @@ The available methods are:
 - deleteMany
 - addOne
 - removeOne
+- addMany
 - removeMany
+- getAll
 
 See [Additional endpoints](#additional-endpoints) for an example using a rest-hapi handler method.
 
