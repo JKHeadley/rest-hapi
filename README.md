@@ -65,14 +65,12 @@ npm install rest-hapi
 ### First time setup/Demo
 **WARNING**: This will clear all data in the following MongoDB collections (in the db defined in ``restHapi.config``, default ``mongodb://localhost/rest_hapi``) if they exist: ``users``, ``roles``.
 
-If you would like to seed your database with some demo models/data, first run:
-```
-$ npm install bcrypt
-```
-then do:
+If you would like to seed your database with some demo models/data, run:
+
 ```
 $ ./node_modules/.bin/rest-hapi-cli seed
 ```
+
 NOTE: The password for all seed users is ``1234``.
 
 You can use these models as templates for your models or delete them later if you wish.
