@@ -139,12 +139,23 @@ module.exports = {
  * @param model: A mongoose model.
  * @param query: rest-hapi query parameters to be converted to a mongoose query.
  * @param Log: A logging object.
- * @returns {object} A promise for the resulting model documents.
+ * @returns {object} A promise for the resulting model documents or the count of the query results.
  * @private
  */
 function _list(model, query, Log) {
   try {
-    var mongooseQuery = model.find();
+    var mongooseQuery = {};
+    if (query.$count) {
+      mongooseQuery = model.count();
+      mongooseQuery = QueryHelper.createMongooseQuery(model, query, mongooseQuery, Log).lean();
+      return mongooseQuery.exec()
+          .then(function(result) {
+            Log.log("Result: %s", JSON.stringify(result));
+            return result;
+          })
+    }
+
+    mongooseQuery = model.find();
     mongooseQuery = QueryHelper.createMongooseQuery(model, query, mongooseQuery, Log).lean();
     return mongooseQuery.exec()
         .then(function (result) {
@@ -827,7 +838,7 @@ function _removeMany(ownerModel, ownerId, childModel, associationName, payload, 
  * @param associationName: The name of the association from the ownerModel's perspective.
  * @param query: rest-hapi query parameters to be converted to a mongoose query.
  * @param Log: A logging object
- * @returns {object} A promise returning true if the add succeeds.
+ * @returns {object} A promise for the resulting model documents or the count of the query results.
  * @private
  */
 function _getAll(ownerModel, ownerId, childModel, associationName, query, Log) {
@@ -874,15 +885,17 @@ function _getAll(ownerModel, ownerId, childModel, associationName, query, Log) {
             var extraFieldData = result;
             return promise
                 .then(function(result) {
-                  result.forEach(function(object) {
-                    var data = extraFieldData.find(function(data) {
-                      return data[association.model]._id.toString() === object._id
+                  if (_.isArray(result)) {
+                    result.forEach(function(object) {
+                      var data = extraFieldData.find(function(data) {
+                        return data[association.model]._id.toString() === object._id
+                      });
+                      var fields = data.toJSON();
+                      delete fields._id;
+                      delete fields[association.model];
+                      object[association.linkingModel] = fields;
                     });
-                    var fields = data.toJSON();
-                    delete fields._id;
-                    delete fields[association.model];
-                    object[association.linkingModel] = fields;
-                  });
+                  }
 
                   return result;
                 })

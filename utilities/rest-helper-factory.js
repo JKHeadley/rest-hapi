@@ -157,6 +157,8 @@ module.exports = function (logger, mongoose, server) {
             'fields prioritizes the sort starting with the first field listed. Valid values include: ' + sortableFields.toString().replace(/,/g,', ')), Joi.string().valid(sortableFields));
         queryValidation.$exclude = Joi.alternatives().try(Joi.array().items(Joi.objectId())
             .description('A list of objectIds to exclude in the result.'), Joi.objectId());
+        queryValidation.$count = Joi.boolean()
+            .description('If set to true, only a count of the query results will be returned.');
         queryValidation.$where = Joi.any().optional()
             .description('An optional field for raw mongoose queries.');
 
@@ -202,10 +204,7 @@ module.exports = function (logger, mongoose, server) {
             }
           },
           response: {
-            schema: config.enableResponseValidation ? Joi.array().items(readModel) : Joi.array().items(Joi.any())
-            // schema: Joi.array().items(readModel)
-            // schema: Joi.array().items(readModel || Joi.object().unknown().optional())
-            // schema: Joi.array().items(Joi.any())//TODO: proper validation
+            schema: config.enableResponseValidation ? Joi.alternatives().try(Joi.array().items(readModel), Joi.number()) : Joi.array().items(Joi.any())
           }
         }
       });
@@ -912,6 +911,8 @@ module.exports = function (logger, mongoose, server) {
                 'fields prioritizes the sort starting with the first field listed. Valid values include: ' + sortableFields.toString().replace(/,/g,', ')), Joi.string().valid(sortableFields));
         queryValidation.$exclude = Joi.alternatives().try(Joi.array().items(Joi.objectId())
             .description('A list of objectIds to exclude in the result.'), Joi.objectId());
+        queryValidation.$count = Joi.boolean()
+            .description('If set to true, only a count of the query results will be returned.');
         queryValidation.$where = Joi.any().optional()
             .description('An optional field for raw mongoose queries.');
 
@@ -958,10 +959,7 @@ module.exports = function (logger, mongoose, server) {
             }
           },
           response: {
-            schema: config.enableResponseValidation ? Joi.array().items(readModel) : Joi.array().items(Joi.any())
-            // schema: Joi.array().items(readModel)
-            // schema: Joi.array().items(readModel || Joi.object().unknown().optional())
-            // schema: Joi.array().items(Joi.any())//TODO: proper validation
+            schema: config.enableResponseValidation ? Joi.alternatives().try(Joi.array().items(readModel), Joi.number()) : Joi.array().items(Joi.any())
           }
         }
       });

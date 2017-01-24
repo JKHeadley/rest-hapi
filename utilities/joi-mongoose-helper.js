@@ -226,7 +226,7 @@ module.exports = {
           model = Joi.any().only(field.enum);
         }
         else {
-          model = Joi.string();
+          model = Joi.string().allow('');
         }
         break;
       default:

@@ -75,6 +75,8 @@ module.exports = {
 
     delete query[""]; //EXPL: hack due to bug in hapi-swagger-docs
 
+    delete query.$count;
+
     mongooseQuery = this.setSkip(query, mongooseQuery, Log);
 
     mongooseQuery = this.setLimit(query, mongooseQuery, Log);
