@@ -771,6 +771,9 @@ supported parameters:
 
 * $embed
     - A set of associations to populate. 
+    
+* $count
+    - If set to true, only a count of the query results will be returned.
 
 * $where
     - An optional field for raw mongoose queries.
