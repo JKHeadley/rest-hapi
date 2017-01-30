@@ -163,8 +163,9 @@ module.exports = function (logger, mongoose, server) {
             .description('An optional field for raw mongoose queries.');
 
         _.each(queryableFields, function (fieldName) {
-          queryValidation[fieldName] = Joi.alternatives().try(Joi.array().items(Joi.string())
-              .description('Match values for the ' + fieldName + ' property.'), Joi.string().optional());
+          const joiModel = joiMongooseHelper.generateJoiModelFromFieldType(model.schema.paths[fieldName].options, Log);
+          queryValidation[fieldName] = Joi.alternatives().try(Joi.array().items(joiModel)
+              .description('Match values for the ' + fieldName + ' property.'), joiModel);
         })
       }
 
@@ -917,8 +918,9 @@ module.exports = function (logger, mongoose, server) {
             .description('An optional field for raw mongoose queries.');
 
         _.each(queryableFields, function (fieldName) {
-          queryValidation[fieldName] = Joi.alternatives().try(Joi.array().items(Joi.string())
-              .description('Match values for the ' + fieldName + ' property.'), Joi.string().optional());
+          const joiModel = joiMongooseHelper.generateJoiModelFromFieldType(childModel.schema.paths[fieldName].options, Log);
+          queryValidation[fieldName] = Joi.alternatives().try(Joi.array().items(joiModel)
+              .description('Match values for the ' + fieldName + ' property.'), joiModel);
         })
       }
 

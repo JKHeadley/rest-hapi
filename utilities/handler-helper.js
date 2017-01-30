@@ -9,6 +9,8 @@ var _ = require('lodash');
 
 //TODO: add a "clean" method that clears out all soft-deleted docs
 //TODO: add an optional TTL config setting that determines how long soft-deleted docs remain in the system
+//TODO: possibly remove "MANY_ONE" association and make it implied
+//TODO: possibly remove "ONE_ONE" association and make it implied
 
 module.exports = {
 

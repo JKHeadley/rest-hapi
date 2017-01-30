@@ -188,7 +188,7 @@ module.exports = {
 
     for (var i = 0; i < fieldNames.length; i++) {
       var fieldName = fieldNames[i];
-      if (fields[fieldName] && fieldName !== "__v" && fieldName !== "__t" && fieldName !== "_id") {
+      if (fields[fieldName] && fieldName !== "__v" && fieldName !== "__t") {
         var field = fields[fieldName].options;
         var association = associations ? (associations[fields[fieldName].path] || {}) : {};
 
