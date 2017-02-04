@@ -873,6 +873,7 @@ test('rest-helper-factory.generateListEndpoint', function(t) {
     queryHelperStub.getReadableFields = this.spy(function(){return readableFields});
     queryHelperStub.getSortableFields = this.spy(function(){return sortableFields});
     var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});
+    joiMongooseHelperStub.generateJoiModelFromFieldType = this.spy(function(){return Joi.string()});
     var joiStub = require('joi');
     // joiStub.number = function () {
     //   return {
@@ -902,7 +903,12 @@ test('rest-helper-factory.generateListEndpoint', function(t) {
 
     t.plan(4);
 
-    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    var userSchema = new mongoose.Schema({
+      test: {
+        type: Types.String
+      }
+    });
+    userSchema.statics = { routeOptions: {} };
 
     var userModel = mongoose.model("user", userSchema);
 
@@ -922,7 +928,7 @@ test('rest-helper-factory.generateListEndpoint', function(t) {
     .description('An optional field for raw mongoose queries.');
 
     queryValidation["test"] = Joi.alternatives().try(Joi.array().items(Joi.string())
-        .description('Match values for the ' + "test" + ' property.'), Joi.string().optional());
+        .description('Match values for the ' + "test" + ' property.'), Joi.string());
 
     //</editor-fold>
 
@@ -970,9 +976,19 @@ test('rest-helper-factory.generateListEndpoint', function(t) {
 
     t.plan(2);
 
-    var userSchema1 = new mongoose.Schema({});     userSchema1.statics = { routeOptions: {} };
 
-    var userSchema2 = new mongoose.Schema({});
+    var userSchema1 = new mongoose.Schema({
+      test: {
+        type: Types.String
+      }
+    });
+    userSchema1.statics = { routeOptions: {} };
+
+    var userSchema2 = new mongoose.Schema({
+      test: {
+        type: Types.String
+      }
+    });
     userSchema2.statics = {
       routeOptions: {
         associations: {
@@ -1030,7 +1046,12 @@ test('rest-helper-factory.generateListEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    var userSchema = new mongoose.Schema({
+      test: {
+        type: Types.String
+      }
+    });
+    userSchema.statics = { routeOptions: {} };
 
     var userModel = mongoose.model("user", userSchema);
 
@@ -1073,7 +1094,12 @@ test('rest-helper-factory.generateListEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    var userSchema = new mongoose.Schema({
+      test: {
+        type: Types.String
+      }
+    });
+    userSchema.statics = { routeOptions: {} };
 
     var userModel = mongoose.model("user", userSchema);
     //</editor-fold>
@@ -1113,7 +1139,12 @@ test('rest-helper-factory.generateListEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    var userSchema = new mongoose.Schema({
+      test: {
+        type: Types.String
+      }
+    });
+    userSchema.statics = { routeOptions: {} };
 
     var userModel = mongoose.model("user", userSchema);
 
@@ -6533,6 +6564,7 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
     queryHelperStub.getReadableFields = this.spy(function(){return readableFields});
     queryHelperStub.getSortableFields = this.spy(function(){return sortableFields});
     var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});
+    joiMongooseHelperStub.generateJoiModelFromFieldType = this.spy(function(){return Joi.string()});
     var joiStub = require('joi');
     // joiStub.number = function () {
     //   return {
@@ -6562,12 +6594,12 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
 
     t.plan(4);
 
-    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
-    userSchema.statics = {
-      routeOptions: {
-        associations: {}
+    var userSchema = new mongoose.Schema({
+      test: {
+        type: Types.String
       }
-    };
+    });
+    userSchema.statics = { routeOptions: { associations: {} } };
 
     var userModel = mongoose.model("user", userSchema);
 
@@ -6590,7 +6622,7 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
         .description('An optional field for raw mongoose queries.');
 
     queryValidation["test"] = Joi.alternatives().try(Joi.array().items(Joi.string())
-        .description('Match values for the ' + "test" + ' property.'), Joi.string().optional());
+        .description('Match values for the ' + "test" + ' property.'), Joi.string());
 
     //</editor-fold>
 
@@ -6640,7 +6672,12 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
 
     t.plan(2);
 
-    var userSchema1 = new mongoose.Schema({});     userSchema1.statics = { routeOptions: {} };
+
+    var userSchema1 = new mongoose.Schema({
+      test: {
+        type: Types.String
+      }
+    });
     userSchema1.statics = {
       routeOptions: {
         associations: {
@@ -6649,14 +6686,22 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
       }
     };
 
-    var userSchema2 = new mongoose.Schema({});
+    var userSchema2 = new mongoose.Schema({
+      test: {
+        type: Types.String
+      }
+    });
     userSchema2.statics = {
       routeOptions: {
         associations: {}
       }
     };
 
-    var childSchema1 = new mongoose.Schema({});
+    var childSchema1 = new mongoose.Schema({
+      test: {
+        type: Types.String
+      }
+    });
 
     var childModel1 = mongoose.model("child1", childSchema1);
     var childModel2 = mongoose.model("child2", userSchema1);

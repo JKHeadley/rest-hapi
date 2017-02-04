@@ -90,8 +90,16 @@ module.exports = {
           var dataObject = {};
           dataObject[association.model] = { type: mongoose.Schema.Types.ObjectId, ref: association.model };
           if (association.linkingModel) {//EXPL: if a linking model is defined, add it to the association definition
-            var linkingModelFile = modelPath + "/linking-models/" + association.linkingModel + ".model";
-            var linkingModel = require(linkingModelFile)();
+            var linkingModelFiles = require('require-all')(modelPath + '/linking-models');
+            for (var fileName in linkingModelFiles) {
+              if (linkingModelFiles[fileName]().modelName === association.linkingModel) {
+                var linkingModel = linkingModelFiles[fileName]();
+                break;
+              }
+            }
+            if (!linkingModel) {
+              throw "unknown linking model: " + association.linkingModel;
+            }
             association.include = {
               through: linkingModel
             };

@@ -613,11 +613,14 @@ Many-many relationships can include extra fields that contain data specific
 to each association instance.  This is accomplished through linking models which
 behave similar to pivot/through tables in a relational database.  Linking model files are
 stored in the ``/models/linking-models`` directory and follow the same 
-``{name}.model.js`` format as normal models.  Below is an example of a many-many
+``{model name}.model.js`` format as normal models.  Below is an example of a many-many
 relationship between the ``user`` model and itself through the ``friends`` association.
 The extra field ``friendsSince`` could contain a date representing how long the two
 associated users have known each other.  This example also displays how models can contain a 
 reference to themselves.  
+
+**NOTE** The linking model filename does not have to match the model name, however the ``linkingModel``
+association property **must** match the linking model ``modleName`` property.
 
 
 ``/models/user.model.js``:

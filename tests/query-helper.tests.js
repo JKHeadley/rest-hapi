@@ -71,7 +71,7 @@ test('query-helper.getQueryableFields', function(t) {
 
     //<editor-fold desc="Assert">
     t.ok(_.isArray(result), "result is an array");
-    t.equal(result.length, 3, "result has three items");
+    t.equal(result.length, 4, "result has four items");
     t.ok(_.indexOf(result, "email") > -1, "result contains email");
     t.ok(_.indexOf(result, "firstName") > -1, "result contains firstName");
     t.ok(_.indexOf(result, "lastName") > -1, "result contains lastName");
@@ -118,7 +118,7 @@ test('query-helper.getQueryableFields', function(t) {
 
     //<editor-fold desc="Assert">
     t.ok(_.isArray(result), "result is an array");
-    t.equal(result.length, 3, "result has three items");
+    t.equal(result.length, 4, "result has four items");
     t.ok(_.indexOf(result, "email") > -1, "result contains email");
     t.ok(_.indexOf(result, "firstName") > -1, "result contains firstName");
     t.ok(_.indexOf(result, "lastName") > -1, "result contains lastName");
@@ -131,11 +131,11 @@ test('query-helper.getQueryableFields', function(t) {
     //</editor-fold>
   });
 
-  t.test('query-helper.getQueryableFields doesn\'t return the fields "__v", "__t", or "_id".', function (t) {
+  t.test('query-helper.getQueryableFields doesn\'t return the fields "__v", or "__t".', function (t) {
     //<editor-fold desc="Arrange">
     var queryHelper = require('../utilities/query-helper');
 
-    t.plan(5);
+    t.plan(4);
 
     var userSchema = new mongoose.Schema({
       email: {
@@ -172,7 +172,6 @@ test('query-helper.getQueryableFields', function(t) {
 
     t.ok(_.indexOf(result, "__v") < 0, "result doesn't contain __v");
     t.ok(_.indexOf(result, "__t") < 0, "result doesn't contain __t");
-    t.ok(_.indexOf(result, "_id") < 0, "result doesn't contain _id");
     //</editor-fold>
 
     //<editor-fold desc="Restore">

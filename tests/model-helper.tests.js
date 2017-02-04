@@ -126,7 +126,7 @@ test('model-helper.extendSchemaAssociations', function(t) {
       "  var Types = mongoose.Schema.Types;\n\n" +
       "  var Model = {\n" +
       "      Schema: {\n" +
-      "        linkingModelField: {\n" +
+      "        linkingModel: {\n" +
       "          type: Types.String\n" +
       "        }\n" +
       "      },\n" +
@@ -141,7 +141,7 @@ test('model-helper.extendSchemaAssociations', function(t) {
           type: mongoose.Schema.Types.ObjectId,
           ref: "group"
         },
-        linkingModelField: {
+        linkingModel: {
           type: mongoose.Schema.Types.String
         }
       }]
@@ -174,7 +174,13 @@ test('model-helper.extendSchemaAssociations', function(t) {
 
       deferred.promise.then(function() {
         //<editor-fold desc="Act">
-        modelHelper.extendSchemaAssociations(userSchema, mongoose, "../models");
+        try {
+          modelHelper.extendSchemaAssociations(userSchema, mongoose, __dirname + "/../models");
+        }
+        catch(error) {
+          Log.error(error);
+          throw error;
+        }
         //</editor-fold>
 
         //<editor-fold desc="Assert">
