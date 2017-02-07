@@ -1074,11 +1074,11 @@ module.exports = function (mongoose) {
 ## Authorization
 rest-hapi takes advantage of the ``scope`` property within the ``auth`` route config object of a hapi endpoint.  Each generated endpoint has it's ``scope`` property set based on two model properties within the ``routeOptions`` object. The first is a ``scope`` property that, when set, is applied to all generated endpoints for that model. The second is an action specifi scope property that only applies to endpoints corresponding with the action. A list of these action scope properties can be seen below:
 
-* createScope: value is added to the scope of any endpoint that creates model documents 
-* readScope: value is added to the scope of any endpoint that retrieves documents and can be queried against
-* updateScope: value is added to the scope of any endpoint that directly updates documents
-* deleteScope: value is added to the scope of any endpoint that deletes documents
-* associateScope: value is added to the scope of any endpoint that modifies an association
+* ``createScope``: value is added to the scope of any endpoint that creates model documents 
+* ``readScope``: value is added to the scope of any endpoint that retrieves documents and can be queried against
+* ``updateScope``: value is added to the scope of any endpoint that directly updates documents
+* ``deleteScope``: value is added to the scope of any endpoint that deletes documents
+* ``associateScope``: value is added to the scope of any endpoint that modifies an association
 
 In the example below, only users with the ``Admin`` scope in their authentication credentials can access all of the generated endpoints for the user model, while users with the ``User`` scope are restricted to read-only access/endpoints.
 
