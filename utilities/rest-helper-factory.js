@@ -7,6 +7,7 @@ var assert = require('assert');
 var joiMongooseHelper = require('./joi-mongoose-helper');
 var queryHelper = require('./query-helper');
 var validationHelper = require("./validation-helper");
+var authHelper = require('./auth-helper');
 var chalk = require('chalk');
 var config = require("../config");
 
@@ -18,7 +19,7 @@ module.exports = function (logger, mongoose, server) {
 
   var headersValidation;
 
-  if (config.auth) {
+  if (config.authStrategy) {
     headersValidation = Joi.object({
       'authorization': Joi.string().required()
     }).options({allowUnknown: true});
@@ -177,12 +178,22 @@ module.exports = function (logger, mongoose, server) {
 
       var readModel = joiMongooseHelper.generateJoiReadModel(model, Log);
 
+      var auth = {
+        strategy: config.authStrategy
+      };
+
+      var scope = authHelper.generateScope(model, 'read', Log);
+
+      if (!_.isEmpty(scope)) {
+        auth.scope = scope;
+      }
+
       server.route({
         method: 'GET',
         path: '/' + resourceAliasForRoute,
         config: {
           handler: handler,
-          auth: config.auth,
+          auth: auth,
           description: 'Get a list of ' + collectionName + 's',
           tags: ['api', collectionName],
           cors: true,
@@ -253,12 +264,22 @@ module.exports = function (logger, mongoose, server) {
 
       var readModel = model.readModel || joiMongooseHelper.generateJoiReadModel(model, Log);
 
+      var auth = {
+        strategy: config.authStrategy
+      };
+
+      var scope = authHelper.generateScope(model, 'read', Log);
+
+      if (!_.isEmpty(scope)) {
+        auth.scope = scope;
+      }
+
       server.route({
         method: 'GET',
         path: '/' + resourceAliasForRoute + '/{_id}',
         config: {
           handler: handler,
-          auth: config.auth,
+          auth: auth,
           description: 'Get a specific ' + collectionName,
           tags: ['api', collectionName],
           cors: true,
@@ -327,12 +348,22 @@ module.exports = function (logger, mongoose, server) {
 
       readModel = Joi.alternatives().try(Joi.array().items(readModel), readModel);
 
+      var auth = {
+        strategy: config.authStrategy
+      };
+
+      var scope = authHelper.generateScope(model, 'create', Log);
+
+      if (!_.isEmpty(scope)) {
+        auth.scope = scope;
+      }
+
       server.route({
         method: 'POST',
         path: '/' + resourceAliasForRoute,
         config: {
           handler: handler,
-          auth: config.auth,
+          auth: auth,
           cors: true,
           description: 'Create one or more new ' + collectionName + 's',
           tags: ['api', collectionName],
@@ -393,12 +424,22 @@ module.exports = function (logger, mongoose, server) {
         payloadModel = Joi.object({ hardDelete: Joi.bool() }).allow(null);
       }
 
+      var auth = {
+        strategy: config.authStrategy
+      };
+
+      var scope = authHelper.generateScope(model, 'delete', Log);
+
+      if (!_.isEmpty(scope)) {
+        auth.scope = scope;
+      }
+
       server.route({
         method: 'DELETE',
         path: '/' + resourceAliasForRoute + "/{_id}",
         config: {
           handler: handler,
-          auth: config.auth,
+          auth: auth,
           cors: true,
           description: 'Delete a ' + collectionName,
           tags: ['api', collectionName],
@@ -468,12 +509,22 @@ module.exports = function (logger, mongoose, server) {
         payloadModel = Joi.array().items(Joi.objectId());
       }
 
+      var auth = {
+        strategy: config.authStrategy
+      };
+
+      var scope = authHelper.generateScope(model, 'delete', Log);
+
+      if (!_.isEmpty(scope)) {
+        auth.scope = scope;
+      }
+
       server.route({
         method: 'DELETE',
         path: '/' + resourceAliasForRoute,
         config: {
           handler: handler,
-          auth: config.auth,
+          auth: auth,
           cors: true,
           description: 'Delete multiple ' + collectionName + 's',
           tags: ['api', collectionName],
@@ -535,12 +586,22 @@ module.exports = function (logger, mongoose, server) {
 
       var readModel = joiMongooseHelper.generateJoiReadModel(model, Log);
 
+      var auth = {
+        strategy: config.authStrategy
+      };
+
+      var scope = authHelper.generateScope(model, 'update', Log);
+
+      if (!_.isEmpty(scope)) {
+        auth.scope = scope;
+      }
+
       server.route({
         method: 'PUT',
         path: '/' + resourceAliasForRoute + '/{_id}',
         config: {
           handler: handler,
-          auth: config.auth,
+          auth: auth,
           cors: true,
           description: 'Update a ' + collectionName,
           tags: ['api', collectionName],
@@ -610,12 +671,22 @@ module.exports = function (logger, mongoose, server) {
         payloadValidation = joiMongooseHelper.generateJoiAssociationModel(association.include.through, Log);
       }
 
+      var auth = {
+        strategy: config.authStrategy
+      };
+
+      var scope = authHelper.generateScope(ownerModel, 'associate', Log);
+
+      if (!_.isEmpty(scope)) {
+        auth.scope = scope;
+      }
+
       server.route({
         method: 'PUT',
         path: '/' + ownerAlias + '/{ownerId}/' + childAlias + "/{childId}",
         config: {
           handler: handler,
-          auth: config.auth,
+          auth: auth,
           cors: true,
           description: 'Add a single ' + childModelName + ' to a ' + ownerModelName + '\'s list of ' + associationName,
           tags: ['api', associationName, ownerModelName],
@@ -677,12 +748,22 @@ module.exports = function (logger, mongoose, server) {
 
       var handler = HandlerHelper.generateAssociationRemoveOneHandler(ownerModel, association, options, Log);
 
+      var auth = {
+        strategy: config.authStrategy
+      };
+
+      var scope = authHelper.generateScope(ownerModel, 'associate', Log);
+
+      if (!_.isEmpty(scope)) {
+        auth.scope = scope;
+      }
+
       server.route({
         method: 'DELETE',
         path: '/' + ownerAlias + '/{ownerId}/' + childAlias + "/{childId}",
         config: {
           handler: handler,
-          auth: config.auth,
+          auth: auth,
           cors: true,
           description: 'Remove a single ' + childModelName + ' from a ' + ownerModelName + '\'s list of ' + associationName,
           tags: ['api', associationName, ownerModelName],
@@ -753,12 +834,22 @@ module.exports = function (logger, mongoose, server) {
         payloadValidation = Joi.array().items(Joi.objectId()).required();
       }
 
+      var auth = {
+        strategy: config.authStrategy
+      };
+
+      var scope = authHelper.generateScope(ownerModel, 'associate', Log);
+
+      if (!_.isEmpty(scope)) {
+        auth.scope = scope;
+      }
+
       server.route({
         method: 'POST',
         path: '/' + ownerAlias + '/{ownerId}/' + childAlias,
         config: {
           handler: handler,
-          auth: config.auth,
+          auth: auth,
           cors: true,
           description: 'Add multiple ' + childModelName + 's to a ' + ownerModelName + '\'s list of ' + associationName,
           tags: ['api', associationName, ownerModelName],
@@ -818,12 +909,22 @@ module.exports = function (logger, mongoose, server) {
 
       var payloadValidation = Joi.array().items(Joi.objectId()).required();
 
+      var auth = {
+        strategy: config.authStrategy
+      };
+
+      var scope = authHelper.generateScope(ownerModel, 'associate', Log);
+
+      if (!_.isEmpty(scope)) {
+        auth.scope = scope;
+      }
+
       server.route({
         method: 'DELETE',
         path: '/' + ownerAlias + '/{ownerId}/' + childAlias,
         config: {
           handler: handler,
-          auth: config.auth,
+          auth: auth,
           cors: true,
           description: 'Remove multiple ' + childModelName + 's from a ' + ownerModelName + '\'s list of ' + associationName,
           tags: ['api', associationName, ownerModelName],
@@ -932,12 +1033,22 @@ module.exports = function (logger, mongoose, server) {
 
       var readModel = joiMongooseHelper.generateJoiReadModel(childModel, Log);
 
+      var auth = {
+        strategy: config.authStrategy
+      };
+
+      var scope = authHelper.generateScope(ownerModel, 'read', Log);
+
+      if (!_.isEmpty(scope)) {
+        auth.scope = scope;
+      }
+
       server.route({
         method: 'GET',
         path: '/' + ownerAlias + '/{ownerId}/' + childAlias,
         config: {
           handler: handler,
-          auth: config.auth,
+          auth: auth,
           cors: true,
           description: 'Get all of the ' + associationName + ' for a ' + ownerModelName,
           tags: ['api', associationName, ownerModelName],

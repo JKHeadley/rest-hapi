@@ -18,6 +18,7 @@ var fs = require('fs');
 // fs.createReadStream(__dirname + '/../config.js').pipe(fs.createWriteStream(__dirname + '/../config.js'));
 
 //TODO: test DeleteMany endpoint
+//TODO: test scope functionality
 
 test('rest-helper-factory exists and has expected members', function (t) {
   //<editor-fold desc="Arrange">
@@ -48,7 +49,7 @@ test('rest-helper-factory.defaultHeadersValidation', function(t) {
   t.test('rest-helper-factory.defaultHeadersValidation requires authorization property if auth is enabled', function (t) {
     //<editor-fold desc="Arrange">
     var server = sinon.spy();
-    var config = { auth: "token" };
+    var config = { authStrategy: "token" };
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
       '../config': config
     })(Log, mongoose, server);
@@ -75,7 +76,7 @@ test('rest-helper-factory.defaultHeadersValidation', function(t) {
   t.test('rest-helper-factory.defaultHeadersValidation doesn\'t require authorization property if auth is disabled', function (t) {
     //<editor-fold desc="Arrange">
     var server = sinon.spy();
-    var config = { auth: null };
+    var config = { authStrategy: null };
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
       '../config': config
     })(Log, mongoose, server);
@@ -735,7 +736,7 @@ test('rest-helper-factory.generateListEndpoint', function(t) {
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
     var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});
-    var config = { auth: "TEST_AUTH" };
+    var config = { authStrategy: "TEST_AUTH" };
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
       './handler-helper-factory': handlerHelperStubWrapper,
       './query-helper': queryHelperStub,
@@ -757,7 +758,7 @@ test('rest-helper-factory.generateListEndpoint', function(t) {
     //<editor-fold desc="Assert">
     var serverObject = server.route.args[0][0];
     // Log.debug(JSON.stringify(serverObject));
-    t.equal(serverObject.config.auth, config.auth, "config auth used");
+    t.deepEqual(serverObject.config.auth, { strategy: config.authStrategy }, "config auth used");
     //</editor-fold>
 
 
@@ -1036,7 +1037,7 @@ test('rest-helper-factory.generateListEndpoint', function(t) {
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
     var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});
-    var config = { auth: "TEST_AUTH" };
+    var config = { authStrategy: "TEST_AUTH" };
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
       './handler-helper-factory': handlerHelperStubWrapper,
       './query-helper': queryHelperStub,
@@ -1464,7 +1465,7 @@ test('rest-helper-factory.generateFindEndpoint', function(t) {
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
     var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});
-    var config = { auth: "TEST_AUTH" };
+    var config = { authStrategy: "TEST_AUTH" };
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
       './handler-helper-factory': handlerHelperStubWrapper,
       './query-helper': queryHelperStub,
@@ -1486,7 +1487,7 @@ test('rest-helper-factory.generateFindEndpoint', function(t) {
     //<editor-fold desc="Assert">
     var serverObject = server.route.args[0][0];
     // Log.debug(JSON.stringify(serverObject));
-    t.equal(serverObject.config.auth, config.auth, "config auth used");
+    t.deepEqual(serverObject.config.auth, { strategy: config.authStrategy }, "config auth used");
     //</editor-fold>
 
 
@@ -1764,7 +1765,7 @@ test('rest-helper-factory.generateFindEndpoint', function(t) {
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
     var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});
-    var config = { auth: "TEST_AUTH" };
+    var config = { authStrategy: "TEST_AUTH" };
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
       './handler-helper-factory': handlerHelperStubWrapper,
       './query-helper': queryHelperStub,
@@ -2185,7 +2186,7 @@ test('rest-helper-factory.generateFindEndpoint', function(t) {
 //     var queryHelperStub = this.stub(require('../utilities/query-helper'));
 //     var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});
 //     joiMongooseHelperStub.generateJoiCreateModel = this.spy(function(){return Joi.any()});
-//     var config = { auth: "TEST_AUTH" };
+//     var config = { authStrategy: "TEST_AUTH" };
 //     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
 //       './handler-helper-factory': handlerHelperStubWrapper,
 //       './query-helper': queryHelperStub,
@@ -2207,7 +2208,7 @@ test('rest-helper-factory.generateFindEndpoint', function(t) {
 //     //<editor-fold desc="Assert">
 //     var serverObject = server.route.args[0][0];
 //     // Log.debug(JSON.stringify(serverObject));
-//     t.equal(serverObject.config.auth, config.auth, "config auth used");
+//     t.deepEqual(serverObject.config.auth, { strategy: config.authStrategy }, "config auth used");
 //     //</editor-fold>
 //
 //
@@ -2360,7 +2361,7 @@ test('rest-helper-factory.generateFindEndpoint', function(t) {
 //     var queryHelperStub = this.stub(require('../utilities/query-helper'));
 //     var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});
 //     joiMongooseHelperStub.generateJoiCreateModel = this.spy(function(){return Joi.any()});
-//     var config = { auth: "TEST_AUTH" };
+//     var config = { authStrategy: "TEST_AUTH" };
 //     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
 //       './handler-helper-factory': handlerHelperStubWrapper,
 //       './query-helper': queryHelperStub,
@@ -2701,7 +2702,7 @@ test('rest-helper-factory.generateDeleteOneEndpoint', function(t) {
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
     var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});
-    var config = { auth: "TEST_AUTH" };
+    var config = { authStrategy: "TEST_AUTH" };
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
       './handler-helper-factory': handlerHelperStubWrapper,
       './query-helper': queryHelperStub,
@@ -2723,7 +2724,7 @@ test('rest-helper-factory.generateDeleteOneEndpoint', function(t) {
     //<editor-fold desc="Assert">
     var serverObject = server.route.args[0][0];
     // Log.debug(JSON.stringify(serverObject));
-    t.equal(serverObject.config.auth, config.auth, "config auth used");
+    t.deepEqual(serverObject.config.auth, { strategy: config.authStrategy }, "config auth used");
     //</editor-fold>
 
 
@@ -2894,7 +2895,7 @@ test('rest-helper-factory.generateDeleteOneEndpoint', function(t) {
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
     var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});
-    var config = { auth: "TEST_AUTH" };
+    var config = { authStrategy: "TEST_AUTH" };
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
       './handler-helper-factory': handlerHelperStubWrapper,
       './query-helper': queryHelperStub,
@@ -3267,7 +3268,7 @@ test('rest-helper-factory.generateUpdateEndpoint', function(t) {
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
         var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});     joiMongooseHelperStub.generateJoiUpdateModel = this.spy(function(){return Joi.any()}); 
-    var config = { auth: "TEST_AUTH" };
+    var config = { authStrategy: "TEST_AUTH" };
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
       './handler-helper-factory': handlerHelperStubWrapper,
       './query-helper': queryHelperStub,
@@ -3289,7 +3290,7 @@ test('rest-helper-factory.generateUpdateEndpoint', function(t) {
     //<editor-fold desc="Assert">
     var serverObject = server.route.args[0][0];
     // Log.debug(JSON.stringify(serverObject));
-    t.equal(serverObject.config.auth, config.auth, "config auth used");
+    t.deepEqual(serverObject.config.auth, { strategy: config.authStrategy }, "config auth used");
     //</editor-fold>
 
 
@@ -3495,7 +3496,7 @@ test('rest-helper-factory.generateUpdateEndpoint', function(t) {
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
         var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});     joiMongooseHelperStub.generateJoiUpdateModel = this.spy(function(){return Joi.any()}); 
-    var config = { auth: "TEST_AUTH" };
+    var config = { authStrategy: "TEST_AUTH" };
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
       './handler-helper-factory': handlerHelperStubWrapper,
       './query-helper': queryHelperStub,
@@ -3969,7 +3970,7 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
     var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiAssociationModel', function(){return Joi.any()});
-    var config = { auth: "TEST_AUTH" };
+    var config = { authStrategy: "TEST_AUTH" };
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
       './handler-helper-factory': handlerHelperStubWrapper,
       './query-helper': queryHelperStub,
@@ -3998,7 +3999,7 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
     //<editor-fold desc="Assert">
     var serverObject = server.route.args[0][0];
     // Log.debug(JSON.stringify(serverObject));
-    t.equal(serverObject.config.auth, config.auth, "config auth used");
+    t.deepEqual(serverObject.config.auth, { strategy: config.authStrategy }, "config auth used");
     //</editor-fold>
 
 
@@ -4271,7 +4272,7 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
     var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiAssociationModel', function(){return Joi.any()});
-    var config = { auth: "TEST_AUTH" };
+    var config = { authStrategy: "TEST_AUTH" };
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
       './handler-helper-factory': handlerHelperStubWrapper,
       './query-helper': queryHelperStub,
@@ -4764,7 +4765,7 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
     var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});
-    var config = { auth: "TEST_AUTH" };
+    var config = { authStrategy: "TEST_AUTH" };
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
       './handler-helper-factory': handlerHelperStubWrapper,
       './query-helper': queryHelperStub,
@@ -4793,7 +4794,7 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
     //<editor-fold desc="Assert">
     var serverObject = server.route.args[0][0];
     // Log.debug(JSON.stringify(serverObject));
-    t.equal(serverObject.config.auth, config.auth, "config auth used");
+    t.deepEqual(serverObject.config.auth, { strategy: config.authStrategy }, "config auth used");
     //</editor-fold>
 
 
@@ -5005,7 +5006,7 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
     var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});
-    var config = { auth: "TEST_AUTH" };
+    var config = { authStrategy: "TEST_AUTH" };
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
       './handler-helper-factory': handlerHelperStubWrapper,
       './query-helper': queryHelperStub,
@@ -5496,7 +5497,7 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
     var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});
-    var config = { auth: "TEST_AUTH" };
+    var config = { authStrategy: "TEST_AUTH" };
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
       './handler-helper-factory': handlerHelperStubWrapper,
       './query-helper': queryHelperStub,
@@ -5525,7 +5526,7 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
     //<editor-fold desc="Assert">
     var serverObject = server.route.args[0][0];
     // Log.debug(JSON.stringify(serverObject));
-    t.equal(serverObject.config.auth, config.auth, "config auth used");
+    t.deepEqual(serverObject.config.auth, { strategy: config.authStrategy }, "config auth used");
     //</editor-fold>
 
 
@@ -5785,7 +5786,7 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
     var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});
-    var config = { auth: "TEST_AUTH" };
+    var config = { authStrategy: "TEST_AUTH" };
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
       './handler-helper-factory': handlerHelperStubWrapper,
       './query-helper': queryHelperStub,
@@ -6341,7 +6342,7 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
     var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});
-    var config = { auth: "TEST_AUTH" };
+    var config = { authStrategy: "TEST_AUTH" };
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
       './handler-helper-factory': handlerHelperStubWrapper,
       './query-helper': queryHelperStub,
@@ -6392,7 +6393,7 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
     var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});
-    var config = { auth: "TEST_AUTH" };
+    var config = { authStrategy: "TEST_AUTH" };
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
       './handler-helper-factory': handlerHelperStubWrapper,
       './query-helper': queryHelperStub,
@@ -6422,7 +6423,7 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
     //<editor-fold desc="Assert">
     var serverObject = server.route.args[0][0];
     // Log.debug(JSON.stringify(serverObject));
-    t.equal(serverObject.config.auth, config.auth, "config auth used");
+    t.deepEqual(serverObject.config.auth, { strategy: config.authStrategy }, "config auth used");
     //</editor-fold>
 
 
@@ -6750,7 +6751,7 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
     var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});
-    var config = { auth: "TEST_AUTH" };
+    var config = { authStrategy: "TEST_AUTH" };
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
       './handler-helper-factory': handlerHelperStubWrapper,
       './query-helper': queryHelperStub,

@@ -5,6 +5,8 @@ var config = {};
 config.server = {};
 config.mongo = {};
 
+//TODO: remove config.server?
+
 /**
  * Your app title goes here.
  * @type {string}
@@ -58,7 +60,7 @@ config.mongo.URI = 'mongodb://localhost/rest_hapi';
  * Set to false for no authentication (default).
  * @type {boolean/string}
  */
-config.auth = false;
+config.authStrategy = false;
 
 /**
  * MetaData options:
