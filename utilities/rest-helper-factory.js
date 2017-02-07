@@ -178,14 +178,18 @@ module.exports = function (logger, mongoose, server) {
 
       var readModel = joiMongooseHelper.generateJoiReadModel(model, Log);
 
-      var auth = {
-        strategy: config.authStrategy
-      };
+      var auth = false;
 
-      var scope = authHelper.generateScope(model, 'read', Log);
+      if (config.authStrategy) {
+        auth = {
+          strategy: config.authStrategy
+        };
 
-      if (!_.isEmpty(scope)) {
-        auth.scope = scope;
+        var scope = authHelper.generateScope(model, 'read', Log);
+
+        if (!_.isEmpty(scope)) {
+          auth.scope = scope;
+        }
       }
 
       server.route({
@@ -264,14 +268,18 @@ module.exports = function (logger, mongoose, server) {
 
       var readModel = model.readModel || joiMongooseHelper.generateJoiReadModel(model, Log);
 
-      var auth = {
-        strategy: config.authStrategy
-      };
+      var auth = false;
 
-      var scope = authHelper.generateScope(model, 'read', Log);
+      if (config.authStrategy) {
+        auth = {
+          strategy: config.authStrategy
+        };
 
-      if (!_.isEmpty(scope)) {
-        auth.scope = scope;
+        var scope = authHelper.generateScope(model, 'read', Log);
+
+        if (!_.isEmpty(scope)) {
+          auth.scope = scope;
+        }
       }
 
       server.route({
@@ -348,14 +356,18 @@ module.exports = function (logger, mongoose, server) {
 
       readModel = Joi.alternatives().try(Joi.array().items(readModel), readModel);
 
-      var auth = {
-        strategy: config.authStrategy
-      };
+      var auth = false;
 
-      var scope = authHelper.generateScope(model, 'create', Log);
+      if (config.authStrategy) {
+        auth = {
+          strategy: config.authStrategy
+        };
 
-      if (!_.isEmpty(scope)) {
-        auth.scope = scope;
+        var scope = authHelper.generateScope(model, 'create', Log);
+
+        if (!_.isEmpty(scope)) {
+          auth.scope = scope;
+        }
       }
 
       server.route({
@@ -424,14 +436,18 @@ module.exports = function (logger, mongoose, server) {
         payloadModel = Joi.object({ hardDelete: Joi.bool() }).allow(null);
       }
 
-      var auth = {
-        strategy: config.authStrategy
-      };
+      var auth = false;
 
-      var scope = authHelper.generateScope(model, 'delete', Log);
+      if (config.authStrategy) {
+        auth = {
+          strategy: config.authStrategy
+        };
 
-      if (!_.isEmpty(scope)) {
-        auth.scope = scope;
+        var scope = authHelper.generateScope(model, 'delete', Log);
+
+        if (!_.isEmpty(scope)) {
+          auth.scope = scope;
+        }
       }
 
       server.route({
@@ -509,14 +525,18 @@ module.exports = function (logger, mongoose, server) {
         payloadModel = Joi.array().items(Joi.objectId());
       }
 
-      var auth = {
-        strategy: config.authStrategy
-      };
+      var auth = false;
 
-      var scope = authHelper.generateScope(model, 'delete', Log);
+      if (config.authStrategy) {
+        auth = {
+          strategy: config.authStrategy
+        };
 
-      if (!_.isEmpty(scope)) {
-        auth.scope = scope;
+        var scope = authHelper.generateScope(model, 'delete', Log);
+
+        if (!_.isEmpty(scope)) {
+          auth.scope = scope;
+        }
       }
 
       server.route({
@@ -586,14 +606,18 @@ module.exports = function (logger, mongoose, server) {
 
       var readModel = joiMongooseHelper.generateJoiReadModel(model, Log);
 
-      var auth = {
-        strategy: config.authStrategy
-      };
+      var auth = false;
 
-      var scope = authHelper.generateScope(model, 'update', Log);
+      if (config.authStrategy) {
+        auth = {
+          strategy: config.authStrategy
+        };
 
-      if (!_.isEmpty(scope)) {
-        auth.scope = scope;
+        var scope = authHelper.generateScope(model, 'update', Log);
+
+        if (!_.isEmpty(scope)) {
+          auth.scope = scope;
+        }
       }
 
       server.route({
@@ -671,14 +695,18 @@ module.exports = function (logger, mongoose, server) {
         payloadValidation = joiMongooseHelper.generateJoiAssociationModel(association.include.through, Log);
       }
 
-      var auth = {
-        strategy: config.authStrategy
-      };
+      var auth = false;
 
-      var scope = authHelper.generateScope(ownerModel, 'associate', Log);
+      if (config.authStrategy) {
+        auth = {
+          strategy: config.authStrategy
+        };
 
-      if (!_.isEmpty(scope)) {
-        auth.scope = scope;
+        var scope = authHelper.generateScope(ownerModel, 'associate', Log);
+
+        if (!_.isEmpty(scope)) {
+          auth.scope = scope;
+        }
       }
 
       server.route({
@@ -748,14 +776,18 @@ module.exports = function (logger, mongoose, server) {
 
       var handler = HandlerHelper.generateAssociationRemoveOneHandler(ownerModel, association, options, Log);
 
-      var auth = {
-        strategy: config.authStrategy
-      };
+      var auth = false;
 
-      var scope = authHelper.generateScope(ownerModel, 'associate', Log);
+      if (config.authStrategy) {
+        auth = {
+          strategy: config.authStrategy
+        };
 
-      if (!_.isEmpty(scope)) {
-        auth.scope = scope;
+        var scope = authHelper.generateScope(ownerModel, 'associate', Log);
+
+        if (!_.isEmpty(scope)) {
+          auth.scope = scope;
+        }
       }
 
       server.route({
@@ -834,14 +866,18 @@ module.exports = function (logger, mongoose, server) {
         payloadValidation = Joi.array().items(Joi.objectId()).required();
       }
 
-      var auth = {
-        strategy: config.authStrategy
-      };
+      var auth = false;
 
-      var scope = authHelper.generateScope(ownerModel, 'associate', Log);
+      if (config.authStrategy) {
+        auth = {
+          strategy: config.authStrategy
+        };
 
-      if (!_.isEmpty(scope)) {
-        auth.scope = scope;
+        var scope = authHelper.generateScope(ownerModel, 'associate', Log);
+
+        if (!_.isEmpty(scope)) {
+          auth.scope = scope;
+        }
       }
 
       server.route({
@@ -909,14 +945,18 @@ module.exports = function (logger, mongoose, server) {
 
       var payloadValidation = Joi.array().items(Joi.objectId()).required();
 
-      var auth = {
-        strategy: config.authStrategy
-      };
+      var auth = false;
 
-      var scope = authHelper.generateScope(ownerModel, 'associate', Log);
+      if (config.authStrategy) {
+        auth = {
+          strategy: config.authStrategy
+        };
 
-      if (!_.isEmpty(scope)) {
-        auth.scope = scope;
+        var scope = authHelper.generateScope(ownerModel, 'associate', Log);
+
+        if (!_.isEmpty(scope)) {
+          auth.scope = scope;
+        }
       }
 
       server.route({
@@ -1033,14 +1073,18 @@ module.exports = function (logger, mongoose, server) {
 
       var readModel = joiMongooseHelper.generateJoiReadModel(childModel, Log);
 
-      var auth = {
-        strategy: config.authStrategy
-      };
+      var auth = false;
 
-      var scope = authHelper.generateScope(ownerModel, 'read', Log);
+      if (config.authStrategy) {
+        auth = {
+          strategy: config.authStrategy
+        };
 
-      if (!_.isEmpty(scope)) {
-        auth.scope = scope;
+        var scope = authHelper.generateScope(ownerModel, 'read', Log);
+
+        if (!_.isEmpty(scope)) {
+          auth.scope = scope;
+        }
       }
 
       server.route({
