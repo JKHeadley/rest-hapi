@@ -40,10 +40,11 @@ http://ec2-35-164-131-1.us-west-2.compute.amazonaws.com:8124
 - [Validation](#validation)
 - [Middleware](#middleware)
 - [Additional endpoints](#additional-endpoints)
+- [Authorization](#authorization)
 - [Exposed handler methods](#exposed-handler-methods)
 - [Soft delete](#soft-delete)
 - [Metadata](#metadata)
-- [Authentication/Additional Plugins](#authenticationadditional-plugins)
+- [Model generation](#model-generation)
 - [Testing](#testing)
 - [License](#license)
 - [Questions](#questions)
@@ -178,7 +179,7 @@ config.mongo.URI = 'mongodb://localhost/rest_hapi';
  * Set to false for no authentication (default).
  * @type {boolean/string}
  */
-config.auth = false;
+config.authStrategy = false;
 
 /**
  * MetaData options:
@@ -1069,6 +1070,52 @@ module.exports = function (mongoose) {
 
 [Back to top](#readme-contents)
 
+
+## Authorization
+rest-hapi takes advantage of the ``scope`` property within the ``auth`` route config object of a hapi endpoint.  Each generated endpoint has its ``scope`` property set based on two model properties within the ``routeOptions`` object. The first is a ``scope`` property that, when set, is applied to all generated endpoints for that model. The second is an action specific scope property that only applies to endpoints corresponding with the action. A list of these action scope properties can be seen below:
+
+* ``createScope``: value is added to the scope of any endpoint that creates model documents 
+* ``readScope``: value is added to the scope of any endpoint that retrieves documents and can be queried against
+* ``updateScope``: value is added to the scope of any endpoint that directly updates documents
+* ``deleteScope``: value is added to the scope of any endpoint that deletes documents
+* ``associateScope``: value is added to the scope of any endpoint that modifies an association
+
+In the example below, only users with the ``Admin`` scope in their authentication credentials can access all of the generated endpoints for the user model, while users with the ``User`` scope are restricted to read-only access/endpoints.
+
+```javascript
+module.exports = function (mongoose) {
+  var modelName = "user";
+  var Types = mongoose.Schema.Types;
+  var Schema = new mongoose.Schema({
+    email: {
+      type: Types.String,
+      required: true,
+      unique: true
+    },
+    password: {
+      type: Types.String,
+      required: true,
+      exclude: true,
+      allowOnUpdate: false
+    }
+  });
+  
+  Schema.statics = {
+    collectionName: modelName
+    routeOptions: {
+      scope: "Admin",
+      readScope: "User"
+    }
+  };
+  
+  return Schema;
+};
+```
+
+**NOTE** Use of scope properties requires that an authentication strategy be defined and implemented. If the ``config.authStrategy`` property is set to ``false``, then no scopes will be applied, even if they are defined in the model.
+
+[Back to top](#readme-contents)
+
 ## Exposed handler methods
 rest-hapi exposes the handler methods used in the generated endpoints for the user to take advantage of in their server code. These methods provide several advantages including:
 
@@ -1277,14 +1324,14 @@ Ex:
 
 [Back to top](#readme-contents)
 
-## Authentication/Additional Plugins
-Some hapi plugins, such as authentication plugins, may require models to exist before the routes are registered. In this case rest-hapi provides a ``generateModels`` function that can be called before any plugins are registered.  See below for example usage:
+## Model generation
+In some situations models may be required before or without endpoint generation. For example some hapi plugins may require models to exist before the routes are registered. In these cases rest-hapi provides a ``generateModels`` function that can be called independently.  See below for example usage:
 
 ```javascript
 restHapi.generateModels(mongoose)
         .then(function() {
             server.register(require('hapi-auth-jwt2'), (err) => {
-                require('./utilities/auth').applyJwtStrategy(server);
+                require('./utilities/auth').applyJwtStrategy(server);  //requires models to exist
 
                 server.register({
                     register: restHapi,
@@ -1306,6 +1353,8 @@ restHapi.generateModels(mongoose)
             console.log("There was an error generating the models: ", error)
         });
 ```
+
+NOTE: See ``gulp/seed.js`` for another example usage of ``generateModels``.
 
 [Back to top](#readme-contents)
 
