@@ -12,6 +12,7 @@ var testHelper = require("./test-helper");
 
 //TODO: add tests for text search functions
 //TODO: add tests for $exclude param
+//TODO: add tests for "getReference" code (implied associations)
 
 test('query-helper exists and has expected members', function (t) {
   //<editor-fold desc="Arrange">
@@ -651,7 +652,7 @@ test('query-helper.populateEmbeddedDocs', function(t) {
     //</editor-fold>
 
     //<editor-fold desc="Act">
-    nestPopulate(query, {}, 0, embeds, associations, Log);
+    nestPopulate(query, {}, 0, embeds, associations, {}, Log);
     //</editor-fold>
 
     //<editor-fold desc="Assert">
@@ -689,7 +690,7 @@ test('query-helper.populateEmbeddedDocs', function(t) {
     //</editor-fold>
 
     //<editor-fold desc="Act">
-    nestPopulate(query, {}, 0, embeds, associations, Log);
+    nestPopulate(query, {}, 0, embeds, associations, {}, Log);
     //</editor-fold>
 
     //<editor-fold desc="Assert">
@@ -738,8 +739,8 @@ test('query-helper.populateEmbeddedDocs', function(t) {
     //</editor-fold>
 
     //<editor-fold desc="Act">
-    var result_many = nestPopulate(query, {}, 0, embeds, associations_many, Log);
-    var result_one = nestPopulate(query, {}, 0, embeds, associations_one, Log);
+    var result_many = nestPopulate(query, {}, 0, embeds, associations_many, {}, Log);
+    var result_one = nestPopulate(query, {}, 0, embeds, associations_one, {}, Log);
     //</editor-fold>
 
     //<editor-fold desc="Assert">
@@ -763,18 +764,28 @@ test('query-helper.populateEmbeddedDocs', function(t) {
 
     var nestPopulate = queryHelper.__get__("nestPopulate");
 
-    t.plan(6);
+    t.plan(8);
 
     var query = {};
 
-    var embeds = ["title", "users", "groups"];
+    var embeds = ["title", "users", "one", "groups"];
 
-    var associations_three = {
+    var associations_four = {
       groups: {
         type: "MANY_MANY",
         model: "group",
         include: {
-          model: { routeOptions: { associations: { } } }
+          model: { routeOptions: { associations: {} } }
+        }
+      }
+    };
+
+    var associations_three = {
+      one: {
+        type: "ONE_ONE",
+        model: "one",
+        include: {
+          model: { routeOptions: { associations: associations_four } }
         }
       }
     };
@@ -802,16 +813,18 @@ test('query-helper.populateEmbeddedDocs', function(t) {
     //</editor-fold>
 
     //<editor-fold desc="Act">
-    var populate = nestPopulate(query, {}, 0, embeds, associations_one, Log);
+    var populate = nestPopulate(query, {}, 0, embeds, associations_one, {}, Log);
     //</editor-fold>
 
     //<editor-fold desc="Assert">
     t.equals(populate.path, "title");
     t.equals(populate.select, "test users");
     t.equals(populate.populate.path, "users");
-    t.equals(populate.populate.select, "test groups.group");
-    t.equals(populate.populate.populate.path, "groups.group");
-    t.equals(populate.populate.populate.select, "test");
+    t.equals(populate.populate.select, "test one");
+    t.equals(populate.populate.populate.path, "one");
+    t.equals(populate.populate.populate.select, "test groups.group groups");
+    t.equals(populate.populate.populate.populate.path, "groups.group");
+    t.equals(populate.populate.populate.populate.select, "test");
     //</editor-fold>
 
     //<editor-fold desc="Restore">

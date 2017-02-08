@@ -447,18 +447,30 @@ function nestPopulate(query, populate, index, embeds, associations, model, Log) 
   }
 
   if (index < embeds.length - 1) {
+
     associations = association.include.model.routeOptions.associations;
     populate = nestPopulate(query, populate, index + 1, embeds, associations, association.include.model, Log);
     populate.populate = extend({}, populate);//EXPL: prevent circular reference
     populate.path = populatePath;
-    populate.select = select + " " + populate.populate.path;//EXPL: have to add the path to the select to include nested MANY_MANY embeds
-    populate.model = association.include.model;
+
+    var type = association.include.model.routeOptions.associations[embeds[index + 1]].type;
+    if (type === "MANY_MANY") {
+      populate.select = select + " " + populate.populate.path + ' ' + embeds[index + 1];//EXPL: have to add the path and the next embed to the select to include nested MANY_MANY embeds
+    }
+    else {
+      populate.select = select + " " + populate.populate.path;//EXPL: have to add the path to the select to include nested ONE_MANY embeds
+    }
+
+    populate.model = association.model;
+
     return populate;
   }
   else {
+
     populate.path = populatePath;
     populate.select = select;
-    populate.model = association.include.model;
+    populate.model = association.model;
+
     return populate;
   }
 }
