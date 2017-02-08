@@ -7,14 +7,15 @@ rest-hapi is a hapi plugin intended to abstract the work involved in setting up 
 
 ## Features
 
-* Automatic generation of CRUD endpoints with middleware support
-* Automatic generation of association endpoints
-* [joi](https://github.com/hapijs/joi) validation
-* Swagger docs for all generated endpoints via [hapi-swagger](https://github.com/glennjones/hapi-swagger)
-* Query parameter support for searching, sorting, filtering, pagination, and embedding of associated models
-* Support for "soft" delete
-* Built in metadata
-* Exposed handler methods
+* Automatic generation of [CRUD](#creating-endpoints) endpoints with [middleware](#middleware) support
+* Automatic generation of [association](#associations) endpoints
+* [joi](https://github.com/hapijs/joi) [validation](#validation)
+* Built in [authorization](#authorization)
+* [Swagger docs](#swagger-documentation) for all generated endpoints via [hapi-swagger](https://github.com/glennjones/hapi-swagger)
+* [Query parameter](#querying) support for searching, sorting, filtering, pagination, and embedding of associated models
+* Support for ["soft" delete](#soft-delete)
+* Built in [metadata](#metadata)
+* Exposed [handler methods](#exposed-handler-methods)
 
 ## Live demo
 
@@ -61,8 +62,11 @@ You need [Node.js](https://nodejs.org/en/) installed and you'll need [MongoDB](h
 ## Installation
 
 ```
-npm install rest-hapi
+$ npm install rest-hapi
 ```
+
+[Back to top](#readme-contents)
+
 ### First time setup/Demo
 **WARNING**: This will clear all data in the following MongoDB collections (in the db defined in ``restHapi.config``, default ``mongodb://localhost/rest_hapi``) if they exist: ``users``, ``roles``.
 
@@ -1432,12 +1436,12 @@ MIT
 [Back to top](#readme-contents)
 
 ## Questions?
-If you have any questions/issues/feature requests, please feel free to open an [issue](https://github.com/JKHeadley/rest-hapi/issues/new).
+If you have any questions/issues/feature requests, please feel free to open an [issue](https://github.com/JKHeadley/rest-hapi/issues/new).  We'd love to hear from you!
 
 [Back to top](#readme-contents)
 
 ## Future work
-This project is still in its infancy, and there are many features I would still like to add.  Below is a list of some possible future updates:
+This project is still in its infancy, and there are many features we would still like to add.  Below is a list of some possible future updates:
 
 - sorting through populate fields (Ex: sort users through role.name)
 - support marking fields as ``duplicate`` i.e. any associated models referencing that model will duplicate those fields along with the reference Id. This could allow for a shallow embed that will return a list of reference ids with their "duplicate" values, and a full embed that will return the fully embedded references
