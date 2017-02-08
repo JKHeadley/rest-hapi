@@ -1095,7 +1095,7 @@ The second is an action specific scope property that only applies to endpoints c
 
 The third type of scope is property that relates to a specific association action, with an action prefix of ``add``, ``remove``, or ``get``.  These scope properties are specific to the associations defined in the model and take the form of :
 
--{action}{associationName}{modelName}Scope
+-{action}{modelName}{associationName}Scope
 
 In the example below, users with the ``Admin`` scope in their authentication credentials can access all of the generated endpoints for the user model, users with the ``User`` scope are granted read access for the user model, and users with the ``addUserGroupsScope`` are capable of adding group associations to a user document.
 
