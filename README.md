@@ -26,6 +26,7 @@ http://ec2-35-164-131-1.us-west-2.compute.amazonaws.com:8124
 ## Demo Project
 
 [appy](https://github.com/JKHeadley/appy): A ready-to-go user system built on rest-hapi.
+
 [rest-hapi-demo](https://github.com/JKHeadley/rest-hapi-demo): A simple demo project implementing rest-hapi in a hapi server.
 
 ## Readme contents
