@@ -711,7 +711,7 @@ module.exports = function (logger, mongoose, server) {
         };
 
         var scope = authHelper.generateScopeForEndpoint(ownerModel, 'associate', Log);
-        var addScope = 'add' + associationName[0].toUpperCase() + associationName.slice(1) + 'Scope';
+        var addScope = 'add' + ownerModelName[0].toUpperCase() + ownerModelName.slice(1) + associationName[0].toUpperCase() + associationName.slice(1) + 'Scope';
         scope = scope.concat(authHelper.generateScopeForEndpoint(ownerModel, addScope, Log));
 
         if (!_.isEmpty(scope)) {
@@ -795,7 +795,7 @@ module.exports = function (logger, mongoose, server) {
         };
 
         var scope = authHelper.generateScopeForEndpoint(ownerModel, 'associate', Log);
-        var removeScope = 'remove' + associationName[0].toUpperCase() + associationName.slice(1) + 'Scope';
+        var removeScope = 'remove' + ownerModelName[0].toUpperCase() + ownerModelName.slice(1) + associationName[0].toUpperCase() + associationName.slice(1) + 'Scope';
         scope = scope.concat(authHelper.generateScopeForEndpoint(ownerModel, removeScope, Log));
 
         if (!_.isEmpty(scope)) {
