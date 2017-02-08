@@ -7,14 +7,15 @@ rest-hapi is a hapi plugin intended to abstract the work involved in setting up 
 
 ## Features
 
-* Automatic generation of CRUD endpoints with middleware support
-* Automatic generation of association endpoints
-* [joi](https://github.com/hapijs/joi) validation
-* Swagger docs for all generated endpoints via [hapi-swagger](https://github.com/glennjones/hapi-swagger)
-* Query parameter support for searching, sorting, filtering, pagination, and embedding of associated models
-* Support for "soft" delete
-* Built in metadata
-* Exposed handler methods
+* Automatic generation of [CRUD](#creating-endpoints) endpoints with [middleware](#middleware) support
+* Automatic generation of [association](#associations) endpoints
+* [joi](https://github.com/hapijs/joi) [validation](#validation)
+* Built in [authorization](#authorization)
+* [Swagger docs](#swagger-documentation) for all generated endpoints via [hapi-swagger](https://github.com/glennjones/hapi-swagger)
+* [Query parameter](#querying) support for searching, sorting, filtering, pagination, and embedding of associated models
+* Support for ["soft" delete](#soft-delete)
+* Built in [metadata](#metadata)
+* Exposed [handler methods](#exposed-handler-methods)
 
 ## Live demo
 
