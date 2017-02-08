@@ -126,6 +126,8 @@ var config = {};
 config.server = {};
 config.mongo = {};
 
+//TODO: remove config.server?
+
 /**
  * Your app title goes here.
  * @type {string}
@@ -208,6 +210,13 @@ config.filterDeletedEmbeds = false;
 config.enableQueryValidation = true;
 config.enablePayloadValidation = true;
 config.enableResponseValidation = true;
+
+/**
+ * If set to true, (and authStrategy is not false) then endpoints will be generated with pre-defined
+ * scopes based on the model definition.
+ * @type {boolean}
+ */
+config.generateScopes = true;
 
 /**
  * Flag specifying whether to text index all string fields for all models to enable text search.
@@ -1072,7 +1081,11 @@ module.exports = function (mongoose) {
 
 
 ## Authorization
-rest-hapi takes advantage of the ``scope`` property within the ``auth`` route config object of a hapi endpoint.  Each generated endpoint has its ``scope`` property set based on two model properties within the ``routeOptions`` object. The first is a ``scope`` property that, when set, is applied to all generated endpoints for that model. The second is an action specific scope property that only applies to endpoints corresponding with the action. A list of these action scope properties can be seen below:
+rest-hapi takes advantage of the ``scope`` property within the ``auth`` route config object of a hapi endpoint.  Each generated endpoint has its ``scope`` property set based on model properties within the ``routeOptions.scope`` object. There are three types of scopes that can be set: a general scope property, action scope properties, and association scope properties. A description of these can be seen below.
+
+The first type of scope is a ``scope`` property that, when set, is applied to all generated endpoints for that model. 
+
+The second is an action specific scope property that only applies to endpoints corresponding with the action. A list of these action scope properties can be seen below:
 
 * ``createScope``: value is added to the scope of any endpoint that creates model documents 
 * ``readScope``: value is added to the scope of any endpoint that retrieves documents and can be queried against
@@ -1080,7 +1093,11 @@ rest-hapi takes advantage of the ``scope`` property within the ``auth`` route co
 * ``deleteScope``: value is added to the scope of any endpoint that deletes documents
 * ``associateScope``: value is added to the scope of any endpoint that modifies an association
 
-In the example below, only users with the ``Admin`` scope in their authentication credentials can access all of the generated endpoints for the user model, while users with the ``User`` scope are restricted to read-only access/endpoints.
+The third type of scope is property that relates to a specific association action, with an action prefix of ``add``, ``remove``, or ``get``.  These scope properties are specific to the associations defined in the model and take the form of :
+
+-{action}{associationName}{modelName}Scope
+
+In the example below, users with the ``Admin`` scope in their authentication credentials can access all of the generated endpoints for the user model, users with the ``User`` scope are granted read access for the user model, and users with the ``addUserGroupsScope`` are capable of adding group associations to a user document.
 
 ```javascript
 module.exports = function (mongoose) {
@@ -1103,8 +1120,18 @@ module.exports = function (mongoose) {
   Schema.statics = {
     collectionName: modelName
     routeOptions: {
-      scope: "Admin",
-      readScope: "User"
+      scope: {
+        scope: "Admin",
+        readScope: "User",
+        addUserGroupsScope: "Project Lead"
+      },
+      associations: {
+        groups: {
+          type: "MANY_MANY",
+          model: "group",
+          alias: "team"
+        }
+      }
     }
   };
   
@@ -1113,6 +1140,39 @@ module.exports = function (mongoose) {
 ```
 
 **NOTE** Use of scope properties requires that an authentication strategy be defined and implemented. If the ``config.authStrategy`` property is set to ``false``, then no scopes will be applied, even if they are defined in the model.
+
+### Generating scopes
+If the ``config.generateScopes`` property is set to true, then generated endpoints will come pre-defined with scope values.  These values will exist in addition to any scope values defined in the ``routeOptions.scope`` object. For instance, the tables below show two possibilities for the user model scope: the first is with no model scope defined, and the second is with a model scope defined as in the example above.
+
+#### Without Model Scope Defined
+Endpoint | Scope
+--- | ---
+DELETE /user | [ 'root', 'delete', 'deleteUser' ]
+POST /user | [ 'root', 'create', 'createUser' ]
+GET /user | [ 'root', 'read', 'readUser' ]
+DELETE /user/{_id} | [ 'root', 'delete', 'deleteUser' ]
+GET /user/{_id} | [ 'root', 'read', 'readUser' ]
+PUT /user/{_id} | [ 'root', 'update', 'updateUser' ]
+GET /user/{ownerId}/group | [ 'root', 'read', 'readUser', 'getUserGroups' ]
+POST /user/{ownerId}/group | [ 'root', 'associate', 'associateUser', 'addUserGroups' ]
+DELETE /user/{ownerId}/group | [ 'root', 'associate', 'associateUser', 'removeUserGroups' ]
+PUT /user/{ownerId}/group/{childId} | [ 'root', 'associate', 'associateUser', 'addUserGroups' ]
+DELETE /user/{ownerId}/group/{childId} | [ 'root', 'associate', 'associateUser', 'removeUserGroups' ]
+
+#### With Model Scope Defined
+Endpoint | Scope
+--- | ---
+DELETE /user | [ 'root', 'Admin', 'delete', 'deleteUser' ]
+POST /user | [ 'root', 'Admin', 'create', 'createUser' ]
+GET /user | [ 'root', 'Admin', 'read', 'readUser', 'User' ]
+DELETE /user/{_id} | [ 'root', 'Admin', 'delete', 'deleteUser' ]
+GET /user/{_id} | [ 'root', 'Admin', 'read', 'readUser', 'User' ]
+PUT /user/{_id} | [ 'root', 'Admin', 'update', 'updateUser' ]
+GET /user/{ownerId}/group | [ 'root', 'Admin', 'read', 'readUser', 'User', 'getUserGroups' ]
+POST /user/{ownerId}/group | [ 'root', 'Admin', 'associate', 'associateUser', 'addUserGroups', 'Project Lead' ]
+DELETE /user/{ownerId}/group | [ 'root', 'Admin', 'associate', 'associateUser', 'removeUserGroups' ]
+PUT /user/{ownerId}/group/{childId} | [ 'root', 'Admin', 'associate', 'associateUser', 'addUserGroups', 'Project Lead' ]
+DELETE /user/{ownerId}/group/{childId} | [ 'root', 'Admin', 'associate', 'associateUser', 'removeUserGroups' ]
 
 [Back to top](#readme-contents)
 
