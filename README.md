@@ -23,7 +23,9 @@ View the swagger docs for the live demo:
 
 http://ec2-35-164-131-1.us-west-2.compute.amazonaws.com:8124
 
-## Demo Project
+## Example Projects
+
+[appy](https://github.com/JKHeadley/appy): A ready-to-go user system built on rest-hapi.
 
 [rest-hapi-demo](https://github.com/JKHeadley/rest-hapi-demo): A simple demo project implementing rest-hapi in a hapi server.
 
@@ -1143,7 +1145,7 @@ module.exports = function (mongoose) {
 };
 ```
 
-**NOTE** Use of scope properties requires that an authentication strategy be defined and implemented. If the ``config.authStrategy`` property is set to ``false``, then no scopes will be applied, even if they are defined in the model.
+**NOTE** Use of scope properties requires that an authentication strategy be defined and implemented. If the ``config.authStrategy`` property is set to ``false``, then no scopes will be applied, even if they are defined in the model.  For an example of scopes in action, check out [appy](https://github.com/JKHeadley/appy):
 
 ### Generating scopes
 If the ``config.generateScopes`` property is set to true, then generated endpoints will come pre-defined with scope values.  These values will exist in addition to any scope values defined in the ``routeOptions.scope`` object. For instance, the tables below show two possibilities for the user model scope: the first is with no model scope defined, and the second is with a model scope defined as in the example above.
