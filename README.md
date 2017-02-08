@@ -23,7 +23,7 @@ View the swagger docs for the live demo:
 
 http://ec2-35-164-131-1.us-west-2.compute.amazonaws.com:8124
 
-## Demo Project
+## Example Projects
 
 [appy](https://github.com/JKHeadley/appy): A ready-to-go user system built on rest-hapi.
 
