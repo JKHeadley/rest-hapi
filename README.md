@@ -1436,12 +1436,12 @@ MIT
 [Back to top](#readme-contents)
 
 ## Questions?
-If you have any questions/issues/feature requests, please feel free to open an [issue](https://github.com/JKHeadley/rest-hapi/issues/new).
+If you have any questions/issues/feature requests, please feel free to open an [issue](https://github.com/JKHeadley/rest-hapi/issues/new).  We'd love to hear from you!
 
 [Back to top](#readme-contents)
 
 ## Future work
-This project is still in its infancy, and there are many features I would still like to add.  Below is a list of some possible future updates:
+This project is still in its infancy, and there are many features we would still like to add.  Below is a list of some possible future updates:
 
 - sorting through populate fields (Ex: sort users through role.name)
 - support marking fields as ``duplicate`` i.e. any associated models referencing that model will duplicate those fields along with the reference Id. This could allow for a shallow embed that will return a list of reference ids with their "duplicate" values, and a full embed that will return the fully embedded references
