@@ -17,11 +17,13 @@ rest-hapi is a hapi plugin intended to abstract the work involved in setting up 
 * Built in [metadata](#metadata)
 * Exposed [handler methods](#exposed-handler-methods)
 
-## Live demo
+## Live demos
 
-View the swagger docs for the live demo:
+View the swagger docs for the live demos:
 
-http://ec2-35-164-131-1.us-west-2.compute.amazonaws.com:8124
+appy: http://ec2-35-164-131-1.us-west-2.compute.amazonaws.com:8125
+
+rest-hapi-demo: http://ec2-35-164-131-1.us-west-2.compute.amazonaws.com:8124
 
 ## Example Projects
 
