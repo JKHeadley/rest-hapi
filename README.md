@@ -62,8 +62,11 @@ You need [Node.js](https://nodejs.org/en/) installed and you'll need [MongoDB](h
 ## Installation
 
 ```
-npm install rest-hapi
+$ npm install rest-hapi
 ```
+
+[Back to top](#readme-contents)
+
 ### First time setup/Demo
 **WARNING**: This will clear all data in the following MongoDB collections (in the db defined in ``restHapi.config``, default ``mongodb://localhost/rest_hapi``) if they exist: ``users``, ``roles``.
 
