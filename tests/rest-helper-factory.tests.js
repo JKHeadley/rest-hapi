@@ -3744,7 +3744,7 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
 
     var userModel = mongoose.model("user", userSchema);
 
-    var association = { include: { model: { schema: { methods: {} } } } };
+    var association = { include: { model: { schema: { methods: {} }, modelName: "testAssociation" } } }; 
     //</editor-fold>
 
     //<editor-fold desc="Act">
@@ -3788,7 +3788,7 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
 
     var userModel = mongoose.model("user", userSchema);
 
-    var association = { include: { model: { schema: { methods: {} } } } };
+    var association = { include: { model: { schema: { methods: {} }, modelName: "testAssociation" } } }; 
     //</editor-fold>
 
     //<editor-fold desc="Act">
@@ -3832,7 +3832,7 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
 
     var userModel = mongoose.model("user", userSchema);
 
-    var association = { include: { model: { schema: { methods: {} } } } }; 
+    var association = { include: { model: { schema: { methods: {} }, modelName: "testAssociation" } } };  
     //</editor-fold>
 
     //<editor-fold desc="Act">
@@ -3941,7 +3941,7 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
 
     var userModel = mongoose.model("user", userSchema);
 
-    var association = { include: { model: { schema: { methods: {} } } } }; 
+    var association = { include: { model: { schema: { methods: {} }, modelName: "testAssociation" } } };  
     //</editor-fold>
 
     //<editor-fold desc="Act">
@@ -3989,7 +3989,7 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
 
     var userModel = mongoose.model("user", userSchema);
 
-    var association = { include: { model: { schema: { methods: {} } } } }; 
+    var association = { include: { model: { schema: { methods: {} }, modelName: "testAssociation" } } }; 
     //</editor-fold>
 
     //<editor-fold desc="Act">
@@ -4120,7 +4120,7 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
 
     var userModel = mongoose.model("user", userSchema);
 
-    var association = { include: { model: { schema: { methods: {} } } } }; 
+    var association = { include: { model: { schema: { methods: {} }, modelName: "testAssociation" } } };  
     //</editor-fold>
 
     //<editor-fold desc="Act">
@@ -4238,7 +4238,7 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
 
     var userModel = mongoose.model("user", userSchema);
 
-    var association = { include: { model: { schema: { methods: {} } } } }; 
+    var association = { include: { model: { schema: { methods: {} }, modelName: "testAssociation" } } };  
 
     var params =  {
       ownerId: "TEST",
@@ -4291,7 +4291,7 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
 
     var userModel = mongoose.model("user", userSchema);
 
-    var association = { include: { model: { schema: { methods: {} } } } }; 
+    var association = { include: { model: { schema: { methods: {} }, modelName: "testAssociation" } } };  
 
     var headerValidation = Joi.object({
       'authorization': Joi.string().required()
@@ -4341,7 +4341,7 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
 
     var userModel = mongoose.model("user", userSchema);
 
-    var association = { include: { model: { schema: { methods: {} } } } }; 
+    var association = { include: { model: { schema: { methods: {} }, modelName: "testAssociation" } } };  
     //</editor-fold>
 
     //<editor-fold desc="Act">
@@ -4387,7 +4387,7 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
 
     var userModel = mongoose.model("user", userSchema);
 
-    var association = { include: { model: { schema: { methods: {} } } } }; 
+    var association = { include: { model: { schema: { methods: {} }, modelName: "testAssociation" } } };  
 
     var responseSchema = {};
     //</editor-fold>
@@ -4539,7 +4539,7 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
 
     var userModel = mongoose.model("user", userSchema);
 
-    var association = { include: { model: { schema: { methods: {} } } } }; 
+    var association = { include: { model: { schema: { methods: {} }, modelName: "testAssociation" } } };  
     //</editor-fold>
 
     //<editor-fold desc="Act">
@@ -4583,7 +4583,7 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
 
     var userModel = mongoose.model("user", userSchema);
 
-    var association = { include: { model: { schema: { methods: {} } } } }; 
+    var association = { include: { model: { schema: { methods: {} }, modelName: "testAssociation" } } };  
     //</editor-fold>
 
     //<editor-fold desc="Act">
@@ -4627,7 +4627,7 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
 
     var userModel = mongoose.model("user", userSchema);
 
-    var association = { include: { model: { schema: { methods: {} } } } };
+    var association = { include: { model: { schema: { methods: {} }, modelName: "testAssociation" } } }; 
     //</editor-fold>
 
     //<editor-fold desc="Act">
@@ -4736,7 +4736,7 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
 
     var userModel = mongoose.model("user", userSchema);
 
-    var association = { include: { model: { schema: { methods: {} } } } }; 
+    var association = { include: { model: { schema: { methods: {} }, modelName: "testAssociation" } } };  
     //</editor-fold>
 
     //<editor-fold desc="Act">
@@ -4784,7 +4784,7 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
 
     var userModel = mongoose.model("user", userSchema);
 
-    var association = { include: { model: { schema: { methods: {} } } } }; 
+    var association = { include: { model: { schema: { methods: {} }, modelName: "testAssociation" } } };  
     //</editor-fold>
 
     //<editor-fold desc="Act">
@@ -4914,7 +4914,7 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
 
     var userModel = mongoose.model("user", userSchema);
 
-    var association = { include: { model: { schema: { methods: {} } } } }; 
+    var association = { include: { model: { schema: { methods: {} }, modelName: "testAssociation" } } };  
     //</editor-fold>
 
     //<editor-fold desc="Act">
@@ -4972,7 +4972,7 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
 
     var userModel = mongoose.model("user", userSchema);
 
-    var association = { include: { model: { schema: { methods: {} } } } }; 
+    var association = { include: { model: { schema: { methods: {} }, modelName: "testAssociation" } } };  
 
     var params =  {
       ownerId: "TEST",
@@ -5025,7 +5025,7 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
 
     var userModel = mongoose.model("user", userSchema);
 
-    var association = { include: { model: { schema: { methods: {} } } } }; 
+    var association = { include: { model: { schema: { methods: {} }, modelName: "testAssociation" } } };  
 
     var headerValidation = Joi.object({
       'authorization': Joi.string().required()
@@ -5075,7 +5075,7 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
 
     var userModel = mongoose.model("user", userSchema);
 
-    var association = { include: { model: { schema: { methods: {} } } } }; 
+    var association = { include: { model: { schema: { methods: {} }, modelName: "testAssociation" } } };  
     //</editor-fold>
 
     //<editor-fold desc="Act">
@@ -5121,7 +5121,7 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
 
     var userModel = mongoose.model("user", userSchema);
 
-    var association = { include: { model: { schema: { methods: {} } } } }; 
+    var association = { include: { model: { schema: { methods: {} }, modelName: "testAssociation" } } };  
 
     var responseSchema = {};
     //</editor-fold>
@@ -5273,7 +5273,7 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
 
     var userModel = mongoose.model("user", userSchema);
 
-    var association = { include: { model: { schema: { methods: {} } } } }; 
+    var association = { include: { model: { schema: { methods: {} }, modelName: "testAssociation" } } };  
     //</editor-fold>
 
     //<editor-fold desc="Act">
@@ -5317,7 +5317,7 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
 
     var userModel = mongoose.model("user", userSchema);
 
-    var association = { include: { model: { schema: { methods: {} } } } }; 
+    var association = { include: { model: { schema: { methods: {} }, modelName: "testAssociation" } } };  
     //</editor-fold>
 
     //<editor-fold desc="Act">
@@ -5361,7 +5361,7 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
 
     var userModel = mongoose.model("user", userSchema);
 
-    var association = { include: { model: { schema: { methods: {} } } } }; 
+    var association = { include: { model: { schema: { methods: {} }, modelName: "testAssociation" } } };  
     //</editor-fold>
 
     //<editor-fold desc="Act">
@@ -5468,7 +5468,7 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
 
     var userModel = mongoose.model("user", userSchema);
 
-    var association = { include: { model: { schema: { methods: {} } } } }; 
+    var association = { include: { model: { schema: { methods: {} }, modelName: "testAssociation" } } };  
     //</editor-fold>
 
     //<editor-fold desc="Act">
@@ -5516,7 +5516,7 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
 
     var userModel = mongoose.model("user", userSchema);
 
-    var association = { include: { model: { schema: { methods: {} } } } }; 
+    var association = { include: { model: { schema: { methods: {} }, modelName: "testAssociation" } } };  
     //</editor-fold>
 
     //<editor-fold desc="Act">
@@ -5624,7 +5624,7 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
 
     var userModel = mongoose.model("user", userSchema);
 
-    var association = { include: { model: { schema: { methods: {} } } } }; 
+    var association = { include: { model: { schema: { methods: {} }, modelName: "testAssociation" } } };  
     //</editor-fold>
 
     //<editor-fold desc="Act">
@@ -5751,7 +5751,7 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
 
     var userModel = mongoose.model("user", userSchema);
 
-    var association = { include: { model: { schema: { methods: {} } } } }; 
+    var association = { include: { model: { schema: { methods: {} }, modelName: "testAssociation" } } };  
 
     var params =  {
       ownerId: Joi.any().valid("objectId").required()
@@ -5805,7 +5805,7 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
 
     var userModel = mongoose.model("user", userSchema);
 
-    var association = { include: { model: { schema: { methods: {} } } } }; 
+    var association = { include: { model: { schema: { methods: {} }, modelName: "testAssociation" } } };  
 
     var headerValidation = Joi.object({
       'authorization': Joi.string().required()
@@ -5855,7 +5855,7 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
 
     var userModel = mongoose.model("user", userSchema);
 
-    var association = { include: { model: { schema: { methods: {} } } } }; 
+    var association = { include: { model: { schema: { methods: {} }, modelName: "testAssociation" } } };  
     //</editor-fold>
 
     //<editor-fold desc="Act">
@@ -5901,7 +5901,7 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
 
     var userModel = mongoose.model("user", userSchema);
 
-    var association = { include: { model: { schema: { methods: {} } } } }; 
+    var association = { include: { model: { schema: { methods: {} }, modelName: "testAssociation" } } };  
 
     var responseSchema = {};
     //</editor-fold>

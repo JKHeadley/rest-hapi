@@ -185,12 +185,14 @@ module.exports = function (logger, mongoose, server) {
           strategy: config.authStrategy
         };
 
-        var scope = authHelper.generateScope(model, 'read', Log);
+        var scope = authHelper.generateScopeForEndpoint(model, 'read', Log);
 
         if (!_.isEmpty(scope)) {
           auth.scope = scope;
+          Log.debug("Scope for GET/" + resourceAliasForRoute + ":", scope);
         }
       }
+
 
       server.route({
         method: 'GET',
@@ -275,11 +277,13 @@ module.exports = function (logger, mongoose, server) {
           strategy: config.authStrategy
         };
 
-        var scope = authHelper.generateScope(model, 'read', Log);
+        var scope = authHelper.generateScopeForEndpoint(model, 'read', Log);
 
         if (!_.isEmpty(scope)) {
           auth.scope = scope;
+          Log.debug("Scope for GET/" + resourceAliasForRoute + '/{_id}' + ":", scope);
         }
+
       }
 
       server.route({
@@ -363,10 +367,11 @@ module.exports = function (logger, mongoose, server) {
           strategy: config.authStrategy
         };
 
-        var scope = authHelper.generateScope(model, 'create', Log);
+        var scope = authHelper.generateScopeForEndpoint(model, 'create', Log);
 
         if (!_.isEmpty(scope)) {
           auth.scope = scope;
+          Log.debug("Scope for POST/" + resourceAliasForRoute + ":", scope);
         }
       }
 
@@ -443,10 +448,11 @@ module.exports = function (logger, mongoose, server) {
           strategy: config.authStrategy
         };
 
-        var scope = authHelper.generateScope(model, 'delete', Log);
+        var scope = authHelper.generateScopeForEndpoint(model, 'delete', Log);
 
         if (!_.isEmpty(scope)) {
           auth.scope = scope;
+          Log.debug("Scope for DELETE/" + resourceAliasForRoute + "/{_id}" + ":", scope);
         }
       }
 
@@ -532,10 +538,11 @@ module.exports = function (logger, mongoose, server) {
           strategy: config.authStrategy
         };
 
-        var scope = authHelper.generateScope(model, 'delete', Log);
+        var scope = authHelper.generateScopeForEndpoint(model, 'delete', Log);
 
         if (!_.isEmpty(scope)) {
           auth.scope = scope;
+          Log.debug("Scope for DELETE/" + resourceAliasForRoute + ":", scope);
         }
       }
 
@@ -613,10 +620,11 @@ module.exports = function (logger, mongoose, server) {
           strategy: config.authStrategy
         };
 
-        var scope = authHelper.generateScope(model, 'update', Log);
+        var scope = authHelper.generateScopeForEndpoint(model, 'update', Log);
 
         if (!_.isEmpty(scope)) {
           auth.scope = scope;
+          Log.debug("Scope for PUT/" + resourceAliasForRoute + '/{_id}' + ":", scope);
         }
       }
 
@@ -702,10 +710,13 @@ module.exports = function (logger, mongoose, server) {
           strategy: config.authStrategy
         };
 
-        var scope = authHelper.generateScope(ownerModel, 'associate', Log);
+        var scope = authHelper.generateScopeForEndpoint(ownerModel, 'associate', Log);
+        var addScope = 'add' + associationName[0].toUpperCase() + associationName.slice(1) + 'Scope';
+        scope = scope.concat(authHelper.generateScopeForEndpoint(ownerModel, addScope, Log));
 
         if (!_.isEmpty(scope)) {
           auth.scope = scope;
+          Log.debug("Scope for PUT/" + ownerAlias + '/{ownerId}/' + childAlias + "/{childId}" + ":", scope);
         }
       }
 
@@ -783,10 +794,13 @@ module.exports = function (logger, mongoose, server) {
           strategy: config.authStrategy
         };
 
-        var scope = authHelper.generateScope(ownerModel, 'associate', Log);
+        var scope = authHelper.generateScopeForEndpoint(ownerModel, 'associate', Log);
+        var removeScope = 'remove' + associationName[0].toUpperCase() + associationName.slice(1) + 'Scope';
+        scope = scope.concat(authHelper.generateScopeForEndpoint(ownerModel, removeScope, Log));
 
         if (!_.isEmpty(scope)) {
           auth.scope = scope;
+          Log.debug("Scope for DELETE/" + ownerAlias + '/{ownerId}/' + childAlias + "/{childId}" + ":", scope);
         }
       }
 
@@ -873,10 +887,13 @@ module.exports = function (logger, mongoose, server) {
           strategy: config.authStrategy
         };
 
-        var scope = authHelper.generateScope(ownerModel, 'associate', Log);
+        var scope = authHelper.generateScopeForEndpoint(ownerModel, 'associate', Log);
+        var addScope = 'add' + ownerModelName[0].toUpperCase() + ownerModelName.slice(1) + associationName[0].toUpperCase() + associationName.slice(1) + 'Scope';
+        scope = scope.concat(authHelper.generateScopeForEndpoint(ownerModel, addScope, Log));
 
         if (!_.isEmpty(scope)) {
           auth.scope = scope;
+          Log.debug("Scope for POST/" + ownerAlias + '/{ownerId}/' + childAlias + ":", scope);
         }
       }
 
@@ -952,10 +969,13 @@ module.exports = function (logger, mongoose, server) {
           strategy: config.authStrategy
         };
 
-        var scope = authHelper.generateScope(ownerModel, 'associate', Log);
+        var scope = authHelper.generateScopeForEndpoint(ownerModel, 'associate', Log);
+        var removeScope = 'remove' + ownerModelName[0].toUpperCase() + ownerModelName.slice(1) + associationName[0].toUpperCase() + associationName.slice(1) + 'Scope';
+        scope = scope.concat(authHelper.generateScopeForEndpoint(ownerModel, removeScope, Log));
 
         if (!_.isEmpty(scope)) {
           auth.scope = scope;
+          Log.debug("Scope for DELETE/" + ownerAlias + '/{ownerId}/' + childAlias + ":", scope);
         }
       }
 
@@ -1080,10 +1100,13 @@ module.exports = function (logger, mongoose, server) {
           strategy: config.authStrategy
         };
 
-        var scope = authHelper.generateScope(ownerModel, 'read', Log);
+        var scope = authHelper.generateScopeForEndpoint(ownerModel, 'read', Log);
+        var getScope = 'get' + ownerModelName[0].toUpperCase() + ownerModelName.slice(1) + associationName[0].toUpperCase() + associationName.slice(1) + 'Scope';
+        scope = scope.concat(authHelper.generateScopeForEndpoint(ownerModel, getScope, Log));
 
         if (!_.isEmpty(scope)) {
           auth.scope = scope;
+          Log.debug("Scope for GET/" + ownerAlias + '/{ownerId}/' + childAlias + ":", scope);
         }
       }
 

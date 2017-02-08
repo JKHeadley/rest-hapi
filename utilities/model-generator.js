@@ -1,6 +1,7 @@
 'use strict';
 
 var modelHelper = require('./model-helper');
+var authHelper = require('./auth-helper');
 var fs = require('fs');
 var path = require('path');
 var Q = require('q');
@@ -60,6 +61,13 @@ module.exports = function (mongoose, Log, config) {
     for (var modelKey in models) {//EXPL: Populate internal model associations
       var model = models[modelKey];
       modelHelper.associateModels(model.schema, models);
+    }
+
+    for (var modelKey in models) {//EXPL: Generate scopes if enabled
+      if (config.generateScopes) {
+        var model = models[modelKey];
+        authHelper.generateScopeForModel(model, Log);
+      }
     }
 
     deferred.resolve(models);
