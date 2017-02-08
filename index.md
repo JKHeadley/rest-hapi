@@ -1,32 +1,42 @@
 # rest-hapi
-A RESTful API generator built around the [hapi](https://github.com/hapijs/hapi) framework and [mongoose](https://github.com/Automattic/mongoose) ODM.
+A RESTful API generator plugin for the [hapi](https://github.com/hapijs/hapi) framework utilizing the [mongoose](https://github.com/Automattic/mongoose) ODM.
 
-[![Build Status](https://travis-ci.org/JKHeadley/rest-hapi.svg?branch=master)](https://travis-ci.org/JKHeadley/rest-hapi)
+[![Build Status](https://travis-ci.org/JKHeadley/rest-hapi.svg?branch=master)](https://travis-ci.org/JKHeadley/rest-hapi) [![npm](https://img.shields.io/npm/dt/rest-hapi.svg)](https://www.npmjs.com/package/rest-hapi) [![npm](https://img.shields.io/npm/v/rest-hapi.svg)](https://www.npmjs.com/package/rest-hapi)
 
-rest-hapi is a framework intended to abstract the work involved in setting up API routes/validation/handlers/etc. for the purpose of rapid app development.  At the same time it provides a powerful combination of [relational](#associations) structure with [NoSQL](#creating-endpoints) flexibility.  You define your models and the rest is done for you.  Have your own API server up and running in minutes!
+rest-hapi is a hapi plugin intended to abstract the work involved in setting up API routes/validation/handlers/etc. for the purpose of rapid app development.  At the same time it provides a powerful combination of [relational](#associations) structure with [NoSQL](#creating-endpoints) flexibility.  You define your models and the rest is done for you.  Have your own API server up and running in minutes!
 
 ## Features
 
-* Automatic generation of CRUD endpoints with middleware support
-* Automatic generation of association endpoints
-* [joi](https://github.com/hapijs/joi) validation
-* User password encryption support
-* Optional token authentication for all generated endpoints
-* Swagger docs for all generated endpoints via [hapi-swagger](https://github.com/glennjones/hapi-swagger)
-* Query parameter support for sorting, filtering, pagination, and embedding of associated models
+* Automatic generation of [CRUD](#creating-endpoints) endpoints with [middleware](#middleware) support
+* Automatic generation of [association](#associations) endpoints
+* [joi](https://github.com/hapijs/joi) [validation](#validation)
+* Built in [authorization](#authorization)
+* [Swagger docs](#swagger-documentation) for all generated endpoints via [hapi-swagger](https://github.com/glennjones/hapi-swagger)
+* [Query parameter](#querying) support for searching, sorting, filtering, pagination, and embedding of associated models
+* Support for ["soft" delete](#soft-delete)
+* Built in [metadata](#metadata)
+* Exposed [handler methods](#exposed-handler-methods)
 
-## Live demo
+## Live demos
 
-View the swagger docs for the live demo:
+View the swagger docs for the live demos:
 
-http://ec2-35-162-67-113.us-west-2.compute.amazonaws.com:8124/
+appy: http://ec2-35-164-131-1.us-west-2.compute.amazonaws.com:8125
+
+rest-hapi-demo: http://ec2-35-164-131-1.us-west-2.compute.amazonaws.com:8124
+
+## Example Projects
+
+[appy](https://github.com/JKHeadley/appy): A ready-to-go user system built on rest-hapi.
+
+[rest-hapi-demo](https://github.com/JKHeadley/rest-hapi-demo): A simple demo project implementing rest-hapi in a hapi server.
 
 ## Readme contents
 - [Requirements](#requirements)
 - [Installation](#installation)
-- [Running the app](#running-the-app)
+- [First time setup/Demo](#first-time-setupdemo)
+- [Using the plugin](#using-the-plugin)
 - [Configuration](#configuration)
-- [Testing](#testing)
 - [Swagger documentation](#swagger-documentation)
 - [Creating endpoints](#creating-endpoints)
 - [Associations](#associations)
@@ -35,7 +45,12 @@ http://ec2-35-162-67-113.us-west-2.compute.amazonaws.com:8124/
 - [Validation](#validation)
 - [Middleware](#middleware)
 - [Additional endpoints](#additional-endpoints)
-- [Token authentication](#token-authentication)
+- [Authorization](#authorization)
+- [Exposed handler methods](#exposed-handler-methods)
+- [Soft delete](#soft-delete)
+- [Metadata](#metadata)
+- [Model generation](#model-generation)
+- [Testing](#testing)
 - [License](#license)
 - [Questions](#questions)
 - [Future work](#future-work)
@@ -44,58 +59,205 @@ http://ec2-35-162-67-113.us-west-2.compute.amazonaws.com:8124/
 
 ## Requirements
 
-You need [Node.js](https://nodejs.org/en/) installed and you'll need [MongoDB](https://docs.mongodb.com/manual/installation/) installed and running.  You will also need the [gulp](https://www.npmjs.com/package/gulp) node package installed.
+You need [Node.js](https://nodejs.org/en/) installed and you'll need [MongoDB](https://docs.mongodb.com/manual/installation/) installed and running.
 
 [Back to top](#readme-contents)
 
 ## Installation
 
 ```
-$ git clone https://github.com/JKHeadley/rest-hapi.git
-$ cd rest-hapi
-$ npm install
+$ npm install rest-hapi
 ```
+
+[Back to top](#readme-contents)
+
 ### First time setup/Demo
-**WARNING**: This will clear all data in the following MongoDB collections (in the db defined in ``config.local.js``) if they exist: ``users``, ``roles``.
+**WARNING**: This will clear all data in the following MongoDB collections (in the db defined in ``restHapi.config``, default ``mongodb://localhost/rest_hapi``) if they exist: ``users``, ``roles``.
 
 If you would like to seed your database with some demo models/data, run:
+
 ```
-$ gulp seed
+$ ./node_modules/.bin/rest-hapi-cli seed
 ```
+
 NOTE: The password for all seed users is ``1234``.
 
 You can use these models as templates for your models or delete them later if you wish.
 
 [Back to top](#readme-contents)
 
-## Running the app
-```
-$ gulp serve:local
-```
-or just
-```
-$ gulp
-```
-Then point your browser to [http://localhost:8124/](http://localhost:8124/) to view the swagger docs.
+## Using the plugin
 
-[gulp-nodemon](https://www.npmjs.com/package/gulp-nodemon) watches for changes in server code and restarts the app automatically.
+As rest-hapi is a hapi plugin, you'll need to set up a hapi server to generate API endpoints.  You'll also need to set up a [mongoose](https://github.com/Automattic/mongoose) instance and include it in the plugin's options when you register. Below is an example nodejs script ``api.js`` with the minimum requirements to set up an API with rest-hapi:
+
+```javascript
+'use strict';
+
+let Hapi = require('hapi');
+let mongoose = require('mongoose');
+let restHapi = require('rest-hapi');
+
+function api(){
+
+    let server = new Hapi.Server();
+
+    server.connection(restHapi.config.server.connection);
+
+    server.register({
+            register: restHapi,
+            options: {
+                mongoose: mongoose
+            }
+        },
+        function() {
+            server.start();
+        });
+
+    return server;
+}
+
+module.exports = api();
+```
+You can then run ``$ node api.js`` and point your browser to [http://localhost:8124/](http://localhost:8124/) to view the swagger docs (NOTE: API endpoints will only be generated if you have provided models. See [First time setup/Demo](#first-time-setupdemo) or [Creating endpoints](#creating-endpoints).)
 
 [Back to top](#readme-contents)
 
 ## Configuration
 
-Edit the config file relevant to your environment (local, development, production).  The default config
-file is ```/api/config.local.js```.  Here you can set the server port, mongodb URI, and authentication.
+Configuration of the generated API is handled through the ``restHapi.config`` object.  Below is a description of the current configuration options/properties.
+
+```javascript
+/**
+ * config.js - Configuration settings for the generated API
+ */
+var config = {};
+config.server = {};
+config.mongo = {};
+
+//TODO: remove config.server?
+
+/**
+ * Your app title goes here.
+ * @type {string}
+ */
+config.appTitle = "rest-hapi API";
+
+/**
+ * Your app version goes here.
+ * @type {string}
+ */
+config.version = '1.0.0';
+
+/**
+ * Flag signifying whether the absolute path to the models directory is provided
+ * @type {boolean}
+ */
+config.absoluteModelPath = false;
+
+/**
+ * Path to the models directory (default 'models')
+ * @type {string}
+ */
+config.modelPath = 'models';
+
+/**
+ * Server settings:
+ * - config.server.port = 8124; (default)
+ */
+config.server.port = 8124;
+
+config.server.routes = {
+    cors: {
+        additionalHeaders: ['X-Total-Count'],
+        additionalExposedHeaders: ['X-Total-Count']
+    }
+};
+
+config.server.connection = {
+    port: config.server.port,
+    routes: config.server.routes
+};
+
+/**
+ * Mongo settings
+ * - config.mongo.URI = 'mongodb://localhost/rest_hapi'; (local db, default)
+ */
+config.mongo.URI = 'mongodb://localhost/rest_hapi';
+
+/**
+ * Authentication strategy to be used for all generated endpoints.
+ * Set to false for no authentication (default).
+ * @type {boolean/string}
+ */
+config.authStrategy = false;
+
+/**
+ * MetaData options:
+ * default: true
+ * @type {boolean}
+ */
+config.enableCreatedAt = true;
+config.enableUpdatedAt = true;
+
+/**
+ * Soft delete options
+ * - enableSoftDelete: adds "isDeleted" property to each model. Delete endpoints set "isDeleted" to true
+ * unless the payload contains { hardDelete: true }, in which case the document is actually deleted (default false)
+ * - filterDeletedEmbeds: if enabled, associations with "isDeleted" set to true will not populate (default false)
+ * NOTE: this option is known to be buggy
+ * @type {boolean}
+ */
+config.enableSoftDelete = false;
+config.filterDeletedEmbeds = false;
+
+/**
+ * Validation options:
+ * default: true
+ * @type {boolean}
+ */
+config.enableQueryValidation = true;
+config.enablePayloadValidation = true;
+config.enableResponseValidation = true;
+
+/**
+ * If set to true, (and authStrategy is not false) then endpoints will be generated with pre-defined
+ * scopes based on the model definition.
+ * @type {boolean}
+ */
+config.generateScopes = true;
+
+/**
+ * Flag specifying whether to text index all string fields for all models to enable text search.
+ * WARNING: enabling this adds overhead to add inserts and updates, as well as added storage requirements.
+ * Default is false.
+ * @type {boolean}
+ */
+config.enableTextSearch = false;
+
+/**
+ * Log level options:
+ * - INTERNAL use it for logging calls and other internal stuff
+ * - DEBUG recommended to use it for debugging applications
+ * - NOTE development verbose information (default)
+ * - INFO minor information
+ * - LOG significant messages
+ * - WARNING really important stuff
+ * - ERROR application business logic error condition
+ * - FATAL system error condition
+ */
+config.loglevel = "DEBUG";
+
+/**
+ * Determines the initial expansion state of the swagger docs
+ * - options: 'none', 'list', 'full' (default: 'none')
+ * @type {string}
+ */
+config.docExpansion = 'none';
+
+module.exports = config;
+```
 
 [Back to top](#rest-hapi)
-
-# Testing
-To run tests:
-```
-$ gulp test
-```
-
-[Back to top](#readme-contents)
 
 ## Swagger documentation
 
@@ -107,8 +269,8 @@ access to testing your endpoints along with model schema descriptions and query 
 
 ## Creating endpoints
 
-Restful endpoints are automatically generated based off of any mongoose models that you add to the 
-``/api/models`` folder with the file structure of ``{model name}.model.js``.  These models must adhere to the following format:
+Restful endpoints are automatically generated based off of any mongoose models that you add to your ``models`` folder
+with the file structure of ``{model name}.model.js``.  These models must adhere to the following format:
 
 ```javascript
 module.exports = function (mongoose) {
@@ -127,7 +289,7 @@ module.exports = function (mongoose) {
 
 As a concrete example, here is a ``user`` model:
 
-``/api/models/user.model.js``:
+``/models/user.model.js``:
 
 ```javascript
 module.exports = function (mongoose) {
@@ -159,11 +321,12 @@ module.exports = function (mongoose) {
 This will generate the following CRUD endpoints:
 
 ```
+DELETE /user        Delete multiple users
+POST /user          Create one or more new users
 GET /user           Get a list of users
-POST /user          Create a new user
+DELETE /user/{_id}  Delete a user
 GET /user/{_id}     Get a specific user
 PUT /user/{_id}     Update a user
-DELETE /user/{_id}  Delete a user
 ```
 
 [Back to top](#readme-contents)
@@ -190,7 +353,7 @@ Each association must be added to an ``associations`` object within the
 ``routeOptions`` object. The ``type`` and ``model`` fields are
 required for all associations.
 
-``/api/models/user.model.js``:
+``/models/user.model.js``:
 
 ```javascript
 module.exports = function (mongoose) {
@@ -230,7 +393,7 @@ module.exports = function (mongoose) {
 };
 ```
 
-``/api/models/dog.model.js``:
+``/models/dog.model.js``:
 
 ```javascript
 module.exports = function (mongoose) {
@@ -274,7 +437,7 @@ field is required for associations of type ``ONE_ONE`` or ``MANY_ONE``.  This
 field must match the association name, include a type of ``ObjectId``, and
 include a ``ref`` property with the associated model name.
 
-``/api/models/user.model.js``:
+``/models/user.model.js``:
 
 ```javascript
 module.exports = function (mongoose) {
@@ -315,7 +478,7 @@ module.exports = function (mongoose) {
 };
 ```
 
-``/api/models/role.model.js``:
+``/models/role.model.js``:
 
 ```javascript
 module.exports = function (mongoose) {
@@ -358,8 +521,9 @@ Along with the normal CRUD endpoints, the following association
 endpoints will be generated for the ``role`` model:
 
 ```
-GET /role/{ownerId}/user                Gets all of the users for a role
-POST /role/{ownerId}/user               Sets multiple users for a role
+GET /role/{ownerId}/user                Get all of the users for a role
+POST /role/{ownerId}/user               Add multiple users to a role
+DELETE /role/{ownerId}/user             Remove multiple users from a role's list of users
 PUT /role/{ownerId}/user/{childId}      Add a single user object to a role's list of users
 DELETE /role/{ownerId}/user/{childId}   Remove a single user object from a role's list of users
 ```
@@ -370,7 +534,7 @@ Below is an example of a many-many relationship between the ``user`` and
 ``group`` models. In this relationship a single ``user`` instance can belong
 to multiple ``group`` instances and vice versa.
 
-``/api/models/user.model.js``:
+``/models/user.model.js``:
 
 ```javascript
 module.exports = function (mongoose) {
@@ -407,7 +571,7 @@ module.exports = function (mongoose) {
 ```
 
 
-``/api/models/group.model.js``:
+``/models/group.model.js``:
 
 ```javascript
 module.exports = function (mongoose) {
@@ -444,8 +608,9 @@ Along with the normal CRUD endpoints, the following association
 endpoints will be generated for the ``user`` model:
 
 ```
-GET /user/{ownerId}/group               Gets all of the groups for a user
-POST /user/{ownerId}/group              Sets multiple groups for a user
+GET /user/{ownerId}/group               Get all of the groups for a user
+POST /user/{ownerId}/group              Add multiple groups for a user
+DELETE /user/{ownerId}/group            Remove multiple groups from a user's list of groups
 PUT /user/{ownerId}/group/{childId}     Add a single group object to a user's list of groups
 DELETE /user/{ownerId}/group/{childId}  Remove a single group object from a user's list of groups
 ```
@@ -453,8 +618,9 @@ DELETE /user/{ownerId}/group/{childId}  Remove a single group object from a user
 and for the ``group`` model:
 
 ```
-GET /group/{ownerId}/user               Gets all of the users for a group
-POST /group/{ownerId}/user              Sets multiple users for a group
+GET /group/{ownerId}/user               Get all of the users for a group
+POST /group/{ownerId}/user              Add multiple users for a group
+DELETE /group/{ownerId}/user            Remove multiple users from a group's list of users
 PUT /group/{ownerId}/user/{childId}     Add a single user object to a group's list of users
 DELETE /group/{ownerId}/user/{childId}  Remove a single user object from a group's list of users
 ```
@@ -463,16 +629,19 @@ DELETE /group/{ownerId}/user/{childId}  Remove a single user object from a group
 
 Many-many relationships can include extra fields that contain data specific
 to each association instance.  This is accomplished through linking models which
-behave similar to pivot tables in a relational database.  Linking model files are
-stored in the ``/api/models/linking-models`` directory and follow the same 
-``{name}.model.js`` format as normal models.  Below is an example of a many-many
+behave similar to pivot/through tables in a relational database.  Linking model files are
+stored in the ``/models/linking-models`` directory and follow the same 
+``{model name}.model.js`` format as normal models.  Below is an example of a many-many
 relationship between the ``user`` model and itself through the ``friends`` association.
 The extra field ``friendsSince`` could contain a date representing how long the two
 associated users have known each other.  This example also displays how models can contain a 
 reference to themselves.  
 
+**NOTE** The linking model filename does not have to match the model name, however the ``linkingModel``
+association property **must** match the linking model ``modleName`` property.
 
-``/api/models/user.model.js``:
+
+``/models/user.model.js``:
 
 ```javascript
 module.exports = function (mongoose) {
@@ -511,7 +680,7 @@ module.exports = function (mongoose) {
 ```
 
 
-``/api/models/linking-models/user_user.model.js``:
+``/models/linking-models/user_user.model.js``:
 
 ```javascript
 var mongoose = require("mongoose");
@@ -579,15 +748,17 @@ module.exports = function (mongoose) {
 will result in the following endpoints:
 
 ```
+DELETE /person 
+POST /person 
 GET /person 
-POST /person
 DELETE /person/{_id} 
-PUT /person/{_id} 
 GET /person/{_id} 
-POST /person/{ownerId}/team 
+PUT /person/{_id}
 GET /person/{ownerId}/team 
+DELETE /person/{ownerId}/team 
+POST /person/{ownerId}/team 
+DELETE /person/{ownerId}/team/{childId} 
 PUT /person/{ownerId}/team/{childId} 
-DELETE /person/{ownerId}/team/{childId}
 ```
 
 [Back to top](#readme-contents)
@@ -608,12 +779,22 @@ supported parameters:
     - A list of basic fields to be included in each resource.
 
 * $sort
-    - A set of fields to sort by. Including field name indicates it should be sorted ascending, 
-    while prepending '-' indicates descending. The default sort direction is 'ascending' 
-    (lowest value to highest value). Listing multiple fields prioritizes the sort starting with the first field listed. 
+    - A set of fields to sort by. Including field name indicates it should be sorted ascending, while prepending '-' indicates descending. The default sort direction is 'ascending' (lowest value to highest value). Listing multiple fields prioritizes the sort starting with the first field listed. 
+
+* $text
+    - A full text search parameter. Takes advantage of indexes for efficient searching. Also implements stemming with   searches. Prefixing search terms with a "-" will exclude results that match that term.
+    
+* $term
+    - A regex search parameter. Slower than $text search but supports partial matches and doesn't require indexing. This can be refined using the $searchFields parameter.
+    
+* $searchFields
+    - A set of fields to apply the $term search parameter to. If this parameter is not included, the $term search parameter is applied to all searchable fields.
 
 * $embed
     - A set of associations to populate. 
+    
+* $count
+    - If set to true, only a count of the query results will be returned.
 
 * $where
     - An optional field for raw mongoose queries.
@@ -721,7 +902,7 @@ requireOnRead: true | field required on read/response
 requireOnUpdate: true | field required on update
 allowOnRead: false | field excluded from read model
 allowOnUpdate: false | field excluded from update model
-allowOnUpdate: false | field excluded from create model
+allowOnCreate: false | field excluded from create model
 queryable: false | field cannot be included as a query parameter
 exclude: true | field cannot be included in a response or as part of a query
 allowNull: true | field accepts ``null`` as a valid value
@@ -735,26 +916,27 @@ exist under the ``routeOptions`` object. Middleware functions must return
 are available:
 
 * list: 
-    - post(request, result, Log)
+    - post(query, result, Log)
 * find: 
-    - post(request, result, Log)
+    - post(query, result, Log)
 * create:
-    - pre(request, Log)
-    - post(request, result, Log)
+    - pre(payload, Log)
+    - post(payload, result, Log)
 * update: 
-    - pre(request, Log)
-    - post(request, result, Log)
+    - pre(payload, Log)
+    - post(payload, result, Log)
 * delete: 
-    - pre(request, Log)
-    - post(request, result, Log)
+    - pre(\_id, hardDelete, Log)
+    - post(hardDelete, deleted, Log)
 
 
 For example, a ``create: pre`` function can be defined to encrypt a users password
-using the built-in ``password-helper`` utility.  Notice the use of the ``Q`` library
+using a static method ``generatePasswordHash``.  Notice the use of the ``Q`` library
 to return a promise.
  
 ```javascript
 var Q = require('q');
+var bcrypt = require('bcrypt');
 
 module.exports = function (mongoose) {
   var modelName = "user";
@@ -762,7 +944,6 @@ module.exports = function (mongoose) {
   var Schema = new mongoose.Schema({
     email: {
       type: Types.String,
-      required: true,
       unique: true
     },
     password: {
@@ -773,20 +954,25 @@ module.exports = function (mongoose) {
     }
   });
   
-  Schema.statics= {
-    collectionName: modelName
+  Schema.statics = {
+    collectionName:modelName,
     routeOptions: {
       create: {
-        pre: function (request, Log) {
+        pre: function (payload, Log) {
           var deferred = Q.defer();
-          var passwordUtility = require('../../api/utilities/password-helper');
-          var hashedPassword = passwordUtility.hash_password(request.payload.password);
+          var hashedPassword = mongoose.model('user').generatePasswordHash(payload.password);
 
-          request.payload.password = hashedPassword;
-          deferred.resolve(request);
+          payload.password = hashedPassword;
+          deferred.resolve(payload);
           return deferred.promise;
         }
       }
+    },
+
+    generatePasswordHash: function(password) {
+      var salt = bcrypt.genSaltSync(10);
+      var hash = bcrypt.hashSync(password, salt);
+      return hash;
     }
   };
   
@@ -805,8 +991,8 @@ look like this:
 
 ```javascript
 var Joi = require('joi');
-Joi.objectId = require('joi-objectid')(Joi);
-var Boom = require('boom');
+var bcrypt = require('bcrypt');
+var restHapi = require('rest-hapi');
 
 module.exports = function (mongoose) {
   var modelName = "user";
@@ -832,15 +1018,15 @@ module.exports = function (mongoose) {
         //Password Update Endpoint
         function (server, model, options, Log) {
           Log = Log.bind("Password Update");
+          var Boom = require('boom');
 
           var collectionName = model.collectionDisplayName || model.modelName;
 
           Log.note("Generating Password Update endpoint for " + collectionName);
 
           var handler = function (request, reply) {
-            var passwordUtility = require('../../api/utilities/password-helper');
-            var hashedPassword = passwordUtility.hash_password(request.payload.password);
-            return model.findByIdAndUpdate(request.params._id, {password: hashedPassword}).then(function (result) {
+            var hashedPassword = model.generatePasswordHash(request.payload.password);
+            return restHapi.update(model, request.params._id, {password: hashedPassword}, Log).then(function (result) {
               if (result) {
                 return reply("Password updated.").code(200);
               }
@@ -885,6 +1071,12 @@ module.exports = function (mongoose) {
           });
         }
       ]
+    },
+    
+    generatePasswordHash: function(password) {
+      var salt = bcrypt.genSaltSync(10);
+      var hash = bcrypt.hashSync(password, salt);
+      return hash;
     }
   };
   
@@ -895,14 +1087,27 @@ module.exports = function (mongoose) {
 
 [Back to top](#readme-contents)
 
-## Token authentication
-The rest-hapi framework supports built in token authentication for all generated endpoints given the following requirements are fulfilled:
 
-- A ``user`` model exists with at least the following properties:
+## Authorization
+rest-hapi takes advantage of the ``scope`` property within the ``auth`` route config object of a hapi endpoint.  Each generated endpoint has its ``scope`` property set based on model properties within the ``routeOptions.scope`` object. There are three types of scopes that can be set: a general scope property, action scope properties, and association scope properties. A description of these can be seen below.
+
+The first type of scope is a ``scope`` property that, when set, is applied to all generated endpoints for that model. 
+
+The second is an action specific scope property that only applies to endpoints corresponding with the action. A list of these action scope properties can be seen below:
+
+* ``createScope``: value is added to the scope of any endpoint that creates model documents 
+* ``readScope``: value is added to the scope of any endpoint that retrieves documents and can be queried against
+* ``updateScope``: value is added to the scope of any endpoint that directly updates documents
+* ``deleteScope``: value is added to the scope of any endpoint that deletes documents
+* ``associateScope``: value is added to the scope of any endpoint that modifies an association
+
+The third type of scope is property that relates to a specific association action, with an action prefix of ``add``, ``remove``, or ``get``.  These scope properties are specific to the associations defined in the model and take the form of :
+
+-{action}{modelName}{associationName}Scope
+
+In the example below, users with the ``Admin`` scope in their authentication credentials can access all of the generated endpoints for the user model, users with the ``User`` scope are granted read access for the user model, and users with the ``addUserGroupsScope`` are capable of adding group associations to a user document.
 
 ```javascript
-var Q = require('q');
-
 module.exports = function (mongoose) {
   var modelName = "user";
   var Types = mongoose.Schema.Types;
@@ -917,35 +1122,22 @@ module.exports = function (mongoose) {
       required: true,
       exclude: true,
       allowOnUpdate: false
-    },
-    token: {
-      type: Types.String,
-      allowNull: true,
-      exclude: true,
-      allowOnUpdate: false,
-      allowOnCreate: false
-    },
-    tokenCreatedAt: {
-      type: Types.String,
-      allowNull: true,
-      exclude: true,
-      allowOnUpdate: false,
-      allowOnCreate: false
     }
   });
   
   Schema.statics = {
-    collectionName:modelName,
+    collectionName: modelName
     routeOptions: {
-      create: {
-        pre: function (request, Log) {
-          var deferred = Q.defer();
-          var passwordUtility = require('../../api/utilities/password-helper');
-          var hashedPassword = passwordUtility.hash_password(request.payload.password);
-
-          request.payload.password = hashedPassword;
-          deferred.resolve(request);
-          return deferred.promise;
+      scope: {
+        scope: "Admin",
+        readScope: "User",
+        addUserGroupsScope: "Project Lead"
+      },
+      associations: {
+        groups: {
+          type: "MANY_MANY",
+          model: "group",
+          alias: "team"
         }
       }
     }
@@ -954,20 +1146,290 @@ module.exports = function (mongoose) {
   return Schema;
 };
 ```
-**NOTE:** Token authentication requires that passwords are encrypted using the password helper as above.
 
-- The ``auth`` property in the config file is set to ``"token"``.
+**NOTE** Use of scope properties requires that an authentication strategy be defined and implemented. If the ``config.authStrategy`` property is set to ``false``, then no scopes will be applied, even if they are defined in the model.  For an example of scopes in action, check out [appy](https://github.com/JKHeadley/appy):
 
-Given these conditions, a new endpoint will be generated:
+### Generating scopes
+If the ``config.generateScopes`` property is set to true, then generated endpoints will come pre-defined with scope values.  These values will exist in addition to any scope values defined in the ``routeOptions.scope`` object. For instance, the tables below show two possibilities for the user model scope: the first is with no model scope defined, and the second is with a model scope defined as in the example above.
 
+#### Without Model Scope Defined
+Endpoint | Scope
+--- | ---
+DELETE /user | [ 'root', 'delete', 'deleteUser' ]
+POST /user | [ 'root', 'create', 'createUser' ]
+GET /user | [ 'root', 'read', 'readUser' ]
+DELETE /user/{_id} | [ 'root', 'delete', 'deleteUser' ]
+GET /user/{_id} | [ 'root', 'read', 'readUser' ]
+PUT /user/{_id} | [ 'root', 'update', 'updateUser' ]
+GET /user/{ownerId}/group | [ 'root', 'read', 'readUser', 'getUserGroups' ]
+POST /user/{ownerId}/group | [ 'root', 'associate', 'associateUser', 'addUserGroups' ]
+DELETE /user/{ownerId}/group | [ 'root', 'associate', 'associateUser', 'removeUserGroups' ]
+PUT /user/{ownerId}/group/{childId} | [ 'root', 'associate', 'associateUser', 'addUserGroups' ]
+DELETE /user/{ownerId}/group/{childId} | [ 'root', 'associate', 'associateUser', 'removeUserGroups' ]
+
+#### With Model Scope Defined
+Endpoint | Scope
+--- | ---
+DELETE /user | [ 'root', 'Admin', 'delete', 'deleteUser' ]
+POST /user | [ 'root', 'Admin', 'create', 'createUser' ]
+GET /user | [ 'root', 'Admin', 'read', 'readUser', 'User' ]
+DELETE /user/{_id} | [ 'root', 'Admin', 'delete', 'deleteUser' ]
+GET /user/{_id} | [ 'root', 'Admin', 'read', 'readUser', 'User' ]
+PUT /user/{_id} | [ 'root', 'Admin', 'update', 'updateUser' ]
+GET /user/{ownerId}/group | [ 'root', 'Admin', 'read', 'readUser', 'User', 'getUserGroups' ]
+POST /user/{ownerId}/group | [ 'root', 'Admin', 'associate', 'associateUser', 'addUserGroups', 'Project Lead' ]
+DELETE /user/{ownerId}/group | [ 'root', 'Admin', 'associate', 'associateUser', 'removeUserGroups' ]
+PUT /user/{ownerId}/group/{childId} | [ 'root', 'Admin', 'associate', 'associateUser', 'addUserGroups', 'Project Lead' ]
+DELETE /user/{ownerId}/group/{childId} | [ 'root', 'Admin', 'associate', 'associateUser', 'removeUserGroups' ]
+
+[Back to top](#readme-contents)
+
+## Exposed handler methods
+rest-hapi exposes the handler methods used in the generated endpoints for the user to take advantage of in their server code. These methods provide several advantages including:
+
+- [middleware](#middleware) functionality
+- [metadata](#metadata) support
+- [soft delete](#soft-delete) support
+- [association/relational](#associations) management
+- rest-hapi [query](#querying) support
+
+The available methods are:
+
+- list
+- find
+- create
+- update
+- deleteOne
+- deleteMany
+- addOne
+- removeOne
+- addMany
+- removeMany
+- getAll
+
+See [Additional endpoints](#additional-endpoints) for an example using a rest-hapi handler method.
+
+A more detailed description of each method can be found below:
+
+```javascript
+/**
+ * Finds a list of model documents
+ * @param model: A mongoose model.
+ * @param query: rest-hapi query parameters to be converted to a mongoose query.
+ * @param Log: A logging object.
+ * @returns {object} A promise for the resulting model documents.
+ */
+function list(model, query, Log)
+
+/**
+ * Finds a model document
+ * @param model: A mongoose model.
+ * @param _id: The document id.
+ * @param query: rest-hapi query parameters to be converted to a mongoose query.
+ * @param Log: A logging object.
+ * @returns {object} A promise for the resulting model document.
+ */
+function find(model, _id, query, Log) {...}
+
+/**
+ * Creates a model document
+ * @param model: A mongoose model.
+ * @param payload: Data used to create the model document.
+ * @param Log: A logging object.
+ * @returns {object} A promise for the resulting model document.
+ */
+function create(model, payload, Log) {...}
+
+/**
+ * Updates a model document
+ * @param model: A mongoose model.
+ * @param _id: The document id.
+ * @param payload: Data used to update the model document.
+ * @param Log: A logging object.
+ * @returns {object} A promise for the resulting model document.
+ */
+function update(model, _id, payload, Log) {...}
+
+/**
+ * Deletes a model document
+ * @param model: A mongoose model.
+ * @param _id: The document id.
+ * @param hardDelete: Flag used to determine a soft or hard delete.
+ * @param Log: A logging object.
+ * @returns {object} A promise returning true if the delete succeeds.
+ */
+function deleteOne(model, _id, hardDelete, Log) {...}
+
+/**
+ * Deletes multiple documents
+ * @param model: A mongoose model.
+ * @param payload: Either an array of ids or an array of objects containing an id and a "hardDelete" flag.
+ * @param Log: A logging object.
+ * @returns {object} A promise returning true if the delete succeeds.
+ */
+function deleteMany(model, payload, Log) {...}
+
+/**
+ * Adds an association to a document
+ * @param ownerModel: The model that is being added to.
+ * @param ownerId: The id of the owner document.
+ * @param childModel: The model that is being added.
+ * @param childId: The id of the child document.
+ * @param associationName: The name of the association from the ownerModel's perspective.
+ * @param payload: An object containing an extra linking-model fields.
+ * @param Log: A logging object
+ * @returns {object} A promise returning true if the add succeeds.
+ */
+function addOne(ownerModel, ownerId, childModel, childId, associationName, payload, Log) {...}
+
+/**
+ * Removes an association to a document
+ * @param ownerModel: The model that is being removed from.
+ * @param ownerId: The id of the owner document.
+ * @param childModel: The model that is being removed.
+ * @param childId: The id of the child document.
+ * @param associationName: The name of the association from the ownerModel's perspective.
+ * @param Log: A logging object
+ * @returns {object} A promise returning true if the remove succeeds.
+ */
+function removeOne(ownerModel, ownerId, childModel, childId, associationName, Log) {...}
+
+/**
+ * Adds multiple associations to a document
+ * @param ownerModel: The model that is being added to.
+ * @param ownerId: The id of the owner document.
+ * @param childModel: The model that is being added.
+ * @param associationName: The name of the association from the ownerModel's perspective.
+ * @param payload: Either a list of id's or a list of id's along with extra linking-model fields.
+ * @param Log: A logging object
+ * @returns {object} A promise returning true if the add succeeds.
+ */
+function addMany(ownerModel, ownerId, childModel, associationName, payload, Log) {...}
+
+/**
+ * Removes multiple associations from a document
+ * @param ownerModel: The model that is being removed from.
+ * @param ownerId: The id of the owner document.
+ * @param childModel: The model that is being removed.
+ * @param associationName: The name of the association from the ownerModel's perspective.
+ * @param payload: A list of ids
+ * @param Log: A logging object
+ * @returns {object} A promise returning true if the remove succeeds.
+ */
+function removeMany(ownerModel, ownerId, childModel, associationName, payload, Log) {...}
+
+/**
+ * Get all of the associations for a document
+ * @param ownerModel: The model that is being added to.
+ * @param ownerId: The id of the owner document.
+ * @param childModel: The model that is being added.
+ * @param associationName: The name of the association from the ownerModel's perspective.
+ * @param query: rest-hapi query parameters to be converted to a mongoose query.
+ * @param Log: A logging object
+ * @returns {object} A promise returning true if the add succeeds.
+ */
+function getAll(ownerModel, ownerId, childModel, associationName, query, Log) {...}
 ```
-POST /token     Create a token for a user.
+
+[Back to top](#readme-contents)
+
+## Soft delete
+rest-hapi supports soft delete functionality for documents.  When the ``enableSoftDelete`` config property is set to ``true``, documents will gain an ``isDeleted`` property when they are created that will be set to ``false``.  Whenever that document is deleted (via a rest-hapi endpoint or method), the document will remain in the collection, its ``isDeleted`` property will be set to ``true``, and the ``deletedAt`` property will be populated.  
+
+"Hard" deletion is still possible when soft delete is enabled. In order to hard delete a document (i.e. remove a document from it's collection) via the api, a payload must be sent with the ``hardDelete`` property set to ``true``. 
+
+The rest-hapi delete methods include a ``hardDelete`` flag as a parameter. The following is an example of a hard delete using a [rest-hapi method](#exposed-handler-methods): 
+
+``restHapi.deleteOne(model, _id, true, Log);``
+
+[Back to top](#readme-contents)
+
+## Metadata
+rest-hapi supports the following optional metadata:
+- createdAt (default enabled)
+- updatedAt (default enabled)
+- deletedAt (default disabled) (see [Soft delete](#soft-delete))
+
+When enabled, these properties will automatically be populated during CRUD operations. For example, say I create a user with a payload of:
+
+```json
+ {
+    "email": "test@email.com",
+    "password": "1234"
+ }
 ```
 
-This endpoint takes a user email and password as a payload and returns an authentication token.  When token authentication is enabled, all generated enpoints require an Authentication header:
+If I then query for this document I might get:
 
+```json
+ {
+    "_id": "588077dfe8b75a830dc53e8b",
+    "email": "test@email.com",
+    "createdAt": "2017-01-19T08:25:03.577Z",
+    "updatedAt": "2017-01-19T08:25:03.577Z"
+ }
 ```
-Authorization: Bearer USER_TOKEN
+
+If I later update that user's email then an additional query might return:
+
+```json
+ {
+    "_id": "588077dfe8b75a830dc53e8b",
+    "email": "test2@email.com",
+    "createdAt": "2017-01-19T08:25:03.577Z",
+    "updatedAt": "2017-01-19T08:30:46.676Z"
+ }
+```
+
+The ``deletedAt`` property marks when a document was [soft deleted](#soft-delete).
+
+**NOTE**: Metadata properties are only set/updated if the document is created/modified using rest-hapi endpoints/methods.
+Ex: 
+
+``mongoose.model('user').findByIdAndUpdate(_id, payload)`` will not modify ``updatedAt`` whereas
+
+``restHapi.update(mongoose.model('user'), _id, payload)`` will. (see [Exposed handler methods](#exposed-handler-methods))
+
+[Back to top](#readme-contents)
+
+## Model generation
+In some situations models may be required before or without endpoint generation. For example some hapi plugins may require models to exist before the routes are registered. In these cases rest-hapi provides a ``generateModels`` function that can be called independently.  See below for example usage:
+
+```javascript
+restHapi.generateModels(mongoose)
+        .then(function() {
+            server.register(require('hapi-auth-jwt2'), (err) => {
+                require('./utilities/auth').applyJwtStrategy(server);  //requires models to exist
+
+                server.register({
+                    register: restHapi,
+                    options: {
+                        mongoose: mongoose
+                    }
+                }, function(err) {
+
+                    server.start(function (err) {
+
+                        server.log('info', 'Server initialized: ' + server.info);
+
+                        restHapi.logUtil.logActionComplete(restHapi.logger, "Server Initialized", server.info);
+                    });
+                });
+            });
+        })
+        .catch(function(error) {
+            console.log("There was an error generating the models: ", error)
+        });
+```
+
+NOTE: See ``gulp/seed.js`` for another example usage of ``generateModels``.
+
+[Back to top](#readme-contents)
+
+## Testing
+If you have downloaded the source you can run the tests with:
+```
+$ gulp test
 ```
 
 [Back to top](#readme-contents)
@@ -978,19 +1440,16 @@ MIT
 [Back to top](#readme-contents)
 
 ## Questions?
-If you have any questions/issues/feature requests, please feel free to open an issue.
+If you have any questions/issues/feature requests, please feel free to open an [issue](https://github.com/JKHeadley/rest-hapi/issues/new).  We'd love to hear from you!
 
 [Back to top](#readme-contents)
 
 ## Future work
-This project is still in its infancy, and there are many features I would still like to add.  Below is a list of some possible future updates:
+This project is still in its infancy, and there are many features we would still like to add.  Below is a list of some possible future updates:
 
-- support mongoose ``$text`` search query parameter
 - sorting through populate fields (Ex: sort users through role.name)
-- have built in ``created_at`` and ``updated_at`` fields for each model
 - support marking fields as ``duplicate`` i.e. any associated models referencing that model will duplicate those fields along with the reference Id. This could allow for a shallow embed that will return a list of reference ids with their "duplicate" values, and a full embed that will return the fully embedded references
-- support automatic logging of all operations via a ``eventLogs`` collection
-- support "soft" delete of mongo documents, i.e. documents are marked as "deleted" but remain in the db.
+- support automatic logging/auditing of all operations
 - (LONG TERM) support mysql as well as mongodb
 
 [Back to top](#readme-contents)
