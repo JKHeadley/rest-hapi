@@ -93,9 +93,10 @@ config.enableResponseValidation = true;
 /**
  * If set to true, (and authStrategy is not false) then endpoints will be generated with pre-defined
  * scopes based on the model definition.
+ * default: false
  * @type {boolean}
  */
-config.generateScopes = true;
+config.generateScopes = false;
 
 /**
  * Flag specifying whether to text index all string fields for all models to enable text search.

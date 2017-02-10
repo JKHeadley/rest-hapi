@@ -453,8 +453,7 @@ function nestPopulate(query, populate, index, embeds, associations, model, Log) 
     populate.populate = extend({}, populate);//EXPL: prevent circular reference
     populate.path = populatePath;
 
-    var type = association.include.model.routeOptions.associations[embeds[index + 1]].type;
-    if (type === "MANY_MANY") {
+    if (associations[embeds[index + 1]] && associations[embeds[index + 1]].type === "MANY_MANY") {
       populate.select = select + " " + populate.populate.path + ' ' + embeds[index + 1];//EXPL: have to add the path and the next embed to the select to include nested MANY_MANY embeds
     }
     else {
