@@ -1209,7 +1209,7 @@ The available methods are:
 - removeMany
 - getAll
 
-See [Additional endpoints](#additional-endpoints) for an example using a rest-hapi handler method, or refer to the [appy seed file](https://github.com/JKHeadley/appy/blob/master/gulp/seed.js) for an excellent example.
+Check out the [appy seed file](https://github.com/JKHeadley/appy/blob/master/gulp/seed.js) for an excellent example of rest-hapi handler methods in action, or refer to the [Additional endpoints](#additional-endpoints) section example.
 
 A more detailed description of each method can be found below:
 
