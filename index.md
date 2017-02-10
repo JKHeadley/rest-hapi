@@ -1153,6 +1153,7 @@ module.exports = function (mongoose) {
 If the ``config.generateScopes`` property is set to true, then generated endpoints will come pre-defined with scope values.  These values will exist in addition to any scope values defined in the ``routeOptions.scope`` object. For instance, the tables below show two possibilities for the user model scope: the first is with no model scope defined, and the second is with a model scope defined as in the example above.
 
 #### Without Model Scope Defined
+
 Endpoint | Scope
 --- | ---
 DELETE /user | [ 'root', 'delete', 'deleteUser' ]
@@ -1168,6 +1169,7 @@ PUT /user/{ownerId}/group/{childId} | [ 'root', 'associate', 'associateUser', 'a
 DELETE /user/{ownerId}/group/{childId} | [ 'root', 'associate', 'associateUser', 'removeUserGroups' ]
 
 #### With Model Scope Defined
+
 Endpoint | Scope
 --- | ---
 DELETE /user | [ 'root', 'Admin', 'delete', 'deleteUser' ]
@@ -1207,7 +1209,7 @@ The available methods are:
 - removeMany
 - getAll
 
-See [Additional endpoints](#additional-endpoints) for an example using a rest-hapi handler method.
+Check out the [appy seed file](https://github.com/JKHeadley/appy/blob/master/gulp/seed.js) for an excellent example of rest-hapi handler methods in action, or refer to the [Additional endpoints](#additional-endpoints) section example.
 
 A more detailed description of each method can be found below:
 
