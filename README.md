@@ -1424,7 +1424,7 @@ restHapi.generateModels(mongoose)
         });
 ```
 
-NOTE: See ``gulp/seed.js`` for another example usage of ``generateModels``.
+NOTE: See the [appy seed file](https://github.com/JKHeadley/appy/blob/master/gulp/seed.js) (or [gulp/seed.js](https://github.com/JKHeadley/rest-hapi/blob/master/gulp/seed.js)) for another example usage of ``generateModels``.
 
 [Back to top](#readme-contents)
 
