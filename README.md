@@ -15,7 +15,7 @@ rest-hapi is a hapi plugin intended to abstract the work involved in setting up 
 * [Query parameter](#querying) support for searching, sorting, filtering, pagination, and embedding of associated models
 * Support for ["soft" delete](#soft-delete)
 * Built in [metadata](#metadata)
-* Exposed [handler methods](#exposed-handler-methods)
+* Mongoose [wrapper methods](#mongoose-wrapper-methods)
 
 ## Live demos
 
@@ -46,7 +46,7 @@ rest-hapi-demo: http://ec2-35-164-131-1.us-west-2.compute.amazonaws.com:8124
 - [Middleware](#middleware)
 - [Additional endpoints](#additional-endpoints)
 - [Authorization](#authorization)
-- [Exposed handler methods](#exposed-handler-methods)
+- [Mongoose wrapper methods](#mongoose-wrapper-methods)
 - [Soft delete](#soft-delete)
 - [Metadata](#metadata)
 - [Model generation](#model-generation)
@@ -629,7 +629,7 @@ DELETE /group/{ownerId}/user/{childId}  Remove a single user object from a group
 
 Many-many relationships can include extra fields that contain data specific
 to each association instance.  This is accomplished through linking models which
-behave similar to pivot/through tables in a relational database.  Linking model files are
+behave similar to junction tables in a relational database.  Linking model files are
 stored in the ``/models/linking-models`` directory and follow the same 
 ``{model name}.model.js`` format as normal models.  Below is an example of a many-many
 relationship between the ``user`` model and itself through the ``friends`` association.
@@ -1186,8 +1186,8 @@ DELETE /user/{ownerId}/group/{childId} | [ 'root', 'Admin', 'associate', 'associ
 
 [Back to top](#readme-contents)
 
-## Exposed handler methods
-rest-hapi exposes the handler methods used in the generated endpoints for the user to take advantage of in their server code. These methods provide several advantages including:
+## Mongoose wrapper methods
+rest-hapi provides mongoose wrapper methods for the user to take advantage of in their server code. These methods provide several advantages including:
 
 - [middleware](#middleware) functionality
 - [metadata](#metadata) support
@@ -1209,7 +1209,7 @@ The available methods are:
 - removeMany
 - getAll
 
-Check out the [appy seed file](https://github.com/JKHeadley/appy/blob/master/gulp/seed.js) for an excellent example of rest-hapi handler methods in action, or refer to the [Additional endpoints](#additional-endpoints) section example.
+When used with the [model generating](#model-generation) function, these methods provide a quick and easy way to start adding rich, relational data to your db. Check out the [appy seed file](https://github.com/JKHeadley/appy/blob/master/gulp/seed.js) for an excellent example of these methods in action, or refer to the [Additional endpoints](#additional-endpoints) section example.
 
 A more detailed description of each method can be found below:
 
@@ -1340,7 +1340,7 @@ rest-hapi supports soft delete functionality for documents.  When the ``enableSo
 
 "Hard" deletion is still possible when soft delete is enabled. In order to hard delete a document (i.e. remove a document from it's collection) via the api, a payload must be sent with the ``hardDelete`` property set to ``true``. 
 
-The rest-hapi delete methods include a ``hardDelete`` flag as a parameter. The following is an example of a hard delete using a [rest-hapi method](#exposed-handler-methods): 
+The rest-hapi delete methods include a ``hardDelete`` flag as a parameter. The following is an example of a hard delete using a [rest-hapi method](#mongoose-wrapper-methods): 
 
 ``restHapi.deleteOne(model, _id, true, Log);``
 
@@ -1390,7 +1390,7 @@ Ex:
 
 ``mongoose.model('user').findByIdAndUpdate(_id, payload)`` will not modify ``updatedAt`` whereas
 
-``restHapi.update(mongoose.model('user'), _id, payload)`` will. (see [Exposed handler methods](#exposed-handler-methods))
+``restHapi.update(mongoose.model('user'), _id, payload)`` will. (see [Mongoose wrapper methods](#mongoose-wrapper-methods))
 
 [Back to top](#readme-contents)
 
@@ -1424,7 +1424,7 @@ restHapi.generateModels(mongoose)
         });
 ```
 
-NOTE: See ``gulp/seed.js`` for another example usage of ``generateModels``.
+NOTE: See the [appy seed file](https://github.com/JKHeadley/appy/blob/master/gulp/seed.js) (or [gulp/seed.js](https://github.com/JKHeadley/rest-hapi/blob/master/gulp/seed.js)) for another example usage of ``generateModels``.
 
 [Back to top](#readme-contents)
 
