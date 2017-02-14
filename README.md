@@ -1,4 +1,4 @@
-# ![alt text](https://github.com/JKHeadley/rest-hapi/blob/master/assets/rest-hapi.png)
+# ![rest-hapi](https://cloud.githubusercontent.com/assets/12631935/22916311/9661cac6-f232-11e6-96d4-aea680c9042b.png)
 
 A RESTful API generator plugin for the [hapi](https://github.com/hapijs/hapi) framework utilizing the [mongoose](https://github.com/Automattic/mongoose) ODM.
 
