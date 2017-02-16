@@ -202,7 +202,7 @@ module.exports = function (logger, mongoose, server) {
           auth: auth,
           description: 'Get a list of ' + collectionName + 's',
           tags: ['api', collectionName],
-          cors: true,
+          cors: config.cors,
           validate: {
             query: config.enableQueryValidation ? queryValidation : Joi.any(),
             headers: headersValidation
@@ -294,7 +294,7 @@ module.exports = function (logger, mongoose, server) {
           auth: auth,
           description: 'Get a specific ' + collectionName,
           tags: ['api', collectionName],
-          cors: true,
+          cors: config.cors,
           validate: {
             query: config.enableQueryValidation ? queryValidation : Joi.any(),
             params: {
@@ -381,7 +381,7 @@ module.exports = function (logger, mongoose, server) {
         config: {
           handler: handler,
           auth: auth,
-          cors: true,
+          cors: config.cors,
           description: 'Create one or more new ' + collectionName + 's',
           tags: ['api', collectionName],
           validate: {
@@ -462,7 +462,7 @@ module.exports = function (logger, mongoose, server) {
         config: {
           handler: handler,
           auth: auth,
-          cors: true,
+          cors: config.cors,
           description: 'Delete a ' + collectionName,
           tags: ['api', collectionName],
           validate: {
@@ -552,7 +552,7 @@ module.exports = function (logger, mongoose, server) {
         config: {
           handler: handler,
           auth: auth,
-          cors: true,
+          cors: config.cors,
           description: 'Delete multiple ' + collectionName + 's',
           tags: ['api', collectionName],
           validate: {
@@ -634,7 +634,7 @@ module.exports = function (logger, mongoose, server) {
         config: {
           handler: handler,
           auth: auth,
-          cors: true,
+          cors: config.cors,
           description: 'Update a ' + collectionName,
           tags: ['api', collectionName],
           validate: {
@@ -726,7 +726,7 @@ module.exports = function (logger, mongoose, server) {
         config: {
           handler: handler,
           auth: auth,
-          cors: true,
+          cors: config.cors,
           description: 'Add a single ' + childModelName + ' to a ' + ownerModelName + '\'s list of ' + associationName,
           tags: ['api', associationName, ownerModelName],
           validate: {
@@ -810,7 +810,7 @@ module.exports = function (logger, mongoose, server) {
         config: {
           handler: handler,
           auth: auth,
-          cors: true,
+          cors: config.cors,
           description: 'Remove a single ' + childModelName + ' from a ' + ownerModelName + '\'s list of ' + associationName,
           tags: ['api', associationName, ownerModelName],
           validate: {
@@ -903,7 +903,7 @@ module.exports = function (logger, mongoose, server) {
         config: {
           handler: handler,
           auth: auth,
-          cors: true,
+          cors: config.cors,
           description: 'Add multiple ' + childModelName + 's to a ' + ownerModelName + '\'s list of ' + associationName,
           tags: ['api', associationName, ownerModelName],
           validate: {
@@ -985,7 +985,7 @@ module.exports = function (logger, mongoose, server) {
         config: {
           handler: handler,
           auth: auth,
-          cors: true,
+          cors: config.cors,
           description: 'Remove multiple ' + childModelName + 's from a ' + ownerModelName + '\'s list of ' + associationName,
           tags: ['api', associationName, ownerModelName],
           validate: {
@@ -1116,7 +1116,7 @@ module.exports = function (logger, mongoose, server) {
         config: {
           handler: handler,
           auth: auth,
-          cors: true,
+          cors: config.cors,
           description: 'Get all of the ' + associationName + ' for a ' + ownerModelName,
           tags: ['api', associationName, ownerModelName],
           validate: {

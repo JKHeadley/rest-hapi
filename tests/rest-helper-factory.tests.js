@@ -850,7 +850,11 @@ test('rest-helper-factory.generateListEndpoint', function(t) {
     //<editor-fold desc="Assert">
     var serverObject = server.route.args[0][0];
     // Log.debug(JSON.stringify(serverObject));
-    t.equal(serverObject.config.cors, true, "cors used");
+    var cors = {
+      additionalHeaders: ['X-Total-Count'],
+      additionalExposedHeaders: ['X-Total-Count']
+    };
+    t.deepEqual(serverObject.config.cors, cors, "cors used");
     //</editor-fold>
 
 
@@ -1579,7 +1583,11 @@ test('rest-helper-factory.generateFindEndpoint', function(t) {
     //<editor-fold desc="Assert">
     var serverObject = server.route.args[0][0];
     // Log.debug(JSON.stringify(serverObject));
-    t.equal(serverObject.config.cors, true, "cors used");
+    var cors = {
+      additionalHeaders: ['X-Total-Count'],
+      additionalExposedHeaders: ['X-Total-Count']
+    };
+    t.deepEqual(serverObject.config.cors, cors, "cors used");
     //</editor-fold>
 
 
@@ -2302,7 +2310,11 @@ test('rest-helper-factory.generateFindEndpoint', function(t) {
 //     //<editor-fold desc="Assert">
 //     var serverObject = server.route.args[0][0];
 //     // Log.debug(JSON.stringify(serverObject));
-//     t.equal(serverObject.config.cors, true, "cors used");
+// var cors = {
+//   additionalHeaders: ['X-Total-Count'],
+//   additionalExposedHeaders: ['X-Total-Count']
+// };
+// t.deepEqual(serverObject.config.cors, cors, "cors used");
 //     //</editor-fold>
 //
 //
@@ -2816,7 +2828,11 @@ test('rest-helper-factory.generateDeleteOneEndpoint', function(t) {
     //<editor-fold desc="Assert">
     var serverObject = server.route.args[0][0];
     // Log.debug(JSON.stringify(serverObject));
-    t.equal(serverObject.config.cors, true, "cors used");
+    var cors = {
+      additionalHeaders: ['X-Total-Count'],
+      additionalExposedHeaders: ['X-Total-Count']
+    };
+    t.deepEqual(serverObject.config.cors, cors, "cors used");
     //</editor-fold>
 
 
@@ -3382,7 +3398,11 @@ test('rest-helper-factory.generateUpdateEndpoint', function(t) {
     //<editor-fold desc="Assert">
     var serverObject = server.route.args[0][0];
     // Log.debug(JSON.stringify(serverObject));
-    t.equal(serverObject.config.cors, true, "cors used");
+    var cors = {
+      additionalHeaders: ['X-Total-Count'],
+      additionalExposedHeaders: ['X-Total-Count']
+    };
+    t.deepEqual(serverObject.config.cors, cors, "cors used");
     //</editor-fold>
 
 
@@ -4130,7 +4150,11 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
     //<editor-fold desc="Assert">
     var serverObject = server.route.args[0][0];
     // Log.debug(JSON.stringify(serverObject));
-    t.equal(serverObject.config.cors, true, "cors used");
+    var cors = {
+      additionalHeaders: ['X-Total-Count'],
+      additionalExposedHeaders: ['X-Total-Count']
+    };
+    t.deepEqual(serverObject.config.cors, cors, "cors used");
     //</editor-fold>
 
 
@@ -4924,7 +4948,11 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
     //<editor-fold desc="Assert">
     var serverObject = server.route.args[0][0];
     // Log.debug(JSON.stringify(serverObject));
-    t.equal(serverObject.config.cors, true, "cors used");
+    var cors = {
+      additionalHeaders: ['X-Total-Count'],
+      additionalExposedHeaders: ['X-Total-Count']
+    };
+    t.deepEqual(serverObject.config.cors, cors, "cors used");
     //</editor-fold>
 
 
@@ -5634,7 +5662,11 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
     //<editor-fold desc="Assert">
     var serverObject = server.route.args[0][0];
     // Log.debug(JSON.stringify(serverObject));
-    t.equal(serverObject.config.cors, true, "cors used");
+    var cors = {
+      additionalHeaders: ['X-Total-Count'],
+      additionalExposedHeaders: ['X-Total-Count']
+    };
+    t.deepEqual(serverObject.config.cors, cors, "cors used");
     //</editor-fold>
 
 
@@ -6539,7 +6571,11 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
     //<editor-fold desc="Assert">
     var serverObject = server.route.args[0][0];
     // Log.debug(JSON.stringify(serverObject));
-    t.equal(serverObject.config.cors, true, "cors used");
+    var cors = {
+      additionalHeaders: ['X-Total-Count'],
+      additionalExposedHeaders: ['X-Total-Count']
+    };
+    t.deepEqual(serverObject.config.cors, cors, "cors used");
     //</editor-fold>
 
 

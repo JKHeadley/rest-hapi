@@ -32,21 +32,12 @@ config.absoluteModelPath = false;
 config.modelPath = 'models';
 
 /**
- * Server settings:
- * - config.server.port = 8124; (default)
+ * Cors settings for generated endpoints. Can be set to false to disable.
+ * @type {{additionalHeaders: string[], additionalExposedHeaders: string[]}}
  */
-config.server.port = 8124;
-
-config.server.routes = {
-    cors: {
-        additionalHeaders: ['X-Total-Count'],
-        additionalExposedHeaders: ['X-Total-Count']
-    }
-};
-
-config.server.connection = {
-    port: config.server.port,
-    routes: config.server.routes
+config.cors =  {
+    additionalHeaders: ['X-Total-Count'],
+    additionalExposedHeaders: ['X-Total-Count']
 };
 
 /**
