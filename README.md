@@ -1461,3 +1461,6 @@ This project is still in its infancy, and there are many features we would still
 Please reference the contributing doc: https://github.com/JKHeadley/rest-hapi/blob/master/CONTRIBUTING.md
 
 [Back to top](#readme-contents)
+
+#Join the team 
+ Do you want to collaborate? Join the project at https://projectgroupie.com/projects/206
