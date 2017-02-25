@@ -340,7 +340,7 @@ PUT /user/{_id}     Update a user
 
 Association endpoints can also be generated based on model definitions, see the [Associations](#associations) section.
 
-**NOTE** If your ``models`` directory is not in your projects root directory, you will need to specify the path (relative to your projects root directory) by assigning the path to the ``config.modelPath`` property and you will need to set the ``config.absoluteModelPath`` property to ``true``.
+**NOTE:** If your ``models`` directory is not in your projects root directory, you will need to specify the path (relative to your projects root directory) by assigning the path to the ``config.modelPath`` property and you will need to set the ``config.absoluteModelPath`` property to ``true``.
 
 [Back to top](#readme-contents)
 
@@ -377,7 +377,7 @@ module.exports = function (server, mongoose, logger) {
 };
 ```
 
-**NOTE** If your ``api`` directory is not in your projects root directory, you will need to specify the path (relative to your projects root directory) by assigning the path to the ``config.apiPath`` property and you will need to set the ``config.absoluteApiPath`` property to ``true``.
+**NOTE:** If your ``api`` directory is not in your projects root directory, you will need to specify the path (relative to your projects root directory) by assigning the path to the ``config.apiPath`` property and you will need to set the ``config.absoluteApiPath`` property to ``true``.
 
 [Back to top](#readme-contents)
 
