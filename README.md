@@ -271,7 +271,7 @@ access to testing your endpoints along with model schema descriptions and query 
 
 ## Creating endpoints
 
-Creating endpoints with rest-hapi can be accomplished three different ways: generating endpoints based off of model definitions, defining standalone endpoints, and adding endpoints to a model,.
+Creating endpoints with rest-hapi can be accomplished three different ways: generating endpoints based off of model definitions, defining standalone endpoints, and adding endpoints to a model.
 
 ### Model Endpoints
 Restful endpoints are automatically generated based off of any mongoose models that you add to your ``models`` directory
