@@ -10,6 +10,7 @@ var mongoose = require('mongoose');
 //TODO: support "allowNull"
 //TODO: add ".default()" to paths that have a default value
 //TODO: support arrays and objects
+//TODO: support "allowUndefined"
 
 module.exports = {
 

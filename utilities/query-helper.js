@@ -28,6 +28,7 @@ let globals = require('../components/globals');
     }]]
  */
 //TODO: support parallel embeds, Ex: { $embed: ['facilitiesPerFloor.categories','facilitiesPerFloor.items'] } //NOTE: this seems to work for some queries
+//TODO: support field queries for "null" and "undefined"
 
 module.exports = {
   /**

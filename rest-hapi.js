@@ -12,6 +12,7 @@ const _ = require('lodash'),
     restHelperFactory = require('./utilities/rest-helper-factory'),
     handlerHelper = require('./utilities/handler-helper'),
     modelGenerator = require('./utilities/model-generator'),
+    apiGenerator = require('./utilities/api-generator'),
     defaultConfig = require('./config');
 
 let modelsGenerated = false;
@@ -91,7 +92,15 @@ function register(server, options, next) {
                         restHelper.generateRoutes(server, model, {models:models})
                     }
 
-                    next();
+                    apiGenerator(server, mongoose, logger, config)
+                        .then(function() {
+                            next();
+                        })
+                        .catch(function(error) {
+                            logger.error(error);
+                            next(error);
+                        })
+
                 });
         })
         .catch(function(error) {

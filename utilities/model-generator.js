@@ -6,6 +6,13 @@ var fs = require('fs');
 var path = require('path');
 var Q = require('q');
 
+/**
+ * This module reads in all the model files and generates the corresponding mongoose models.
+ * @param mongoose
+ * @param Log
+ * @param config
+ * @returns {*|promise}
+ */
 module.exports = function (mongoose, Log, config) {
   var models = {};
   var schemas = {};
@@ -24,7 +31,7 @@ module.exports = function (mongoose, Log, config) {
       if (err.message.includes('no such file')) {
         Log.error(err);
         deferred.reject("The model directory provided is either empty or does not exist. " +
-            "Try setting the 'modelDirectory' property of the config file.");
+            "Try setting the 'modelPath' property of the config file.");
       }
       else {
         deferred.reject(err);

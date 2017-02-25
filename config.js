@@ -32,6 +32,18 @@ config.absoluteModelPath = false;
 config.modelPath = 'models';
 
 /**
+ * Flag signifying whether the absolute path to the api directory is provided
+ * @type {boolean}
+ */
+config.absoluteApiPath = false;
+
+/**
+ * Path to the directory for additional endpoints (default 'api')
+ * @type {string}
+ */
+config.apiPath = 'api';
+
+/**
  * Cors settings for generated endpoints. Can be set to false to disable.
  * @type {{additionalHeaders: string[], additionalExposedHeaders: string[]}}
  */
