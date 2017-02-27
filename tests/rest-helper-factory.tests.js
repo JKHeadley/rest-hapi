@@ -45,11 +45,11 @@ test('rest-helper-factory exists and has expected members', function (t) {
   //</editor-fold>
 });
 
-test('rest-helper-factory.defaultHeadersValidation', function(t) {
+test('rest-helper-factory.defaultHeadersValidation', function (t) {
   t.test('rest-helper-factory.defaultHeadersValidation requires authorization property if auth is enabled', function (t) {
     //<editor-fold desc="Arrange">
     var server = sinon.spy();
-    var config = { authStrategy: "token" };
+    var config = {authStrategy: "token"};
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
       '../config': config
     })(Log, mongoose, server);
@@ -57,7 +57,7 @@ test('rest-helper-factory.defaultHeadersValidation', function(t) {
     t.plan(2);
 
     var header1 = {};
-    var header2 = { authorization: "test" };
+    var header2 = {authorization: "test"};
     //</editor-fold>
 
     //<editor-fold desc="Act">
@@ -76,7 +76,7 @@ test('rest-helper-factory.defaultHeadersValidation', function(t) {
   t.test('rest-helper-factory.defaultHeadersValidation doesn\'t require authorization property if auth is disabled', function (t) {
     //<editor-fold desc="Arrange">
     var server = sinon.spy();
-    var config = { authStrategy: null };
+    var config = {authStrategy: null};
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
       '../config': config
     })(Log, mongoose, server);
@@ -84,7 +84,7 @@ test('rest-helper-factory.defaultHeadersValidation', function(t) {
     t.plan(1);
 
     var header1 = {};
-    var header2 = { authorization: "test" };
+    var header2 = {authorization: "test"};
     //</editor-fold>
 
     //<editor-fold desc="Act">
@@ -106,7 +106,7 @@ test('rest-helper-factory.defaultHeadersValidation', function(t) {
 
     t.plan(1);
 
-    var header = { authorization: "test", unknown: "test" };
+    var header = {authorization: "test", unknown: "test"};
     //</editor-fold>
 
     //<editor-fold desc="Act">
@@ -124,10 +124,13 @@ test('rest-helper-factory.defaultHeadersValidation', function(t) {
   t.end();
 });
 
-test('rest-helper-factory.generateRoutes', function(t) {
+test('rest-helper-factory.generateRoutes', function (t) {
   var server = sinon.spy();
-  sinon.stub(Log, 'error', function(){});
-  sinon.stub(Log, 'bind', function(){ return Log });
+  sinon.stub(Log, 'error', function () {
+  });
+  sinon.stub(Log, 'bind', function () {
+    return Log
+  });
   var restHelperFactory = require('../utilities/rest-helper-factory')(Log, mongoose, server);
   testHelper.testModelParameter(t, restHelperFactory.generateRoutes, "restHelperFactory.generateRoutes", ["server", "model", "options"], Log);
 
@@ -440,20 +443,25 @@ test('rest-helper-factory.generateRoutes', function(t) {
   t.end();
 });
 
-test('rest-helper-factory.generateListEndpoint', function(t) {
+test('rest-helper-factory.generateListEndpoint', function (t) {
   var server = sinon.spy();
   var restHelperFactory = require('../utilities/rest-helper-factory')(Log, mongoose, server);
   testHelper.testModelParameter(t, restHelperFactory.generateListEndpoint, "restHelperFactory.generateListEndpoint", ["server", "model", "options", "Log"], Log);
 
   t.test('rest-helper-factory.generateListEndpoint calls handlerHelper.generateListHandler', sinon.test(function (t) {
     //<editor-fold desc="Arrange">
-    var server = this.stub({route: function(){}});
+    var server = this.stub({
+      route: function () {
+      }
+    });
 
-    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(),server));
+    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(), server));
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+      return Joi.any()
+    });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
       './handler-helper-factory': handlerHelperStubWrapper,
       './query-helper': queryHelperStub,
@@ -463,7 +471,7 @@ test('rest-helper-factory.generateListEndpoint', function(t) {
     t.plan(1);
 
     var userSchema = new mongoose.Schema({});
-    userSchema.statics = { routeOptions: {} };
+    userSchema.statics = {routeOptions: {}};
 
     var userModel = mongoose.model("user", userSchema);
     //</editor-fold>
@@ -485,13 +493,18 @@ test('rest-helper-factory.generateListEndpoint', function(t) {
 
   t.test('rest-helper-factory.generateListEndpoint calls queryHelper.getQueryableFields, getReadableFields, and getSortableFields', sinon.test(function (t) {
     //<editor-fold desc="Arrange">
-    var server = this.stub({route: function(){}});
+    var server = this.stub({
+      route: function () {
+      }
+    });
 
-    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(),server));
+    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(), server));
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+      return Joi.any()
+    });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
       './handler-helper-factory': handlerHelperStubWrapper,
       './query-helper': queryHelperStub,
@@ -500,7 +513,8 @@ test('rest-helper-factory.generateListEndpoint', function(t) {
 
     t.plan(3);
 
-    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    var userSchema = new mongoose.Schema({});
+    userSchema.statics = {routeOptions: {}};
 
     var userModel = mongoose.model("user", userSchema);
     //</editor-fold>
@@ -524,13 +538,18 @@ test('rest-helper-factory.generateListEndpoint', function(t) {
 
   t.test('rest-helper-factory.generateListEndpoint calls joiMongooseHelper.generateJoiReadModel', sinon.test(function (t) {
     //<editor-fold desc="Arrange">
-    var server = this.stub({route: function(){}});
+    var server = this.stub({
+      route: function () {
+      }
+    });
 
-    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(),server));
+    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(), server));
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+      return Joi.any()
+    });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
       './handler-helper-factory': handlerHelperStubWrapper,
       './query-helper': queryHelperStub,
@@ -539,7 +558,8 @@ test('rest-helper-factory.generateListEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    var userSchema = new mongoose.Schema({});
+    userSchema.statics = {routeOptions: {}};
 
     var userModel = mongoose.model("user", userSchema);
     //</editor-fold>
@@ -561,13 +581,18 @@ test('rest-helper-factory.generateListEndpoint', function(t) {
 
   t.test('rest-helper-factory.generateListEndpoint calls server.route', sinon.test(function (t) {
     //<editor-fold desc="Arrange">
-    var server = this.stub({route: function(){}});
+    var server = this.stub({
+      route: function () {
+      }
+    });
 
-    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(),server));
+    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(), server));
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+      return Joi.any()
+    });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
       './handler-helper-factory': handlerHelperStubWrapper,
       './query-helper': queryHelperStub,
@@ -576,7 +601,8 @@ test('rest-helper-factory.generateListEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    var userSchema = new mongoose.Schema({});
+    userSchema.statics = {routeOptions: {}};
 
     var userModel = mongoose.model("user", userSchema);
     //</editor-fold>
@@ -598,13 +624,18 @@ test('rest-helper-factory.generateListEndpoint', function(t) {
 
   t.test('rest-helper-factory.generateListEndpoint calls server.route with "GET" method', sinon.test(function (t) {
     //<editor-fold desc="Arrange">
-    var server = this.stub({route: function(){}});
+    var server = this.stub({
+      route: function () {
+      }
+    });
 
-    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(),server));
+    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(), server));
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+      return Joi.any()
+    });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
       './handler-helper-factory': handlerHelperStubWrapper,
       './query-helper': queryHelperStub,
@@ -613,7 +644,8 @@ test('rest-helper-factory.generateListEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    var userSchema = new mongoose.Schema({});
+    userSchema.statics = {routeOptions: {}};
 
     var userModel = mongoose.model("user", userSchema);
     //</editor-fold>
@@ -637,13 +669,18 @@ test('rest-helper-factory.generateListEndpoint', function(t) {
 
   t.test('rest-helper-factory.generateListEndpoint calls server.route with correct resourceAliasForRoute', sinon.test(function (t) {
     //<editor-fold desc="Arrange">
-    var server = this.stub({route: function(){}});
+    var server = this.stub({
+      route: function () {
+      }
+    });
 
-    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(),server));
+    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(), server));
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+      return Joi.any()
+    });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
       './handler-helper-factory': handlerHelperStubWrapper,
       './query-helper': queryHelperStub,
@@ -652,7 +689,8 @@ test('rest-helper-factory.generateListEndpoint', function(t) {
 
     t.plan(2);
 
-    var userSchema1 = new mongoose.Schema({});     userSchema1.statics = { routeOptions: {} };
+    var userSchema1 = new mongoose.Schema({});
+    userSchema1.statics = {routeOptions: {}};
 
     var userSchema2 = new mongoose.Schema({});
     userSchema2.statics = {
@@ -689,14 +727,21 @@ test('rest-helper-factory.generateListEndpoint', function(t) {
 
   t.test('rest-helper-factory.generateListEndpoint calls server.route with correct handler', sinon.test(function (t) {
     //<editor-fold desc="Arrange">
-    var server = this.stub({route: function(){}});
+    var server = this.stub({
+      route: function () {
+      }
+    });
 
-    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(),server));
-    handlerHelperStub.generateListHandler = this.spy(function(){return "HANDLER"})
+    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(), server));
+    handlerHelperStub.generateListHandler = this.spy(function () {
+      return "HANDLER"
+    })
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+      return Joi.any()
+    });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
       './handler-helper-factory': handlerHelperStubWrapper,
       './query-helper': queryHelperStub,
@@ -705,7 +750,8 @@ test('rest-helper-factory.generateListEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    var userSchema = new mongoose.Schema({});
+    userSchema.statics = {routeOptions: {}};
 
     var userModel = mongoose.model("user", userSchema);
     //</editor-fold>
@@ -729,14 +775,19 @@ test('rest-helper-factory.generateListEndpoint', function(t) {
 
   t.test('rest-helper-factory.generateListEndpoint calls server.route using authentication defined by config', sinon.test(function (t) {
     //<editor-fold desc="Arrange">
-    var server = this.stub({route: function(){}});
+    var server = this.stub({
+      route: function () {
+      }
+    });
 
-    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(),server));
+    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(), server));
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});
-    var config = { authStrategy: "TEST_AUTH" };
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+      return Joi.any()
+    });
+    var config = {authStrategy: "TEST_AUTH"};
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
       './handler-helper-factory': handlerHelperStubWrapper,
       './query-helper': queryHelperStub,
@@ -746,7 +797,8 @@ test('rest-helper-factory.generateListEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    var userSchema = new mongoose.Schema({});
+    userSchema.statics = {routeOptions: {}};
 
     var userModel = mongoose.model("user", userSchema);
     //</editor-fold>
@@ -758,7 +810,7 @@ test('rest-helper-factory.generateListEndpoint', function(t) {
     //<editor-fold desc="Assert">
     var serverObject = server.route.args[0][0];
     // Log.debug(JSON.stringify(serverObject));
-    t.deepEqual(serverObject.config.auth, { strategy: config.authStrategy }, "config auth used");
+    t.deepEqual(serverObject.config.auth, {strategy: config.authStrategy}, "config auth used");
     //</editor-fold>
 
 
@@ -770,13 +822,18 @@ test('rest-helper-factory.generateListEndpoint', function(t) {
 
   t.test('rest-helper-factory.generateListEndpoint calls server.route with correct collectionName', sinon.test(function (t) {
     //<editor-fold desc="Arrange">
-    var server = this.stub({route: function(){}});
+    var server = this.stub({
+      route: function () {
+      }
+    });
 
-    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(),server));
+    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(), server));
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+      return Joi.any()
+    });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
       './handler-helper-factory': handlerHelperStubWrapper,
       './query-helper': queryHelperStub,
@@ -785,7 +842,8 @@ test('rest-helper-factory.generateListEndpoint', function(t) {
 
     t.plan(4);
 
-    var userSchema1 = new mongoose.Schema({});     userSchema1.statics = { routeOptions: {} };
+    var userSchema1 = new mongoose.Schema({});
+    userSchema1.statics = {routeOptions: {}};
 
     var userSchema2 = new mongoose.Schema({});
     userSchema2.statics = {
@@ -823,13 +881,18 @@ test('rest-helper-factory.generateListEndpoint', function(t) {
 
   t.test('rest-helper-factory.generateListEndpoint calls server.route using cors', sinon.test(function (t) {
     //<editor-fold desc="Arrange">
-    var server = this.stub({route: function(){}});
+    var server = this.stub({
+      route: function () {
+      }
+    });
 
-    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(),server));
+    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(), server));
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+      return Joi.any()
+    });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
       './handler-helper-factory': handlerHelperStubWrapper,
       './query-helper': queryHelperStub,
@@ -838,7 +901,8 @@ test('rest-helper-factory.generateListEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    var userSchema = new mongoose.Schema({});
+    userSchema.statics = {routeOptions: {}};
 
     var userModel = mongoose.model("user", userSchema);
     //</editor-fold>
@@ -866,19 +930,32 @@ test('rest-helper-factory.generateListEndpoint', function(t) {
 
   t.test('rest-helper-factory.generateListEndpoint calls server.route using correct queryValidation', sinon.test(function (t) {
     //<editor-fold desc="Arrange">
-    var server = this.stub({route: function(){}});
+    var server = this.stub({
+      route: function () {
+      }
+    });
 
-    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(),server));
+    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(), server));
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    queryHelperStub.getQueryableFields = this.spy(function(){return ["test"]});
+    queryHelperStub.getQueryableFields = this.spy(function () {
+      return ["test"]
+    });
     var readableFields = ['readable'];
     var sortableFields = ['sortable'];
-    queryHelperStub.getReadableFields = this.spy(function(){return readableFields});
-    queryHelperStub.getSortableFields = this.spy(function(){return sortableFields});
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});
-    joiMongooseHelperStub.generateJoiModelFromFieldType = this.spy(function(){return Joi.string()});
+    queryHelperStub.getReadableFields = this.spy(function () {
+      return readableFields
+    });
+    queryHelperStub.getSortableFields = this.spy(function () {
+      return sortableFields
+    });
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+      return Joi.any()
+    });
+    joiMongooseHelperStub.generateJoiModelFromFieldType = this.spy(function () {
+      return Joi.string()
+    });
     var joiStub = require('joi');
     // joiStub.number = function () {
     //   return {
@@ -913,14 +990,14 @@ test('rest-helper-factory.generateListEndpoint', function(t) {
         type: Types.String
       }
     });
-    userSchema.statics = { routeOptions: {} };
+    userSchema.statics = {routeOptions: {}};
 
     var userModel = mongoose.model("user", userSchema);
 
     var queryValidation = {};
 
     queryValidation.$select = Joi.alternatives().try(Joi.array().items(Joi.string().valid(readableFields))
-        .description('A list of basic fields to be included in each resource. Valid values include: ' + readableFields.toString().replace(/,/g,', ')), Joi.string().valid(readableFields));
+        .description('A list of basic fields to be included in each resource. Valid values include: ' + readableFields.toString().replace(/,/g, ', ')), Joi.string().valid(readableFields));
     // queryValidation.$term = Joi.string().optional()
     //   .description('A generic search parameter. This can be refined using the `searchFields` parameter. Valid values include: ' + queryableFields);
     // queryValidation.$searchFields = Joi.string().optional()//TODO: make enumerated array.
@@ -928,9 +1005,9 @@ test('rest-helper-factory.generateListEndpoint', function(t) {
     queryValidation.$sort = Joi.alternatives().try(Joi.array().items(Joi.string().valid(sortableFields))
         .description('A set of fields to sort by. Including field name indicates it should be sorted ascending, while prepending ' +
             '\'-\' indicates descending. The default sort direction is \'ascending\' (lowest value to highest value). Listing multiple' +
-            'fields prioritizes the sort starting with the first field listed. Valid values include: ' + sortableFields.toString().replace(/,/g,', ')), Joi.string().valid(sortableFields));
+            'fields prioritizes the sort starting with the first field listed. Valid values include: ' + sortableFields.toString().replace(/,/g, ', ')), Joi.string().valid(sortableFields));
     queryValidation.$where = Joi.any().optional()
-    .description('An optional field for raw mongoose queries.');
+        .description('An optional field for raw mongoose queries.');
 
     queryValidation["test"] = Joi.alternatives().try(Joi.array().items(Joi.string())
         .description('Match values for the ' + "test" + ' property.'), Joi.string());
@@ -961,18 +1038,29 @@ test('rest-helper-factory.generateListEndpoint', function(t) {
 
   t.test('rest-helper-factory.generateListEndpoint calls server.route with $embed validation if associations exist', sinon.test(function (t) {
     //<editor-fold desc="Arrange">
-    var server = this.stub({route: function(){}});
+    var server = this.stub({
+      route: function () {
+      }
+    });
 
-    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(),server));
+    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(), server));
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    queryHelperStub.getQueryableFields = this.spy(function(){return ["test"]});
+    queryHelperStub.getQueryableFields = this.spy(function () {
+      return ["test"]
+    });
     var readableFields = ['readable'];
     var sortableFields = ['sortable'];
-    queryHelperStub.getReadableFields = this.spy(function(){return readableFields});
-    queryHelperStub.getSortableFields = this.spy(function(){return sortableFields});
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});
+    queryHelperStub.getReadableFields = this.spy(function () {
+      return readableFields
+    });
+    queryHelperStub.getSortableFields = this.spy(function () {
+      return sortableFields
+    });
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+      return Joi.any()
+    });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
       './handler-helper-factory': handlerHelperStubWrapper,
       './query-helper': queryHelperStub,
@@ -987,7 +1075,7 @@ test('rest-helper-factory.generateListEndpoint', function(t) {
         type: Types.String
       }
     });
-    userSchema1.statics = { routeOptions: {} };
+    userSchema1.statics = {routeOptions: {}};
 
     var userSchema2 = new mongoose.Schema({
       test: {
@@ -1007,7 +1095,7 @@ test('rest-helper-factory.generateListEndpoint', function(t) {
 
     var queryValidation = {};
     queryValidation.$embed = Joi.alternatives().try(Joi.array().items(Joi.string())
-        .description('A set of complex object properties to populate. Valid first level values include ' + Object.keys({test:{}}).toString().replace(/,/g,', ')), Joi.string());
+        .description('A set of complex object properties to populate. Valid first level values include ' + Object.keys({test: {}}).toString().replace(/,/g, ', ')), Joi.string());
     //</editor-fold>
 
     //<editor-fold desc="Act">
@@ -1034,14 +1122,19 @@ test('rest-helper-factory.generateListEndpoint', function(t) {
 
   t.test('rest-helper-factory.generateListEndpoint calls server.route using correct header validation', sinon.test(function (t) {
     //<editor-fold desc="Arrange">
-    var server = this.stub({route: function(){}});
+    var server = this.stub({
+      route: function () {
+      }
+    });
 
-    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(),server));
+    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(), server));
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});
-    var config = { authStrategy: "TEST_AUTH" };
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+      return Joi.any()
+    });
+    var config = {authStrategy: "TEST_AUTH"};
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
       './handler-helper-factory': handlerHelperStubWrapper,
       './query-helper': queryHelperStub,
@@ -1056,7 +1149,7 @@ test('rest-helper-factory.generateListEndpoint', function(t) {
         type: Types.String
       }
     });
-    userSchema.statics = { routeOptions: {} };
+    userSchema.statics = {routeOptions: {}};
 
     var userModel = mongoose.model("user", userSchema);
 
@@ -1084,13 +1177,18 @@ test('rest-helper-factory.generateListEndpoint', function(t) {
 
   t.test('rest-helper-factory.generateListEndpoint calls server.route using hapi-swagger plugin', sinon.test(function (t) {
     //<editor-fold desc="Arrange">
-    var server = this.stub({route: function(){}});
+    var server = this.stub({
+      route: function () {
+      }
+    });
 
-    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(),server));
+    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(), server));
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+      return Joi.any()
+    });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
       './handler-helper-factory': handlerHelperStubWrapper,
       './query-helper': queryHelperStub,
@@ -1104,7 +1202,7 @@ test('rest-helper-factory.generateListEndpoint', function(t) {
         type: Types.String
       }
     });
-    userSchema.statics = { routeOptions: {} };
+    userSchema.statics = {routeOptions: {}};
 
     var userModel = mongoose.model("user", userSchema);
     //</editor-fold>
@@ -1128,14 +1226,19 @@ test('rest-helper-factory.generateListEndpoint', function(t) {
 
   t.test('rest-helper-factory.generateListEndpoint calls server.route with correct response schema validation', sinon.test(function (t) {
     //<editor-fold desc="Arrange">
-    var server = this.stub({route: function(){}});
+    var server = this.stub({
+      route: function () {
+      }
+    });
 
-    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(),server));
+    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(), server));
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
     var readModel = Joi.any().valid(["test"]);
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return readModel});
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+      return readModel
+    });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
       './handler-helper-factory': handlerHelperStubWrapper,
       './query-helper': queryHelperStub,
@@ -1149,11 +1252,15 @@ test('rest-helper-factory.generateListEndpoint', function(t) {
         type: Types.String
       }
     });
-    userSchema.statics = { routeOptions: {} };
+    userSchema.statics = {routeOptions: {}};
 
     var userModel = mongoose.model("user", userSchema);
 
-    var responseSchema = Joi.alternatives().try(Joi.object({ docs: Joi.array().items(readModel), pages: Joi.any(), items: Joi.any() }), Joi.number());
+    var responseSchema = Joi.alternatives().try(Joi.object({
+      docs: Joi.array().items(readModel),
+      pages: Joi.any(),
+      items: Joi.any()
+    }), Joi.number());
     //</editor-fold>
 
     //<editor-fold desc="Act">
@@ -1176,20 +1283,25 @@ test('rest-helper-factory.generateListEndpoint', function(t) {
   t.end();
 });
 
-test('rest-helper-factory.generateFindEndpoint', function(t) {
+test('rest-helper-factory.generateFindEndpoint', function (t) {
   var server = sinon.spy();
   var restHelperFactory = require('../utilities/rest-helper-factory')(Log, mongoose, server);
   testHelper.testModelParameter(t, restHelperFactory.generateFindEndpoint, "restHelperFactory.generateFindEndpoint", ["server", "model", "options", "Log"], Log);
 
   t.test('rest-helper-factory.generateFindEndpoint calls handlerHelper.generateFindHandler', sinon.test(function (t) {
     //<editor-fold desc="Arrange">
-    var server = this.stub({route: function(){}});
+    var server = this.stub({
+      route: function () {
+      }
+    });
 
-    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(),server));
+    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(), server));
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+      return Joi.any()
+    });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
       './handler-helper-factory': handlerHelperStubWrapper,
       './query-helper': queryHelperStub,
@@ -1198,7 +1310,8 @@ test('rest-helper-factory.generateFindEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    var userSchema = new mongoose.Schema({});
+    userSchema.statics = {routeOptions: {}};
 
     var userModel = mongoose.model("user", userSchema);
     //</editor-fold>
@@ -1220,13 +1333,18 @@ test('rest-helper-factory.generateFindEndpoint', function(t) {
 
   t.test('rest-helper-factory.generateFindEndpoint calls queryHelper.getReadableFields', sinon.test(function (t) {
     //<editor-fold desc="Arrange">
-    var server = this.stub({route: function(){}});
+    var server = this.stub({
+      route: function () {
+      }
+    });
 
-    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(),server));
+    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(), server));
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+      return Joi.any()
+    });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
       './handler-helper-factory': handlerHelperStubWrapper,
       './query-helper': queryHelperStub,
@@ -1235,7 +1353,8 @@ test('rest-helper-factory.generateFindEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    var userSchema = new mongoose.Schema({});
+    userSchema.statics = {routeOptions: {}};
 
     var userModel = mongoose.model("user", userSchema);
     //</editor-fold>
@@ -1257,13 +1376,18 @@ test('rest-helper-factory.generateFindEndpoint', function(t) {
 
   t.test('rest-helper-factory.generateFindEndpoint calls joiMongooseHelper.generateJoiReadModel', sinon.test(function (t) {
     //<editor-fold desc="Arrange">
-    var server = this.stub({route: function(){}});
+    var server = this.stub({
+      route: function () {
+      }
+    });
 
-    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(),server));
+    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(), server));
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+      return Joi.any()
+    });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
       './handler-helper-factory': handlerHelperStubWrapper,
       './query-helper': queryHelperStub,
@@ -1272,7 +1396,8 @@ test('rest-helper-factory.generateFindEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    var userSchema = new mongoose.Schema({});
+    userSchema.statics = {routeOptions: {}};
 
     var userModel = mongoose.model("user", userSchema);
     //</editor-fold>
@@ -1294,13 +1419,18 @@ test('rest-helper-factory.generateFindEndpoint', function(t) {
 
   t.test('rest-helper-factory.generateFindEndpoint calls server.route', sinon.test(function (t) {
     //<editor-fold desc="Arrange">
-    var server = this.stub({route: function(){}});
+    var server = this.stub({
+      route: function () {
+      }
+    });
 
-    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(),server));
+    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(), server));
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+      return Joi.any()
+    });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
       './handler-helper-factory': handlerHelperStubWrapper,
       './query-helper': queryHelperStub,
@@ -1309,7 +1439,8 @@ test('rest-helper-factory.generateFindEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    var userSchema = new mongoose.Schema({});
+    userSchema.statics = {routeOptions: {}};
 
     var userModel = mongoose.model("user", userSchema);
     //</editor-fold>
@@ -1331,13 +1462,18 @@ test('rest-helper-factory.generateFindEndpoint', function(t) {
 
   t.test('rest-helper-factory.generateFindEndpoint calls server.route with "GET" method', sinon.test(function (t) {
     //<editor-fold desc="Arrange">
-    var server = this.stub({route: function(){}});
+    var server = this.stub({
+      route: function () {
+      }
+    });
 
-    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(),server));
+    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(), server));
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+      return Joi.any()
+    });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
       './handler-helper-factory': handlerHelperStubWrapper,
       './query-helper': queryHelperStub,
@@ -1346,7 +1482,8 @@ test('rest-helper-factory.generateFindEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    var userSchema = new mongoose.Schema({});
+    userSchema.statics = {routeOptions: {}};
 
     var userModel = mongoose.model("user", userSchema);
     //</editor-fold>
@@ -1370,13 +1507,18 @@ test('rest-helper-factory.generateFindEndpoint', function(t) {
 
   t.test('rest-helper-factory.generateFindEndpoint calls server.route with correct resourceAliasForRoute', sinon.test(function (t) {
     //<editor-fold desc="Arrange">
-    var server = this.stub({route: function(){}});
+    var server = this.stub({
+      route: function () {
+      }
+    });
 
-    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(),server));
+    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(), server));
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+      return Joi.any()
+    });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
       './handler-helper-factory': handlerHelperStubWrapper,
       './query-helper': queryHelperStub,
@@ -1385,7 +1527,8 @@ test('rest-helper-factory.generateFindEndpoint', function(t) {
 
     t.plan(2);
 
-    var userSchema1 = new mongoose.Schema({});     userSchema1.statics = { routeOptions: {} };
+    var userSchema1 = new mongoose.Schema({});
+    userSchema1.statics = {routeOptions: {}};
 
     var userSchema2 = new mongoose.Schema({});
     userSchema2.statics = {
@@ -1422,14 +1565,21 @@ test('rest-helper-factory.generateFindEndpoint', function(t) {
 
   t.test('rest-helper-factory.generateFindEndpoint calls server.route with correct handler', sinon.test(function (t) {
     //<editor-fold desc="Arrange">
-    var server = this.stub({route: function(){}});
+    var server = this.stub({
+      route: function () {
+      }
+    });
 
-    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(),server));
-    handlerHelperStub.generateFindHandler = this.spy(function(){return "HANDLER"})
+    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(), server));
+    handlerHelperStub.generateFindHandler = this.spy(function () {
+      return "HANDLER"
+    })
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+      return Joi.any()
+    });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
       './handler-helper-factory': handlerHelperStubWrapper,
       './query-helper': queryHelperStub,
@@ -1438,7 +1588,8 @@ test('rest-helper-factory.generateFindEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    var userSchema = new mongoose.Schema({});
+    userSchema.statics = {routeOptions: {}};
 
     var userModel = mongoose.model("user", userSchema);
     //</editor-fold>
@@ -1462,14 +1613,19 @@ test('rest-helper-factory.generateFindEndpoint', function(t) {
 
   t.test('rest-helper-factory.generateFindEndpoint calls server.route using authentication defined by config', sinon.test(function (t) {
     //<editor-fold desc="Arrange">
-    var server = this.stub({route: function(){}});
+    var server = this.stub({
+      route: function () {
+      }
+    });
 
-    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(),server));
+    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(), server));
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});
-    var config = { authStrategy: "TEST_AUTH" };
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+      return Joi.any()
+    });
+    var config = {authStrategy: "TEST_AUTH"};
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
       './handler-helper-factory': handlerHelperStubWrapper,
       './query-helper': queryHelperStub,
@@ -1479,7 +1635,8 @@ test('rest-helper-factory.generateFindEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    var userSchema = new mongoose.Schema({});
+    userSchema.statics = {routeOptions: {}};
 
     var userModel = mongoose.model("user", userSchema);
     //</editor-fold>
@@ -1491,7 +1648,7 @@ test('rest-helper-factory.generateFindEndpoint', function(t) {
     //<editor-fold desc="Assert">
     var serverObject = server.route.args[0][0];
     // Log.debug(JSON.stringify(serverObject));
-    t.deepEqual(serverObject.config.auth, { strategy: config.authStrategy }, "config auth used");
+    t.deepEqual(serverObject.config.auth, {strategy: config.authStrategy}, "config auth used");
     //</editor-fold>
 
 
@@ -1503,13 +1660,18 @@ test('rest-helper-factory.generateFindEndpoint', function(t) {
 
   t.test('rest-helper-factory.generateFindEndpoint calls server.route with correct collectionName', sinon.test(function (t) {
     //<editor-fold desc="Arrange">
-    var server = this.stub({route: function(){}});
+    var server = this.stub({
+      route: function () {
+      }
+    });
 
-    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(),server));
+    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(), server));
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+      return Joi.any()
+    });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
       './handler-helper-factory': handlerHelperStubWrapper,
       './query-helper': queryHelperStub,
@@ -1518,7 +1680,8 @@ test('rest-helper-factory.generateFindEndpoint', function(t) {
 
     t.plan(4);
 
-    var userSchema1 = new mongoose.Schema({});     userSchema1.statics = { routeOptions: {} };
+    var userSchema1 = new mongoose.Schema({});
+    userSchema1.statics = {routeOptions: {}};
 
     var userSchema2 = new mongoose.Schema({});
     userSchema2.statics = {
@@ -1556,13 +1719,18 @@ test('rest-helper-factory.generateFindEndpoint', function(t) {
 
   t.test('rest-helper-factory.generateFindEndpoint calls server.route using cors', sinon.test(function (t) {
     //<editor-fold desc="Arrange">
-    var server = this.stub({route: function(){}});
+    var server = this.stub({
+      route: function () {
+      }
+    });
 
-    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(),server));
+    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(), server));
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+      return Joi.any()
+    });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
       './handler-helper-factory': handlerHelperStubWrapper,
       './query-helper': queryHelperStub,
@@ -1571,7 +1739,8 @@ test('rest-helper-factory.generateFindEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    var userSchema = new mongoose.Schema({});
+    userSchema.statics = {routeOptions: {}};
 
     var userModel = mongoose.model("user", userSchema);
     //</editor-fold>
@@ -1599,18 +1768,29 @@ test('rest-helper-factory.generateFindEndpoint', function(t) {
 
   t.test('rest-helper-factory.generateFindEndpoint calls server.route using correct queryValidation', sinon.test(function (t) {
     //<editor-fold desc="Arrange">
-    var server = this.stub({route: function(){}});
+    var server = this.stub({
+      route: function () {
+      }
+    });
 
-    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(),server));
+    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(), server));
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    queryHelperStub.getQueryableFields = this.spy(function(){return ["test"]});
+    queryHelperStub.getQueryableFields = this.spy(function () {
+      return ["test"]
+    });
     var readableFields = ['readable'];
     var sortableFields = ['sortable'];
-    queryHelperStub.getReadableFields = this.spy(function(){return readableFields});
-    queryHelperStub.getSortableFields = this.spy(function(){return sortableFields});
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});
+    queryHelperStub.getReadableFields = this.spy(function () {
+      return readableFields
+    });
+    queryHelperStub.getSortableFields = this.spy(function () {
+      return sortableFields
+    });
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+      return Joi.any()
+    });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
       './handler-helper-factory': handlerHelperStubWrapper,
       './query-helper': queryHelperStub,
@@ -1619,14 +1799,15 @@ test('rest-helper-factory.generateFindEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    var userSchema = new mongoose.Schema({});
+    userSchema.statics = {routeOptions: {}};
 
     var userModel = mongoose.model("user", userSchema);
 
     var queryValidation = {};
 
     queryValidation.$select = Joi.alternatives().try(Joi.array().items(Joi.string().valid(readableFields))
-        .description('A list of basic fields to be included in each resource. Valid values include: ' + readableFields.toString().replace(/,/g,', ')), Joi.string().valid(readableFields));
+        .description('A list of basic fields to be included in each resource. Valid values include: ' + readableFields.toString().replace(/,/g, ', ')), Joi.string().valid(readableFields));
 
     //</editor-fold>
 
@@ -1648,18 +1829,29 @@ test('rest-helper-factory.generateFindEndpoint', function(t) {
 
   t.test('rest-helper-factory.generateFindEndpoint calls server.route with $embed validation if associations exist', sinon.test(function (t) {
     //<editor-fold desc="Arrange">
-    var server = this.stub({route: function(){}});
+    var server = this.stub({
+      route: function () {
+      }
+    });
 
-    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(),server));
+    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(), server));
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    queryHelperStub.getQueryableFields = this.spy(function(){return ["test"]});
+    queryHelperStub.getQueryableFields = this.spy(function () {
+      return ["test"]
+    });
     var readableFields = ['readable'];
     var sortableFields = ['sortable'];
-    queryHelperStub.getReadableFields = this.spy(function(){return readableFields});
-    queryHelperStub.getSortableFields = this.spy(function(){return sortableFields});
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});
+    queryHelperStub.getReadableFields = this.spy(function () {
+      return readableFields
+    });
+    queryHelperStub.getSortableFields = this.spy(function () {
+      return sortableFields
+    });
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+      return Joi.any()
+    });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
       './handler-helper-factory': handlerHelperStubWrapper,
       './query-helper': queryHelperStub,
@@ -1668,7 +1860,8 @@ test('rest-helper-factory.generateFindEndpoint', function(t) {
 
     t.plan(2);
 
-    var userSchema1 = new mongoose.Schema({});     userSchema1.statics = { routeOptions: {} };
+    var userSchema1 = new mongoose.Schema({});
+    userSchema1.statics = {routeOptions: {}};
 
     var userSchema2 = new mongoose.Schema({});
     userSchema2.statics = {
@@ -1684,7 +1877,7 @@ test('rest-helper-factory.generateFindEndpoint', function(t) {
 
     var queryValidation = {};
     queryValidation.$embed = Joi.alternatives().try(Joi.array().items(Joi.string())
-        .description('A set of complex object properties to populate. Valid first level values include ' + Object.keys({test:{}}).toString().replace(/,/g,', ')), Joi.string());
+        .description('A set of complex object properties to populate. Valid first level values include ' + Object.keys({test: {}}).toString().replace(/,/g, ', ')), Joi.string());
     //</editor-fold>
 
     //<editor-fold desc="Act">
@@ -1711,15 +1904,20 @@ test('rest-helper-factory.generateFindEndpoint', function(t) {
 
   t.test('rest-helper-factory.generateFindEndpoint calls server.route using correct params validation', sinon.test(function (t) {
     //<editor-fold desc="Arrange">
-    var server = this.stub({route: function(){}});
+    var server = this.stub({
+      route: function () {
+      }
+    });
 
-    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(),server));
+    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(), server));
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+      return Joi.any()
+    });
     var joiStub = require('joi');
-    var joiObjectIdStub = function() {
+    var joiObjectIdStub = function () {
       return function () {
         return {
           required: function () {
@@ -1738,13 +1936,14 @@ test('rest-helper-factory.generateFindEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    var userSchema = new mongoose.Schema({});
+    userSchema.statics = {routeOptions: {}};
 
     var userModel = mongoose.model("user", userSchema);
 
-    var params =  {
-        _id: "TEST"
-      };
+    var params = {
+      _id: "TEST"
+    };
     //</editor-fold>
 
     //<editor-fold desc="Act">
@@ -1766,14 +1965,19 @@ test('rest-helper-factory.generateFindEndpoint', function(t) {
 
   t.test('rest-helper-factory.generateFindEndpoint calls server.route using correct header validation', sinon.test(function (t) {
     //<editor-fold desc="Arrange">
-    var server = this.stub({route: function(){}});
+    var server = this.stub({
+      route: function () {
+      }
+    });
 
-    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(),server));
+    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(), server));
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});
-    var config = { authStrategy: "TEST_AUTH" };
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+      return Joi.any()
+    });
+    var config = {authStrategy: "TEST_AUTH"};
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
       './handler-helper-factory': handlerHelperStubWrapper,
       './query-helper': queryHelperStub,
@@ -1783,7 +1987,8 @@ test('rest-helper-factory.generateFindEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    var userSchema = new mongoose.Schema({});
+    userSchema.statics = {routeOptions: {}};
 
     var userModel = mongoose.model("user", userSchema);
 
@@ -1811,13 +2016,18 @@ test('rest-helper-factory.generateFindEndpoint', function(t) {
 
   t.test('rest-helper-factory.generateFindEndpoint calls server.route using hapi-swagger plugin', sinon.test(function (t) {
     //<editor-fold desc="Arrange">
-    var server = this.stub({route: function(){}});
+    var server = this.stub({
+      route: function () {
+      }
+    });
 
-    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(),server));
+    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(), server));
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+      return Joi.any()
+    });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
       './handler-helper-factory': handlerHelperStubWrapper,
       './query-helper': queryHelperStub,
@@ -1826,7 +2036,8 @@ test('rest-helper-factory.generateFindEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    var userSchema = new mongoose.Schema({});
+    userSchema.statics = {routeOptions: {}};
 
     var userModel = mongoose.model("user", userSchema);
     //</editor-fold>
@@ -1850,14 +2061,19 @@ test('rest-helper-factory.generateFindEndpoint', function(t) {
 
   t.test('rest-helper-factory.generateFindEndpoint calls server.route with correct response schema validation', sinon.test(function (t) {
     //<editor-fold desc="Arrange">
-    var server = this.stub({route: function(){}});
+    var server = this.stub({
+      route: function () {
+      }
+    });
 
-    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(),server));
+    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(), server));
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
     var readModel = Joi.any().valid(["test"]);
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return readModel});
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+      return readModel
+    });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
       './handler-helper-factory': handlerHelperStubWrapper,
       './query-helper': queryHelperStub,
@@ -1866,7 +2082,8 @@ test('rest-helper-factory.generateFindEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    var userSchema = new mongoose.Schema({});
+    userSchema.statics = {routeOptions: {}};
 
     var userModel = mongoose.model("user", userSchema);
 
@@ -2495,20 +2712,25 @@ test('rest-helper-factory.generateFindEndpoint', function(t) {
 //   t.end();
 // });
 
-test('rest-helper-factory.generateDeleteOneEndpoint', function(t) {
+test('rest-helper-factory.generateDeleteOneEndpoint', function (t) {
   var server = sinon.spy();
   var restHelperFactory = require('../utilities/rest-helper-factory')(Log, mongoose, server);
   testHelper.testModelParameter(t, restHelperFactory.generateDeleteOneEndpoint, "restHelperFactory.generateDeleteOneEndpoint", ["server", "model", "options", "Log"], Log);
 
   t.test('rest-helper-factory.generateDeleteOneEndpoint calls handlerHelper.generateDeleteOneHandler', sinon.test(function (t) {
     //<editor-fold desc="Arrange">
-    var server = this.stub({route: function(){}});
+    var server = this.stub({
+      route: function () {
+      }
+    });
 
-    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(),server));
+    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(), server));
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+      return Joi.any()
+    });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
       './handler-helper-factory': handlerHelperStubWrapper,
       './query-helper': queryHelperStub,
@@ -2517,7 +2739,8 @@ test('rest-helper-factory.generateDeleteOneEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    var userSchema = new mongoose.Schema({});
+    userSchema.statics = {routeOptions: {}};
 
     var userModel = mongoose.model("user", userSchema);
     //</editor-fold>
@@ -2539,13 +2762,18 @@ test('rest-helper-factory.generateDeleteOneEndpoint', function(t) {
 
   t.test('rest-helper-factory.generateDeleteOneEndpoint calls server.route', sinon.test(function (t) {
     //<editor-fold desc="Arrange">
-    var server = this.stub({route: function(){}});
+    var server = this.stub({
+      route: function () {
+      }
+    });
 
-    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(),server));
+    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(), server));
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+      return Joi.any()
+    });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
       './handler-helper-factory': handlerHelperStubWrapper,
       './query-helper': queryHelperStub,
@@ -2554,7 +2782,8 @@ test('rest-helper-factory.generateDeleteOneEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    var userSchema = new mongoose.Schema({});
+    userSchema.statics = {routeOptions: {}};
 
     var userModel = mongoose.model("user", userSchema);
     //</editor-fold>
@@ -2576,13 +2805,18 @@ test('rest-helper-factory.generateDeleteOneEndpoint', function(t) {
 
   t.test('rest-helper-factory.generateDeleteOneEndpoint calls server.route with "DELETE" method', sinon.test(function (t) {
     //<editor-fold desc="Arrange">
-    var server = this.stub({route: function(){}});
+    var server = this.stub({
+      route: function () {
+      }
+    });
 
-    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(),server));
+    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(), server));
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+      return Joi.any()
+    });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
       './handler-helper-factory': handlerHelperStubWrapper,
       './query-helper': queryHelperStub,
@@ -2591,7 +2825,8 @@ test('rest-helper-factory.generateDeleteOneEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    var userSchema = new mongoose.Schema({});
+    userSchema.statics = {routeOptions: {}};
 
     var userModel = mongoose.model("user", userSchema);
     //</editor-fold>
@@ -2615,13 +2850,18 @@ test('rest-helper-factory.generateDeleteOneEndpoint', function(t) {
 
   t.test('rest-helper-factory.generateDeleteOneEndpoint calls server.route with correct resourceAliasForRoute', sinon.test(function (t) {
     //<editor-fold desc="Arrange">
-    var server = this.stub({route: function(){}});
+    var server = this.stub({
+      route: function () {
+      }
+    });
 
-    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(),server));
+    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(), server));
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+      return Joi.any()
+    });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
       './handler-helper-factory': handlerHelperStubWrapper,
       './query-helper': queryHelperStub,
@@ -2630,7 +2870,8 @@ test('rest-helper-factory.generateDeleteOneEndpoint', function(t) {
 
     t.plan(2);
 
-    var userSchema1 = new mongoose.Schema({});     userSchema1.statics = { routeOptions: {} };
+    var userSchema1 = new mongoose.Schema({});
+    userSchema1.statics = {routeOptions: {}};
 
     var userSchema2 = new mongoose.Schema({});
     userSchema2.statics = {
@@ -2667,14 +2908,21 @@ test('rest-helper-factory.generateDeleteOneEndpoint', function(t) {
 
   t.test('rest-helper-factory.generateDeleteOneEndpoint calls server.route with correct handler', sinon.test(function (t) {
     //<editor-fold desc="Arrange">
-    var server = this.stub({route: function(){}});
+    var server = this.stub({
+      route: function () {
+      }
+    });
 
-    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(),server));
-    handlerHelperStub.generateDeleteHandler = this.spy(function(){return "HANDLER"})
+    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(), server));
+    handlerHelperStub.generateDeleteHandler = this.spy(function () {
+      return "HANDLER"
+    })
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+      return Joi.any()
+    });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
       './handler-helper-factory': handlerHelperStubWrapper,
       './query-helper': queryHelperStub,
@@ -2683,7 +2931,8 @@ test('rest-helper-factory.generateDeleteOneEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    var userSchema = new mongoose.Schema({});
+    userSchema.statics = {routeOptions: {}};
 
     var userModel = mongoose.model("user", userSchema);
     //</editor-fold>
@@ -2707,14 +2956,19 @@ test('rest-helper-factory.generateDeleteOneEndpoint', function(t) {
 
   t.test('rest-helper-factory.generateDeleteOneEndpoint calls server.route using authentication defined by config', sinon.test(function (t) {
     //<editor-fold desc="Arrange">
-    var server = this.stub({route: function(){}});
+    var server = this.stub({
+      route: function () {
+      }
+    });
 
-    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(),server));
+    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(), server));
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});
-    var config = { authStrategy: "TEST_AUTH" };
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+      return Joi.any()
+    });
+    var config = {authStrategy: "TEST_AUTH"};
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
       './handler-helper-factory': handlerHelperStubWrapper,
       './query-helper': queryHelperStub,
@@ -2724,7 +2978,8 @@ test('rest-helper-factory.generateDeleteOneEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    var userSchema = new mongoose.Schema({});
+    userSchema.statics = {routeOptions: {}};
 
     var userModel = mongoose.model("user", userSchema);
     //</editor-fold>
@@ -2736,7 +2991,7 @@ test('rest-helper-factory.generateDeleteOneEndpoint', function(t) {
     //<editor-fold desc="Assert">
     var serverObject = server.route.args[0][0];
     // Log.debug(JSON.stringify(serverObject));
-    t.deepEqual(serverObject.config.auth, { strategy: config.authStrategy }, "config auth used");
+    t.deepEqual(serverObject.config.auth, {strategy: config.authStrategy}, "config auth used");
     //</editor-fold>
 
 
@@ -2748,13 +3003,18 @@ test('rest-helper-factory.generateDeleteOneEndpoint', function(t) {
 
   t.test('rest-helper-factory.generateDeleteOneEndpoint calls server.route with correct collectionName', sinon.test(function (t) {
     //<editor-fold desc="Arrange">
-    var server = this.stub({route: function(){}});
+    var server = this.stub({
+      route: function () {
+      }
+    });
 
-    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(),server));
+    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(), server));
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+      return Joi.any()
+    });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
       './handler-helper-factory': handlerHelperStubWrapper,
       './query-helper': queryHelperStub,
@@ -2763,7 +3023,8 @@ test('rest-helper-factory.generateDeleteOneEndpoint', function(t) {
 
     t.plan(4);
 
-    var userSchema1 = new mongoose.Schema({});     userSchema1.statics = { routeOptions: {} };
+    var userSchema1 = new mongoose.Schema({});
+    userSchema1.statics = {routeOptions: {}};
 
     var userSchema2 = new mongoose.Schema({});
     userSchema2.statics = {
@@ -2801,13 +3062,18 @@ test('rest-helper-factory.generateDeleteOneEndpoint', function(t) {
 
   t.test('rest-helper-factory.generateDeleteOneEndpoint calls server.route using cors', sinon.test(function (t) {
     //<editor-fold desc="Arrange">
-    var server = this.stub({route: function(){}});
+    var server = this.stub({
+      route: function () {
+      }
+    });
 
-    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(),server));
+    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(), server));
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+      return Joi.any()
+    });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
       './handler-helper-factory': handlerHelperStubWrapper,
       './query-helper': queryHelperStub,
@@ -2816,7 +3082,8 @@ test('rest-helper-factory.generateDeleteOneEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    var userSchema = new mongoose.Schema({});
+    userSchema.statics = {routeOptions: {}};
 
     var userModel = mongoose.model("user", userSchema);
     //</editor-fold>
@@ -2844,16 +3111,21 @@ test('rest-helper-factory.generateDeleteOneEndpoint', function(t) {
 
   t.test('rest-helper-factory.generateDeleteOneEndpoint calls server.route using correct params validation', sinon.test(function (t) {
     //<editor-fold desc="Arrange">
-    var server = this.stub({route: function(){}});
+    var server = this.stub({
+      route: function () {
+      }
+    });
 
-    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(),server));
+    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(), server));
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+      return Joi.any()
+    });
     var joiStub = require('joi');
 
-    var joiObjectIdStub = function() {
+    var joiObjectIdStub = function () {
       return function () {
         return {
           required: function () {
@@ -2872,11 +3144,12 @@ test('rest-helper-factory.generateDeleteOneEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    var userSchema = new mongoose.Schema({});
+    userSchema.statics = {routeOptions: {}};
 
     var userModel = mongoose.model("user", userSchema);
 
-    var params =  {
+    var params = {
       _id: "TEST"
     };
 
@@ -2904,14 +3177,19 @@ test('rest-helper-factory.generateDeleteOneEndpoint', function(t) {
 
   t.test('rest-helper-factory.generateDeleteOneEndpoint calls server.route using correct header validation', sinon.test(function (t) {
     //<editor-fold desc="Arrange">
-    var server = this.stub({route: function(){}});
+    var server = this.stub({
+      route: function () {
+      }
+    });
 
-    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(),server));
+    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(), server));
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});
-    var config = { authStrategy: "TEST_AUTH" };
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+      return Joi.any()
+    });
+    var config = {authStrategy: "TEST_AUTH"};
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
       './handler-helper-factory': handlerHelperStubWrapper,
       './query-helper': queryHelperStub,
@@ -2921,7 +3199,8 @@ test('rest-helper-factory.generateDeleteOneEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    var userSchema = new mongoose.Schema({});
+    userSchema.statics = {routeOptions: {}};
 
     var userModel = mongoose.model("user", userSchema);
 
@@ -2949,13 +3228,18 @@ test('rest-helper-factory.generateDeleteOneEndpoint', function(t) {
 
   t.test('rest-helper-factory.generateDeleteOneEndpoint calls server.route using hapi-swagger plugin', sinon.test(function (t) {
     //<editor-fold desc="Arrange">
-    var server = this.stub({route: function(){}});
+    var server = this.stub({
+      route: function () {
+      }
+    });
 
-    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(),server));
+    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(), server));
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+      return Joi.any()
+    });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
       './handler-helper-factory': handlerHelperStubWrapper,
       './query-helper': queryHelperStub,
@@ -2964,7 +3248,8 @@ test('rest-helper-factory.generateDeleteOneEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    var userSchema = new mongoose.Schema({});
+    userSchema.statics = {routeOptions: {}};
 
     var userModel = mongoose.model("user", userSchema);
     //</editor-fold>
@@ -2989,21 +3274,31 @@ test('rest-helper-factory.generateDeleteOneEndpoint', function(t) {
   t.end();
 });
 
-test('rest-helper-factory.generateUpdateEndpoint', function(t) {
+test('rest-helper-factory.generateUpdateEndpoint', function (t) {
   var server = sinon.spy();
   var restHelperFactory = require('../utilities/rest-helper-factory')(Log, mongoose, server);
   testHelper.testModelParameter(t, restHelperFactory.generateUpdateEndpoint, "restHelperFactory.generateUpdateEndpoint", ["server", "model", "options", "Log"], Log);
 
   t.test('rest-helper-factory.generateUpdateEndpoint calls handlerHelper.generateUpdateHandler', sinon.test(function (t) {
     //<editor-fold desc="Arrange">
-    var server = this.stub({route: function(){}});
+    var server = this.stub({
+      route: function () {
+      }
+    });
 
-    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(),server));
+    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(), server));
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-        var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});     joiMongooseHelperStub.generateJoiUpdateModel = this.spy(function(){return Joi.any()}); 
-    joiMongooseHelperStub.generateJoiUpdateModel = this.spy(function(){return Joi.any()});
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+      return Joi.any()
+    });
+    joiMongooseHelperStub.generateJoiUpdateModel = this.spy(function () {
+      return Joi.any()
+    });
+    joiMongooseHelperStub.generateJoiUpdateModel = this.spy(function () {
+      return Joi.any()
+    });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
       './handler-helper-factory': handlerHelperStubWrapper,
       './query-helper': queryHelperStub,
@@ -3012,7 +3307,8 @@ test('rest-helper-factory.generateUpdateEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    var userSchema = new mongoose.Schema({});
+    userSchema.statics = {routeOptions: {}};
 
     var userModel = mongoose.model("user", userSchema);
     //</editor-fold>
@@ -3032,15 +3328,23 @@ test('rest-helper-factory.generateUpdateEndpoint', function(t) {
     //</editor-fold>
   }));
 
-  t.test('rest-helper-factory.generateUpdateEndpoint calls joiMongooseHelper.generateJoiReadModel', sinon.test(function (t)  {
+  t.test('rest-helper-factory.generateUpdateEndpoint calls joiMongooseHelper.generateJoiReadModel', sinon.test(function (t) {
     //<editor-fold desc="Arrange">
-    var server = this.stub({route: function(){}});
+    var server = this.stub({
+      route: function () {
+      }
+    });
 
-    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(),server));
+    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(), server));
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-        var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});     joiMongooseHelperStub.generateJoiUpdateModel = this.spy(function(){return Joi.any()}); 
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+      return Joi.any()
+    });
+    joiMongooseHelperStub.generateJoiUpdateModel = this.spy(function () {
+      return Joi.any()
+    });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
       './handler-helper-factory': handlerHelperStubWrapper,
       './query-helper': queryHelperStub,
@@ -3049,7 +3353,8 @@ test('rest-helper-factory.generateUpdateEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    var userSchema = new mongoose.Schema({});
+    userSchema.statics = {routeOptions: {}};
 
     var userModel = mongoose.model("user", userSchema);
     //</editor-fold>
@@ -3069,15 +3374,23 @@ test('rest-helper-factory.generateUpdateEndpoint', function(t) {
     //</editor-fold>
   }));
 
-  t.test('rest-helper-factory.generateUpdateEndpoint calls joiMongooseHelper.generateJoiUpdateModel', sinon.test(function (t)  {
+  t.test('rest-helper-factory.generateUpdateEndpoint calls joiMongooseHelper.generateJoiUpdateModel', sinon.test(function (t) {
     //<editor-fold desc="Arrange">
-    var server = this.stub({route: function(){}});
+    var server = this.stub({
+      route: function () {
+      }
+    });
 
-    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(),server));
+    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(), server));
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-        var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});     joiMongooseHelperStub.generateJoiUpdateModel = this.spy(function(){return Joi.any()}); 
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+      return Joi.any()
+    });
+    joiMongooseHelperStub.generateJoiUpdateModel = this.spy(function () {
+      return Joi.any()
+    });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
       './handler-helper-factory': handlerHelperStubWrapper,
       './query-helper': queryHelperStub,
@@ -3086,7 +3399,8 @@ test('rest-helper-factory.generateUpdateEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    var userSchema = new mongoose.Schema({});
+    userSchema.statics = {routeOptions: {}};
 
     var userModel = mongoose.model("user", userSchema);
     //</editor-fold>
@@ -3108,13 +3422,21 @@ test('rest-helper-factory.generateUpdateEndpoint', function(t) {
 
   t.test('rest-helper-factory.generateUpdateEndpoint calls server.route', sinon.test(function (t) {
     //<editor-fold desc="Arrange">
-    var server = this.stub({route: function(){}});
+    var server = this.stub({
+      route: function () {
+      }
+    });
 
-    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(),server));
+    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(), server));
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-        var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});     joiMongooseHelperStub.generateJoiUpdateModel = this.spy(function(){return Joi.any()}); 
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+      return Joi.any()
+    });
+    joiMongooseHelperStub.generateJoiUpdateModel = this.spy(function () {
+      return Joi.any()
+    });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
       './handler-helper-factory': handlerHelperStubWrapper,
       './query-helper': queryHelperStub,
@@ -3123,7 +3445,8 @@ test('rest-helper-factory.generateUpdateEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    var userSchema = new mongoose.Schema({});
+    userSchema.statics = {routeOptions: {}};
 
     var userModel = mongoose.model("user", userSchema);
     //</editor-fold>
@@ -3145,13 +3468,21 @@ test('rest-helper-factory.generateUpdateEndpoint', function(t) {
 
   t.test('rest-helper-factory.generateUpdateEndpoint calls server.route with "PUT" method', sinon.test(function (t) {
     //<editor-fold desc="Arrange">
-    var server = this.stub({route: function(){}});
+    var server = this.stub({
+      route: function () {
+      }
+    });
 
-    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(),server));
+    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(), server));
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-        var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});     joiMongooseHelperStub.generateJoiUpdateModel = this.spy(function(){return Joi.any()}); 
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+      return Joi.any()
+    });
+    joiMongooseHelperStub.generateJoiUpdateModel = this.spy(function () {
+      return Joi.any()
+    });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
       './handler-helper-factory': handlerHelperStubWrapper,
       './query-helper': queryHelperStub,
@@ -3160,7 +3491,8 @@ test('rest-helper-factory.generateUpdateEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    var userSchema = new mongoose.Schema({});
+    userSchema.statics = {routeOptions: {}};
 
     var userModel = mongoose.model("user", userSchema);
     //</editor-fold>
@@ -3184,14 +3516,24 @@ test('rest-helper-factory.generateUpdateEndpoint', function(t) {
 
   t.test('rest-helper-factory.generateUpdateEndpoint calls server.route with correct resourceAliasForRoute', sinon.test(function (t) {
     //<editor-fold desc="Arrange">
-    var server = this.stub({route: function(){}});
+    var server = this.stub({
+      route: function () {
+      }
+    });
 
-    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(),server));
+    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(), server));
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-        var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});     joiMongooseHelperStub.generateJoiUpdateModel = this.spy(function(){return Joi.any()}); 
-    joiMongooseHelperStub.generateJoiUpdateModel =function(){return Joi.any()};
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+      return Joi.any()
+    });
+    joiMongooseHelperStub.generateJoiUpdateModel = this.spy(function () {
+      return Joi.any()
+    });
+    joiMongooseHelperStub.generateJoiUpdateModel = function () {
+      return Joi.any()
+    };
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
       './handler-helper-factory': handlerHelperStubWrapper,
       './query-helper': queryHelperStub,
@@ -3200,7 +3542,8 @@ test('rest-helper-factory.generateUpdateEndpoint', function(t) {
 
     t.plan(2);
 
-    var userSchema1 = new mongoose.Schema({});     userSchema1.statics = { routeOptions: {} };
+    var userSchema1 = new mongoose.Schema({});
+    userSchema1.statics = {routeOptions: {}};
 
     var userSchema2 = new mongoose.Schema({});
     userSchema2.statics = {
@@ -3237,14 +3580,24 @@ test('rest-helper-factory.generateUpdateEndpoint', function(t) {
 
   t.test('rest-helper-factory.generateUpdateEndpoint calls server.route with correct handler', sinon.test(function (t) {
     //<editor-fold desc="Arrange">
-    var server = this.stub({route: function(){}});
+    var server = this.stub({
+      route: function () {
+      }
+    });
 
-    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(),server));
-    handlerHelperStub.generateUpdateHandler = this.spy(function(){return "HANDLER"})
+    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(), server));
+    handlerHelperStub.generateUpdateHandler = this.spy(function () {
+      return "HANDLER"
+    })
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-        var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});     joiMongooseHelperStub.generateJoiUpdateModel = this.spy(function(){return Joi.any()}); 
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+      return Joi.any()
+    });
+    joiMongooseHelperStub.generateJoiUpdateModel = this.spy(function () {
+      return Joi.any()
+    });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
       './handler-helper-factory': handlerHelperStubWrapper,
       './query-helper': queryHelperStub,
@@ -3253,7 +3606,8 @@ test('rest-helper-factory.generateUpdateEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    var userSchema = new mongoose.Schema({});
+    userSchema.statics = {routeOptions: {}};
 
     var userModel = mongoose.model("user", userSchema);
     //</editor-fold>
@@ -3277,14 +3631,22 @@ test('rest-helper-factory.generateUpdateEndpoint', function(t) {
 
   t.test('rest-helper-factory.generateUpdateEndpoint calls server.route using authentication defined by config', sinon.test(function (t) {
     //<editor-fold desc="Arrange">
-    var server = this.stub({route: function(){}});
+    var server = this.stub({
+      route: function () {
+      }
+    });
 
-    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(),server));
+    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(), server));
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-        var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});     joiMongooseHelperStub.generateJoiUpdateModel = this.spy(function(){return Joi.any()}); 
-    var config = { authStrategy: "TEST_AUTH" };
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+      return Joi.any()
+    });
+    joiMongooseHelperStub.generateJoiUpdateModel = this.spy(function () {
+      return Joi.any()
+    });
+    var config = {authStrategy: "TEST_AUTH"};
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
       './handler-helper-factory': handlerHelperStubWrapper,
       './query-helper': queryHelperStub,
@@ -3294,7 +3656,8 @@ test('rest-helper-factory.generateUpdateEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    var userSchema = new mongoose.Schema({});
+    userSchema.statics = {routeOptions: {}};
 
     var userModel = mongoose.model("user", userSchema);
     //</editor-fold>
@@ -3306,7 +3669,7 @@ test('rest-helper-factory.generateUpdateEndpoint', function(t) {
     //<editor-fold desc="Assert">
     var serverObject = server.route.args[0][0];
     // Log.debug(JSON.stringify(serverObject));
-    t.deepEqual(serverObject.config.auth, { strategy: config.authStrategy }, "config auth used");
+    t.deepEqual(serverObject.config.auth, {strategy: config.authStrategy}, "config auth used");
     //</editor-fold>
 
 
@@ -3318,13 +3681,21 @@ test('rest-helper-factory.generateUpdateEndpoint', function(t) {
 
   t.test('rest-helper-factory.generateUpdateEndpoint calls server.route with correct collectionName', sinon.test(function (t) {
     //<editor-fold desc="Arrange">
-    var server = this.stub({route: function(){}});
+    var server = this.stub({
+      route: function () {
+      }
+    });
 
-    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(),server));
+    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(), server));
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-        var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});     joiMongooseHelperStub.generateJoiUpdateModel = this.spy(function(){return Joi.any()}); 
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+      return Joi.any()
+    });
+    joiMongooseHelperStub.generateJoiUpdateModel = this.spy(function () {
+      return Joi.any()
+    });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
       './handler-helper-factory': handlerHelperStubWrapper,
       './query-helper': queryHelperStub,
@@ -3333,7 +3704,8 @@ test('rest-helper-factory.generateUpdateEndpoint', function(t) {
 
     t.plan(4);
 
-    var userSchema1 = new mongoose.Schema({});     userSchema1.statics = { routeOptions: {} };
+    var userSchema1 = new mongoose.Schema({});
+    userSchema1.statics = {routeOptions: {}};
 
     var userSchema2 = new mongoose.Schema({});
     userSchema2.statics = {
@@ -3371,13 +3743,21 @@ test('rest-helper-factory.generateUpdateEndpoint', function(t) {
 
   t.test('rest-helper-factory.generateUpdateEndpoint calls server.route using cors', sinon.test(function (t) {
     //<editor-fold desc="Arrange">
-    var server = this.stub({route: function(){}});
+    var server = this.stub({
+      route: function () {
+      }
+    });
 
-    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(),server));
+    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(), server));
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-        var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});     joiMongooseHelperStub.generateJoiUpdateModel = this.spy(function(){return Joi.any()}); 
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+      return Joi.any()
+    });
+    joiMongooseHelperStub.generateJoiUpdateModel = this.spy(function () {
+      return Joi.any()
+    });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
       './handler-helper-factory': handlerHelperStubWrapper,
       './query-helper': queryHelperStub,
@@ -3386,7 +3766,8 @@ test('rest-helper-factory.generateUpdateEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    var userSchema = new mongoose.Schema({});
+    userSchema.statics = {routeOptions: {}};
 
     var userModel = mongoose.model("user", userSchema);
     //</editor-fold>
@@ -3414,14 +3795,24 @@ test('rest-helper-factory.generateUpdateEndpoint', function(t) {
 
   t.test('rest-helper-factory.generateUpdateEndpoint calls server.route using correct payload validation', sinon.test(function (t) {
     //<editor-fold desc="Arrange">
-    var server = this.stub({route: function(){}});
+    var server = this.stub({
+      route: function () {
+      }
+    });
 
-    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(),server));
+    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(), server));
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-        var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});     joiMongooseHelperStub.generateJoiUpdateModel = this.spy(function(){return Joi.any()}); 
-    joiMongooseHelperStub.generateJoiUpdateModel = function(){return Joi.any().valid("TEST")};
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+      return Joi.any()
+    });
+    joiMongooseHelperStub.generateJoiUpdateModel = this.spy(function () {
+      return Joi.any()
+    });
+    joiMongooseHelperStub.generateJoiUpdateModel = function () {
+      return Joi.any().valid("TEST")
+    };
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
       './handler-helper-factory': handlerHelperStubWrapper,
       './query-helper': queryHelperStub,
@@ -3430,7 +3821,8 @@ test('rest-helper-factory.generateUpdateEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    var userSchema = new mongoose.Schema({});
+    userSchema.statics = {routeOptions: {}};
 
     var userModel = mongoose.model("user", userSchema);
     //</editor-fold>
@@ -3453,16 +3845,24 @@ test('rest-helper-factory.generateUpdateEndpoint', function(t) {
 
   t.test('rest-helper-factory.generateUpdateEndpoint calls server.route using correct params validation', sinon.test(function (t) {
     //<editor-fold desc="Arrange">
-    var server = this.stub({route: function(){}});
+    var server = this.stub({
+      route: function () {
+      }
+    });
 
-    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(),server));
+    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(), server));
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-        var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});     joiMongooseHelperStub.generateJoiUpdateModel = this.spy(function(){return Joi.any()}); 
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+      return Joi.any()
+    });
+    joiMongooseHelperStub.generateJoiUpdateModel = this.spy(function () {
+      return Joi.any()
+    });
     var joiStub = require('joi');
 
-    var joiObjectIdStub = function() {
+    var joiObjectIdStub = function () {
       return function () {
         return {
           required: function () {
@@ -3481,11 +3881,12 @@ test('rest-helper-factory.generateUpdateEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    var userSchema = new mongoose.Schema({});
+    userSchema.statics = {routeOptions: {}};
 
     var userModel = mongoose.model("user", userSchema);
 
-    var params =  {
+    var params = {
       _id: "TEST"
     };
     //</editor-fold>
@@ -3509,14 +3910,22 @@ test('rest-helper-factory.generateUpdateEndpoint', function(t) {
 
   t.test('rest-helper-factory.generateUpdateEndpoint calls server.route using correct header validation', sinon.test(function (t) {
     //<editor-fold desc="Arrange">
-    var server = this.stub({route: function(){}});
+    var server = this.stub({
+      route: function () {
+      }
+    });
 
-    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(),server));
+    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(), server));
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-        var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});     joiMongooseHelperStub.generateJoiUpdateModel = this.spy(function(){return Joi.any()}); 
-    var config = { authStrategy: "TEST_AUTH" };
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+      return Joi.any()
+    });
+    joiMongooseHelperStub.generateJoiUpdateModel = this.spy(function () {
+      return Joi.any()
+    });
+    var config = {authStrategy: "TEST_AUTH"};
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
       './handler-helper-factory': handlerHelperStubWrapper,
       './query-helper': queryHelperStub,
@@ -3526,7 +3935,8 @@ test('rest-helper-factory.generateUpdateEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    var userSchema = new mongoose.Schema({});
+    userSchema.statics = {routeOptions: {}};
 
     var userModel = mongoose.model("user", userSchema);
 
@@ -3554,13 +3964,21 @@ test('rest-helper-factory.generateUpdateEndpoint', function(t) {
 
   t.test('rest-helper-factory.generateUpdateEndpoint calls server.route using hapi-swagger plugin', sinon.test(function (t) {
     //<editor-fold desc="Arrange">
-    var server = this.stub({route: function(){}});
+    var server = this.stub({
+      route: function () {
+      }
+    });
 
-    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(),server));
+    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(), server));
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-        var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});     joiMongooseHelperStub.generateJoiUpdateModel = this.spy(function(){return Joi.any()}); 
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+      return Joi.any()
+    });
+    joiMongooseHelperStub.generateJoiUpdateModel = this.spy(function () {
+      return Joi.any()
+    });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
       './handler-helper-factory': handlerHelperStubWrapper,
       './query-helper': queryHelperStub,
@@ -3569,7 +3987,8 @@ test('rest-helper-factory.generateUpdateEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    var userSchema = new mongoose.Schema({});
+    userSchema.statics = {routeOptions: {}};
 
     var userModel = mongoose.model("user", userSchema);
     //</editor-fold>
@@ -3593,15 +4012,22 @@ test('rest-helper-factory.generateUpdateEndpoint', function(t) {
 
   t.test('rest-helper-factory.generateUpdateEndpoint calls server.route with correct response schema validation', sinon.test(function (t) {
     //<editor-fold desc="Arrange">
-    var server = this.stub({route: function(){}});
+    var server = this.stub({
+      route: function () {
+      }
+    });
 
-    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(),server));
+    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(), server));
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
     var readModel = Joi.any().valid(["test"]);
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return readModel});
-    joiMongooseHelperStub.generateJoiUpdateModel = this.spy(function(){return Joi.any()});
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+      return readModel
+    });
+    joiMongooseHelperStub.generateJoiUpdateModel = this.spy(function () {
+      return Joi.any()
+    });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
       './handler-helper-factory': handlerHelperStubWrapper,
       './query-helper': queryHelperStub,
@@ -3610,7 +4036,8 @@ test('rest-helper-factory.generateUpdateEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    var userSchema = new mongoose.Schema({});
+    userSchema.statics = {routeOptions: {}};
 
     var userModel = mongoose.model("user", userSchema);
 
@@ -3637,20 +4064,25 @@ test('rest-helper-factory.generateUpdateEndpoint', function(t) {
   t.end();
 });
 
-test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
+test('rest-helper-factory.generateAssociationAddOneEndpoint', function (t) {
   var server = sinon.spy();
   var restHelperFactory = require('../utilities/rest-helper-factory')(Log, mongoose, server);
   testHelper.testModelParameter(t, restHelperFactory.generateAssociationAddOneEndpoint, "restHelperFactory.generateAssociationAddOneEndpoint", ["server", "model", "options", "Log"], Log);
 
   t.test('rest-helper-factory.generateAssociationAddOneEndpoint asserts routeOptions.associations exist', sinon.test(function (t) {
     //<editor-fold desc="Arrange">
-    var server = this.stub({route: function(){}});
+    var server = this.stub({
+      route: function () {
+      }
+    });
 
-    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(),server));
+    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(), server));
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiAssociationModel', function(){return Joi.any()});
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiAssociationModel', function () {
+      return Joi.any()
+    });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
       './handler-helper-factory': handlerHelperStubWrapper,
       './query-helper': queryHelperStub,
@@ -3659,14 +4091,15 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
 
     t.plan(2);
 
-    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    var userSchema = new mongoose.Schema({});
+    userSchema.statics = {routeOptions: {}};
     userSchema.statics = {
       routeOptions: {}
     };
 
     var userModel = mongoose.model("user", userSchema);
 
-    var association = { include: {} };
+    var association = {include: {}};
     //</editor-fold>
 
     try {
@@ -3691,13 +4124,18 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
 
   t.test('rest-helper-factory.generateAssociationAddOneEndpoint asserts association input exists', sinon.test(function (t) {
     //<editor-fold desc="Arrange">
-    var server = this.stub({route: function(){}});
+    var server = this.stub({
+      route: function () {
+      }
+    });
 
-    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(),server));
+    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(), server));
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiAssociationModel', function(){return Joi.any()});
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiAssociationModel', function () {
+      return Joi.any()
+    });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
       './handler-helper-factory': handlerHelperStubWrapper,
       './query-helper': queryHelperStub,
@@ -3706,7 +4144,8 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
 
     t.plan(2);
 
-    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    var userSchema = new mongoose.Schema({});
+    userSchema.statics = {routeOptions: {}};
     userSchema.statics = {
       routeOptions: {
         associations: {}
@@ -3715,7 +4154,7 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
 
     var userModel = mongoose.model("user", userSchema);
 
-    var association = { include: {} };
+    var association = {include: {}};
     //</editor-fold>
 
     try {
@@ -3740,13 +4179,18 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
 
   t.test('rest-helper-factory.generateAssociationAddOneEndpoint calls handlerHelper.generateAssociationAddOneHandler', sinon.test(function (t) {
     //<editor-fold desc="Arrange">
-    var server = this.stub({route: function(){}});
+    var server = this.stub({
+      route: function () {
+      }
+    });
 
-    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(),server));
+    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(), server));
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiAssociationModel', function(){return Joi.any()});
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiAssociationModel', function () {
+      return Joi.any()
+    });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
       './handler-helper-factory': handlerHelperStubWrapper,
       './query-helper': queryHelperStub,
@@ -3755,7 +4199,8 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    var userSchema = new mongoose.Schema({});
+    userSchema.statics = {routeOptions: {}};
     userSchema.statics = {
       routeOptions: {
         associations: {}
@@ -3764,7 +4209,7 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
 
     var userModel = mongoose.model("user", userSchema);
 
-    var association = { include: { model: { schema: { methods: {} }, modelName: "testAssociation" } } }; 
+    var association = {include: {model: {schema: {methods: {}}, modelName: "testAssociation"}}};
     //</editor-fold>
 
     //<editor-fold desc="Act">
@@ -3784,13 +4229,18 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
 
   t.test('rest-helper-factory.generateAssociationAddOneEndpoint calls server.route', sinon.test(function (t) {
     //<editor-fold desc="Arrange">
-    var server = this.stub({route: function(){}});
+    var server = this.stub({
+      route: function () {
+      }
+    });
 
-    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(),server));
+    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(), server));
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiAssociationModel', function(){return Joi.any()});
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiAssociationModel', function () {
+      return Joi.any()
+    });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
       './handler-helper-factory': handlerHelperStubWrapper,
       './query-helper': queryHelperStub,
@@ -3799,7 +4249,8 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    var userSchema = new mongoose.Schema({});
+    userSchema.statics = {routeOptions: {}};
     userSchema.statics = {
       routeOptions: {
         associations: {}
@@ -3808,7 +4259,7 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
 
     var userModel = mongoose.model("user", userSchema);
 
-    var association = { include: { model: { schema: { methods: {} }, modelName: "testAssociation" } } }; 
+    var association = {include: {model: {schema: {methods: {}}, modelName: "testAssociation"}}};
     //</editor-fold>
 
     //<editor-fold desc="Act">
@@ -3828,13 +4279,18 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
 
   t.test('rest-helper-factory.generateAssociationAddOneEndpoint calls server.route with "PUT" method', sinon.test(function (t) {
     //<editor-fold desc="Arrange">
-    var server = this.stub({route: function(){}});
+    var server = this.stub({
+      route: function () {
+      }
+    });
 
-    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(),server));
+    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(), server));
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiAssociationModel', function(){return Joi.any()});
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiAssociationModel', function () {
+      return Joi.any()
+    });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
       './handler-helper-factory': handlerHelperStubWrapper,
       './query-helper': queryHelperStub,
@@ -3843,7 +4299,8 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    var userSchema = new mongoose.Schema({});
+    userSchema.statics = {routeOptions: {}};
     userSchema.statics = {
       routeOptions: {
         associations: {}
@@ -3852,7 +4309,7 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
 
     var userModel = mongoose.model("user", userSchema);
 
-    var association = { include: { model: { schema: { methods: {} }, modelName: "testAssociation" } } };  
+    var association = {include: {model: {schema: {methods: {}}, modelName: "testAssociation"}}};
     //</editor-fold>
 
     //<editor-fold desc="Act">
@@ -3874,14 +4331,21 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
 
   t.test('rest-helper-factory.generateAssociationAddOneEndpoint calls server.route with correct ownerAlias and childAlias', sinon.test(function (t) {
     //<editor-fold desc="Arrange">
-    var server = this.stub({route: function(){}});
+    var server = this.stub({
+      route: function () {
+      }
+    });
 
-    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(),server));
+    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(), server));
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiAssociationModel', function(){return Joi.any()});
-    joiMongooseHelperStub.generateJoiUpdateModel =function(){return Joi.any()};
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiAssociationModel', function () {
+      return Joi.any()
+    });
+    joiMongooseHelperStub.generateJoiUpdateModel = function () {
+      return Joi.any()
+    };
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
       './handler-helper-factory': handlerHelperStubWrapper,
       './query-helper': queryHelperStub,
@@ -3890,7 +4354,8 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
 
     t.plan(2);
 
-    var userSchema1 = new mongoose.Schema({});     userSchema1.statics = { routeOptions: {} };
+    var userSchema1 = new mongoose.Schema({});
+    userSchema1.statics = {routeOptions: {}};
     userSchema1.statics = {
       routeOptions: {
         associations: {}
@@ -3908,8 +4373,8 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
     var userModel1 = mongoose.model("user1", userSchema1);
     var userModel2 = mongoose.model("user2", userSchema2);
 
-    var association1 = { include: { model: { modelName: "TEST1", schema: { methods: {} } } } };
-    var association2 = { include: { model: { schema: { methods: {} }} }, alias: "TEST2" };
+    var association1 = {include: {model: {modelName: "TEST1", schema: {methods: {}}}}};
+    var association2 = {include: {model: {schema: {methods: {}}}}, alias: "TEST2"};
     //</editor-fold>
 
     //<editor-fold desc="Act">
@@ -3936,14 +4401,21 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
 
   t.test('rest-helper-factory.generateAssociationAddOneEndpoint calls server.route with correct handler', sinon.test(function (t) {
     //<editor-fold desc="Arrange">
-    var server = this.stub({route: function(){}});
+    var server = this.stub({
+      route: function () {
+      }
+    });
 
-    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(),server));
-    handlerHelperStub.generateAssociationAddOneHandler = this.spy(function(){return "HANDLER"})
+    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(), server));
+    handlerHelperStub.generateAssociationAddOneHandler = this.spy(function () {
+      return "HANDLER"
+    })
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiAssociationModel', function(){return Joi.any()});
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiAssociationModel', function () {
+      return Joi.any()
+    });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
       './handler-helper-factory': handlerHelperStubWrapper,
       './query-helper': queryHelperStub,
@@ -3952,7 +4424,8 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    var userSchema = new mongoose.Schema({});
+    userSchema.statics = {routeOptions: {}};
     userSchema.statics = {
       routeOptions: {
         associations: {}
@@ -3961,7 +4434,7 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
 
     var userModel = mongoose.model("user", userSchema);
 
-    var association = { include: { model: { schema: { methods: {} }, modelName: "testAssociation" } } };  
+    var association = {include: {model: {schema: {methods: {}}, modelName: "testAssociation"}}};
     //</editor-fold>
 
     //<editor-fold desc="Act">
@@ -3983,14 +4456,19 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
 
   t.test('rest-helper-factory.generateAssociationAddOneEndpoint calls server.route using authentication defined by config', sinon.test(function (t) {
     //<editor-fold desc="Arrange">
-    var server = this.stub({route: function(){}});
+    var server = this.stub({
+      route: function () {
+      }
+    });
 
-    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(),server));
+    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(), server));
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiAssociationModel', function(){return Joi.any()});
-    var config = { authStrategy: "TEST_AUTH" };
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiAssociationModel', function () {
+      return Joi.any()
+    });
+    var config = {authStrategy: "TEST_AUTH"};
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
       './handler-helper-factory': handlerHelperStubWrapper,
       './query-helper': queryHelperStub,
@@ -4000,7 +4478,8 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    var userSchema = new mongoose.Schema({});
+    userSchema.statics = {routeOptions: {}};
     userSchema.statics = {
       routeOptions: {
         associations: {}
@@ -4009,7 +4488,7 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
 
     var userModel = mongoose.model("user", userSchema);
 
-    var association = { include: { model: { schema: { methods: {} }, modelName: "testAssociation" } } }; 
+    var association = {include: {model: {schema: {methods: {}}, modelName: "testAssociation"}}};
     //</editor-fold>
 
     //<editor-fold desc="Act">
@@ -4019,7 +4498,7 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
     //<editor-fold desc="Assert">
     var serverObject = server.route.args[0][0];
     // Log.debug(JSON.stringify(serverObject));
-    t.deepEqual(serverObject.config.auth, { strategy: config.authStrategy }, "config auth used");
+    t.deepEqual(serverObject.config.auth, {strategy: config.authStrategy}, "config auth used");
     //</editor-fold>
 
 
@@ -4031,13 +4510,18 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
 
   t.test('rest-helper-factory.generateAssociationAddOneEndpoint calls server.route with correct associationName and ownerModelName', sinon.test(function (t) {
     //<editor-fold desc="Arrange">
-    var server = this.stub({route: function(){}});
+    var server = this.stub({
+      route: function () {
+      }
+    });
 
-    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(),server));
+    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(), server));
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiAssociationModel', function(){return Joi.any()});
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiAssociationModel', function () {
+      return Joi.any()
+    });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
       './handler-helper-factory': handlerHelperStubWrapper,
       './query-helper': queryHelperStub,
@@ -4046,7 +4530,8 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
 
     t.plan(4);
 
-    var userSchema1 = new mongoose.Schema({});     userSchema1.statics = { routeOptions: {} };
+    var userSchema1 = new mongoose.Schema({});
+    userSchema1.statics = {routeOptions: {}};
     userSchema1.statics = {
       routeOptions: {
         associations: {}
@@ -4082,8 +4567,8 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
     var childModel1 = mongoose.model("child1", childSchema1);
     var childModel2 = mongoose.model("child2", childSchema2);
 
-    var association1 = { include: { model: childModel1 } };
-    var association2 = { include: { model: childModel2, as: "Children" } };
+    var association1 = {include: {model: childModel1}};
+    var association2 = {include: {model: childModel2, as: "Children"}};
     //</editor-fold>
 
     //<editor-fold desc="Act">
@@ -4116,13 +4601,18 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
 
   t.test('rest-helper-factory.generateAssociationAddOneEndpoint calls server.route using cors', sinon.test(function (t) {
     //<editor-fold desc="Arrange">
-    var server = this.stub({route: function(){}});
+    var server = this.stub({
+      route: function () {
+      }
+    });
 
-    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(),server));
+    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(), server));
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiAssociationModel', function(){return Joi.any()});
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiAssociationModel', function () {
+      return Joi.any()
+    });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
       './handler-helper-factory': handlerHelperStubWrapper,
       './query-helper': queryHelperStub,
@@ -4131,7 +4621,8 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    var userSchema = new mongoose.Schema({});
+    userSchema.statics = {routeOptions: {}};
     userSchema.statics = {
       routeOptions: {
         associations: {}
@@ -4140,7 +4631,7 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
 
     var userModel = mongoose.model("user", userSchema);
 
-    var association = { include: { model: { schema: { methods: {} }, modelName: "testAssociation" } } };  
+    var association = {include: {model: {schema: {methods: {}}, modelName: "testAssociation"}}};
     //</editor-fold>
 
     //<editor-fold desc="Act">
@@ -4166,14 +4657,21 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
 
   t.test('rest-helper-factory.generateAssociationAddOneEndpoint calls server.route using correct payload validation', sinon.test(function (t) {
     //<editor-fold desc="Arrange">
-    var server = this.stub({route: function(){}});
+    var server = this.stub({
+      route: function () {
+      }
+    });
 
-    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(),server));
+    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(), server));
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiAssociationModel', function(){return Joi.any()});
-    joiMongooseHelperStub.generateJoiAssociationModel = function(){return Joi.any().valid("TEST")};
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiAssociationModel', function () {
+      return Joi.any()
+    });
+    joiMongooseHelperStub.generateJoiAssociationModel = function () {
+      return Joi.any().valid("TEST")
+    };
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
       './handler-helper-factory': handlerHelperStubWrapper,
       './query-helper': queryHelperStub,
@@ -4199,8 +4697,8 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
     var userModel1 = mongoose.model("user1", userSchema1);
     var userModel2 = mongoose.model("user2", userSchema2);
 
-    var association1 = { include: { model: { modelName: "TEST1", schema: { methods: {} } } } };
-    var association2 = { include: { model: { schema: { methods: {} }}, through: {} }, alias: "TEST2" };
+    var association1 = {include: {model: {modelName: "TEST1", schema: {methods: {}}}}};
+    var association2 = {include: {model: {schema: {methods: {}}}, through: {}}, alias: "TEST2"};
     //</editor-fold>
 
     //<editor-fold desc="Act">
@@ -4226,15 +4724,20 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
 
   t.test('rest-helper-factory.generateAssociationAddOneEndpoint calls server.route using correct params validation', sinon.test(function (t) {
     //<editor-fold desc="Arrange">
-    var server = this.stub({route: function(){}});
+    var server = this.stub({
+      route: function () {
+      }
+    });
 
-    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(),server));
+    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(), server));
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiAssociationModel', function(){return Joi.any()});
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiAssociationModel', function () {
+      return Joi.any()
+    });
     var joiStub = require('joi');
-    var joiObjectIdStub = function() {
+    var joiObjectIdStub = function () {
       return function () {
         return {
           required: function () {
@@ -4253,7 +4756,8 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    var userSchema = new mongoose.Schema({});
+    userSchema.statics = {routeOptions: {}};
     userSchema.statics = {
       routeOptions: {
         associations: {}
@@ -4262,9 +4766,9 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
 
     var userModel = mongoose.model("user", userSchema);
 
-    var association = { include: { model: { schema: { methods: {} }, modelName: "testAssociation" } } };  
+    var association = {include: {model: {schema: {methods: {}}, modelName: "testAssociation"}}};
 
-    var params =  {
+    var params = {
       ownerId: "TEST",
       childId: "TEST"
     };
@@ -4289,14 +4793,19 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
 
   t.test('rest-helper-factory.generateAssociationAddOneEndpoint calls server.route using correct header validation', sinon.test(function (t) {
     //<editor-fold desc="Arrange">
-    var server = this.stub({route: function(){}});
+    var server = this.stub({
+      route: function () {
+      }
+    });
 
-    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(),server));
+    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(), server));
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiAssociationModel', function(){return Joi.any()});
-    var config = { authStrategy: "TEST_AUTH" };
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiAssociationModel', function () {
+      return Joi.any()
+    });
+    var config = {authStrategy: "TEST_AUTH"};
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
       './handler-helper-factory': handlerHelperStubWrapper,
       './query-helper': queryHelperStub,
@@ -4306,7 +4815,8 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    var userSchema = new mongoose.Schema({});
+    userSchema.statics = {routeOptions: {}};
     userSchema.statics = {
       routeOptions: {
         associations: {}
@@ -4315,7 +4825,7 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
 
     var userModel = mongoose.model("user", userSchema);
 
-    var association = { include: { model: { schema: { methods: {} }, modelName: "testAssociation" } } };  
+    var association = {include: {model: {schema: {methods: {}}, modelName: "testAssociation"}}};
 
     var headerValidation = Joi.object({
       'authorization': Joi.string().required()
@@ -4341,13 +4851,18 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
 
   t.test('rest-helper-factory.generateAssociationAddOneEndpoint calls server.route using hapi-swagger plugin', sinon.test(function (t) {
     //<editor-fold desc="Arrange">
-    var server = this.stub({route: function(){}});
+    var server = this.stub({
+      route: function () {
+      }
+    });
 
-    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(),server));
+    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(), server));
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiAssociationModel', function(){return Joi.any()});
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiAssociationModel', function () {
+      return Joi.any()
+    });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
       './handler-helper-factory': handlerHelperStubWrapper,
       './query-helper': queryHelperStub,
@@ -4356,7 +4871,8 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    var userSchema = new mongoose.Schema({});
+    userSchema.statics = {routeOptions: {}};
     userSchema.statics = {
       routeOptions: {
         associations: {}
@@ -4365,7 +4881,7 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
 
     var userModel = mongoose.model("user", userSchema);
 
-    var association = { include: { model: { schema: { methods: {} }, modelName: "testAssociation" } } };  
+    var association = {include: {model: {schema: {methods: {}}, modelName: "testAssociation"}}};
     //</editor-fold>
 
     //<editor-fold desc="Act">
@@ -4387,13 +4903,18 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
 
   t.test('rest-helper-factory.generateAssociationAddOneEndpoint calls server.route with correct response schema validation', sinon.test(function (t) {
     //<editor-fold desc="Arrange">
-    var server = this.stub({route: function(){}});
+    var server = this.stub({
+      route: function () {
+      }
+    });
 
-    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(),server));
+    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(), server));
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiAssociationModel', function(){return readModel});
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiAssociationModel', function () {
+      return readModel
+    });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
       './handler-helper-factory': handlerHelperStubWrapper,
       './query-helper': queryHelperStub,
@@ -4402,7 +4923,8 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    var userSchema = new mongoose.Schema({});
+    userSchema.statics = {routeOptions: {}};
     userSchema.statics = {
       routeOptions: {
         associations: {}
@@ -4411,7 +4933,7 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
 
     var userModel = mongoose.model("user", userSchema);
 
-    var association = { include: { model: { schema: { methods: {} }, modelName: "testAssociation" } } };  
+    var association = {include: {model: {schema: {methods: {}}, modelName: "testAssociation"}}};
 
     var responseSchema = {};
     //</editor-fold>
@@ -4436,20 +4958,25 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
   t.end();
 });
 
-test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
+test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function (t) {
   var server = sinon.spy();
   var restHelperFactory = require('../utilities/rest-helper-factory')(Log, mongoose, server);
   testHelper.testModelParameter(t, restHelperFactory.generateAssociationRemoveOneEndpoint, "restHelperFactory.generateAssociationRemoveOneEndpoint", ["server", "model", "options", "Log"], Log);
 
   t.test('rest-helper-factory.generateAssociationRemoveOneEndpoint asserts routeOptions.associations exist', sinon.test(function (t) {
     //<editor-fold desc="Arrange">
-    var server = this.stub({route: function(){}});
+    var server = this.stub({
+      route: function () {
+      }
+    });
 
-    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(),server));
+    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(), server));
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+      return Joi.any()
+    });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
       './handler-helper-factory': handlerHelperStubWrapper,
       './query-helper': queryHelperStub,
@@ -4458,14 +4985,15 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
 
     t.plan(2);
 
-    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    var userSchema = new mongoose.Schema({});
+    userSchema.statics = {routeOptions: {}};
     userSchema.statics = {
       routeOptions: {}
     };
 
     var userModel = mongoose.model("user", userSchema);
 
-    var association = { include: {} };
+    var association = {include: {}};
     //</editor-fold>
 
     try {
@@ -4490,13 +5018,18 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
 
   t.test('rest-helper-factory.generateAssociationRemoveOneEndpoint asserts association input exists', sinon.test(function (t) {
     //<editor-fold desc="Arrange">
-    var server = this.stub({route: function(){}});
+    var server = this.stub({
+      route: function () {
+      }
+    });
 
-    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(),server));
+    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(), server));
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+      return Joi.any()
+    });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
       './handler-helper-factory': handlerHelperStubWrapper,
       './query-helper': queryHelperStub,
@@ -4505,7 +5038,8 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
 
     t.plan(2);
 
-    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    var userSchema = new mongoose.Schema({});
+    userSchema.statics = {routeOptions: {}};
     userSchema.statics = {
       routeOptions: {
         associations: {}
@@ -4514,7 +5048,7 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
 
     var userModel = mongoose.model("user", userSchema);
 
-    var association = { include: {} };
+    var association = {include: {}};
     //</editor-fold>
 
     try {
@@ -4539,13 +5073,18 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
 
   t.test('rest-helper-factory.generateAssociationRemoveOneEndpoint calls handlerHelper.generateAssociationRemoveOneHandler', sinon.test(function (t) {
     //<editor-fold desc="Arrange">
-    var server = this.stub({route: function(){}});
+    var server = this.stub({
+      route: function () {
+      }
+    });
 
-    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(),server));
+    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(), server));
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+      return Joi.any()
+    });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
       './handler-helper-factory': handlerHelperStubWrapper,
       './query-helper': queryHelperStub,
@@ -4554,7 +5093,8 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    var userSchema = new mongoose.Schema({});
+    userSchema.statics = {routeOptions: {}};
     userSchema.statics = {
       routeOptions: {
         associations: {}
@@ -4563,7 +5103,7 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
 
     var userModel = mongoose.model("user", userSchema);
 
-    var association = { include: { model: { schema: { methods: {} }, modelName: "testAssociation" } } };  
+    var association = {include: {model: {schema: {methods: {}}, modelName: "testAssociation"}}};
     //</editor-fold>
 
     //<editor-fold desc="Act">
@@ -4583,13 +5123,18 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
 
   t.test('rest-helper-factory.generateAssociationRemoveOneEndpoint calls server.route', sinon.test(function (t) {
     //<editor-fold desc="Arrange">
-    var server = this.stub({route: function(){}});
+    var server = this.stub({
+      route: function () {
+      }
+    });
 
-    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(),server));
+    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(), server));
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+      return Joi.any()
+    });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
       './handler-helper-factory': handlerHelperStubWrapper,
       './query-helper': queryHelperStub,
@@ -4598,7 +5143,8 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    var userSchema = new mongoose.Schema({});
+    userSchema.statics = {routeOptions: {}};
     userSchema.statics = {
       routeOptions: {
         associations: {}
@@ -4607,7 +5153,7 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
 
     var userModel = mongoose.model("user", userSchema);
 
-    var association = { include: { model: { schema: { methods: {} }, modelName: "testAssociation" } } };  
+    var association = {include: {model: {schema: {methods: {}}, modelName: "testAssociation"}}};
     //</editor-fold>
 
     //<editor-fold desc="Act">
@@ -4627,13 +5173,18 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
 
   t.test('rest-helper-factory.generateAssociationRemoveOneEndpoint calls server.route with "DELETE" method', sinon.test(function (t) {
     //<editor-fold desc="Arrange">
-    var server = this.stub({route: function(){}});
+    var server = this.stub({
+      route: function () {
+      }
+    });
 
-    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(),server));
+    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(), server));
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+      return Joi.any()
+    });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
       './handler-helper-factory': handlerHelperStubWrapper,
       './query-helper': queryHelperStub,
@@ -4642,7 +5193,8 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    var userSchema = new mongoose.Schema({});
+    userSchema.statics = {routeOptions: {}};
     userSchema.statics = {
       routeOptions: {
         associations: {}
@@ -4651,7 +5203,7 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
 
     var userModel = mongoose.model("user", userSchema);
 
-    var association = { include: { model: { schema: { methods: {} }, modelName: "testAssociation" } } }; 
+    var association = {include: {model: {schema: {methods: {}}, modelName: "testAssociation"}}};
     //</editor-fold>
 
     //<editor-fold desc="Act">
@@ -4673,14 +5225,21 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
 
   t.test('rest-helper-factory.generateAssociationRemoveOneEndpoint calls server.route with correct ownerAlias and childAlias', sinon.test(function (t) {
     //<editor-fold desc="Arrange">
-    var server = this.stub({route: function(){}});
+    var server = this.stub({
+      route: function () {
+      }
+    });
 
-    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(),server));
+    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(), server));
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});
-    joiMongooseHelperStub.generateJoiUpdateModel =function(){return Joi.any()};
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+      return Joi.any()
+    });
+    joiMongooseHelperStub.generateJoiUpdateModel = function () {
+      return Joi.any()
+    };
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
       './handler-helper-factory': handlerHelperStubWrapper,
       './query-helper': queryHelperStub,
@@ -4689,7 +5248,8 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
 
     t.plan(2);
 
-    var userSchema1 = new mongoose.Schema({});     userSchema1.statics = { routeOptions: {} };
+    var userSchema1 = new mongoose.Schema({});
+    userSchema1.statics = {routeOptions: {}};
     userSchema1.statics = {
       routeOptions: {
         associations: {}
@@ -4707,8 +5267,8 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
     var userModel1 = mongoose.model("user1", userSchema1);
     var userModel2 = mongoose.model("user2", userSchema2);
 
-    var association1 = { include: { model: { modelName: "TEST1", schema: { methods: {} } } } };
-    var association2 = { include: { model: { schema: { methods: {} }} }, alias: "TEST2" };
+    var association1 = {include: {model: {modelName: "TEST1", schema: {methods: {}}}}};
+    var association2 = {include: {model: {schema: {methods: {}}}}, alias: "TEST2"};
     //</editor-fold>
 
     //<editor-fold desc="Act">
@@ -4735,14 +5295,21 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
 
   t.test('rest-helper-factory.generateAssociationRemoveOneEndpoint calls server.route with correct handler', sinon.test(function (t) {
     //<editor-fold desc="Arrange">
-    var server = this.stub({route: function(){}});
+    var server = this.stub({
+      route: function () {
+      }
+    });
 
-    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(),server));
-    handlerHelperStub.generateAssociationRemoveOneHandler = this.spy(function(){return "HANDLER"})
+    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(), server));
+    handlerHelperStub.generateAssociationRemoveOneHandler = this.spy(function () {
+      return "HANDLER"
+    })
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+      return Joi.any()
+    });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
       './handler-helper-factory': handlerHelperStubWrapper,
       './query-helper': queryHelperStub,
@@ -4751,7 +5318,8 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    var userSchema = new mongoose.Schema({});
+    userSchema.statics = {routeOptions: {}};
     userSchema.statics = {
       routeOptions: {
         associations: {}
@@ -4760,7 +5328,7 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
 
     var userModel = mongoose.model("user", userSchema);
 
-    var association = { include: { model: { schema: { methods: {} }, modelName: "testAssociation" } } };  
+    var association = {include: {model: {schema: {methods: {}}, modelName: "testAssociation"}}};
     //</editor-fold>
 
     //<editor-fold desc="Act">
@@ -4782,14 +5350,19 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
 
   t.test('rest-helper-factory.generateAssociationRemoveOneEndpoint calls server.route using authentication defined by config', sinon.test(function (t) {
     //<editor-fold desc="Arrange">
-    var server = this.stub({route: function(){}});
+    var server = this.stub({
+      route: function () {
+      }
+    });
 
-    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(),server));
+    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(), server));
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});
-    var config = { authStrategy: "TEST_AUTH" };
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+      return Joi.any()
+    });
+    var config = {authStrategy: "TEST_AUTH"};
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
       './handler-helper-factory': handlerHelperStubWrapper,
       './query-helper': queryHelperStub,
@@ -4799,7 +5372,8 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    var userSchema = new mongoose.Schema({});
+    userSchema.statics = {routeOptions: {}};
     userSchema.statics = {
       routeOptions: {
         associations: {}
@@ -4808,7 +5382,7 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
 
     var userModel = mongoose.model("user", userSchema);
 
-    var association = { include: { model: { schema: { methods: {} }, modelName: "testAssociation" } } };  
+    var association = {include: {model: {schema: {methods: {}}, modelName: "testAssociation"}}};
     //</editor-fold>
 
     //<editor-fold desc="Act">
@@ -4818,7 +5392,7 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
     //<editor-fold desc="Assert">
     var serverObject = server.route.args[0][0];
     // Log.debug(JSON.stringify(serverObject));
-    t.deepEqual(serverObject.config.auth, { strategy: config.authStrategy }, "config auth used");
+    t.deepEqual(serverObject.config.auth, {strategy: config.authStrategy}, "config auth used");
     //</editor-fold>
 
 
@@ -4830,13 +5404,18 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
 
   t.test('rest-helper-factory.generateAssociationRemoveOneEndpoint calls server.route with correct associationName and ownerModelName', sinon.test(function (t) {
     //<editor-fold desc="Arrange">
-    var server = this.stub({route: function(){}});
+    var server = this.stub({
+      route: function () {
+      }
+    });
 
-    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(),server));
+    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(), server));
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+      return Joi.any()
+    });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
       './handler-helper-factory': handlerHelperStubWrapper,
       './query-helper': queryHelperStub,
@@ -4845,7 +5424,8 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
 
     t.plan(4);
 
-    var userSchema1 = new mongoose.Schema({});     userSchema1.statics = { routeOptions: {} };
+    var userSchema1 = new mongoose.Schema({});
+    userSchema1.statics = {routeOptions: {}};
     userSchema1.statics = {
       routeOptions: {
         associations: {}
@@ -4881,8 +5461,8 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
     var childModel1 = mongoose.model("child1", childSchema1);
     var childModel2 = mongoose.model("child2", childSchema2);
 
-    var association1 = { include: { model: childModel1 } };
-    var association2 = { include: { model: childModel2, as: "Children" } };
+    var association1 = {include: {model: childModel1}};
+    var association2 = {include: {model: childModel2, as: "Children"}};
     //</editor-fold>
 
     //<editor-fold desc="Act">
@@ -4914,13 +5494,18 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
 
   t.test('rest-helper-factory.generateAssociationRemoveOneEndpoint calls server.route using cors', sinon.test(function (t) {
     //<editor-fold desc="Arrange">
-    var server = this.stub({route: function(){}});
+    var server = this.stub({
+      route: function () {
+      }
+    });
 
-    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(),server));
+    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(), server));
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+      return Joi.any()
+    });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
       './handler-helper-factory': handlerHelperStubWrapper,
       './query-helper': queryHelperStub,
@@ -4929,7 +5514,8 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    var userSchema = new mongoose.Schema({});
+    userSchema.statics = {routeOptions: {}};
     userSchema.statics = {
       routeOptions: {
         associations: {}
@@ -4938,7 +5524,7 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
 
     var userModel = mongoose.model("user", userSchema);
 
-    var association = { include: { model: { schema: { methods: {} }, modelName: "testAssociation" } } };  
+    var association = {include: {model: {schema: {methods: {}}, modelName: "testAssociation"}}};
     //</editor-fold>
 
     //<editor-fold desc="Act">
@@ -4964,15 +5550,20 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
 
   t.test('rest-helper-factory.generateAssociationRemoveOneEndpoint calls server.route using correct params validation', sinon.test(function (t) {
     //<editor-fold desc="Arrange">
-    var server = this.stub({route: function(){}});
+    var server = this.stub({
+      route: function () {
+      }
+    });
 
-    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(),server));
+    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(), server));
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+      return Joi.any()
+    });
     var joiStub = require('joi');
-    var joiObjectIdStub = function() {
+    var joiObjectIdStub = function () {
       return function () {
         return {
           required: function () {
@@ -4991,7 +5582,8 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    var userSchema = new mongoose.Schema({});
+    userSchema.statics = {routeOptions: {}};
     userSchema.statics = {
       routeOptions: {
         associations: {}
@@ -5000,9 +5592,9 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
 
     var userModel = mongoose.model("user", userSchema);
 
-    var association = { include: { model: { schema: { methods: {} }, modelName: "testAssociation" } } };  
+    var association = {include: {model: {schema: {methods: {}}, modelName: "testAssociation"}}};
 
-    var params =  {
+    var params = {
       ownerId: "TEST",
       childId: "TEST"
     };
@@ -5027,14 +5619,19 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
 
   t.test('rest-helper-factory.generateAssociationRemoveOneEndpoint calls server.route using correct header validation', sinon.test(function (t) {
     //<editor-fold desc="Arrange">
-    var server = this.stub({route: function(){}});
+    var server = this.stub({
+      route: function () {
+      }
+    });
 
-    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(),server));
+    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(), server));
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});
-    var config = { authStrategy: "TEST_AUTH" };
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+      return Joi.any()
+    });
+    var config = {authStrategy: "TEST_AUTH"};
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
       './handler-helper-factory': handlerHelperStubWrapper,
       './query-helper': queryHelperStub,
@@ -5044,7 +5641,8 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    var userSchema = new mongoose.Schema({});
+    userSchema.statics = {routeOptions: {}};
     userSchema.statics = {
       routeOptions: {
         associations: {}
@@ -5053,7 +5651,7 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
 
     var userModel = mongoose.model("user", userSchema);
 
-    var association = { include: { model: { schema: { methods: {} }, modelName: "testAssociation" } } };  
+    var association = {include: {model: {schema: {methods: {}}, modelName: "testAssociation"}}};
 
     var headerValidation = Joi.object({
       'authorization': Joi.string().required()
@@ -5079,13 +5677,18 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
 
   t.test('rest-helper-factory.generateAssociationRemoveOneEndpoint calls server.route using hapi-swagger plugin', sinon.test(function (t) {
     //<editor-fold desc="Arrange">
-    var server = this.stub({route: function(){}});
+    var server = this.stub({
+      route: function () {
+      }
+    });
 
-    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(),server));
+    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(), server));
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+      return Joi.any()
+    });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
       './handler-helper-factory': handlerHelperStubWrapper,
       './query-helper': queryHelperStub,
@@ -5094,7 +5697,8 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    var userSchema = new mongoose.Schema({});
+    userSchema.statics = {routeOptions: {}};
     userSchema.statics = {
       routeOptions: {
         associations: {}
@@ -5103,7 +5707,7 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
 
     var userModel = mongoose.model("user", userSchema);
 
-    var association = { include: { model: { schema: { methods: {} }, modelName: "testAssociation" } } };  
+    var association = {include: {model: {schema: {methods: {}}, modelName: "testAssociation"}}};
     //</editor-fold>
 
     //<editor-fold desc="Act">
@@ -5125,13 +5729,18 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
 
   t.test('rest-helper-factory.generateAssociationRemoveOneEndpoint calls server.route with correct response schema validation', sinon.test(function (t) {
     //<editor-fold desc="Arrange">
-    var server = this.stub({route: function(){}});
+    var server = this.stub({
+      route: function () {
+      }
+    });
 
-    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(),server));
+    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(), server));
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return readModel});
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+      return readModel
+    });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
       './handler-helper-factory': handlerHelperStubWrapper,
       './query-helper': queryHelperStub,
@@ -5140,7 +5749,8 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    var userSchema = new mongoose.Schema({});
+    userSchema.statics = {routeOptions: {}};
     userSchema.statics = {
       routeOptions: {
         associations: {}
@@ -5149,7 +5759,7 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
 
     var userModel = mongoose.model("user", userSchema);
 
-    var association = { include: { model: { schema: { methods: {} }, modelName: "testAssociation" } } };  
+    var association = {include: {model: {schema: {methods: {}}, modelName: "testAssociation"}}};
 
     var responseSchema = {};
     //</editor-fold>
@@ -5174,20 +5784,25 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
   t.end();
 });
 
-test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
+test('rest-helper-factory.generateAssociationAddManyEndpoint', function (t) {
   var server = sinon.spy();
   var restHelperFactory = require('../utilities/rest-helper-factory')(Log, mongoose, server);
   testHelper.testModelParameter(t, restHelperFactory.generateAssociationAddManyEndpoint, "restHelperFactory.generateAssociationAddManyEndpoint", ["server", "model", "options", "Log"], Log);
 
   t.test('rest-helper-factory.generateAssociationAddManyEndpoint asserts routeOptions.associations exist', sinon.test(function (t) {
     //<editor-fold desc="Arrange">
-    var server = this.stub({route: function(){}});
+    var server = this.stub({
+      route: function () {
+      }
+    });
 
-    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(),server));
+    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(), server));
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+      return Joi.any()
+    });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
       './handler-helper-factory': handlerHelperStubWrapper,
       './query-helper': queryHelperStub,
@@ -5196,14 +5811,15 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
 
     t.plan(2);
 
-    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    var userSchema = new mongoose.Schema({});
+    userSchema.statics = {routeOptions: {}};
     userSchema.statics = {
       routeOptions: {}
     };
 
     var userModel = mongoose.model("user", userSchema);
 
-    var association = { include: {} };
+    var association = {include: {}};
     //</editor-fold>
 
     try {
@@ -5228,13 +5844,18 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
 
   t.test('rest-helper-factory.generateAssociationAddManyEndpoint asserts association input exists', sinon.test(function (t) {
     //<editor-fold desc="Arrange">
-    var server = this.stub({route: function(){}});
+    var server = this.stub({
+      route: function () {
+      }
+    });
 
-    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(),server));
+    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(), server));
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+      return Joi.any()
+    });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
       './handler-helper-factory': handlerHelperStubWrapper,
       './query-helper': queryHelperStub,
@@ -5243,7 +5864,8 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
 
     t.plan(2);
 
-    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    var userSchema = new mongoose.Schema({});
+    userSchema.statics = {routeOptions: {}};
     userSchema.statics = {
       routeOptions: {
         associations: {}
@@ -5252,7 +5874,7 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
 
     var userModel = mongoose.model("user", userSchema);
 
-    var association = { include: {} };
+    var association = {include: {}};
     //</editor-fold>
 
     try {
@@ -5277,13 +5899,18 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
 
   t.test('rest-helper-factory.generateAssociationAddManyEndpoint calls handlerHelper.generateAssociationAddManyHandler', sinon.test(function (t) {
     //<editor-fold desc="Arrange">
-    var server = this.stub({route: function(){}});
+    var server = this.stub({
+      route: function () {
+      }
+    });
 
-    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(),server));
+    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(), server));
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+      return Joi.any()
+    });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
       './handler-helper-factory': handlerHelperStubWrapper,
       './query-helper': queryHelperStub,
@@ -5292,7 +5919,8 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    var userSchema = new mongoose.Schema({});
+    userSchema.statics = {routeOptions: {}};
     userSchema.statics = {
       routeOptions: {
         associations: {}
@@ -5301,7 +5929,7 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
 
     var userModel = mongoose.model("user", userSchema);
 
-    var association = { include: { model: { schema: { methods: {} }, modelName: "testAssociation" } } };  
+    var association = {include: {model: {schema: {methods: {}}, modelName: "testAssociation"}}};
     //</editor-fold>
 
     //<editor-fold desc="Act">
@@ -5321,13 +5949,18 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
 
   t.test('rest-helper-factory.generateAssociationAddManyEndpoint calls server.route', sinon.test(function (t) {
     //<editor-fold desc="Arrange">
-    var server = this.stub({route: function(){}});
+    var server = this.stub({
+      route: function () {
+      }
+    });
 
-    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(),server));
+    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(), server));
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+      return Joi.any()
+    });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
       './handler-helper-factory': handlerHelperStubWrapper,
       './query-helper': queryHelperStub,
@@ -5336,7 +5969,8 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    var userSchema = new mongoose.Schema({});
+    userSchema.statics = {routeOptions: {}};
     userSchema.statics = {
       routeOptions: {
         associations: {}
@@ -5345,7 +5979,7 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
 
     var userModel = mongoose.model("user", userSchema);
 
-    var association = { include: { model: { schema: { methods: {} }, modelName: "testAssociation" } } };  
+    var association = {include: {model: {schema: {methods: {}}, modelName: "testAssociation"}}};
     //</editor-fold>
 
     //<editor-fold desc="Act">
@@ -5365,13 +5999,18 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
 
   t.test('rest-helper-factory.generateAssociationAddManyEndpoint calls server.route with "POST" method', sinon.test(function (t) {
     //<editor-fold desc="Arrange">
-    var server = this.stub({route: function(){}});
+    var server = this.stub({
+      route: function () {
+      }
+    });
 
-    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(),server));
+    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(), server));
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+      return Joi.any()
+    });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
       './handler-helper-factory': handlerHelperStubWrapper,
       './query-helper': queryHelperStub,
@@ -5380,7 +6019,8 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    var userSchema = new mongoose.Schema({});
+    userSchema.statics = {routeOptions: {}};
     userSchema.statics = {
       routeOptions: {
         associations: {}
@@ -5389,7 +6029,7 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
 
     var userModel = mongoose.model("user", userSchema);
 
-    var association = { include: { model: { schema: { methods: {} }, modelName: "testAssociation" } } };  
+    var association = {include: {model: {schema: {methods: {}}, modelName: "testAssociation"}}};
     //</editor-fold>
 
     //<editor-fold desc="Act">
@@ -5410,14 +6050,21 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
 
   t.test('rest-helper-factory.generateAssociationAddManyEndpoint calls server.route with correct ownerAlias and childAlias', sinon.test(function (t) {
     //<editor-fold desc="Arrange">
-    var server = this.stub({route: function(){}});
+    var server = this.stub({
+      route: function () {
+      }
+    });
 
-    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(),server));
+    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(), server));
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});
-    joiMongooseHelperStub.generateJoiUpdateModel =function(){return Joi.any()};
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+      return Joi.any()
+    });
+    joiMongooseHelperStub.generateJoiUpdateModel = function () {
+      return Joi.any()
+    };
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
       './handler-helper-factory': handlerHelperStubWrapper,
       './query-helper': queryHelperStub,
@@ -5426,7 +6073,8 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
 
     t.plan(2);
 
-    var userSchema1 = new mongoose.Schema({});     userSchema1.statics = { routeOptions: {} };
+    var userSchema1 = new mongoose.Schema({});
+    userSchema1.statics = {routeOptions: {}};
     userSchema1.statics = {
       routeOptions: {
         associations: {}
@@ -5444,8 +6092,8 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
     var userModel1 = mongoose.model("user1", userSchema1);
     var userModel2 = mongoose.model("user2", userSchema2);
 
-    var association1 = { include: { model: { modelName: "TEST1" } } };
-    var association2 = { include: { model: {} }, alias: "TEST2" };
+    var association1 = {include: {model: {modelName: "TEST1"}}};
+    var association2 = {include: {model: {}}, alias: "TEST2"};
     //</editor-fold>
 
     //<editor-fold desc="Act">
@@ -5471,14 +6119,21 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
 
   t.test('rest-helper-factory.generateAssociationAddManyEndpoint calls server.route with correct handler', sinon.test(function (t) {
     //<editor-fold desc="Arrange">
-    var server = this.stub({route: function(){}});
+    var server = this.stub({
+      route: function () {
+      }
+    });
 
-    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(),server));
-    handlerHelperStub.generateAssociationAddManyHandler = this.spy(function(){return "HANDLER"})
+    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(), server));
+    handlerHelperStub.generateAssociationAddManyHandler = this.spy(function () {
+      return "HANDLER"
+    })
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+      return Joi.any()
+    });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
       './handler-helper-factory': handlerHelperStubWrapper,
       './query-helper': queryHelperStub,
@@ -5487,7 +6142,8 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    var userSchema = new mongoose.Schema({});
+    userSchema.statics = {routeOptions: {}};
     userSchema.statics = {
       routeOptions: {
         associations: {}
@@ -5496,7 +6152,7 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
 
     var userModel = mongoose.model("user", userSchema);
 
-    var association = { include: { model: { schema: { methods: {} }, modelName: "testAssociation" } } };  
+    var association = {include: {model: {schema: {methods: {}}, modelName: "testAssociation"}}};
     //</editor-fold>
 
     //<editor-fold desc="Act">
@@ -5518,14 +6174,19 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
 
   t.test('rest-helper-factory.generateAssociationAddManyEndpoint calls server.route using authentication defined by config', sinon.test(function (t) {
     //<editor-fold desc="Arrange">
-    var server = this.stub({route: function(){}});
+    var server = this.stub({
+      route: function () {
+      }
+    });
 
-    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(),server));
+    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(), server));
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});
-    var config = { authStrategy: "TEST_AUTH" };
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+      return Joi.any()
+    });
+    var config = {authStrategy: "TEST_AUTH"};
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
       './handler-helper-factory': handlerHelperStubWrapper,
       './query-helper': queryHelperStub,
@@ -5535,7 +6196,8 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    var userSchema = new mongoose.Schema({});
+    userSchema.statics = {routeOptions: {}};
     userSchema.statics = {
       routeOptions: {
         associations: {}
@@ -5544,7 +6206,7 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
 
     var userModel = mongoose.model("user", userSchema);
 
-    var association = { include: { model: { schema: { methods: {} }, modelName: "testAssociation" } } };  
+    var association = {include: {model: {schema: {methods: {}}, modelName: "testAssociation"}}};
     //</editor-fold>
 
     //<editor-fold desc="Act">
@@ -5554,7 +6216,7 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
     //<editor-fold desc="Assert">
     var serverObject = server.route.args[0][0];
     // Log.debug(JSON.stringify(serverObject));
-    t.deepEqual(serverObject.config.auth, { strategy: config.authStrategy }, "config auth used");
+    t.deepEqual(serverObject.config.auth, {strategy: config.authStrategy}, "config auth used");
     //</editor-fold>
 
 
@@ -5566,13 +6228,18 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
 
   t.test('rest-helper-factory.generateAssociationAddManyEndpoint calls server.route with correct associationName and ownerModelName', sinon.test(function (t) {
     //<editor-fold desc="Arrange">
-    var server = this.stub({route: function(){}});
+    var server = this.stub({
+      route: function () {
+      }
+    });
 
-    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(),server));
+    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(), server));
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+      return Joi.any()
+    });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
       './handler-helper-factory': handlerHelperStubWrapper,
       './query-helper': queryHelperStub,
@@ -5581,7 +6248,8 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
 
     t.plan(4);
 
-    var userSchema1 = new mongoose.Schema({});     userSchema1.statics = { routeOptions: {} };
+    var userSchema1 = new mongoose.Schema({});
+    userSchema1.statics = {routeOptions: {}};
     userSchema1.statics = {
       routeOptions: {
         associations: {}
@@ -5599,8 +6267,8 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
     var userModel1 = mongoose.model("user1", userSchema1);
     var userModel2 = mongoose.model("user2", userSchema2);
 
-    var association1 = { include: { model: { modelName: "TEST1" } } };
-    var association2 = { include: { model: { modelName: "test2" }, as: "TEST2" } };
+    var association1 = {include: {model: {modelName: "TEST1"}}};
+    var association2 = {include: {model: {modelName: "test2"}, as: "TEST2"}};
     //</editor-fold>
 
     //<editor-fold desc="Act">
@@ -5628,13 +6296,18 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
 
   t.test('rest-helper-factory.generateAssociationAddManyEndpoint calls server.route using cors', sinon.test(function (t) {
     //<editor-fold desc="Arrange">
-    var server = this.stub({route: function(){}});
+    var server = this.stub({
+      route: function () {
+      }
+    });
 
-    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(),server));
+    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(), server));
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+      return Joi.any()
+    });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
       './handler-helper-factory': handlerHelperStubWrapper,
       './query-helper': queryHelperStub,
@@ -5643,7 +6316,8 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    var userSchema = new mongoose.Schema({});
+    userSchema.statics = {routeOptions: {}};
     userSchema.statics = {
       routeOptions: {
         associations: {}
@@ -5652,7 +6326,7 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
 
     var userModel = mongoose.model("user", userSchema);
 
-    var association = { include: { model: { schema: { methods: {} }, modelName: "testAssociation" } } };  
+    var association = {include: {model: {schema: {methods: {}}, modelName: "testAssociation"}}};
     //</editor-fold>
 
     //<editor-fold desc="Act">
@@ -5678,17 +6352,24 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
 
   t.test('rest-helper-factory.generateAssociationAddManyEndpoint calls server.route using correct payload validation', sinon.test(function (t) {
     //<editor-fold desc="Arrange">
-    var server = this.stub({route: function(){}});
+    var server = this.stub({
+      route: function () {
+      }
+    });
 
-    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(),server));
+    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(), server));
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});
-    joiMongooseHelperStub.generateJoiAssociationModel = function(){return Joi.object().unknown()};
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+      return Joi.any()
+    });
+    joiMongooseHelperStub.generateJoiAssociationModel = function () {
+      return Joi.object().unknown()
+    };
     var joiStub = require('joi');
 
-    var joiObjectIdStub = function() {
+    var joiObjectIdStub = function () {
       return function () {
         return Joi.any().valid("objectId");
       }
@@ -5703,7 +6384,8 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
 
     t.plan(2);
 
-    var userSchema1 = new mongoose.Schema({});     userSchema1.statics = { routeOptions: {} };
+    var userSchema1 = new mongoose.Schema({});
+    userSchema1.statics = {routeOptions: {}};
     userSchema1.statics = {
       routeOptions: {
         associations: {}
@@ -5720,10 +6402,10 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
     var userModel1 = mongoose.model("user1", userSchema1);
     var userModel2 = mongoose.model("user2", userSchema2);
 
-    var association1 = { include: { model: { modelName: "TEST1", schema: { methods: {} } } } };
-    var association2 = { include: { model: { schema: { methods: {} }}, through: {} }, alias: "TEST2" };
+    var association1 = {include: {model: {modelName: "TEST1", schema: {methods: {}}}}};
+    var association2 = {include: {model: {schema: {methods: {}}}, through: {}}, alias: "TEST2"};
 
-    var payloadValidation1 = Joi.array().items(Joi.object().unknown().keys({ childId: Joi.any().valid("objectId") })).required();
+    var payloadValidation1 = Joi.array().items(Joi.object().unknown().keys({childId: Joi.any().valid("objectId")})).required();
     var payloadValidation2 = Joi.array().items(Joi.any().valid("objectId")).required();
     //</editor-fold>
 
@@ -5750,16 +6432,21 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
 
   t.test('rest-helper-factory.generateAssociationAddManyEndpoint calls server.route using correct params validation', sinon.test(function (t) {
     //<editor-fold desc="Arrange">
-    var server = this.stub({route: function(){}});
+    var server = this.stub({
+      route: function () {
+      }
+    });
 
-    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(),server));
+    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(), server));
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+      return Joi.any()
+    });
     var joiStub = require('joi');
 
-    var joiObjectIdStub = function() {
+    var joiObjectIdStub = function () {
       return function () {
         return Joi.any().valid("objectId");
       }
@@ -5774,7 +6461,8 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
 
     t.plan(3);
 
-    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    var userSchema = new mongoose.Schema({});
+    userSchema.statics = {routeOptions: {}};
     userSchema.statics = {
       routeOptions: {
         associations: {}
@@ -5783,9 +6471,9 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
 
     var userModel = mongoose.model("user", userSchema);
 
-    var association = { include: { model: { schema: { methods: {} }, modelName: "testAssociation" } } };  
+    var association = {include: {model: {schema: {methods: {}}, modelName: "testAssociation"}}};
 
-    var params =  {
+    var params = {
       ownerId: Joi.any().valid("objectId").required()
     };
     //</editor-fold>
@@ -5811,14 +6499,19 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
 
   t.test('rest-helper-factory.generateAssociationAddManyEndpoint calls server.route using correct header validation', sinon.test(function (t) {
     //<editor-fold desc="Arrange">
-    var server = this.stub({route: function(){}});
+    var server = this.stub({
+      route: function () {
+      }
+    });
 
-    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(),server));
+    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(), server));
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});
-    var config = { authStrategy: "TEST_AUTH" };
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+      return Joi.any()
+    });
+    var config = {authStrategy: "TEST_AUTH"};
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
       './handler-helper-factory': handlerHelperStubWrapper,
       './query-helper': queryHelperStub,
@@ -5828,7 +6521,8 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    var userSchema = new mongoose.Schema({});
+    userSchema.statics = {routeOptions: {}};
     userSchema.statics = {
       routeOptions: {
         associations: {}
@@ -5837,7 +6531,7 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
 
     var userModel = mongoose.model("user", userSchema);
 
-    var association = { include: { model: { schema: { methods: {} }, modelName: "testAssociation" } } };  
+    var association = {include: {model: {schema: {methods: {}}, modelName: "testAssociation"}}};
 
     var headerValidation = Joi.object({
       'authorization': Joi.string().required()
@@ -5863,13 +6557,18 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
 
   t.test('rest-helper-factory.generateAssociationAddManyEndpoint calls server.route using hapi-swagger plugin', sinon.test(function (t) {
     //<editor-fold desc="Arrange">
-    var server = this.stub({route: function(){}});
+    var server = this.stub({
+      route: function () {
+      }
+    });
 
-    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(),server));
+    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(), server));
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+      return Joi.any()
+    });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
       './handler-helper-factory': handlerHelperStubWrapper,
       './query-helper': queryHelperStub,
@@ -5878,7 +6577,8 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    var userSchema = new mongoose.Schema({});
+    userSchema.statics = {routeOptions: {}};
     userSchema.statics = {
       routeOptions: {
         associations: {}
@@ -5887,7 +6587,7 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
 
     var userModel = mongoose.model("user", userSchema);
 
-    var association = { include: { model: { schema: { methods: {} }, modelName: "testAssociation" } } };  
+    var association = {include: {model: {schema: {methods: {}}, modelName: "testAssociation"}}};
     //</editor-fold>
 
     //<editor-fold desc="Act">
@@ -5909,13 +6609,18 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
 
   t.test('rest-helper-factory.generateAssociationAddManyEndpoint calls server.route with correct response schema validation', sinon.test(function (t) {
     //<editor-fold desc="Arrange">
-    var server = this.stub({route: function(){}});
+    var server = this.stub({
+      route: function () {
+      }
+    });
 
-    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(),server));
+    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(), server));
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return readModel});
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+      return readModel
+    });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
       './handler-helper-factory': handlerHelperStubWrapper,
       './query-helper': queryHelperStub,
@@ -5924,7 +6629,8 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    var userSchema = new mongoose.Schema({});
+    userSchema.statics = {routeOptions: {}};
     userSchema.statics = {
       routeOptions: {
         associations: {}
@@ -5933,7 +6639,7 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
 
     var userModel = mongoose.model("user", userSchema);
 
-    var association = { include: { model: { schema: { methods: {} }, modelName: "testAssociation" } } };  
+    var association = {include: {model: {schema: {methods: {}}, modelName: "testAssociation"}}};
 
     var responseSchema = {};
     //</editor-fold>
@@ -5958,20 +6664,25 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
   t.end();
 });
 
-test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
+test('rest-helper-factory.generateAssociationGetAllEndpoint', function (t) {
   var server = sinon.spy();
   var restHelperFactory = require('../utilities/rest-helper-factory')(Log, mongoose, server);
   testHelper.testModelParameter(t, restHelperFactory.generateAssociationGetAllEndpoint, "restHelperFactory.generateAssociationGetAllEndpoint", ["server", "model", "options", "Log"], Log);
 
   t.test('rest-helper-factory.generateAssociationGetAllEndpoint asserts routeOptions.associations exist', sinon.test(function (t) {
     //<editor-fold desc="Arrange">
-    var server = this.stub({route: function(){}});
+    var server = this.stub({
+      route: function () {
+      }
+    });
 
-    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(),server));
+    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(), server));
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+      return Joi.any()
+    });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
       './handler-helper-factory': handlerHelperStubWrapper,
       './query-helper': queryHelperStub,
@@ -5980,14 +6691,15 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
 
     t.plan(2);
 
-    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    var userSchema = new mongoose.Schema({});
+    userSchema.statics = {routeOptions: {}};
     userSchema.statics = {
       routeOptions: {}
     };
 
     var userModel = mongoose.model("user", userSchema);
 
-    var association = { include: {} };
+    var association = {include: {}};
     //</editor-fold>
 
     try {
@@ -6012,13 +6724,18 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
 
   t.test('rest-helper-factory.generateAssociationGetAllEndpoint asserts association input exists', sinon.test(function (t) {
     //<editor-fold desc="Arrange">
-    var server = this.stub({route: function(){}});
+    var server = this.stub({
+      route: function () {
+      }
+    });
 
-    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(),server));
+    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(), server));
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+      return Joi.any()
+    });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
       './handler-helper-factory': handlerHelperStubWrapper,
       './query-helper': queryHelperStub,
@@ -6027,7 +6744,8 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
 
     t.plan(2);
 
-    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    var userSchema = new mongoose.Schema({});
+    userSchema.statics = {routeOptions: {}};
     userSchema.statics = {
       routeOptions: {
         associations: {}
@@ -6036,7 +6754,7 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
 
     var userModel = mongoose.model("user", userSchema);
 
-    var association = { include: {} };
+    var association = {include: {}};
     //</editor-fold>
 
     try {
@@ -6061,13 +6779,18 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
 
   t.test('rest-helper-factory.generateAssociationGetAllEndpoint calls handlerHelper.generateAssociationGetAllHandler', sinon.test(function (t) {
     //<editor-fold desc="Arrange">
-    var server = this.stub({route: function(){}});
+    var server = this.stub({
+      route: function () {
+      }
+    });
 
-    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(),server));
+    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(), server));
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+      return Joi.any()
+    });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
       './handler-helper-factory': handlerHelperStubWrapper,
       './query-helper': queryHelperStub,
@@ -6076,7 +6799,8 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    var userSchema = new mongoose.Schema({});
+    userSchema.statics = {routeOptions: {}};
     userSchema.statics = {
       routeOptions: {
         associations: {}
@@ -6086,7 +6810,7 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
     var userModel = mongoose.model("user", userSchema);
 
     var childModel = mongoose.model("child", userSchema);
-    var association = { include: { model: childModel } };
+    var association = {include: {model: childModel}};
     //</editor-fold>
 
     //<editor-fold desc="Act">
@@ -6108,13 +6832,18 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
 
   t.test('rest-helper-factory.generateAssociationGetAllEndpoint calls queryHelper.getQueryableFields, getReadableFields, and getSortableFields', sinon.test(function (t) {
     //<editor-fold desc="Arrange">
-    var server = this.stub({route: function(){}});
+    var server = this.stub({
+      route: function () {
+      }
+    });
 
-    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(),server));
+    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(), server));
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+      return Joi.any()
+    });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
       './handler-helper-factory': handlerHelperStubWrapper,
       './query-helper': queryHelperStub,
@@ -6123,7 +6852,8 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
 
     t.plan(3);
 
-    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    var userSchema = new mongoose.Schema({});
+    userSchema.statics = {routeOptions: {}};
     userSchema.statics = {
       routeOptions: {
         associations: {}
@@ -6133,7 +6863,7 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
     var userModel = mongoose.model("user", userSchema);
 
     var childModel = mongoose.model("child", userSchema);
-    var association = { include: { model: childModel } };
+    var association = {include: {model: childModel}};
     //</editor-fold>
 
     //<editor-fold desc="Act">
@@ -6157,13 +6887,18 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
 
   t.test('rest-helper-factory.generateAssociationGetAllEndpoint calls joiMongooseHelper.generateJoiReadModel', sinon.test(function (t) {
     //<editor-fold desc="Arrange">
-    var server = this.stub({route: function(){}});
+    var server = this.stub({
+      route: function () {
+      }
+    });
 
-    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(),server));
+    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(), server));
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+      return Joi.any()
+    });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
       './handler-helper-factory': handlerHelperStubWrapper,
       './query-helper': queryHelperStub,
@@ -6172,7 +6907,8 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    var userSchema = new mongoose.Schema({});
+    userSchema.statics = {routeOptions: {}};
     userSchema.statics = {
       routeOptions: {
         associations: {}
@@ -6182,7 +6918,7 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
     var userModel = mongoose.model("user", userSchema);
 
     var childModel = mongoose.model("child", userSchema);
-    var association = { include: { model: childModel } };
+    var association = {include: {model: childModel}};
     //</editor-fold>
 
     //<editor-fold desc="Act">
@@ -6204,13 +6940,18 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
 
   t.test('rest-helper-factory.generateAssociationGetAllEndpoint calls server.route', sinon.test(function (t) {
     //<editor-fold desc="Arrange">
-    var server = this.stub({route: function(){}});
+    var server = this.stub({
+      route: function () {
+      }
+    });
 
-    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(),server));
+    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(), server));
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+      return Joi.any()
+    });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
       './handler-helper-factory': handlerHelperStubWrapper,
       './query-helper': queryHelperStub,
@@ -6219,7 +6960,8 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    var userSchema = new mongoose.Schema({});
+    userSchema.statics = {routeOptions: {}};
     userSchema.statics = {
       routeOptions: {
         associations: {}
@@ -6229,7 +6971,7 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
     var userModel = mongoose.model("user", userSchema);
 
     var childModel = mongoose.model("child", userSchema);
-    var association = { include: { model: childModel } };
+    var association = {include: {model: childModel}};
     //</editor-fold>
 
     //<editor-fold desc="Act">
@@ -6251,13 +6993,18 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
 
   t.test('rest-helper-factory.generateAssociationGetAllEndpoint calls server.route with "GET" method', sinon.test(function (t) {
     //<editor-fold desc="Arrange">
-    var server = this.stub({route: function(){}});
+    var server = this.stub({
+      route: function () {
+      }
+    });
 
-    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(),server));
+    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(), server));
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+      return Joi.any()
+    });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
       './handler-helper-factory': handlerHelperStubWrapper,
       './query-helper': queryHelperStub,
@@ -6266,7 +7013,8 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    var userSchema = new mongoose.Schema({});
+    userSchema.statics = {routeOptions: {}};
     userSchema.statics = {
       routeOptions: {
         associations: {}
@@ -6276,7 +7024,7 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
     var userModel = mongoose.model("user", userSchema);
 
     var childModel = mongoose.model("child", userSchema);
-    var association = { include: { model: childModel } };
+    var association = {include: {model: childModel}};
     //</editor-fold>
 
     //<editor-fold desc="Act">
@@ -6300,14 +7048,21 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
 
   t.test('rest-helper-factory.generateAssociationGetAllEndpoint calls server.route with correct ownerAlias and childAlias', sinon.test(function (t) {
     //<editor-fold desc="Arrange">
-    var server = this.stub({route: function(){}});
+    var server = this.stub({
+      route: function () {
+      }
+    });
 
-    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(),server));
+    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(), server));
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});
-    joiMongooseHelperStub.generateJoiUpdateModel =function(){return Joi.any()};
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+      return Joi.any()
+    });
+    joiMongooseHelperStub.generateJoiUpdateModel = function () {
+      return Joi.any()
+    };
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
       './handler-helper-factory': handlerHelperStubWrapper,
       './query-helper': queryHelperStub,
@@ -6316,7 +7071,8 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
 
     t.plan(2);
 
-    var userSchema1 = new mongoose.Schema({});     userSchema1.statics = { routeOptions: {} };
+    var userSchema1 = new mongoose.Schema({});
+    userSchema1.statics = {routeOptions: {}};
     userSchema1.statics = {
       routeOptions: {
         associations: {}
@@ -6337,8 +7093,8 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
     var childModel1 = mongoose.model("child1", userSchema1);
     var childModel2 = mongoose.model("child2", userSchema2);
 
-    var association1 = { include: { model: childModel1 } };
-    var association2 = { include: { model: childModel2 }, alias: "TEST2" };
+    var association1 = {include: {model: childModel1}};
+    var association2 = {include: {model: childModel2}, alias: "TEST2"};
     //</editor-fold>
 
     //<editor-fold desc="Act">
@@ -6366,15 +7122,22 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
 
   t.test('rest-helper-factory.generateAssociationGetAllEndpoint calls server.route with correct handler', sinon.test(function (t) {
     //<editor-fold desc="Arrange">
-    var server = this.stub({route: function(){}});
+    var server = this.stub({
+      route: function () {
+      }
+    });
 
-    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(),server));
-    handlerHelperStub.generateAssociationGetAllHandler = this.spy(function(){return "HANDLER"})
+    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(), server));
+    handlerHelperStub.generateAssociationGetAllHandler = this.spy(function () {
+      return "HANDLER"
+    })
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});
-    var config = { authStrategy: "TEST_AUTH" };
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+      return Joi.any()
+    });
+    var config = {authStrategy: "TEST_AUTH"};
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
       './handler-helper-factory': handlerHelperStubWrapper,
       './query-helper': queryHelperStub,
@@ -6384,7 +7147,8 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    var userSchema = new mongoose.Schema({});
+    userSchema.statics = {routeOptions: {}};
     userSchema.statics = {
       routeOptions: {
         associations: {}
@@ -6394,7 +7158,7 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
     var userModel = mongoose.model("user", userSchema);
 
     var childModel = mongoose.model("child", userSchema);
-    var association = { include: { model: childModel } };
+    var association = {include: {model: childModel}};
     //</editor-fold>
 
     //<editor-fold desc="Act">
@@ -6418,14 +7182,19 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
 
   t.test('rest-helper-factory.generateAssociationGetAllEndpoint calls server.route using authentication defined by config', sinon.test(function (t) {
     //<editor-fold desc="Arrange">
-    var server = this.stub({route: function(){}});
+    var server = this.stub({
+      route: function () {
+      }
+    });
 
-    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(),server));
+    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(), server));
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});
-    var config = { authStrategy: "TEST_AUTH" };
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+      return Joi.any()
+    });
+    var config = {authStrategy: "TEST_AUTH"};
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
       './handler-helper-factory': handlerHelperStubWrapper,
       './query-helper': queryHelperStub,
@@ -6435,7 +7204,8 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    var userSchema = new mongoose.Schema({});
+    userSchema.statics = {routeOptions: {}};
     userSchema.statics = {
       routeOptions: {
         associations: {}
@@ -6445,7 +7215,7 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
     var userModel = mongoose.model("user", userSchema);
 
     var childModel = mongoose.model("child", userSchema);
-    var association = { include: { model: childModel } };
+    var association = {include: {model: childModel}};
     //</editor-fold>
 
     //<editor-fold desc="Act">
@@ -6455,7 +7225,7 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
     //<editor-fold desc="Assert">
     var serverObject = server.route.args[0][0];
     // Log.debug(JSON.stringify(serverObject));
-    t.deepEqual(serverObject.config.auth, { strategy: config.authStrategy }, "config auth used");
+    t.deepEqual(serverObject.config.auth, {strategy: config.authStrategy}, "config auth used");
     //</editor-fold>
 
 
@@ -6469,13 +7239,18 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
 
   t.test('rest-helper-factory.generateAssociationGetAllEndpoint calls server.route with correct associationName and ownerModelName', sinon.test(function (t) {
     //<editor-fold desc="Arrange">
-    var server = this.stub({route: function(){}});
+    var server = this.stub({
+      route: function () {
+      }
+    });
 
-    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(),server));
+    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(), server));
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+      return Joi.any()
+    });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
       './handler-helper-factory': handlerHelperStubWrapper,
       './query-helper': queryHelperStub,
@@ -6484,7 +7259,8 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
 
     t.plan(4);
 
-    var userSchema1 = new mongoose.Schema({});     userSchema1.statics = { routeOptions: {} };
+    var userSchema1 = new mongoose.Schema({});
+    userSchema1.statics = {routeOptions: {}};
     userSchema1.statics = {
       routeOptions: {
         associations: {}
@@ -6505,8 +7281,8 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
     var childModel1 = mongoose.model("child1", userSchema1);
     var childModel2 = mongoose.model("child2", userSchema2);
 
-    var association1 = { include: { model: childModel1 } };
-    var association2 = { include: { model: childModel2, as: "TEST2" } };
+    var association1 = {include: {model: childModel1}};
+    var association2 = {include: {model: childModel2, as: "TEST2"}};
     //</editor-fold>
 
     //<editor-fold desc="Act">
@@ -6536,13 +7312,18 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
 
   t.test('rest-helper-factory.generateAssociationGetAllEndpoint calls server.route using cors', sinon.test(function (t) {
     //<editor-fold desc="Arrange">
-    var server = this.stub({route: function(){}});
+    var server = this.stub({
+      route: function () {
+      }
+    });
 
-    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(),server));
+    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(), server));
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+      return Joi.any()
+    });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
       './handler-helper-factory': handlerHelperStubWrapper,
       './query-helper': queryHelperStub,
@@ -6551,7 +7332,8 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    var userSchema = new mongoose.Schema({});
+    userSchema.statics = {routeOptions: {}};
     userSchema.statics = {
       routeOptions: {
         associations: {}
@@ -6561,7 +7343,7 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
     var userModel = mongoose.model("user", userSchema);
 
     var childModel = mongoose.model("child", userSchema);
-    var association = { include: { model: childModel } };
+    var association = {include: {model: childModel}};
     //</editor-fold>
 
     //<editor-fold desc="Act">
@@ -6589,19 +7371,32 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
 
   t.test('rest-helper-factory.generateAssociationGetAllEndpoint calls server.route using correct queryValidation', sinon.test(function (t) {
     //<editor-fold desc="Arrange">
-    var server = this.stub({route: function(){}});
+    var server = this.stub({
+      route: function () {
+      }
+    });
 
-    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(),server));
+    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(), server));
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    queryHelperStub.getQueryableFields = this.spy(function(){return ["test"]});
+    queryHelperStub.getQueryableFields = this.spy(function () {
+      return ["test"]
+    });
     var readableFields = ['readable'];
     var sortableFields = ['sortable'];
-    queryHelperStub.getReadableFields = this.spy(function(){return readableFields});
-    queryHelperStub.getSortableFields = this.spy(function(){return sortableFields});
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});
-    joiMongooseHelperStub.generateJoiModelFromFieldType = this.spy(function(){return Joi.string()});
+    queryHelperStub.getReadableFields = this.spy(function () {
+      return readableFields
+    });
+    queryHelperStub.getSortableFields = this.spy(function () {
+      return sortableFields
+    });
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+      return Joi.any()
+    });
+    joiMongooseHelperStub.generateJoiModelFromFieldType = this.spy(function () {
+      return Joi.string()
+    });
     var joiStub = require('joi');
     // joiStub.number = function () {
     //   return {
@@ -6636,17 +7431,17 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
         type: Types.String
       }
     });
-    userSchema.statics = { routeOptions: { associations: {} } };
+    userSchema.statics = {routeOptions: {associations: {}}};
 
     var userModel = mongoose.model("user", userSchema);
 
     var childModel = mongoose.model("child", userSchema);
-    var association = { include: { model: childModel } };
+    var association = {include: {model: childModel}};
 
     var queryValidation = {};
 
     queryValidation.$select = Joi.alternatives().try(Joi.array().items(Joi.string().valid(readableFields))
-        .description('A list of basic fields to be included in each resource. Valid values include: ' + readableFields.toString().replace(/,/g,', ')), Joi.string().valid(readableFields));
+        .description('A list of basic fields to be included in each resource. Valid values include: ' + readableFields.toString().replace(/,/g, ', ')), Joi.string().valid(readableFields));
     // queryValidation.$term = Joi.string().optional()
     //   .description('A generic search parameter. This can be refined using the `searchFields` parameter. Valid values include: ' + queryableFields);
     // queryValidation.$searchFields = Joi.string().optional()//TODO: make enumerated array.
@@ -6654,7 +7449,7 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
     queryValidation.$sort = Joi.alternatives().try(Joi.array().items(Joi.string().valid(sortableFields))
         .description('A set of fields to sort by. Including field name indicates it should be sorted ascending, while prepending ' +
             '\'-\' indicates descending. The default sort direction is \'ascending\' (lowest value to highest value). Listing multiple' +
-            'fields prioritizes the sort starting with the first field listed. Valid values include: ' + sortableFields.toString().replace(/,/g,', ')), Joi.string().valid(sortableFields));
+            'fields prioritizes the sort starting with the first field listed. Valid values include: ' + sortableFields.toString().replace(/,/g, ', ')), Joi.string().valid(sortableFields));
     queryValidation.$where = Joi.any().optional()
         .description('An optional field for raw mongoose queries.');
 
@@ -6689,18 +7484,29 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
 
   t.test('rest-helper-factory.generateAssociationGetAllEndpoint calls server.route with $embed validation if associations exist', sinon.test(function (t) {
     //<editor-fold desc="Arrange">
-    var server = this.stub({route: function(){}});
+    var server = this.stub({
+      route: function () {
+      }
+    });
 
-    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(),server));
+    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(), server));
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    queryHelperStub.getQueryableFields = this.spy(function(){return ["test"]});
+    queryHelperStub.getQueryableFields = this.spy(function () {
+      return ["test"]
+    });
     var readableFields = ['readable'];
     var sortableFields = ['sortable'];
-    queryHelperStub.getReadableFields = this.spy(function(){return readableFields});
-    queryHelperStub.getSortableFields = this.spy(function(){return sortableFields});
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});
+    queryHelperStub.getReadableFields = this.spy(function () {
+      return readableFields
+    });
+    queryHelperStub.getSortableFields = this.spy(function () {
+      return sortableFields
+    });
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+      return Joi.any()
+    });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
       './handler-helper-factory': handlerHelperStubWrapper,
       './query-helper': queryHelperStub,
@@ -6743,15 +7549,15 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
     var childModel1 = mongoose.model("child1", childSchema1);
     var childModel2 = mongoose.model("child2", userSchema1);
 
-    var association1 = { include: { model: childModel1 } };
-    var association2 = { include: { model: childModel2 }, alias: "TEST2" };
+    var association1 = {include: {model: childModel1}};
+    var association2 = {include: {model: childModel2}, alias: "TEST2"};
 
     var userModel1 = mongoose.model("user1", userSchema1);
     var userModel2 = mongoose.model("user2", userSchema2);
 
     var queryValidation = {};
     queryValidation.$embed = Joi.alternatives().try(Joi.array().items(Joi.string())
-        .description('A set of complex object properties to populate. Valid first level values include ' + Object.keys({test:{}}).toString().replace(/,/g,', ')), Joi.string());
+        .description('A set of complex object properties to populate. Valid first level values include ' + Object.keys({test: {}}).toString().replace(/,/g, ', ')), Joi.string());
     //</editor-fold>
 
     //<editor-fold desc="Act">
@@ -6780,14 +7586,19 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
 
   t.test('rest-helper-factory.generateAssociationGetAllEndpoint calls server.route using correct header validation', sinon.test(function (t) {
     //<editor-fold desc="Arrange">
-    var server = this.stub({route: function(){}});
+    var server = this.stub({
+      route: function () {
+      }
+    });
 
-    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(),server));
+    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(), server));
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});
-    var config = { authStrategy: "TEST_AUTH" };
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+      return Joi.any()
+    });
+    var config = {authStrategy: "TEST_AUTH"};
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
       './handler-helper-factory': handlerHelperStubWrapper,
       './query-helper': queryHelperStub,
@@ -6797,7 +7608,8 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    var userSchema = new mongoose.Schema({});
+    userSchema.statics = {routeOptions: {}};
     userSchema.statics = {
       routeOptions: {
         associations: {}
@@ -6807,7 +7619,7 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
     var userModel = mongoose.model("user", userSchema);
 
     var childModel = mongoose.model("child", userSchema);
-    var association = { include: { model: childModel } };
+    var association = {include: {model: childModel}};
 
     var headerValidation = Joi.object({
       'authorization': Joi.string().required()
@@ -6835,13 +7647,18 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
 
   t.test('rest-helper-factory.generateAssociationGetAllEndpoint calls server.route using hapi-swagger plugin', sinon.test(function (t) {
     //<editor-fold desc="Arrange">
-    var server = this.stub({route: function(){}});
+    var server = this.stub({
+      route: function () {
+      }
+    });
 
-    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(),server));
+    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(), server));
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+      return Joi.any()
+    });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
       './handler-helper-factory': handlerHelperStubWrapper,
       './query-helper': queryHelperStub,
@@ -6850,7 +7667,8 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    var userSchema = new mongoose.Schema({});
+    userSchema.statics = {routeOptions: {}};
     userSchema.statics = {
       routeOptions: {
         associations: {}
@@ -6860,7 +7678,7 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
     var userModel = mongoose.model("user", userSchema);
 
     var childModel = mongoose.model("child", userSchema);
-    var association = { include: { model: childModel } };
+    var association = {include: {model: childModel}};
     //</editor-fold>
 
     //<editor-fold desc="Act">
@@ -6884,14 +7702,19 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
 
   t.test('rest-helper-factory.generateAssociationGetAllEndpoint calls server.route with correct response schema validation', sinon.test(function (t) {
     //<editor-fold desc="Arrange">
-    var server = this.stub({route: function(){}});
+    var server = this.stub({
+      route: function () {
+      }
+    });
 
-    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(),server));
+    var handlerHelperStub = this.stub(require('../utilities/handler-helper-factory')(this.spy(), server));
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
     var readModel = Joi.any().valid(["test"]);
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return readModel});
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+      return readModel
+    });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
       './handler-helper-factory': handlerHelperStubWrapper,
       './query-helper': queryHelperStub,
@@ -6900,7 +7723,8 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
 
     t.plan(1);
 
-    var userSchema = new mongoose.Schema({});     userSchema.statics = { routeOptions: {} };
+    var userSchema = new mongoose.Schema({});
+    userSchema.statics = {routeOptions: {}};
     userSchema.statics = {
       routeOptions: {
         associations: {}
@@ -6910,9 +7734,13 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
     var userModel = mongoose.model("user", userSchema);
 
     var childModel = mongoose.model("child", userSchema);
-    var association = { include: { model: childModel } };
+    var association = {include: {model: childModel}};
 
-    var responseSchema = Joi.alternatives().try(Joi.object({ docs: Joi.array().items(readModel), pages: Joi.any(), items: Joi.any() }), Joi.number());
+    var responseSchema = Joi.alternatives().try(Joi.object({
+      docs: Joi.array().items(readModel),
+      pages: Joi.any(),
+      items: Joi.any()
+    }), Joi.number());
     //</editor-fold>
 
     //<editor-fold desc="Act">

@@ -56,7 +56,7 @@ test('model-helper exists and has expected members', function (t) {
 //   t.end();
 // });
 
-test('model-helper.extendSchemaAssociations', function(t) {
+test('model-helper.extendSchemaAssociations', function (t) {
   t.test('model-helper.extendSchemaAssociations calls Schema.add with correct args if association is MANY_MANY.', function (t) {
     //<editor-fold desc="Arrange">
     var modelHelper = require("../utilities/model-helper");
@@ -121,19 +121,19 @@ test('model-helper.extendSchemaAssociations', function(t) {
     userSchema.add = sinon.spy();
 
     var linkingModelFile =
-      "var mongoose = require('mongoose');\n\n" +
-      "module.exports = function () {\n\n" +
-      "  var Types = mongoose.Schema.Types;\n\n" +
-      "  var Model = {\n" +
-      "      Schema: {\n" +
-      "        linkingModel: {\n" +
-      "          type: Types.String\n" +
-      "        }\n" +
-      "      },\n" +
-      "      modelName: 'test_linking'\n" +
-      "  };\n" +
-      "  return Model;\n" +
-      "};\n";
+        "var mongoose = require('mongoose');\n\n" +
+        "module.exports = function () {\n\n" +
+        "  var Types = mongoose.Schema.Types;\n\n" +
+        "  var Model = {\n" +
+        "      Schema: {\n" +
+        "        linkingModel: {\n" +
+        "          type: Types.String\n" +
+        "        }\n" +
+        "      },\n" +
+        "      modelName: 'test_linking'\n" +
+        "  };\n" +
+        "  return Model;\n" +
+        "};\n";
 
     var extendObject = {
       groups: [{
@@ -153,18 +153,18 @@ test('model-helper.extendSchemaAssociations', function(t) {
     var linkingModelPath = __dirname + "/../models/linking-models/";
     var linkingModelfileName = linkingModelPath + "test_linking.model.js";
 
-    mkdirp(linkingModelPath, function(err) {
+    mkdirp(linkingModelPath, function (err) {
       var deferred = Q.defer();
 
-      if(err) {
+      if (err) {
         Log.error(err);
         deferred.reject(err);
       }
 
       fs.openSync(linkingModelfileName, 'w');
 
-      fs.writeFile(linkingModelfileName, linkingModelFile, function(err) {
-        if(err) {
+      fs.writeFile(linkingModelfileName, linkingModelFile, function (err) {
+        if (err) {
           Log.error(err);
           deferred.reject(err);
         }
@@ -172,12 +172,12 @@ test('model-helper.extendSchemaAssociations', function(t) {
       });
       //</editor-fold>
 
-      deferred.promise.then(function() {
+      deferred.promise.then(function () {
         //<editor-fold desc="Act">
         try {
           modelHelper.extendSchemaAssociations(userSchema, mongoose, __dirname + "/../models");
         }
-        catch(error) {
+        catch (error) {
           Log.error(error);
           throw error;
         }
@@ -254,7 +254,7 @@ test('model-helper.extendSchemaAssociations', function(t) {
   t.end();
 });
 
-test('model-helper.associateModels', function(t) {
+test('model-helper.associateModels', function (t) {
   t.test('model-helper.associateModels builds association.include property.', function (t) {
     //<editor-fold desc="Arrange">
     var modelHelper = require("../utilities/model-helper");
