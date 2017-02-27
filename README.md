@@ -175,8 +175,8 @@ config.apiPath = 'api';
  * @type {{additionalHeaders: string[], additionalExposedHeaders: string[]}}
  */
 config.cors =  {
-    additionalHeaders: ['X-Total-Count'],
-    additionalExposedHeaders: ['X-Total-Count']
+    additionalHeaders: [],
+    additionalExposedHeaders: []
 };
 
 /**
@@ -942,6 +942,9 @@ supported parameters:
 
 * $skip
     - The number of records to skip in the database. This is typically used in pagination.
+    
+* $page
+    - The number of records to skip based on the $limit parameter. This is typically used in pagination.
 
 * $limit
     - The maximum number of records to return. This is typically used in pagination.
@@ -974,6 +977,25 @@ supported parameters:
     - Ex: ``/user?email=test@user.com``
     
 Query parameters can either be passed in as a single string, or an array of strings.
+
+### Pagination
+For any GET query that returns multiple documents, pagination data is returned alongside the documents. The response object has the form:
+
+- docs - an array of documents from the query as class instances.
+- pages - an object where:
+* current - a number indicating the current page.
+* prev - a number indicating the previous page.
+* hasPrev - a boolean indicating if there is a previous page.
+* next - a number indicating the next page.
+* hasNext - a boolean indicating if there is a next page.
+* total - a number indicating the total number of pages.
+- items - an object where:
+* limit - a number indicating the how many results should be returned.
+* begin - a number indicating what item number the results begin with.
+* end - a number indicating what item number the results end with.
+* total - a number indicating the total number of matching results.
+
+**NOTE:** Pagination data borrowed from mongo-models [pagedFind](https://github.com/jedireza/mongo-models/blob/master/API.md#pagedfindfilter-fields-sort-limit-page-callback).
 
 ### Populate nested associations
 Associations can be populated through the ``$embed`` parameter.  To populate nested associations,
