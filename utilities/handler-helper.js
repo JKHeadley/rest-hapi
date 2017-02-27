@@ -147,6 +147,7 @@ module.exports = {
 function _list(model, query, Log) {
   try {
     var mongooseQuery = {};
+    var count = "";
     if (query.$count) {
       mongooseQuery = model.count();
       mongooseQuery = QueryHelper.createMongooseQuery(model, query, mongooseQuery, Log).lean();
@@ -159,7 +160,12 @@ function _list(model, query, Log) {
 
     mongooseQuery = model.find();
     mongooseQuery = QueryHelper.createMongooseQuery(model, query, mongooseQuery, Log).lean();
-    return mongooseQuery.exec()
+    return mongooseQuery.count()
+        .then(function (result) {
+          count = result;
+          mongooseQuery = QueryHelper.paginate(query, mongooseQuery, Log);
+          return mongooseQuery.exec('find')
+        })
         .then(function (result) {
 
           var promise = {};
@@ -198,10 +204,38 @@ function _list(model, query, Log) {
                   }
 
                   Log.log("Result: %s", JSON.stringify(result));
-                  return result;
+                  return result
                 });
 
-                return result;
+                
+                const pages = {
+                    current: query.$page || 1,
+                    prev: 0,
+                    hasPrev: false,
+                    next: 0,
+                    hasNext: false,
+                    total: 0
+                };
+                const items = {
+                    limit: query.$limit,
+                    begin: ((query.$page * query.$limit) - query.$limit) + 1,
+                    end: query.$page * query.$limit,
+                    total: count
+                };
+
+                pages.total = Math.ceil(count / query.$limit);
+                pages.next = pages.current + 1;
+                pages.hasNext = pages.next <= pages.total;
+                pages.prev = pages.current - 1;
+                pages.hasPrev = pages.prev !== 0;
+                if (items.begin > items.total) {
+                  items.begin = items.total;
+                }
+                if (items.end > items.total) {
+                  items.end = items.total;
+                }
+
+                return { docs: result, pages: pages, items: items };
               })
               .catch(function (error) {
                 const message = "There was a postprocessing error.";

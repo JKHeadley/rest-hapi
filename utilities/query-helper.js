@@ -78,10 +78,6 @@ module.exports = {
 
     delete query.$count;
 
-    mongooseQuery = this.setSkip(query, mongooseQuery, Log);
-
-    mongooseQuery = this.setLimit(query, mongooseQuery, Log);
-
     mongooseQuery = this.setExclude(query, mongooseQuery, Log);
 
     var attributesFilter = this.createAttributesFilter(query, model, Log);
@@ -125,7 +121,14 @@ module.exports = {
     //EXPL: handle regex search
     this.setTermSearch(query, model, Log);
 
-    mongooseQuery.where(query);
+    var whereQuery = _.extend({}, query);
+
+    //EXPL: delete pagination parameters
+    delete whereQuery.$limit;
+    delete whereQuery.$skip;
+    delete whereQuery.$page;
+
+    mongooseQuery.where(whereQuery);
     return mongooseQuery;
   },
 
@@ -221,6 +224,26 @@ module.exports = {
   },
 
   /**
+   * Handle pagination for the query if needed.
+   * @param query: The incoming request query.
+   * @param mongooseQuery: A mongoose query.
+   * @param Log: A logging object.
+   * @returns {*}: The updated mongoose query.
+   */
+  paginate: function(query, mongooseQuery, Log) {
+    if (query.$page) {
+      mongooseQuery = this.setPage(query, mongooseQuery, Log);
+    }
+    else {
+      mongooseQuery = this.setSkip(query, mongooseQuery, Log);
+    }
+
+    mongooseQuery = this.setLimit(query, mongooseQuery, Log);
+
+    return mongooseQuery;
+  },
+
+  /**
    * Set the skip amount for the mongoose query. Typically used for paging.
    * @param query: The incoming request query.
    * @param mongooseQuery: A mongoose query.
@@ -230,7 +253,20 @@ module.exports = {
   setSkip: function (query, mongooseQuery, Log) {
     if (query.$skip) {
       mongooseQuery.skip(query.$skip);
-      delete query.$skip;
+    }
+    return mongooseQuery;
+  },
+
+  /**
+   * Set the page for the mongoose query. Typically used for paging.
+   * @param query: The incoming request query.
+   * @param mongooseQuery: A mongoose query.
+   * @param Log: A logging object.
+   * @returns {*}: The updated mongoose query.
+   */
+  setPage: function (query, mongooseQuery, Log) {
+    if (query.$page) {
+      mongooseQuery.skip((query.$page - 1) * query.$limit);
     }
     return mongooseQuery;
   },
@@ -246,7 +282,6 @@ module.exports = {
     //TODO: possible default limit of 20?
     if (query.$limit) {
       mongooseQuery.limit(query.$limit);
-      delete query.$limit;
     }
     return mongooseQuery;
   },

@@ -48,8 +48,8 @@ config.apiPath = 'api';
  * @type {{additionalHeaders: string[], additionalExposedHeaders: string[]}}
  */
 config.cors =  {
-    additionalHeaders: ['X-Total-Count'],
-    additionalExposedHeaders: ['X-Total-Count']
+    additionalHeaders: [],
+    additionalExposedHeaders: []
 };
 
 /**

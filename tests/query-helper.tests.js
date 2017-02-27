@@ -18,7 +18,7 @@ test('query-helper exists and has expected members', function (t) {
   //<editor-fold desc="Arrange">
   var queryHelper = require('../utilities/query-helper');
 
-  t.plan(9);
+  t.plan(11);
   //</editor-fold>
 
   //<editor-fold desc="Assert">
@@ -28,6 +28,8 @@ test('query-helper exists and has expected members', function (t) {
   t.ok(queryHelper.getQueryableFields, "query-helper.getQueryableFields exists.");
   t.ok(queryHelper.setSkip, "query-helper.setSkip exists.");
   t.ok(queryHelper.setLimit, "query-helper.setLimit exists.");
+  t.ok(queryHelper.setPage, "query-helper.setPage exists.");
+  t.ok(queryHelper.paginate, "query-helper.setPage exists.");
   t.ok(queryHelper.populateEmbeddedDocs, "query-helper.populateEmbeddedDocs exists.");
   t.ok(queryHelper.setSort, "query-helper.setSort exists.");
   t.ok(queryHelper.createAttributesFilter, "query-helper.createAttributesFilter exists.");
@@ -431,7 +433,7 @@ test('query-helper.setSkip', function(t) {
     //<editor-fold desc="Arrange">
     var queryHelper = require('../utilities/query-helper');
 
-    t.plan(4);
+    t.plan(3);
 
     var query = { $skip: 3 };
     var mongooseQuery = {};
@@ -445,7 +447,6 @@ test('query-helper.setSkip', function(t) {
     //<editor-fold desc="Assert">
     t.ok(mongooseQuery.skip.called, "the skip function was called");
     t.ok(mongooseQuery.skip.calledWith(3), "the skip function was called with argument '3'");
-    t.notOk(query.$skip, "the '$skip' query parameter was deleted");
     t.equals(mongooseQuery, result, "the mongooseQuery is returned");
     //</editor-fold>
   });
@@ -479,7 +480,7 @@ test('query-helper.setLimit', function(t) {
     //<editor-fold desc="Arrange">
     var queryHelper = require('../utilities/query-helper');
 
-    t.plan(4);
+    t.plan(3);
 
     var query = { $limit: 3 };
     var mongooseQuery = {};
@@ -493,7 +494,6 @@ test('query-helper.setLimit', function(t) {
     //<editor-fold desc="Assert">
     t.ok(mongooseQuery.limit.called, "the limit function was called");
     t.ok(mongooseQuery.limit.calledWith(3), "the limit function was called with argument '3'");
-    t.notOk(query.$limit, "the '$limit' query parameter was deleted");
     t.equals(mongooseQuery, result, "the mongooseQuery is returned");
     //</editor-fold>
   });
@@ -1096,13 +1096,11 @@ test('query-helper.createMongooseQuery', function(t) {
       select: sinon.spy(),
       where: sinon.spy()
     };
-    sinon.stub(queryHelper, "setSkip", function(){ return mongooseQuery });
-    sinon.stub(queryHelper, "setLimit", function(){ return mongooseQuery });
     sinon.stub(queryHelper, "createAttributesFilter", function(){ return mongooseQuery });
     sinon.stub(queryHelper, "populateEmbeddedDocs", function(){ return mongooseQuery });
     sinon.stub(queryHelper, "setSort", function(){ return mongooseQuery });
 
-    t.plan(7);
+    t.plan(5);
 
     var userSchema = new mongoose.Schema({
       email: {
@@ -1132,8 +1130,6 @@ test('query-helper.createMongooseQuery', function(t) {
     //</editor-fold>
 
     //<editor-fold desc="Assert">
-    t.ok(queryHelper.setSkip.called, "setSkip called");
-    t.ok(queryHelper.setLimit.called, "setLimit called");
     t.ok(queryHelper.createAttributesFilter.called, "createAttributesFilter called");
     t.ok(queryHelper.populateEmbeddedDocs.called, "populateEmbeddedDocs called");
     t.ok(queryHelper.setSort.called, "setSort called");
@@ -1143,8 +1139,6 @@ test('query-helper.createMongooseQuery', function(t) {
 
 
     //<editor-fold desc="Restore">
-    queryHelper.setSkip.restore();
-    queryHelper.setLimit.restore();
     queryHelper.createAttributesFilter.restore();
     queryHelper.populateEmbeddedDocs.restore();
     queryHelper.setSort.restore();
@@ -1257,6 +1251,69 @@ test('query-helper.createMongooseQuery', function(t) {
     queryHelper.createAttributesFilter.restore();
     queryHelper.populateEmbeddedDocs.restore();
     queryHelper.setSort.restore();
+    delete mongoose.models.user;
+    delete mongoose.modelSchemas.user;
+    //</editor-fold>
+  });
+
+  t.end();
+});
+
+test('query-helper.paginate', function(t) {
+
+  t.test('query-helper.paginate calls correct methods.', function (t) {
+    //<editor-fold desc="Arrange">
+    var queryHelper = require('../utilities/query-helper');
+
+    var mongooseQuery = {
+      select: sinon.spy(),
+      where: sinon.spy()
+    };
+    sinon.stub(queryHelper, "setLimit", function(){ return mongooseQuery });
+    sinon.stub(queryHelper, "setSkip", function(){ return mongooseQuery });
+    sinon.stub(queryHelper, "setPage", function(){ return mongooseQuery });
+
+    t.plan(3);
+
+    var userSchema = new mongoose.Schema({
+      email: {
+        type: Types.String,
+        queryable: true
+      },
+      firstName: {
+        type: Types.String,
+        queryable: true
+      },
+      lastName: {
+        type: Types.String
+      },
+      password: {
+        type: Types.String,
+        queryable: true,
+        exclude: true
+      }
+    });
+
+    userSchema.statics = { routeOptions: {} };     var userModel = mongoose.model("user", userSchema);
+
+    //</editor-fold>
+
+    //<editor-fold desc="Act">
+    queryHelper.paginate({ $page: 1 }, mongooseQuery, Log);
+    queryHelper.paginate({}, mongooseQuery, Log);
+    //</editor-fold>
+
+    //<editor-fold desc="Assert">
+    t.ok(queryHelper.setLimit.callCount === 2, "queryHelper.setLimit called twice");
+    t.ok(queryHelper.setSkip.callCount === 1, "queryHelper.setSkip called once");
+    t.ok(queryHelper.setPage.callCount === 1, "queryHelper.setPage called once");
+    //</editor-fold>
+
+
+    //<editor-fold desc="Restore">
+    queryHelper.setLimit.restore();
+    queryHelper.setSkip.restore();
+    queryHelper.setPage.restore();
     delete mongoose.models.user;
     delete mongoose.modelSchemas.user;
     //</editor-fold>

@@ -851,8 +851,8 @@ test('rest-helper-factory.generateListEndpoint', function(t) {
     var serverObject = server.route.args[0][0];
     // Log.debug(JSON.stringify(serverObject));
     var cors = {
-      additionalHeaders: ['X-Total-Count'],
-      additionalExposedHeaders: ['X-Total-Count']
+      additionalHeaders: [],
+      additionalExposedHeaders: []
     };
     t.deepEqual(serverObject.config.cors, cors, "cors used");
     //</editor-fold>
@@ -1153,7 +1153,7 @@ test('rest-helper-factory.generateListEndpoint', function(t) {
 
     var userModel = mongoose.model("user", userSchema);
 
-    var responseSchema = Joi.alternatives().try(Joi.array().items(readModel), Joi.number());
+    var responseSchema = Joi.alternatives().try(Joi.object({ docs: Joi.array().items(readModel), pages: Joi.any(), items: Joi.any() }), Joi.number());
     //</editor-fold>
 
     //<editor-fold desc="Act">
@@ -1584,8 +1584,8 @@ test('rest-helper-factory.generateFindEndpoint', function(t) {
     var serverObject = server.route.args[0][0];
     // Log.debug(JSON.stringify(serverObject));
     var cors = {
-      additionalHeaders: ['X-Total-Count'],
-      additionalExposedHeaders: ['X-Total-Count']
+      additionalHeaders: [],
+      additionalExposedHeaders: []
     };
     t.deepEqual(serverObject.config.cors, cors, "cors used");
     //</editor-fold>
@@ -2311,8 +2311,8 @@ test('rest-helper-factory.generateFindEndpoint', function(t) {
 //     var serverObject = server.route.args[0][0];
 //     // Log.debug(JSON.stringify(serverObject));
 // var cors = {
-//   additionalHeaders: ['X-Total-Count'],
-//   additionalExposedHeaders: ['X-Total-Count']
+//   additionalHeaders: [],
+//   additionalExposedHeaders: []
 // };
 // t.deepEqual(serverObject.config.cors, cors, "cors used");
 //     //</editor-fold>
@@ -2829,8 +2829,8 @@ test('rest-helper-factory.generateDeleteOneEndpoint', function(t) {
     var serverObject = server.route.args[0][0];
     // Log.debug(JSON.stringify(serverObject));
     var cors = {
-      additionalHeaders: ['X-Total-Count'],
-      additionalExposedHeaders: ['X-Total-Count']
+      additionalHeaders: [],
+      additionalExposedHeaders: []
     };
     t.deepEqual(serverObject.config.cors, cors, "cors used");
     //</editor-fold>
@@ -3399,8 +3399,8 @@ test('rest-helper-factory.generateUpdateEndpoint', function(t) {
     var serverObject = server.route.args[0][0];
     // Log.debug(JSON.stringify(serverObject));
     var cors = {
-      additionalHeaders: ['X-Total-Count'],
-      additionalExposedHeaders: ['X-Total-Count']
+      additionalHeaders: [],
+      additionalExposedHeaders: []
     };
     t.deepEqual(serverObject.config.cors, cors, "cors used");
     //</editor-fold>
@@ -4151,8 +4151,8 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
     var serverObject = server.route.args[0][0];
     // Log.debug(JSON.stringify(serverObject));
     var cors = {
-      additionalHeaders: ['X-Total-Count'],
-      additionalExposedHeaders: ['X-Total-Count']
+      additionalHeaders: [],
+      additionalExposedHeaders: []
     };
     t.deepEqual(serverObject.config.cors, cors, "cors used");
     //</editor-fold>
@@ -4949,8 +4949,8 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
     var serverObject = server.route.args[0][0];
     // Log.debug(JSON.stringify(serverObject));
     var cors = {
-      additionalHeaders: ['X-Total-Count'],
-      additionalExposedHeaders: ['X-Total-Count']
+      additionalHeaders: [],
+      additionalExposedHeaders: []
     };
     t.deepEqual(serverObject.config.cors, cors, "cors used");
     //</editor-fold>
@@ -5663,8 +5663,8 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
     var serverObject = server.route.args[0][0];
     // Log.debug(JSON.stringify(serverObject));
     var cors = {
-      additionalHeaders: ['X-Total-Count'],
-      additionalExposedHeaders: ['X-Total-Count']
+      additionalHeaders: [],
+      additionalExposedHeaders: []
     };
     t.deepEqual(serverObject.config.cors, cors, "cors used");
     //</editor-fold>
@@ -6572,8 +6572,8 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
     var serverObject = server.route.args[0][0];
     // Log.debug(JSON.stringify(serverObject));
     var cors = {
-      additionalHeaders: ['X-Total-Count'],
-      additionalExposedHeaders: ['X-Total-Count']
+      additionalHeaders: [],
+      additionalExposedHeaders: []
     };
     t.deepEqual(serverObject.config.cors, cors, "cors used");
     //</editor-fold>
@@ -6912,7 +6912,7 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
     var childModel = mongoose.model("child", userSchema);
     var association = { include: { model: childModel } };
 
-    var responseSchema = Joi.alternatives().try(Joi.array().items(readModel), Joi.number());
+    var responseSchema = Joi.alternatives().try(Joi.object({ docs: Joi.array().items(readModel), pages: Joi.any(), items: Joi.any() }), Joi.number());
     //</editor-fold>
 
     //<editor-fold desc="Act">

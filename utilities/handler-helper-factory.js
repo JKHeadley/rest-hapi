@@ -25,8 +25,6 @@ let config = require("../config");
 
 //TODO: possibly execute .toJSON() on all return data to reduce data size
 
-//TODO: fix X-Total-Count headers
-
 //TODO-DONE: update hapi version
 
 //TODO: look into using glue
@@ -156,7 +154,9 @@ function generateListHandler(model, options, Log) {
 
       handlerHelper.list(model, request.query, Log)
           .then(function(result) {
-            return reply(result).header('X-Total-Count', result.length).code(200);
+            const pageData = result.pageData;
+            delete result.pageData;
+            return reply(result).code(200);
           })
           .catch(function(error) {
             var response = errorHelper.formatResponse(error, Log);
@@ -452,7 +452,7 @@ function generateAssociationGetAllHandler(ownerModel, association, options, Log)
 
       handlerHelper.getAll(ownerModel, request.params.ownerId, childModel, associationName, request.query, Log)
           .then(function(result) {
-            return reply(result).header('X-Total-Count', result.length).code(200);
+            return reply(result).code(200);
           })
           .catch(function(error) {
             var response = errorHelper.formatResponse(error, Log);

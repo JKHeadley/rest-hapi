@@ -129,9 +129,11 @@ module.exports = function (logger, mongoose, server) {
 
       var queryValidation = {
         $skip: Joi.number().integer().min(0).optional()
-        .description('The number of records to skip in the database. This is typically used in pagination.'),
+          .description('The number of records to skip in the database. This is typically used in pagination.'),
+        $page: Joi.number().integer().min(0).optional()
+            .description('The number of records to skip based on the $limit parameter. This is typically used in pagination.'),
         $limit: Joi.number().integer().min(0).optional()
-        .description('The maximum number of records to return. This is typically used in pagination.')
+          .description('The maximum number of records to return. This is typically used in pagination.')
       };
 
       var queryableFields = queryHelper.getQueryableFields(model, Log);
@@ -222,7 +224,9 @@ module.exports = function (logger, mongoose, server) {
             }
           },
           response: {
-            schema: config.enableResponseValidation ? Joi.alternatives().try(Joi.array().items(readModel), Joi.number()) : Joi.array().items(Joi.any())
+            // schema: config.enableResponseValidation ? Joi.alternatives().try(Joi.array().items(readModel), Joi.number()) : Joi.array().items(Joi.any())
+            schema: config.enableResponseValidation ? Joi.alternatives().try(Joi.object({ docs: Joi.array().items(readModel), pages: Joi.any(), items: Joi.any() }), Joi.number()) :
+                Joi.alternatives().try(Joi.object({ docs: Joi.array().items(readModel), pages: Joi.any(), items: Joi.any() }), Joi.number() )
           }
         }
       });
@@ -1045,6 +1049,8 @@ module.exports = function (logger, mongoose, server) {
       var queryValidation = {
         $skip: Joi.number().integer().min(0).optional()
         .description('The number of records to skip in the database. This is typically used in pagination.'),
+        $page: Joi.number().integer().min(0).optional()
+            .description('The number of records to skip based on the $limit parameter. This is typically used in pagination.'),
         $limit: Joi.number().integer().min(0).optional()
         .description('The maximum number of records to return. This is typically used in pagination.')
       };
@@ -1139,7 +1145,9 @@ module.exports = function (logger, mongoose, server) {
             }
           },
           response: {
-            schema: config.enableResponseValidation ? Joi.alternatives().try(Joi.array().items(readModel), Joi.number()) : Joi.array().items(Joi.any())
+            // schema: config.enableResponseValidation ? Joi.alternatives().try(Joi.array().items(readModel), Joi.number()) : Joi.array().items(Joi.any())
+            schema: config.enableResponseValidation ? Joi.alternatives().try(Joi.object({ docs: Joi.array().items(readModel), pages: Joi.any(), items: Joi.any() }), Joi.number()) :
+                Joi.alternatives().try(Joi.object({ docs: Joi.array().items(readModel), pages: Joi.any(), items: Joi.any() }), Joi.number() )
           }
         }
       });
