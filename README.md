@@ -995,7 +995,7 @@ For any GET query that returns multiple documents, pagination data is returned a
     * end - a number indicating what item number the results end with.
     * total - a number indicating the total number of matching results.
 
-**NOTE:** Pagination data borrowed from mongo-models [pagedFind](https://github.com/jedireza/mongo-models/blob/master/API.md#pagedfindfilter-fields-sort-limit-page-callback).
+**NOTE:** Pagination format borrowed from mongo-models [pagedFind](https://github.com/jedireza/mongo-models/blob/master/API.md#pagedfindfilter-fields-sort-limit-page-callback).
 
 ### Populate nested associations
 Associations can be populated through the ``$embed`` parameter.  To populate nested associations,
