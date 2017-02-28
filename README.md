@@ -1277,6 +1277,17 @@ DELETE /user/{ownerId}/group | [ 'root', 'Admin', 'associate', 'associateUser', 
 PUT /user/{ownerId}/group/{childId} | [ 'root', 'Admin', 'associate', 'associateUser', 'addUserGroups', 'Project Lead' ]
 DELETE /user/{ownerId}/group/{childId} | [ 'root', 'Admin', 'associate', 'associateUser', 'removeUserGroups' ]
 
+### Disabling scopes
+Authentication (and as such Authorization) can be disabled for certain routes by adding a property under a model's ``routeOptions`` property with the value set to ``false``.  Below is a list of options and their effects:
+
+Property | Effect
+--- | ---
+createAuth: false | auth is disabled for any endpoint that creates model documents 
+readAuth: false | auth is disabled for any endpoint that retrieves documents and can be queried against
+updateAuth: false | auth is disabled for any endpoint that directly updates documents
+deleteAuth: false | auth is disabled for any endpoint that deletes documents
+associateAuth: false | auth is disabled for any endpoint that modifies an association
+
 [Back to top](#readme-contents)
 
 ## Mongoose wrapper methods
