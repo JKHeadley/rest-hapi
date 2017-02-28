@@ -182,7 +182,7 @@ module.exports = function (logger, mongoose, server) {
 
       var auth = false;
 
-      if (config.authStrategy) {
+      if (config.authStrategy && model.routeOptions.readAuth !== false) {
         auth = {
           strategy: config.authStrategy
         };
@@ -193,6 +193,9 @@ module.exports = function (logger, mongoose, server) {
           auth.scope = scope;
           Log.debug("Scope for GET/" + resourceAliasForRoute + ":", scope);
         }
+      }
+      else {
+        headersValidation = null;
       }
 
 
@@ -276,7 +279,7 @@ module.exports = function (logger, mongoose, server) {
 
       var auth = false;
 
-      if (config.authStrategy) {
+      if (config.authStrategy && model.routeOptions.readAuth !== false) {
         auth = {
           strategy: config.authStrategy
         };
@@ -288,6 +291,9 @@ module.exports = function (logger, mongoose, server) {
           Log.debug("Scope for GET/" + resourceAliasForRoute + '/{_id}' + ":", scope);
         }
 
+      }
+      else {
+        headersValidation = null;
       }
 
       server.route({
@@ -366,7 +372,7 @@ module.exports = function (logger, mongoose, server) {
 
       var auth = false;
 
-      if (config.authStrategy) {
+      if (config.authStrategy && model.routeOptions.createAuth !== false) {
         auth = {
           strategy: config.authStrategy
         };
@@ -377,6 +383,9 @@ module.exports = function (logger, mongoose, server) {
           auth.scope = scope;
           Log.debug("Scope for POST/" + resourceAliasForRoute + ":", scope);
         }
+      }
+      else {
+        headersValidation = null;
       }
 
       server.route({
@@ -447,7 +456,7 @@ module.exports = function (logger, mongoose, server) {
 
       var auth = false;
 
-      if (config.authStrategy) {
+      if (config.authStrategy && model.routeOptions.deleteAuth !== false) {
         auth = {
           strategy: config.authStrategy
         };
@@ -458,6 +467,9 @@ module.exports = function (logger, mongoose, server) {
           auth.scope = scope;
           Log.debug("Scope for DELETE/" + resourceAliasForRoute + "/{_id}" + ":", scope);
         }
+      }
+      else {
+        headersValidation = null;
       }
 
       server.route({
@@ -537,7 +549,7 @@ module.exports = function (logger, mongoose, server) {
 
       var auth = false;
 
-      if (config.authStrategy) {
+      if (config.authStrategy && model.routeOptions.deleteAuth !== false) {
         auth = {
           strategy: config.authStrategy
         };
@@ -548,6 +560,9 @@ module.exports = function (logger, mongoose, server) {
           auth.scope = scope;
           Log.debug("Scope for DELETE/" + resourceAliasForRoute + ":", scope);
         }
+      }
+      else {
+        headersValidation = null;
       }
 
       server.route({
@@ -619,7 +634,7 @@ module.exports = function (logger, mongoose, server) {
 
       var auth = false;
 
-      if (config.authStrategy) {
+      if (config.authStrategy && model.routeOptions.updateAuth !== false) {
         auth = {
           strategy: config.authStrategy
         };
@@ -630,6 +645,9 @@ module.exports = function (logger, mongoose, server) {
           auth.scope = scope;
           Log.debug("Scope for PUT/" + resourceAliasForRoute + '/{_id}' + ":", scope);
         }
+      }
+      else {
+        headersValidation = null;
       }
 
       server.route({
@@ -709,7 +727,7 @@ module.exports = function (logger, mongoose, server) {
 
       var auth = false;
 
-      if (config.authStrategy) {
+      if (config.authStrategy && ownerModel.routeOptions.associateAuth !== false) {
         auth = {
           strategy: config.authStrategy
         };
@@ -722,6 +740,9 @@ module.exports = function (logger, mongoose, server) {
           auth.scope = scope;
           Log.debug("Scope for PUT/" + ownerAlias + '/{ownerId}/' + childAlias + "/{childId}" + ":", scope);
         }
+      }
+      else {
+        headersValidation = null;
       }
 
       server.route({
@@ -793,7 +814,7 @@ module.exports = function (logger, mongoose, server) {
 
       var auth = false;
 
-      if (config.authStrategy) {
+      if (config.authStrategy && ownerModel.routeOptions.associateAuth !== false) {
         auth = {
           strategy: config.authStrategy
         };
@@ -806,6 +827,9 @@ module.exports = function (logger, mongoose, server) {
           auth.scope = scope;
           Log.debug("Scope for DELETE/" + ownerAlias + '/{ownerId}/' + childAlias + "/{childId}" + ":", scope);
         }
+      }
+      else {
+        headersValidation = null;
       }
 
       server.route({
@@ -886,7 +910,7 @@ module.exports = function (logger, mongoose, server) {
 
       var auth = false;
 
-      if (config.authStrategy) {
+      if (config.authStrategy && ownerModel.routeOptions.associateAuth !== false) {
         auth = {
           strategy: config.authStrategy
         };
@@ -899,6 +923,9 @@ module.exports = function (logger, mongoose, server) {
           auth.scope = scope;
           Log.debug("Scope for POST/" + ownerAlias + '/{ownerId}/' + childAlias + ":", scope);
         }
+      }
+      else {
+        headersValidation = null;
       }
 
       server.route({
@@ -968,7 +995,7 @@ module.exports = function (logger, mongoose, server) {
 
       var auth = false;
 
-      if (config.authStrategy) {
+      if (config.authStrategy && ownerModel.routeOptions.associateAuth !== false) {
         auth = {
           strategy: config.authStrategy
         };
@@ -981,6 +1008,9 @@ module.exports = function (logger, mongoose, server) {
           auth.scope = scope;
           Log.debug("Scope for DELETE/" + ownerAlias + '/{ownerId}/' + childAlias + ":", scope);
         }
+      }
+      else {
+        headersValidation = null;
       }
 
       server.route({
@@ -1101,7 +1131,7 @@ module.exports = function (logger, mongoose, server) {
 
       var auth = false;
 
-      if (config.authStrategy) {
+      if (config.authStrategy && ownerModel.routeOptions.readAuth !== false) {
         auth = {
           strategy: config.authStrategy
         };
@@ -1114,6 +1144,9 @@ module.exports = function (logger, mongoose, server) {
           auth.scope = scope;
           Log.debug("Scope for GET/" + ownerAlias + '/{ownerId}/' + childAlias + ":", scope);
         }
+      }
+      else {
+        headersValidation = null;
       }
 
       server.route({
