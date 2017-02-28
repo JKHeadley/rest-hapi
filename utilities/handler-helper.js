@@ -541,7 +541,7 @@ function _deleteOne(model, _id, hardDelete, Log) {
     return promise
         .then(function () {
           if (config.enableSoftDelete && !hardDelete) {
-            promise = model.findByIdAndUpdate(_id, { isDeleted: true, deletedAt: new Date() });
+            promise = model.findByIdAndUpdate(_id, { isDeleted: true, deletedAt: new Date() }, {new: true});
           }
           else {
             promise = model.findByIdAndRemove(_id);
@@ -1060,7 +1060,7 @@ function _setAssociation(ownerModel, ownerObject, childModel, childId, associati
               childObject[childAssociationName][duplicateIndex] = payload;
             }
 
-            promise = Q.all(ownerObject.save(), childObject.save());
+            promise = Q.all(ownerModel.findByIdAndUpdate(ownerObject._id, ownerObject), childModel.findByIdAndUpdate(childObject._id, childObject));
           }
           else {
             deferred.reject("Association type incorrectly defined.");
@@ -1153,7 +1153,7 @@ function _removeAssociation(ownerModel, ownerObject, childModel, childId, associ
               childObject[childAssociationName].splice(index, 1);
             }
 
-            promise = Q.all(ownerObject.save(), childObject.save());
+            promise = Q.all(ownerModel.findByIdAndUpdate(ownerObject._id, ownerObject), childModel.findByIdAndUpdate(childObject._id, childObject));
           }
           else {
             deferred.reject("Association type incorrectly defined.");
