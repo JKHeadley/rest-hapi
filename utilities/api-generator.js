@@ -26,9 +26,14 @@ module.exports = function (server, mongoose, Log, config) {
   fs.readdir(apiPath, function(err, files) {
     if (err) {
       if (err.message.includes('no such file')) {
-        Log.error(err);
-        deferred.reject("The api directory provided is either empty or does not exist. " +
-            "Try setting the 'apiPath' property of the config file.");
+        if (config.absoluteApiPath === true) {
+          Log.error(err);
+          deferred.reject("The api directory provided is either empty or does not exist. " +
+              "Try setting the 'apiPath' property of the config file.");
+        }
+        else {
+          deferred.resolve();
+        }
       }
       else {
         deferred.reject(err);
