@@ -914,15 +914,14 @@ function _getAll(ownerModel, ownerId, childModel, associationName, query, Log) {
 
           query.$where = extend({'_id': { $in: childIds }}, query.$where);
 
-          // var promise = generateListHandler(childModel, options, Log)(request, reply);
           var promise = _list(childModel, query, Log);
 
           if (many_many && association.linkingModel) {//EXPL: we have to manually insert the extra fields into the result
             var extraFieldData = result;
             return promise
                 .then(function(result) {
-                  if (_.isArray(result)) {
-                    result.forEach(function(object) {
+                  if (_.isArray(result.docs)) {
+                    result.docs.forEach(function(object) {
                       var data = extraFieldData.find(function(data) {
                         return data[association.model]._id.toString() === object._id
                       });
