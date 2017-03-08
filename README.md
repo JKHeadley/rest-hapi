@@ -1118,7 +1118,7 @@ are available:
     - pre(payload, Log)
     - post(payload, result, Log)
 * update: 
-    - pre(payload, Log)
+    - pre(\_id, payload, Log)
     - post(payload, result, Log)
 * delete: 
     - pre(\_id, hardDelete, Log)
