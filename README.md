@@ -983,7 +983,7 @@ Query parameters can either be passed in as a single string, or an array of stri
 ### Pagination
 For any GET query that returns multiple documents, pagination data is returned alongside the documents. The response object has the form:
 
-- docs - an array of documents from the query as class instances.
+- docs - an array of documents.
 - pages - an object where:
     * current - a number indicating the current page.
     * prev - a number indicating the previous page.
@@ -1118,7 +1118,7 @@ are available:
     - pre(payload, Log)
     - post(payload, result, Log)
 * update: 
-    - pre(payload, Log)
+    - pre(\_id, payload, Log)
     - post(payload, result, Log)
 * delete: 
     - pre(\_id, hardDelete, Log)
