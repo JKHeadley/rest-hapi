@@ -152,7 +152,7 @@ function generateListHandler(model, options, Log) {
     try {
       Log.log("params(%s), query(%s), payload(%s)", JSON.stringify(request.params), JSON.stringify(request.query), JSON.stringify(request.payload));
 
-      handlerHelper.list(model, request.query, Log)
+      handlerHelper.list(model, request.query, request, Log)
           .then(function(result) {
             const pageData = result.pageData;
             delete result.pageData;
@@ -184,7 +184,7 @@ function generateFindHandler(model, options, Log) {
     try {
       Log.log("params(%s), query(%s), payload(%s)", JSON.stringify(request.params), JSON.stringify(request.query), JSON.stringify(request.payload));
 
-      handlerHelper.find(model, request.params._id, request.query, Log)
+      handlerHelper.find(model, request.params._id, request.query, request, Log)
           .then(function(result) {
             return reply(result).code(200);
           })
@@ -214,7 +214,7 @@ function generateCreateHandler(model, options, Log) {
     try {
       Log.log("params(%s), query(%s), payload(%s)", JSON.stringify(request.params), JSON.stringify(request.query), JSON.stringify(request.payload));
 
-      handlerHelper.create(model, request.payload, Log)
+      handlerHelper.create(model, request.payload, request, Log)
           .then(function(result) {
             return reply(result).code(201);
           })
@@ -244,7 +244,7 @@ function generateUpdateHandler(model, options, Log) {
     try {
       Log.log("params(%s), query(%s), payload(%s)", JSON.stringify(request.params), JSON.stringify(request.query), JSON.stringify(request.payload));
 
-      handlerHelper.update(model, request.params._id, request.payload, Log)
+      handlerHelper.update(model, request.params._id, request.payload, request, Log)
           .then(function(result) {
             return reply(result).code(200);
           })
@@ -277,10 +277,10 @@ function generateDeleteHandler(model, options, Log) {
       let promise = {};
       if (request.params._id) {
         var hardDelete = request.payload ? request.payload.hardDelete : false;
-        promise = handlerHelper.deleteOne(model, request.params._id, hardDelete, Log);
+        promise = handlerHelper.deleteOne(model, request.params._id, hardDelete, request, Log);
       }
       else {
-        promise = handlerHelper.deleteMany(model, request.payload, Log);
+        promise = handlerHelper.deleteMany(model, request.payload, request, Log);
       }
 
       promise
