@@ -109,7 +109,7 @@ test('handler-helper.list', function (t) {
           //</editor-fold>
 
           //<editor-fold desc="Act">
-          handlerHelper.list(userModel, query, Log);
+          handlerHelper.list(userModel, query, null, Log);
           //</editor-fold>
 
           //<editor-fold desc="Assert">
@@ -161,7 +161,7 @@ test('handler-helper.list', function (t) {
           //</editor-fold>
 
           //<editor-fold desc="Act">
-          handlerHelper.list(userModel, query, Log);
+          handlerHelper.list(userModel, query, null, Log);
           //</editor-fold>
 
           //<editor-fold desc="Assert">
@@ -224,7 +224,7 @@ test('handler-helper.list', function (t) {
           var LogStub = sandbox.stub(Log, 'error', function () {
           });
           //<editor-fold desc="Act">
-          handlerHelper.list(userModel, query, LogStub);
+          handlerHelper.list(userModel, query, null, LogStub);
           //</editor-fold>
 
           //<editor-fold desc="Assert">
@@ -278,7 +278,7 @@ test('handler-helper.list', function (t) {
             './query-helper': queryHelperStub,
             './error-helper': errorHelperStub
           });
-          // sandbox.stub(Log, 'error', function(){});
+          sandbox.stub(Log, 'error', function(){});
 
           var userSchema = new mongoose.Schema({});
 
@@ -292,7 +292,7 @@ test('handler-helper.list', function (t) {
           //</editor-fold>
 
           //<editor-fold desc="Act">
-          handlerHelper.list(userModel, query, Log);
+          handlerHelper.list(userModel, query, null, Log);
           //</editor-fold>
 
           //<editor-fold desc="Assert">
@@ -372,12 +372,12 @@ test('handler-helper.list', function (t) {
           //</editor-fold>
 
           //<editor-fold desc="Act">
-          handlerHelper.list(userModel, query, Log);
+          handlerHelper.list(userModel, query, "request", Log);
           //</editor-fold>
 
           //<editor-fold desc="Assert">
           return postDeferred.promise.then(function () {
-            t.ok(postSpy.calledWithExactly(query, "TEST", Log), "list.post called");
+            t.ok(postSpy.calledWithExactly(query, "TEST", "request", Log), "list.post called");
           })
           //</editor-fold>
 
@@ -442,7 +442,7 @@ test('handler-helper.list', function (t) {
           //</editor-fold>
 
           //<editor-fold desc="Act">
-          var promise = handlerHelper.list(userModel, {}, Log);
+          var promise = handlerHelper.list(userModel, {}, null, Log);
           //</editor-fold>
 
           //<editor-fold desc="Assert">
@@ -512,7 +512,7 @@ test('handler-helper.list', function (t) {
           //</editor-fold>
 
           //<editor-fold desc="Act">
-          var promise = handlerHelper.list(userModel, query, Log);
+          var promise = handlerHelper.list(userModel, query, null, Log);
           //</editor-fold>
 
           //<editor-fold desc="Assert">
@@ -602,7 +602,7 @@ test('handler-helper.list', function (t) {
           //</editor-fold>
 
           //<editor-fold desc="Act">
-          var promise = handlerHelper.list(userModel, {}, Log);
+          var promise = handlerHelper.list(userModel, {}, null, Log);
           //</editor-fold>
 
           //<editor-fold desc="Assert">
@@ -668,7 +668,7 @@ test('handler-helper.list', function (t) {
           //</editor-fold>
 
           //<editor-fold desc="Act">
-          var promise = handlerHelper.list(userModel, {}, Log);
+          var promise = handlerHelper.list(userModel, {}, null, Log);
           //</editor-fold>
 
           //<editor-fold desc="Assert">
@@ -715,7 +715,7 @@ test('handler-helper.list', function (t) {
           //</editor-fold>
 
           //<editor-fold desc="Act">
-          var promise = handlerHelper.list(userModel, {}, Log);
+          var promise = handlerHelper.list(userModel, {}, null, Log);
           //</editor-fold>
 
           //<editor-fold desc="Assert">
