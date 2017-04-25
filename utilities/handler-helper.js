@@ -118,7 +118,7 @@ module.exports = {
    * @param Log: A logging object
    * @returns {object} A promise returning true if the remove succeeds.
    */
-   removeMany: _removeMany,
+  removeMany: _removeMany,
 
   /**
    * Get all of the associations for a document
@@ -144,7 +144,7 @@ module.exports = {
  * @returns {object} A promise for the resulting model documents or the count of the query results.
  * @private
  */
-function _list(model, query, Log) {
+function _list(model, query, request, Log) {
   try {
     var mongooseQuery = {};
     var count = "";
@@ -170,7 +170,7 @@ function _list(model, query, Log) {
 
           var promise = {};
           if (model.routeOptions && model.routeOptions.list && model.routeOptions.list.post) {
-            promise = model.routeOptions.list.post(query, result, Log);
+            promise = model.routeOptions.list.post(query, result, request, Log);
           }
           else {
             promise = Q.when(result);
@@ -267,7 +267,7 @@ function _list(model, query, Log) {
  * @returns {object} A promise for the resulting model document.
  * @private
  */
-function _find(model, _id, query, Log) {
+function _find(model, _id, query, request, Log) {
   try {
     var mongooseQuery = model.findOne({ '_id': _id });
     mongooseQuery = QueryHelper.createMongooseQuery(model, query, mongooseQuery, Log).lean();
@@ -276,7 +276,7 @@ function _find(model, _id, query, Log) {
           if (result) {
             var promise = {};
             if (model.routeOptions && model.routeOptions.find && model.routeOptions.find.post) {
-              promise = model.routeOptions.find.post(query, result, Log);
+              promise = model.routeOptions.find.post(query, result, request, Log);
             } else {
               promise = Q.when(result);
             }
@@ -341,7 +341,7 @@ function _find(model, _id, query, Log) {
  * @returns {object} A promise for the resulting model document.
  * @private
  */
-function _create(model, payload, Log) {
+function _create(model, payload, request, Log) {
   try {
     var isArray = true;
     if (!_.isArray(payload)) {
@@ -352,7 +352,7 @@ function _create(model, payload, Log) {
     var promises =  [];
     if (model.routeOptions && model.routeOptions.create && model.routeOptions.create.pre){
       payload.forEach(function(document) {
-        promises.push(model.routeOptions.create.pre(document, Log));
+        promises.push(model.routeOptions.create.pre(document, request, Log));
       });
     }
     else {
@@ -390,7 +390,7 @@ function _create(model, payload, Log) {
                       var promises = [];
                       if (model.routeOptions && model.routeOptions.create && model.routeOptions.create.post) {
                         payload.forEach(function(document) {
-                          promises.push(model.routeOptions.create.post(document, result, Log));
+                          promises.push(model.routeOptions.create.post(document, result, request, Log));
                         });
                       }
                       else {
@@ -446,11 +446,11 @@ function _create(model, payload, Log) {
  * @returns {object} A promise for the resulting model document.
  * @private
  */
-function _update(model, _id, payload, Log) {
+function _update(model, _id, payload, request, Log) {
   try {
     var promise =  {};
     if (model.routeOptions && model.routeOptions.update && model.routeOptions.update.pre){
-      promise = model.routeOptions.update.pre(_id, payload, Log);
+      promise = model.routeOptions.update.pre(_id, payload, request, Log);
     }
     else {
       promise = Q.when(payload);
@@ -475,7 +475,7 @@ function _update(model, _id, payload, Log) {
                         // result = result.toJSON();
 
                         if (model.routeOptions && model.routeOptions.update && model.routeOptions.update.post) {
-                          promise = model.routeOptions.update.post(payload, result, Log);
+                          promise = model.routeOptions.update.post(payload, result, request, Log);
                         }
                         else {
                           promise = Q.when(result);
@@ -528,11 +528,11 @@ function _update(model, _id, payload, Log) {
  * @private
  */
 //TODO: only update "deleteAt" the first time a document is deleted
-function _deleteOne(model, _id, hardDelete, Log) {
+function _deleteOne(model, _id, hardDelete, request, Log) {
   try {
     var promise = {};
     if (model.routeOptions && model.routeOptions.delete && model.routeOptions.delete.pre) {
-      promise = model.routeOptions.delete.pre(_id, hardDelete, Log);
+      promise = model.routeOptions.delete.pre(_id, hardDelete, request, Log);
     }
     else {
       promise = Q.when();
@@ -553,7 +553,7 @@ function _deleteOne(model, _id, hardDelete, Log) {
 
                   var promise = {};
                   if (model.routeOptions && model.routeOptions.delete && model.routeOptions.delete.post) {
-                    promise = model.routeOptions.delete.post(hardDelete, deleted, Log);
+                    promise = model.routeOptions.delete.post(hardDelete, deleted, request, Log);
                   }
                   else {
                     promise = Q.when();
@@ -604,15 +604,15 @@ function _deleteOne(model, _id, hardDelete, Log) {
  */
 //TODO: prevent Q.all from catching first error and returning early. Catch individual errors and return a list
 //TODO(cont) of ids that failed
-function _deleteMany(model, payload, Log) {
+function _deleteMany(model, payload, request, Log) {
   try {
     let promises = [];
     payload.forEach(function(arg) {
       if (_.isString(arg)) {
-        promises.push(_deleteOne(model, arg, false, Log));
+        promises.push(_deleteOne(model, arg, false, request, Log));
       }
       else {
-        promises.push(_deleteOne(model, arg._id, arg.hardDelete, Log));
+        promises.push(_deleteOne(model, arg._id, arg.hardDelete, request, Log));
       }
     });
 
@@ -877,7 +877,7 @@ function _removeMany(ownerModel, ownerId, childModel, associationName, payload, 
  * @returns {object} A promise for the resulting model documents or the count of the query results.
  * @private
  */
-function _getAll(ownerModel, ownerId, childModel, associationName, query, Log) {
+function _getAll(ownerModel, ownerId, childModel, associationName, query, request, Log) {
   try {
 
     var association = ownerModel.routeOptions.associations[associationName];
@@ -914,7 +914,7 @@ function _getAll(ownerModel, ownerId, childModel, associationName, query, Log) {
 
           query.$where = extend({'_id': { $in: childIds }}, query.$where);
 
-          var promise = _list(childModel, query, Log);
+          var promise = _list(childModel, query, request, Log);
 
           if (many_many && association.linkingModel) {//EXPL: we have to manually insert the extra fields into the result
             var extraFieldData = result;
