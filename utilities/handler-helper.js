@@ -1059,7 +1059,7 @@ function _setAssociation(ownerModel, ownerObject, childModel, childId, associati
               childObject[childAssociationName][duplicateIndex] = payload;
             }
 
-            promise = Q.all(ownerModel.findByIdAndUpdate(ownerObject._id, ownerObject), childModel.findByIdAndUpdate(childObject._id, childObject));
+            promise = Q.all([ownerModel.findByIdAndUpdate(ownerObject._id, ownerObject), childModel.findByIdAndUpdate(childObject._id, childObject)]);
           }
           else {
             deferred.reject("Association type incorrectly defined.");
@@ -1152,7 +1152,7 @@ function _removeAssociation(ownerModel, ownerObject, childModel, childId, associ
               childObject[childAssociationName].splice(index, 1);
             }
 
-            promise = Q.all(ownerModel.findByIdAndUpdate(ownerObject._id, ownerObject), childModel.findByIdAndUpdate(childObject._id, childObject));
+            promise = Q.all([ownerModel.findByIdAndUpdate(ownerObject._id, ownerObject), childModel.findByIdAndUpdate(childObject._id, childObject)]);
           }
           else {
             deferred.reject("Association type incorrectly defined.");
