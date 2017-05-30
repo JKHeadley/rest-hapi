@@ -147,6 +147,7 @@ module.exports = {
 function _list(model, query, Log) {
   try {
     var mongooseQuery = {};
+    var originalQuery = extend({}, query);
     var count = "";
     if (query.$count) {
       mongooseQuery = model.count();
@@ -170,7 +171,7 @@ function _list(model, query, Log) {
 
           var promise = {};
           if (model.routeOptions && model.routeOptions.list && model.routeOptions.list.post) {
-            promise = model.routeOptions.list.post(query, result, Log);
+            promise = model.routeOptions.list.post(originalQuery, result, Log);
           }
           else {
             promise = Q.when(result);
