@@ -385,12 +385,11 @@ function _create(model, payload, Log) {
                         return item.toJSON();
                       });
 
-
                       //TODO: include eventLogs
 
                       var promises = [];
                       if (model.routeOptions && model.routeOptions.create && model.routeOptions.create.post) {
-                        payload.forEach(function(document) {
+                        result.forEach(function(document) {
                           promises.push(model.routeOptions.create.post(document, result, Log));
                         });
                       }
