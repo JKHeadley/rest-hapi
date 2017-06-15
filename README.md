@@ -876,6 +876,8 @@ module.exports = function () {
 [Back to top](#readme-contents)
 
 ## Route customization
+
+### Custom path names
 By default route paths are constructed using model names, however aliases can be provided to customize the route paths.
 ``routeOptions.alias`` can be set to alter the base path name, and an ``alias`` property for an association can be set 
 to alter the association path name.  For example:
@@ -933,6 +935,17 @@ POST /person/{ownerId}/team
 DELETE /person/{ownerId}/team/{childId} 
 PUT /person/{ownerId}/team/{childId} 
 ```
+
+### Omitting routes
+
+You can prevent CRUD endpoints from generating by setting the correct property to ``false`` within the routeOptions object. Below is a list of properties and their effect:
+
+Property | Effect when false
+--- | --- 
+allowRead    |      omits ``GET /path`` and ``GET /path/{_id}`` endpoints
+allowCreate  |      omits ``POST /path`` endpoint
+allowUpdate  |      omits ``PUT /path/{_id}`` endpoint
+allowDelete  |      omits ``DELETE /path`` and ``DELETE /path/{_id}`` endpoints
 
 [Back to top](#readme-contents)
 
