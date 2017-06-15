@@ -957,7 +957,7 @@ allowRead    |      omits ``GET /owner/{ownerId}/child`` endpoint
 
 For example, a routeOption object that omits endpoints for creating objects and removing a specific association could look like this:
 
-```
+```javascript
 routeOptions: {
     allowCreate: false,
     associations: {
