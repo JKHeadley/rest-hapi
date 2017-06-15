@@ -938,7 +938,7 @@ PUT /person/{ownerId}/team/{childId}
 
 ### Omitting routes
 
-You can prevent CRUD endpoints from generating by setting the correct property to ``false`` within the routeOptions object. Below is a list of properties and their effect:
+You can prevent CRUD endpoints from generating by setting the correct property to ``false`` within the ``routeOptions`` object. Below is a list of properties and their effect:
 
 Property | Effect when false
 --- | --- 
@@ -946,6 +946,30 @@ allowRead    |      omits ``GET /path`` and ``GET /path/{_id}`` endpoints
 allowCreate  |      omits ``POST /path`` endpoint
 allowUpdate  |      omits ``PUT /path/{_id}`` endpoint
 allowDelete  |      omits ``DELETE /path`` and ``DELETE /path/{_id}`` endpoints
+
+Similarly, you can prevent association endpoints from generating through the following properties within each association object:
+
+Property | Effect when false
+--- | --- 
+allowAdd     |      omits ``POST /owner/{ownerId}/child`` and ``PUT /owner/{ownerId}/child/{childId}`` endpoints
+allowRemove  |      omits ``DELETE /owner/{ownerId}/child`` and ``ELETE /owner/{ownerId}/child/{childId}`` endpoints
+allowRead    |      omits ``GET /owner/{ownerId}/child`` endpoint
+
+For example, a routeOption object that omits endpoints for creating objects and removing a specific association could look like this:
+
+```
+routeOptions: {
+    allowCreate: false,
+    associations: {
+        users: {
+            type: "MANY_ONE",
+            alias: "user",
+            model: "user",
+            allowRemove: false
+        }
+    }
+}
+```
 
 [Back to top](#readme-contents)
 
