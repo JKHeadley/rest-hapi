@@ -1153,7 +1153,7 @@ are available:
     - post(query, result, Log)
 * create:
     - pre(payload, Log)
-    - post(payload, result, Log)
+    - post(document, result, Log)
 * update: 
     - pre(\_id, payload, Log)
     - post(payload, result, Log)
