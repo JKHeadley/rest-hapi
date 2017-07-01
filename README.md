@@ -1,8 +1,9 @@
 # ![rest-hapi](https://cloud.githubusercontent.com/assets/12631935/22916311/9661cac6-f232-11e6-96d4-aea680c9042b.png)
 
-A RESTful API generator plugin for the [hapi](https://github.com/hapijs/hapi) framework utilizing the [mongoose](https://github.com/Automattic/mongoose) ODM.
+A RESTful API generator for the [hapi](https://github.com/hapijs/hapi) framework utilizing the [mongoose](https://github.com/Automattic/mongoose) ODM.
 
 [![Build Status](https://travis-ci.org/JKHeadley/rest-hapi.svg?branch=master)](https://travis-ci.org/JKHeadley/rest-hapi) [![npm](https://img.shields.io/npm/dt/rest-hapi.svg)](https://www.npmjs.com/package/rest-hapi) [![npm](https://img.shields.io/npm/v/rest-hapi.svg)](https://www.npmjs.com/package/rest-hapi)
+[![StackShare](https://img.shields.io/badge/tech-stack-0690fa.svg?style=flat)](https://stackshare.io/JKHeadley/rest-hapi)
 
 rest-hapi is a hapi plugin intended to abstract the work involved in setting up API routes/validation/handlers/etc. for the purpose of rapid app development.  At the same time it provides a powerful combination of [relational](#associations) structure with [NoSQL](#creating-endpoints) flexibility.  You define your models and the rest is done for you.  Have your own API server up and running in minutes!
 
@@ -876,6 +877,8 @@ module.exports = function () {
 [Back to top](#readme-contents)
 
 ## Route customization
+
+### Custom path names
 By default route paths are constructed using model names, however aliases can be provided to customize the route paths.
 ``routeOptions.alias`` can be set to alter the base path name, and an ``alias`` property for an association can be set 
 to alter the association path name.  For example:
@@ -932,6 +935,41 @@ DELETE /person/{ownerId}/team
 POST /person/{ownerId}/team 
 DELETE /person/{ownerId}/team/{childId} 
 PUT /person/{ownerId}/team/{childId} 
+```
+
+### Omitting routes
+
+You can prevent CRUD endpoints from generating by setting the correct property to ``false`` within the ``routeOptions`` object. Below is a list of properties and their effect:
+
+Property | Effect when false
+--- | --- 
+allowRead    |      omits ``GET /path`` and ``GET /path/{_id}`` endpoints
+allowCreate  |      omits ``POST /path`` endpoint
+allowUpdate  |      omits ``PUT /path/{_id}`` endpoint
+allowDelete  |      omits ``DELETE /path`` and ``DELETE /path/{_id}`` endpoints
+
+Similarly, you can prevent association endpoints from generating through the following properties within each association object:
+
+Property | Effect when false
+--- | --- 
+allowAdd     |      omits ``POST /owner/{ownerId}/child`` and ``PUT /owner/{ownerId}/child/{childId}`` endpoints
+allowRemove  |      omits ``DELETE /owner/{ownerId}/child`` and ``ELETE /owner/{ownerId}/child/{childId}`` endpoints
+allowRead    |      omits ``GET /owner/{ownerId}/child`` endpoint
+
+For example, a routeOption object that omits endpoints for creating objects and removing a specific association could look like this:
+
+```javascript
+routeOptions: {
+    allowCreate: false,
+    associations: {
+        users: {
+            type: "MANY_ONE",
+            alias: "user",
+            model: "user",
+            allowRemove: false
+        }
+    }
+}
 ```
 
 [Back to top](#readme-contents)
@@ -1116,7 +1154,7 @@ are available:
     - post(query, result, Log)
 * create:
     - pre(payload, Log)
-    - post(payload, result, Log)
+    - post(document, result, Log)
 * update: 
     - pre(\_id, payload, Log)
     - post(payload, result, Log)
