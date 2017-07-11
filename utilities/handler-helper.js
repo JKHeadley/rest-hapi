@@ -145,6 +145,7 @@ module.exports = {
  * @private
  */
 function _list(model, query, Log) {
+  let logError = false;
   try {
     var mongooseQuery = {};
     var originalQuery = extend({}, query);
@@ -240,16 +241,31 @@ function _list(model, query, Log) {
               })
               .catch(function (error) {
                 const message = "There was a postprocessing error.";
+                if (!logError) {
+                  Log.error(message);
+                  logError = true;
+                  delete error.type;
+                }
                 errorHelper.handleError(error, message, errorHelper.types.BAD_REQUEST, Log);
               })
         })
         .catch(function (error) {
           const message = "There was an error accessing the database.";
+          if (!logError) {
+            Log.error(message);
+            logError = true;
+            delete error.type;
+          }
           errorHelper.handleError(error, message, errorHelper.types.SERVER_TIMEOUT, Log);
         });
   }
   catch(error) {
     const message = "There was an error processing the request.";
+    if (!logError) {
+      Log.error(message);
+      logError = true;
+      delete error.type;
+    }
     try {
       errorHelper.handleError(error, message, errorHelper.types.BAD_REQUEST, Log)
     }
@@ -269,6 +285,7 @@ function _list(model, query, Log) {
  * @private
  */
 function _find(model, _id, query, Log) {
+  let logError = false;
   try {
     var mongooseQuery = model.findOne({ '_id': _id });
     mongooseQuery = QueryHelper.createMongooseQuery(model, query, mongooseQuery, Log).lean();
@@ -308,21 +325,40 @@ function _find(model, _id, query, Log) {
                 })
                 .catch(function (error) {
                   const message = "There was a postprocessing error.";
+                  if (!logError) {
+                    Log.error(message);
+                    logError = true;
+                    delete error.type;
+                  }
                   errorHelper.handleError(error, message, errorHelper.types.BAD_REQUEST, Log);
                 });
           }
           else {
             const message = "No resource was found with that id.";
+            if (!logError) {
+              Log.error(message);
+              logError = true;
+            }
             errorHelper.handleError(message, message, errorHelper.types.NOT_FOUND, Log);
           }
         })
         .catch(function (error) {
           const message = "There was an error accessing the database.";
+          if (!logError) {
+            Log.error(message);
+            logError = true;
+            delete error.type;
+          }
           errorHelper.handleError(error, message, errorHelper.types.SERVER_TIMEOUT, Log);
         });
   }
   catch(error) {
     const message = "There was an error processing the request.";
+    if (!logError) {
+      Log.error(message);
+      logError = true;
+      delete error.type;
+    }
     try {
       errorHelper.handleError(error, message, errorHelper.types.BAD_REQUEST, Log)
     }
@@ -343,6 +379,7 @@ function _find(model, _id, query, Log) {
  * @private
  */
 function _create(model, payload, Log) {
+  let logError = false;
   try {
     var isArray = true;
     if (!_.isArray(payload)) {
@@ -412,26 +449,42 @@ function _create(model, payload, Log) {
                           })
                           .catch(function (error) {
                             const message = "There was a postprocessing error creating the resource.";
-                            Log.error(message);
+                            if (!logError) {
+                              Log.error(message);
+                              logError = true;
+                              delete error.type;
+                            }
                             errorHelper.handleError(error, message, errorHelper.types.BAD_REQUEST, Log);
                           });
                     })
               })
               .catch(function (error) {
                 const message = "There was an error creating the resource.";
-                Log.error(message);
+                if (!logError) {
+                  Log.error(message);
+                  logError = true;
+                  delete error.type;
+                }
                 errorHelper.handleError(error, message, errorHelper.types.SERVER_TIMEOUT, Log);
               });
         })
         .catch(function (error) {
           const message = "There was a preprocessing error creating the resource.";
-          Log.error(message);
+          if (!logError) {
+            Log.error(message);
+            logError = true;
+            delete error.type;
+          }
           errorHelper.handleError(error, message, errorHelper.types.BAD_REQUEST, Log);
         });
   }
   catch(error) {
     const message = "There was an error processing the request.";
-    Log.error(message);
+    if (!logError) {
+      Log.error(message);
+      logError = true;
+      delete error.type;
+    }
     try {
       errorHelper.handleError(error, message, errorHelper.types.BAD_REQUEST, Log)
     }
@@ -451,6 +504,7 @@ function _create(model, payload, Log) {
  * @private
  */
 function _update(model, _id, payload, Log) {
+  let logError = false;
   try {
     var promise =  {};
     if (model.routeOptions && model.routeOptions.update && model.routeOptions.update.pre){
@@ -492,32 +546,51 @@ function _update(model, _id, payload, Log) {
                             })
                             .catch(function (error) {
                               const message = "There was a postprocessing error updating the resource.";
-                              Log.error(message);
+                              if (!logError) {
+                                Log.error(message);
+                                logError = true;
+                                delete error.type;
+                              }
                               errorHelper.handleError(error, message, errorHelper.types.BAD_REQUEST, Log);
                             });
                       })
                 }
                 else {
                   const message = "No resource was found with that id.";
-                  Log.error(message);
+                  if (!logError) {
+                    Log.error(message);
+                    logError = true;
+                  }
                   errorHelper.handleError(message, message, errorHelper.types.NOT_FOUND, Log);
                 }
               })
               .catch(function (error) {
                 const message = "There was an error updating the resource.";
-                Log.error(message);
+                if (!logError) {
+                  Log.error(message);
+                  logError = true;
+                  delete error.type;
+                }
                 errorHelper.handleError(error, message, errorHelper.types.SERVER_TIMEOUT, Log);
               });
         })
         .catch(function (error) {
           const message = "There was a preprocessing error updating the resource.";
-          Log.error(message);
+          if (!logError) {
+            Log.error(message);
+            logError = true;
+            delete error.type;
+          }
           errorHelper.handleError(error, message, errorHelper.types.BAD_REQUEST, Log);
         });
   }
   catch(error) {
     const message = "There was an error processing the request.";
-    Log.error(message);
+    if (!logError) {
+      Log.error(message);
+      logError = true;
+      delete error.type;
+    }
     try {
       errorHelper.handleError(error, message, errorHelper.types.BAD_REQUEST, Log)
     }
@@ -538,6 +611,7 @@ function _update(model, _id, payload, Log) {
  */
 //TODO: only update "deleteAt" the first time a document is deleted
 function _deleteOne(model, _id, hardDelete, Log) {
+  let logError = false;
   try {
     var promise = {};
     if (model.routeOptions && model.routeOptions.delete && model.routeOptions.delete.pre) {
@@ -574,31 +648,50 @@ function _deleteOne(model, _id, hardDelete, Log) {
                       })
                       .catch(function (error) {
                         const message = "There was a postprocessing error deleting the resource.";
-                        Log.error(message);
+                        if (!logError) {
+                          Log.error(message);
+                          logError = true;
+                          delete error.type;
+                        }
                         errorHelper.handleError(error, message, errorHelper.types.BAD_REQUEST, Log);
                       });
                 }
                 else {
                   const message = "No resource was found with that id.";
-                  Log.error(message);
+                  if (!logError) {
+                    Log.error(message);
+                    logError = true;
+                  }
                   errorHelper.handleError(message, message, errorHelper.types.NOT_FOUND, Log);
                 }
               })
               .catch(function (error) {
                 const message = "There was an error deleting the resource.";
-                Log.error(message);
+                if (!logError) {
+                  Log.error(message);
+                  logError = true;
+                  delete error.type;
+                }
                 errorHelper.handleError(error, message, errorHelper.types.SERVER_TIMEOUT, Log);
               });
         })
         .catch(function (error) {
           const message = "There was a preprocessing error deleting the resource.";
-          Log.error(message);
+          if (!logError) {
+            Log.error(message);
+            logError = true;
+            delete error.type;
+          }
           errorHelper.handleError(error, message, errorHelper.types.BAD_REQUEST, Log);
         });
   }
   catch(error) {
     const message = "There was an error processing the request.";
-    Log.error(message);
+    if (!logError) {
+      Log.error(message);
+      logError = true;
+      delete error.type;
+    }
     try {
       errorHelper.handleError(error, message, errorHelper.types.BAD_REQUEST, Log)
     }
@@ -664,6 +757,7 @@ function _deleteMany(model, payload, Log) {
  * @private
  */
 function _addOne(ownerModel, ownerId, childModel, childId, associationName, payload, Log) {
+  let logError = false;
   try {
     return ownerModel.findOne({ '_id': ownerId })
         .then(function (ownerObject) {
@@ -679,20 +773,31 @@ function _addOne(ownerModel, ownerId, childModel, childId, associationName, payl
                 })
                 .catch(function (error) {
                   const message = "There was a database error while setting the association.";
-                  Log.error(message);
+                  if (!logError) {
+                    Log.error(message);
+                    logError = true;
+                    delete error.type;
+                  }
                   errorHelper.handleError(error, message, errorHelper.types.GATEWAY_TIMEOUT, Log);
                 });
           }
           else {
             const message = "No owner resource was found with that id.";
-            Log.error(message);
+            if (!logError) {
+              Log.error(message);
+              logError = true;
+            }
             errorHelper.handleError(message, message, errorHelper.types.NOT_FOUND, Log);
           }
         })
   }
   catch(error) {
     const message = "There was an error processing the request.";
-    Log.error(message);
+    if (!logError) {
+      Log.error(message);
+      logError = true;
+      delete error.type;
+    }
     try {
       errorHelper.handleError(error, message, errorHelper.types.BAD_REQUEST, Log)
     }
@@ -714,6 +819,7 @@ function _addOne(ownerModel, ownerId, childModel, childId, associationName, payl
  * @private
  */
 function _removeOne(ownerModel, ownerId, childModel, childId, associationName, Log) {
+  let logError = false;
   try {
     return ownerModel.findOne({ '_id': ownerId })
         .then(function (ownerObject) {
@@ -724,20 +830,31 @@ function _removeOne(ownerModel, ownerId, childModel, childId, associationName, L
                 })
                 .catch(function (error) {
                   const message = "There was a database error while removing the association.";
-                  Log.error(message);
+                  if (!logError) {
+                    Log.error(message);
+                    logError = true;
+                    delete error.type;
+                  }
                   errorHelper.handleError(error, message, errorHelper.types.GATEWAY_TIMEOUT, Log);
                 });
           }
           else {
             const message = "No owner resource was found with that id.";
-            Log.error(message);
+            if (!logError) {
+              Log.error(message);
+              logError = true;
+            }
             errorHelper.handleError(message, message, errorHelper.types.NOT_FOUND, Log);
           }
         })
   }
   catch(error) {
     const message = "There was an error processing the request.";
-    Log.error(message);
+    if (!logError) {
+      Log.error(message);
+      logError = true;
+      delete error.type;
+    }
     try {
       errorHelper.handleError(error, message, errorHelper.types.BAD_REQUEST, Log)
     }
@@ -759,6 +876,7 @@ function _removeOne(ownerModel, ownerId, childModel, childId, associationName, L
  * @private
  */
 function _addMany(ownerModel, ownerId, childModel, associationName, payload, Log) {
+  let logError = false;
   try {
     return ownerModel.findOne({ '_id': ownerId })
         .then(function (ownerObject) {
@@ -801,20 +919,31 @@ function _addMany(ownerModel, ownerId, childModel, associationName, payload, Log
                 })
                 .catch(function (error) {
                   const message = "There was an internal error while setting the associations.";
-                  Log.error(message);
+                  if (!logError) {
+                    Log.error(message);
+                    logError = true;
+                    delete error.type;
+                  }
                   errorHelper.handleError(error, message, errorHelper.types.GATEWAY_TIMEOUT, Log);
                 });
           }
           else {
             const message = "No owner resource was found with that id.";
-            Log.error(message);
+            if (!logError) {
+              Log.error(message);
+              logError = true;
+            }
             errorHelper.handleError(message, message, errorHelper.types.NOT_FOUND, Log);
           }
         })
   }
   catch(error) {
     const message = "There was an error processing the request.";
-    Log.error(message);
+    if (!logError) {
+      Log.error(message);
+      logError = true;
+      delete error.type;
+    }
     try {
       errorHelper.handleError(error, message, errorHelper.types.BAD_REQUEST, Log)
     }
@@ -836,6 +965,7 @@ function _addMany(ownerModel, ownerId, childModel, associationName, payload, Log
  * @private
  */
 function _removeMany(ownerModel, ownerId, childModel, associationName, payload, Log) {
+  let logError = false;
   try {
     return ownerModel.findOne({ '_id': ownerId })
         .then(function (ownerObject) {
@@ -870,20 +1000,31 @@ function _removeMany(ownerModel, ownerId, childModel, associationName, payload, 
                 })
                 .catch(function (error) {
                   const message = "There was an internal error while removing the associations.";
-                  Log.error(message);
+                  if (!logError) {
+                    Log.error(message);
+                    logError = true;
+                    delete error.type;
+                  }
                   errorHelper.handleError(error, message, errorHelper.types.GATEWAY_TIMEOUT, Log);
                 });
           }
           else {
             const message = "No owner resource was found with that id.";
-            Log.error(message);
+            if (!logError) {
+              Log.error(message);
+              logError = true;
+            }
             errorHelper.handleError(message, message, errorHelper.types.NOT_FOUND, Log);
           }
         })
   }
   catch(error) {
     const message = "There was an error processing the request.";
-    Log.error(message);
+    if (!logError) {
+      Log.error(message);
+      logError = true;
+      delete error.type;
+    }
     try {
       errorHelper.handleError(error, message, errorHelper.types.BAD_REQUEST, Log)
     }
@@ -942,6 +1083,15 @@ function _getAll(ownerModel, ownerId, childModel, associationName, query, Log) {
             });
           }
 
+          if (query._id) {
+            if (!_.isArray(query._id)) {
+              query._id = [query._id];
+            }
+            childIds = childIds.filter(function(id) {
+              return query._id.indexOf(id.toString()) > -1
+            })
+            delete query._id
+          }
           query.$where = extend({'_id': { $in: childIds }}, query.$where);
 
           var promise = _list(childModel, query, Log);
@@ -977,13 +1127,17 @@ function _getAll(ownerModel, ownerId, childModel, associationName, query, Log) {
         })
         .catch(function (error) {
           const message = "There was an error processing the request.";
-          Log.error(message);
+          if (!error.type) {
+            Log.error(message);
+          }
           errorHelper.handleError(error, message, errorHelper.types.BAD_REQUEST, Log);
         });
   }
   catch(error) {
     const message = "There was an error processing the request.";
-    Log.error(message);
+    if (!error.type) {
+      Log.error(message);
+    }
     try {
       errorHelper.handleError(error, message, errorHelper.types.BAD_REQUEST, Log)
     }
@@ -1093,7 +1247,7 @@ function _setAssociation(ownerModel, ownerObject, childModel, childId, associati
             promise = Q.all([ownerModel.findByIdAndUpdate(ownerObject._id, ownerObject), childModel.findByIdAndUpdate(childObject._id, childObject)]);
           }
           else {
-            deferred.reject("Association type incorrectly defined.");
+            deferred.reject(new Error("Association type incorrectly defined."));
             return deferred.promise;
           }
 
@@ -1109,11 +1263,11 @@ function _setAssociation(ownerModel, ownerObject, childModel, childId, associati
               });
         }
         else {
-          deferred.reject("Child object not found.");
+          deferred.reject(new Error("Child object not found."));
         }
       })
       .catch(function (error) {
-        Log.error("error: ", error);
+        Log.error(error);
         deferred.reject(error);
       });
 
@@ -1186,7 +1340,7 @@ function _removeAssociation(ownerModel, ownerObject, childModel, childId, associ
             promise = Q.all([ownerModel.findByIdAndUpdate(ownerObject._id, ownerObject), childModel.findByIdAndUpdate(childObject._id, childObject)]);
           }
           else {
-            deferred.reject("Association type incorrectly defined.");
+            deferred.reject(new Error("Association type incorrectly defined."));
             return deferred.promise;
           }
 
@@ -1201,7 +1355,7 @@ function _removeAssociation(ownerModel, ownerObject, childModel, childId, associ
               });
         }
         else {
-          deferred.reject("Child object not found.");
+          deferred.reject(new Error("Child object not found."));
         }
       })
       .catch(function (error) {
