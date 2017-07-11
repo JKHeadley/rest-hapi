@@ -412,22 +412,26 @@ function _create(model, payload, Log) {
                           })
                           .catch(function (error) {
                             const message = "There was a postprocessing error creating the resource.";
+                            Log.error(message);
                             errorHelper.handleError(error, message, errorHelper.types.BAD_REQUEST, Log);
                           });
                     })
               })
               .catch(function (error) {
                 const message = "There was an error creating the resource.";
+                Log.error(message);
                 errorHelper.handleError(error, message, errorHelper.types.SERVER_TIMEOUT, Log);
               });
         })
         .catch(function (error) {
           const message = "There was a preprocessing error creating the resource.";
+          Log.error(message);
           errorHelper.handleError(error, message, errorHelper.types.BAD_REQUEST, Log);
         });
   }
   catch(error) {
     const message = "There was an error processing the request.";
+    Log.error(message);
     try {
       errorHelper.handleError(error, message, errorHelper.types.BAD_REQUEST, Log)
     }
@@ -488,27 +492,32 @@ function _update(model, _id, payload, Log) {
                             })
                             .catch(function (error) {
                               const message = "There was a postprocessing error updating the resource.";
+                              Log.error(message);
                               errorHelper.handleError(error, message, errorHelper.types.BAD_REQUEST, Log);
                             });
                       })
                 }
                 else {
                   const message = "No resource was found with that id.";
+                  Log.error(message);
                   errorHelper.handleError(message, message, errorHelper.types.NOT_FOUND, Log);
                 }
               })
               .catch(function (error) {
                 const message = "There was an error updating the resource.";
+                Log.error(message);
                 errorHelper.handleError(error, message, errorHelper.types.SERVER_TIMEOUT, Log);
               });
         })
         .catch(function (error) {
           const message = "There was a preprocessing error updating the resource.";
+          Log.error(message);
           errorHelper.handleError(error, message, errorHelper.types.BAD_REQUEST, Log);
         });
   }
   catch(error) {
     const message = "There was an error processing the request.";
+    Log.error(message);
     try {
       errorHelper.handleError(error, message, errorHelper.types.BAD_REQUEST, Log)
     }
@@ -564,27 +573,32 @@ function _deleteOne(model, _id, hardDelete, Log) {
                         return true;
                       })
                       .catch(function (error) {
-                        const message = "There was a postprocessing error creating the resource.";
+                        const message = "There was a postprocessing error deleting the resource.";
+                        Log.error(message);
                         errorHelper.handleError(error, message, errorHelper.types.BAD_REQUEST, Log);
                       });
                 }
                 else {
                   const message = "No resource was found with that id.";
+                  Log.error(message);
                   errorHelper.handleError(message, message, errorHelper.types.NOT_FOUND, Log);
                 }
               })
               .catch(function (error) {
                 const message = "There was an error deleting the resource.";
+                Log.error(message);
                 errorHelper.handleError(error, message, errorHelper.types.SERVER_TIMEOUT, Log);
               });
         })
         .catch(function (error) {
           const message = "There was a preprocessing error deleting the resource.";
+          Log.error(message);
           errorHelper.handleError(error, message, errorHelper.types.BAD_REQUEST, Log);
         });
   }
   catch(error) {
     const message = "There was an error processing the request.";
+    Log.error(message);
     try {
       errorHelper.handleError(error, message, errorHelper.types.BAD_REQUEST, Log)
     }
@@ -627,6 +641,7 @@ function _deleteMany(model, payload, Log) {
 
   catch(error) {
     const message = "There was an error processing the request.";
+    Log.error(message);
     try {
       errorHelper.handleError(error, message, errorHelper.types.BAD_REQUEST, Log)
     }
@@ -664,17 +679,20 @@ function _addOne(ownerModel, ownerId, childModel, childId, associationName, payl
                 })
                 .catch(function (error) {
                   const message = "There was a database error while setting the association.";
+                  Log.error(message);
                   errorHelper.handleError(error, message, errorHelper.types.GATEWAY_TIMEOUT, Log);
                 });
           }
           else {
             const message = "No owner resource was found with that id.";
+            Log.error(message);
             errorHelper.handleError(message, message, errorHelper.types.NOT_FOUND, Log);
           }
         })
   }
   catch(error) {
     const message = "There was an error processing the request.";
+    Log.error(message);
     try {
       errorHelper.handleError(error, message, errorHelper.types.BAD_REQUEST, Log)
     }
@@ -706,17 +724,20 @@ function _removeOne(ownerModel, ownerId, childModel, childId, associationName, L
                 })
                 .catch(function (error) {
                   const message = "There was a database error while removing the association.";
+                  Log.error(message);
                   errorHelper.handleError(error, message, errorHelper.types.GATEWAY_TIMEOUT, Log);
                 });
           }
           else {
             const message = "No owner resource was found with that id.";
+            Log.error(message);
             errorHelper.handleError(message, message, errorHelper.types.NOT_FOUND, Log);
           }
         })
   }
   catch(error) {
     const message = "There was an error processing the request.";
+    Log.error(message);
     try {
       errorHelper.handleError(error, message, errorHelper.types.BAD_REQUEST, Log)
     }
@@ -780,17 +801,20 @@ function _addMany(ownerModel, ownerId, childModel, associationName, payload, Log
                 })
                 .catch(function (error) {
                   const message = "There was an internal error while setting the associations.";
+                  Log.error(message);
                   errorHelper.handleError(error, message, errorHelper.types.GATEWAY_TIMEOUT, Log);
                 });
           }
           else {
             const message = "No owner resource was found with that id.";
+            Log.error(message);
             errorHelper.handleError(message, message, errorHelper.types.NOT_FOUND, Log);
           }
         })
   }
   catch(error) {
     const message = "There was an error processing the request.";
+    Log.error(message);
     try {
       errorHelper.handleError(error, message, errorHelper.types.BAD_REQUEST, Log)
     }
@@ -846,17 +870,20 @@ function _removeMany(ownerModel, ownerId, childModel, associationName, payload, 
                 })
                 .catch(function (error) {
                   const message = "There was an internal error while removing the associations.";
+                  Log.error(message);
                   errorHelper.handleError(error, message, errorHelper.types.GATEWAY_TIMEOUT, Log);
                 });
           }
           else {
             const message = "No owner resource was found with that id.";
+            Log.error(message);
             errorHelper.handleError(message, message, errorHelper.types.NOT_FOUND, Log);
           }
         })
   }
   catch(error) {
     const message = "There was an error processing the request.";
+    Log.error(message);
     try {
       errorHelper.handleError(error, message, errorHelper.types.BAD_REQUEST, Log)
     }
@@ -897,6 +924,9 @@ function _getAll(ownerModel, ownerId, childModel, associationName, query, Log) {
     mongooseQuery = QueryHelper.createMongooseQuery(ownerModel, ownerRequest.query, mongooseQuery, Log);
     return mongooseQuery.exec()
         .then(function (result) {
+          if (!result) {
+            throw new Error("owner object not found")
+          }
           result = result[associationName];
           var childIds = [];
           var many_many = false;
@@ -925,6 +955,9 @@ function _getAll(ownerModel, ownerId, childModel, associationName, query, Log) {
                       var data = extraFieldData.find(function(data) {
                         return data[association.model]._id.toString() === object._id
                       });
+                      if (!data) {
+                        throw new Error("child object not found")
+                      }
                       var fields = data.toJSON();
                       delete fields._id;
                       delete fields[association.model];
@@ -934,25 +967,23 @@ function _getAll(ownerModel, ownerId, childModel, associationName, query, Log) {
 
                   return result;
                 })
-                .catch(function (error) {
-                  const message = "There was an error processing the request.";
-                  errorHelper.handleError(error, message, errorHelper.types.BAD_REQUEST, Log);
-                });
           }
           else {
             return promise
                 .then(function(result) {
                   return result;
                 })
-                .catch(function (error) {
-                  const message = "There was an error processing the request.";
-                  errorHelper.handleError(error, message, errorHelper.types.BAD_REQUEST, Log);
-                });
           }
+        })
+        .catch(function (error) {
+          const message = "There was an error processing the request.";
+          Log.error(message);
+          errorHelper.handleError(error, message, errorHelper.types.BAD_REQUEST, Log);
         });
   }
   catch(error) {
     const message = "There was an error processing the request.";
+    Log.error(message);
     try {
       errorHelper.handleError(error, message, errorHelper.types.BAD_REQUEST, Log)
     }
@@ -1035,13 +1066,13 @@ function _setAssociation(ownerModel, ownerObject, childModel, childId, associati
             }
 
             if (!childAssociation.include) {
-              throw "Missing association between " + ownerModel.modelName + " and " + childModel.modelName + ".";
+              throw new Error("Missing association between " + ownerModel.modelName + " and " + childModel.modelName + ".");
             }
 
             var childAssociationName = childAssociation.include.as;
 
             if (!childObject[childAssociationName]) {
-              throw childAssociationName + " association does not exist.";
+              throw new Error(childAssociationName + " association does not exist.");
             }
 
             duplicate = childObject[childAssociationName].filter(function (associationObject) {
