@@ -150,6 +150,11 @@ function _list(model, query, Log) {
     var mongooseQuery = {};
     var originalQuery = extend({}, query);
     var count = "";
+    var flatten = false;
+    if (query.$flatten) {
+      flatten = true;
+    }
+    delete query.$flatten;
     if (query.$count) {
       mongooseQuery = model.count();
       mongooseQuery = QueryHelper.createMongooseQuery(model, query, mongooseQuery, Log).lean();
@@ -192,6 +197,14 @@ function _list(model, query, Log) {
                         }
                         else {
                           result[associationKey] = data[associationKey];
+                        }
+                      }
+                      if (association.type === "MANY_MANY" && flatten === true) {//EXPL: remove additional fields and return a flattened array
+                        if (result[associationKey]) {
+                          result[associationKey] = result[associationKey].map(function(object) {
+                            object = object[association.model];
+                            return object;
+                          })
                         }
                       }
                     }
@@ -287,6 +300,11 @@ function _list(model, query, Log) {
 function _find(model, _id, query, Log) {
   let logError = false;
   try {
+    var flatten = false;
+    if (query.$flatten) {
+      flatten = true;
+    }
+    delete query.$flatten;
     var mongooseQuery = model.findOne({ '_id': _id });
     mongooseQuery = QueryHelper.createMongooseQuery(model, query, mongooseQuery, Log).lean();
     return mongooseQuery.exec()
@@ -307,6 +325,14 @@ function _find(model, _id, query, Log) {
                       var association = associations[associationKey];
                       if (association.type === "ONE_MANY" && data[associationKey]) {//EXPL: we have to manually populate the return value for virtual (e.g. ONE_MANY) associations
                         result[associationKey] = data[associationKey];
+                      }
+                      if (association.type === "MANY_MANY" && flatten === true) {//EXPL: remove additional fields and return a flattened array
+                        if (result[associationKey]) {
+                          result[associationKey] = result[associationKey].map(function(object) {
+                            object = object[association.model];
+                            return object;
+                          })
+                        }
                       }
                     }
                   }
