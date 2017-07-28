@@ -1007,6 +1007,9 @@ supported parameters:
 * $embed
     - A set of associations to populate. 
     
+* $flatten
+    - Set to true to flatten embedded arrays, i.e. remove linking-model data.
+    
 * $count
     - If set to true, only a count of the query results will be returned.
 
