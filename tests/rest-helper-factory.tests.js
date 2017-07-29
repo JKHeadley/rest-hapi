@@ -6405,7 +6405,7 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function (t) {
     var association1 = {include: {model: {modelName: "TEST1", schema: {methods: {}}}}};
     var association2 = {include: {model: {schema: {methods: {}}}, through: {}}, alias: "TEST2"};
 
-    var payloadValidation1 = Joi.array().items(Joi.object().unknown().keys({childId: Joi.any().valid("objectId")})).required();
+    var payloadValidation1 = Joi.array().items(Joi.object().unknown().keys({childId: Joi.any().valid("objectId")}).label("undefined_many")).required();
     var payloadValidation2 = Joi.array().items(Joi.any().valid("objectId")).required();
     //</editor-fold>
 
