@@ -65,9 +65,7 @@ module.exports = {
       }
     }
 
-    var readModel = Joi.object(readModelBase).meta({
-      className: model.modelName + "ReadModel"
-    });
+    var readModel = Joi.object(readModelBase).label(model.modelName + "ReadModel");
 
     return readModel;
   },
@@ -110,9 +108,7 @@ module.exports = {
       }
     }
 
-    var updateModel = Joi.object(updateModelBase).meta({
-      className: model.modelName + "UpdateModel"
-    });
+    var updateModel = Joi.object(updateModelBase).label(model.modelName + "UpdateModel");
 
     return updateModel;
   },
@@ -156,9 +152,7 @@ module.exports = {
       }
     }
 
-    var createModel = Joi.object(createModelBase).meta({
-      className: model.modelName + "CreateModel"
-    });
+    var createModel = Joi.object(createModelBase).label(model.modelName + "CreateModel");
 
     return createModel;
   },
@@ -191,9 +185,7 @@ module.exports = {
       }
     }
 
-    var associationModel = Joi.object(associationModelBase).meta({
-      className: model.modelName + "AssociationModel"
-    });
+    var associationModel = Joi.object(associationModelBase).label(model.modelName + "AssociationModel");
 
     return associationModel;
   },

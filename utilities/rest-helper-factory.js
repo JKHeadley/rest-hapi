@@ -903,9 +903,10 @@ module.exports = function (logger, mongoose, server) {
 
       if (association.include && association.include.through) {
         payloadValidation = joiMongooseHelper.generateJoiAssociationModel(association.include.through, Log);
+        var label =  payloadValidation._flags.label + "_many";
         payloadValidation = payloadValidation.keys({
           childId: Joi.objectId()
-        });
+        }).label(label);
         payloadValidation = Joi.array().items(payloadValidation).required();
       } 
       else {
