@@ -201,7 +201,16 @@ module.exports = {
 
     assert(field.type, "incorrect field format");
 
-    switch (field.type.schemaName) {
+    let isArray = false;
+    let fieldCopy = _.extend({}, field);
+
+
+    if (_.isArray(fieldCopy.type)) {
+      isArray = true;
+      fieldCopy.type = fieldCopy.type[0];
+    }
+
+    switch (fieldCopy.type.schemaName) {
       case 'ObjectId':
         model = Joi.objectId().description("objectId");
         break;
@@ -215,11 +224,11 @@ module.exports = {
         model = Joi.date();
         break;
       case 'String':
-        if (field.enum) {
-          model = Joi.any().only(field.enum);
+        if (fieldCopy.enum) {
+          model = Joi.any().only(fieldCopy.enum);
         }
-        else if (field.stringType) {
-          switch (field.stringType) {
+        else if (fieldCopy.stringType) {
+          switch (fieldCopy.stringType) {
             case 'uri':
               model = Joi.string().uri();
               break;
@@ -263,16 +272,22 @@ module.exports = {
         break;
     }
 
-    if (field.description) {
-      model = model.description(field.description);
-    }
-    else if (field.stringType) {
-      model = model.description(field.stringType);
-    }
 
-    if (field.allowNull) {
+    if (fieldCopy.allowNull) {
       model = model.allow(null);
     }
+
+    if (isArray) {
+      model = Joi.array().items(model);
+    }
+
+    if (fieldCopy.description) {
+      model = model.description(fieldCopy.description);
+    }
+    else if (fieldCopy.stringType) {
+      model = model.description(fieldCopy.stringType);
+    }
+
 
     return model;
   }
