@@ -203,7 +203,7 @@ module.exports = {
 
     switch (field.type.schemaName) {
       case 'ObjectId':
-        model = Joi.objectId();
+        model = Joi.objectId().description("objectId");
         break;
       case 'Boolean':
         model = Joi.bool();
@@ -217,6 +217,42 @@ module.exports = {
       case 'String':
         if (field.enum) {
           model = Joi.any().only(field.enum);
+        }
+        else if (field.stringType) {
+          switch (field.stringType) {
+            case 'uri':
+              model = Joi.string().uri().description('uri');
+              break;
+            case 'email':
+              model = Joi.string().email().description('email');
+              break;
+            case 'token':
+              model = Joi.string().token().description('token');
+              break;
+            case 'hex':
+              model = Joi.string().hex().description('hex');
+              break;
+            case 'base64':
+              model = Joi.string().base64().description('base64');
+              break;
+            case 'hostname':
+              model = Joi.string().hostname().description('hostname');
+              break;
+            case 'lowercase':
+              model = Joi.string().lowercase().description('lowercase');
+              break;
+            case 'uppercase':
+              model = Joi.string().uppercase().description('uppercase');
+              break;
+            case 'trim':
+              model = Joi.string().trim().description('trim');
+              break;
+            case 'creditCard':
+              model = Joi.string().creditCard().description('creditCard');
+              break;
+            default:
+              model = Joi.string().allow('');
+          }
         }
         else {
           model = Joi.string().allow('');
