@@ -1122,12 +1122,23 @@ Date        |      Joi.date()
 String      |      Joi.string()
 types       |      Joi.any()
 
-Fields of type ``String`` that include an ``enum`` property result in the following joi validation:
+Fields of type ``String`` can include further validation restrictions based on additional field properties as shown below:
 
 Field Property | joi Validation
 --- | ---
 enum: [items] | Joi.any().only([items])
+stringType: 'email' | Joi.string().email()
+stringType: 'uri' | Joi.string().uri()
+stringType: 'token' | Joi.string().token()
+stringType: 'base64' | Joi.string().base64()
+stringType: 'lowercase' | Joi.string().lowercase()
+stringType: 'uppercase' | Joi.string().uppercase()
+stringType: 'hostname' | Joi.string().hostname()
+stringType: 'hex' | Joi.string().hex()
+stringType: 'trim' | Joi.string().trim()
+stringType: 'creditCard' | Joi.string().creditCard()
 
+In addition, if a `description: "Description text."` field property is included, then `.description("Description text.")` will be called on the joi validation object.
 
 rest-hapi generates joi validation models for create, read, and update events as well as association events with linking models.  By default these validation models include all the fields of the mongoose models and list them as optional.  However additional field properties can be included to customize the validation models.  Below is a list of currently supported field properties and their effect on the validation models.
 
