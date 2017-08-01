@@ -221,34 +221,34 @@ module.exports = {
         else if (field.stringType) {
           switch (field.stringType) {
             case 'uri':
-              model = Joi.string().uri().description('uri');
+              model = Joi.string().uri();
               break;
             case 'email':
-              model = Joi.string().email().description('email');
+              model = Joi.string().email();
               break;
             case 'token':
-              model = Joi.string().token().description('token');
+              model = Joi.string().token();
               break;
             case 'hex':
-              model = Joi.string().hex().description('hex');
+              model = Joi.string().hex();
               break;
             case 'base64':
-              model = Joi.string().base64().description('base64');
+              model = Joi.string().base64();
               break;
             case 'hostname':
-              model = Joi.string().hostname().description('hostname');
+              model = Joi.string().hostname();
               break;
             case 'lowercase':
-              model = Joi.string().lowercase().description('lowercase');
+              model = Joi.string().lowercase();
               break;
             case 'uppercase':
-              model = Joi.string().uppercase().description('uppercase');
+              model = Joi.string().uppercase();
               break;
             case 'trim':
-              model = Joi.string().trim().description('trim');
+              model = Joi.string().trim();
               break;
             case 'creditCard':
-              model = Joi.string().creditCard().description('creditCard');
+              model = Joi.string().creditCard();
               break;
             default:
               model = Joi.string().allow('');
@@ -261,6 +261,13 @@ module.exports = {
       default:
         model = Joi.any();
         break;
+    }
+
+    if (field.description) {
+      model = model.description(field.description);
+    }
+    else if (field.stringType) {
+      model = model.description(field.stringType);
     }
 
     if (field.allowNull) {
