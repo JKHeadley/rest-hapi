@@ -4,11 +4,13 @@ const _ = require('lodash'),
     extend = require('extend'),
     Inert = require('inert'),
     Vision = require('vision'),
-    HapiSwagger = require('hapi-swagger'),
+    HS = require('hapi-swagger'),
+    MH = require('mrhorse'),
     logging = require('loggin'),
     logUtil = require('./utilities/log-util'),
     chalk = require('chalk'),
     Q = require("q"),
+    fs = require("fs"),
     restHelperFactory = require('./utilities/rest-helper-factory'),
     handlerHelper = require('./utilities/handler-helper'),
     modelGenerator = require('./utilities/model-generator'),
@@ -63,6 +65,8 @@ function register(server, options, next) {
     promise
         .then(function(models) {
 
+            //EXPL: setup hapi-swagger plugin
+            //region Hapi-Swagger Plugin
             let swaggerOptions = {
                 documentationPath: '/',
                 info: {
@@ -72,13 +76,51 @@ function register(server, options, next) {
                 expanded: config.docExpansion
             };
 
+            let HapiSwagger = {
+                register: HS,
+                options: swaggerOptions
+            };
+            //endregion
+
+
+            //EXPL: setup mrhorse policy plugin
+            //region Mrhorse Plugin
+            let policyPath = "";
+            let Mrhorse = {};
+
+            if (config.enablePolicies) {
+                if (config.absolutePolicyPath === true) {
+                    policyPath = config.policyPath;
+                }
+                else {
+                    policyPath = __dirname + '/../../../' + config.policyPath;
+                }
+
+                let pathExists = true;
+                try {
+                    fs.accessSync(policyPath);
+                } catch (e) {
+                    pathExists = false;
+                    logger.error("Policy path does not exist.")
+                }
+
+                if (pathExists) {
+                    Mrhorse = {
+                        register: MH,
+                        options: {
+                            policyDirectory: policyPath
+                        }
+                    }
+                }
+            }
+            //endregion
+
             server.register([
                     Inert,
                     Vision,
-                    {
-                        register: HapiSwagger,
-                        options: swaggerOptions
-                    }],
+                    HapiSwagger,
+                    Mrhorse
+                ],
                 function (err) {
                     if (err) {
                         logger.error(err);

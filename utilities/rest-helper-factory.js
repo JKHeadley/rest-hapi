@@ -200,6 +200,13 @@ module.exports = function (logger, mongoose, server) {
         headersValidation = null;
       }
 
+      var policies = [];
+
+      if (model.routeOptions.policies) {
+        policies = model.routeOptions.policies;
+        policies = (policies.policies || []).concat(policies.readPolicies || []);
+      }
+
 
       server.route({
         method: 'GET',
@@ -226,7 +233,8 @@ module.exports = function (logger, mongoose, server) {
                 {code: 500, message: 'There was an unknown error.'},
                 {code: 503, message: 'There was a problem with the database.'}
               ]
-            }
+            },
+            'policies': policies
           },
           response: {
             // schema: config.enableResponseValidation ? Joi.alternatives().try(Joi.array().items(readModel), Joi.number()) : Joi.array().items(Joi.any())
@@ -300,6 +308,13 @@ module.exports = function (logger, mongoose, server) {
         headersValidation = null;
       }
 
+      var policies = [];
+
+      if (model.routeOptions.policies) {
+        policies = model.routeOptions.policies;
+        policies = (policies.policies || []).concat(policies.readPolicies || []);
+      }
+
       server.route({
         method: 'GET',
         path: '/' + resourceAliasForRoute + '/{_id}',
@@ -329,7 +344,8 @@ module.exports = function (logger, mongoose, server) {
                 {code: 500, message: 'There was an unknown error.'},
                 {code: 503, message: 'There was a problem with the database.'}
               ]
-            }
+            },
+            'policies': policies
           },
           response: {
             schema: config.enableResponseValidation ? readModel : Joi.any()
@@ -392,6 +408,13 @@ module.exports = function (logger, mongoose, server) {
         headersValidation = null;
       }
 
+      var policies = [];
+
+      if (model.routeOptions.policies) {
+        policies = model.routeOptions.policies;
+        policies = (policies.policies || []).concat(policies.createPolicies || []);
+      }
+
       server.route({
         method: 'POST',
         path: '/' + resourceAliasForRoute,
@@ -417,7 +440,8 @@ module.exports = function (logger, mongoose, server) {
                 {code: 500, message: 'There was an unknown error.'},
                 {code: 503, message: 'There was a problem with the database.'}
               ]
-            }
+            },
+            'policies': policies
           },
           response: {
             schema: config.enableResponseValidation ? readModel : Joi.any()
@@ -476,6 +500,13 @@ module.exports = function (logger, mongoose, server) {
         headersValidation = null;
       }
 
+      var policies = [];
+
+      if (model.routeOptions.policies) {
+        policies = model.routeOptions.policies;
+        policies = (policies.policies || []).concat(policies.deletePolicies || []);
+      }
+
       server.route({
         method: 'DELETE',
         path: '/' + resourceAliasForRoute + "/{_id}",
@@ -505,7 +536,8 @@ module.exports = function (logger, mongoose, server) {
                 {code: 500, message: 'There was an unknown error.'},
                 {code: 503, message: 'There was a problem with the database.'}
               ]
-            }
+            },
+            'policies': policies
           },
           response: {
             //TODO: add a response schema if needed
@@ -569,6 +601,13 @@ module.exports = function (logger, mongoose, server) {
         headersValidation = null;
       }
 
+      var policies = [];
+
+      if (model.routeOptions.policies) {
+        policies = model.routeOptions.policies;
+        policies = (policies.policies || []).concat(policies.deletePolicies || []);
+      }
+
       server.route({
         method: 'DELETE',
         path: '/' + resourceAliasForRoute,
@@ -595,7 +634,8 @@ module.exports = function (logger, mongoose, server) {
                 {code: 500, message: 'There was an unknown error.'},
                 {code: 503, message: 'There was a problem with the database.'}
               ]
-            }
+            },
+            'policies': policies
           },
           response: {
             //TODO: add a response schema if needed
@@ -654,6 +694,13 @@ module.exports = function (logger, mongoose, server) {
         headersValidation = null;
       }
 
+      var policies = [];
+
+      if (model.routeOptions.policies) {
+        policies = model.routeOptions.policies;
+        policies = (policies.policies || []).concat(policies.updatePolicies || []);
+      }
+
       server.route({
         method: 'PUT',
         path: '/' + resourceAliasForRoute + '/{_id}',
@@ -683,7 +730,8 @@ module.exports = function (logger, mongoose, server) {
                 {code: 500, message: 'There was an unknown error.'},
                 {code: 503, message: 'There was a problem with the database.'}
               ]
-            }
+            },
+            'policies': policies
           },
           response: {
             schema: config.enableResponseValidation ? readModel : Joi.any()
@@ -749,6 +797,13 @@ module.exports = function (logger, mongoose, server) {
         headersValidation = null;
       }
 
+      var policies = [];
+
+      if (ownerModelName.routeOptions.policies) {
+        policies = model.routeOptions.policies;
+        policies = (policies.policies || []).concat(policies.associatePolicies || []);
+      }
+
       server.route({
         method: 'PUT',
         path: '/' + ownerAlias + '/{ownerId}/' + childAlias + "/{childId}",
@@ -779,7 +834,8 @@ module.exports = function (logger, mongoose, server) {
                 {code: 500, message: 'There was an unknown error.'},
                 {code: 503, message: 'There was a problem with the database.'}
               ]
-            }
+            },
+            'policies': policies
           },
           response: {}//TODO: verify what response schema is needed here
         }
@@ -836,6 +892,13 @@ module.exports = function (logger, mongoose, server) {
         headersValidation = null;
       }
 
+      var policies = [];
+
+      if (ownerModelName.routeOptions.policies) {
+        policies = model.routeOptions.policies;
+        policies = (policies.policies || []).concat(policies.associatePolicies || []);
+      }
+
       server.route({
         method: 'DELETE',
         path: '/' + ownerAlias + '/{ownerId}/' + childAlias + "/{childId}",
@@ -862,7 +925,8 @@ module.exports = function (logger, mongoose, server) {
                 {code: 500, message: 'There was an unknown error.'},
                 {code: 503, message: 'There was a problem with the database.'}
               ]
-            }
+            },
+            'policies': policies
           },
           response: {}
         }
@@ -933,6 +997,13 @@ module.exports = function (logger, mongoose, server) {
         headersValidation = null;
       }
 
+      var policies = [];
+
+      if (ownerModelName.routeOptions.policies) {
+        policies = model.routeOptions.policies;
+        policies = (policies.policies || []).concat(policies.associatePolicies || []);
+      }
+
       server.route({
         method: 'POST',
         path: '/' + ownerAlias + '/{ownerId}/' + childAlias,
@@ -959,7 +1030,8 @@ module.exports = function (logger, mongoose, server) {
                 {code: 500, message: 'There was an unknown error.'},
                 {code: 503, message: 'There was a problem with the database.'}
               ]
-            }
+            },
+            'policies': policies
           },
           response: {}
         }
@@ -1018,6 +1090,13 @@ module.exports = function (logger, mongoose, server) {
         headersValidation = null;
       }
 
+      var policies = [];
+
+      if (ownerModelName.routeOptions.policies) {
+        policies = model.routeOptions.policies;
+        policies = (policies.policies || []).concat(policies.associatePolicies || []);
+      }
+
       server.route({
         method: 'DELETE',
         path: '/' + ownerAlias + '/{ownerId}/' + childAlias,
@@ -1044,7 +1123,8 @@ module.exports = function (logger, mongoose, server) {
                 {code: 500, message: 'There was an unknown error.'},
                 {code: 503, message: 'There was a problem with the database.'}
               ]
-            }
+            },
+            'policies': policies
           },
           response: {}
         }
@@ -1156,6 +1236,13 @@ module.exports = function (logger, mongoose, server) {
         headersValidation = null;
       }
 
+      var policies = [];
+
+      if (ownerModelName.routeOptions.policies) {
+        policies = model.routeOptions.policies;
+        policies = (policies.policies || []).concat(policies.readPolicies || []);
+      }
+
       server.route({
         method: 'GET',
         path: '/' + ownerAlias + '/{ownerId}/' + childAlias,
@@ -1182,7 +1269,8 @@ module.exports = function (logger, mongoose, server) {
                 {code: 500, message: 'There was an unknown error.'},
                 {code: 503, message: 'There was a problem with the database.'}
               ]
-            }
+            },
+            'policies': policies
           },
           response: {
             // schema: config.enableResponseValidation ? Joi.alternatives().try(Joi.array().items(readModel), Joi.number()) : Joi.array().items(Joi.any())

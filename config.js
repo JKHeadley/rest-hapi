@@ -44,6 +44,25 @@ config.absoluteApiPath = false;
 config.apiPath = 'api';
 
 /**
+ * Flag to enable mrhorse policy plugin (https://github.com/mark-bradshaw/mrhorse)
+ * @type {string}
+ * default: false
+ */
+config.enablePolicies = false;
+
+/**
+ * Flag signifying whether the absolute path to the policies directory is provided
+ * @type {boolean}
+ */
+config.absolutePolicyPath = false;
+
+/**
+ * Path to the directory for mrhorse policies (https://github.com/mark-bradshaw/mrhorse) (default 'policies')
+ * @type {string}
+ */
+config.policyPath = 'policies';
+
+/**
  * Cors settings for generated endpoints. Can be set to false to disable.
  * @type {{additionalHeaders: string[], additionalExposedHeaders: string[]}}
  */
