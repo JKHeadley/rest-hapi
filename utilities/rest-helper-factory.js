@@ -229,9 +229,8 @@ module.exports = function (logger, mongoose, server) {
             }
           },
           response: {
-            // schema: config.enableResponseValidation ? Joi.alternatives().try(Joi.array().items(readModel), Joi.number()) : Joi.array().items(Joi.any())
             schema: config.enableResponseValidation ? Joi.alternatives().try(Joi.object({ docs: Joi.array().items(readModel), pages: Joi.any(), items: Joi.any() }), Joi.number()) :
-                Joi.alternatives().try(Joi.object({ docs: Joi.array().items(readModel), pages: Joi.any(), items: Joi.any() }), Joi.number() )
+                Joi.alternatives().try(Joi.object({ docs: Joi.array().items(Joi.any()), pages: Joi.any(), items: Joi.any() }), Joi.number() )
           }
         }
       });
@@ -1185,9 +1184,8 @@ module.exports = function (logger, mongoose, server) {
             }
           },
           response: {
-            // schema: config.enableResponseValidation ? Joi.alternatives().try(Joi.array().items(readModel), Joi.number()) : Joi.array().items(Joi.any())
             schema: config.enableResponseValidation ? Joi.alternatives().try(Joi.object({ docs: Joi.array().items(readModel), pages: Joi.any(), items: Joi.any() }), Joi.number()) :
-                Joi.alternatives().try(Joi.object({ docs: Joi.array().items(readModel), pages: Joi.any(), items: Joi.any() }), Joi.number() )
+                Joi.alternatives().try(Joi.object({ docs: Joi.array().items(Joi.any()), pages: Joi.any(), items: Joi.any() }), Joi.number() )
           }
         }
       });
