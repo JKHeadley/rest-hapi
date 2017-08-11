@@ -233,8 +233,8 @@ function _list(model, query, Log) {
                 };
                 const items = {
                     limit: query.$limit,
-                    begin: ((query.$page * query.$limit) - query.$limit) + 1,
-                    end: query.$page * query.$limit,
+                    begin: (((query.$page || 1) * query.$limit) - query.$limit) + 1,
+                    end: (query.$page || 1) * query.$limit,
                     total: count
                 };
 
