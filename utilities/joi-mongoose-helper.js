@@ -55,7 +55,7 @@ module.exports = {
 
         //TODO: possibly add stricter validation for associations
         if (association.type === "MANY_MANY" || association.type === "ONE_MANY") {
-          readModelBase[associationName] = Joi.array().items(Joi.object().unknown());
+          readModelBase[associationName] = Joi.array().items(Joi.any());
           if (association.linkingModel) {
             readModelBase[association.linkingModel] = Joi.object().unknown().allow(null);
           }
