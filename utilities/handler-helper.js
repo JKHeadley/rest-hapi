@@ -442,11 +442,8 @@ function _create(model, payload, Log) {
                   return item._id;
                 });
 
-                return model.find().where({'_id': { $in: data } }).select(attributes).exec()
+                return model.find().where({'_id': { $in: data } }).select(attributes).lean().exec()
                     .then(function(result) {
-                      result = result.map(function(item) {
-                        return item.toJSON();
-                      });
 
                       //TODO: include eventLogs
 
@@ -462,10 +459,6 @@ function _create(model, payload, Log) {
 
                       return Q.all(promises)
                           .then(function (result) {
-                            result = result.map(function(item) {
-                              item._id = item._id.toString();//TODO: handle this with preware
-                              return item;
-                            });
                             if (isArray) {
                               return result;
                             }
@@ -556,7 +549,6 @@ function _update(model, _id, payload, Log) {
 
                   return model.findOne({'_id': result._id}, attributes).lean()
                       .then(function (result) {
-                        // result = result.toJSON();
 
                         if (model.routeOptions && model.routeOptions.update && model.routeOptions.update.post) {
                           promise = model.routeOptions.update.post(payload, result, Log);
@@ -567,7 +559,6 @@ function _update(model, _id, payload, Log) {
 
                         return promise
                             .then(function (result) {
-                              result._id = result._id.toString();//TODO: handle this with preware
                               return result;
                             })
                             .catch(function (error) {
