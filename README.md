@@ -7,8 +7,6 @@ A RESTful API generator for the [hapi](https://github.com/hapijs/hapi) framework
 
 rest-hapi is a hapi plugin intended to abstract the work involved in setting up API routes/validation/handlers/etc. for the purpose of rapid app development.  At the same time it provides a powerful combination of [relational](#associations) structure with [NoSQL](#creating-endpoints) flexibility.  You define your models and the rest is done for you.  Have your own API server up and running in minutes!
 
-##NOTE: Breaking change in GET requests from v0.13.0->v0.14.0   See the [Pagination](#pagination) section for details.
-
 ## Features
 
 * Automatic generation of [CRUD](#creating-endpoints) endpoints with [middleware](#middleware) support
@@ -489,13 +487,9 @@ module.exports = function (mongoose) {
 
 ## Associations
 
-The rest-hapi framework supports model associations that mimic associations in 
-a relational database.  This includes one-one, one-many, many-one, and many-many
-relationships.  Associations are created by adding the relevant schema fields
-and populating the ``associations`` object within ``routeOptions``.  Associations
-exists as references to a document's ``_id`` field, and can be populated to return 
-the associated object.  See [Querying](#querying) for more details on how to populate
-associations.
+The rest-hapi framework supports model associations that mimic associations in a relational database.  This includes [one-one](#one_one), [one-many](#one_manymany_one), [many-one](#one_manymany_one), and [many-many](#many_many) relationships.  Associations are created by adding the relevant schema fields and populating the ``associations`` object within ``routeOptions``.  Associations exists as references to a document's ``_id`` field, and can be populated to return the associated object.  See [Querying](#querying) for more details on how to populate associations.
+
+***Update: One sided [-many](#_many) relationships are available as of v0.19.0***
 
 ### ONE_ONE
 
@@ -872,6 +866,75 @@ module.exports = function () {
 
   return Model;
 };
+```
+
+### \_MANY
+
+A one-sided -many relationship can exists between two models. This allows the parent model to have direct control over the reference Ids. Below is an example of a -many relationship between the ``post`` and ``hashtag`` models. 
+
+``/models/post.model.js``:
+
+```javascript
+'use strict';
+
+module.exports = function (mongoose) {
+  var modelName = "post";
+  var Types = mongoose.Schema.Types;
+  var Schema = new mongoose.Schema({
+    caption: {
+      type: Types.String
+    }
+    user: {
+      type: Types.ObjectId,
+      ref: "user",
+      required: true
+    }
+  });
+  
+  Schema.statics = {
+    collectionName:modelName,
+    routeOptions: {
+      associations: {
+        hashtags: {
+          type: "_MANY",
+          model: "hashtag"
+        },
+        user: {
+          type: "MANY_ONE",
+          model: "user"
+        }
+      }
+    }
+  };
+  
+  return Schema;
+};
+```
+
+In this example, a ``post`` contains many hashtags, but the ``hashtag`` model will have no association with the ``post`` model. 
+
+Similar to one-many or many-many relationships the following association 
+endpoints will be generated for the ``post`` model:
+
+```
+GET /post/{ownerId}/hashtag                Get all of the hashtags for a post
+POST /post/{ownerId}/hashtag               Add multiple hashtags to a post
+DELETE /post/{ownerId}/hashtag             Remove multiple hashtags from a post's list of hashtags
+PUT /post/{ownerId}/hashtag/{childId}      Add a single hashtag object to a post's list of hashtags
+DELETE /post/{ownerId}/hashtag/{childId}   Remove a single hashtag object from a post's list of hashtags
+```
+
+However, unlike a one-many or many-many relationship, the -many relationship will exist as a mutable model property which is simply an array of objectIds. This means the associations can be directly modified through the parent model ``create`` and         ``update`` endpoints. For example, the following json could be used as a payload for either the ``POST /post`` or ``PUT /post/{_id}`` endpoints:
+
+```javascript
+{
+  "caption": "Having a great day!",
+  "user":"59960dce22a535c8edfa1317",
+  "hashtags": [
+    "59960dce22a535c8edfa132d",
+    "59960dce22a535c8edfa132e"
+  ]
+}
 ```
 
 [Back to top](#readme-contents)
