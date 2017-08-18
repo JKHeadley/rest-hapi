@@ -119,7 +119,13 @@ module.exports = {
               foreignField: association.foreignField
             });
           }
-        } else {
+        }
+        else if (association.type === "_MANY") {//EXPL: for one sided _many relationships, the association exists as a simple array of objectIds
+          var extendObject = {};
+          extendObject[associationKey] = { type: [mongoose.Schema.Types.ObjectId], ref: association.model };
+          Schema.add(extendObject);
+        }
+        else {
           //TODO: define ONE_ONE and MANY_ONE associations if needed
         }
       }

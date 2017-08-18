@@ -69,7 +69,7 @@ module.exports = function (logger, mongoose, server) {
           for (var associationName in model.routeOptions.associations) {
             var association = model.routeOptions.associations[associationName];
 
-            if (association.type == "MANY_MANY" || association.type == "ONE_MANY") {
+            if (association.type == "MANY_MANY" || association.type == "ONE_MANY" || association.type == "_MANY") {
               if (association.allowAdd !== false) {
                 this.generateAssociationAddOneEndpoint(server, model, association, options, Log);
                 this.generateAssociationAddManyEndpoint(server, model, association, options, Log);

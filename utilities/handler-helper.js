@@ -1263,6 +1263,21 @@ function _setAssociation(ownerModel, ownerObject, childModel, childId, associati
 
             promise = Q.all([ownerModel.findByIdAndUpdate(ownerObject._id, ownerObject), childModel.findByIdAndUpdate(childObject._id, childObject)]);
           }
+          else if (association.type === "_MANY") {
+
+            var duplicate = ownerObject[associationName].filter(function (_childId) {
+              return _childId.toString() === childId;
+            });
+            duplicate = duplicate[0];
+
+            var duplicateIndex = ownerObject[associationName].indexOf(duplicate);
+
+            if (duplicateIndex < 0) {//EXPL: if the association doesn't already exist, create it
+              ownerObject[associationName].push(childId);
+            }
+
+            promise = Q.all([ownerModel.findByIdAndUpdate(ownerObject._id, ownerObject)]);
+          }
           else {
             deferred.reject(new Error("Association type incorrectly defined."));
             return deferred.promise;
@@ -1355,6 +1370,21 @@ function _removeAssociation(ownerModel, ownerObject, childModel, childId, associ
             }
 
             promise = Q.all([ownerModel.findByIdAndUpdate(ownerObject._id, ownerObject), childModel.findByIdAndUpdate(childObject._id, childObject)]);
+          }
+          else if (associationType === "_MANY") {//EXPL: remove reference from owner model
+
+            //EXPL: remove the associated child from the owner
+            var deleteChild = ownerObject[associationName].filter(function(childId) {
+              return childId.toString() === childObject._id.toString();
+            });
+            deleteChild = deleteChild[0];
+
+            var index = ownerObject[associationName].indexOf(deleteChild);
+            if (index > -1) {
+              ownerObject[associationName].splice(index, 1);
+            }
+
+            promise = Q.all([ownerModel.findByIdAndUpdate(ownerObject._id, ownerObject)]);
           }
           else {
             deferred.reject(new Error("Association type incorrectly defined."));

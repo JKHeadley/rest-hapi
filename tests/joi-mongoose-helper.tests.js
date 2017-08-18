@@ -246,7 +246,7 @@ test('joi-mongoose-helper.generateJoiReadModel', function (t) {
     //<editor-fold desc="Arrange">
     var joiMongooseHelper = require('../utilities/joi-mongoose-helper');
 
-    t.plan(14);
+    t.plan(16);
 
     sinon.stub(joiMongooseHelper, "generateJoiModelFromFieldType", function () {
       return Joi.any()
@@ -283,7 +283,7 @@ test('joi-mongoose-helper.generateJoiReadModel', function (t) {
     var readModel = joiMongooseHelper.generateJoiReadModel(userModel, Log);
     //</editor-fold>
 
-    //TODO: require association arrays to be objects (or objectIds, not strings) ref issue #24
+
     //<editor-fold desc="Assert">
     t.ok(joiMongooseHelper.generateJoiModelFromFieldType.callCount === 1, "generateJoiModelFromFieldType not called on association fields");
     t.ok(Joi.validate({title: {}}, readModel).error === null, "title field valid");
@@ -294,10 +294,10 @@ test('joi-mongoose-helper.generateJoiReadModel', function (t) {
     t.ok(Joi.validate({profileImage: ""}, readModel).error !== null, "non-object profileImage field not valid");
     t.ok(Joi.validate({groups: [{}, {}]}, readModel).error === null, "groups field valid");
     t.ok(Joi.validate({groups: null}, readModel).error !== null, "null groups field not valid");
-    // t.ok(Joi.validate({groups: ["", 3, {}]}, readModel).error !== null, "groups field must be array of objects");
+    t.ok(Joi.validate({groups: ["", 3, {}]}, readModel).error !== null, "groups field must be array of objects");
     t.ok(Joi.validate({permissions: [{}, {}]}, readModel).error === null, "permissions field valid");
     t.ok(Joi.validate({permissions: null}, readModel).error !== null, "null permissions field not valid");
-    // t.ok(Joi.validate({permissions: ["", 3, {}]}, readModel).error !== null, "permissions field must be array of objects");
+    t.ok(Joi.validate({permissions: ["", 3, {}]}, readModel).error !== null, "permissions field must be array of objects");
     t.ok(Joi.validate({link: {}}, readModel).error === null, "link field valid");
     t.ok(Joi.validate({link: null}, readModel).error === null, "null link field valid");
     t.ok(Joi.validate({link: ""}, readModel).error !== null, "non-object link field not valid");
