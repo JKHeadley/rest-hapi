@@ -1201,6 +1201,9 @@ function _setAssociation(ownerModel, ownerObject, childModel, childId, associati
               });
 
               payload = payload[0];
+
+              payload = extend({}, payload);//EXPL: break the reference to the original payload
+
               delete payload.childId;
 
               extraFields = true;
