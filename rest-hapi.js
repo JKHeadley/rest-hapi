@@ -31,6 +31,7 @@ module.exports = {
     addOne: handlerHelper.addOne,
     removeOne: handlerHelper.removeOne,
     addMany: handlerHelper.addMany,
+    removeMany: handlerHelper.removeMany,
     getAll: handlerHelper.getAll,
     logger: {},
     getLogger: getLogger,
