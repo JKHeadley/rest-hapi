@@ -16,26 +16,21 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 Before | After
 --- | --- 
-list         
---- | --- 
+**list**    
 post(query, result, Log) |      post(request, result, Log)  
 --- | --- 
-find         
---- | --- 
+**find**   
 post(query, result, Log)    |      post(request, result, Log)  
 --- | --- 
-create 
---- | --- 
+**create** 
 pre(payload, Log) | pre(payload, request, Log)
 post(document, result, Log) | post(document, request, result, Log)
 --- | --- 
-update 
---- | --- 
+**update** 
 pre(\_id, payload, Log) | pre(\_id, request, Log)
 post(payload, result, Log) | post(request, result, Log)
 --- | --- 
-delete 
---- | --- 
+**delete** 
 pre(\_id, hardDelete, Log) | pre(\_id, hardDelete, request, Log)
 post(hardDelete, deleted, Log) | post(hardDelete, deleted, request, Log)
 
