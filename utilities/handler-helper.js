@@ -564,13 +564,17 @@ function _create(model, payload, Log) {
  * @private
  */
 function _createHandler(model, request, Log) {
-  let payload = extend({}, request.payload);
+  let payload = null;
+
   let logError = false;
   try {
     var isArray = true;
-    if (!_.isArray(payload)) {
-      payload = [payload];
+    if (!_.isArray(request.payload)) {
+      payload = [extend({}, request.payload)];
       isArray = false;
+    }
+    else {
+      payload = extend([], request.payload);
     }
 
     var promises =  [];
@@ -931,7 +935,7 @@ function _deleteMany(model, payload, Log) {
 //TODO: prevent Q.all from catching first error and returning early. Catch individual errors and return a list
 //TODO(cont) of ids that failed
 function _deleteManyHandler(model, request, Log) {
-  let payload = extend({}, request.payload);
+  let payload = extend([], request.payload);
   try {
     let promises = [];
     payload.forEach(function(arg) {
@@ -1146,7 +1150,7 @@ function _addMany(ownerModel, ownerId, childModel, associationName, payload, Log
  * @private
  */
 function _addManyHandler(ownerModel, ownerId, childModel, associationName, request, Log) {
-  let payload = extend({}, request.payload);
+  let payload = extend([], request.payload);
   let logError = false;
   try {
     return ownerModel.findOne({ '_id': ownerId })
@@ -1252,7 +1256,7 @@ function _removeMany(ownerModel, ownerId, childModel, associationName, payload, 
  * @private
  */
 function _removeManyHandler(ownerModel, ownerId, childModel, associationName, request, Log) {
-  let payload = extend({}, request.payload);
+  let payload = extend([], request.payload);
   let logError = false;
   try {
     return ownerModel.findOne({ '_id': ownerId })
