@@ -20,7 +20,7 @@ test('handler-helper exists and has expected members', function (t) {
   var Log = logger.bind("handler-helper");
   var handlerHelper = require('../utilities/handler-helper');
 
-  t.plan(11);
+  t.plan(21);
   //</editor-fold>
 
   //<editor-fold desc="Assert">
@@ -35,16 +35,26 @@ test('handler-helper exists and has expected members', function (t) {
   t.ok(handlerHelper.removeOne, "handler-helper.removeOne exists.");
   t.ok(handlerHelper.addMany, "handler-helper.addMany exists.");
   t.ok(handlerHelper.getAll, "handler-helper.getAll exists.");
+  t.ok(handlerHelper.listHandler, "handler-helper.listHandler exists.");
+  t.ok(handlerHelper.findHandler, "handler-helper.findHandler exists.");
+  t.ok(handlerHelper.createHandler, "handler-helper.createHandler exists.");
+  t.ok(handlerHelper.deleteOneHandler, "handler-helper.deleteOneHandler exists.");
+  t.ok(handlerHelper.deleteManyHandler, "handler-helper.deleteManyHandler exists.");
+  t.ok(handlerHelper.updateHandler, "handler-helper.updateHandler exists.");
+  t.ok(handlerHelper.addOneHandler, "handler-helper.addOneHandler exists.");
+  t.ok(handlerHelper.removeOneHandler, "handler-helper.removeOneHandler exists.");
+  t.ok(handlerHelper.addManyHandler, "handler-helper.addManyHandler exists.");
+  t.ok(handlerHelper.getAllHandler, "handler-helper.getAllHandler exists.");
   //</editor-fold>
 });
 
-test('handler-helper.list', function (t) {
+test('handler-helper.listHandler', function (t) {
 
   return Q.when()
 
-  //handler-helper.list calls model.find()
+  //handler-helper.listHandler calls model.find()
       .then(function () {
-        return t.test('handler-helper.list calls model.find()', function (t) {
+        return t.test('handler-helper.listHandler calls model.find()', function (t) {
           //<editor-fold desc="Arrange">
           var sandbox = sinon.sandbox.create();
           var Log = logger.bind("handler-helper");
@@ -65,7 +75,7 @@ test('handler-helper.list', function (t) {
           //</editor-fold>
 
           //<editor-fold desc="Act">
-          handlerHelper.list(userModel, {}, Log);
+          handlerHelper.listHandler(userModel, { query: {} }, Log);
           //</editor-fold>
 
           //<editor-fold desc="Assert">
@@ -82,9 +92,9 @@ test('handler-helper.list', function (t) {
         });
       })
 
-      //handler-helper.list calls QueryHelper.createMongooseQuery
+      //handler-helper.listHandler calls QueryHelper.createMongooseQuery
       .then(function () {
-        return t.test('handler-helper.list calls QueryHelper.createMongooseQuery', function (t) {
+        return t.test('handler-helper.listHandler calls QueryHelper.createMongooseQuery', function (t) {
           //<editor-fold desc="Arrange">
           var sandbox = sinon.sandbox.create();
           var Log = logger.bind("handler-helper");
@@ -106,10 +116,11 @@ test('handler-helper.list', function (t) {
           });
 
           var query = {test: {}};
+          var request = { query: query };
           //</editor-fold>
 
           //<editor-fold desc="Act">
-          handlerHelper.list(userModel, query, Log);
+          handlerHelper.listHandler(userModel, request, Log);
           //</editor-fold>
 
           //<editor-fold desc="Assert">
@@ -126,9 +137,9 @@ test('handler-helper.list', function (t) {
         });
       })
 
-      //handler-helper.list calls mongooseQuery.count
+      //handler-helper.listHandler calls mongooseQuery.count
       .then(function () {
-        return t.test('handler-helper.list calls mongooseQuery.count', function (t) {
+        return t.test('handler-helper.listHandler calls mongooseQuery.count', function (t) {
           //<editor-fold desc="Arrange">
           var sandbox = sinon.sandbox.create();
           var Log = logger.bind("handler-helper");
@@ -158,10 +169,11 @@ test('handler-helper.list', function (t) {
           });
 
           var query = {test: {}};
+          var request = { query: query };
           //</editor-fold>
 
           //<editor-fold desc="Act">
-          handlerHelper.list(userModel, query, Log);
+          handlerHelper.listHandler(userModel, request, Log);
           //</editor-fold>
 
           //<editor-fold desc="Assert">
@@ -178,9 +190,9 @@ test('handler-helper.list', function (t) {
         });
       })
 
-      //handler-helper.list calls QueryHelper.paginate
+      //handler-helper.listHandler calls QueryHelper.paginate
       .then(function () {
-        return t.test('handler-helper.list calls QueryHelper.paginate', function (t) {
+        return t.test('handler-helper.listHandler calls QueryHelper.paginate', function (t) {
           //<editor-fold desc="Arrange">
           var sandbox = sinon.sandbox.create();
           var Log = logger.bind("handler-helper");
@@ -219,12 +231,13 @@ test('handler-helper.list', function (t) {
           });
 
           var query = {test: {}};
+          var request = { query: query };
           //</editor-fold>
 
           var LogStub = sandbox.stub(Log, 'error', function () {
           });
           //<editor-fold desc="Act">
-          handlerHelper.list(userModel, query, LogStub);
+          handlerHelper.listHandler(userModel, request, LogStub);
           //</editor-fold>
 
           //<editor-fold desc="Assert">
@@ -245,9 +258,9 @@ test('handler-helper.list', function (t) {
         });
       })
 
-      //handler-helper.list calls mongooseQuery.exec
+      //handler-helper.listHandler calls mongooseQuery.exec
       .then(function () {
-        return t.test('handler-helper.list calls mongooseQuery.exec', function (t) {
+        return t.test('handler-helper.listHandler calls mongooseQuery.exec', function (t) {
           //<editor-fold desc="Arrange">
           var sandbox = sinon.sandbox.create();
           var Log = logger.bind("handler-helper");
@@ -278,7 +291,7 @@ test('handler-helper.list', function (t) {
             './query-helper': queryHelperStub,
             './error-helper': errorHelperStub
           });
-          // sandbox.stub(Log, 'error', function(){});
+          sandbox.stub(Log, 'error', function(){});
 
           var userSchema = new mongoose.Schema({});
 
@@ -289,10 +302,11 @@ test('handler-helper.list', function (t) {
           });
 
           var query = {test: {}};
+          var request = { query: query };
           //</editor-fold>
 
           //<editor-fold desc="Act">
-          handlerHelper.list(userModel, query, Log);
+          handlerHelper.listHandler(userModel, request, Log);
           //</editor-fold>
 
           //<editor-fold desc="Assert">
@@ -313,9 +327,9 @@ test('handler-helper.list', function (t) {
         });
       })
 
-      //handler-helper.list calls post processing if it exists
+      //handler-helper.listHandler calls post processing if it exists
       .then(function () {
-        return t.test('handler-helper.list calls post processing if it exists', function (t) {
+        return t.test('handler-helper.listHandler calls post processing if it exists', function (t) {
           //<editor-fold desc="Arrange">
           var sandbox = sinon.sandbox.create();
           var Log = logger.bind("handler-helper");
@@ -369,15 +383,16 @@ test('handler-helper.list', function (t) {
           userModel.find = sandbox.spy();
 
           var query = {test: {}};
+          var request = { query: query };
           //</editor-fold>
 
           //<editor-fold desc="Act">
-          handlerHelper.list(userModel, query, Log);
+          handlerHelper.listHandler(userModel, request, Log);
           //</editor-fold>
 
           //<editor-fold desc="Assert">
           return postDeferred.promise.then(function () {
-            t.ok(postSpy.calledWithExactly(query, "TEST", Log), "list.post called");
+            t.ok(postSpy.calledWithExactly(request, "TEST", Log), "list.post called");
           })
           //</editor-fold>
 
@@ -392,9 +407,9 @@ test('handler-helper.list', function (t) {
         });
       })
 
-      //handler-helper.list returns a list of results
+      //handler-helper.listHandler returns a list of results
       .then(function () {
-        return t.test('handler-helper.list returns a list of results', function (t) {
+        return t.test('handler-helper.listHandler returns a list of results', function (t) {
           //<editor-fold desc="Arrange">
           var sandbox = sinon.sandbox.create();
           var Log = logger.bind("handler-helper");
@@ -439,10 +454,11 @@ test('handler-helper.list', function (t) {
           userModel.find = sandbox.spy();
 
           var query = {test: {}};
+          var request = { query: query };
           //</editor-fold>
 
           //<editor-fold desc="Act">
-          var promise = handlerHelper.list(userModel, {}, Log);
+          var promise = handlerHelper.listHandler(userModel, request, Log);
           //</editor-fold>
 
           //<editor-fold desc="Assert">
@@ -462,9 +478,9 @@ test('handler-helper.list', function (t) {
         });
       })
 
-      //handler-helper.list returns pagination data
+      //handler-helper.listHandler returns pagination data
       .then(function () {
-        return t.test('handler-helper.list returns pagination data', function (t) {
+        return t.test('handler-helper.listHandler returns pagination data', function (t) {
           //<editor-fold desc="Arrange">
           var sandbox = sinon.sandbox.create();
           var Log = logger.bind("handler-helper");
@@ -509,10 +525,11 @@ test('handler-helper.list', function (t) {
           userModel.find = sandbox.spy();
 
           var query = {$page: 2, $limit: 3};
+          var request = { query: query };
           //</editor-fold>
 
           //<editor-fold desc="Act">
-          var promise = handlerHelper.list(userModel, query, Log);
+          var promise = handlerHelper.listHandler(userModel, request, Log);
           //</editor-fold>
 
           //<editor-fold desc="Assert">
@@ -540,9 +557,9 @@ test('handler-helper.list', function (t) {
         });
       })
 
-      //handler-helper.list throws a postprocessing error
+      //handler-helper.listHandler throws a postprocessing error
       .then(function () {
-        return t.test('handler-helper.list throws a postprocessing error', function (t) {
+        return t.test('handler-helper.listHandler throws a postprocessing error', function (t) {
           //<editor-fold desc="Arrange">
           var sandbox = sinon.sandbox.create();
           var Log = logger.bind("handler-helper");
@@ -599,10 +616,11 @@ test('handler-helper.list', function (t) {
           userModel.find = sandbox.spy();
 
           var query = {test: {}};
+          var request = { query: query };
           //</editor-fold>
 
           //<editor-fold desc="Act">
-          var promise = handlerHelper.list(userModel, {}, Log);
+          var promise = handlerHelper.listHandler(userModel, request, Log);
           //</editor-fold>
 
           //<editor-fold desc="Assert">
@@ -622,9 +640,9 @@ test('handler-helper.list', function (t) {
         });
       })
 
-      //handler-helper.list throws a database error
+      //handler-helper.listHandler throws a database error
       .then(function () {
-        return t.test('handler-helper.list throws a database error', function (t) {
+        return t.test('handler-helper.listHandler throws a database error', function (t) {
           //<editor-fold desc="Arrange">
           var sandbox = sinon.sandbox.create();
           var Log = logger.bind("handler-helper");
@@ -668,7 +686,7 @@ test('handler-helper.list', function (t) {
           //</editor-fold>
 
           //<editor-fold desc="Act">
-          var promise = handlerHelper.list(userModel, {}, Log);
+          var promise = handlerHelper.listHandler(userModel, { query: {} }, Log);
           //</editor-fold>
 
           //<editor-fold desc="Assert">
@@ -688,9 +706,9 @@ test('handler-helper.list', function (t) {
         });
       })
 
-      //handler-helper.list throws a general processing error
+      //handler-helper.listHandler throws a general processing error
       .then(function () {
-        return t.test('handler-helper.list throws a general processing error', function (t) {
+        return t.test('handler-helper.listHandler throws a general processing error', function (t) {
           //<editor-fold desc="Arrange">
           var sandbox = sinon.sandbox.create();
           var Log = logger.bind("handler-helper");
@@ -715,7 +733,7 @@ test('handler-helper.list', function (t) {
           //</editor-fold>
 
           //<editor-fold desc="Act">
-          var promise = handlerHelper.list(userModel, {}, Log);
+          var promise = handlerHelper.listHandler(userModel, { query: {} }, Log);
           //</editor-fold>
 
           //<editor-fold desc="Assert">
