@@ -24,7 +24,7 @@ module.exports = {
       throw error;
     }
     else {
-      Log.error("error: ", error);
+      Log.error(error);
       message = message || error;
       throw { message: message, type: type };
     }
@@ -57,7 +57,7 @@ module.exports = {
       return response;
     }
     catch(error) {
-      Log.error("error:", error);
+      Log.error(error);
       return error;
     }
   }

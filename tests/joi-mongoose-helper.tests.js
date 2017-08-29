@@ -283,6 +283,7 @@ test('joi-mongoose-helper.generateJoiReadModel', function (t) {
     var readModel = joiMongooseHelper.generateJoiReadModel(userModel, Log);
     //</editor-fold>
 
+
     //<editor-fold desc="Assert">
     t.ok(joiMongooseHelper.generateJoiModelFromFieldType.callCount === 1, "generateJoiModelFromFieldType not called on association fields");
     t.ok(Joi.validate({title: {}}, readModel).error === null, "title field valid");
@@ -331,7 +332,7 @@ test('joi-mongoose-helper.generateJoiReadModel', function (t) {
     //</editor-fold>
 
     //<editor-fold desc="Assert">
-    t.ok(readModel._meta[0].className === "userReadModel", "className correct");
+    t.ok(readModel._flags.label === "userReadModel", "className correct");
     //</editor-fold>
 
     //<editor-fold desc="Restore">
@@ -677,7 +678,7 @@ test('joi-mongoose-helper.generateJoiUpdateModel', function (t) {
     //</editor-fold>
 
     //<editor-fold desc="Assert">
-    t.ok(updateModel._meta[0].className === "userUpdateModel", "className correct");
+    t.ok(updateModel._flags.label === "userUpdateModel", "className correct");
     //</editor-fold>
 
     //<editor-fold desc="Restore">
@@ -1022,7 +1023,7 @@ test('joi-mongoose-helper.generateJoiCreateModel', function (t) {
     //</editor-fold>
 
     //<editor-fold desc="Assert">
-    t.ok(createModel._meta[0].className === "userCreateModel", "className correct");
+    t.ok(createModel._flags.label === "userCreateModel", "className correct");
     //</editor-fold>
 
     //<editor-fold desc="Restore">
@@ -1195,7 +1196,7 @@ test('joi-mongoose-helper.generateJoiAssociationModel', function (t) {
     //</editor-fold>
 
     //<editor-fold desc="Assert">
-    t.ok(associationModel._meta[0].className === "userAssociationModel", "className correct");
+    t.ok(associationModel._flags.label === "userAssociationModel", "className correct");
     //</editor-fold>
 
     //<editor-fold desc="Restore">

@@ -145,9 +145,16 @@ module.exports = {
  * @private
  */
 function _list(model, query, request, Log) {
+  let logError = false;
   try {
     var mongooseQuery = {};
+    var originalQuery = extend({}, query);
     var count = "";
+    var flatten = false;
+    if (query.$flatten) {
+      flatten = true;
+    }
+    delete query.$flatten;
     if (query.$count) {
       mongooseQuery = model.count();
       mongooseQuery = QueryHelper.createMongooseQuery(model, query, mongooseQuery, Log).lean();
@@ -170,7 +177,7 @@ function _list(model, query, request, Log) {
 
           var promise = {};
           if (model.routeOptions && model.routeOptions.list && model.routeOptions.list.post) {
-            promise = model.routeOptions.list.post(query, result, request, Log);
+            promise = model.routeOptions.list.post(originalQuery, result, request, Log);
           }
           else {
             promise = Q.when(result);
@@ -190,6 +197,14 @@ function _list(model, query, request, Log) {
                         }
                         else {
                           result[associationKey] = data[associationKey];
+                        }
+                      }
+                      if (association.type === "MANY_MANY" && flatten === true) {//EXPL: remove additional fields and return a flattened array
+                        if (result[associationKey]) {
+                          result[associationKey] = result[associationKey].map(function(object) {
+                            object = object[association.model];
+                            return object;
+                          })
                         }
                       }
                     }
@@ -218,8 +233,8 @@ function _list(model, query, request, Log) {
                 };
                 const items = {
                     limit: query.$limit,
-                    begin: ((query.$page * query.$limit) - query.$limit) + 1,
-                    end: query.$page * query.$limit,
+                    begin: (((query.$page || 1) * query.$limit) - query.$limit) + 1,
+                    end: (query.$page || 1) * query.$limit,
                     total: count
                 };
 
@@ -239,16 +254,31 @@ function _list(model, query, request, Log) {
               })
               .catch(function (error) {
                 const message = "There was a postprocessing error.";
+                if (!logError) {
+                  Log.error(message);
+                  logError = true;
+                  delete error.type;
+                }
                 errorHelper.handleError(error, message, errorHelper.types.BAD_REQUEST, Log);
               })
         })
         .catch(function (error) {
           const message = "There was an error accessing the database.";
+          if (!logError) {
+            Log.error(message);
+            logError = true;
+            delete error.type;
+          }
           errorHelper.handleError(error, message, errorHelper.types.SERVER_TIMEOUT, Log);
         });
   }
   catch(error) {
     const message = "There was an error processing the request.";
+    if (!logError) {
+      Log.error(message);
+      logError = true;
+      delete error.type;
+    }
     try {
       errorHelper.handleError(error, message, errorHelper.types.BAD_REQUEST, Log)
     }
@@ -268,7 +298,13 @@ function _list(model, query, request, Log) {
  * @private
  */
 function _find(model, _id, query, request, Log) {
+  let logError = false;
   try {
+    var flatten = false;
+    if (query.$flatten) {
+      flatten = true;
+    }
+    delete query.$flatten;
     var mongooseQuery = model.findOne({ '_id': _id });
     mongooseQuery = QueryHelper.createMongooseQuery(model, query, mongooseQuery, Log).lean();
     return mongooseQuery.exec()
@@ -290,6 +326,14 @@ function _find(model, _id, query, request, Log) {
                       if (association.type === "ONE_MANY" && data[associationKey]) {//EXPL: we have to manually populate the return value for virtual (e.g. ONE_MANY) associations
                         result[associationKey] = data[associationKey];
                       }
+                      if (association.type === "MANY_MANY" && flatten === true) {//EXPL: remove additional fields and return a flattened array
+                        if (result[associationKey]) {
+                          result[associationKey] = result[associationKey].map(function(object) {
+                            object = object[association.model];
+                            return object;
+                          })
+                        }
+                      }
                     }
                   }
 
@@ -307,21 +351,40 @@ function _find(model, _id, query, request, Log) {
                 })
                 .catch(function (error) {
                   const message = "There was a postprocessing error.";
+                  if (!logError) {
+                    Log.error(message);
+                    logError = true;
+                    delete error.type;
+                  }
                   errorHelper.handleError(error, message, errorHelper.types.BAD_REQUEST, Log);
                 });
           }
           else {
             const message = "No resource was found with that id.";
+            if (!logError) {
+              Log.error(message);
+              logError = true;
+            }
             errorHelper.handleError(message, message, errorHelper.types.NOT_FOUND, Log);
           }
         })
         .catch(function (error) {
           const message = "There was an error accessing the database.";
+          if (!logError) {
+            Log.error(message);
+            logError = true;
+            delete error.type;
+          }
           errorHelper.handleError(error, message, errorHelper.types.SERVER_TIMEOUT, Log);
         });
   }
   catch(error) {
     const message = "There was an error processing the request.";
+    if (!logError) {
+      Log.error(message);
+      logError = true;
+      delete error.type;
+    }
     try {
       errorHelper.handleError(error, message, errorHelper.types.BAD_REQUEST, Log)
     }
@@ -342,6 +405,7 @@ function _find(model, _id, query, request, Log) {
  * @private
  */
 function _create(model, payload, request, Log) {
+  let logError = false;
   try {
     var isArray = true;
     if (!_.isArray(payload)) {
@@ -378,18 +442,14 @@ function _create(model, payload, request, Log) {
                   return item._id;
                 });
 
-                return model.find().where({'_id': { $in: data } }).select(attributes).exec()
+                return model.find().where({'_id': { $in: data } }).select(attributes).lean().exec()
                     .then(function(result) {
-                      result = result.map(function(item) {
-                        return item.toJSON();
-                      });
-
 
                       //TODO: include eventLogs
 
                       var promises = [];
                       if (model.routeOptions && model.routeOptions.create && model.routeOptions.create.post) {
-                        payload.forEach(function(document) {
+                        result.forEach(function(document) {
                           promises.push(model.routeOptions.create.post(document, result, request, Log));
                         });
                       }
@@ -399,10 +459,6 @@ function _create(model, payload, request, Log) {
 
                       return Q.all(promises)
                           .then(function (result) {
-                            result = result.map(function(item) {
-                              item._id = item._id.toString();//TODO: handle this with preware
-                              return item;
-                            });
                             if (isArray) {
                               return result;
                             }
@@ -412,22 +468,42 @@ function _create(model, payload, request, Log) {
                           })
                           .catch(function (error) {
                             const message = "There was a postprocessing error creating the resource.";
+                            if (!logError) {
+                              Log.error(message);
+                              logError = true;
+                              delete error.type;
+                            }
                             errorHelper.handleError(error, message, errorHelper.types.BAD_REQUEST, Log);
                           });
                     })
               })
               .catch(function (error) {
                 const message = "There was an error creating the resource.";
+                if (!logError) {
+                  Log.error(message);
+                  logError = true;
+                  delete error.type;
+                }
                 errorHelper.handleError(error, message, errorHelper.types.SERVER_TIMEOUT, Log);
               });
         })
         .catch(function (error) {
           const message = "There was a preprocessing error creating the resource.";
+          if (!logError) {
+            Log.error(message);
+            logError = true;
+            delete error.type;
+          }
           errorHelper.handleError(error, message, errorHelper.types.BAD_REQUEST, Log);
         });
   }
   catch(error) {
     const message = "There was an error processing the request.";
+    if (!logError) {
+      Log.error(message);
+      logError = true;
+      delete error.type;
+    }
     try {
       errorHelper.handleError(error, message, errorHelper.types.BAD_REQUEST, Log)
     }
@@ -447,6 +523,7 @@ function _create(model, payload, request, Log) {
  * @private
  */
 function _update(model, _id, payload, request, Log) {
+  let logError = false;
   try {
     var promise =  {};
     if (model.routeOptions && model.routeOptions.update && model.routeOptions.update.pre){
@@ -472,7 +549,6 @@ function _update(model, _id, payload, request, Log) {
 
                   return model.findOne({'_id': result._id}, attributes).lean()
                       .then(function (result) {
-                        // result = result.toJSON();
 
                         if (model.routeOptions && model.routeOptions.update && model.routeOptions.update.post) {
                           promise = model.routeOptions.update.post(payload, result, request, Log);
@@ -483,32 +559,55 @@ function _update(model, _id, payload, request, Log) {
 
                         return promise
                             .then(function (result) {
-                              result._id = result._id.toString();//TODO: handle this with preware
                               return result;
                             })
                             .catch(function (error) {
                               const message = "There was a postprocessing error updating the resource.";
+                              if (!logError) {
+                                Log.error(message);
+                                logError = true;
+                                delete error.type;
+                              }
                               errorHelper.handleError(error, message, errorHelper.types.BAD_REQUEST, Log);
                             });
                       })
                 }
                 else {
                   const message = "No resource was found with that id.";
+                  if (!logError) {
+                    Log.error(message);
+                    logError = true;
+                  }
                   errorHelper.handleError(message, message, errorHelper.types.NOT_FOUND, Log);
                 }
               })
               .catch(function (error) {
                 const message = "There was an error updating the resource.";
+                if (!logError) {
+                  Log.error(message);
+                  logError = true;
+                  delete error.type;
+                }
                 errorHelper.handleError(error, message, errorHelper.types.SERVER_TIMEOUT, Log);
               });
         })
         .catch(function (error) {
           const message = "There was a preprocessing error updating the resource.";
+          if (!logError) {
+            Log.error(message);
+            logError = true;
+            delete error.type;
+          }
           errorHelper.handleError(error, message, errorHelper.types.BAD_REQUEST, Log);
         });
   }
   catch(error) {
     const message = "There was an error processing the request.";
+    if (!logError) {
+      Log.error(message);
+      logError = true;
+      delete error.type;
+    }
     try {
       errorHelper.handleError(error, message, errorHelper.types.BAD_REQUEST, Log)
     }
@@ -529,6 +628,7 @@ function _update(model, _id, payload, request, Log) {
  */
 //TODO: only update "deleteAt" the first time a document is deleted
 function _deleteOne(model, _id, hardDelete, request, Log) {
+  let logError = false;
   try {
     var promise = {};
     if (model.routeOptions && model.routeOptions.delete && model.routeOptions.delete.pre) {
@@ -564,27 +664,51 @@ function _deleteOne(model, _id, hardDelete, request, Log) {
                         return true;
                       })
                       .catch(function (error) {
-                        const message = "There was a postprocessing error creating the resource.";
+                        const message = "There was a postprocessing error deleting the resource.";
+                        if (!logError) {
+                          Log.error(message);
+                          logError = true;
+                          delete error.type;
+                        }
                         errorHelper.handleError(error, message, errorHelper.types.BAD_REQUEST, Log);
                       });
                 }
                 else {
                   const message = "No resource was found with that id.";
+                  if (!logError) {
+                    Log.error(message);
+                    logError = true;
+                  }
                   errorHelper.handleError(message, message, errorHelper.types.NOT_FOUND, Log);
                 }
               })
               .catch(function (error) {
                 const message = "There was an error deleting the resource.";
+                if (!logError) {
+                  Log.error(message);
+                  logError = true;
+                  delete error.type;
+                }
                 errorHelper.handleError(error, message, errorHelper.types.SERVER_TIMEOUT, Log);
               });
         })
         .catch(function (error) {
           const message = "There was a preprocessing error deleting the resource.";
+          if (!logError) {
+            Log.error(message);
+            logError = true;
+            delete error.type;
+          }
           errorHelper.handleError(error, message, errorHelper.types.BAD_REQUEST, Log);
         });
   }
   catch(error) {
     const message = "There was an error processing the request.";
+    if (!logError) {
+      Log.error(message);
+      logError = true;
+      delete error.type;
+    }
     try {
       errorHelper.handleError(error, message, errorHelper.types.BAD_REQUEST, Log)
     }
@@ -627,6 +751,7 @@ function _deleteMany(model, payload, request, Log) {
 
   catch(error) {
     const message = "There was an error processing the request.";
+    Log.error(message);
     try {
       errorHelper.handleError(error, message, errorHelper.types.BAD_REQUEST, Log)
     }
@@ -649,6 +774,7 @@ function _deleteMany(model, payload, request, Log) {
  * @private
  */
 function _addOne(ownerModel, ownerId, childModel, childId, associationName, payload, Log) {
+  let logError = false;
   try {
     return ownerModel.findOne({ '_id': ownerId })
         .then(function (ownerObject) {
@@ -664,17 +790,31 @@ function _addOne(ownerModel, ownerId, childModel, childId, associationName, payl
                 })
                 .catch(function (error) {
                   const message = "There was a database error while setting the association.";
+                  if (!logError) {
+                    Log.error(message);
+                    logError = true;
+                    delete error.type;
+                  }
                   errorHelper.handleError(error, message, errorHelper.types.GATEWAY_TIMEOUT, Log);
                 });
           }
           else {
             const message = "No owner resource was found with that id.";
+            if (!logError) {
+              Log.error(message);
+              logError = true;
+            }
             errorHelper.handleError(message, message, errorHelper.types.NOT_FOUND, Log);
           }
         })
   }
   catch(error) {
     const message = "There was an error processing the request.";
+    if (!logError) {
+      Log.error(message);
+      logError = true;
+      delete error.type;
+    }
     try {
       errorHelper.handleError(error, message, errorHelper.types.BAD_REQUEST, Log)
     }
@@ -696,6 +836,7 @@ function _addOne(ownerModel, ownerId, childModel, childId, associationName, payl
  * @private
  */
 function _removeOne(ownerModel, ownerId, childModel, childId, associationName, Log) {
+  let logError = false;
   try {
     return ownerModel.findOne({ '_id': ownerId })
         .then(function (ownerObject) {
@@ -706,17 +847,31 @@ function _removeOne(ownerModel, ownerId, childModel, childId, associationName, L
                 })
                 .catch(function (error) {
                   const message = "There was a database error while removing the association.";
+                  if (!logError) {
+                    Log.error(message);
+                    logError = true;
+                    delete error.type;
+                  }
                   errorHelper.handleError(error, message, errorHelper.types.GATEWAY_TIMEOUT, Log);
                 });
           }
           else {
             const message = "No owner resource was found with that id.";
+            if (!logError) {
+              Log.error(message);
+              logError = true;
+            }
             errorHelper.handleError(message, message, errorHelper.types.NOT_FOUND, Log);
           }
         })
   }
   catch(error) {
     const message = "There was an error processing the request.";
+    if (!logError) {
+      Log.error(message);
+      logError = true;
+      delete error.type;
+    }
     try {
       errorHelper.handleError(error, message, errorHelper.types.BAD_REQUEST, Log)
     }
@@ -738,6 +893,7 @@ function _removeOne(ownerModel, ownerId, childModel, childId, associationName, L
  * @private
  */
 function _addMany(ownerModel, ownerId, childModel, associationName, payload, Log) {
+  let logError = false;
   try {
     return ownerModel.findOne({ '_id': ownerId })
         .then(function (ownerObject) {
@@ -780,17 +936,31 @@ function _addMany(ownerModel, ownerId, childModel, associationName, payload, Log
                 })
                 .catch(function (error) {
                   const message = "There was an internal error while setting the associations.";
+                  if (!logError) {
+                    Log.error(message);
+                    logError = true;
+                    delete error.type;
+                  }
                   errorHelper.handleError(error, message, errorHelper.types.GATEWAY_TIMEOUT, Log);
                 });
           }
           else {
             const message = "No owner resource was found with that id.";
+            if (!logError) {
+              Log.error(message);
+              logError = true;
+            }
             errorHelper.handleError(message, message, errorHelper.types.NOT_FOUND, Log);
           }
         })
   }
   catch(error) {
     const message = "There was an error processing the request.";
+    if (!logError) {
+      Log.error(message);
+      logError = true;
+      delete error.type;
+    }
     try {
       errorHelper.handleError(error, message, errorHelper.types.BAD_REQUEST, Log)
     }
@@ -812,6 +982,7 @@ function _addMany(ownerModel, ownerId, childModel, associationName, payload, Log
  * @private
  */
 function _removeMany(ownerModel, ownerId, childModel, associationName, payload, Log) {
+  let logError = false;
   try {
     return ownerModel.findOne({ '_id': ownerId })
         .then(function (ownerObject) {
@@ -846,17 +1017,31 @@ function _removeMany(ownerModel, ownerId, childModel, associationName, payload, 
                 })
                 .catch(function (error) {
                   const message = "There was an internal error while removing the associations.";
+                  if (!logError) {
+                    Log.error(message);
+                    logError = true;
+                    delete error.type;
+                  }
                   errorHelper.handleError(error, message, errorHelper.types.GATEWAY_TIMEOUT, Log);
                 });
           }
           else {
             const message = "No owner resource was found with that id.";
+            if (!logError) {
+              Log.error(message);
+              logError = true;
+            }
             errorHelper.handleError(message, message, errorHelper.types.NOT_FOUND, Log);
           }
         })
   }
   catch(error) {
     const message = "There was an error processing the request.";
+    if (!logError) {
+      Log.error(message);
+      logError = true;
+      delete error.type;
+    }
     try {
       errorHelper.handleError(error, message, errorHelper.types.BAD_REQUEST, Log)
     }
@@ -897,6 +1082,9 @@ function _getAll(ownerModel, ownerId, childModel, associationName, query, reques
     mongooseQuery = QueryHelper.createMongooseQuery(ownerModel, ownerRequest.query, mongooseQuery, Log);
     return mongooseQuery.exec()
         .then(function (result) {
+          if (!result) {
+            throw new Error("owner object not found")
+          }
           result = result[associationName];
           var childIds = [];
           var many_many = false;
@@ -912,6 +1100,15 @@ function _getAll(ownerModel, ownerId, childModel, associationName, query, reques
             });
           }
 
+          if (query._id) {
+            if (!_.isArray(query._id)) {
+              query._id = [query._id];
+            }
+            childIds = childIds.filter(function(id) {
+              return query._id.indexOf(id.toString()) > -1
+            })
+            delete query._id
+          }
           query.$where = extend({'_id': { $in: childIds }}, query.$where);
 
           var promise = _list(childModel, query, request, Log);
@@ -925,6 +1122,9 @@ function _getAll(ownerModel, ownerId, childModel, associationName, query, reques
                       var data = extraFieldData.find(function(data) {
                         return data[association.model]._id.toString() === object._id
                       });
+                      if (!data) {
+                        throw new Error("child object not found")
+                      }
                       var fields = data.toJSON();
                       delete fields._id;
                       delete fields[association.model];
@@ -934,25 +1134,27 @@ function _getAll(ownerModel, ownerId, childModel, associationName, query, reques
 
                   return result;
                 })
-                .catch(function (error) {
-                  const message = "There was an error processing the request.";
-                  errorHelper.handleError(error, message, errorHelper.types.BAD_REQUEST, Log);
-                });
           }
           else {
             return promise
                 .then(function(result) {
                   return result;
                 })
-                .catch(function (error) {
-                  const message = "There was an error processing the request.";
-                  errorHelper.handleError(error, message, errorHelper.types.BAD_REQUEST, Log);
-                });
           }
+        })
+        .catch(function (error) {
+          const message = "There was an error processing the request.";
+          if (!error.type) {
+            Log.error(message);
+          }
+          errorHelper.handleError(error, message, errorHelper.types.BAD_REQUEST, Log);
         });
   }
   catch(error) {
     const message = "There was an error processing the request.";
+    if (!error.type) {
+      Log.error(message);
+    }
     try {
       errorHelper.handleError(error, message, errorHelper.types.BAD_REQUEST, Log)
     }
@@ -999,6 +1201,9 @@ function _setAssociation(ownerModel, ownerObject, childModel, childId, associati
               });
 
               payload = payload[0];
+
+              payload = extend({}, payload);//EXPL: break the reference to the original payload
+
               delete payload.childId;
 
               extraFields = true;
@@ -1035,13 +1240,13 @@ function _setAssociation(ownerModel, ownerObject, childModel, childId, associati
             }
 
             if (!childAssociation.include) {
-              throw "Missing association between " + ownerModel.modelName + " and " + childModel.modelName + ".";
+              throw new Error("Missing association between " + ownerModel.modelName + " and " + childModel.modelName + ".");
             }
 
             var childAssociationName = childAssociation.include.as;
 
             if (!childObject[childAssociationName]) {
-              throw childAssociationName + " association does not exist.";
+              throw new Error(childAssociationName + " association does not exist.");
             }
 
             duplicate = childObject[childAssociationName].filter(function (associationObject) {
@@ -1059,10 +1264,25 @@ function _setAssociation(ownerModel, ownerObject, childModel, childId, associati
               childObject[childAssociationName][duplicateIndex] = payload;
             }
 
-            promise = Q.all(ownerModel.findByIdAndUpdate(ownerObject._id, ownerObject), childModel.findByIdAndUpdate(childObject._id, childObject));
+            promise = Q.all([ownerModel.findByIdAndUpdate(ownerObject._id, ownerObject), childModel.findByIdAndUpdate(childObject._id, childObject)]);
+          }
+          else if (association.type === "_MANY") {
+
+            var duplicate = ownerObject[associationName].filter(function (_childId) {
+              return _childId.toString() === childId;
+            });
+            duplicate = duplicate[0];
+
+            var duplicateIndex = ownerObject[associationName].indexOf(duplicate);
+
+            if (duplicateIndex < 0) {//EXPL: if the association doesn't already exist, create it
+              ownerObject[associationName].push(childId);
+            }
+
+            promise = Q.all([ownerModel.findByIdAndUpdate(ownerObject._id, ownerObject)]);
           }
           else {
-            deferred.reject("Association type incorrectly defined.");
+            deferred.reject(new Error("Association type incorrectly defined."));
             return deferred.promise;
           }
 
@@ -1078,11 +1298,11 @@ function _setAssociation(ownerModel, ownerObject, childModel, childId, associati
               });
         }
         else {
-          deferred.reject("Child object not found.");
+          deferred.reject(new Error("Child object not found."));
         }
       })
       .catch(function (error) {
-        Log.error("error: ", error);
+        Log.error(error);
         deferred.reject(error);
       });
 
@@ -1152,10 +1372,25 @@ function _removeAssociation(ownerModel, ownerObject, childModel, childId, associ
               childObject[childAssociationName].splice(index, 1);
             }
 
-            promise = Q.all(ownerModel.findByIdAndUpdate(ownerObject._id, ownerObject), childModel.findByIdAndUpdate(childObject._id, childObject));
+            promise = Q.all([ownerModel.findByIdAndUpdate(ownerObject._id, ownerObject), childModel.findByIdAndUpdate(childObject._id, childObject)]);
+          }
+          else if (associationType === "_MANY") {//EXPL: remove reference from owner model
+
+            //EXPL: remove the associated child from the owner
+            var deleteChild = ownerObject[associationName].filter(function(childId) {
+              return childId.toString() === childObject._id.toString();
+            });
+            deleteChild = deleteChild[0];
+
+            var index = ownerObject[associationName].indexOf(deleteChild);
+            if (index > -1) {
+              ownerObject[associationName].splice(index, 1);
+            }
+
+            promise = Q.all([ownerModel.findByIdAndUpdate(ownerObject._id, ownerObject)]);
           }
           else {
-            deferred.reject("Association type incorrectly defined.");
+            deferred.reject(new Error("Association type incorrectly defined."));
             return deferred.promise;
           }
 
@@ -1170,7 +1405,7 @@ function _removeAssociation(ownerModel, ownerObject, childModel, childId, associ
               });
         }
         else {
-          deferred.reject("Child object not found.");
+          deferred.reject(new Error("Child object not found."));
         }
       })
       .catch(function (error) {

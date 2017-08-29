@@ -1,14 +1,14 @@
 {
   "name": "rest-hapi",
-  "version": "0.15.3",
+  "version": "0.19.2",
   "description": "A RESTful API generator for hapi",
   "main": "rest-hapi.js",
   "bin": {
     "rest-hapi-cli": "./rest-hapi-cli.js"
   },
   "engines": {
-    "node": "~6.0.0",
-    "npm": "~4.0.5"
+    "node": ">=6.0.0",
+    "npm": ">=4.0.0"
   },
   "directories": {
     "test": "tests"
