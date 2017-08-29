@@ -152,7 +152,7 @@ function generateListHandler(model, options, Log) {
     try {
       Log.log("params(%s), query(%s), payload(%s)", JSON.stringify(request.params), JSON.stringify(request.query), JSON.stringify(request.payload));
 
-      handlerHelper.list(model, request.query, request, Log)
+      handlerHelper.listHandler(model, request, Log)
           .then(function(result) {
             const pageData = result.pageData;
             delete result.pageData;
@@ -184,7 +184,7 @@ function generateFindHandler(model, options, Log) {
     try {
       Log.log("params(%s), query(%s), payload(%s)", JSON.stringify(request.params), JSON.stringify(request.query), JSON.stringify(request.payload));
 
-      handlerHelper.find(model, request.params._id, request.query, request, Log)
+      handlerHelper.findHandler(model, request.params._id, request, Log)
           .then(function(result) {
             return reply(result).code(200);
           })
@@ -214,7 +214,7 @@ function generateCreateHandler(model, options, Log) {
     try {
       Log.log("params(%s), query(%s), payload(%s)", JSON.stringify(request.params), JSON.stringify(request.query), JSON.stringify(request.payload));
 
-      handlerHelper.create(model, request.payload, request, Log)
+      handlerHelper.createHandler(model, request, Log)
           .then(function(result) {
             return reply(result).code(201);
           })
@@ -244,7 +244,7 @@ function generateUpdateHandler(model, options, Log) {
     try {
       Log.log("params(%s), query(%s), payload(%s)", JSON.stringify(request.params), JSON.stringify(request.query), JSON.stringify(request.payload));
 
-      handlerHelper.update(model, request.params._id, request.payload, request, Log)
+      handlerHelper.updateHandler(model, request.params._id, request, Log)
           .then(function(result) {
             return reply(result).code(200);
           })
@@ -277,10 +277,10 @@ function generateDeleteHandler(model, options, Log) {
       let promise = {};
       if (request.params._id) {
         var hardDelete = request.payload ? request.payload.hardDelete : false;
-        promise = handlerHelper.deleteOne(model, request.params._id, hardDelete, request, Log);
+        promise = handlerHelper.deleteOneHandler(model, request.params._id, hardDelete, request, Log);
       }
       else {
-        promise = handlerHelper.deleteMany(model, request.payload, request, Log);
+        promise = handlerHelper.deleteManyHandler(model, request, Log);
       }
 
       promise
@@ -316,7 +316,7 @@ function generateAssociationAddOneHandler(ownerModel, association, options, Log)
     try {
       Log.log(addMethodName + " + params(%s), query(%s), payload(%s)", JSON.stringify(request.params), JSON.stringify(request.query), JSON.stringify(request.payload));
 
-      handlerHelper.addOne(ownerModel, request.params.ownerId, childModel, request.params.childId, associationName, request.payload, Log)
+      handlerHelper.addOneHandler(ownerModel, request.params.ownerId, childModel, request.params.childId, associationName, request, Log)
           .then(function(result) {
             return reply().code(204);
           })
@@ -349,7 +349,7 @@ function generateAssociationRemoveOneHandler(ownerModel, association, options, L
     try {
       Log.log(removeMethodName + " + params(%s), query(%s), payload(%s)", JSON.stringify(request.params), JSON.stringify(request.query), JSON.stringify(request.payload));
 
-      handlerHelper.removeOne(ownerModel, request.params.ownerId, childModel, request.params.childId, associationName, Log)
+      handlerHelper.removeOneHandler(ownerModel, request.params.ownerId, childModel, request.params.childId, associationName, request, Log)
           .then(function(result) {
             return reply().code(204);
           })
@@ -382,7 +382,7 @@ function generateAssociationAddManyHandler(ownerModel, association, options, Log
     try {
       Log.log(addMethodName + " + params(%s), query(%s), payload(%s)", JSON.stringify(request.params), JSON.stringify(request.query), JSON.stringify(request.payload));
 
-      handlerHelper.addMany(ownerModel, request.params.ownerId, childModel, associationName, request.payload, Log)
+      handlerHelper.addManyHandler(ownerModel, request.params.ownerId, childModel, associationName, request, Log)
           .then(function(result) {
             return reply().code(204);
           })
@@ -416,7 +416,7 @@ function generateAssociationRemoveManyHandler(ownerModel, association, options, 
     try {
       Log.log(removeMethodName + " + params(%s), query(%s), payload(%s)", JSON.stringify(request.params), JSON.stringify(request.query), JSON.stringify(request.payload));
 
-      handlerHelper.removeMany(ownerModel, request.params.ownerId, childModel, associationName, request.payload, Log)
+      handlerHelper.removeManyHandler(ownerModel, request.params.ownerId, childModel, associationName, request, Log)
           .then(function(result) {
             Log.debug("result:", result);
             return reply().code(204);
@@ -450,7 +450,7 @@ function generateAssociationGetAllHandler(ownerModel, association, options, Log)
     try {
       Log.log(getAllMethodName + " + params(%s), query(%s), payload(%s)", JSON.stringify(request.params), JSON.stringify(request.query), JSON.stringify(request.payload));
 
-      handlerHelper.getAll(ownerModel, request.params.ownerId, childModel, associationName, request.query, Log)
+      handlerHelper.getAllHandler(ownerModel, request.params.ownerId, childModel, associationName, request, Log)
           .then(function(result) {
             return reply(result).code(200);
           })
