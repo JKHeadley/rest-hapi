@@ -7,6 +7,8 @@ A RESTful API generator for the [hapi](https://github.com/hapijs/hapi) framework
 
 rest-hapi is a hapi plugin intended to abstract the work involved in setting up API routes/validation/handlers/etc. for the purpose of rapid app development.  At the same time it provides a powerful combination of [relational](#associations) structure with [NoSQL](#creating-endpoints) flexibility.  You define your models and the rest is done for you.  Have your own API server up and running in minutes!
 
+# NOTE: Breaking changes from v0.19.2 -> v0.20.0. Please refer to the [changelog](https://github.com/JKHeadley/rest-hapi/blob/master/CHANGELOG.md#0200---2017-08-29-breaking) for details.
+
 ## Features
 
 * Automatic generation of [CRUD](#creating-endpoints) endpoints with [middleware](#middleware) support
@@ -1226,19 +1228,18 @@ exist under the ``routeOptions`` object. Middleware functions must return
 are available:
 
 * list: 
-    - post(query, result, Log)
+    - post(request, result, Log)
 * find: 
-    - post(query, result, Log)
+    - post(request, result, Log)
 * create:
-    - pre(payload, Log)
-    - post(document, result, Log)
+    - pre(payload, request, Log)
+    - post(document, request, result, Log)
 * update: 
-    - pre(\_id, payload, Log)
-    - post(payload, result, Log)
+    - pre(\_id, request, Log)
+    - post(request, result, Log)
 * delete: 
-    - pre(\_id, hardDelete, Log)
-    - post(hardDelete, deleted, Log)
-
+    - pre(\_id, hardDelete, request, Log)
+    - post(hardDelete, deleted, request, Log)
 
 For example, a ``create: pre`` function can be defined to encrypt a users password
 using a static method ``generatePasswordHash``.  Notice the use of the ``Q`` library
