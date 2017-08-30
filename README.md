@@ -1229,7 +1229,8 @@ are available:
 
 * list: 
     - post(request, result, Log)
-* find: 
+* find:
+    - pre(\_id, query, request, Log)
     - post(request, result, Log)
 * create:
     - pre(payload, request, Log)
