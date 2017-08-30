@@ -221,7 +221,6 @@ test('handler-helper.listHandler', function (t) {
           };
           var paginateDeferred = Q.defer();
           var paginateSpy = sandbox.spy(function () {
-            debugger;
             paginateDeferred.resolve()
           });
           queryHelperStub.paginate = paginateSpy;
@@ -696,9 +695,9 @@ test('handler-helper.listHandler', function (t) {
               .catch(function (error) {
                 t.equals(error.message, "There was a postprocessing error.", "threw a postprocessing error");
               })
-              //</editor-fold>
+          //</editor-fold>
 
-              //<editor-fold desc="Restore">
+          //<editor-fold desc="Restore">
               .then(function () {
                 sandbox.restore();
                 delete mongoose.models.user;
@@ -762,9 +761,9 @@ test('handler-helper.listHandler', function (t) {
               .catch(function (error) {
                 t.equals(error.message, "There was an error accessing the database.", "threw a database error");
               })
-              //</editor-fold>
+          //</editor-fold>
 
-              //<editor-fold desc="Restore">
+          //<editor-fold desc="Restore">
               .then(function () {
                 sandbox.restore();
                 delete mongoose.models.user;
@@ -809,9 +808,9 @@ test('handler-helper.listHandler', function (t) {
               .catch(function (error) {
                 t.equals(error.message, "There was an error processing the request.", "threw a general processing error");
               })
-              //</editor-fold>
+          //</editor-fold>
 
-              //<editor-fold desc="Restore">
+          //<editor-fold desc="Restore">
               .then(function () {
                 sandbox.restore();
                 delete mongoose.models.user;
