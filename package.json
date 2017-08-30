@@ -66,6 +66,7 @@
     "rewire": "^2.5.2",
     "rmdir": "^1.2.0",
     "sinon": "^2.3.8",
+    "sinon-test": "^2.1.0",
     "tap-colorize": "latest",
     "tape": "latest",
     "vision": "^4.1.1"
