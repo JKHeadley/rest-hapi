@@ -950,8 +950,6 @@ test('handler-helper.findHandler', function(t) {
           userModel.findOne = sandbox.spy();
 
           var request = { query: {}, params: { _id: {}} };
-          var replyDeferred = Q.defer();
-          var reply = sandbox.spy(function() { replyDeferred.resolve() });
           //</editor-fold>
 
           //<editor-fold desc="Act">
@@ -1025,8 +1023,6 @@ test('handler-helper.findHandler', function(t) {
           userModel.findOne = sandbox.spy();
 
           var request = { query: {}, params: { _id: {}} };
-          var replyDeferred = Q.defer();
-          var reply = sandbox.spy(function() { replyDeferred.resolve() });
           //</editor-fold>
 
           //<editor-fold desc="Act">
