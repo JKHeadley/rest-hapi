@@ -4115,7 +4115,7 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function (t) {
 
     catch (error) {
       //<editor-fold desc="Assert">
-      t.equal(error.name, "AssertionError", "error is an AssertionError");
+      t.ok(/^AssertionError/.test(error.name), "error is an AssertionError");
       t.ok(error.message.indexOf("associations") > -1, "assertion message contains 'associations' text.");
       //</editor-fold>
     }
@@ -4170,7 +4170,7 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function (t) {
 
     catch (error) {
       //<editor-fold desc="Assert">
-      t.equal(error.name, "AssertionError", "error is an AssertionError");
+      t.ok(/^AssertionError/.test(error.name), "error is an AssertionError");
       t.ok(error.message.indexOf("association input") > -1, "assertion message contains 'association input' text.");
       //</editor-fold>
     }
@@ -5009,7 +5009,7 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function (t) {
 
     catch (error) {
       //<editor-fold desc="Assert">
-      t.equal(error.name, "AssertionError", "error is an AssertionError");
+      t.ok(/^AssertionError/.test(error.name), "error is an AssertionError");
       t.ok(error.message.indexOf("associations") > -1, "assertion message contains 'associations' text.");
       //</editor-fold>
     }
@@ -5064,7 +5064,7 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function (t) {
 
     catch (error) {
       //<editor-fold desc="Assert">
-      t.equal(error.name, "AssertionError", "error is an AssertionError");
+      t.ok(/^AssertionError/.test(error.name), "error is an AssertionError");
       t.ok(error.message.indexOf("association input") > -1, "assertion message contains 'association input' text.");
       //</editor-fold>
     }
@@ -5835,7 +5835,7 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function (t) {
 
     catch (error) {
       //<editor-fold desc="Assert">
-      t.equal(error.name, "AssertionError", "error is an AssertionError");
+      t.ok(/^AssertionError/.test(error.name), "error is an AssertionError");
       t.ok(error.message.indexOf("associations") > -1, "assertion message contains 'associations' text.");
       //</editor-fold>
     }
@@ -5890,7 +5890,7 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function (t) {
 
     catch (error) {
       //<editor-fold desc="Assert">
-      t.equal(error.name, "AssertionError", "error is an AssertionError");
+      t.ok(/^AssertionError/.test(error.name), "error is an AssertionError");
       t.ok(error.message.indexOf("association input") > -1, "assertion message contains 'association input' text.");
       //</editor-fold>
     }
@@ -6715,7 +6715,7 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function (t) {
 
     catch (error) {
       //<editor-fold desc="Assert">
-      t.equal(error.name, "AssertionError", "error is an AssertionError");
+      t.ok(/^AssertionError/.test(error.name), "error is an AssertionError");
       t.ok(error.message.indexOf("associations") > -1, "assertion message contains 'associations' text.");
       //</editor-fold>
     }
@@ -6770,7 +6770,7 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function (t) {
 
     catch (error) {
       //<editor-fold desc="Assert">
-      t.equal(error.name, "AssertionError", "error is an AssertionError");
+      t.ok(/^AssertionError/.test(error.name), "error is an AssertionError");
       t.ok(error.message.indexOf("association input") > -1, "assertion message contains 'association input' text.");
       //</editor-fold>
     }
