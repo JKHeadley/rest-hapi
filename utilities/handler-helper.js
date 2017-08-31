@@ -414,7 +414,7 @@ function _listHandler(model, request, Log) {
               });
         })
         .catch(function (error) {
-          const message = "There was an error processing the request.";
+          const message = "There was a preprocessing error.";
           if (!logError) {
             Log.error(message);
             logError = true;
@@ -441,7 +441,7 @@ function _listHandler(model, request, Log) {
 
 
 /**
- * List function exposed as a mongoose wrapper.
+ * Find function exposed as a mongoose wrapper.
  * @param model: A mongoose model.
  * @param _id: The document id.
  * @param query: rest-hapi query parameters to be converted to a mongoose query.
