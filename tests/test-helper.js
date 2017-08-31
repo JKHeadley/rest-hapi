@@ -33,7 +33,7 @@ module.exports = {
         methodToTest.apply(null, paramCopy);
         t.fail("No error was thrown.");
       } catch (error) {
-        t.equal(error.name, "AssertionError", "error is an AssertionError");
+        t.ok(/^AssertionError/.test(error.name), "error is an AssertionError");
         t.ok(error.message.indexOf("schema") > -1, "assertion message contains 'schema' text.");
       }
 
@@ -47,7 +47,7 @@ module.exports = {
         methodToTest.apply(null, paramCopy);
         t.fail("No error was thrown.");
       } catch (error) {
-        t.equal(error.name, "AssertionError", "error is an AssertionError");
+        t.ok(/^AssertionError/.test(error.name), "error is an AssertionError");
         t.ok(error.message.indexOf("schema.paths") > -1, "assertion message contains 'schema.paths' text.");
       }
 
@@ -63,7 +63,7 @@ module.exports = {
         methodToTest.apply(null, paramCopy);
         t.fail("No error was thrown.");
       } catch (error) {
-        t.equal(error.name, "AssertionError", "error is an AssertionError");
+        t.ok(/^AssertionError/.test(error.name), "error is an AssertionError");
         t.ok(error.message.indexOf("routeOptions") > -1, "assertion message contains 'routeOptions' text.");
       }
 
@@ -86,7 +86,7 @@ module.exports = {
         methodToTest.apply(null, paramCopy);
         t.fail("No error was thrown.");
       } catch (error) {
-        t.equal(error.name, "AssertionError", "error is an AssertionError");
+        t.ok(/^AssertionError/.test(error.name), "error is an AssertionError");
         t.ok(error.message.indexOf("options") > -1, "assertion message contains 'options' text.");
       }
     });
