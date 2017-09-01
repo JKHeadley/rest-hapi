@@ -790,13 +790,17 @@ test('handler-helper.listHandler', function (t) {
           });
 
           var userSchema = new mongoose.Schema({});
+          userSchema.statics = {
+            routeOptions: {
+              list: {
+                pre: function () {
+                  return Q.reject("error message");
+                }
+              }
+            }
+          };
 
           var userModel = mongoose.model("user", userSchema);
-
-          var error = "error message";
-          userModel.find = sandbox.spy(function () {
-            throw(error)
-          });
           //</editor-fold>
 
           //<editor-fold desc="Act">
@@ -811,6 +815,57 @@ test('handler-helper.listHandler', function (t) {
           //</editor-fold>
 
           //<editor-fold desc="Restore">
+              .then(function () {
+                sandbox.restore();
+                delete mongoose.models.user;
+                delete mongoose.modelSchemas.user;
+              });
+          //</editor-fold>
+        });
+      })
+
+      //handler-helper.listHandler throws a general processing error
+      .then(function () {
+        return t.test('handler-helper.listHandler throws a general processing error', function (t) {
+          //<editor-fold desc="Arrange">
+          var sandbox = sinon.sandbox.create();
+          var Log = logger.bind("handler-helper");
+          var server = sandbox.spy();
+          var queryHelperStub = sandbox.stub(require('../utilities/query-helper'));
+          var boomStub = sandbox.stub(require('boom'));
+          var handlerHelper = proxyquire('../utilities/handler-helper', {
+            './query-helper': queryHelperStub,
+            'boom': boomStub
+          });
+          sandbox.stub(Log, 'error', function () {
+          });
+
+          var userSchema = new mongoose.Schema({});
+          userSchema.statics = {
+            routeOptions: {
+              list: {
+                pre: function () {
+                  throw("error message");
+                }
+              }
+            }
+          };
+
+          var userModel = mongoose.model("user", userSchema);
+          //</editor-fold>
+
+          //<editor-fold desc="Act">
+          var promise = handlerHelper.listHandler(userModel, { query: {} }, Log);
+          //</editor-fold>
+
+          //<editor-fold desc="Assert">
+          return promise
+              .catch(function (error) {
+                t.equals(error.message, "There was an error processing the request.", "threw a general processing error");
+              })
+              //</editor-fold>
+
+              //<editor-fold desc="Restore">
               .then(function () {
                 sandbox.restore();
                 delete mongoose.models.user;
