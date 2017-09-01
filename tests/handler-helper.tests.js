@@ -1354,9 +1354,6 @@ test('handler-helper.createHandler', function(t) {
 
           //<editor-fold desc="Assert">
           return deferred.promise.then(function() {
-            // TODO this test previously expected createAttributesFilter to be called with request.query,
-            //      but the code currently calls it with a hard-coded {}
-            //      which is correct?
             t.ok(queryHelperStub.createAttributesFilter.calledWithExactly({}, userModel, Log), "queryHelperStub.createAttributesFilter called");
           })
           //</editor-fold>
@@ -1490,9 +1487,9 @@ test('handler-helper.createHandler', function(t) {
         });
       })
 
-      //handler-helper.createHandler returns single result
+      //handler-helper.createHandler returns single result when payload is not an array
       .then(function() {
-        return t.test('handler-helper.createHandler returns single result', function (t) {
+        return t.test('handler-helper.createHandler returns single result when payload is not an array', function (t) {
           //<editor-fold desc="Arrange">
           var sandbox = sinon.sandbox.create();
           var Log = logger.bind("handler-helper");
@@ -1509,8 +1506,11 @@ test('handler-helper.createHandler', function(t) {
           var userModel = mongoose.model("user", userSchema);
           userModel.create = sandbox.spy(function(){ return Q.when([{ _id: "TEST" }]) });
 
+          //NOTE: payload is an object so we expect a single object to be returned
+          var payload = { _id: '3' };
+
           var findExec = function(){
-            return Q.when([{ _id: '3' }]);
+            return Q.when([payload]);
           };
           var findLean = function(){
             return { exec: findExec };
@@ -1526,7 +1526,7 @@ test('handler-helper.createHandler', function(t) {
             return { where: findWhere };
           });
 
-          var request = { query: {}, payload: {} };
+          var request = { query: {}, payload: payload };
           //</editor-fold>
 
           //<editor-fold desc="Act">
@@ -1535,7 +1535,7 @@ test('handler-helper.createHandler', function(t) {
 
           //<editor-fold desc="Assert">
           return promise.then(function(result) {
-            t.deepEqual(result, { _id: '3' }, "returned single result");
+            t.deepEqual(result, payload, "returned single result");
           })
           //</editor-fold>
 
@@ -1545,6 +1545,68 @@ test('handler-helper.createHandler', function(t) {
             delete mongoose.models.user;
             delete mongoose.modelSchemas.user;
           });
+          //</editor-fold>
+        });
+      })
+
+      //handler-helper.createHandler returns an array when payload is an array
+      .then(function() {
+        return t.test('handler-helper.createHandler returns an array when payload is an array', function (t) {
+          //<editor-fold desc="Arrange">
+          var sandbox = sinon.sandbox.create();
+          var Log = logger.bind("handler-helper");
+          var server = sandbox.spy();
+          var queryHelperStub = sandbox.stub(require('../utilities/query-helper'));
+          queryHelperStub.createAttributesFilter = function(){ return "attributes" };
+          var handlerHelper = proxyquire('../utilities/handler-helper', {
+            './query-helper': queryHelperStub
+          });
+          sandbox.stub(Log, 'error', function(){});
+
+          var userSchema = new mongoose.Schema({});
+
+          var userModel = mongoose.model("user", userSchema);
+          userModel.create = sandbox.spy(function(){ return Q.when([{ _id: "TEST" }]) });
+
+          //NOTE: payload is an array so we expect an array to be returned
+          var payload = [{ _id: '3' }, { _id: '4' }];
+
+          var findExec = function(){
+            return Q.when(payload);
+          };
+          var findLean = function(){
+            return { exec: findExec };
+          };
+          var findSelect = function(){
+            return { lean: findLean };
+          };
+          var findWhere = function(){
+            return { select: findSelect };
+          };
+
+          userModel.find = sandbox.spy(function(){
+            return { where: findWhere };
+          });
+
+          var request = { query: {}, payload: payload };
+          //</editor-fold>
+
+          //<editor-fold desc="Act">
+          var promise = handlerHelper.createHandler(userModel, request, Log);
+          //</editor-fold>
+
+          //<editor-fold desc="Assert">
+          return promise.then(function(result) {
+            t.deepEqual(result, payload, "returned array");
+          })
+          //</editor-fold>
+
+          //<editor-fold desc="Restore">
+              .then(function(){
+                sandbox.restore();
+                delete mongoose.models.user;
+                delete mongoose.modelSchemas.user;
+              });
           //</editor-fold>
         });
       })
