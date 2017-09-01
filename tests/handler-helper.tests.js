@@ -75,19 +75,22 @@ test('handler-helper.listHandler', function (t) {
           //</editor-fold>
 
           //<editor-fold desc="Act">
-          handlerHelper.listHandler(userModel, { query: {} }, Log);
+          var promise = handlerHelper.listHandler(userModel, { query: {} }, Log);
           //</editor-fold>
 
           //<editor-fold desc="Assert">
-          t.ok(userModel.find.called, "find called");
+          return promise.then(function (){
+            t.ok(userModel.find.called, "find called");
+          })
           //</editor-fold>
 
 
           //<editor-fold desc="Restore">
-          sandbox.restore();
-          delete mongoose.models.user;
-          delete mongoose.modelSchemas.user;
-          return Q.when();
+              .then(function (){
+                sandbox.restore();
+                delete mongoose.models.user;
+                delete mongoose.modelSchemas.user;
+              });
           //</editor-fold>
         });
       })
@@ -120,19 +123,22 @@ test('handler-helper.listHandler', function (t) {
           //</editor-fold>
 
           //<editor-fold desc="Act">
-          handlerHelper.listHandler(userModel, request, Log);
+          var promise = handlerHelper.listHandler(userModel, request, Log);
           //</editor-fold>
 
           //<editor-fold desc="Assert">
-          t.ok(queryHelperStub.createMongooseQuery.calledWithExactly(userModel, query, "TEST", Log), "createMongooseQuery called");
+          return promise.then(function () {
+            t.ok(queryHelperStub.createMongooseQuery.calledWithExactly(userModel, query, "TEST", Log), "createMongooseQuery called");
+          })
           //</editor-fold>
 
 
           //<editor-fold desc="Restore">
-          sandbox.restore();
-          delete mongoose.models.user;
-          delete mongoose.modelSchemas.user;
-          return Q.when();
+              .then(function (){
+                sandbox.restore();
+                delete mongoose.models.user;
+                delete mongoose.modelSchemas.user;
+              });
           //</editor-fold>
         });
       })
@@ -173,19 +179,22 @@ test('handler-helper.listHandler', function (t) {
           //</editor-fold>
 
           //<editor-fold desc="Act">
-          handlerHelper.listHandler(userModel, request, Log);
+          var promise = handlerHelper.listHandler(userModel, request, Log);
           //</editor-fold>
 
           //<editor-fold desc="Assert">
-          t.ok(countSpy.called, "count called");
+          return promise.then(function (){
+            t.ok(countSpy.called, "count called");
+          })
           //</editor-fold>
 
 
           //<editor-fold desc="Restore">
-          sandbox.restore();
-          delete mongoose.models.user;
-          delete mongoose.modelSchemas.user;
-          return Q.when();
+              .then(function (){
+                sandbox.restore();
+                delete mongoose.models.user;
+                delete mongoose.modelSchemas.user;
+              });
           //</editor-fold>
         });
       })
@@ -322,6 +331,64 @@ test('handler-helper.listHandler', function (t) {
                 delete mongoose.models.user;
                 delete mongoose.modelSchemas.user;
                 return Q.when();
+              });
+          //</editor-fold>
+        });
+      })
+
+      //handler-helper.listHandler calls pre processing if it exists
+      .then(function () {
+        return t.test('handler-helper.listHandler calls pre processing if it exists', function (t) {
+          //<editor-fold desc="Arrange">
+          var sandbox = sinon.sandbox.create();
+          var Log = logger.bind("handler-helper");
+          var server = sandbox.spy();
+
+          var queryHelperStub = sandbox.stub(require('../utilities/query-helper'));
+          var errorHelperStub = sandbox.stub(require('../utilities/error-helper'));
+          var handlerHelper = proxyquire('../utilities/handler-helper', {
+            './query-helper': queryHelperStub,
+            './error-helper': errorHelperStub
+          });
+          // sandbox.stub(Log, 'error', function(){});
+
+          var userSchema = new mongoose.Schema({});
+          var preDeferred = Q.defer();
+          var preSpy = sandbox.spy(function () {
+            preDeferred.resolve();
+          });
+          userSchema.statics = {
+            routeOptions: {
+              list: {
+                pre: preSpy
+              }
+            }
+          };
+
+          var userModel = mongoose.model("user", userSchema);
+
+          userModel.find = sandbox.spy();
+
+          var query = {test: {}};
+          var request = { query: query };
+          //</editor-fold>
+
+          //<editor-fold desc="Act">
+          handlerHelper.listHandler(userModel, request, Log);
+          //</editor-fold>
+
+          //<editor-fold desc="Assert">
+          return preDeferred.promise.then(function () {
+            t.ok(preSpy.calledWithExactly(query, request, Log), "list.pre called");
+          })
+          //</editor-fold>
+
+
+          //<editor-fold desc="Restore">
+              .then(function () {
+                sandbox.restore();
+                delete mongoose.models.user;
+                delete mongoose.modelSchemas.user;
               });
           //</editor-fold>
         });
@@ -628,9 +695,9 @@ test('handler-helper.listHandler', function (t) {
               .catch(function (error) {
                 t.equals(error.message, "There was a postprocessing error.", "threw a postprocessing error");
               })
-              //</editor-fold>
+          //</editor-fold>
 
-              //<editor-fold desc="Restore">
+          //<editor-fold desc="Restore">
               .then(function () {
                 sandbox.restore();
                 delete mongoose.models.user;
@@ -694,9 +761,60 @@ test('handler-helper.listHandler', function (t) {
               .catch(function (error) {
                 t.equals(error.message, "There was an error accessing the database.", "threw a database error");
               })
-              //</editor-fold>
+          //</editor-fold>
 
-              //<editor-fold desc="Restore">
+          //<editor-fold desc="Restore">
+              .then(function () {
+                sandbox.restore();
+                delete mongoose.models.user;
+                delete mongoose.modelSchemas.user;
+              });
+          //</editor-fold>
+        });
+      })
+
+      //handler-helper.listHandler throws a preprocessing error
+      .then(function () {
+        return t.test('handler-helper.listHandler throws a preprocessing error', function (t) {
+          //<editor-fold desc="Arrange">
+          var sandbox = sinon.sandbox.create();
+          var Log = logger.bind("handler-helper");
+          var server = sandbox.spy();
+          var queryHelperStub = sandbox.stub(require('../utilities/query-helper'));
+          var boomStub = sandbox.stub(require('boom'));
+          var handlerHelper = proxyquire('../utilities/handler-helper', {
+            './query-helper': queryHelperStub,
+            'boom': boomStub
+          });
+          sandbox.stub(Log, 'error', function () {
+          });
+
+          var userSchema = new mongoose.Schema({});
+          userSchema.statics = {
+            routeOptions: {
+              list: {
+                pre: function () {
+                  return Q.reject("error message");
+                }
+              }
+            }
+          };
+
+          var userModel = mongoose.model("user", userSchema);
+          //</editor-fold>
+
+          //<editor-fold desc="Act">
+          var promise = handlerHelper.listHandler(userModel, { query: {} }, Log);
+          //</editor-fold>
+
+          //<editor-fold desc="Assert">
+          return promise
+              .catch(function (error) {
+                t.equals(error.message, "There was a preprocessing error.", "threw a preprocessing error");
+              })
+          //</editor-fold>
+
+          //<editor-fold desc="Restore">
               .then(function () {
                 sandbox.restore();
                 delete mongoose.models.user;
@@ -723,13 +841,17 @@ test('handler-helper.listHandler', function (t) {
           });
 
           var userSchema = new mongoose.Schema({});
+          userSchema.statics = {
+            routeOptions: {
+              list: {
+                pre: function () {
+                  throw("error message");
+                }
+              }
+            }
+          };
 
           var userModel = mongoose.model("user", userSchema);
-
-          var error = "error message";
-          userModel.find = sandbox.spy(function () {
-            throw(error)
-          });
           //</editor-fold>
 
           //<editor-fold desc="Act">

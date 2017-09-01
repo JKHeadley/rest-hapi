@@ -1227,24 +1227,25 @@ exist under the ``routeOptions`` object. Middleware functions must return
  a promise.  The following middleware functions
 are available:
 
-* list: 
+* list:
+    - pre(query, request, Log)
     - post(request, result, Log)
-* find: 
+* find:
     - post(request, result, Log)
 * create:
     - pre(payload, request, Log)
     - post(document, request, result, Log)
-* update: 
+* update:
     - pre(\_id, request, Log)
     - post(request, result, Log)
-* delete: 
+* delete:
     - pre(\_id, hardDelete, request, Log)
     - post(hardDelete, deleted, request, Log)
 
 For example, a ``create: pre`` function can be defined to encrypt a users password
 using a static method ``generatePasswordHash``.  Notice the use of the ``Q`` library
 to return a promise.
- 
+
 ```javascript
 'use strict';
 
@@ -1266,12 +1267,12 @@ module.exports = function (mongoose) {
       allowOnUpdate: false
     }
   });
-  
+
   Schema.statics = {
     collectionName:modelName,
     routeOptions: {
       create: {
-        pre: function (payload, Log) {
+        pre: function (payload, request, Log) {
           var deferred = Q.defer();
           var hashedPassword = mongoose.model('user').generatePasswordHash(payload.password);
 
@@ -1288,7 +1289,7 @@ module.exports = function (mongoose) {
       return hash;
     }
   };
-  
+
   return Schema;
 };
 ```
