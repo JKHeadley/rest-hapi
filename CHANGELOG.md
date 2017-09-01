@@ -6,6 +6,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [0.20.2] - 2017-08-31
+### Added
+- Uncommented and updated find handler tests.
+
+### Changed
+- Update dependencies and tests so that rest-hapi works under node v8.
+
 ## [0.20.0] - 2017-08-29 [BREAKING]
 ### Added
 - Hapi request object now accessible in middleware functions.
@@ -38,5 +45,6 @@ post(hardDelete, deleted, Log) | post(hardDelete, deleted, request, Log)
 
 [Unreleased]: https://github.com/jkheadley/rest-hapi/compare/v0.20.0...HEAD
 [0.20.0]: https://github.com/jkheadley/rest-hapi/compare/v0.19.2...v0.20.0
+[0.20.2]: https://github.com/jkheadley/rest-hapi/compare/v0.20.0...v0.20.2
 
 [BREAKING]: https://github.com/JKHeadley/rest-hapi/releases
