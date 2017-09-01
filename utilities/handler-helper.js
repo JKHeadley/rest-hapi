@@ -534,7 +534,7 @@ function _findHandler(model, _id, request, Log) {
               });
         })
         .catch(function(error) {
-          const message = "There was an error processing the request.";
+          const message = "There was an error preprocessing the request.";
           if (!logError) {
             Log.error(message);
             logError = true;
