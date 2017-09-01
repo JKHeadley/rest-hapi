@@ -959,7 +959,6 @@ test('handler-helper.findHandler', function(t) {
           //<editor-fold desc="Assert">
           return promise.then(function (result) {
             // Log.error(reply.args[0]);
-            debugger;
             t.deepEqual(result, "TEST1", "returns single result");
           })
           //</editor-fold>
