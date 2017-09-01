@@ -1157,7 +1157,8 @@ function _addManyHandler(ownerModel, ownerId, childModel, associationName, reque
         .then(function (ownerObject) {
           if (ownerObject) {
             var childIds = [];
-            if (typeof payload[0] === 'string' || payload[0] instanceof String) {//EXPL: the payload is an array of Ids
+            //EXPL: the payload is an array of Ids
+            if (typeof payload[0] === 'string' || payload[0] instanceof String || payload[0]._bsontype === "ObjectID") {
               childIds = payload;
             }
             else {//EXPL: the payload contains extra fields
@@ -1485,7 +1486,8 @@ function _setAssociation(ownerModel, ownerObject, childModel, childId, associati
             promise = childObject.save();
           }
           else if (association.type === "MANY_MANY") {
-            if (typeof payload[0] === 'string' || payload[0] instanceof String) {//EXPL: the payload is an array of Ids. No extra fields
+            //EXPL: the payload is an array of Ids. No extra fields
+            if (typeof payload[0] === 'string' || payload[0] instanceof String || payload[0]._bsontype === "ObjectID") {
               payload = {};
 
               extraFields = false;
