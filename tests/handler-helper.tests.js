@@ -773,9 +773,9 @@ test('handler-helper.listHandler', function (t) {
         });
       })
 
-      //handler-helper.listHandler throws a general processing error
+      //handler-helper.listHandler throws a preprocessing error
       .then(function () {
-        return t.test('handler-helper.listHandler throws a general processing error', function (t) {
+        return t.test('handler-helper.listHandler throws a preprocessing error', function (t) {
           //<editor-fold desc="Arrange">
           var sandbox = sinon.sandbox.create();
           var Log = logger.bind("handler-helper");
@@ -806,7 +806,7 @@ test('handler-helper.listHandler', function (t) {
           //<editor-fold desc="Assert">
           return promise
               .catch(function (error) {
-                t.equals(error.message, "There was an error processing the request.", "threw a general processing error");
+                t.equals(error.message, "There was a preprocessing error.", "threw a preprocessing error");
               })
           //</editor-fold>
 
