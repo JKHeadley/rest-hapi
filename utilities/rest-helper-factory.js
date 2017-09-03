@@ -779,7 +779,7 @@ module.exports = function (logger, mongoose, server) {
       }
 
       let tags = [];
-      if (model.routeOptions.enableAddSwagger !== false) {
+      if (association.enableAddSwagger !== false) {
           tags = ['api', associationName, ownerModelName];
       }
 
@@ -871,7 +871,7 @@ module.exports = function (logger, mongoose, server) {
       }
 
       let tags = [];
-      if (model.routeOptions.enableRemoveSwagger !== false) {
+      if (association.enableRemoveSwagger !== false) {
           tags = ['api', associationName, ownerModelName];
       }
 
@@ -973,7 +973,7 @@ module.exports = function (logger, mongoose, server) {
       }
 
       let tags = [];
-      if (model.routeOptions.enableAddSwagger !== false) {
+      if (association.enableAddSwagger !== false) {
           tags = ['api', associationName, ownerModelName];
       }
 
@@ -1063,7 +1063,7 @@ module.exports = function (logger, mongoose, server) {
       }
 
       let tags = [];
-      if (model.routeOptions.enableRemoveSwagger !== false) {
+      if (association.enableRemoveSwagger !== false) {
           tags = ['api', associationName, ownerModelName];
       }
 
@@ -1206,7 +1206,7 @@ module.exports = function (logger, mongoose, server) {
       }
 
       let tags = [];
-      if (model.routeOptions.enableReadSwagger !== false) {
+      if (association.enableReadSwagger !== false) {
           tags = ['api', associationName, ownerModelName];
       }
 
