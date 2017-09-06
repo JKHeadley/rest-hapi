@@ -9,7 +9,7 @@ module.exports = {
    */
   types: {
     BAD_REQUEST: "Bad Request",
-    SERVER_TIMEOUT: "Server Timeout",
+    BAD_IMPLEMENTATION: "Bad Implementation",
     NOT_FOUND: "Not Found",
     GATEWAY_TIMEOUT: "Gateway Timeout"
   },
@@ -39,8 +39,8 @@ module.exports = {
     try {
       var response = {};
       switch (error.type) {
-        case this.types.SERVER_TIMEOUT:
-          response = Boom.serverTimeout(error.message);
+        case this.types.BAD_IMPLEMENTATION:
+          response = Boom.badImplementation(error.message);
           break;
         case this.types.GATEWAY_TIMEOUT:
           response = Boom.gatewayTimeout(error.message);
