@@ -906,19 +906,22 @@ test('handler-helper.findHandler', function(t) {
           //</editor-fold>
 
           //<editor-fold desc="Act">
-          handlerHelper.findHandler(userModel, "TEST", request, Log);
+          var promise = handlerHelper.findHandler(userModel, "TEST", request, Log);
           //</editor-fold>
 
           //<editor-fold desc="Assert">
-          t.ok(userModel.findOne.calledWithExactly({ _id: "TEST" }), "findOne called");
+          return promise.then(function(){
+            t.ok(userModel.findOne.calledWithExactly({ _id: "TEST" }), "findOne called");
+          })
           //</editor-fold>
 
 
           //<editor-fold desc="Restore">
-          sandbox.restore();
-          delete mongoose.models.user;
-          delete mongoose.modelSchemas.user;
-          return Q.when();
+              .then(function(){
+                sandbox.restore();
+                delete mongoose.models.user;
+                delete mongoose.modelSchemas.user;
+              });
           //</editor-fold>
         });
       })
@@ -950,19 +953,79 @@ test('handler-helper.findHandler', function(t) {
           //</editor-fold>
 
           //<editor-fold desc="Act">
-          handlerHelper.findHandler(userModel, "TEST", request, Log);
+          var promise = handlerHelper.findHandler(userModel, "TEST", request, Log);
           //</editor-fold>
 
           //<editor-fold desc="Assert">
-          t.ok(queryHelperStub.createMongooseQuery.calledWithExactly(userModel, request.query, "TEST", Log), "createMongooseQuery called");
+          return promise.then(function(){
+            t.ok(queryHelperStub.createMongooseQuery.calledWithExactly(userModel, request.query, "TEST", Log), "createMongooseQuery called");
+          })
           //</editor-fold>
 
 
           //<editor-fold desc="Restore">
-          sandbox.restore();
-          delete mongoose.models.user;
-          delete mongoose.modelSchemas.user;
-          return Q.when();
+              .then(function(){
+                sandbox.restore();
+                delete mongoose.models.user;
+                delete mongoose.modelSchemas.user;
+              });
+          //</editor-fold>
+        });
+      })
+
+      //handler-helper.findHandler calls pre processing if it exists
+      .then(function() {
+        return t.test('handler-helper.findHandler calls pre processing if it exists', function (t) {
+          //<editor-fold desc="Arrange">
+          var sandbox = sinon.sandbox.create();
+          var Log = logger.bind("handler-helper");
+          var server = sandbox.spy();
+
+          var queryHelperStub = sandbox.stub(require('../utilities/query-helper'));
+          var errorHelperStub = sandbox.stub(require('../utilities/error-helper'));
+          var handlerHelper = proxyquire('../utilities/handler-helper', {
+            './query-helper': queryHelperStub,
+            './error-helper': errorHelperStub
+          });
+          sandbox.stub(Log, 'error', function(){});
+
+          var userSchema = new mongoose.Schema({});
+          var preDeferred = Q.defer();
+          var preSpy = sandbox.spy(function() {
+            preDeferred.resolve();
+          });
+          userSchema.statics = {
+            routeOptions: {
+              find: {
+                pre: preSpy
+              }
+            }
+          };
+
+          var userModel = mongoose.model("user", userSchema);
+
+          userModel.findOne = sandbox.spy();
+
+          var request = { query: {}, params: { _id: {}} };
+          //</editor-fold>
+
+          //<editor-fold desc="Act">
+          handlerHelper.findHandler(userModel, "TEST", request, Log);
+          //</editor-fold>
+
+          //<editor-fold desc="Assert">
+          return preDeferred.promise.then(function() {
+                t.ok(preSpy.calledWithExactly("TEST", request.query, request, Log), "find.pre called");
+              })
+          //</editor-fold>
+
+
+          //<editor-fold desc="Restore">
+              .then(function(){
+                sandbox.restore();
+                delete mongoose.models.user;
+                delete mongoose.modelSchemas.user;
+              });
           //</editor-fold>
         });
       })
@@ -1284,6 +1347,58 @@ test('handler-helper.findHandler', function(t) {
         });
       })
 
+      //handler-helper.findHandler throws a preprocessing error
+      .then(function() {
+        return t.test('handler-helper.findHandler throws a preprocessing error', function (t) {
+          //<editor-fold desc="Arrange">
+          var sandbox = sinon.sandbox.create();
+          var Log = logger.bind("handler-helper");
+          var server = sandbox.spy();
+          var queryHelperStub = sandbox.stub(require('../utilities/query-helper'));
+          var boomStub = sandbox.stub(require('boom'));
+          var handlerHelper = proxyquire('../utilities/handler-helper', {
+            './query-helper': queryHelperStub,
+            'boom': boomStub
+          });
+          sandbox.stub(Log, 'error', function(){});
+
+          var userSchema = new mongoose.Schema({});
+          userSchema.statics = {
+            routeOptions: {
+              find: {
+                pre: function(){
+                  return Q.reject("error message");
+                }
+              }
+            }
+          };
+
+          var userModel = mongoose.model("user", userSchema);
+
+          var request = { query: {}, params: { _id: "TEST"} };
+          //</editor-fold>
+
+          //<editor-fold desc="Act">
+          var promise = handlerHelper.findHandler(userModel, "TEST", request, Log);
+          //</editor-fold>
+
+          //<editor-fold desc="Assert">
+          return promise
+              .catch(function(error) {
+                t.equals(error.message, "There was an error preprocessing the request.", "threw a preprocessing error");
+              })
+              //</editor-fold>
+
+              //<editor-fold desc="Restore">
+              .then(function(){
+                sandbox.restore();
+                delete mongoose.models.user;
+                delete mongoose.modelSchemas.user;
+              });
+          //</editor-fold>
+        });
+      })
+
       //handler-helper.findHandler throws a general processing error
       .then(function() {
         return t.test('handler-helper.findHandler throws a general processing error', function (t) {
@@ -1300,13 +1415,17 @@ test('handler-helper.findHandler', function(t) {
           sandbox.stub(Log, 'error', function(){});
 
           var userSchema = new mongoose.Schema({});
+          userSchema.statics = {
+            routeOptions: {
+              find: {
+                pre: function(){
+                  throw("error message");
+                }
+              }
+            }
+          };
 
           var userModel = mongoose.model("user", userSchema);
-
-          var error = "error message";
-          userModel.findOne = sandbox.spy(function(){
-            throw(error);
-          });
 
           var request = { query: {}, params: { _id: "TEST"} };
           //</editor-fold>
