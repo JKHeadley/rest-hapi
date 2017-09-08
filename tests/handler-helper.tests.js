@@ -221,7 +221,8 @@ test('handler-helper.listHandler', function (t) {
           };
           var paginateDeferred = Q.defer();
           var paginateSpy = sandbox.spy(function () {
-            paginateDeferred.resolve()
+            paginateDeferred.resolve();
+            return { exec: function(){ return Q.when([]) } };
           });
           queryHelperStub.paginate = paginateSpy;
           var errorHelperStub = sandbox.stub(require('../utilities/error-helper'));
@@ -287,7 +288,8 @@ test('handler-helper.listHandler', function (t) {
           };
           var deferred = Q.defer();
           var execSpy = sandbox.spy(function () {
-            deferred.resolve()
+            deferred.resolve();
+            return Q.when([]);
           });
           var paginateSpy = sandbox.spy(function () {
             return {exec: execSpy}
