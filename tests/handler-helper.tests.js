@@ -656,10 +656,8 @@ test('handler-helper.listHandler', function (t) {
           });
           queryHelperStub.paginate = paginateSpy;
 
-          var boomStub = sandbox.stub(require('boom'));
           var handlerHelper = proxyquire('../utilities/handler-helper', {
-            './query-helper': queryHelperStub,
-            'boom': boomStub
+            './query-helper': queryHelperStub
           });
           sandbox.stub(Log, 'error', function () {
           });
@@ -737,10 +735,8 @@ test('handler-helper.listHandler', function (t) {
           });
           queryHelperStub.paginate = paginateSpy;
 
-          var boomStub = sandbox.stub(require('boom'));
           var handlerHelper = proxyquire('../utilities/handler-helper', {
-            './query-helper': queryHelperStub,
-            'boom': boomStub
+            './query-helper': queryHelperStub
           });
           sandbox.stub(Log, 'error', function () {
           });
@@ -781,10 +777,8 @@ test('handler-helper.listHandler', function (t) {
           var Log = logger.bind("handler-helper");
           var server = sandbox.spy();
           var queryHelperStub = sandbox.stub(require('../utilities/query-helper'));
-          var boomStub = sandbox.stub(require('boom'));
           var handlerHelper = proxyquire('../utilities/handler-helper', {
-            './query-helper': queryHelperStub,
-            'boom': boomStub
+            './query-helper': queryHelperStub
           });
           sandbox.stub(Log, 'error', function () {
           });
@@ -832,10 +826,8 @@ test('handler-helper.listHandler', function (t) {
           var Log = logger.bind("handler-helper");
           var server = sandbox.spy();
           var queryHelperStub = sandbox.stub(require('../utilities/query-helper'));
-          var boomStub = sandbox.stub(require('boom'));
           var handlerHelper = proxyquire('../utilities/handler-helper', {
-            './query-helper': queryHelperStub,
-            'boom': boomStub
+            './query-helper': queryHelperStub
           });
           sandbox.stub(Log, 'error', function () {
           });
@@ -1181,10 +1173,8 @@ test('handler-helper.findHandler', function(t) {
             return mongooseQuery2;
           };
 
-          var boomStub = sandbox.stub(require('boom'));
           var handlerHelper = proxyquire('../utilities/handler-helper', {
-            './query-helper': queryHelperStub,
-            'boom': boomStub
+            './query-helper': queryHelperStub
           });
           sandbox.stub(Log, 'error', function(){});
 
@@ -1252,10 +1242,8 @@ test('handler-helper.findHandler', function(t) {
             return mongooseQuery2;
           };
 
-          var boomStub = sandbox.stub(require('boom'));
           var handlerHelper = proxyquire('../utilities/handler-helper', {
-            './query-helper': queryHelperStub,
-            'boom': boomStub
+            './query-helper': queryHelperStub
           });
           sandbox.stub(Log, 'error', function(){});
 
@@ -1310,10 +1298,8 @@ test('handler-helper.findHandler', function(t) {
             return mongooseQuery2;
           };
 
-          var boomStub = sandbox.stub(require('boom'));
           var handlerHelper = proxyquire('../utilities/handler-helper', {
-            './query-helper': queryHelperStub,
-            'boom': boomStub
+            './query-helper': queryHelperStub
           });
           sandbox.stub(Log, 'error', function(){});
 
@@ -1355,10 +1341,8 @@ test('handler-helper.findHandler', function(t) {
           var Log = logger.bind("handler-helper");
           var server = sandbox.spy();
           var queryHelperStub = sandbox.stub(require('../utilities/query-helper'));
-          var boomStub = sandbox.stub(require('boom'));
           var handlerHelper = proxyquire('../utilities/handler-helper', {
-            './query-helper': queryHelperStub,
-            'boom': boomStub
+            './query-helper': queryHelperStub
           });
           sandbox.stub(Log, 'error', function(){});
 
@@ -1407,10 +1391,8 @@ test('handler-helper.findHandler', function(t) {
           var Log = logger.bind("handler-helper");
           var server = sandbox.spy();
           var queryHelperStub = sandbox.stub(require('../utilities/query-helper'));
-          var boomStub = sandbox.stub(require('boom'));
           var handlerHelper = proxyquire('../utilities/handler-helper', {
-            './query-helper': queryHelperStub,
-            'boom': boomStub
+            './query-helper': queryHelperStub
           });
           sandbox.stub(Log, 'error', function(){});
 
@@ -1861,10 +1843,8 @@ test('handler-helper.createHandler', function(t) {
           var server = sandbox.spy();
           var queryHelperStub = sandbox.stub(require('../utilities/query-helper'));
           queryHelperStub.createAttributesFilter = function(){ return "attributes" };
-          var boomStub = sandbox.stub(require('boom'));
           var handlerHelper = proxyquire('../utilities/handler-helper', {
-            './query-helper': queryHelperStub,
-            'boom': boomStub
+            './query-helper': queryHelperStub
           });
           sandbox.stub(Log, 'error', function(){});
 
@@ -1930,10 +1910,8 @@ test('handler-helper.createHandler', function(t) {
           var server = sandbox.spy();
           var queryHelperStub = sandbox.stub(require('../utilities/query-helper'));
           queryHelperStub.createAttributesFilter = function(){ return "attributes" };
-          var boomStub = sandbox.stub(require('boom'));
           var handlerHelper = proxyquire('../utilities/handler-helper', {
-            './query-helper': queryHelperStub,
-            'boom': boomStub
+            './query-helper': queryHelperStub
           });
           sandbox.stub(Log, 'error', function(){});
 
@@ -1999,10 +1977,8 @@ test('handler-helper.createHandler', function(t) {
           var server = sandbox.spy();
           var queryHelperStub = sandbox.stub(require('../utilities/query-helper'));
           queryHelperStub.createAttributesFilter = function(){ return "attributes" };
-          var boomStub = sandbox.stub(require('boom'));
           var handlerHelper = proxyquire('../utilities/handler-helper', {
-            './query-helper': queryHelperStub,
-            'boom': boomStub
+            './query-helper': queryHelperStub
           });
           sandbox.stub(Log, 'error', function(){});
 
@@ -2050,10 +2026,8 @@ test('handler-helper.createHandler', function(t) {
           var server = sandbox.spy();
           var queryHelperStub = sandbox.stub(require('../utilities/query-helper'));
           queryHelperStub.createAttributesFilter = function(){ return "attributes" };
-          var boomStub = sandbox.stub(require('boom'));
           var handlerHelper = proxyquire('../utilities/handler-helper', {
-            './query-helper': queryHelperStub,
-            'boom': boomStub
+            './query-helper': queryHelperStub
           });
           sandbox.stub(Log, 'error', function(){});
 
@@ -2281,9 +2255,7 @@ test('handler-helper.deleteOneHandler', function(t) {
           var sandbox = sinon.sandbox.create();
           var Log = logger.bind("handler-helper");
           var server = sandbox.spy();
-          var boomStub = sandbox.stub(require('boom'));
           var handlerHelper = proxyquire('../utilities/handler-helper', {
-            'boom': boomStub
           });
           sandbox.stub(Log, 'error', function(){});
 
@@ -2330,9 +2302,7 @@ test('handler-helper.deleteOneHandler', function(t) {
           var sandbox = sinon.sandbox.create();
           var Log = logger.bind("handler-helper");
           var server = sandbox.spy();
-          var boomStub = sandbox.stub(require('boom'));
           var handlerHelper = proxyquire('../utilities/handler-helper', {
-            'boom': boomStub
           });
           sandbox.stub(Log, 'error', function(){});
 
@@ -2372,9 +2342,7 @@ test('handler-helper.deleteOneHandler', function(t) {
           var sandbox = sinon.sandbox.create();
           var Log = logger.bind("handler-helper");
           var server = sandbox.spy();
-          var boomStub = sandbox.stub(require('boom'));
           var handlerHelper = proxyquire('../utilities/handler-helper', {
-            'boom': boomStub
           });
           sandbox.stub(Log, 'error', function(){});
 
@@ -2420,9 +2388,7 @@ test('handler-helper.deleteOneHandler', function(t) {
           var sandbox = sinon.sandbox.create();
           var Log = logger.bind("handler-helper");
           var server = sandbox.spy();
-          var boomStub = sandbox.stub(require('boom'));
           var handlerHelper = proxyquire('../utilities/handler-helper', {
-            'boom': boomStub
           });
           sandbox.stub(Log, 'error', function(){});
 
@@ -2778,10 +2744,8 @@ test('handler-helper.updateHandler', function(t) {
           var server = sandbox.spy();
           var queryHelperStub = sandbox.stub(require('../utilities/query-helper'));
           queryHelperStub.createAttributesFilter = function(){ return "attributes" };
-          var boomStub = sandbox.stub(require('boom'));
           var handlerHelper = proxyquire('../utilities/handler-helper', {
-            './query-helper': queryHelperStub,
-            'boom': boomStub
+            './query-helper': queryHelperStub
           });
           sandbox.stub(Log, 'error', function(){});
 
@@ -2837,10 +2801,8 @@ test('handler-helper.updateHandler', function(t) {
           var server = sandbox.spy();
           var queryHelperStub = sandbox.stub(require('../utilities/query-helper'));
           queryHelperStub.createAttributesFilter = function(){ return "attributes" };
-          var boomStub = sandbox.stub(require('boom'));
           var handlerHelper = proxyquire('../utilities/handler-helper', {
-            './query-helper': queryHelperStub,
-            'boom': boomStub
+            './query-helper': queryHelperStub
           });
           sandbox.stub(Log, 'error', function(){});
 
@@ -2882,10 +2844,8 @@ test('handler-helper.updateHandler', function(t) {
           var server = sandbox.spy();
           var queryHelperStub = sandbox.stub(require('../utilities/query-helper'));
           queryHelperStub.createAttributesFilter = function(){ return "attributes" };
-          var boomStub = sandbox.stub(require('boom'));
           var handlerHelper = proxyquire('../utilities/handler-helper', {
-            './query-helper': queryHelperStub,
-            'boom': boomStub
+            './query-helper': queryHelperStub
           });
           sandbox.stub(Log, 'error', function(){});
 
@@ -2927,10 +2887,8 @@ test('handler-helper.updateHandler', function(t) {
           var server = sandbox.spy();
           var queryHelperStub = sandbox.stub(require('../utilities/query-helper'));
           queryHelperStub.createAttributesFilter = function(){ return "attributes" };
-          var boomStub = sandbox.stub(require('boom'));
           var handlerHelper = proxyquire('../utilities/handler-helper', {
-            './query-helper': queryHelperStub,
-            'boom': boomStub
+            './query-helper': queryHelperStub
           });
           sandbox.stub(Log, 'error', function(){});
 
@@ -2978,10 +2936,8 @@ test('handler-helper.updateHandler', function(t) {
           var server = sandbox.spy();
           var queryHelperStub = sandbox.stub(require('../utilities/query-helper'));
           queryHelperStub.createAttributesFilter = function(){ return "attributes" };
-          var boomStub = sandbox.stub(require('boom'));
           var handlerHelper = proxyquire('../utilities/handler-helper', {
-            './query-helper': queryHelperStub,
-            'boom': boomStub
+            './query-helper': queryHelperStub
           });
           sandbox.stub(Log, 'error', function(){});
 
