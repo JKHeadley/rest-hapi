@@ -130,9 +130,8 @@ test('rest-helper-factory.defaultHeadersValidation', function (t) {
 
 test('rest-helper-factory.generateRoutes', function (t) {
   var server = sinon.spy();
-  sinon.stub(Log, 'error', function () {
-  });
-  sinon.stub(Log, 'bind', function () {
+  sinon.stub(Log, 'error').callsFake(function(){});
+  sinon.stub(Log, 'bind').callsFake(function(){
     return Log
   });
   var restHelperFactory = require('../utilities/rest-helper-factory')(Log, mongoose, server);
@@ -153,12 +152,12 @@ test('rest-helper-factory.generateRoutes', function (t) {
     };
     var userModel = mongoose.model("user", userSchema);
 
-    sinon.stub(restHelperFactory, 'generateListEndpoint', sinon.spy());
-    sinon.stub(restHelperFactory, 'generateFindEndpoint', sinon.spy());
-    sinon.stub(restHelperFactory, 'generateCreateEndpoint', sinon.spy());
-    sinon.stub(restHelperFactory, 'generateUpdateEndpoint', sinon.spy());
-    sinon.stub(restHelperFactory, 'generateDeleteOneEndpoint', sinon.spy());
-    sinon.stub(restHelperFactory, 'generateDeleteManyEndpoint', sinon.spy());
+    sinon.stub(restHelperFactory, 'generateListEndpoint').callsFake(sinon.spy());
+    sinon.stub(restHelperFactory, 'generateFindEndpoint').callsFake(sinon.spy());
+    sinon.stub(restHelperFactory, 'generateCreateEndpoint').callsFake(sinon.spy());
+    sinon.stub(restHelperFactory, 'generateUpdateEndpoint').callsFake(sinon.spy());
+    sinon.stub(restHelperFactory, 'generateDeleteOneEndpoint').callsFake(sinon.spy());
+    sinon.stub(restHelperFactory, 'generateDeleteManyEndpoint').callsFake(sinon.spy());
     //</editor-fold>
 
     //<editor-fold desc="Act">
@@ -204,12 +203,12 @@ test('rest-helper-factory.generateRoutes', function (t) {
     };
     var userModel = mongoose.model("user", userSchema);
 
-    sinon.stub(restHelperFactory, 'generateListEndpoint', sinon.spy());
-    sinon.stub(restHelperFactory, 'generateFindEndpoint', sinon.spy());
-    sinon.stub(restHelperFactory, 'generateCreateEndpoint', sinon.spy());
-    sinon.stub(restHelperFactory, 'generateUpdateEndpoint', sinon.spy());
-    sinon.stub(restHelperFactory, 'generateDeleteOneEndpoint', sinon.spy());
-    sinon.stub(restHelperFactory, 'generateDeleteManyEndpoint', sinon.spy());
+    sinon.stub(restHelperFactory, 'generateListEndpoint').callsFake(sinon.spy());
+    sinon.stub(restHelperFactory, 'generateFindEndpoint').callsFake(sinon.spy());
+    sinon.stub(restHelperFactory, 'generateCreateEndpoint').callsFake(sinon.spy());
+    sinon.stub(restHelperFactory, 'generateUpdateEndpoint').callsFake(sinon.spy());
+    sinon.stub(restHelperFactory, 'generateDeleteOneEndpoint').callsFake(sinon.spy());
+    sinon.stub(restHelperFactory, 'generateDeleteManyEndpoint').callsFake(sinon.spy());
     //</editor-fold>
 
     //<editor-fold desc="Act">
@@ -269,18 +268,18 @@ test('rest-helper-factory.generateRoutes', function (t) {
     var groups = userModel.routeOptions.associations.groups;
     var permissions = userModel.routeOptions.associations.permissions;
 
-    sinon.stub(restHelperFactory, 'generateListEndpoint', sinon.spy());
-    sinon.stub(restHelperFactory, 'generateFindEndpoint', sinon.spy());
-    sinon.stub(restHelperFactory, 'generateCreateEndpoint', sinon.spy());
-    sinon.stub(restHelperFactory, 'generateUpdateEndpoint', sinon.spy());
-    sinon.stub(restHelperFactory, 'generateDeleteOneEndpoint', sinon.spy());
-    sinon.stub(restHelperFactory, 'generateDeleteManyEndpoint', sinon.spy());
+    sinon.stub(restHelperFactory, 'generateListEndpoint').callsFake(sinon.spy());
+    sinon.stub(restHelperFactory, 'generateFindEndpoint').callsFake(sinon.spy());
+    sinon.stub(restHelperFactory, 'generateCreateEndpoint').callsFake(sinon.spy());
+    sinon.stub(restHelperFactory, 'generateUpdateEndpoint').callsFake(sinon.spy());
+    sinon.stub(restHelperFactory, 'generateDeleteOneEndpoint').callsFake(sinon.spy());
+    sinon.stub(restHelperFactory, 'generateDeleteManyEndpoint').callsFake(sinon.spy());
 
-    sinon.stub(restHelperFactory, 'generateAssociationAddOneEndpoint', sinon.spy());
-    sinon.stub(restHelperFactory, 'generateAssociationRemoveOneEndpoint', sinon.spy());
-    sinon.stub(restHelperFactory, 'generateAssociationAddManyEndpoint', sinon.spy());
-    sinon.stub(restHelperFactory, 'generateAssociationRemoveManyEndpoint', sinon.spy());
-    sinon.stub(restHelperFactory, 'generateAssociationGetAllEndpoint', sinon.spy());
+    sinon.stub(restHelperFactory, 'generateAssociationAddOneEndpoint').callsFake(sinon.spy());
+    sinon.stub(restHelperFactory, 'generateAssociationRemoveOneEndpoint').callsFake(sinon.spy());
+    sinon.stub(restHelperFactory, 'generateAssociationAddManyEndpoint').callsFake(sinon.spy());
+    sinon.stub(restHelperFactory, 'generateAssociationRemoveManyEndpoint').callsFake(sinon.spy());
+    sinon.stub(restHelperFactory, 'generateAssociationGetAllEndpoint').callsFake(sinon.spy());
     //</editor-fold>
 
     //<editor-fold desc="Act">
@@ -351,18 +350,18 @@ test('rest-helper-factory.generateRoutes', function (t) {
     };
     var userModel = mongoose.model("user", userSchema);
 
-    sinon.stub(restHelperFactory, 'generateListEndpoint', sinon.spy());
-    sinon.stub(restHelperFactory, 'generateFindEndpoint', sinon.spy());
-    sinon.stub(restHelperFactory, 'generateCreateEndpoint', sinon.spy());
-    sinon.stub(restHelperFactory, 'generateUpdateEndpoint', sinon.spy());
-    sinon.stub(restHelperFactory, 'generateDeleteOneEndpoint', sinon.spy());
-    sinon.stub(restHelperFactory, 'generateDeleteManyEndpoint', sinon.spy());
+    sinon.stub(restHelperFactory, 'generateListEndpoint').callsFake(sinon.spy());
+    sinon.stub(restHelperFactory, 'generateFindEndpoint').callsFake(sinon.spy());
+    sinon.stub(restHelperFactory, 'generateCreateEndpoint').callsFake(sinon.spy());
+    sinon.stub(restHelperFactory, 'generateUpdateEndpoint').callsFake(sinon.spy());
+    sinon.stub(restHelperFactory, 'generateDeleteOneEndpoint').callsFake(sinon.spy());
+    sinon.stub(restHelperFactory, 'generateDeleteManyEndpoint').callsFake(sinon.spy());
 
-    sinon.stub(restHelperFactory, 'generateAssociationAddOneEndpoint', sinon.spy());
-    sinon.stub(restHelperFactory, 'generateAssociationRemoveOneEndpoint', sinon.spy());
-    sinon.stub(restHelperFactory, 'generateAssociationAddManyEndpoint', sinon.spy());
-    sinon.stub(restHelperFactory, 'generateAssociationRemoveManyEndpoint', sinon.spy());
-    sinon.stub(restHelperFactory, 'generateAssociationGetAllEndpoint', sinon.spy());
+    sinon.stub(restHelperFactory, 'generateAssociationAddOneEndpoint').callsFake(sinon.spy());
+    sinon.stub(restHelperFactory, 'generateAssociationRemoveOneEndpoint').callsFake(sinon.spy());
+    sinon.stub(restHelperFactory, 'generateAssociationAddManyEndpoint').callsFake(sinon.spy());
+    sinon.stub(restHelperFactory, 'generateAssociationRemoveManyEndpoint').callsFake(sinon.spy());
+    sinon.stub(restHelperFactory, 'generateAssociationGetAllEndpoint').callsFake(sinon.spy());
     //</editor-fold>
 
     //<editor-fold desc="Act">
@@ -415,12 +414,12 @@ test('rest-helper-factory.generateRoutes', function (t) {
     var userModel = mongoose.model("user", userSchema);
     var extraEndpoints = userModel.routeOptions.extraEndpoints;
 
-    sinon.stub(restHelperFactory, 'generateListEndpoint', sinon.spy());
-    sinon.stub(restHelperFactory, 'generateFindEndpoint', sinon.spy());
-    sinon.stub(restHelperFactory, 'generateCreateEndpoint', sinon.spy());
-    sinon.stub(restHelperFactory, 'generateUpdateEndpoint', sinon.spy());
-    sinon.stub(restHelperFactory, 'generateDeleteOneEndpoint', sinon.spy());
-    sinon.stub(restHelperFactory, 'generateDeleteManyEndpoint', sinon.spy());
+    sinon.stub(restHelperFactory, 'generateListEndpoint').callsFake(sinon.spy());
+    sinon.stub(restHelperFactory, 'generateFindEndpoint').callsFake(sinon.spy());
+    sinon.stub(restHelperFactory, 'generateCreateEndpoint').callsFake(sinon.spy());
+    sinon.stub(restHelperFactory, 'generateUpdateEndpoint').callsFake(sinon.spy());
+    sinon.stub(restHelperFactory, 'generateDeleteOneEndpoint').callsFake(sinon.spy());
+    sinon.stub(restHelperFactory, 'generateDeleteManyEndpoint').callsFake(sinon.spy());
     //</editor-fold>
 
     //<editor-fold desc="Act">
@@ -463,7 +462,7 @@ test('rest-helper-factory.generateListEndpoint', function (t) {
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel').callsFake(function () {
       return Joi.any()
     });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
@@ -506,7 +505,7 @@ test('rest-helper-factory.generateListEndpoint', function (t) {
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel').callsFake(function () {
       return Joi.any()
     });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
@@ -551,7 +550,7 @@ test('rest-helper-factory.generateListEndpoint', function (t) {
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel').callsFake(function () {
       return Joi.any()
     });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
@@ -594,7 +593,7 @@ test('rest-helper-factory.generateListEndpoint', function (t) {
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel').callsFake(function () {
       return Joi.any()
     });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
@@ -637,7 +636,7 @@ test('rest-helper-factory.generateListEndpoint', function (t) {
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel').callsFake(function () {
       return Joi.any()
     });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
@@ -682,7 +681,7 @@ test('rest-helper-factory.generateListEndpoint', function (t) {
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel').callsFake(function () {
       return Joi.any()
     });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
@@ -743,7 +742,7 @@ test('rest-helper-factory.generateListEndpoint', function (t) {
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel').callsFake(function () {
       return Joi.any()
     });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
@@ -788,7 +787,7 @@ test('rest-helper-factory.generateListEndpoint', function (t) {
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel').callsFake(function () {
       return Joi.any()
     });
     var config = {authStrategy: "TEST_AUTH"};
@@ -835,7 +834,7 @@ test('rest-helper-factory.generateListEndpoint', function (t) {
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel').callsFake(function () {
       return Joi.any()
     });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
@@ -894,7 +893,7 @@ test('rest-helper-factory.generateListEndpoint', function (t) {
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel').callsFake(function () {
       return Joi.any()
     });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
@@ -954,7 +953,7 @@ test('rest-helper-factory.generateListEndpoint', function (t) {
     queryHelperStub.getSortableFields = this.spy(function () {
       return sortableFields
     });
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel').callsFake(function () {
       return Joi.any()
     });
     joiMongooseHelperStub.generateJoiModelFromFieldType = this.spy(function () {
@@ -1062,7 +1061,7 @@ test('rest-helper-factory.generateListEndpoint', function (t) {
     queryHelperStub.getSortableFields = this.spy(function () {
       return sortableFields
     });
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel').callsFake(function () {
       return Joi.any()
     });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
@@ -1135,7 +1134,7 @@ test('rest-helper-factory.generateListEndpoint', function (t) {
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel').callsFake(function () {
       return Joi.any()
     });
     var config = {authStrategy: "TEST_AUTH"};
@@ -1190,7 +1189,7 @@ test('rest-helper-factory.generateListEndpoint', function (t) {
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel').callsFake(function () {
       return Joi.any()
     });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
@@ -1240,7 +1239,7 @@ test('rest-helper-factory.generateListEndpoint', function (t) {
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
     var readModel = Joi.any().valid(["test"]);
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel').callsFake(function () {
       return readModel
     });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
@@ -1303,7 +1302,7 @@ test('rest-helper-factory.generateFindEndpoint', function (t) {
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel').callsFake(function () {
       return Joi.any()
     });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
@@ -1346,7 +1345,7 @@ test('rest-helper-factory.generateFindEndpoint', function (t) {
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel').callsFake(function () {
       return Joi.any()
     });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
@@ -1389,7 +1388,7 @@ test('rest-helper-factory.generateFindEndpoint', function (t) {
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel').callsFake(function () {
       return Joi.any()
     });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
@@ -1432,7 +1431,7 @@ test('rest-helper-factory.generateFindEndpoint', function (t) {
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel').callsFake(function () {
       return Joi.any()
     });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
@@ -1475,7 +1474,7 @@ test('rest-helper-factory.generateFindEndpoint', function (t) {
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel').callsFake(function () {
       return Joi.any()
     });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
@@ -1520,7 +1519,7 @@ test('rest-helper-factory.generateFindEndpoint', function (t) {
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel').callsFake(function () {
       return Joi.any()
     });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
@@ -1581,7 +1580,7 @@ test('rest-helper-factory.generateFindEndpoint', function (t) {
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel').callsFake(function () {
       return Joi.any()
     });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
@@ -1626,7 +1625,7 @@ test('rest-helper-factory.generateFindEndpoint', function (t) {
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel').callsFake(function () {
       return Joi.any()
     });
     var config = {authStrategy: "TEST_AUTH"};
@@ -1673,7 +1672,7 @@ test('rest-helper-factory.generateFindEndpoint', function (t) {
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel').callsFake(function () {
       return Joi.any()
     });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
@@ -1732,7 +1731,7 @@ test('rest-helper-factory.generateFindEndpoint', function (t) {
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel').callsFake(function () {
       return Joi.any()
     });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
@@ -1792,7 +1791,7 @@ test('rest-helper-factory.generateFindEndpoint', function (t) {
     queryHelperStub.getSortableFields = this.spy(function () {
       return sortableFields
     });
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel').callsFake(function () {
       return Joi.any()
     });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
@@ -1853,7 +1852,7 @@ test('rest-helper-factory.generateFindEndpoint', function (t) {
     queryHelperStub.getSortableFields = this.spy(function () {
       return sortableFields
     });
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel').callsFake(function () {
       return Joi.any()
     });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
@@ -1917,7 +1916,7 @@ test('rest-helper-factory.generateFindEndpoint', function (t) {
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel').callsFake(function () {
       return Joi.any()
     });
     var joiStub = require('joi');
@@ -1978,7 +1977,7 @@ test('rest-helper-factory.generateFindEndpoint', function (t) {
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel').callsFake(function () {
       return Joi.any()
     });
     var config = {authStrategy: "TEST_AUTH"};
@@ -2029,7 +2028,7 @@ test('rest-helper-factory.generateFindEndpoint', function (t) {
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel').callsFake(function () {
       return Joi.any()
     });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
@@ -2075,7 +2074,7 @@ test('rest-helper-factory.generateFindEndpoint', function (t) {
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
     var readModel = Joi.any().valid(["test"]);
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel').callsFake(function () {
       return readModel
     });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
@@ -2127,7 +2126,7 @@ test('rest-helper-factory.generateFindEndpoint', function (t) {
 //     var handlerHelperStubWrapper = this.stub();
 //     handlerHelperStubWrapper.returns(handlerHelperStub);
 //     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-//     var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});
+//     var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel').callsFake(function(){return Joi.any()});
 //     joiMongooseHelperStub.generateJoiCreateModel = this.spy(function(){return Joi.any()});
 //     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
 //       './handler-helper-factory': handlerHelperStubWrapper,
@@ -2165,7 +2164,7 @@ test('rest-helper-factory.generateFindEndpoint', function (t) {
 //     var handlerHelperStubWrapper = this.stub();
 //     handlerHelperStubWrapper.returns(handlerHelperStub);
 //     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-//     var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});
+//     var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel').callsFake(function(){return Joi.any()});
 //     joiMongooseHelperStub.generateJoiCreateModel = this.spy(function(){return Joi.any()});
 //     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
 //       './handler-helper-factory': handlerHelperStubWrapper,
@@ -2203,7 +2202,7 @@ test('rest-helper-factory.generateFindEndpoint', function (t) {
 //     var handlerHelperStubWrapper = this.stub();
 //     handlerHelperStubWrapper.returns(handlerHelperStub);
 //     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-//     var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiCreateModel', function(){return Joi.any()});
+//     var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiCreateModel').callsFake(function(){return Joi.any()});
 //     joiMongooseHelperStub.generateJoiReadModel = this.spy(function(){return Joi.any()});
 //     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
 //       './handler-helper-factory': handlerHelperStubWrapper,
@@ -2241,7 +2240,7 @@ test('rest-helper-factory.generateFindEndpoint', function (t) {
 //     var handlerHelperStubWrapper = this.stub();
 //     handlerHelperStubWrapper.returns(handlerHelperStub);
 //     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-//     var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});
+//     var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel').callsFake(function(){return Joi.any()});
 //     joiMongooseHelperStub.generateJoiCreateModel = this.spy(function(){return Joi.any()});
 //     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
 //       './handler-helper-factory': handlerHelperStubWrapper,
@@ -2279,7 +2278,7 @@ test('rest-helper-factory.generateFindEndpoint', function (t) {
 //     var handlerHelperStubWrapper = this.stub();
 //     handlerHelperStubWrapper.returns(handlerHelperStub);
 //     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-//     var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});
+//     var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel').callsFake(function(){return Joi.any()});
 //     joiMongooseHelperStub.generateJoiCreateModel = this.spy(function(){return Joi.any()});
 //     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
 //       './handler-helper-factory': handlerHelperStubWrapper,
@@ -2319,7 +2318,7 @@ test('rest-helper-factory.generateFindEndpoint', function (t) {
 //     var handlerHelperStubWrapper = this.stub();
 //     handlerHelperStubWrapper.returns(handlerHelperStub);
 //     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-//     var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});
+//     var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel').callsFake(function(){return Joi.any()});
 //     joiMongooseHelperStub.generateJoiCreateModel =function(){return Joi.any()};
 //     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
 //       './handler-helper-factory': handlerHelperStubWrapper,
@@ -2373,7 +2372,7 @@ test('rest-helper-factory.generateFindEndpoint', function (t) {
 //     var handlerHelperStubWrapper = this.stub();
 //     handlerHelperStubWrapper.returns(handlerHelperStub);
 //     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-//     var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});
+//     var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel').callsFake(function(){return Joi.any()});
 //     joiMongooseHelperStub.generateJoiCreateModel = this.spy(function(){return Joi.any()});
 //     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
 //       './handler-helper-factory': handlerHelperStubWrapper,
@@ -2413,7 +2412,7 @@ test('rest-helper-factory.generateFindEndpoint', function (t) {
 //     var handlerHelperStubWrapper = this.stub();
 //     handlerHelperStubWrapper.returns(handlerHelperStub);
 //     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-//     var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});
+//     var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel').callsFake(function(){return Joi.any()});
 //     joiMongooseHelperStub.generateJoiCreateModel = this.spy(function(){return Joi.any()});
 //     var config = { authStrategy: "TEST_AUTH" };
 //     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
@@ -2455,7 +2454,7 @@ test('rest-helper-factory.generateFindEndpoint', function (t) {
 //     var handlerHelperStubWrapper = this.stub();
 //     handlerHelperStubWrapper.returns(handlerHelperStub);
 //     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-//     var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});
+//     var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel').callsFake(function(){return Joi.any()});
 //     joiMongooseHelperStub.generateJoiCreateModel = this.spy(function(){return Joi.any()});
 //     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
 //       './handler-helper-factory': handlerHelperStubWrapper,
@@ -2509,7 +2508,7 @@ test('rest-helper-factory.generateFindEndpoint', function (t) {
 //     var handlerHelperStubWrapper = this.stub();
 //     handlerHelperStubWrapper.returns(handlerHelperStub);
 //     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-//     var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});
+//     var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel').callsFake(function(){return Joi.any()});
 //     joiMongooseHelperStub.generateJoiCreateModel = this.spy(function(){return Joi.any()});
 //     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
 //       './handler-helper-factory': handlerHelperStubWrapper,
@@ -2553,7 +2552,7 @@ test('rest-helper-factory.generateFindEndpoint', function (t) {
 //     var handlerHelperStubWrapper = this.stub();
 //     handlerHelperStubWrapper.returns(handlerHelperStub);
 //     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-//     var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});
+//     var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel').callsFake(function(){return Joi.any()});
 //     joiMongooseHelperStub.generateJoiCreateModel = function(){return Joi.any().valid("TEST")};
 //     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
 //       './handler-helper-factory': handlerHelperStubWrapper,
@@ -2592,7 +2591,7 @@ test('rest-helper-factory.generateFindEndpoint', function (t) {
 //     var handlerHelperStubWrapper = this.stub();
 //     handlerHelperStubWrapper.returns(handlerHelperStub);
 //     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-//     var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});
+//     var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel').callsFake(function(){return Joi.any()});
 //     joiMongooseHelperStub.generateJoiCreateModel = this.spy(function(){return Joi.any()});
 //     var config = { authStrategy: "TEST_AUTH" };
 //     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
@@ -2638,7 +2637,7 @@ test('rest-helper-factory.generateFindEndpoint', function (t) {
 //     var handlerHelperStubWrapper = this.stub();
 //     handlerHelperStubWrapper.returns(handlerHelperStub);
 //     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-//     var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return Joi.any()});
+//     var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel').callsFake(function(){return Joi.any()});
 //     joiMongooseHelperStub.generateJoiCreateModel = this.spy(function(){return Joi.any()});
 //     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
 //       './handler-helper-factory': handlerHelperStubWrapper,
@@ -2679,7 +2678,7 @@ test('rest-helper-factory.generateFindEndpoint', function (t) {
 //     handlerHelperStubWrapper.returns(handlerHelperStub);
 //     var queryHelperStub = this.stub(require('../utilities/query-helper'));
 //     var readModel = Joi.any().valid(["test"]);
-//     var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function(){return readModel});
+//     var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel').callsFake(function(){return readModel});
 //     joiMongooseHelperStub.generateJoiCreateModel = this.spy(function(){return Joi.any()});
 //     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
 //       './handler-helper-factory': handlerHelperStubWrapper,
@@ -2732,7 +2731,7 @@ test('rest-helper-factory.generateDeleteOneEndpoint', function (t) {
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel').callsFake(function () {
       return Joi.any()
     });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
@@ -2775,7 +2774,7 @@ test('rest-helper-factory.generateDeleteOneEndpoint', function (t) {
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel').callsFake(function () {
       return Joi.any()
     });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
@@ -2818,7 +2817,7 @@ test('rest-helper-factory.generateDeleteOneEndpoint', function (t) {
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel').callsFake(function () {
       return Joi.any()
     });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
@@ -2863,7 +2862,7 @@ test('rest-helper-factory.generateDeleteOneEndpoint', function (t) {
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel').callsFake(function () {
       return Joi.any()
     });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
@@ -2924,7 +2923,7 @@ test('rest-helper-factory.generateDeleteOneEndpoint', function (t) {
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel').callsFake(function () {
       return Joi.any()
     });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
@@ -2969,7 +2968,7 @@ test('rest-helper-factory.generateDeleteOneEndpoint', function (t) {
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel').callsFake(function () {
       return Joi.any()
     });
     var config = {authStrategy: "TEST_AUTH"};
@@ -3016,7 +3015,7 @@ test('rest-helper-factory.generateDeleteOneEndpoint', function (t) {
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel').callsFake(function () {
       return Joi.any()
     });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
@@ -3075,7 +3074,7 @@ test('rest-helper-factory.generateDeleteOneEndpoint', function (t) {
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel').callsFake(function () {
       return Joi.any()
     });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
@@ -3124,7 +3123,7 @@ test('rest-helper-factory.generateDeleteOneEndpoint', function (t) {
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel').callsFake(function () {
       return Joi.any()
     });
     var joiStub = require('joi');
@@ -3190,7 +3189,7 @@ test('rest-helper-factory.generateDeleteOneEndpoint', function (t) {
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel').callsFake(function () {
       return Joi.any()
     });
     var config = {authStrategy: "TEST_AUTH"};
@@ -3241,7 +3240,7 @@ test('rest-helper-factory.generateDeleteOneEndpoint', function (t) {
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel').callsFake(function () {
       return Joi.any()
     });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
@@ -3294,7 +3293,7 @@ test('rest-helper-factory.generateUpdateEndpoint', function (t) {
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel').callsFake(function () {
       return Joi.any()
     });
     joiMongooseHelperStub.generateJoiUpdateModel = this.spy(function () {
@@ -3343,7 +3342,7 @@ test('rest-helper-factory.generateUpdateEndpoint', function (t) {
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel').callsFake(function () {
       return Joi.any()
     });
     joiMongooseHelperStub.generateJoiUpdateModel = this.spy(function () {
@@ -3389,7 +3388,7 @@ test('rest-helper-factory.generateUpdateEndpoint', function (t) {
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel').callsFake(function () {
       return Joi.any()
     });
     joiMongooseHelperStub.generateJoiUpdateModel = this.spy(function () {
@@ -3435,7 +3434,7 @@ test('rest-helper-factory.generateUpdateEndpoint', function (t) {
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel').callsFake(function () {
       return Joi.any()
     });
     joiMongooseHelperStub.generateJoiUpdateModel = this.spy(function () {
@@ -3481,7 +3480,7 @@ test('rest-helper-factory.generateUpdateEndpoint', function (t) {
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel').callsFake(function () {
       return Joi.any()
     });
     joiMongooseHelperStub.generateJoiUpdateModel = this.spy(function () {
@@ -3529,7 +3528,7 @@ test('rest-helper-factory.generateUpdateEndpoint', function (t) {
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel').callsFake(function () {
       return Joi.any()
     });
     joiMongooseHelperStub.generateJoiUpdateModel = this.spy(function () {
@@ -3596,7 +3595,7 @@ test('rest-helper-factory.generateUpdateEndpoint', function (t) {
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel').callsFake(function () {
       return Joi.any()
     });
     joiMongooseHelperStub.generateJoiUpdateModel = this.spy(function () {
@@ -3644,7 +3643,7 @@ test('rest-helper-factory.generateUpdateEndpoint', function (t) {
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel').callsFake(function () {
       return Joi.any()
     });
     joiMongooseHelperStub.generateJoiUpdateModel = this.spy(function () {
@@ -3694,7 +3693,7 @@ test('rest-helper-factory.generateUpdateEndpoint', function (t) {
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel').callsFake(function () {
       return Joi.any()
     });
     joiMongooseHelperStub.generateJoiUpdateModel = this.spy(function () {
@@ -3756,7 +3755,7 @@ test('rest-helper-factory.generateUpdateEndpoint', function (t) {
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel').callsFake(function () {
       return Joi.any()
     });
     joiMongooseHelperStub.generateJoiUpdateModel = this.spy(function () {
@@ -3808,7 +3807,7 @@ test('rest-helper-factory.generateUpdateEndpoint', function (t) {
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel').callsFake(function () {
       return Joi.any()
     });
     joiMongooseHelperStub.generateJoiUpdateModel = this.spy(function () {
@@ -3858,7 +3857,7 @@ test('rest-helper-factory.generateUpdateEndpoint', function (t) {
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel').callsFake(function () {
       return Joi.any()
     });
     joiMongooseHelperStub.generateJoiUpdateModel = this.spy(function () {
@@ -3923,7 +3922,7 @@ test('rest-helper-factory.generateUpdateEndpoint', function (t) {
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel').callsFake(function () {
       return Joi.any()
     });
     joiMongooseHelperStub.generateJoiUpdateModel = this.spy(function () {
@@ -3977,7 +3976,7 @@ test('rest-helper-factory.generateUpdateEndpoint', function (t) {
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel').callsFake(function () {
       return Joi.any()
     });
     joiMongooseHelperStub.generateJoiUpdateModel = this.spy(function () {
@@ -4026,7 +4025,7 @@ test('rest-helper-factory.generateUpdateEndpoint', function (t) {
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
     var readModel = Joi.any().valid(["test"]);
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel').callsFake(function () {
       return readModel
     });
     joiMongooseHelperStub.generateJoiUpdateModel = this.spy(function () {
@@ -4084,7 +4083,7 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function (t) {
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiAssociationModel', function () {
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiAssociationModel').callsFake(function () {
       return Joi.any()
     });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
@@ -4137,7 +4136,7 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function (t) {
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiAssociationModel', function () {
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiAssociationModel').callsFake(function () {
       return Joi.any()
     });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
@@ -4192,7 +4191,7 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function (t) {
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiAssociationModel', function () {
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiAssociationModel').callsFake(function () {
       return Joi.any()
     });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
@@ -4242,7 +4241,7 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function (t) {
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiAssociationModel', function () {
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiAssociationModel').callsFake(function () {
       return Joi.any()
     });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
@@ -4292,7 +4291,7 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function (t) {
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiAssociationModel', function () {
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiAssociationModel').callsFake(function () {
       return Joi.any()
     });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
@@ -4344,7 +4343,7 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function (t) {
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiAssociationModel', function () {
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiAssociationModel').callsFake(function () {
       return Joi.any()
     });
     joiMongooseHelperStub.generateJoiUpdateModel = function () {
@@ -4417,7 +4416,7 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function (t) {
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiAssociationModel', function () {
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiAssociationModel').callsFake(function () {
       return Joi.any()
     });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
@@ -4469,7 +4468,7 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function (t) {
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiAssociationModel', function () {
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiAssociationModel').callsFake(function () {
       return Joi.any()
     });
     var config = {authStrategy: "TEST_AUTH"};
@@ -4523,7 +4522,7 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function (t) {
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiAssociationModel', function () {
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiAssociationModel').callsFake(function () {
       return Joi.any()
     });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
@@ -4614,7 +4613,7 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function (t) {
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiAssociationModel', function () {
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiAssociationModel').callsFake(function () {
       return Joi.any()
     });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
@@ -4670,7 +4669,7 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function (t) {
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiAssociationModel', function () {
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiAssociationModel').callsFake(function () {
       return Joi.any()
     });
     joiMongooseHelperStub.generateJoiAssociationModel = function () {
@@ -4737,7 +4736,7 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function (t) {
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiAssociationModel', function () {
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiAssociationModel').callsFake(function () {
       return Joi.any()
     });
     var joiStub = require('joi');
@@ -4806,7 +4805,7 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function (t) {
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiAssociationModel', function () {
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiAssociationModel').callsFake(function () {
       return Joi.any()
     });
     var config = {authStrategy: "TEST_AUTH"};
@@ -4864,7 +4863,7 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function (t) {
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiAssociationModel', function () {
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiAssociationModel').callsFake(function () {
       return Joi.any()
     });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
@@ -4916,7 +4915,7 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function (t) {
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiAssociationModel', function () {
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiAssociationModel').callsFake(function () {
       return readModel
     });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
@@ -4978,7 +4977,7 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function (t) {
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel').callsFake(function () {
       return Joi.any()
     });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
@@ -5031,7 +5030,7 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function (t) {
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel').callsFake(function () {
       return Joi.any()
     });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
@@ -5086,7 +5085,7 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function (t) {
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel').callsFake(function () {
       return Joi.any()
     });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
@@ -5136,7 +5135,7 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function (t) {
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel').callsFake(function () {
       return Joi.any()
     });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
@@ -5186,7 +5185,7 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function (t) {
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel').callsFake(function () {
       return Joi.any()
     });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
@@ -5238,7 +5237,7 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function (t) {
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel').callsFake(function () {
       return Joi.any()
     });
     joiMongooseHelperStub.generateJoiUpdateModel = function () {
@@ -5311,7 +5310,7 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function (t) {
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel').callsFake(function () {
       return Joi.any()
     });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
@@ -5363,7 +5362,7 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function (t) {
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel').callsFake(function () {
       return Joi.any()
     });
     var config = {authStrategy: "TEST_AUTH"};
@@ -5417,7 +5416,7 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function (t) {
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel').callsFake(function () {
       return Joi.any()
     });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
@@ -5507,7 +5506,7 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function (t) {
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel').callsFake(function () {
       return Joi.any()
     });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
@@ -5563,7 +5562,7 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function (t) {
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel').callsFake(function () {
       return Joi.any()
     });
     var joiStub = require('joi');
@@ -5632,7 +5631,7 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function (t) {
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel').callsFake(function () {
       return Joi.any()
     });
     var config = {authStrategy: "TEST_AUTH"};
@@ -5690,7 +5689,7 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function (t) {
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel').callsFake(function () {
       return Joi.any()
     });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
@@ -5742,7 +5741,7 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function (t) {
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel').callsFake(function () {
       return readModel
     });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
@@ -5804,7 +5803,7 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function (t) {
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel').callsFake(function () {
       return Joi.any()
     });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
@@ -5857,7 +5856,7 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function (t) {
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel').callsFake(function () {
       return Joi.any()
     });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
@@ -5912,7 +5911,7 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function (t) {
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel').callsFake(function () {
       return Joi.any()
     });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
@@ -5962,7 +5961,7 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function (t) {
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel').callsFake(function () {
       return Joi.any()
     });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
@@ -6012,7 +6011,7 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function (t) {
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel').callsFake(function () {
       return Joi.any()
     });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
@@ -6063,7 +6062,7 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function (t) {
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel').callsFake(function () {
       return Joi.any()
     });
     joiMongooseHelperStub.generateJoiUpdateModel = function () {
@@ -6135,7 +6134,7 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function (t) {
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel').callsFake(function () {
       return Joi.any()
     });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
@@ -6187,7 +6186,7 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function (t) {
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel').callsFake(function () {
       return Joi.any()
     });
     var config = {authStrategy: "TEST_AUTH"};
@@ -6241,7 +6240,7 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function (t) {
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel').callsFake(function () {
       return Joi.any()
     });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
@@ -6309,7 +6308,7 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function (t) {
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel').callsFake(function () {
       return Joi.any()
     });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
@@ -6365,7 +6364,7 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function (t) {
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel').callsFake(function () {
       return Joi.any()
     });
     joiMongooseHelperStub.generateJoiAssociationModel = function () {
@@ -6445,7 +6444,7 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function (t) {
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel').callsFake(function () {
       return Joi.any()
     });
     var joiStub = require('joi');
@@ -6512,7 +6511,7 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function (t) {
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel').callsFake(function () {
       return Joi.any()
     });
     var config = {authStrategy: "TEST_AUTH"};
@@ -6570,7 +6569,7 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function (t) {
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel').callsFake(function () {
       return Joi.any()
     });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
@@ -6622,7 +6621,7 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function (t) {
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel').callsFake(function () {
       return readModel
     });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
@@ -6684,7 +6683,7 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function (t) {
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel').callsFake(function () {
       return Joi.any()
     });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
@@ -6737,7 +6736,7 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function (t) {
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel').callsFake(function () {
       return Joi.any()
     });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
@@ -6792,7 +6791,7 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function (t) {
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel').callsFake(function () {
       return Joi.any()
     });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
@@ -6845,7 +6844,7 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function (t) {
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel').callsFake(function () {
       return Joi.any()
     });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
@@ -6900,7 +6899,7 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function (t) {
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel').callsFake(function () {
       return Joi.any()
     });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
@@ -6953,7 +6952,7 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function (t) {
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel').callsFake(function () {
       return Joi.any()
     });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
@@ -7006,7 +7005,7 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function (t) {
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel').callsFake(function () {
       return Joi.any()
     });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
@@ -7061,7 +7060,7 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function (t) {
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel').callsFake(function () {
       return Joi.any()
     });
     joiMongooseHelperStub.generateJoiUpdateModel = function () {
@@ -7138,7 +7137,7 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function (t) {
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel').callsFake(function () {
       return Joi.any()
     });
     var config = {authStrategy: "TEST_AUTH"};
@@ -7195,7 +7194,7 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function (t) {
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel').callsFake(function () {
       return Joi.any()
     });
     var config = {authStrategy: "TEST_AUTH"};
@@ -7252,7 +7251,7 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function (t) {
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel').callsFake(function () {
       return Joi.any()
     });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
@@ -7325,7 +7324,7 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function (t) {
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel').callsFake(function () {
       return Joi.any()
     });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
@@ -7395,7 +7394,7 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function (t) {
     queryHelperStub.getSortableFields = this.spy(function () {
       return sortableFields
     });
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel').callsFake(function () {
       return Joi.any()
     });
     joiMongooseHelperStub.generateJoiModelFromFieldType = this.spy(function () {
@@ -7508,7 +7507,7 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function (t) {
     queryHelperStub.getSortableFields = this.spy(function () {
       return sortableFields
     });
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel').callsFake(function () {
       return Joi.any()
     });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
@@ -7599,7 +7598,7 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function (t) {
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel').callsFake(function () {
       return Joi.any()
     });
     var config = {authStrategy: "TEST_AUTH"};
@@ -7660,7 +7659,7 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function (t) {
     var handlerHelperStubWrapper = this.stub();
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel').callsFake(function () {
       return Joi.any()
     });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
@@ -7716,7 +7715,7 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function (t) {
     handlerHelperStubWrapper.returns(handlerHelperStub);
     var queryHelperStub = this.stub(require('../utilities/query-helper'));
     var readModel = Joi.any().valid(["test"]);
-    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel', function () {
+    var joiMongooseHelperStub = this.stub(require('../utilities/joi-mongoose-helper'), 'generateJoiReadModel').callsFake(function () {
       return readModel
     });
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
