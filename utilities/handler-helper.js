@@ -1394,6 +1394,7 @@ function _getAll(ownerModel, ownerId, childModel, associationName, query, Log) {
  * @private
  */
 function _getAllHandler(ownerModel, ownerId, childModel, associationName, request, Log) {
+  let logError = false;
   try {
     let query = request.query;
 
@@ -1466,7 +1467,30 @@ function _getAllHandler(ownerModel, ownerId, childModel, associationName, reques
                     });
                   }
 
-                  return result;
+                  var promise = {};
+                  if (ownerModel.routeOptions && ownerModel.routeOptions.getAll &&
+                      ownerModel.routeOptions.getAll[associationName] && ownerModel.routeOptions.getAll[associationName].post) {
+                    promise = Q.fcall(ownerModel.routeOptions.getAll[associationName].post, request, result.docs, Log);
+                  }
+                  else {
+                    promise = Q.when(result.docs);
+                  }
+
+                  return promise
+                      .then(function(docs) {
+                        result.docs = docs;
+
+                        return result;
+                      })
+                      .catch(function(error) {
+                        const message = "There was a postprocessing error.";
+                        if (!logError) {
+                          Log.error(message);
+                          logError = true;
+                          delete error.type;
+                        }
+                        errorHelper.handleError(error, message, errorHelper.types.BAD_REQUEST, Log);
+                      });
                 })
           }
           else {
@@ -1478,16 +1502,20 @@ function _getAllHandler(ownerModel, ownerId, childModel, associationName, reques
         })
         .catch(function (error) {
           const message = "There was an error processing the request.";
-          if (!error.type) {
+          if (!logError) {
             Log.error(message);
+            logError = true;
+            delete error.type;
           }
           errorHelper.handleError(error, message, errorHelper.types.BAD_REQUEST, Log);
         });
   }
   catch(error) {
     const message = "There was an error processing the request.";
-    if (!error.type) {
+    if (!logError) {
       Log.error(message);
+      logError = true;
+      delete error.type;
     }
     try {
       errorHelper.handleError(error, message, errorHelper.types.BAD_REQUEST, Log)

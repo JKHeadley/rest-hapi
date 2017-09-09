@@ -1222,6 +1222,7 @@ allowNull: true | field accepts ``null`` as a valid value
 [Back to top](#readme-contents)
 
 ## Middleware
+### CRUD
 Models can support middleware functions for CRUD operations. These
 exist under the ``routeOptions`` object. Middleware functions must return
  a promise.  The following middleware functions
@@ -1293,6 +1294,32 @@ module.exports = function (mongoose) {
 
   return Schema;
 };
+```
+
+### Association
+Support is being added for association middlware. Currently the following association middleware exist:
+
+* getAll:
+    - post(request, result, Log)
+    
+Association middleware is defined similar to CRUD middleware, with the only difference being the association name must be specified.  See below for an example:
+
+```javascript
+        routeOptions: {
+          associations: {
+            groups: {
+              type: "MANY_MANY",
+              model: "group"
+            }
+          }
+        },
+        getAll: {
+          groups: {                                 //<---this must match the association name
+            post: function(request, result, Log) {
+              /** modify and return result **/
+            }
+          }
+        }
 ```
 
 [Back to top](#readme-contents)
