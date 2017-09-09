@@ -6,6 +6,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [0.22.0] - 2017-09-08
+### Added
+- getAll association middleware
+- Uncommented and updated deleteOne handler tests.
+
+### Changed
+- Replaced Boom.serverTimeout with .badImplementation
+
 ## [0.21.0] - 2017-09-06
 ### Added
 - list and find pre middleware
@@ -52,10 +60,11 @@ post(hardDelete, deleted, Log) | post(hardDelete, deleted, request, Log)
 
 
 
-[Unreleased]: https://github.com/jkheadley/rest-hapi/compare/v0.21.0...HEAD
+[Unreleased]: https://github.com/jkheadley/rest-hapi/compare/v0.22.0...HEAD
 [0.20.0]: https://github.com/jkheadley/rest-hapi/compare/v0.19.2...v0.20.0
 [0.20.2]: https://github.com/jkheadley/rest-hapi/compare/v0.20.0...v0.20.2
 [0.20.3]: https://github.com/jkheadley/rest-hapi/compare/v0.20.2...v0.20.3
 [0.21.0]: https://github.com/jkheadley/rest-hapi/compare/v0.20.3...v0.21.0
+[0.22.0]: https://github.com/jkheadley/rest-hapi/compare/v0.21.0...v0.22.0
 
 [BREAKING]: https://github.com/JKHeadley/rest-hapi/releases
