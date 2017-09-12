@@ -100,16 +100,101 @@ module.exports = {
             if (!linkingModel) {
               throw "unknown linking model: " + association.linkingModel;
             }
-            association.include = {
-              through: linkingModel
-            };
-            for (var objectKey in linkingModel.Schema) {
-              var object = linkingModel.Schema[objectKey];
-              dataObject[objectKey] = object;
+
+            association.include = {};
+
+            //EXPL: Create separate collection for linking model
+            if (!config.embedLinkingModels){
+              let modelExists = true;
+              try {
+                association.include.through = mongoose.model(linkingModel.modelName);
+              }
+              catch(error) {
+                modelExists = false;
+              }
+              if (!modelExists) {
+                const modelName = Schema.options.collection;
+                const Types = mongoose.Schema.Types;
+                linkingModel.Schema[modelName + "Id"] = {
+                  type: Types.ObjectId,
+                  ref: modelName
+                };
+                linkingModel.Schema[association.model + "Id"] = {
+                  type: Types.ObjectId,
+                  ref: association.model
+                };
+                var linkingModelSchema = new mongoose.Schema(linkingModel.Schema, { collection: linkingModel.modelName });
+
+                association.include.through = mongoose.model(linkingModel.modelName, linkingModelSchema);
+              }
+
+              //EXPL: we use virtual relationships for linking model collections
+              Schema.virtual(associationKey, {
+                ref: linkingModel.modelName,
+                localField: '_id',
+                foreignField: association.model + "Id"
+              });
+            }
+            //EXPL: Extend original schema with linking model schema
+            else {
+              for (var objectKey in linkingModel.Schema) {
+                var object = linkingModel.Schema[objectKey];
+                dataObject[objectKey] = object;
+              }
+
+              extendObject[associationKey] = [dataObject];
+              Schema.add(extendObject);
             }
           }
-          extendObject[associationKey] = [dataObject];
-          Schema.add(extendObject);
+          //EXPL: if linking models aren't embedded and one isn't defined, then we need to create a linking model collection
+          else if (!config.embedLinkingModels) {
+            const linkingModelName_1 = Schema.options.collection + "_" + association.model;
+            const linkingModelName_2 = association.model + "_" + Schema.options.collection;
+            let linkingModelName = linkingModelName_1;
+
+            association.include = {};
+
+            let modelExists = [true, true];
+            try {
+              association.include.through = mongoose.model(linkingModelName_1);
+              linkingModelName = linkingModelName_1;
+            }
+            catch(error) {
+              modelExists[0] = false;
+            }
+            try {
+              association.include.through = mongoose.model(linkingModelName_2);
+              linkingModelName = linkingModelName_2;
+            }
+            catch(error) {
+              modelExists[1] = false;
+            }
+            if (!modelExists[0] && !modelExists[1]) {
+              const modelName = Schema.options.collection;
+              const Types = mongoose.Schema.Types;
+
+              linkingModel = { Schema: {} };
+
+              linkingModel.Schema[modelName + "Id"] = {
+                type: Types.ObjectId,
+                ref: modelName
+              };
+              linkingModel.Schema[association.model + "Id"] = {
+                type: Types.ObjectId,
+                ref: association.model
+              };
+              var linkingModelSchema = new mongoose.Schema(linkingModel.Schema, { collection: linkingModelName });
+
+              association.include.through = mongoose.model(linkingModelName, linkingModelSchema);
+            }
+
+            //EXPL: we use virtual relationships for linking model collections
+            Schema.virtual(associationKey, {
+              ref: linkingModelName,
+              localField: '_id',
+              foreignField: association.model + "Id"
+            });
+          }
         }
         else if (association.type === "ONE_MANY") {//EXPL: for one-many relationships, create a virtual relationship
           if (association.foreignField) {

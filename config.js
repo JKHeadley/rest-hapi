@@ -66,10 +66,23 @@ config.mongo.URI = 'mongodb://localhost/rest_hapi';
 config.authStrategy = false;
 
 /**
- * MetaData options:
+ * If set to false, linking models will be saved in their own collection in th db.  This is useful if a single document
+ * will be associated with many other documents, which could cause the document size to become very large. For example,
+ * a business might be associated with thousands of users.
+ *
+ * Embedding the linking models will be more efficient for population/association queries but less efficient for memory/document size.
+ *
+ * This setting can be individually overwritten by setting the "embedLinkingModel" association property.
  * default: true
  * @type {boolean}
  */
+config.embedLinkingModels = false;
+
+/**
+* MetaData options:
+    * default: true
+* @type {boolean}
+*/
 config.enableCreatedAt = true;
 config.enableUpdatedAt = true;
 

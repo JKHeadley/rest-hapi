@@ -2,6 +2,7 @@
 
 var QueryHelper = require('./query-helper');
 var Q = require('q');
+var Mongoose = require('mongoose');
 var errorHelper = require('./error-helper');
 var extend = require('util')._extend;
 var config = require('../config');
@@ -1561,7 +1562,7 @@ function _setAssociation(ownerModel, ownerObject, childModel, childId, associati
             }
             else {
               payload = payload.filter(function(object) {//EXPL: the payload contains extra fields
-                return object.childId === childObject._id.toString();
+                return object.childId.toString() === childObject._id.toString();
               });
 
               payload = payload[0];
@@ -1572,63 +1573,79 @@ function _setAssociation(ownerModel, ownerObject, childModel, childId, associati
 
               extraFields = true;
             }
-            payload[childModel.modelName] = childObject._id;
 
-            var duplicate = ownerObject[associationName].filter(function (associationObject) {
-              return associationObject[childModel.modelName].toString() === childId;
-            });
-            duplicate = duplicate[0];
+            //EXPL: if linking models aren't embeded, just upsert the linking model collection
+            if (!config.embedLinkingModels) {
+              const linkingModel = association.include.through;
+              let query = {};
+              query[ownerModel.modelName + "Id"] = ownerObject._id;
+              query[childModel.modelName + "Id"] = childObject._id;
 
-            var duplicateIndex = ownerObject[associationName].indexOf(duplicate);
+              payload[ownerModel.modelName + "Id"] = ownerObject._id;
+              payload[childModel.modelName + "Id"] = childObject._id;
 
-            if (duplicateIndex < 0) {//EXPL: if the association doesn't already exist, create it, otherwise update the extra fields
-              ownerObject[associationName].push(payload);
-            }
-            else if (extraFields) {//EXPL: only update if there are extra fields TODO: reference MANY_MANY bug where updating association that's just an id (i.e. no extra fields) causes an error and reference this as the fix
-              payload._id = ownerObject[associationName][duplicateIndex]._id;//EXPL: retain the association instance id for consistency
-              ownerObject[associationName][duplicateIndex] = payload;
-            }
-
-            payload = extend({}, payload);//EXPL: break the reference to the original payload
-            delete payload._id;
-
-            delete payload[childModel.modelName];
-            payload[ownerModel.modelName] = ownerObject._id;
-            var childAssociation = {};
-            var childAssociations = childModel.routeOptions.associations;
-            for (var childAssociationKey in childAssociations) {
-              var association = childAssociations[childAssociationKey];
-              if (association.model === ownerModel.modelName && association.type === "MANY_MANY") {//TODO: Add issue referencing a conflict when a model has two associations of the same model and one is a MANY_MANY, and reference this change as the fix
-                childAssociation = association;
-              }
-            }
-
-            if (!childAssociation.include) {
-              throw new Error("Missing association between " + ownerModel.modelName + " and " + childModel.modelName + ".");
-            }
-
-            var childAssociationName = childAssociation.include.as;
-
-            if (!childObject[childAssociationName]) {
-              throw new Error(childAssociationName + " association does not exist.");
-            }
-
-            duplicate = childObject[childAssociationName].filter(function (associationObject) {
-              return associationObject[ownerModel.modelName].toString() === ownerObject._id.toString();
-            });
-            duplicate = duplicate[0];
-
-            duplicateIndex = childObject[childAssociationName].indexOf(duplicate);
-
-            if (duplicateIndex < 0) {//EXPL: if the association doesn't already exist, create it, otherwise update the extra fields
-              childObject[childAssociationName].push(payload);
+              promise = linkingModel.findOneAndUpdate(query, payload, { new: true, upsert: true });
             }
             else {
-              payload._id = childObject[childAssociationName][duplicateIndex]._id;//EXPL: retain the association instance id for consistency
-              childObject[childAssociationName][duplicateIndex] = payload;
+              payload[childModel.modelName] = childObject._id;
+
+              var duplicate = ownerObject[associationName].filter(function (associationObject) {
+                return associationObject[childModel.modelName].toString() === childId;
+              });
+              duplicate = duplicate[0];
+
+              var duplicateIndex = ownerObject[associationName].indexOf(duplicate);
+
+              if (duplicateIndex < 0) {//EXPL: if the association doesn't already exist, create it, otherwise update the extra fields
+                ownerObject[associationName].push(payload);
+              }
+              else if (extraFields) {//EXPL: only update if there are extra fields TODO: reference MANY_MANY bug where updating association that's just an id (i.e. no extra fields) causes an error and reference this as the fix
+                payload._id = ownerObject[associationName][duplicateIndex]._id;//EXPL: retain the association instance id for consistency
+                ownerObject[associationName][duplicateIndex] = payload;
+              }
+
+              payload = extend({}, payload);//EXPL: break the reference to the original payload
+              delete payload._id;
+
+              delete payload[childModel.modelName];
+              payload[ownerModel.modelName] = ownerObject._id;
+              var childAssociation = {};
+              var childAssociations = childModel.routeOptions.associations;
+              for (var childAssociationKey in childAssociations) {
+                var association = childAssociations[childAssociationKey];
+                if (association.model === ownerModel.modelName && association.type === "MANY_MANY") {//TODO: Add issue referencing a conflict when a model has two associations of the same model and one is a MANY_MANY, and reference this change as the fix
+                  childAssociation = association;
+                }
+              }
+
+              if (!childAssociation.include) {
+                throw new Error("Missing association between " + ownerModel.modelName + " and " + childModel.modelName + ".");
+              }
+
+              var childAssociationName = childAssociation.include.as;
+
+              if (!childObject[childAssociationName]) {
+                throw new Error(childAssociationName + " association does not exist.");
+              }
+
+              duplicate = childObject[childAssociationName].filter(function (associationObject) {
+                return associationObject[ownerModel.modelName].toString() === ownerObject._id.toString();
+              });
+              duplicate = duplicate[0];
+
+              duplicateIndex = childObject[childAssociationName].indexOf(duplicate);
+
+              if (duplicateIndex < 0) {//EXPL: if the association doesn't already exist, create it, otherwise update the extra fields
+                childObject[childAssociationName].push(payload);
+              }
+              else {
+                payload._id = childObject[childAssociationName][duplicateIndex]._id;//EXPL: retain the association instance id for consistency
+                childObject[childAssociationName][duplicateIndex] = payload;
+              }
+
+              promise = Q.all([ownerModel.findByIdAndUpdate(ownerObject._id, ownerObject), childModel.findByIdAndUpdate(childObject._id, childObject)]);
             }
 
-            promise = Q.all([ownerModel.findByIdAndUpdate(ownerObject._id, ownerObject), childModel.findByIdAndUpdate(childObject._id, childObject)]);
           }
           else if (association.type === "_MANY") {
 
