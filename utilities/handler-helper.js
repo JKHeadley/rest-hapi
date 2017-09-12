@@ -394,7 +394,10 @@ function _listHandler(model, request, Log) {
                       return { docs: result, pages: pages, items: items };
                     })
                     .catch(function (error) {
-                      const message = "There was a postprocessing error.";
+                      let message = "There was a postprocessing error.";
+                      if (_.isString(error)) {
+                        message = error;
+                      }
                       if (!logError) {
                         Log.error(message);
                         logError = true;
@@ -414,7 +417,10 @@ function _listHandler(model, request, Log) {
               });
         })
         .catch(function (error) {
-          const message = "There was a preprocessing error.";
+          let message = "There was a preprocessing error.";
+          if (_.isString(error)) {
+            message = error;
+          }
           if (!logError) {
             Log.error(message);
             logError = true;
@@ -525,7 +531,10 @@ function _findHandler(model, _id, request, Log) {
                         return result;
                       })
                       .catch(function (error) {
-                        const message = "There was a postprocessing error.";
+                        let message = "There was a postprocessing error.";
+                        if (_.isString(error)) {
+                          message = error;
+                        }
                         if (!logError) {
                           Log.error(message);
                           logError = true;
@@ -554,7 +563,10 @@ function _findHandler(model, _id, request, Log) {
               });
         })
         .catch(function(error) {
-          const message = "There was an error preprocessing the request.";
+          let message = "There was a preprocessing error.";
+          if (_.isString(error)) {
+            message = error;
+          }
           if (!logError) {
             Log.error(message);
             logError = true;
@@ -670,7 +682,10 @@ function _createHandler(model, request, Log) {
                             }
                           })
                           .catch(function (error) {
-                            const message = "There was a postprocessing error creating the resource.";
+                            let message = "There was a postprocessing error creating the resource.";
+                            if (_.isString(error)) {
+                              message = error;
+                            }
                             if (!logError) {
                               Log.error(message);
                               logError = true;
@@ -691,7 +706,10 @@ function _createHandler(model, request, Log) {
               });
         })
         .catch(function (error) {
-          const message = "There was a preprocessing error creating the resource.";
+          let message = "There was a preprocessing error creating the resource.";
+          if (_.isString(error)) {
+            message = error;
+          }
           if (!logError) {
             Log.error(message);
             logError = true;
@@ -780,7 +798,10 @@ function _updateHandler(model, _id, request, Log) {
                               return result;
                             })
                             .catch(function (error) {
-                              const message = "There was a postprocessing error updating the resource.";
+                              let message = "There was a postprocessing error updating the resource.";
+                              if (_.isString(error)) {
+                                message = error;
+                              }
                               if (!logError) {
                                 Log.error(message);
                                 logError = true;
@@ -810,7 +831,10 @@ function _updateHandler(model, _id, request, Log) {
               });
         })
         .catch(function (error) {
-          const message = "There was a preprocessing error updating the resource.";
+          let message = "There was a preprocessing error updating the resource.";
+          if (_.isString(error)) {
+            message = error;
+          }
           if (!logError) {
             Log.error(message);
             logError = true;
@@ -896,7 +920,10 @@ function _deleteOneHandler(model, _id, hardDelete, request, Log) {
                         return true;
                       })
                       .catch(function (error) {
-                        const message = "There was a postprocessing error deleting the resource.";
+                        let message = "There was a postprocessing error deleting the resource.";
+                        if (_.isString(error)) {
+                          message = error;
+                        }
                         if (!logError) {
                           Log.error(message);
                           logError = true;
@@ -925,7 +952,10 @@ function _deleteOneHandler(model, _id, hardDelete, request, Log) {
               });
         })
         .catch(function (error) {
-          const message = "There was a preprocessing error deleting the resource.";
+          let message = "There was a preprocessing error deleting the resource.";
+          if (_.isString(error)) {
+            message = error;
+          }
           if (!logError) {
             Log.error(message);
             logError = true;
@@ -1483,7 +1513,10 @@ function _getAllHandler(ownerModel, ownerId, childModel, associationName, reques
                         return result;
                       })
                       .catch(function(error) {
-                        const message = "There was a postprocessing error.";
+                        let message = "There was a postprocessing error.";
+                        if (_.isString(error)) {
+                          message = error;
+                        }
                         if (!logError) {
                           Log.error(message);
                           logError = true;
