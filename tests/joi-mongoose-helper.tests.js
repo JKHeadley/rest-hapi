@@ -41,7 +41,7 @@ test('joi-mongoose-helper.generateJoiReadModel', function (t) {
 
     t.plan(2);
 
-    sinon.stub(joiMongooseHelper, "generateJoiModelFromFieldType", function () {
+    sinon.stub(joiMongooseHelper, "generateJoiModelFromFieldType").callsFake(function () {
       return Joi.any()
     });
 
@@ -79,7 +79,7 @@ test('joi-mongoose-helper.generateJoiReadModel', function (t) {
 
     t.plan(3);
 
-    sinon.stub(joiMongooseHelper, "generateJoiModelFromFieldType", function () {
+    sinon.stub(joiMongooseHelper, "generateJoiModelFromFieldType").callsFake(function () {
       return Joi.any()
     });
 
@@ -119,7 +119,7 @@ test('joi-mongoose-helper.generateJoiReadModel', function (t) {
 
     t.plan(2);
 
-    sinon.stub(joiMongooseHelper, "generateJoiModelFromFieldType", function () {
+    sinon.stub(joiMongooseHelper, "generateJoiModelFromFieldType").callsFake(function () {
       return Joi.any()
     });
 
@@ -163,7 +163,7 @@ test('joi-mongoose-helper.generateJoiReadModel', function (t) {
 
     t.plan(4);
 
-    sinon.stub(joiMongooseHelper, "generateJoiModelFromFieldType", function () {
+    sinon.stub(joiMongooseHelper, "generateJoiModelFromFieldType").callsFake(function () {
       return Joi.any()
     });
 
@@ -210,7 +210,7 @@ test('joi-mongoose-helper.generateJoiReadModel', function (t) {
 
     t.plan(2);
 
-    sinon.stub(joiMongooseHelper, "generateJoiModelFromFieldType", function () {
+    sinon.stub(joiMongooseHelper, "generateJoiModelFromFieldType").callsFake(function () {
       return Joi.any()
     });
 
@@ -248,7 +248,7 @@ test('joi-mongoose-helper.generateJoiReadModel', function (t) {
 
     t.plan(16);
 
-    sinon.stub(joiMongooseHelper, "generateJoiModelFromFieldType", function () {
+    sinon.stub(joiMongooseHelper, "generateJoiModelFromFieldType").callsFake(function () {
       return Joi.any()
     });
 
@@ -316,7 +316,7 @@ test('joi-mongoose-helper.generateJoiReadModel', function (t) {
 
     t.plan(1);
 
-    sinon.stub(joiMongooseHelper, "generateJoiModelFromFieldType", function () {
+    sinon.stub(joiMongooseHelper, "generateJoiModelFromFieldType").callsFake(function () {
       return Joi.any()
     });
 
@@ -355,7 +355,7 @@ test('joi-mongoose-helper.generateJoiUpdateModel', function (t) {
 
     t.plan(2);
 
-    sinon.stub(joiMongooseHelper, "generateJoiModelFromFieldType", function () {
+    sinon.stub(joiMongooseHelper, "generateJoiModelFromFieldType").callsFake(function () {
       return Joi.any()
     });
 
@@ -393,7 +393,7 @@ test('joi-mongoose-helper.generateJoiUpdateModel', function (t) {
 
     t.plan(3);
 
-    sinon.stub(joiMongooseHelper, "generateJoiModelFromFieldType", function () {
+    sinon.stub(joiMongooseHelper, "generateJoiModelFromFieldType").callsFake(function () {
       return Joi.any()
     });
 
@@ -433,7 +433,7 @@ test('joi-mongoose-helper.generateJoiUpdateModel', function (t) {
 
     t.plan(1);
 
-    sinon.stub(joiMongooseHelper, "generateJoiModelFromFieldType", function () {
+    sinon.stub(joiMongooseHelper, "generateJoiModelFromFieldType").callsFake(function () {
       return Joi.any()
     });
 
@@ -471,7 +471,7 @@ test('joi-mongoose-helper.generateJoiUpdateModel', function (t) {
 
     t.plan(2);
 
-    sinon.stub(joiMongooseHelper, "generateJoiModelFromFieldType", function () {
+    sinon.stub(joiMongooseHelper, "generateJoiModelFromFieldType").callsFake(function () {
       return Joi.any()
     });
 
@@ -513,7 +513,7 @@ test('joi-mongoose-helper.generateJoiUpdateModel', function (t) {
 
     t.plan(3);
 
-    sinon.stub(joiMongooseHelper, "generateJoiModelFromFieldType", function () {
+    sinon.stub(joiMongooseHelper, "generateJoiModelFromFieldType").callsFake(function () {
       return Joi.any()
     });
 
@@ -555,7 +555,7 @@ test('joi-mongoose-helper.generateJoiUpdateModel', function (t) {
 
     t.plan(2);
 
-    sinon.stub(joiMongooseHelper, "generateJoiModelFromFieldType", function () {
+    sinon.stub(joiMongooseHelper, "generateJoiModelFromFieldType").callsFake(function () {
       return Joi.any()
     });
 
@@ -593,7 +593,7 @@ test('joi-mongoose-helper.generateJoiUpdateModel', function (t) {
 
     t.plan(8);
 
-    sinon.stub(joiMongooseHelper, "generateJoiModelFromFieldType", function () {
+    sinon.stub(joiMongooseHelper, "generateJoiModelFromFieldType").callsFake(function () {
       return Joi.any().only("test")
     });
 
@@ -700,7 +700,7 @@ test('joi-mongoose-helper.generateJoiCreateModel', function (t) {
 
     t.plan(2);
 
-    sinon.stub(joiMongooseHelper, "generateJoiModelFromFieldType", function () {
+    sinon.stub(joiMongooseHelper, "generateJoiModelFromFieldType").callsFake(function () {
       return Joi.any()
     });
 
@@ -738,7 +738,7 @@ test('joi-mongoose-helper.generateJoiCreateModel', function (t) {
 
     t.plan(3);
 
-    sinon.stub(joiMongooseHelper, "generateJoiModelFromFieldType", function () {
+    sinon.stub(joiMongooseHelper, "generateJoiModelFromFieldType").callsFake(function () {
       return Joi.any()
     });
 
@@ -778,7 +778,7 @@ test('joi-mongoose-helper.generateJoiCreateModel', function (t) {
 
     t.plan(1);
 
-    sinon.stub(joiMongooseHelper, "generateJoiModelFromFieldType", function () {
+    sinon.stub(joiMongooseHelper, "generateJoiModelFromFieldType").callsFake(function () {
       return Joi.any()
     });
 
@@ -816,7 +816,7 @@ test('joi-mongoose-helper.generateJoiCreateModel', function (t) {
 
     t.plan(2);
 
-    sinon.stub(joiMongooseHelper, "generateJoiModelFromFieldType", function () {
+    sinon.stub(joiMongooseHelper, "generateJoiModelFromFieldType").callsFake(function () {
       return Joi.any()
     });
 
@@ -858,7 +858,7 @@ test('joi-mongoose-helper.generateJoiCreateModel', function (t) {
 
     t.plan(3);
 
-    sinon.stub(joiMongooseHelper, "generateJoiModelFromFieldType", function () {
+    sinon.stub(joiMongooseHelper, "generateJoiModelFromFieldType").callsFake(function () {
       return Joi.any()
     });
 
@@ -900,7 +900,7 @@ test('joi-mongoose-helper.generateJoiCreateModel', function (t) {
 
     t.plan(2);
 
-    sinon.stub(joiMongooseHelper, "generateJoiModelFromFieldType", function () {
+    sinon.stub(joiMongooseHelper, "generateJoiModelFromFieldType").callsFake(function () {
       return Joi.any()
     });
 
@@ -938,7 +938,7 @@ test('joi-mongoose-helper.generateJoiCreateModel', function (t) {
 
     t.plan(8);
 
-    sinon.stub(joiMongooseHelper, "generateJoiModelFromFieldType", function () {
+    sinon.stub(joiMongooseHelper, "generateJoiModelFromFieldType").callsFake(function () {
       return Joi.any().only("test")
     });
 
@@ -1042,7 +1042,7 @@ test('joi-mongoose-helper.generateJoiAssociationModel', function (t) {
 
     t.plan(2);
 
-    sinon.stub(joiMongooseHelper, "generateJoiModelFromFieldType", function () {
+    sinon.stub(joiMongooseHelper, "generateJoiModelFromFieldType").callsFake(function () {
       return Joi.any()
     });
 
@@ -1078,7 +1078,7 @@ test('joi-mongoose-helper.generateJoiAssociationModel', function (t) {
 
     t.plan(3);
 
-    sinon.stub(joiMongooseHelper, "generateJoiModelFromFieldType", function () {
+    sinon.stub(joiMongooseHelper, "generateJoiModelFromFieldType").callsFake(function () {
       return Joi.any()
     });
 
@@ -1115,7 +1115,7 @@ test('joi-mongoose-helper.generateJoiAssociationModel', function (t) {
 
     t.plan(2);
 
-    sinon.stub(joiMongooseHelper, "generateJoiModelFromFieldType", function () {
+    sinon.stub(joiMongooseHelper, "generateJoiModelFromFieldType").callsFake(function () {
       return Joi.any()
     });
 
@@ -1149,7 +1149,7 @@ test('joi-mongoose-helper.generateJoiAssociationModel', function (t) {
 
     t.plan(2);
 
-    sinon.stub(joiMongooseHelper, "generateJoiModelFromFieldType", function () {
+    sinon.stub(joiMongooseHelper, "generateJoiModelFromFieldType").callsFake(function () {
       return Joi.any()
     });
 

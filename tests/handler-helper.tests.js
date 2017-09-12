@@ -65,7 +65,7 @@ test('handler-helper.listHandler', function (t) {
             './query-helper': queryHelperStub,
             './error-helper': errorHelperStub
           });
-          // sandbox.stub(Log, 'error', function(){});
+          sandbox.stub(Log, 'error').callsFake(function(){})
 
           var userSchema = new mongoose.Schema({});
 
@@ -108,7 +108,7 @@ test('handler-helper.listHandler', function (t) {
             './query-helper': queryHelperStub,
             './error-helper': errorHelperStub
           });
-          // sandbox.stub(Log, 'error', function(){});
+          sandbox.stub(Log, 'error').callsFake(function(){})
 
           var userSchema = new mongoose.Schema({});
 
@@ -164,7 +164,7 @@ test('handler-helper.listHandler', function (t) {
             './query-helper': queryHelperStub,
             './error-helper': errorHelperStub
           });
-          // sandbox.stub(Log, 'error', function(){});
+          sandbox.stub(Log, 'error').callsFake(function(){})
 
           var userSchema = new mongoose.Schema({});
 
@@ -221,7 +221,8 @@ test('handler-helper.listHandler', function (t) {
           };
           var paginateDeferred = Q.defer();
           var paginateSpy = sandbox.spy(function () {
-            paginateDeferred.resolve()
+            paginateDeferred.resolve();
+            return { exec: function(){ return Q.when([]) } };
           });
           queryHelperStub.paginate = paginateSpy;
           var errorHelperStub = sandbox.stub(require('../utilities/error-helper'));
@@ -229,7 +230,7 @@ test('handler-helper.listHandler', function (t) {
             './query-helper': queryHelperStub,
             './error-helper': errorHelperStub
           });
-          // sandbox.stub(Log, 'error', function(){});
+          sandbox.stub(Log, 'error').callsFake(function(){});
 
           var userSchema = new mongoose.Schema({});
 
@@ -243,15 +244,13 @@ test('handler-helper.listHandler', function (t) {
           var request = { query: query };
           //</editor-fold>
 
-          var LogStub = sandbox.stub(Log, 'error', function () {
-          });
           //<editor-fold desc="Act">
-          handlerHelper.listHandler(userModel, request, LogStub);
+          handlerHelper.listHandler(userModel, request, Log);
           //</editor-fold>
 
           //<editor-fold desc="Assert">
           return paginateDeferred.promise.then(function () {
-            t.ok(queryHelperStub.paginate.calledWithExactly(query, mongooseQuery1, LogStub), "paginate called");
+            t.ok(queryHelperStub.paginate.calledWithExactly(query, mongooseQuery1, Log), "paginate called");
           })
           //</editor-fold>
 
@@ -289,7 +288,8 @@ test('handler-helper.listHandler', function (t) {
           };
           var deferred = Q.defer();
           var execSpy = sandbox.spy(function () {
-            deferred.resolve()
+            deferred.resolve();
+            return Q.when([]);
           });
           var paginateSpy = sandbox.spy(function () {
             return {exec: execSpy}
@@ -300,7 +300,7 @@ test('handler-helper.listHandler', function (t) {
             './query-helper': queryHelperStub,
             './error-helper': errorHelperStub
           });
-          sandbox.stub(Log, 'error', function(){});
+          sandbox.stub(Log, 'error').callsFake(function(){});
 
           var userSchema = new mongoose.Schema({});
 
@@ -350,7 +350,7 @@ test('handler-helper.listHandler', function (t) {
             './query-helper': queryHelperStub,
             './error-helper': errorHelperStub
           });
-          // sandbox.stub(Log, 'error', function(){});
+          sandbox.stub(Log, 'error').callsFake(function(){});
 
           var userSchema = new mongoose.Schema({});
           var preDeferred = Q.defer();
@@ -430,7 +430,7 @@ test('handler-helper.listHandler', function (t) {
             './query-helper': queryHelperStub,
             './error-helper': errorHelperStub
           });
-          // sandbox.stub(Log, 'error', function(){});
+          sandbox.stub(Log, 'error').callsFake(function(){});
 
           var userSchema = new mongoose.Schema({});
           var postDeferred = Q.defer();
@@ -511,8 +511,7 @@ test('handler-helper.listHandler', function (t) {
             './query-helper': queryHelperStub,
             './error-helper': errorHelperStub
           });
-          sandbox.stub(Log, 'error', function () {
-          });
+          sandbox.stub(Log, 'error').callsFake(function(){});
 
           var userSchema = new mongoose.Schema({});
 
@@ -582,8 +581,7 @@ test('handler-helper.listHandler', function (t) {
             './query-helper': queryHelperStub,
             './error-helper': errorHelperStub
           });
-          sandbox.stub(Log, 'error', function () {
-          });
+          sandbox.stub(Log, 'error').callsFake(function(){});
 
           var userSchema = new mongoose.Schema({});
 
@@ -656,13 +654,10 @@ test('handler-helper.listHandler', function (t) {
           });
           queryHelperStub.paginate = paginateSpy;
 
-          var boomStub = sandbox.stub(require('boom'));
           var handlerHelper = proxyquire('../utilities/handler-helper', {
-            './query-helper': queryHelperStub,
-            'boom': boomStub
+            './query-helper': queryHelperStub
           });
-          sandbox.stub(Log, 'error', function () {
-          });
+          sandbox.stub(Log, 'error').callsFake(function(){});
 
           var userSchema = new mongoose.Schema({});
           var postDeferred = Q.defer();
@@ -737,13 +732,10 @@ test('handler-helper.listHandler', function (t) {
           });
           queryHelperStub.paginate = paginateSpy;
 
-          var boomStub = sandbox.stub(require('boom'));
           var handlerHelper = proxyquire('../utilities/handler-helper', {
-            './query-helper': queryHelperStub,
-            'boom': boomStub
+            './query-helper': queryHelperStub
           });
-          sandbox.stub(Log, 'error', function () {
-          });
+          sandbox.stub(Log, 'error').callsFake(function(){});
 
           var userSchema = new mongoose.Schema({});
 
@@ -781,13 +773,10 @@ test('handler-helper.listHandler', function (t) {
           var Log = logger.bind("handler-helper");
           var server = sandbox.spy();
           var queryHelperStub = sandbox.stub(require('../utilities/query-helper'));
-          var boomStub = sandbox.stub(require('boom'));
           var handlerHelper = proxyquire('../utilities/handler-helper', {
-            './query-helper': queryHelperStub,
-            'boom': boomStub
+            './query-helper': queryHelperStub
           });
-          sandbox.stub(Log, 'error', function () {
-          });
+          sandbox.stub(Log, 'error').callsFake(function(){});
 
           var userSchema = new mongoose.Schema({});
           userSchema.statics = {
@@ -832,13 +821,10 @@ test('handler-helper.listHandler', function (t) {
           var Log = logger.bind("handler-helper");
           var server = sandbox.spy();
           var queryHelperStub = sandbox.stub(require('../utilities/query-helper'));
-          var boomStub = sandbox.stub(require('boom'));
           var handlerHelper = proxyquire('../utilities/handler-helper', {
-            './query-helper': queryHelperStub,
-            'boom': boomStub
+            './query-helper': queryHelperStub
           });
-          sandbox.stub(Log, 'error', function () {
-          });
+          sandbox.stub(Log, 'error').callsFake(function(){});
 
           var userSchema = new mongoose.Schema({});
           userSchema.statics = {
@@ -894,7 +880,7 @@ test('handler-helper.findHandler', function(t) {
             './query-helper': queryHelperStub,
             './error-helper': errorHelperStub
           });
-          sandbox.stub(Log, 'error', function(){});
+          sandbox.stub(Log, 'error').callsFake(function(){})
 
           var userSchema = new mongoose.Schema({});
 
@@ -939,7 +925,7 @@ test('handler-helper.findHandler', function(t) {
             './query-helper': queryHelperStub,
             './error-helper': errorHelperStub
           });
-          sandbox.stub(Log, 'error', function(){});
+          sandbox.stub(Log, 'error').callsFake(function(){})
 
           var userSchema = new mongoose.Schema({});
 
@@ -987,7 +973,7 @@ test('handler-helper.findHandler', function(t) {
             './query-helper': queryHelperStub,
             './error-helper': errorHelperStub
           });
-          sandbox.stub(Log, 'error', function(){});
+          sandbox.stub(Log, 'error').callsFake(function(){})
 
           var userSchema = new mongoose.Schema({});
           var preDeferred = Q.defer();
@@ -1056,7 +1042,7 @@ test('handler-helper.findHandler', function(t) {
             './query-helper': queryHelperStub,
             './error-helper': errorHelperStub
           });
-          sandbox.stub(Log, 'error', function(){});
+          sandbox.stub(Log, 'error').callsFake(function(){})
 
           var userSchema = new mongoose.Schema({});
           var deferred = Q.defer();
@@ -1126,7 +1112,7 @@ test('handler-helper.findHandler', function(t) {
             './query-helper': queryHelperStub,
             './error-helper': errorHelperStub
           });
-          sandbox.stub(Log, 'error', function(){});
+          sandbox.stub(Log, 'error').callsFake(function(){})
 
           var userSchema = new mongoose.Schema({});
 
@@ -1181,12 +1167,10 @@ test('handler-helper.findHandler', function(t) {
             return mongooseQuery2;
           };
 
-          var boomStub = sandbox.stub(require('boom'));
           var handlerHelper = proxyquire('../utilities/handler-helper', {
-            './query-helper': queryHelperStub,
-            'boom': boomStub
+            './query-helper': queryHelperStub
           });
-          sandbox.stub(Log, 'error', function(){});
+          sandbox.stub(Log, 'error').callsFake(function(){})
 
           var userSchema = new mongoose.Schema({});
           var postDeferred = Q.defer();
@@ -1252,12 +1236,10 @@ test('handler-helper.findHandler', function(t) {
             return mongooseQuery2;
           };
 
-          var boomStub = sandbox.stub(require('boom'));
           var handlerHelper = proxyquire('../utilities/handler-helper', {
-            './query-helper': queryHelperStub,
-            'boom': boomStub
+            './query-helper': queryHelperStub
           });
-          sandbox.stub(Log, 'error', function(){});
+          sandbox.stub(Log, 'error').callsFake(function(){})
 
           var userSchema = new mongoose.Schema({});
           var userModel = mongoose.model("user", userSchema);
@@ -1310,12 +1292,10 @@ test('handler-helper.findHandler', function(t) {
             return mongooseQuery2;
           };
 
-          var boomStub = sandbox.stub(require('boom'));
           var handlerHelper = proxyquire('../utilities/handler-helper', {
-            './query-helper': queryHelperStub,
-            'boom': boomStub
+            './query-helper': queryHelperStub
           });
-          sandbox.stub(Log, 'error', function(){});
+          sandbox.stub(Log, 'error').callsFake(function(){})
 
           var userSchema = new mongoose.Schema({});
 
@@ -1355,12 +1335,10 @@ test('handler-helper.findHandler', function(t) {
           var Log = logger.bind("handler-helper");
           var server = sandbox.spy();
           var queryHelperStub = sandbox.stub(require('../utilities/query-helper'));
-          var boomStub = sandbox.stub(require('boom'));
           var handlerHelper = proxyquire('../utilities/handler-helper', {
-            './query-helper': queryHelperStub,
-            'boom': boomStub
+            './query-helper': queryHelperStub
           });
-          sandbox.stub(Log, 'error', function(){});
+          sandbox.stub(Log, 'error').callsFake(function(){})
 
           var userSchema = new mongoose.Schema({});
           userSchema.statics = {
@@ -1407,12 +1385,10 @@ test('handler-helper.findHandler', function(t) {
           var Log = logger.bind("handler-helper");
           var server = sandbox.spy();
           var queryHelperStub = sandbox.stub(require('../utilities/query-helper'));
-          var boomStub = sandbox.stub(require('boom'));
           var handlerHelper = proxyquire('../utilities/handler-helper', {
-            './query-helper': queryHelperStub,
-            'boom': boomStub
+            './query-helper': queryHelperStub
           });
-          sandbox.stub(Log, 'error', function(){});
+          sandbox.stub(Log, 'error').callsFake(function(){})
 
           var userSchema = new mongoose.Schema({});
           userSchema.statics = {
@@ -1470,7 +1446,7 @@ test('handler-helper.createHandler', function(t) {
             './query-helper': queryHelperStub,
             './error-helper': errorHelperStub
           });
-          sandbox.stub(Log, 'error', function(){});
+          sandbox.stub(Log, 'error').callsFake(function(){})
 
           var userSchema = new mongoose.Schema({});
           var preDeferred = Q.defer();
@@ -1525,7 +1501,7 @@ test('handler-helper.createHandler', function(t) {
             './query-helper': queryHelperStub,
             './error-helper': errorHelperStub
           });
-          sandbox.stub(Log, 'error', function(){});
+          sandbox.stub(Log, 'error').callsFake(function(){})
 
           var userSchema = new mongoose.Schema({});
 
@@ -1577,7 +1553,7 @@ test('handler-helper.createHandler', function(t) {
             './query-helper': queryHelperStub,
             './error-helper': errorHelperStub
           });
-          sandbox.stub(Log, 'error', function(){});
+          sandbox.stub(Log, 'error').callsFake(function(){})
 
           var userSchema = new mongoose.Schema({});
 
@@ -1623,7 +1599,7 @@ test('handler-helper.createHandler', function(t) {
             './query-helper': queryHelperStub,
             './error-helper': errorHelperStub
           });
-          sandbox.stub(Log, 'error', function(){});
+          sandbox.stub(Log, 'error').callsFake(function(){})
 
           var userSchema = new mongoose.Schema({});
 
@@ -1672,7 +1648,7 @@ test('handler-helper.createHandler', function(t) {
             './query-helper': queryHelperStub,
             './error-helper': errorHelperStub
           });
-          // sandbox.stub(Log, 'error', function(){});
+          // sandbox.stub(Log, 'error').callsFake(function(){})
 
           var userSchema = new mongoose.Schema({});
           var deferred = Q.defer();
@@ -1740,7 +1716,7 @@ test('handler-helper.createHandler', function(t) {
           var handlerHelper = proxyquire('../utilities/handler-helper', {
             './query-helper': queryHelperStub
           });
-          sandbox.stub(Log, 'error', function(){});
+          sandbox.stub(Log, 'error').callsFake(function(){})
 
           var userSchema = new mongoose.Schema({});
 
@@ -1802,7 +1778,7 @@ test('handler-helper.createHandler', function(t) {
           var handlerHelper = proxyquire('../utilities/handler-helper', {
             './query-helper': queryHelperStub
           });
-          sandbox.stub(Log, 'error', function(){});
+          sandbox.stub(Log, 'error').callsFake(function(){})
 
           var userSchema = new mongoose.Schema({});
 
@@ -1861,12 +1837,10 @@ test('handler-helper.createHandler', function(t) {
           var server = sandbox.spy();
           var queryHelperStub = sandbox.stub(require('../utilities/query-helper'));
           queryHelperStub.createAttributesFilter = function(){ return "attributes" };
-          var boomStub = sandbox.stub(require('boom'));
           var handlerHelper = proxyquire('../utilities/handler-helper', {
-            './query-helper': queryHelperStub,
-            'boom': boomStub
+            './query-helper': queryHelperStub
           });
-          sandbox.stub(Log, 'error', function(){});
+          sandbox.stub(Log, 'error').callsFake(function(){})
 
           var userSchema = new mongoose.Schema({});
           userSchema.statics = {
@@ -1930,12 +1904,10 @@ test('handler-helper.createHandler', function(t) {
           var server = sandbox.spy();
           var queryHelperStub = sandbox.stub(require('../utilities/query-helper'));
           queryHelperStub.createAttributesFilter = function(){ return "attributes" };
-          var boomStub = sandbox.stub(require('boom'));
           var handlerHelper = proxyquire('../utilities/handler-helper', {
-            './query-helper': queryHelperStub,
-            'boom': boomStub
+            './query-helper': queryHelperStub
           });
-          sandbox.stub(Log, 'error', function(){});
+          sandbox.stub(Log, 'error').callsFake(function(){})
 
           var userSchema = new mongoose.Schema({});
           userSchema.statics = {
@@ -1999,12 +1971,10 @@ test('handler-helper.createHandler', function(t) {
           var server = sandbox.spy();
           var queryHelperStub = sandbox.stub(require('../utilities/query-helper'));
           queryHelperStub.createAttributesFilter = function(){ return "attributes" };
-          var boomStub = sandbox.stub(require('boom'));
           var handlerHelper = proxyquire('../utilities/handler-helper', {
-            './query-helper': queryHelperStub,
-            'boom': boomStub
+            './query-helper': queryHelperStub
           });
-          sandbox.stub(Log, 'error', function(){});
+          sandbox.stub(Log, 'error').callsFake(function(){})
 
           var userSchema = new mongoose.Schema({});
           userSchema.statics = {
@@ -2050,12 +2020,10 @@ test('handler-helper.createHandler', function(t) {
           var server = sandbox.spy();
           var queryHelperStub = sandbox.stub(require('../utilities/query-helper'));
           queryHelperStub.createAttributesFilter = function(){ return "attributes" };
-          var boomStub = sandbox.stub(require('boom'));
           var handlerHelper = proxyquire('../utilities/handler-helper', {
-            './query-helper': queryHelperStub,
-            'boom': boomStub
+            './query-helper': queryHelperStub
           });
-          sandbox.stub(Log, 'error', function(){});
+          sandbox.stub(Log, 'error').callsFake(function(){})
 
           var userSchema = new mongoose.Schema({});
           userSchema.statics = {
@@ -2107,7 +2075,7 @@ test('handler-helper.deleteOneHandler', function(t) {
           var server = sandbox.spy();
           var handlerHelper = proxyquire('../utilities/handler-helper', {
           });
-          sandbox.stub(Log, 'error', function(){});
+          sandbox.stub(Log, 'error').callsFake(function(){})
 
           var userSchema = new mongoose.Schema({});
           var preDeferred = Q.defer();
@@ -2156,7 +2124,7 @@ test('handler-helper.deleteOneHandler', function(t) {
           var server = sandbox.spy();
           var handlerHelper = proxyquire('../utilities/handler-helper', {
           });
-          sandbox.stub(Log, 'error', function(){});
+          sandbox.stub(Log, 'error').callsFake(function(){})
 
           var userSchema = new mongoose.Schema({});
 
@@ -2196,7 +2164,7 @@ test('handler-helper.deleteOneHandler', function(t) {
           var server = sandbox.spy();
           var handlerHelper = proxyquire('../utilities/handler-helper', {
           });
-          sandbox.stub(Log, 'error', function(){});
+          sandbox.stub(Log, 'error').callsFake(function(){})
 
           var userSchema = new mongoose.Schema({});
           var deferred = Q.defer();
@@ -2244,7 +2212,7 @@ test('handler-helper.deleteOneHandler', function(t) {
           var server = sandbox.spy();
           var handlerHelper = proxyquire('../utilities/handler-helper', {
           });
-          sandbox.stub(Log, 'error', function(){});
+          sandbox.stub(Log, 'error').callsFake(function(){})
 
           var userSchema = new mongoose.Schema({});
 
@@ -2281,11 +2249,9 @@ test('handler-helper.deleteOneHandler', function(t) {
           var sandbox = sinon.sandbox.create();
           var Log = logger.bind("handler-helper");
           var server = sandbox.spy();
-          var boomStub = sandbox.stub(require('boom'));
           var handlerHelper = proxyquire('../utilities/handler-helper', {
-            'boom': boomStub
           });
-          sandbox.stub(Log, 'error', function(){});
+          sandbox.stub(Log, 'error').callsFake(function(){})
 
           var userSchema = new mongoose.Schema({});
           userSchema.statics = {
@@ -2330,11 +2296,9 @@ test('handler-helper.deleteOneHandler', function(t) {
           var sandbox = sinon.sandbox.create();
           var Log = logger.bind("handler-helper");
           var server = sandbox.spy();
-          var boomStub = sandbox.stub(require('boom'));
           var handlerHelper = proxyquire('../utilities/handler-helper', {
-            'boom': boomStub
           });
-          sandbox.stub(Log, 'error', function(){});
+          sandbox.stub(Log, 'error').callsFake(function(){})
 
           var userSchema = new mongoose.Schema({});
 
@@ -2372,11 +2336,9 @@ test('handler-helper.deleteOneHandler', function(t) {
           var sandbox = sinon.sandbox.create();
           var Log = logger.bind("handler-helper");
           var server = sandbox.spy();
-          var boomStub = sandbox.stub(require('boom'));
           var handlerHelper = proxyquire('../utilities/handler-helper', {
-            'boom': boomStub
           });
-          sandbox.stub(Log, 'error', function(){});
+          sandbox.stub(Log, 'error').callsFake(function(){})
 
           var userSchema = new mongoose.Schema({});
           userSchema.statics = {
@@ -2420,11 +2382,9 @@ test('handler-helper.deleteOneHandler', function(t) {
           var sandbox = sinon.sandbox.create();
           var Log = logger.bind("handler-helper");
           var server = sandbox.spy();
-          var boomStub = sandbox.stub(require('boom'));
           var handlerHelper = proxyquire('../utilities/handler-helper', {
-            'boom': boomStub
           });
-          sandbox.stub(Log, 'error', function(){});
+          sandbox.stub(Log, 'error').callsFake(function(){})
 
           var userSchema = new mongoose.Schema({});
           userSchema.statics = {
@@ -2480,7 +2440,7 @@ test('handler-helper.updateHandler', function(t) {
             './query-helper': queryHelperStub,
             './error-helper': errorHelperStub
           });
-          sandbox.stub(Log, 'error', function(){});
+          sandbox.stub(Log, 'error').callsFake(function(){})
 
           var userSchema = new mongoose.Schema({});
           var preDeferred = Q.defer();
@@ -2533,7 +2493,7 @@ test('handler-helper.updateHandler', function(t) {
             './query-helper': queryHelperStub,
             './error-helper': errorHelperStub
           });
-          sandbox.stub(Log, 'error', function(){});
+          sandbox.stub(Log, 'error').callsFake(function(){})
 
           var userSchema = new mongoose.Schema({});
 
@@ -2581,7 +2541,7 @@ test('handler-helper.updateHandler', function(t) {
             './query-helper': queryHelperStub,
             './error-helper': errorHelperStub
           });
-          sandbox.stub(Log, 'error', function(){});
+          sandbox.stub(Log, 'error').callsFake(function(){})
 
           var userSchema = new mongoose.Schema({});
 
@@ -2628,7 +2588,7 @@ test('handler-helper.updateHandler', function(t) {
             './query-helper': queryHelperStub,
             './error-helper': errorHelperStub
           });
-          sandbox.stub(Log, 'error', function(){});
+          sandbox.stub(Log, 'error').callsFake(function(){})
 
           var userSchema = new mongoose.Schema({});
 
@@ -2673,7 +2633,7 @@ test('handler-helper.updateHandler', function(t) {
             './query-helper': queryHelperStub,
             './error-helper': errorHelperStub
           });
-          sandbox.stub(Log, 'error', function(){});
+          sandbox.stub(Log, 'error').callsFake(function(){})
 
           var userSchema = new mongoose.Schema({});
           var deferred = Q.defer();
@@ -2732,7 +2692,7 @@ test('handler-helper.updateHandler', function(t) {
             './query-helper': queryHelperStub,
             './error-helper': errorHelperStub
           });
-          sandbox.stub(Log, 'error', function(){});
+          sandbox.stub(Log, 'error').callsFake(function(){})
 
           var userSchema = new mongoose.Schema({});
 
@@ -2778,12 +2738,10 @@ test('handler-helper.updateHandler', function(t) {
           var server = sandbox.spy();
           var queryHelperStub = sandbox.stub(require('../utilities/query-helper'));
           queryHelperStub.createAttributesFilter = function(){ return "attributes" };
-          var boomStub = sandbox.stub(require('boom'));
           var handlerHelper = proxyquire('../utilities/handler-helper', {
-            './query-helper': queryHelperStub,
-            'boom': boomStub
+            './query-helper': queryHelperStub
           });
-          sandbox.stub(Log, 'error', function(){});
+          sandbox.stub(Log, 'error').callsFake(function(){})
 
           var userSchema = new mongoose.Schema({});
           userSchema.statics = {
@@ -2837,12 +2795,10 @@ test('handler-helper.updateHandler', function(t) {
           var server = sandbox.spy();
           var queryHelperStub = sandbox.stub(require('../utilities/query-helper'));
           queryHelperStub.createAttributesFilter = function(){ return "attributes" };
-          var boomStub = sandbox.stub(require('boom'));
           var handlerHelper = proxyquire('../utilities/handler-helper', {
-            './query-helper': queryHelperStub,
-            'boom': boomStub
+            './query-helper': queryHelperStub
           });
-          sandbox.stub(Log, 'error', function(){});
+          sandbox.stub(Log, 'error').callsFake(function(){})
 
           var userSchema = new mongoose.Schema({});
 
@@ -2882,12 +2838,10 @@ test('handler-helper.updateHandler', function(t) {
           var server = sandbox.spy();
           var queryHelperStub = sandbox.stub(require('../utilities/query-helper'));
           queryHelperStub.createAttributesFilter = function(){ return "attributes" };
-          var boomStub = sandbox.stub(require('boom'));
           var handlerHelper = proxyquire('../utilities/handler-helper', {
-            './query-helper': queryHelperStub,
-            'boom': boomStub
+            './query-helper': queryHelperStub
           });
-          sandbox.stub(Log, 'error', function(){});
+          sandbox.stub(Log, 'error').callsFake(function(){})
 
           var userSchema = new mongoose.Schema({});
 
@@ -2927,12 +2881,10 @@ test('handler-helper.updateHandler', function(t) {
           var server = sandbox.spy();
           var queryHelperStub = sandbox.stub(require('../utilities/query-helper'));
           queryHelperStub.createAttributesFilter = function(){ return "attributes" };
-          var boomStub = sandbox.stub(require('boom'));
           var handlerHelper = proxyquire('../utilities/handler-helper', {
-            './query-helper': queryHelperStub,
-            'boom': boomStub
+            './query-helper': queryHelperStub
           });
-          sandbox.stub(Log, 'error', function(){});
+          sandbox.stub(Log, 'error').callsFake(function(){})
 
           var userSchema = new mongoose.Schema({});
           userSchema.statics = {
@@ -2978,12 +2930,10 @@ test('handler-helper.updateHandler', function(t) {
           var server = sandbox.spy();
           var queryHelperStub = sandbox.stub(require('../utilities/query-helper'));
           queryHelperStub.createAttributesFilter = function(){ return "attributes" };
-          var boomStub = sandbox.stub(require('boom'));
           var handlerHelper = proxyquire('../utilities/handler-helper', {
-            './query-helper': queryHelperStub,
-            'boom': boomStub
+            './query-helper': queryHelperStub
           });
-          sandbox.stub(Log, 'error', function(){});
+          sandbox.stub(Log, 'error').callsFake(function(){})
 
           var userSchema = new mongoose.Schema({});
           userSchema.statics = {
@@ -3035,7 +2985,7 @@ test('handler-helper.updateHandler', function(t) {
 //       var server = sandbox.spy();
 //       var handlerHelper = proxyquire('../utilities/handler-helper', {
 //       });
-//       sandbox.stub(Log, 'error', function(){});
+//       sandbox.stub(Log, 'error').callsFake(function(){})
 //
 //       var userSchema = new mongoose.Schema({});
 //
@@ -3083,7 +3033,7 @@ test('handler-helper.updateHandler', function(t) {
 //       var handlerHelper = rewire('../utilities/handler-helper');
 //       handlerHelper.__set__("setAssociation", setAssociation);
 //       handlerHelper = handlerHelper(mongoose, server);
-//       sandbox.stub(Log, 'error', function(){});
+//       sandbox.stub(Log, 'error').callsFake(function(){})
 //
 //       var userSchema = new mongoose.Schema({});
 //
@@ -3133,7 +3083,7 @@ test('handler-helper.updateHandler', function(t) {
 //       var handlerHelper = rewire('../utilities/handler-helper');
 //       handlerHelper.__set__("setAssociation", setAssociation);
 //       handlerHelper = handlerHelper(mongoose, server);
-//       sandbox.stub(Log, 'error', function(){});
+//       sandbox.stub(Log, 'error').callsFake(function(){})
 //
 //       var userSchema = new mongoose.Schema({});
 //
@@ -3186,7 +3136,7 @@ test('handler-helper.updateHandler', function(t) {
 //       handlerHelper.__set__("setAssociation", setAssociation);
 //       handlerHelper.__set__("Boom", boomStub);
 //       handlerHelper = handlerHelper(mongoose, server);
-//       sandbox.stub(Log, 'error', function(){});
+//       sandbox.stub(Log, 'error').callsFake(function(){})
 //
 //       var userSchema = new mongoose.Schema({});
 //
@@ -3237,7 +3187,7 @@ test('handler-helper.updateHandler', function(t) {
 //       var handlerHelper = rewire('../utilities/handler-helper');
 //       handlerHelper.__set__("Boom", boomStub);
 //       handlerHelper = handlerHelper(mongoose, server);
-//       sandbox.stub(Log, 'error', function(){});
+//       sandbox.stub(Log, 'error').callsFake(function(){})
 //
 //       var userSchema = new mongoose.Schema({});
 //
@@ -3288,7 +3238,7 @@ test('handler-helper.updateHandler', function(t) {
 //       var handlerHelper = rewire('../utilities/handler-helper');
 //       handlerHelper.__set__("Boom", boomStub);
 //       handlerHelper = handlerHelper(mongoose, server);
-//       sandbox.stub(Log, 'error', function(){});
+//       sandbox.stub(Log, 'error').callsFake(function(){})
 //
 //       var userSchema = new mongoose.Schema({});
 //
@@ -3343,7 +3293,7 @@ test('handler-helper.updateHandler', function(t) {
 //       var server = sandbox.spy();
 //       var handlerHelper = proxyquire('../utilities/handler-helper', {
 //       });
-//       sandbox.stub(Log, 'error', function(){});
+//       sandbox.stub(Log, 'error').callsFake(function(){})
 //
 //       var userSchema = new mongoose.Schema({});
 //
@@ -3391,7 +3341,7 @@ test('handler-helper.updateHandler', function(t) {
 //       var handlerHelper = rewire('../utilities/handler-helper');
 //       handlerHelper.__set__("removeAssociation", removeAssociation);
 //       handlerHelper = handlerHelper(mongoose, server);
-//       sandbox.stub(Log, 'error', function(){});
+//       sandbox.stub(Log, 'error').callsFake(function(){})
 //
 //       var userSchema = new mongoose.Schema({});
 //
@@ -3441,7 +3391,7 @@ test('handler-helper.updateHandler', function(t) {
 //       var handlerHelper = rewire('../utilities/handler-helper');
 //       handlerHelper.__set__("removeAssociation", removeAssociation);
 //       handlerHelper = handlerHelper(mongoose, server);
-//       sandbox.stub(Log, 'error', function(){});
+//       sandbox.stub(Log, 'error').callsFake(function(){})
 //
 //       var userSchema = new mongoose.Schema({});
 //
@@ -3494,7 +3444,7 @@ test('handler-helper.updateHandler', function(t) {
 //       handlerHelper.__set__("removeAssociation", removeAssociation);
 //       handlerHelper.__set__("Boom", boomStub);
 //       handlerHelper = handlerHelper(mongoose, server);
-//       sandbox.stub(Log, 'error', function(){});
+//       sandbox.stub(Log, 'error').callsFake(function(){})
 //
 //       var userSchema = new mongoose.Schema({});
 //
@@ -3545,7 +3495,7 @@ test('handler-helper.updateHandler', function(t) {
 //       var handlerHelper = rewire('../utilities/handler-helper');
 //       handlerHelper.__set__("Boom", boomStub);
 //       handlerHelper = handlerHelper(mongoose, server);
-//       sandbox.stub(Log, 'error', function(){});
+//       sandbox.stub(Log, 'error').callsFake(function(){})
 //
 //       var userSchema = new mongoose.Schema({});
 //
@@ -3596,7 +3546,7 @@ test('handler-helper.updateHandler', function(t) {
 //       var handlerHelper = rewire('../utilities/handler-helper');
 //       handlerHelper.__set__("Boom", boomStub);
 //       handlerHelper = handlerHelper(mongoose, server);
-//       sandbox.stub(Log, 'error', function(){});
+//       sandbox.stub(Log, 'error').callsFake(function(){})
 //
 //       var userSchema = new mongoose.Schema({});
 //
@@ -3651,7 +3601,7 @@ test('handler-helper.updateHandler', function(t) {
 //       var server = sandbox.spy();
 //       var handlerHelper = proxyquire('../utilities/handler-helper', {
 //       });
-//       sandbox.stub(Log, 'error', function(){});
+//       sandbox.stub(Log, 'error').callsFake(function(){})
 //
 //       var userSchema = new mongoose.Schema({});
 //
@@ -3698,7 +3648,7 @@ test('handler-helper.updateHandler', function(t) {
 //       var handlerHelper = rewire('../utilities/handler-helper');
 //       handlerHelper.__set__("setAssociation", setAssociation);
 //       handlerHelper = handlerHelper(mongoose, server);
-//       sandbox.stub(Log, 'error', function(){});
+//       sandbox.stub(Log, 'error').callsFake(function(){})
 //
 //       var userSchema = new mongoose.Schema({});
 //
@@ -3751,7 +3701,7 @@ test('handler-helper.updateHandler', function(t) {
 //       var handlerHelper = rewire('../utilities/handler-helper');
 //       handlerHelper.__set__("setAssociation", setAssociation);
 //       handlerHelper = handlerHelper(mongoose, server);
-//       sandbox.stub(Log, 'error', function(){});
+//       sandbox.stub(Log, 'error').callsFake(function(){})
 //
 //       var userSchema = new mongoose.Schema({});
 //
@@ -3805,7 +3755,7 @@ test('handler-helper.updateHandler', function(t) {
 //       handlerHelper.__set__("setAssociation", setAssociation);
 //       handlerHelper.__set__("Boom", boomStub);
 //       handlerHelper = handlerHelper(mongoose, server);
-//       sandbox.stub(Log, 'error', function(){});
+//       sandbox.stub(Log, 'error').callsFake(function(){})
 //
 //       var userSchema = new mongoose.Schema({});
 //
@@ -3857,7 +3807,7 @@ test('handler-helper.updateHandler', function(t) {
 //       var handlerHelper = rewire('../utilities/handler-helper');
 //       handlerHelper.__set__("Boom", boomStub);
 //       handlerHelper = handlerHelper(mongoose, server);
-//       sandbox.stub(Log, 'error', function(){});
+//       sandbox.stub(Log, 'error').callsFake(function(){})
 //
 //       var userSchema = new mongoose.Schema({});
 //
@@ -3909,7 +3859,7 @@ test('handler-helper.updateHandler', function(t) {
 //       var handlerHelper = rewire('../utilities/handler-helper');
 //       handlerHelper.__set__("Boom", boomStub);
 //       handlerHelper = handlerHelper(mongoose, server);
-//       sandbox.stub(Log, 'error', function(){});
+//       sandbox.stub(Log, 'error').callsFake(function(){})
 //
 //       var userSchema = new mongoose.Schema({});
 //
@@ -3965,7 +3915,7 @@ test('handler-helper.updateHandler', function(t) {
 //       var server = sandbox.spy();
 //       var handlerHelper = proxyquire('../utilities/handler-helper', {
 //       });
-//       sandbox.stub(Log, 'error', function(){});
+//       sandbox.stub(Log, 'error').callsFake(function(){})
 //
 //       var userSchema = new mongoose.Schema({});
 //       userSchema.statics = {
@@ -4021,7 +3971,7 @@ test('handler-helper.updateHandler', function(t) {
 //       var handlerHelper = proxyquire('../utilities/handler-helper', {
 //         './query-helper': queryHelperStub,
 //       });
-//       sandbox.stub(Log, 'error', function(){});
+//       sandbox.stub(Log, 'error').callsFake(function(){})
 //
 //       var userSchema = new mongoose.Schema({});
 //       userSchema.statics = {
@@ -4084,7 +4034,7 @@ test('handler-helper.updateHandler', function(t) {
 //       handlerHelper.__set__("QueryHelper", queryHelperStub);
 //       handlerHelper.__set__("list", handlerSpy2);
 //       handlerHelper = handlerHelper(mongoose, server);
-//       sandbox.stub(Log, 'error', function(){});
+//       sandbox.stub(Log, 'error').callsFake(function(){})
 //
 //       var userSchema = new mongoose.Schema({});
 //       userSchema.statics = {
@@ -4159,7 +4109,7 @@ test('handler-helper.updateHandler', function(t) {
 //       handlerHelper.__set__("QueryHelper", queryHelperStub);
 //       handlerHelper.__set__("list", handlerSpy2);
 //       handlerHelper = handlerHelper(mongoose, server);
-//       sandbox.stub(Log, 'error', function(){});
+//       sandbox.stub(Log, 'error').callsFake(function(){})
 //
 //       var userSchema = new mongoose.Schema({});
 //       userSchema.statics = {
@@ -4235,7 +4185,7 @@ test('handler-helper.updateHandler', function(t) {
 //       handlerHelper.__set__("QueryHelper", queryHelperStub);
 //       handlerHelper.__set__("list", handlerSpy2);
 //       handlerHelper = handlerHelper(mongoose, server);
-//       sandbox.stub(Log, 'error', function(){});
+//       sandbox.stub(Log, 'error').callsFake(function(){})
 //
 //       var userSchema = new mongoose.Schema({});
 //       userSchema.statics = {
@@ -4298,7 +4248,7 @@ test('handler-helper.updateHandler', function(t) {
 //       var handlerHelper = rewire('../utilities/handler-helper');
 //       handlerHelper.__set__("Boom", boomStub);
 //       handlerHelper = handlerHelper(mongoose, server);
-//       sandbox.stub(Log, 'error', function(){});
+//       sandbox.stub(Log, 'error').callsFake(function(){})
 //
 //       var userSchema = new mongoose.Schema({});
 //       userSchema.statics = {
@@ -4363,7 +4313,7 @@ test('handler-helper.updateHandler', function(t) {
 //       var server = sandbox.spy();
 //       var handlerHelper = rewire('../utilities/handler-helper');
 //       var setAssociation = handlerHelper.__get__("setAssociation");
-//       // sandbox.stub(Log, 'error', function(){});
+//       // sandbox.stub(Log, 'error').callsFake(function(){})
 //
 //       var userSchema = new mongoose.Schema({});
 //
@@ -4422,7 +4372,7 @@ test('handler-helper.updateHandler', function(t) {
 //       var deferredSpy = { resolve: sandbox.spy(function(){ deferred.resolve() }) };
 //       Qstub.defer = function(){ return deferredSpy };
 //       handlerHelper.__set__("Q", Qstub);
-//       // sandbox.stub(Log, 'error', function(){});
+//       // sandbox.stub(Log, 'error').callsFake(function(){})
 //
 //       var userSchema = new mongoose.Schema({});
 //       userSchema.statics = {
@@ -4496,7 +4446,7 @@ test('handler-helper.updateHandler', function(t) {
 //       Qstub.defer = function(){ return deferredSpy };
 //       Qstub.all = function(){ return Q.when() };
 //       handlerHelper.__set__("Q", Qstub);
-//       // sandbox.stub(Log, 'error', function(){});
+//       // sandbox.stub(Log, 'error').callsFake(function(){})
 //
 //       var userSchema = new mongoose.Schema({});
 //       userSchema.statics = {
@@ -4585,7 +4535,7 @@ test('handler-helper.updateHandler', function(t) {
 //       Qstub.defer = function(){ return deferredSpy };
 //       Qstub.all = function(){ return Q.when() };
 //       handlerHelper.__set__("Q", Qstub);
-//       sandbox.stub(Log, 'error', function(){});
+//       sandbox.stub(Log, 'error').callsFake(function(){})
 //
 //       var userSchema = new mongoose.Schema({});
 //       userSchema.statics = {
@@ -4674,7 +4624,7 @@ test('handler-helper.updateHandler', function(t) {
 //       Qstub.defer = function(){ return deferredSpy };
 //       Qstub.all = function(){ return Q.when() };
 //       handlerHelper.__set__("Q", Qstub);
-//       // sandbox.stub(Log, 'error', function(){});
+//       // sandbox.stub(Log, 'error').callsFake(function(){})
 //
 //       var userSchema = new mongoose.Schema({});
 //       userSchema.statics = {
@@ -4759,7 +4709,7 @@ test('handler-helper.updateHandler', function(t) {
 //       Qstub.defer = function(){ return deferredSpy };
 //       Qstub.all = function(){ return Q.when() };
 //       handlerHelper.__set__("Q", Qstub);
-//       // sandbox.stub(Log, 'error', function(){});
+//       // sandbox.stub(Log, 'error').callsFake(function(){})
 //
 //       var userSchema = new mongoose.Schema({});
 //       userSchema.statics = {
@@ -4844,7 +4794,7 @@ test('handler-helper.updateHandler', function(t) {
 //       var server = sandbox.spy();
 //       var handlerHelper = rewire('../utilities/handler-helper');
 //       var removeAssociation = handlerHelper.__get__("removeAssociation");
-//       // sandbox.stub(Log, 'error', function(){});
+//       // sandbox.stub(Log, 'error').callsFake(function(){})
 //
 //       var userSchema = new mongoose.Schema({});
 //
@@ -4903,7 +4853,7 @@ test('handler-helper.updateHandler', function(t) {
 //       var deferredSpy = { resolve: sandbox.spy(function(){ deferred.resolve() }) };
 //       Qstub.defer = function(){ return deferredSpy };
 //       handlerHelper.__set__("Q", Qstub);
-//       sandbox.stub(Log, 'error', function(){});
+//       sandbox.stub(Log, 'error').callsFake(function(){})
 //
 //       var userSchema = new mongoose.Schema({});
 //       userSchema.statics = {
@@ -4989,7 +4939,7 @@ test('handler-helper.updateHandler', function(t) {
 //       Qstub.defer = function(){ return deferredSpy };
 //       Qstub.all = function(){ return Q.when() };
 //       handlerHelper.__set__("Q", Qstub);
-//       // sandbox.stub(Log, 'error', function(){});
+//       // sandbox.stub(Log, 'error').callsFake(function(){})
 //
 //       var userSchema = new mongoose.Schema({});
 //       userSchema.statics = {
@@ -5076,7 +5026,7 @@ test('handler-helper.updateHandler', function(t) {
 //       Qstub.defer = function(){ return deferredSpy };
 //       Qstub.all = function(){ return Q.when() };
 //       handlerHelper.__set__("Q", Qstub);
-//       // sandbox.stub(Log, 'error', function(){});
+//       // sandbox.stub(Log, 'error').callsFake(function(){})
 //
 //       var userSchema = new mongoose.Schema({});
 //       userSchema.statics = {
@@ -5161,7 +5111,7 @@ test('handler-helper.updateHandler', function(t) {
 //       Qstub.defer = function(){ return deferredSpy };
 //       Qstub.all = function(){ return Q.when() };
 //       handlerHelper.__set__("Q", Qstub);
-//       // sandbox.stub(Log, 'error', function(){});
+//       // sandbox.stub(Log, 'error').callsFake(function(){})
 //
 //       var userSchema = new mongoose.Schema({});
 //       userSchema.statics = {

@@ -379,7 +379,7 @@ test('query-helper.getSortableFields', function (t) {
 
     t.plan(1);
 
-    sinon.stub(queryHelper, "getReadableFields", function () {
+    sinon.stub(queryHelper, "getReadableFields").callsFake(function () {
       return []
     });
 
@@ -410,7 +410,7 @@ test('query-helper.getSortableFields', function (t) {
 
     t.plan(1);
 
-    sinon.stub(queryHelper, "getReadableFields", function () {
+    sinon.stub(queryHelper, "getReadableFields").callsFake(function () {
       return ["email", "firstName", "lastName"]
     });
 
@@ -636,7 +636,7 @@ test('query-helper.populateEmbeddedDocs', function (t) {
     //<editor-fold desc="Arrange">
     var queryHelper = rewire('../utilities/query-helper');
 
-    sinon.stub(queryHelper, "createAttributesFilter", sinon.spy());
+    sinon.stub(queryHelper, "createAttributesFilter").callsFake(sinon.spy());
 
     var nestPopulate = queryHelper.__get__("nestPopulate");
 
@@ -679,7 +679,7 @@ test('query-helper.populateEmbeddedDocs', function (t) {
     //<editor-fold desc="Arrange">
     var queryHelper = rewire('../utilities/query-helper');
 
-    sinon.stub(queryHelper, "createAttributesFilter", sinon.spy());
+    sinon.stub(queryHelper, "createAttributesFilter").callsFake(sinon.spy());
 
     var nestPopulate = queryHelper.__get__("nestPopulate");
 
@@ -716,7 +716,7 @@ test('query-helper.populateEmbeddedDocs', function (t) {
     //<editor-fold desc="Arrange">
     var queryHelper = rewire('../utilities/query-helper');
 
-    sinon.stub(queryHelper, "createAttributesFilter", sinon.spy());
+    sinon.stub(queryHelper, "createAttributesFilter").callsFake(sinon.spy());
 
     var nestPopulate = queryHelper.__get__("nestPopulate");
 
@@ -770,7 +770,7 @@ test('query-helper.populateEmbeddedDocs', function (t) {
     var createAttributesFilter = sinon.stub();
     createAttributesFilter.returns("test");
 
-    sinon.stub(queryHelper, "createAttributesFilter", createAttributesFilter);
+    sinon.stub(queryHelper, "createAttributesFilter").callsFake(createAttributesFilter);
 
     var nestPopulate = queryHelper.__get__("nestPopulate");
 
@@ -1108,13 +1108,13 @@ test('query-helper.createMongooseQuery', function (t) {
       select: sinon.spy(),
       where: sinon.spy()
     };
-    sinon.stub(queryHelper, "createAttributesFilter", function () {
+    sinon.stub(queryHelper, "createAttributesFilter").callsFake(function () {
       return mongooseQuery
     });
-    sinon.stub(queryHelper, "populateEmbeddedDocs", function () {
+    sinon.stub(queryHelper, "populateEmbeddedDocs").callsFake(function () {
       return mongooseQuery
     });
-    sinon.stub(queryHelper, "setSort", function () {
+    sinon.stub(queryHelper, "setSort").callsFake(function () {
       return mongooseQuery
     });
 
@@ -1174,19 +1174,19 @@ test('query-helper.createMongooseQuery', function (t) {
       select: sinon.spy(),
       where: sinon.spy()
     };
-    sinon.stub(queryHelper, "setSkip", function () {
+    sinon.stub(queryHelper, "setSkip").callsFake(function () {
       return mongooseQuery
     });
-    sinon.stub(queryHelper, "setLimit", function () {
+    sinon.stub(queryHelper, "setLimit").callsFake(function () {
       return mongooseQuery
     });
-    sinon.stub(queryHelper, "createAttributesFilter", function () {
+    sinon.stub(queryHelper, "createAttributesFilter").callsFake(function () {
       return mongooseQuery
     });
-    sinon.stub(queryHelper, "populateEmbeddedDocs", function () {
+    sinon.stub(queryHelper, "populateEmbeddedDocs").callsFake(function () {
       return mongooseQuery
     });
-    sinon.stub(queryHelper, "setSort", function () {
+    sinon.stub(queryHelper, "setSort").callsFake(function () {
       return mongooseQuery
     });
 
@@ -1233,19 +1233,19 @@ test('query-helper.createMongooseQuery', function (t) {
       select: sinon.spy(),
       where: sinon.spy()
     };
-    sinon.stub(queryHelper, "setSkip", function () {
+    sinon.stub(queryHelper, "setSkip").callsFake(function () {
       return mongooseQuery
     });
-    sinon.stub(queryHelper, "setLimit", function () {
+    sinon.stub(queryHelper, "setLimit").callsFake(function () {
       return mongooseQuery
     });
-    sinon.stub(queryHelper, "createAttributesFilter", function () {
+    sinon.stub(queryHelper, "createAttributesFilter").callsFake(function () {
       return mongooseQuery
     });
-    sinon.stub(queryHelper, "populateEmbeddedDocs", function () {
+    sinon.stub(queryHelper, "populateEmbeddedDocs").callsFake(function () {
       return mongooseQuery
     });
-    sinon.stub(queryHelper, "setSort", function () {
+    sinon.stub(queryHelper, "setSort").callsFake(function () {
       return mongooseQuery
     });
 
@@ -1310,13 +1310,13 @@ test('query-helper.paginate', function (t) {
       select: sinon.spy(),
       where: sinon.spy()
     };
-    sinon.stub(queryHelper, "setLimit", function () {
+    sinon.stub(queryHelper, "setLimit").callsFake(function () {
       return mongooseQuery
     });
-    sinon.stub(queryHelper, "setSkip", function () {
+    sinon.stub(queryHelper, "setSkip").callsFake(function () {
       return mongooseQuery
     });
-    sinon.stub(queryHelper, "setPage", function () {
+    sinon.stub(queryHelper, "setPage").callsFake(function () {
       return mongooseQuery
     });
 
