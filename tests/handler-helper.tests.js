@@ -430,13 +430,12 @@ test('handler-helper.listHandler', function (t) {
             './query-helper': queryHelperStub,
             './error-helper': errorHelperStub
           });
+
           sandbox.stub(Log, 'error').callsFake(function(){});
 
           var userSchema = new mongoose.Schema({});
-          var postDeferred = Q.defer();
-          var postSpy = sandbox.spy(function () {
-            postDeferred.resolve();
-          });
+
+          var postSpy = sandbox.spy();
           userSchema.statics = {
             routeOptions: {
               list: {
@@ -454,11 +453,11 @@ test('handler-helper.listHandler', function (t) {
           //</editor-fold>
 
           //<editor-fold desc="Act">
-          handlerHelper.listHandler(userModel, request, Log);
+          var promise = handlerHelper.listHandler(userModel, request, Log);
           //</editor-fold>
 
           //<editor-fold desc="Assert">
-          return postDeferred.promise.then(function () {
+          return promise.then(function () {
             t.ok(postSpy.calledWithExactly(request, "TEST", Log), "list.post called");
           })
           //</editor-fold>
@@ -622,9 +621,89 @@ test('handler-helper.listHandler', function (t) {
         });
       })
 
-      //handler-helper.listHandler throws a postprocessing error
+      //handler-helper.listHandler throws a generic postprocessing error
       .then(function () {
-        return t.test('handler-helper.listHandler throws a postprocessing error', function (t) {
+        return t.test('handler-helper.listHandler throws a generic postprocessing error', function (t) {
+          //<editor-fold desc="Arrange">
+          var sandbox = sinon.sandbox.create();
+          var Log = logger.bind("handler-helper");
+          var server = sandbox.spy();
+
+          var deferred = Q.defer();
+          var countSpy = sandbox.spy(function () {
+            return Q.when()
+          });
+          var mongooseQuery1 = {count: countSpy};
+          var mongooseQuery2 = {
+            lean: function () {
+              return mongooseQuery1
+            }
+          };
+          var queryHelperStub = sandbox.stub(require('../utilities/query-helper'));
+          queryHelperStub.createMongooseQuery = function () {
+            return mongooseQuery2
+          };
+          var result = "";
+          deferred.resolve(result);
+          var execSpy = sandbox.spy(function () {
+            return deferred.promise
+          });
+          var paginateSpy = sandbox.spy(function () {
+            return {exec: execSpy}
+          });
+          queryHelperStub.paginate = paginateSpy;
+
+          var handlerHelper = proxyquire('../utilities/handler-helper', {
+            './query-helper': queryHelperStub
+          });
+          sandbox.stub(Log, 'error').callsFake(function(){});
+
+          var userSchema = new mongoose.Schema({});
+          var postDeferred = Q.defer();
+          var error = new Error();
+          postDeferred.reject(error);
+          userSchema.statics = {
+            routeOptions: {
+              list: {
+                post: function () {
+                  return postDeferred.promise
+                }
+              }
+            }
+          };
+
+          var userModel = mongoose.model("user", userSchema);
+
+          userModel.find = sandbox.spy();
+
+          var query = {test: {}};
+          var request = { query: query };
+          //</editor-fold>
+
+          //<editor-fold desc="Act">
+          var promise = handlerHelper.listHandler(userModel, request, Log);
+          //</editor-fold>
+
+          //<editor-fold desc="Assert">
+          return promise
+              .catch(function (error) {
+                t.equals(error.message, "There was a postprocessing error.", "threw a generic postprocessing error");
+              })
+          //</editor-fold>
+
+          //<editor-fold desc="Restore">
+              .then(function () {
+                sandbox.restore();
+                delete mongoose.models.user;
+                delete mongoose.modelSchemas.user;
+              });
+          //</editor-fold>
+        });
+      })
+
+      //handler-helper.listHandler throws a custom postprocessing error
+      .then(function () {
+        return t.test('handler-helper.listHandler throws a custom postprocessing error', function (t) {
           //<editor-fold desc="Arrange">
           var sandbox = sinon.sandbox.create();
           var Log = logger.bind("handler-helper");
@@ -688,11 +767,11 @@ test('handler-helper.listHandler', function (t) {
           //<editor-fold desc="Assert">
           return promise
               .catch(function (error) {
-                t.equals(error.message, "There was a postprocessing error.", "threw a postprocessing error");
+                t.equals(error.message, "error message", "threw a custom postprocessing error");
               })
-          //</editor-fold>
+              //</editor-fold>
 
-          //<editor-fold desc="Restore">
+              //<editor-fold desc="Restore">
               .then(function () {
                 sandbox.restore();
                 delete mongoose.models.user;
@@ -765,9 +844,57 @@ test('handler-helper.listHandler', function (t) {
         });
       })
 
-      //handler-helper.listHandler throws a preprocessing error
+      //handler-helper.listHandler throws a generic preprocessing error
       .then(function () {
-        return t.test('handler-helper.listHandler throws a preprocessing error', function (t) {
+        return t.test('handler-helper.listHandler throws a generic preprocessing error', function (t) {
+          //<editor-fold desc="Arrange">
+          var sandbox = sinon.sandbox.create();
+          var Log = logger.bind("handler-helper");
+          var server = sandbox.spy();
+          var queryHelperStub = sandbox.stub(require('../utilities/query-helper'));
+          var handlerHelper = proxyquire('../utilities/handler-helper', {
+            './query-helper': queryHelperStub
+          });
+          sandbox.stub(Log, 'error').callsFake(function(){});
+
+          var userSchema = new mongoose.Schema({});
+          userSchema.statics = {
+            routeOptions: {
+              list: {
+                pre: function () {
+                  return Q.reject(new Error());
+                }
+              }
+            }
+          };
+
+          var userModel = mongoose.model("user", userSchema);
+          //</editor-fold>
+
+          //<editor-fold desc="Act">
+          var promise = handlerHelper.listHandler(userModel, { query: {} }, Log);
+          //</editor-fold>
+
+          //<editor-fold desc="Assert">
+          return promise
+              .catch(function (error) {
+                t.equals(error.message, "There was a preprocessing error.", "threw a generic preprocessing error");
+              })
+          //</editor-fold>
+
+          //<editor-fold desc="Restore">
+              .then(function () {
+                sandbox.restore();
+                delete mongoose.models.user;
+                delete mongoose.modelSchemas.user;
+              });
+          //</editor-fold>
+        });
+      })
+
+      //handler-helper.listHandler throws a custom preprocessing error
+      .then(function () {
+        return t.test('handler-helper.listHandler throws a custom preprocessing error', function (t) {
           //<editor-fold desc="Arrange">
           var sandbox = sinon.sandbox.create();
           var Log = logger.bind("handler-helper");
@@ -799,11 +926,11 @@ test('handler-helper.listHandler', function (t) {
           //<editor-fold desc="Assert">
           return promise
               .catch(function (error) {
-                t.equals(error.message, "There was a preprocessing error.", "threw a preprocessing error");
+                t.equals(error.message, "error message", "threw a custom preprocessing error");
               })
-          //</editor-fold>
+              //</editor-fold>
 
-          //<editor-fold desc="Restore">
+              //<editor-fold desc="Restore">
               .then(function () {
                 sandbox.restore();
                 delete mongoose.models.user;
@@ -821,21 +948,24 @@ test('handler-helper.listHandler', function (t) {
           var Log = logger.bind("handler-helper");
           var server = sandbox.spy();
           var queryHelperStub = sandbox.stub(require('../utilities/query-helper'));
+
+          var execSpy = sandbox.spy(function () {
+            return Q.reject(error)
+          });
+          var paginateSpy = sandbox.spy(function () {
+            return {exec: execSpy}
+          });
+          queryHelperStub.paginate = paginateSpy;
+
+          var qStub = sandbox.stub(Q, 'when').callsFake(function(){ throw "ERROR" });
+
           var handlerHelper = proxyquire('../utilities/handler-helper', {
-            './query-helper': queryHelperStub
+            './query-helper': queryHelperStub,
+            'q': qStub
           });
           sandbox.stub(Log, 'error').callsFake(function(){});
 
           var userSchema = new mongoose.Schema({});
-          userSchema.statics = {
-            routeOptions: {
-              list: {
-                pre: function () {
-                  throw("error message");
-                }
-              }
-            }
-          };
 
           var userModel = mongoose.model("user", userSchema);
           //</editor-fold>
@@ -1145,9 +1275,78 @@ test('handler-helper.findHandler', function(t) {
         });
       })
 
-      //handler-helper.findHandler throws a postprocessing error
+      //handler-helper.findHandler throws a generic postprocessing error
       .then(function() {
-        return t.test('handler-helper.findHandler throws a postprocessing error', function (t) {
+        return t.test('handler-helper.findHandler throws a generic postprocessing error', function (t) {
+          //<editor-fold desc="Arrange">
+          var sandbox = sinon.sandbox.create();
+          var Log = logger.bind("handler-helper");
+          var server = sandbox.spy();
+
+          var mongooseQuery1 = {
+            exec: function(){ return Q.when("TEST") }
+          };
+          var mongooseQuery2 = {
+            lean: function () {
+              return mongooseQuery1;
+            }
+          };
+
+          var queryHelperStub = sandbox.stub(require('../utilities/query-helper'));
+          queryHelperStub.createMongooseQuery = function(){
+            return mongooseQuery2;
+          };
+
+          var handlerHelper = proxyquire('../utilities/handler-helper', {
+            './query-helper': queryHelperStub
+          });
+          sandbox.stub(Log, 'error').callsFake(function(){})
+
+          var userSchema = new mongoose.Schema({});
+          var postDeferred = Q.defer();
+          var error = new Error();
+          postDeferred.reject(error);
+          userSchema.statics = {
+            routeOptions: {
+              find: {
+                post: function(){
+                  return postDeferred.promise;
+                }
+              }
+            }
+          };
+
+          var userModel = mongoose.model("user", userSchema);
+
+          userModel.findOne = sandbox.spy();
+
+          var request = { query: {}, params: { _id: {}} };
+          //</editor-fold>
+
+          //<editor-fold desc="Act">
+          var promise = handlerHelper.findHandler(userModel, "TEST", request, Log);
+          //</editor-fold>
+
+          //<editor-fold desc="Assert">
+          return promise
+              .catch(function (error) {
+                t.equals(error.message, "There was a postprocessing error.", "threw a generic postprocessing error");
+              })
+          //</editor-fold>
+
+          //<editor-fold desc="Restore">
+              .then(function(){
+                sandbox.restore();
+                delete mongoose.models.user;
+                delete mongoose.modelSchemas.user;
+              });
+          //</editor-fold>
+        });
+      })
+
+      //handler-helper.findHandler throws a custom postprocessing error
+      .then(function() {
+        return t.test('handler-helper.findHandler throws a custom postprocessing error', function (t) {
           //<editor-fold desc="Arrange">
           var sandbox = sinon.sandbox.create();
           var Log = logger.bind("handler-helper");
@@ -1200,11 +1399,11 @@ test('handler-helper.findHandler', function(t) {
           //<editor-fold desc="Assert">
           return promise
               .catch(function (error) {
-                t.equals(error.message, "There was a postprocessing error.", "threw a postprocessing error");
+                t.equals(error.message, "error message", "threw a custom postprocessing error");
               })
-          //</editor-fold>
+              //</editor-fold>
 
-          //<editor-fold desc="Restore">
+              //<editor-fold desc="Restore">
               .then(function(){
                 sandbox.restore();
                 delete mongoose.models.user;
@@ -1327,9 +1526,59 @@ test('handler-helper.findHandler', function(t) {
         });
       })
 
-      //handler-helper.findHandler throws a preprocessing error
+      //handler-helper.findHandler throws a generic preprocessing error
       .then(function() {
-        return t.test('handler-helper.findHandler throws a preprocessing error', function (t) {
+        return t.test('handler-helper.findHandler throws a generic preprocessing error', function (t) {
+          //<editor-fold desc="Arrange">
+          var sandbox = sinon.sandbox.create();
+          var Log = logger.bind("handler-helper");
+          var server = sandbox.spy();
+          var queryHelperStub = sandbox.stub(require('../utilities/query-helper'));
+          var handlerHelper = proxyquire('../utilities/handler-helper', {
+            './query-helper': queryHelperStub
+          });
+          sandbox.stub(Log, 'error').callsFake(function(){})
+
+          var userSchema = new mongoose.Schema({});
+          userSchema.statics = {
+            routeOptions: {
+              find: {
+                pre: function(){
+                  return Q.reject(new Error());
+                }
+              }
+            }
+          };
+
+          var userModel = mongoose.model("user", userSchema);
+
+          var request = { query: {}, params: { _id: "TEST"} };
+          //</editor-fold>
+
+          //<editor-fold desc="Act">
+          var promise = handlerHelper.findHandler(userModel, "TEST", request, Log);
+          //</editor-fold>
+
+          //<editor-fold desc="Assert">
+          return promise
+              .catch(function(error) {
+                t.equals(error.message, "There was a preprocessing error.", "threw a generic preprocessing error");
+              })
+              //</editor-fold>
+
+              //<editor-fold desc="Restore">
+              .then(function(){
+                sandbox.restore();
+                delete mongoose.models.user;
+                delete mongoose.modelSchemas.user;
+              });
+          //</editor-fold>
+        });
+      })
+
+      //handler-helper.findHandler throws a custom preprocessing error
+      .then(function() {
+        return t.test('handler-helper.findHandler throws a custom preprocessing error', function (t) {
           //<editor-fold desc="Arrange">
           var sandbox = sinon.sandbox.create();
           var Log = logger.bind("handler-helper");
@@ -1363,7 +1612,7 @@ test('handler-helper.findHandler', function(t) {
           //<editor-fold desc="Assert">
           return promise
               .catch(function(error) {
-                t.equals(error.message, "There was an error preprocessing the request.", "threw a preprocessing error");
+                t.equals(error.message, "error message", "threw a custom preprocessing error");
               })
               //</editor-fold>
 
@@ -1385,21 +1634,16 @@ test('handler-helper.findHandler', function(t) {
           var Log = logger.bind("handler-helper");
           var server = sandbox.spy();
           var queryHelperStub = sandbox.stub(require('../utilities/query-helper'));
+
+          var qStub = sandbox.stub(Q, 'when').callsFake(function(){ throw "ERROR" });
+
           var handlerHelper = proxyquire('../utilities/handler-helper', {
-            './query-helper': queryHelperStub
+            './query-helper': queryHelperStub,
+            'q': qStub
           });
           sandbox.stub(Log, 'error').callsFake(function(){})
 
           var userSchema = new mongoose.Schema({});
-          userSchema.statics = {
-            routeOptions: {
-              find: {
-                pre: function(){
-                  throw("error message");
-                }
-              }
-            }
-          };
 
           var userModel = mongoose.model("user", userSchema);
 
@@ -1828,9 +2072,76 @@ test('handler-helper.createHandler', function(t) {
         });
       })
 
-      //handler-helper.createHandler throws a postprocessing error
+      //handler-helper.createHandler throws a generic postprocessing error
       .then(function() {
-        return t.test('handler-helper.createHandler throws a postprocessing error', function (t) {
+        return t.test('handler-helper.createHandler throws a generic postprocessing error', function (t) {
+          //<editor-fold desc="Arrange">
+          var sandbox = sinon.sandbox.create();
+          var Log = logger.bind("handler-helper");
+          var server = sandbox.spy();
+          var queryHelperStub = sandbox.stub(require('../utilities/query-helper'));
+          queryHelperStub.createAttributesFilter = function(){ return "attributes" };
+          var handlerHelper = proxyquire('../utilities/handler-helper', {
+            './query-helper': queryHelperStub
+          });
+          sandbox.stub(Log, 'error').callsFake(function(){})
+
+          var userSchema = new mongoose.Schema({});
+          userSchema.statics = {
+            routeOptions: {
+              create: {
+                post: function(){ return Q.reject(new Error()) }
+              }
+            }
+          };
+
+          var userModel = mongoose.model("user", userSchema);
+          userModel.create = sandbox.spy(function(){ return Q.when([{ _id: "TEST" }]) });
+
+          var findExec = function(){
+            return Q.when([{ _id: "TEST" }]);
+          };
+          var findLean = function(){
+            return { exec: findExec };
+          };
+          var findSelect = function(){
+            return { lean: findLean };
+          };
+          var findWhere = function(){
+            return { select: findSelect };
+          };
+
+          userModel.find = sandbox.spy(function(){
+            return { where: findWhere };
+          });
+
+          var request = { query: {}, payload: {} };
+          //</editor-fold>
+
+          //<editor-fold desc="Act">
+          var promise = handlerHelper.createHandler(userModel, request, Log);
+          //</editor-fold>
+
+          //<editor-fold desc="Assert">
+          return promise
+              .catch(function(error) {
+                t.equals(error.message, "There was a postprocessing error creating the resource.", "threw a generic postprocessing error");
+              })
+          //</editor-fold>
+
+          //<editor-fold desc="Restore">
+              .then(function(){
+                sandbox.restore();
+                delete mongoose.models.user;
+                delete mongoose.modelSchemas.user;
+              });
+          //</editor-fold>
+        });
+      })
+
+      //handler-helper.createHandler throws a custom postprocessing error
+      .then(function() {
+        return t.test('handler-helper.createHandler throws a custom postprocessing error', function (t) {
           //<editor-fold desc="Arrange">
           var sandbox = sinon.sandbox.create();
           var Log = logger.bind("handler-helper");
@@ -1881,11 +2192,11 @@ test('handler-helper.createHandler', function(t) {
           //<editor-fold desc="Assert">
           return promise
               .catch(function(error) {
-                t.equals(error.message, "There was a postprocessing error creating the resource.", "threw a postprocessing error");
+                t.equals(error.message, "error message", "threw a custom postprocessing error");
               })
-          //</editor-fold>
+              //</editor-fold>
 
-          //<editor-fold desc="Restore">
+              //<editor-fold desc="Restore">
               .then(function(){
                 sandbox.restore();
                 delete mongoose.models.user;
@@ -1962,9 +2273,58 @@ test('handler-helper.createHandler', function(t) {
         });
       })
 
-      //handler-helper.createHandler throws a preprocessing error
+      //handler-helper.createHandler throws a generic preprocessing error
       .then(function() {
-        return t.test('handler-helper.createHandler throws a preprocessing error', function (t) {
+        return t.test('handler-helper.createHandler throws a generic preprocessing error', function (t) {
+          //<editor-fold desc="Arrange">
+          var sandbox = sinon.sandbox.create();
+          var Log = logger.bind("handler-helper");
+          var server = sandbox.spy();
+          var queryHelperStub = sandbox.stub(require('../utilities/query-helper'));
+          queryHelperStub.createAttributesFilter = function(){ return "attributes" };
+          var handlerHelper = proxyquire('../utilities/handler-helper', {
+            './query-helper': queryHelperStub
+          });
+          sandbox.stub(Log, 'error').callsFake(function(){})
+
+          var userSchema = new mongoose.Schema({});
+          userSchema.statics = {
+            routeOptions: {
+              create: {
+                pre: function(){ return Q.reject(new Error()) }
+              }
+            }
+          };
+
+          var userModel = mongoose.model("user", userSchema);
+
+          var request = { query: {}, payload: {} };
+          //</editor-fold>
+
+          //<editor-fold desc="Act">
+          var promise = handlerHelper.createHandler(userModel, request, Log);
+          //</editor-fold>
+
+          //<editor-fold desc="Assert">
+          return promise
+              .catch(function(error) {
+                t.equals(error.message, "There was a preprocessing error creating the resource.", "threw a generic preprocessing error");
+              })
+          //</editor-fold>
+
+          //<editor-fold desc="Restore">
+              .then(function(){
+                sandbox.restore();
+                delete mongoose.models.user;
+                delete mongoose.modelSchemas.user;
+              });
+          //</editor-fold>
+        });
+      })
+
+      //handler-helper.createHandler throws a custom preprocessing error
+      .then(function() {
+        return t.test('handler-helper.createHandler throws a custom preprocessing error', function (t) {
           //<editor-fold desc="Arrange">
           var sandbox = sinon.sandbox.create();
           var Log = logger.bind("handler-helper");
@@ -1997,11 +2357,11 @@ test('handler-helper.createHandler', function(t) {
           //<editor-fold desc="Assert">
           return promise
               .catch(function(error) {
-                t.equals(error.message, "There was a preprocessing error creating the resource.", "threw a preprocessing error");
+                t.equals(error.message, "error message", "threw a custom preprocessing error");
               })
-          //</editor-fold>
+              //</editor-fold>
 
-          //<editor-fold desc="Restore">
+              //<editor-fold desc="Restore">
               .then(function(){
                 sandbox.restore();
                 delete mongoose.models.user;
@@ -2020,19 +2380,15 @@ test('handler-helper.createHandler', function(t) {
           var server = sandbox.spy();
           var queryHelperStub = sandbox.stub(require('../utilities/query-helper'));
           queryHelperStub.createAttributesFilter = function(){ return "attributes" };
+          var qStub = sandbox.stub(Q, 'when').callsFake(function(){ throw "ERROR" });
+
           var handlerHelper = proxyquire('../utilities/handler-helper', {
-            './query-helper': queryHelperStub
+            './query-helper': queryHelperStub,
+            'q': qStub
           });
           sandbox.stub(Log, 'error').callsFake(function(){})
 
           var userSchema = new mongoose.Schema({});
-          userSchema.statics = {
-            routeOptions: {
-              create: {
-                pre: function(){ throw("error message") }
-              }
-            }
-          };
 
           var userModel = mongoose.model("user", userSchema);
 
@@ -2092,6 +2448,10 @@ test('handler-helper.deleteOneHandler', function(t) {
 
           var userModel = mongoose.model("user", userSchema);
 
+          sandbox.stub(userModel, 'findByIdAndRemove').callsFake(function(){
+            return Q.when("DELETED")
+          });
+
           var request = { query: {} };
           //</editor-fold>
 
@@ -2130,7 +2490,9 @@ test('handler-helper.deleteOneHandler', function(t) {
 
           var userModel = mongoose.model("user", userSchema);
           var deferred = Q.defer();
-          userModel.findByIdAndRemove = sandbox.spy(function(){ return deferred.resolve() });
+          sandbox.stub(userModel, 'findByIdAndRemove').callsFake(function(){
+            return deferred.resolve("DELETED")
+          });
 
           var request = { query: {}, params: { _id: "TEST" } };
           //</editor-fold>
@@ -2178,7 +2540,9 @@ test('handler-helper.deleteOneHandler', function(t) {
           };
 
           var userModel = mongoose.model("user", userSchema);
-          userModel.findByIdAndRemove = sandbox.spy(function(){ return Q.when("DELETED") });
+          sandbox.stub(userModel, 'findByIdAndRemove').callsFake(function(){
+            return Q.when("DELETED")
+          });
 
           var request = { query: {}, params: { _id: "TEST" } };
           //</editor-fold>
@@ -2217,7 +2581,9 @@ test('handler-helper.deleteOneHandler', function(t) {
           var userSchema = new mongoose.Schema({});
 
           var userModel = mongoose.model("user", userSchema);
-          userModel.findByIdAndRemove = sandbox.spy(function(){ return Q.when("DELETED") });
+          sandbox.stub(userModel, 'findByIdAndRemove').callsFake(function(){
+            return Q.when("DELETED")
+          });
 
           var request = { query: {}, params: { _id: "TEST" } };
           //</editor-fold>
@@ -2242,9 +2608,58 @@ test('handler-helper.deleteOneHandler', function(t) {
         });
       })
 
-      //handler-helper.deleteOneHandler throws a postprocessing error
+      //handler-helper.deleteOneHandler throws a generic postprocessing error
       .then(function() {
-        return t.test('handler-helper.deleteOneHandler throws a postprocessing error', function (t) {
+        return t.test('handler-helper.deleteOneHandler throws a generic postprocessing error', function (t) {
+          //<editor-fold desc="Arrange">
+          var sandbox = sinon.sandbox.create();
+          var Log = logger.bind("handler-helper");
+          var server = sandbox.spy();
+          var handlerHelper = proxyquire('../utilities/handler-helper', {
+          });
+          sandbox.stub(Log, 'error').callsFake(function(){})
+
+          var userSchema = new mongoose.Schema({});
+          userSchema.statics = {
+            routeOptions: {
+              delete: {
+                post: function(){ return Q.reject(new Error()) }
+              }
+            }
+          };
+
+          var userModel = mongoose.model("user", userSchema);
+          sandbox.stub(userModel, 'findByIdAndRemove').callsFake(function(){
+            return Q.when("DELETED")
+          });
+
+          var request = { query: {}, params: { _id: "TEST" } };
+          //</editor-fold>
+
+          //<editor-fold desc="Act">
+          var promise = handlerHelper.deleteOneHandler(userModel, "TEST", false, request, Log);
+          //</editor-fold>
+
+          //<editor-fold desc="Assert">
+          return promise
+              .catch(function(error) {
+                t.equals(error.message, "There was a postprocessing error deleting the resource.", "threw a generic postprocessing error");
+              })
+          //</editor-fold>
+
+          //<editor-fold desc="Restore">
+              .then(function(){
+                sandbox.restore();
+                delete mongoose.models.user;
+                delete mongoose.modelSchemas.user;
+              });
+          //</editor-fold>
+        });
+      })
+
+      //handler-helper.deleteOneHandler throws a custom postprocessing error
+      .then(function() {
+        return t.test('handler-helper.deleteOneHandler throws a custom postprocessing error', function (t) {
           //<editor-fold desc="Arrange">
           var sandbox = sinon.sandbox.create();
           var Log = logger.bind("handler-helper");
@@ -2263,7 +2678,9 @@ test('handler-helper.deleteOneHandler', function(t) {
           };
 
           var userModel = mongoose.model("user", userSchema);
-          userModel.findByIdAndRemove = sandbox.spy(function(){ return Q.when("DELETED") });
+          sandbox.stub(userModel, 'findByIdAndRemove').callsFake(function(){
+            return Q.when("DELETED")
+          });
 
           var request = { query: {}, params: { _id: "TEST" } };
           //</editor-fold>
@@ -2275,11 +2692,11 @@ test('handler-helper.deleteOneHandler', function(t) {
           //<editor-fold desc="Assert">
           return promise
               .catch(function(error) {
-                t.equals(error.message, "There was a postprocessing error deleting the resource.", "threw a postprocessing error");
+                t.equals(error.message, "error message", "threw a custom postprocessing error");
               })
-          //</editor-fold>
+              //</editor-fold>
 
-          //<editor-fold desc="Restore">
+              //<editor-fold desc="Restore">
               .then(function(){
                 sandbox.restore();
                 delete mongoose.models.user;
@@ -2303,7 +2720,9 @@ test('handler-helper.deleteOneHandler', function(t) {
           var userSchema = new mongoose.Schema({});
 
           var userModel = mongoose.model("user", userSchema);
-          userModel.findByIdAndRemove = sandbox.spy(function(){ return Q.when() });
+          sandbox.stub(userModel, 'findByIdAndRemove').callsFake(function(){
+            return Q.when("DELETED")
+          });
 
           var request = { query: {}, params: { _id: "TEST" } };
           //</editor-fold>
@@ -2329,7 +2748,56 @@ test('handler-helper.deleteOneHandler', function(t) {
         });
       })
 
-      //handler-helper.deleteOneHandler calls reply with a preprocessing error
+      //handler-helper.deleteOneHandler throws a generic preprocessing error
+      .then(function() {
+        return t.test('handler-helper.deleteOneHandler throws a generic preprocessing error', function (t) {
+          //<editor-fold desc="Arrange">
+          var sandbox = sinon.sandbox.create();
+          var Log = logger.bind("handler-helper");
+          var server = sandbox.spy();
+          var handlerHelper = proxyquire('../utilities/handler-helper', {
+          });
+          sandbox.stub(Log, 'error').callsFake(function(){})
+
+          var userSchema = new mongoose.Schema({});
+          userSchema.statics = {
+            routeOptions: {
+              delete: {
+                pre: function(){ return Q.reject(new Error()) }
+              }
+            }
+          };
+
+          var userModel = mongoose.model("user", userSchema);
+          sandbox.stub(userModel, 'findByIdAndRemove').callsFake(function(){
+            return Q.when("DELETED")
+          });
+
+          var request = { query: {}, params: { _id: "TEST" } };
+          //</editor-fold>
+
+          //<editor-fold desc="Act">
+          var promise = handlerHelper.deleteOneHandler(userModel, "TEST", false, request, Log);
+          //</editor-fold>
+
+          //<editor-fold desc="Assert">
+          return promise
+              .catch(function(error) {
+                t.equals(error.message, "There was a preprocessing error deleting the resource.", "threw a generic preprocessing error");
+              })
+          //</editor-fold>
+
+          //<editor-fold desc="Restore">
+              .then(function(){
+                sandbox.restore();
+                delete mongoose.models.user;
+                delete mongoose.modelSchemas.user;
+              });
+          //</editor-fold>
+        });
+      })
+
+      //handler-helper.deleteOneHandler throws a custom preprocessing error
       .then(function() {
         return t.test('handler-helper.deleteOneHandler calls reply with a preprocessing error', function (t) {
           //<editor-fold desc="Arrange">
@@ -2350,6 +2818,9 @@ test('handler-helper.deleteOneHandler', function(t) {
           };
 
           var userModel = mongoose.model("user", userSchema);
+          sandbox.stub(userModel, 'findByIdAndRemove').callsFake(function(){
+            return Q.when("DELETED")
+          });
 
           var request = { query: {}, params: { _id: "TEST" } };
           //</editor-fold>
@@ -2361,11 +2832,11 @@ test('handler-helper.deleteOneHandler', function(t) {
           //<editor-fold desc="Assert">
           return promise
               .catch(function(error) {
-                t.equals(error.message, "There was a preprocessing error deleting the resource.", "threw a preprocessing error");
+                t.equals(error.message, "error message", "threw a custom preprocessing error");
               })
-          //</editor-fold>
+              //</editor-fold>
 
-          //<editor-fold desc="Restore">
+              //<editor-fold desc="Restore">
               .then(function(){
                 sandbox.restore();
                 delete mongoose.models.user;
@@ -2382,20 +2853,21 @@ test('handler-helper.deleteOneHandler', function(t) {
           var sandbox = sinon.sandbox.create();
           var Log = logger.bind("handler-helper");
           var server = sandbox.spy();
+          var qStub = sandbox.stub(Q, 'when').callsFake(function(){ throw "ERROR" });
+
           var handlerHelper = proxyquire('../utilities/handler-helper', {
+            'q': qStub
           });
+
           sandbox.stub(Log, 'error').callsFake(function(){})
 
           var userSchema = new mongoose.Schema({});
-          userSchema.statics = {
-            routeOptions: {
-              delete: {
-                pre: function(){ throw("error message") }
-              }
-            }
-          };
 
           var userModel = mongoose.model("user", userSchema);
+
+          sandbox.stub(userModel, 'findByIdAndRemove').callsFake(function(){
+            return Q.when("DELETED")
+          });
 
           var request = { query: {}, params: { _id: "TEST" } };
           //</editor-fold>
@@ -2729,9 +3201,66 @@ test('handler-helper.updateHandler', function(t) {
         });
       })
 
-      //handler-helper.updateHandler throws a postprocessing error
+      //handler-helper.updateHandler throws a generic postprocessing error
       .then(function() {
-        return t.test('handler-helper.updateHandler throws a postprocessing error', function (t) {
+        return t.test('handler-helper.updateHandler throws a generic postprocessing error', function (t) {
+          //<editor-fold desc="Arrange">
+          var sandbox = sinon.sandbox.create();
+          var Log = logger.bind("handler-helper");
+          var server = sandbox.spy();
+          var queryHelperStub = sandbox.stub(require('../utilities/query-helper'));
+          queryHelperStub.createAttributesFilter = function(){ return "attributes" };
+          var handlerHelper = proxyquire('../utilities/handler-helper', {
+            './query-helper': queryHelperStub
+          });
+          sandbox.stub(Log, 'error').callsFake(function(){})
+
+          var userSchema = new mongoose.Schema({});
+          userSchema.statics = {
+            routeOptions: {
+              update: {
+                post: function(){ return Q.reject(new Error()) }
+              }
+            }
+          };
+
+          var userModel = mongoose.model("user", userSchema);
+          userModel.findByIdAndUpdate = sandbox.spy(function(){ return Q.when({ _id: {} }) });
+          userModel.findOne = sandbox.spy(function(){
+            return {
+              lean: function(){
+                return Q.when("TEST");
+              }
+            };
+          });
+
+          var request = { query: {}, params: { _id: "_id" }, payload: {} };
+          //</editor-fold>
+
+          //<editor-fold desc="Act">
+          var promise = handlerHelper.updateHandler(userModel, "_id", request, Log);
+          //</editor-fold>
+
+          //<editor-fold desc="Assert">
+          return promise
+              .catch(function(error) {
+                t.equals(error.message, "There was a postprocessing error updating the resource.", "threw a generic postprocessing error");
+              })
+          //</editor-fold>
+
+          //<editor-fold desc="Restore">
+              .then(function(){
+                sandbox.restore();
+                delete mongoose.models.user;
+                delete mongoose.modelSchemas.user;
+              });
+          //</editor-fold>
+        });
+      })
+
+      //handler-helper.updateHandler throws a custom postprocessing error
+      .then(function() {
+        return t.test('handler-helper.updateHandler throws a custom postprocessing error', function (t) {
           //<editor-fold desc="Arrange">
           var sandbox = sinon.sandbox.create();
           var Log = logger.bind("handler-helper");
@@ -2772,11 +3301,11 @@ test('handler-helper.updateHandler', function(t) {
           //<editor-fold desc="Assert">
           return promise
               .catch(function(error) {
-                t.equals(error.message, "There was a postprocessing error updating the resource.", "threw a postprocessing error");
+                t.equals(error.message, "error message", "threw a custom postprocessing error");
               })
-          //</editor-fold>
+              //</editor-fold>
 
-          //<editor-fold desc="Restore">
+              //<editor-fold desc="Restore">
               .then(function(){
                 sandbox.restore();
                 delete mongoose.models.user;
@@ -2872,9 +3401,58 @@ test('handler-helper.updateHandler', function(t) {
         });
       })
 
-      //handler-helper.updateHandler throws a preprocessing error
+      //handler-helper.updateHandler throws a generic preprocessing error
       .then(function() {
-        return t.test('handler-helper.updateHandler throws a preprocessing error', function (t) {
+        return t.test('handler-helper.updateHandler throws a generic preprocessing error', function (t) {
+          //<editor-fold desc="Arrange">
+          var sandbox = sinon.sandbox.create();
+          var Log = logger.bind("handler-helper");
+          var server = sandbox.spy();
+          var queryHelperStub = sandbox.stub(require('../utilities/query-helper'));
+          queryHelperStub.createAttributesFilter = function(){ return "attributes" };
+          var handlerHelper = proxyquire('../utilities/handler-helper', {
+            './query-helper': queryHelperStub
+          });
+          sandbox.stub(Log, 'error').callsFake(function(){})
+
+          var userSchema = new mongoose.Schema({});
+          userSchema.statics = {
+            routeOptions: {
+              update: {
+                pre: function(){ return Q.reject(new Error()) }
+              }
+            }
+          };
+
+          var userModel = mongoose.model("user", userSchema);
+
+          var request = { query: {}, payload: {} };
+          //</editor-fold>
+
+          //<editor-fold desc="Act">
+          var promise = handlerHelper.updateHandler(userModel, "_id", request, Log);
+          //</editor-fold>
+
+          //<editor-fold desc="Assert">
+          return promise
+              .catch(function(error) {
+                t.equals(error.message, "There was a preprocessing error updating the resource.", "threw a generic preprocessing error");
+              })
+          //</editor-fold>
+
+          //<editor-fold desc="Restore">
+              .then(function(){
+                sandbox.restore();
+                delete mongoose.models.user;
+                delete mongoose.modelSchemas.user;
+              });
+          //</editor-fold>
+        });
+      })
+
+      //handler-helper.updateHandler throws a custom preprocessing error
+      .then(function() {
+        return t.test('handler-helper.updateHandler throws a custom preprocessing error', function (t) {
           //<editor-fold desc="Arrange">
           var sandbox = sinon.sandbox.create();
           var Log = logger.bind("handler-helper");
@@ -2907,11 +3485,11 @@ test('handler-helper.updateHandler', function(t) {
           //<editor-fold desc="Assert">
           return promise
               .catch(function(error) {
-                t.equals(error.message, "There was a preprocessing error updating the resource.", "threw a preprocessing error");
+                t.equals(error.message, "error message", "threw a custom preprocessing error");
               })
-          //</editor-fold>
+              //</editor-fold>
 
-          //<editor-fold desc="Restore">
+              //<editor-fold desc="Restore">
               .then(function(){
                 sandbox.restore();
                 delete mongoose.models.user;
@@ -2930,19 +3508,15 @@ test('handler-helper.updateHandler', function(t) {
           var server = sandbox.spy();
           var queryHelperStub = sandbox.stub(require('../utilities/query-helper'));
           queryHelperStub.createAttributesFilter = function(){ return "attributes" };
+
+          var qStub = sandbox.stub(Q, 'when').callsFake(function(){ throw "ERROR" });
+
           var handlerHelper = proxyquire('../utilities/handler-helper', {
-            './query-helper': queryHelperStub
+            'q': qStub
           });
           sandbox.stub(Log, 'error').callsFake(function(){})
 
           var userSchema = new mongoose.Schema({});
-          userSchema.statics = {
-            routeOptions: {
-              update: {
-                pre: function(){ throw("error message") }
-              }
-            }
-          };
 
           var userModel = mongoose.model("user", userSchema);
 

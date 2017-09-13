@@ -281,7 +281,7 @@ function _listHandler(model, request, Log) {
   try {
     var promise = {};
     if (model.routeOptions && model.routeOptions.list && model.routeOptions.list.pre) {
-      promise = model.routeOptions.list.pre(query, request, Log);
+      promise = Q.fcall(model.routeOptions.list.pre, query, request, Log);
     }
     else {
       promise = Q.when(query);
@@ -318,7 +318,7 @@ function _listHandler(model, request, Log) {
 
                 var promise = {};
                 if (model.routeOptions && model.routeOptions.list && model.routeOptions.list.post) {
-                  promise = model.routeOptions.list.post(request, result, Log);
+                  promise = Q.fcall(model.routeOptions.list.post, request, result, Log);
                 }
                 else {
                   promise = Q.when(result);
@@ -394,7 +394,10 @@ function _listHandler(model, request, Log) {
                       return { docs: result, pages: pages, items: items };
                     })
                     .catch(function (error) {
-                      const message = "There was a postprocessing error.";
+                      let message = "There was a postprocessing error.";
+                      if (_.isString(error)) {
+                        message = error;
+                      }
                       if (!logError) {
                         Log.error(message);
                         logError = true;
@@ -414,7 +417,10 @@ function _listHandler(model, request, Log) {
               });
         })
         .catch(function (error) {
-          const message = "There was a preprocessing error.";
+          let message = "There was a preprocessing error.";
+          if (_.isString(error)) {
+            message = error;
+          }
           if (!logError) {
             Log.error(message);
             logError = true;
@@ -468,7 +474,7 @@ function _findHandler(model, _id, request, Log) {
   try {
     var promise = {};
     if (model.routeOptions && model.routeOptions.find && model.routeOptions.find.pre) {
-      promise = model.routeOptions.find.pre(_id, query, request, Log);
+      promise = Q.fcall(model.routeOptions.find.pre, _id, query, request, Log);
     } else {
       promise = Q.when(query);
     }
@@ -487,7 +493,7 @@ function _findHandler(model, _id, request, Log) {
                 if (result) {
                   var promise = {};
                   if (model.routeOptions && model.routeOptions.find && model.routeOptions.find.post) {
-                    promise = model.routeOptions.find.post(request, result, Log);
+                    promise = Q.fcall(model.routeOptions.find.post, request, result, Log);
                   } else {
                     promise = Q.when(result);
                   }
@@ -525,7 +531,10 @@ function _findHandler(model, _id, request, Log) {
                         return result;
                       })
                       .catch(function (error) {
-                        const message = "There was a postprocessing error.";
+                        let message = "There was a postprocessing error.";
+                        if (_.isString(error)) {
+                          message = error;
+                        }
                         if (!logError) {
                           Log.error(message);
                           logError = true;
@@ -554,7 +563,10 @@ function _findHandler(model, _id, request, Log) {
               });
         })
         .catch(function(error) {
-          const message = "There was an error preprocessing the request.";
+          let message = "There was a preprocessing error.";
+          if (_.isString(error)) {
+            message = error;
+          }
           if (!logError) {
             Log.error(message);
             logError = true;
@@ -619,7 +631,7 @@ function _createHandler(model, request, Log) {
     var promises =  [];
     if (model.routeOptions && model.routeOptions.create && model.routeOptions.create.pre){
       payload.forEach(function(document) {
-        promises.push(model.routeOptions.create.pre(document, request, Log));
+        promises.push(Q.fcall(model.routeOptions.create.pre, document, request, Log));
       });
     }
     else {
@@ -653,7 +665,7 @@ function _createHandler(model, request, Log) {
                       var promises = [];
                       if (model.routeOptions && model.routeOptions.create && model.routeOptions.create.post) {
                         result.forEach(function(document) {
-                          promises.push(model.routeOptions.create.post(document, request, result, Log));
+                          promises.push(Q.fcall(model.routeOptions.create.post, document, request, result, Log));
                         });
                       }
                       else {
@@ -670,7 +682,10 @@ function _createHandler(model, request, Log) {
                             }
                           })
                           .catch(function (error) {
-                            const message = "There was a postprocessing error creating the resource.";
+                            let message = "There was a postprocessing error creating the resource.";
+                            if (_.isString(error)) {
+                              message = error;
+                            }
                             if (!logError) {
                               Log.error(message);
                               logError = true;
@@ -691,7 +706,10 @@ function _createHandler(model, request, Log) {
               });
         })
         .catch(function (error) {
-          const message = "There was a preprocessing error creating the resource.";
+          let message = "There was a preprocessing error creating the resource.";
+          if (_.isString(error)) {
+            message = error;
+          }
           if (!logError) {
             Log.error(message);
             logError = true;
@@ -745,7 +763,7 @@ function _updateHandler(model, _id, request, Log) {
   try {
     var promise =  {};
     if (model.routeOptions && model.routeOptions.update && model.routeOptions.update.pre){
-      promise = model.routeOptions.update.pre(_id, request, Log);
+      promise = Q.fcall(model.routeOptions.update.pre, _id, request, Log);
     }
     else {
       promise = Q.when(payload);
@@ -769,7 +787,7 @@ function _updateHandler(model, _id, request, Log) {
                       .then(function (result) {
 
                         if (model.routeOptions && model.routeOptions.update && model.routeOptions.update.post) {
-                          promise = model.routeOptions.update.post(request, result, Log);
+                          promise = Q.fcall(model.routeOptions.update.post, request, result, Log);
                         }
                         else {
                           promise = Q.when(result);
@@ -780,7 +798,10 @@ function _updateHandler(model, _id, request, Log) {
                               return result;
                             })
                             .catch(function (error) {
-                              const message = "There was a postprocessing error updating the resource.";
+                              let message = "There was a postprocessing error updating the resource.";
+                              if (_.isString(error)) {
+                                message = error;
+                              }
                               if (!logError) {
                                 Log.error(message);
                                 logError = true;
@@ -810,7 +831,10 @@ function _updateHandler(model, _id, request, Log) {
               });
         })
         .catch(function (error) {
-          const message = "There was a preprocessing error updating the resource.";
+          let message = "There was a preprocessing error updating the resource.";
+          if (_.isString(error)) {
+            message = error;
+          }
           if (!logError) {
             Log.error(message);
             logError = true;
@@ -864,7 +888,7 @@ function _deleteOneHandler(model, _id, hardDelete, request, Log) {
   try {
     var promise = {};
     if (model.routeOptions && model.routeOptions.delete && model.routeOptions.delete.pre) {
-      promise = model.routeOptions.delete.pre(_id, hardDelete, request, Log);
+      promise = Q.fcall(model.routeOptions.delete.pre, _id, hardDelete, request, Log);
     }
     else {
       promise = Q.when();
@@ -885,7 +909,7 @@ function _deleteOneHandler(model, _id, hardDelete, request, Log) {
 
                   var promise = {};
                   if (model.routeOptions && model.routeOptions.delete && model.routeOptions.delete.post) {
-                    promise = model.routeOptions.delete.post(hardDelete, deleted, request, Log);
+                    promise = Q.fcall(model.routeOptions.delete.post, hardDelete, deleted, request, Log);
                   }
                   else {
                     promise = Q.when();
@@ -896,7 +920,10 @@ function _deleteOneHandler(model, _id, hardDelete, request, Log) {
                         return true;
                       })
                       .catch(function (error) {
-                        const message = "There was a postprocessing error deleting the resource.";
+                        let message = "There was a postprocessing error deleting the resource.";
+                        if (_.isString(error)) {
+                          message = error;
+                        }
                         if (!logError) {
                           Log.error(message);
                           logError = true;
@@ -925,7 +952,10 @@ function _deleteOneHandler(model, _id, hardDelete, request, Log) {
               });
         })
         .catch(function (error) {
-          const message = "There was a preprocessing error deleting the resource.";
+          let message = "There was a preprocessing error deleting the resource.";
+          if (_.isString(error)) {
+            message = error;
+          }
           if (!logError) {
             Log.error(message);
             logError = true;
@@ -1483,7 +1513,10 @@ function _getAllHandler(ownerModel, ownerId, childModel, associationName, reques
                         return result;
                       })
                       .catch(function(error) {
-                        const message = "There was a postprocessing error.";
+                        let message = "There was a postprocessing error.";
+                        if (_.isString(error)) {
+                          message = error;
+                        }
                         if (!logError) {
                           Log.error(message);
                           logError = true;
