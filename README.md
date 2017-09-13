@@ -1236,7 +1236,8 @@ Models can support middleware functions for CRUD operations. These exist under t
     - post(request, result, Log)
         * returns: `result`
 * create:
-    - pre(payload, request, Log) **NOTE:** _For payloads with multiple documents, the pre function will be called for each document individually (passed in through the `payload` parameter) i.e. `request.payload` = array of documents, `payload` = single document_
+    - pre(payload, request, Log) 
+        * **NOTE:** _For payloads with multiple documents, the pre function will be called for each document individually (passed in through the `payload` parameter) i.e. `request.payload` = array of documents, `payload` = single document_
         * returns: `payload`
     - post(document, request, result, Log)
         * returns: `result`
