@@ -1227,29 +1227,29 @@ Models can support middleware functions for CRUD operations. These exist under t
 
 * list:
     - pre(query, request, Log)
-        * returns: query
+        * returns: `query`
     - post(request, result, Log)
-        * returns: result
+        * returns: `result`
 * find:
     - pre(\_id, query, request, Log)
-        * returns: query
+        * returns: `query`
     - post(request, result, Log)
-        * returns: result
+        * returns: `result`
 * create:
-    - pre(payload, request, Log) **NOTE:** For payloads with multiple documents, the pre function will be called for each document individually (passed in through the `payload` parameter) i.e. `request.payload` = array of documents, `payload` = single document
-        * returns: payload
+    - pre(payload, request, Log) **NOTE:** _For payloads with multiple documents, the pre function will be called for each document individually (passed in through the `payload` parameter) i.e. `request.payload` = array of documents, `payload` = single document_
+        * returns: `payload`
     - post(document, request, result, Log)
-        * returns: result
+        * returns: `result`
 * update:
     - pre(\_id, request, Log)
-        * returns: request.payload
+        * returns: `request.payload`
     - post(request, result, Log)
-        * returns: result
+        * returns: `result`
 * delete:
     - pre(\_id, hardDelete, request, Log)
-        * returns: null
+        * returns: `null`
     - post(hardDelete, deleted, request, Log)
-        * returns: null
+        * returns: `null`
 
 For example, a ``create: pre`` function can be defined to encrypt a users password
 using a static method ``generatePasswordHash``.  Notice the use of the ``Q`` library
