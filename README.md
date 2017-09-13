@@ -1253,13 +1253,11 @@ Models can support middleware functions for CRUD operations. These exist under t
         * returns: `null`
 
 For example, a ``create: pre`` function can be defined to encrypt a users password
-using a static method ``generatePasswordHash``.  Notice the use of the ``Q`` library
-to return a promise.
+using a static method ``generatePasswordHash``.
 
 ```javascript
 'use strict';
 
-var Q = require('q');
 var bcrypt = require('bcrypt');
 
 module.exports = function (mongoose) {
@@ -1283,12 +1281,11 @@ module.exports = function (mongoose) {
     routeOptions: {
       create: {
         pre: function (payload, request, Log) {
-          var deferred = Q.defer();
           var hashedPassword = mongoose.model('user').generatePasswordHash(payload.password);
 
           payload.password = hashedPassword;
-          deferred.resolve(payload);
-          return deferred.promise;
+          
+          return payload;
         }
       }
     },
@@ -1304,11 +1301,32 @@ module.exports = function (mongoose) {
 };
 ```
 
+Custom errors can be returned in middleware functions simply by throwing the error message as a string.  This will result in a 400 error response with your custom message. Ex:
+
+```javascript
+      create: {
+        pre: function (payload, request, Log) {
+          throw "TEST ERROR"
+        }
+      }
+```
+
+will result in a response body of:
+
+```javascript
+{
+  "statusCode": 400,
+  "error": "Bad Request",
+  "message": "TEST ERROR"
+}
+```
+
 ### Association
 Support is being added for association middlware. Currently the following association middleware exist:
 
 * getAll:
     - post(request, result, Log)
+        * returns: result
     
 Association middleware is defined similar to CRUD middleware, with the only difference being the association name must be specified.  See below for an example:
 
