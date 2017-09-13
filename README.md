@@ -1223,35 +1223,41 @@ allowNull: true | field accepts ``null`` as a valid value
 
 ## Middleware
 ### CRUD
-Models can support middleware functions for CRUD operations. These
-exist under the ``routeOptions`` object. Middleware functions must return
- a promise.  The following middleware functions
-are available:
+Models can support middleware functions for CRUD operations. These exist under the ``routeOptions`` object. The following middleware functions are available:
 
 * list:
     - pre(query, request, Log)
+        * returns: `query`
     - post(request, result, Log)
+        * returns: `result`
 * find:
     - pre(\_id, query, request, Log)
+        * returns: `query`
     - post(request, result, Log)
+        * returns: `result`
 * create:
-    - pre(payload, request, Log)
+    - pre(payload, request, Log) 
+        * **NOTE:** _For payloads with multiple documents, the pre function will be called for each document individually (passed in through the `payload` parameter) i.e. `request.payload` = array of documents, `payload` = single document_
+        * returns: `payload`
     - post(document, request, result, Log)
+        * returns: `result`
 * update:
     - pre(\_id, request, Log)
+        * returns: `request.payload`
     - post(request, result, Log)
+        * returns: `result`
 * delete:
     - pre(\_id, hardDelete, request, Log)
+        * returns: `null`
     - post(hardDelete, deleted, request, Log)
+        * returns: `null`
 
 For example, a ``create: pre`` function can be defined to encrypt a users password
-using a static method ``generatePasswordHash``.  Notice the use of the ``Q`` library
-to return a promise.
+using a static method ``generatePasswordHash``.
 
 ```javascript
 'use strict';
 
-var Q = require('q');
 var bcrypt = require('bcrypt');
 
 module.exports = function (mongoose) {
@@ -1275,12 +1281,11 @@ module.exports = function (mongoose) {
     routeOptions: {
       create: {
         pre: function (payload, request, Log) {
-          var deferred = Q.defer();
           var hashedPassword = mongoose.model('user').generatePasswordHash(payload.password);
 
           payload.password = hashedPassword;
-          deferred.resolve(payload);
-          return deferred.promise;
+          
+          return payload;
         }
       }
     },
@@ -1296,11 +1301,32 @@ module.exports = function (mongoose) {
 };
 ```
 
+Custom errors can be returned in middleware functions simply by throwing the error message as a string.  This will result in a 400 error response with your custom message. Ex:
+
+```javascript
+      create: {
+        pre: function (payload, request, Log) {
+          throw "TEST ERROR"
+        }
+      }
+```
+
+will result in a response body of:
+
+```javascript
+{
+  "statusCode": 400,
+  "error": "Bad Request",
+  "message": "TEST ERROR"
+}
+```
+
 ### Association
 Support is being added for association middlware. Currently the following association middleware exist:
 
 * getAll:
     - post(request, result, Log)
+        * returns: result
     
 Association middleware is defined similar to CRUD middleware, with the only difference being the association name must be specified.  See below for an example:
 
