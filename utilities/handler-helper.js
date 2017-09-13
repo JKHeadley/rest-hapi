@@ -1222,6 +1222,9 @@ function _addManyHandler(ownerModel, ownerId, childModel, associationName, reque
   let payload = extend([], request.payload);
   let logError = false;
   try {
+    if (_.isEmpty(request.payload)) {
+      throw "Payload is empty."
+    }
     return ownerModel.findOne({ '_id': ownerId })
         .then(function (ownerObject) {
           if (ownerObject) {
@@ -1381,7 +1384,10 @@ function _removeManyHandler(ownerModel, ownerId, childModel, associationName, re
         })
   }
   catch(error) {
-    const message = "There was an error processing the request.";
+    let message = "There was an error processing the request.";
+    if (_.isString(error)) {
+      message = error;
+    }
     if (!logError) {
       Log.error(message);
       logError = true;
