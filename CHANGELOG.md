@@ -6,6 +6,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [0.23.0] - 2017-09-12
+### Added
+- Allow custom errors in middleware
+
+### Changed
+- Cleaned up tests
+- Removed requirement that middlware functions return a promise.
+
 ## [0.22.0] - 2017-09-08
 ### Added
 - getAll association middleware
@@ -60,11 +68,12 @@ post(hardDelete, deleted, Log) | post(hardDelete, deleted, request, Log)
 
 
 
-[Unreleased]: https://github.com/jkheadley/rest-hapi/compare/v0.22.0...HEAD
+[Unreleased]: https://github.com/jkheadley/rest-hapi/compare/v0.23.0...HEAD
 [0.20.0]: https://github.com/jkheadley/rest-hapi/compare/v0.19.2...v0.20.0
 [0.20.2]: https://github.com/jkheadley/rest-hapi/compare/v0.20.0...v0.20.2
 [0.20.3]: https://github.com/jkheadley/rest-hapi/compare/v0.20.2...v0.20.3
 [0.21.0]: https://github.com/jkheadley/rest-hapi/compare/v0.20.3...v0.21.0
 [0.22.0]: https://github.com/jkheadley/rest-hapi/compare/v0.21.0...v0.22.0
+[0.23.0]: https://github.com/jkheadley/rest-hapi/compare/v0.22.0...v0.23.0
 
 [BREAKING]: https://github.com/JKHeadley/rest-hapi/releases
