@@ -1223,26 +1223,33 @@ allowNull: true | field accepts ``null`` as a valid value
 
 ## Middleware
 ### CRUD
-Models can support middleware functions for CRUD operations. These
-exist under the ``routeOptions`` object. Middleware functions must return
- a promise.  The following middleware functions
-are available:
+Models can support middleware functions for CRUD operations. These exist under the ``routeOptions`` object. The following middleware functions are available:
 
 * list:
     - pre(query, request, Log)
+        * returns: query
     - post(request, result, Log)
+        * returns: result
 * find:
     - pre(\_id, query, request, Log)
+        * returns: query
     - post(request, result, Log)
+        * returns: result
 * create:
-    - pre(payload, request, Log)
+    - pre(payload, request, Log) **NOTE:** For payloads with multiple documents, the pre function will be called for each document individually (passed in through the `payload` parameter) i.e. `request.payload` = array of documents, `payload` = single document
+        * returns: payload
     - post(document, request, result, Log)
+        * returns: result
 * update:
     - pre(\_id, request, Log)
+        * returns: request.payload
     - post(request, result, Log)
+        * returns: result
 * delete:
     - pre(\_id, hardDelete, request, Log)
+        * returns: null
     - post(hardDelete, deleted, request, Log)
+        * returns: null
 
 For example, a ``create: pre`` function can be defined to encrypt a users password
 using a static method ``generatePasswordHash``.  Notice the use of the ``Q`` library
