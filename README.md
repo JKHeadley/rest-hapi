@@ -25,9 +25,9 @@ rest-hapi is a hapi plugin intended to abstract the work involved in setting up 
 
 View the swagger docs for the live demos:
 
-appy: http://ec2-35-164-131-1.us-west-2.compute.amazonaws.com:8125
+appy: http://ec2-52-25-112-131.us-west-2.compute.amazonaws.com:8125
 
-rest-hapi-demo: http://ec2-35-164-131-1.us-west-2.compute.amazonaws.com:8124
+rest-hapi-demo: http://ec2-52-25-112-131.us-west-2.compute.amazonaws.com:8124
 
 ## Example Projects
 
