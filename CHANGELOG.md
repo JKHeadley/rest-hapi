@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [0.24.0] - 2017-09-19
 ### Added
 - Exposed joi helper methods, including the rest-hapi version of Joi ObjectId.
+### Fixed
+- Throw error when payload is empty for addMany.
 
 ## [0.23.0] - 2017-09-12
 ### Added
