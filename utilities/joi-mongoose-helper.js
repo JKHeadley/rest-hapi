@@ -212,9 +212,7 @@ module.exports = {
 
     switch (fieldCopy.type.schemaName) {
       case 'ObjectId':
-        //EXPL: Rather than converting all objectIds to string for response, we allow raw mongoose.Types.ObjectId objects
-        let objectIdModel = Joi.object({ "_bsontype": Joi.any(), "id": Joi.any() });
-        model = Joi.alternatives().try(Joi.objectId(), objectIdModel);
+        model = this.joiObjectId();
         break;
       case 'Boolean':
         model = Joi.bool();
@@ -291,6 +289,17 @@ module.exports = {
     }
 
 
+    return model;
+  },
+
+  /**
+   * Provides easy access to the Joi ObjectId type.
+   * @returns {*|{type}}
+   */
+  joiObjectId: function() {
+    //EXPL: Rather than converting all objectIds to string for response, we allow raw mongoose.Types.ObjectId objects
+    let objectIdModel = Joi.object({ "_bsontype": Joi.any(), "id": Joi.any() });
+    let model = Joi.alternatives().try(Joi.objectId().description("ObjectId"), objectIdModel);
     return model;
   }
 
