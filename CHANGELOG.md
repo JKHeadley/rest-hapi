@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [0.25.0] - 2017-09-20
+### Added
+- Added config option to enable logging of routes and scopes (disabled by default).
+
 ## [0.24.0] - 2017-09-19
 ### Added
 - Exposed [joi helper methods](https://github.com/JKHeadley/rest-hapi#joi-helper-methods), including the rest-hapi version of Joi ObjectId.
@@ -74,7 +78,7 @@ post(hardDelete, deleted, Log) | post(hardDelete, deleted, request, Log)
 
 
 
-[Unreleased]: https://github.com/jkheadley/rest-hapi/compare/v0.24.0...HEAD
+[Unreleased]: https://github.com/jkheadley/rest-hapi/compare/v0.25.0...HEAD
 [0.20.0]: https://github.com/jkheadley/rest-hapi/compare/v0.19.2...v0.20.0
 [0.20.2]: https://github.com/jkheadley/rest-hapi/compare/v0.20.0...v0.20.2
 [0.20.3]: https://github.com/jkheadley/rest-hapi/compare/v0.20.2...v0.20.3
@@ -82,5 +86,6 @@ post(hardDelete, deleted, Log) | post(hardDelete, deleted, request, Log)
 [0.22.0]: https://github.com/jkheadley/rest-hapi/compare/v0.21.0...v0.22.0
 [0.23.0]: https://github.com/jkheadley/rest-hapi/compare/v0.22.0...v0.23.0
 [0.24.0]: https://github.com/jkheadley/rest-hapi/compare/v0.23.0...v0.24.0
+[0.25.0]: https://github.com/jkheadley/rest-hapi/compare/v0.24.0...v0.25.0
 
 [BREAKING]: https://github.com/JKHeadley/rest-hapi/releases
