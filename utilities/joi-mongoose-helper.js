@@ -120,28 +120,61 @@ module.exports = {
    * @returns {*}: A Joi object
    */
   generateJoiCreateModel: function (model, Log) {
-    validationHelper.validateModel(model, Log);
+    // validationHelper.validateModel(model, Log);
 
     var createModelBase = {};
 
-    var fields = model.schema.paths;
+    var fields = model.schema.tree;
+    var nested = model.schema.nested;
 
     var associations = model.routeOptions.associations ? model.routeOptions.associations : {};
 
     for (var fieldName in fields) {
 
-      var field = fields[fieldName].options;
+      var field = fields[fieldName];
 
-      var association = associations[fields[fieldName].path] || null;
+      var association = associations[fieldName] || null;
 
       var canCreateAssociation = association ? (association.type === "ONE_ONE" || association.type === "MANY_ONE" || association.type === "_MANY") : false;
 
-      if (fieldName !== "__t" && fieldName !== "__v") {
+      if (fieldName !== "__t" && fieldName !== "__v" && fieldName !== "id") {
+        //EXPL: use the field createModel if one is defined
         if (field.createModel) {
           createModelBase[fieldName] = field.createModel;
         }
         else if (field.allowOnCreate !== false && (canCreateAssociation || !association)) {
-          var attributeCreateModel = this.generateJoiModelFromFieldType(field, Log);
+          var attributeCreateModel = {};
+          //EXPL: if this field is nested, we treat it as a nested model and recursively call "generateJoiCreateModel"
+          if (nested[fieldName]) {
+
+            var nestedModel = {
+              modelName: model.modelName + '.' + fieldName,
+              routeOptions: {},
+              schema: {
+                tree: field
+              }
+            };
+
+            var subNested = {};
+
+            for (var name in nested) {
+              if (name !== fieldName) {
+                var parts = name.split('.');
+                if (parts[0] === fieldName) {
+                  parts.shift();
+                  var subNestedName = parts.join(".");
+                  subNested[subNestedName] = true;
+                }
+              }
+            }
+
+            nestedModel.schema.nested = subNested;
+
+            attributeCreateModel = this.generateJoiCreateModel(nestedModel, Log);
+          }
+          else {
+            attributeCreateModel = this.generateJoiModelFromFieldType(field, Log);
+          }
 
           if (field.required === true) {
             attributeCreateModel = attributeCreateModel.required();
@@ -151,6 +184,8 @@ module.exports = {
         }
       }
     }
+
+
 
     var createModel = Joi.object(createModelBase).label(model.modelName + "CreateModel");
 
@@ -199,7 +234,7 @@ module.exports = {
   generateJoiModelFromFieldType: function (field, Log) {
     var model;
 
-    assert(field.type, "incorrect field format");
+    // assert(field.type, "incorrect field format");
 
     let isArray = false;
     let fieldCopy = _.extend({}, field);
@@ -208,6 +243,12 @@ module.exports = {
     if (_.isArray(fieldCopy.type)) {
       isArray = true;
       fieldCopy.type = fieldCopy.type[0];
+    }
+
+    if (!fieldCopy.type) {
+      fieldCopy.type = {
+        schemaName: "None"
+      }
     }
 
     switch (fieldCopy.type.schemaName) {
