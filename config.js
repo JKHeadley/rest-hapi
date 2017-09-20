@@ -102,12 +102,27 @@ config.enableResponseValidation = true;
 config.generateScopes = false;
 
 /**
+ * If set to true, the scope for each endpoint will be logged when then endpoint is generated.
+ * default: false
+ * @type {boolean}
+ */
+config.logScopes = false;
+
+/**
  * Flag specifying whether to text index all string fields for all models to enable text search.
  * WARNING: enabling this adds overhead to add inserts and updates, as well as added storage requirements.
  * Default is false.
  * @type {boolean}
  */
 config.enableTextSearch = false;
+
+
+/**
+ * If set to true, each route will be logged as it is generated.
+ * default: false
+ * @type {boolean}
+ */
+config.logRoutes = false;
 
 /**
  * Log level options:
