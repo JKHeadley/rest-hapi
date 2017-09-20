@@ -114,7 +114,9 @@ module.exports = function (logger, mongoose, server) {
       Log = Log.bind(chalk.yellow("List"));
       options = options || {};
 
-      Log.note("Generating List endpoint for " + collectionName);
+      if (config.logRoutes) {
+        Log.note("Generating List endpoint for " + collectionName);
+      }
 
       var resourceAliasForRoute;
 
@@ -193,7 +195,9 @@ module.exports = function (logger, mongoose, server) {
 
         if (!_.isEmpty(scope)) {
           auth.scope = scope;
-          Log.debug("Scope for GET/" + resourceAliasForRoute + ":", scope);
+          if (config.logScopes) {
+            Log.debug("Scope for GET/" + resourceAliasForRoute + ":", scope);
+          }
         }
       }
       else {
@@ -248,7 +252,9 @@ module.exports = function (logger, mongoose, server) {
 
       var collectionName = model.collectionDisplayName || model.modelName;
       Log = Log.bind(chalk.yellow("Find"));
-      Log.note("Generating Find endpoint for " + collectionName);
+      if (config.logRoutes) {
+        Log.note("Generating Find endpoint for " + collectionName);
+      }
 
       var resourceAliasForRoute;
 
@@ -291,7 +297,9 @@ module.exports = function (logger, mongoose, server) {
 
         if (!_.isEmpty(scope)) {
           auth.scope = scope;
-          Log.debug("Scope for GET/" + resourceAliasForRoute + '/{_id}' + ":", scope);
+          if (config.logScopes) {
+            Log.debug("Scope for GET/" + resourceAliasForRoute + '/{_id}' + ":", scope);
+          }
         }
 
       }
@@ -349,7 +357,9 @@ module.exports = function (logger, mongoose, server) {
 
       var collectionName = model.collectionDisplayName || model.modelName;
       Log = Log.bind(chalk.yellow("Create"));
-      Log.note("Generating Create endpoint for " + collectionName);
+      if (config.logRoutes) {
+        Log.note("Generating Create endpoint for " + collectionName);
+      }
 
       options = options || {};
 
@@ -384,7 +394,9 @@ module.exports = function (logger, mongoose, server) {
 
         if (!_.isEmpty(scope)) {
           auth.scope = scope;
-          Log.debug("Scope for POST/" + resourceAliasForRoute + ":", scope);
+          if (config.logScopes) {
+            Log.debug("Scope for POST/" + resourceAliasForRoute + ":", scope);
+          }
         }
       }
       else {
@@ -437,7 +449,9 @@ module.exports = function (logger, mongoose, server) {
 
       var collectionName = model.collectionDisplayName || model.modelName;
       Log = Log.bind(chalk.yellow("DeleteOne"));
-      Log.note("Generating Delete One endpoint for " + collectionName);
+      if (config.logRoutes) {
+        Log.note("Generating Delete One endpoint for " + collectionName);
+      }
 
       options = options || {};
 
@@ -468,7 +482,9 @@ module.exports = function (logger, mongoose, server) {
 
         if (!_.isEmpty(scope)) {
           auth.scope = scope;
-          Log.debug("Scope for DELETE/" + resourceAliasForRoute + "/{_id}" + ":", scope);
+          if (config.logScopes) {
+            Log.debug("Scope for DELETE/" + resourceAliasForRoute + "/{_id}" + ":", scope);
+          }
         }
       }
       else {
@@ -527,7 +543,9 @@ module.exports = function (logger, mongoose, server) {
 
       var collectionName = model.collectionDisplayName || model.modelName;
       Log = Log.bind(chalk.yellow("DeleteMany"));
-      Log.note("Generating Delete Many endpoint for " + collectionName);
+      if (config.logRoutes) {
+        Log.note("Generating Delete Many endpoint for " + collectionName);
+      }
 
       options = options || {};
 
@@ -561,7 +579,9 @@ module.exports = function (logger, mongoose, server) {
 
         if (!_.isEmpty(scope)) {
           auth.scope = scope;
-          Log.debug("Scope for DELETE/" + resourceAliasForRoute + ":", scope);
+          if (config.logScopes) {
+            Log.debug("Scope for DELETE/" + resourceAliasForRoute + ":", scope);
+          }
         }
       }
       else {
@@ -616,7 +636,9 @@ module.exports = function (logger, mongoose, server) {
 
       var collectionName = model.collectionDisplayName || model.modelName;
       Log = Log.bind(chalk.yellow("Update"));
-      Log.note("Generating Update endpoint for " + collectionName);
+      if (config.logRoutes) {
+        Log.note("Generating Update endpoint for " + collectionName);
+      }
 
       options = options || {};
 
@@ -646,7 +668,9 @@ module.exports = function (logger, mongoose, server) {
 
         if (!_.isEmpty(scope)) {
           auth.scope = scope;
-          Log.debug("Scope for PUT/" + resourceAliasForRoute + '/{_id}' + ":", scope);
+          if (config.logScopes) {
+            Log.debug("Scope for PUT/" + resourceAliasForRoute + '/{_id}' + ":", scope);
+          }
         }
       }
       else {
@@ -712,7 +736,9 @@ module.exports = function (logger, mongoose, server) {
       var childModelName = childModel.collectionDisplayName || childModel.modelName;
 
       Log = Log.bind(chalk.yellow("AddOne"));
-      Log.note("Generating addOne association endpoint for " + ownerModelName + " -> " + associationName);
+      if (config.logRoutes) {
+        Log.note("Generating addOne association endpoint for " + ownerModelName + " -> " + associationName);
+      }
 
       options = options || {};
 
@@ -741,7 +767,9 @@ module.exports = function (logger, mongoose, server) {
 
         if (!_.isEmpty(scope)) {
           auth.scope = scope;
-          Log.debug("Scope for PUT/" + ownerAlias + '/{ownerId}/' + childAlias + "/{childId}" + ":", scope);
+          if (config.logScopes) {
+            Log.debug("Scope for PUT/" + ownerAlias + '/{ownerId}/' + childAlias + "/{childId}" + ":", scope);
+          }
         }
       }
       else {
@@ -806,7 +834,9 @@ module.exports = function (logger, mongoose, server) {
       var childModelName = childModel.collectionDisplayName || childModel.modelName;
 
       Log = Log.bind(chalk.yellow("RemoveOne"));
-      Log.note("Generating removeOne association endpoint for " + ownerModelName + " -> " + associationName);
+      if (config.logRoutes) {
+        Log.note("Generating removeOne association endpoint for " + ownerModelName + " -> " + associationName);
+      }
 
       options = options || {};
 
@@ -828,7 +858,9 @@ module.exports = function (logger, mongoose, server) {
 
         if (!_.isEmpty(scope)) {
           auth.scope = scope;
-          Log.debug("Scope for DELETE/" + ownerAlias + '/{ownerId}/' + childAlias + "/{childId}" + ":", scope);
+          if (config.logScopes) {
+            Log.debug("Scope for DELETE/" + ownerAlias + '/{ownerId}/' + childAlias + "/{childId}" + ":", scope);
+          }
         }
       }
       else {
@@ -889,7 +921,9 @@ module.exports = function (logger, mongoose, server) {
       var childModelName = childModel.collectionDisplayName || childModel.modelName;
 
       Log = Log.bind(chalk.yellow("AddMany"));
-      Log.note("Generating addMany association endpoint for " + ownerModelName + " -> " + associationName);
+      if (config.logRoutes) {
+        Log.note("Generating addMany association endpoint for " + ownerModelName + " -> " + associationName);
+      }
 
       options = options || {};
 
@@ -925,7 +959,9 @@ module.exports = function (logger, mongoose, server) {
 
         if (!_.isEmpty(scope)) {
           auth.scope = scope;
-          Log.debug("Scope for POST/" + ownerAlias + '/{ownerId}/' + childAlias + ":", scope);
+          if (config.logScopes) {
+            Log.debug("Scope for POST/" + ownerAlias + '/{ownerId}/' + childAlias + ":", scope);
+          }
         }
       }
       else {
@@ -986,7 +1022,9 @@ module.exports = function (logger, mongoose, server) {
       var childModelName = childModel.collectionDisplayName || childModel.modelName;
 
       Log = Log.bind(chalk.yellow("RemoveMany"));
-      Log.note("Generating removeMany association endpoint for " + ownerModelName + " -> " + associationName);
+      if (config.logRoutes) {
+        Log.note("Generating removeMany association endpoint for " + ownerModelName + " -> " + associationName);
+      }
 
       options = options || {};
 
@@ -1010,7 +1048,9 @@ module.exports = function (logger, mongoose, server) {
 
         if (!_.isEmpty(scope)) {
           auth.scope = scope;
-          Log.debug("Scope for DELETE/" + ownerAlias + '/{ownerId}/' + childAlias + ":", scope);
+          if (config.logScopes) {
+            Log.debug("Scope for DELETE/" + ownerAlias + '/{ownerId}/' + childAlias + ":", scope);
+          }
         }
       }
       else {
@@ -1068,7 +1108,9 @@ module.exports = function (logger, mongoose, server) {
       var ownerModelName = ownerModel.collectionDisplayName || ownerModel.modelName;
       
       Log = Log.bind(chalk.yellow("GetAll"));
-      Log.note("Generating list association endpoint for " + ownerModelName + " -> " + associationName);
+      if (config.logRoutes) {
+        Log.note("Generating list association endpoint for " + ownerModelName + " -> " + associationName);
+      }
       
       options = options || {};
 
@@ -1148,7 +1190,9 @@ module.exports = function (logger, mongoose, server) {
 
         if (!_.isEmpty(scope)) {
           auth.scope = scope;
-          Log.debug("Scope for GET/" + ownerAlias + '/{ownerId}/' + childAlias + ":", scope);
+          if (config.logScopes) {
+            Log.debug("Scope for GET/" + ownerAlias + '/{ownerId}/' + childAlias + ":", scope);
+          }
         }
       }
       else {
