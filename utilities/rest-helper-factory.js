@@ -174,6 +174,12 @@ module.exports = function (logger, mongoose, server) {
         })
       }
 
+      queryValidation = Joi.object(queryValidation);
+
+      if (!config.enableQueryValidation) {
+        queryValidation = queryValidation.unknown();
+      }
+
       var associations = model.routeOptions ? model.routeOptions.associations : null;
       if (associations) {
         queryValidation.$embed = Joi.alternatives().try(Joi.array().items(Joi.string())
@@ -183,6 +189,11 @@ module.exports = function (logger, mongoose, server) {
       }
 
       var readModel = joiMongooseHelper.generateJoiReadModel(model, Log);
+
+      if (!config.enableResponseValidation) {
+        var label =  readModel._flags.label;
+        readModel = Joi.alternatives().try(readModel, Joi.any()).label(label);
+      }
 
       var auth = false;
 
@@ -215,7 +226,7 @@ module.exports = function (logger, mongoose, server) {
           tags: ['api', collectionName],
           cors: config.cors,
           validate: {
-            query: config.enableQueryValidation ? queryValidation : Joi.any(),
+            query: queryValidation,
             headers: headersValidation
           },
           plugins: {
@@ -233,12 +244,9 @@ module.exports = function (logger, mongoose, server) {
             }
           },
           response: {
-            schema: config.enableResponseValidation ? Joi.alternatives().try(
+            schema: Joi.alternatives().try(
                 Joi.object({ docs: Joi.array().items(readModel).label(collectionName + "ArrayModel"), pages: Joi.any(),
-                  items: Joi.any() }), Joi.number()).label(collectionName + "ListModel") :
-                Joi.alternatives().try(
-                    Joi.object({ docs: Joi.array().items(Joi.any()).label(collectionName + "ArrayModel"),
-                      pages: Joi.any(), items: Joi.any() }), Joi.number() ).label(collectionName + "ListModel")
+                  items: Joi.any() }), Joi.number()).label(collectionName + "ListModel")
           }
         }
       });
@@ -289,6 +297,11 @@ module.exports = function (logger, mongoose, server) {
       }
 
       var readModel = model.readModel || joiMongooseHelper.generateJoiReadModel(model, Log);
+
+      if (!config.enableResponseValidation) {
+        var label =  readModel._flags.label;
+        readModel = Joi.alternatives().try(readModel, Joi.any()).label(label);
+      }
 
       var auth = false;
 
@@ -343,7 +356,7 @@ module.exports = function (logger, mongoose, server) {
             }
           },
           response: {
-            schema: config.enableResponseValidation ? readModel : Joi.any()
+            schema: readModel
           }
         }
       });
@@ -380,12 +393,22 @@ module.exports = function (logger, mongoose, server) {
 
       var createModel = joiMongooseHelper.generateJoiCreateModel(model, Log);
 
+      if (!config.enablePayloadValidation) {
+        var label =  createModel._flags.label;
+        createModel = Joi.alternatives().try(createModel, Joi.any()).label(label);
+      }
+
       //EXPL: support bulk creates
       createModel = Joi.alternatives().try(Joi.array().items(createModel), createModel);
 
       var readModel = joiMongooseHelper.generateJoiReadModel(model, Log);
+      var label =  readModel._flags.label;
 
-      readModel = Joi.alternatives().try(Joi.array().items(readModel), readModel);
+      readModel = Joi.alternatives().try(Joi.array().items(readModel), readModel).label(label);
+
+      if (!config.enableResponseValidation) {
+        readModel = Joi.alternatives().try(readModel, Joi.any()).label(label);
+      }
 
       var auth = false;
 
@@ -417,7 +440,7 @@ module.exports = function (logger, mongoose, server) {
           description: 'Create one or more new ' + collectionName + 's',
           tags: ['api', collectionName],
           validate: {
-            payload: config.enablePayloadValidation ? createModel : Joi.any(),
+            payload: createModel,
             headers: headersValidation
           },
           plugins: {
@@ -435,7 +458,7 @@ module.exports = function (logger, mongoose, server) {
             }
           },
           response: {
-            schema: config.enableResponseValidation ? readModel : Joi.any()
+            schema: readModel
           }
         }
       });
@@ -473,6 +496,10 @@ module.exports = function (logger, mongoose, server) {
       var payloadModel = null;
       if (config.enableSoftDelete) {
         payloadModel = Joi.object({ hardDelete: Joi.bool() }).allow(null);
+
+        if (!config.enablePayloadValidation) {
+          payloadModel = Joi.alternatives().try(payloadModel, Joi.any());
+        }
       }
 
       var auth = false;
@@ -508,7 +535,7 @@ module.exports = function (logger, mongoose, server) {
             params: {
               _id: Joi.objectId().required()
             },
-            payload: config.enablePayloadValidation ? payloadModel : Joi.any(),
+            payload: payloadModel,
             headers: headersValidation
           },
           plugins: {
@@ -572,6 +599,11 @@ module.exports = function (logger, mongoose, server) {
         payloadModel = Joi.array().items(Joi.objectId());
       }
 
+      if (!config.enablePayloadValidation) {
+        payloadModel = Joi.alternatives().try(payloadModel, Joi.any());
+      }
+
+
       var auth = false;
 
       if (config.authStrategy && model.routeOptions.deleteAuth !== false) {
@@ -602,7 +634,7 @@ module.exports = function (logger, mongoose, server) {
           description: 'Delete multiple ' + collectionName + 's',
           tags: ['api', collectionName],
           validate: {
-            payload: config.enablePayloadValidation ? payloadModel : Joi.any(),
+            payload: payloadModel,
             headers: headersValidation
           },
           plugins: {
@@ -659,7 +691,17 @@ module.exports = function (logger, mongoose, server) {
 
       var updateModel = joiMongooseHelper.generateJoiUpdateModel(model, Log);
 
+      if (!config.enablePayloadValidation) {
+        var label =  updateModel._flags.label;
+        updateModel = Joi.alternatives().try(updateModel, Joi.any()).label(label);
+      }
+
       var readModel = joiMongooseHelper.generateJoiReadModel(model, Log);
+
+      if (!config.enableResponseValidation) {
+        var label =  readModel._flags.label;
+        readModel = Joi.alternatives().try(readModel, Joi.any()).label(label);
+      }
 
       var auth = false;
 
@@ -694,7 +736,7 @@ module.exports = function (logger, mongoose, server) {
             params: {
               _id: Joi.objectId().required()
             },
-            payload: config.enablePayloadValidation ? updateModel : Joi.any(),
+            payload: updateModel,
             headers: headersValidation
           },
           plugins: {
@@ -713,7 +755,7 @@ module.exports = function (logger, mongoose, server) {
             }
           },
           response: {
-            schema: config.enableResponseValidation ? readModel : Joi.any()
+            schema: readModel
           }
         }
       });
@@ -756,6 +798,11 @@ module.exports = function (logger, mongoose, server) {
       //EXPL: A payload is only relevant if a through model is defined
       if (association.include.through) {
         payloadValidation = joiMongooseHelper.generateJoiCreateModel(association.include.through, Log);
+
+        if (!config.enablePayloadValidation) {
+          var label =  payloadValidation._flags.label;
+          payloadValidation = Joi.alternatives().try(payloadValidation, Joi.any()).label(label);
+        }
       }
 
       var auth = false;
@@ -794,7 +841,7 @@ module.exports = function (logger, mongoose, server) {
               ownerId: Joi.objectId().required(),
               childId: Joi.objectId().required()
             },
-            payload: config.enablePayloadValidation ? payloadValidation : Joi.any(),
+            payload: payloadValidation,
             headers: headersValidation
           },
           plugins: {
@@ -937,10 +984,11 @@ module.exports = function (logger, mongoose, server) {
       var handler = HandlerHelper.generateAssociationAddManyHandler(ownerModel, association, options, Log);
 
       var payloadValidation;
+      var label = "";
 
       if (association.include && association.include.through) {
         payloadValidation = joiMongooseHelper.generateJoiCreateModel(association.include.through, Log);
-        var label =  payloadValidation._flags.label + "_many";
+        label =  payloadValidation._flags.label + "_many";
         payloadValidation = payloadValidation.keys({
           childId: Joi.objectId().description("the " + childModelName + "'s _id")
         }).label(label);
@@ -948,6 +996,11 @@ module.exports = function (logger, mongoose, server) {
       } 
       else {
         payloadValidation = Joi.array().items(Joi.objectId()).required();
+      }
+
+      if (!config.enablePayloadValidation) {
+        label =  payloadValidation._flags.label;
+        payloadValidation = Joi.alternatives().try(payloadValidation, Joi.any()).label(label || "blank");
       }
 
       var auth = false;
@@ -985,7 +1038,7 @@ module.exports = function (logger, mongoose, server) {
             params: {
               ownerId: Joi.objectId().required()
             },
-            payload: config.enablePayloadValidation ? payloadValidation : Joi.any(),
+            payload: payloadValidation,
             headers: headersValidation
           },
           plugins: {
@@ -1039,6 +1092,10 @@ module.exports = function (logger, mongoose, server) {
 
       var payloadValidation = Joi.array().items(Joi.objectId()).required();
 
+      if (!config.enablePayloadValidation) {
+        payloadValidation = Joi.alternatives().try(payloadValidation, Joi.any());
+      }
+
       var auth = false;
 
       if (config.authStrategy && ownerModel.routeOptions.associateAuth !== false) {
@@ -1074,7 +1131,7 @@ module.exports = function (logger, mongoose, server) {
             params: {
               ownerId: Joi.objectId().required()
             },
-            payload: config.enablePayloadValidation ? payloadValidation : Joi.any(),
+            payload: payloadValidation,
             headers: headersValidation
           },
           plugins: {
@@ -1179,6 +1236,12 @@ module.exports = function (logger, mongoose, server) {
             .description('Set to true to flatten embedded arrays, i.e. remove linking-model data.');
       }
 
+      queryValidation = Joi.object(queryValidation);
+
+      if (!config.enableQueryValidation) {
+        queryValidation = queryValidation.unknown();
+      }
+
       var readModel = joiMongooseHelper.generateJoiReadModel(childModel, Log);
 
       if (association.linkingModel) {
@@ -1188,6 +1251,11 @@ module.exports = function (logger, mongoose, server) {
       }
 
       readModel = readModel.label(ownerModelName + "_" + associationName + "ReadModel");
+
+      if (!config.enableResponseValidation) {
+        var label =  readModel._flags.label;
+        readModel = Joi.alternatives().try(readModel, Joi.any()).label(label);
+      }
 
       var auth = false;
 
@@ -1221,7 +1289,7 @@ module.exports = function (logger, mongoose, server) {
           description: 'Get all of the ' + associationName + ' for a ' + ownerModelName,
           tags: ['api', associationName, ownerModelName],
           validate: {
-            query: config.enableQueryValidation ? queryValidation : Joi.any(),
+            query: queryValidation,
             params: {
               ownerId: Joi.objectId().required()
             },
@@ -1240,12 +1308,9 @@ module.exports = function (logger, mongoose, server) {
             }
           },
           response: {
-            schema: config.enableResponseValidation ? Joi.alternatives().try(
+            schema: Joi.alternatives().try(
                 Joi.object({ docs: Joi.array().items(readModel).label(ownerModelName + "_" + associationName + "ArrayModel"), pages: Joi.any(), items: Joi.any() }),
-                Joi.number()).label(ownerModelName + "_" + associationName + "ListModel") :
-                Joi.alternatives().try(
-                    Joi.object({ docs: Joi.array().items(Joi.any()).label(ownerModelName + "_" + associationName + "ArrayModel"), pages: Joi.any(), items: Joi.any() }),
-                    Joi.number()).label(ownerModelName + "_" + associationName + "ListModel")
+                Joi.number()).label(ownerModelName + "_" + associationName + "ListModel")
           }
         }
       });
