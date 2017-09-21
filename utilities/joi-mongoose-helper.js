@@ -112,27 +112,59 @@ module.exports = {
    * @returns {*}: A Joi object
    */
   generateJoiUpdateModel: function (model, Log) {
-    validationHelper.validateModel(model, Log);
+    // validationHelper.validateModel(model, Log);
 
     var updateModelBase = {};
 
-    var fields = model.schema.paths;
+    var fields = model.schema.tree;
+    var nested = model.schema.nested;
 
     var associations = model.routeOptions.associations ? model.routeOptions.associations : {};
 
     for (var fieldName in fields) {
-      var field = fields[fieldName].options;
+      var field = fields[fieldName];
 
-      var association = associations[fields[fieldName].path] || null;
+      var association = associations[fieldName] || null;
 
       var canUpdateAssociation = association ? (association.type === "ONE_ONE" || association.type === "MANY_ONE" || association.type === "_MANY") : false;
 
-      if (fieldName !== "__t" && fieldName !== "__v") {
+      if (fieldName !== "__t" && fieldName !== "__v" && fieldName !== "id") {
         if (field.updateModel) {
           updateModelBase[fieldName] = field.updateModel;
         }
         else if (field.allowOnUpdate !== false && (canUpdateAssociation || !association)) {
-          var attributeUpdateModel = this.generateJoiModelFromFieldType(field, Log);
+          var attributeUpdateModel = {};
+          //EXPL: if this field is nested, we treat it as a nested model and recursively call "generateJoiUpdateModel"
+          if (nested[fieldName]) {
+
+            var nestedModel = {
+              modelName: model.modelName + '.' + fieldName,
+              routeOptions: {},
+              schema: {
+                tree: field
+              }
+            };
+
+            var subNested = {};
+
+            for (var name in nested) {
+              if (name !== fieldName) {
+                var parts = name.split('.');
+                if (parts[0] === fieldName) {
+                  parts.shift();
+                  var subNestedName = parts.join(".");
+                  subNested[subNestedName] = true;
+                }
+              }
+            }
+
+            nestedModel.schema.nested = subNested;
+
+            attributeUpdateModel = this.generateJoiUpdateModel(nestedModel, Log);
+          }
+          else {
+            attributeUpdateModel = this.generateJoiModelFromFieldType(field, Log);
+          }
 
           if (field.requireOnUpdate === true) {
             attributeUpdateModel = attributeUpdateModel.required();
