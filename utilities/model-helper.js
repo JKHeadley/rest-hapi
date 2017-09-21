@@ -101,7 +101,11 @@ module.exports = {
               throw "unknown linking model: " + association.linkingModel;
             }
             association.include = {
-              through: linkingModel
+              through: {
+                schema: new mongoose.Schema(linkingModel.Schema, { collection: linkingModel.modelName }),
+                routeOptions: {},
+                modelName: linkingModel.modelName
+              }
             };
             for (var objectKey in linkingModel.Schema) {
               var object = linkingModel.Schema[objectKey];

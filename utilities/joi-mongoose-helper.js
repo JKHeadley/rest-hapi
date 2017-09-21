@@ -85,17 +85,31 @@ module.exports = {
       for (var associationName in model.routeOptions.associations) {
         var association = model.routeOptions.associations[associationName];
 
-        //TODO: possibly add stricter validation for associations
+        var associationModel = Joi.object();
+
+        if (association.type === "MANY_MANY") {
+          if (association.linkingModel) {
+            associationModel = this.generateJoiReadModel(association.include.through);
+          }
+          var associationBase = {};
+          associationBase[association.model] = Joi.object().unknown().allow(null);
+          associationModel = associationModel.keys(associationBase);
+          associationModel = Joi.alternatives().try(associationModel, Joi.object());
+        }
+        else if (association.type === "_MANY") {
+          associationModel = Joi.alternatives().try(this.joiObjectId(), Joi.object());
+        }
+
+        associationModel = associationModel.label(model.modelName + "_" + associationName + "Model");
+
         if (association.type === "MANY_MANY" || association.type === "ONE_MANY" || association.type === "_MANY") {
-          readModelBase[associationName] = Joi.array().items(
-              Joi.object().unknown().allow(null).label(model.modelName + "_" + associationName + "Model"))
+
+          readModelBase[associationName] = Joi.array().items(associationModel)
               .label(model.modelName + "_" + associationName + "ArrayModel");
 
-          if (association.linkingModel) {
-            readModelBase[association.linkingModel] = Joi.object().unknown().allow(null);
-          }
-        } else {
-          readModelBase[associationName] = Joi.object().unknown().allow(null);
+        }
+        else {
+          readModelBase[associationName] = associationModel;
         }
       }
     }
@@ -257,39 +271,6 @@ module.exports = {
     var createModel = Joi.object(createModelBase).label(model.modelName + "CreateModel");
 
     return createModel;
-  },
-
-  /**
-   * Generates a Joi object that validates a query request payload for adding a association
-   * @param model: A mongoose model object.
-   * @param Log: A logging object.
-   * @returns {*}: A Joi object
-   */
-  generateJoiAssociationModel: function (model, Log) {
-    assert(model.Schema, "incorrect model format");
-
-    var associationModelBase = {};
-
-    for (var fieldName in model.Schema) {
-
-      var field = model.Schema[fieldName];
-
-      if (field.createModel) {
-        associationModelBase[fieldName] = field.createModel;
-      }
-      else {
-        var attributeAssociationModel = this.generateJoiModelFromFieldType(field, Log);
-
-        if (field.required) {
-          attributeAssociationModel = attributeAssociationModel.required();
-        }
-        associationModelBase[fieldName] = attributeAssociationModel;
-      }
-    }
-
-    var associationModel = Joi.object(associationModelBase).label(model.modelName + "AssociationModel");
-
-    return associationModel;
   },
 
   /**

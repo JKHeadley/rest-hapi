@@ -755,7 +755,7 @@ module.exports = function (logger, mongoose, server) {
 
       //EXPL: A payload is only relevant if a through model is defined
       if (association.include.through) {
-        payloadValidation = joiMongooseHelper.generateJoiAssociationModel(association.include.through, Log);
+        payloadValidation = joiMongooseHelper.generateJoiCreateModel(association.include.through, Log);
       }
 
       var auth = false;
@@ -939,10 +939,10 @@ module.exports = function (logger, mongoose, server) {
       var payloadValidation;
 
       if (association.include && association.include.through) {
-        payloadValidation = joiMongooseHelper.generateJoiAssociationModel(association.include.through, Log);
+        payloadValidation = joiMongooseHelper.generateJoiCreateModel(association.include.through, Log);
         var label =  payloadValidation._flags.label + "_many";
         payloadValidation = payloadValidation.keys({
-          childId: Joi.objectId()
+          childId: Joi.objectId().description("the " + childModelName + "'s _id")
         }).label(label);
         payloadValidation = Joi.array().items(payloadValidation).required();
       } 
@@ -1181,6 +1181,14 @@ module.exports = function (logger, mongoose, server) {
 
       var readModel = joiMongooseHelper.generateJoiReadModel(childModel, Log);
 
+      if (association.linkingModel) {
+        var associationModel = {};
+        associationModel[association.linkingModel] = joiMongooseHelper.generateJoiReadModel(association.include.through, Log);
+        readModel = readModel.keys(associationModel);
+      }
+
+      readModel = readModel.label(ownerModelName + "_" + associationName + "ReadModel");
+
       var auth = false;
 
       if (config.authStrategy && ownerModel.routeOptions.readAuth !== false) {
@@ -1232,8 +1240,12 @@ module.exports = function (logger, mongoose, server) {
             }
           },
           response: {
-            schema: config.enableResponseValidation ? Joi.alternatives().try(Joi.object({ docs: Joi.array().items(readModel), pages: Joi.any(), items: Joi.any() }), Joi.number()) :
-                Joi.alternatives().try(Joi.object({ docs: Joi.array().items(Joi.any()), pages: Joi.any(), items: Joi.any() }), Joi.number() )
+            schema: config.enableResponseValidation ? Joi.alternatives().try(
+                Joi.object({ docs: Joi.array().items(readModel).label(ownerModelName + "_" + associationName + "ArrayModel"), pages: Joi.any(), items: Joi.any() }),
+                Joi.number()).label(ownerModelName + "_" + associationName + "ListModel") :
+                Joi.alternatives().try(
+                    Joi.object({ docs: Joi.array().items(Joi.any()).label(ownerModelName + "_" + associationName + "ArrayModel"), pages: Joi.any(), items: Joi.any() }),
+                    Joi.number()).label(ownerModelName + "_" + associationName + "ListModel")
           }
         }
       });
