@@ -21,24 +21,56 @@ module.exports = {
    * @returns {*}: A Joi object
    */
   generateJoiReadModel: function (model, Log) {
-    validationHelper.validateModel(model, Log);
+    // validationHelper.validateModel(model, Log);
 
     var readModelBase = {};
 
-    var fields = model.schema.paths;
+    var fields = model.schema.tree;
+    var nested = model.schema.nested;
 
     var associations = model.routeOptions.associations ? Object.keys(model.routeOptions.associations) : [];
 
     for (var fieldName in fields) {
-      var field = fields[fieldName].options;
+      var field = fields[fieldName];
 
-      var isAssociation = associations.indexOf(fields[fieldName].path);
+      var isAssociation = associations.indexOf(fieldName);
 
       if (field.readModel) {
         readModelBase[fieldName] = field.readModel;
       }
-      else if (field.allowOnRead !== false && field.exclude !== true && isAssociation < 0 && fieldName !== "__v") {
-        var attributeReadModel = this.generateJoiModelFromFieldType(field, Log);
+      else if (field.allowOnRead !== false && field.exclude !== true && isAssociation < 0 && fieldName !== "__v" && fieldName !== "id") {
+        var attributeReadModel = {};
+        //EXPL: if this field is nested, we treat it as a nested model and recursively call "generateJoiReadModel"
+        if (nested[fieldName]) {
+
+          var nestedModel = {
+            modelName: model.modelName + '.' + fieldName,
+            routeOptions: {},
+            schema: {
+              tree: field
+            }
+          };
+
+          var subNested = {};
+
+          for (var name in nested) {
+            if (name !== fieldName) {
+              var parts = name.split('.');
+              if (parts[0] === fieldName) {
+                parts.shift();
+                var subNestedName = parts.join(".");
+                subNested[subNestedName] = true;
+              }
+            }
+          }
+
+          nestedModel.schema.nested = subNested;
+
+          attributeReadModel = this.generateJoiReadModel(nestedModel, Log);
+        }
+        else {
+          attributeReadModel = this.generateJoiModelFromFieldType(field, Log);
+        }
 
         if (field.requireOnRead === true) {
           attributeReadModel = attributeReadModel.required();
@@ -55,7 +87,10 @@ module.exports = {
 
         //TODO: possibly add stricter validation for associations
         if (association.type === "MANY_MANY" || association.type === "ONE_MANY" || association.type === "_MANY") {
-          readModelBase[associationName] = Joi.array().items(Joi.object().unknown().allow(null));
+          readModelBase[associationName] = Joi.array().items(
+              Joi.object().unknown().allow(null).label(model.modelName + "_" + associationName + "Model"))
+              .label(model.modelName + "_" + associationName + "ArrayModel");
+
           if (association.linkingModel) {
             readModelBase[association.linkingModel] = Joi.object().unknown().allow(null);
           }

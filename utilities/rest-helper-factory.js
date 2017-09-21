@@ -233,8 +233,12 @@ module.exports = function (logger, mongoose, server) {
             }
           },
           response: {
-            schema: config.enableResponseValidation ? Joi.alternatives().try(Joi.object({ docs: Joi.array().items(readModel), pages: Joi.any(), items: Joi.any() }), Joi.number()) :
-                Joi.alternatives().try(Joi.object({ docs: Joi.array().items(Joi.any()), pages: Joi.any(), items: Joi.any() }), Joi.number() )
+            schema: config.enableResponseValidation ? Joi.alternatives().try(
+                Joi.object({ docs: Joi.array().items(readModel).label(collectionName + "ArrayModel"), pages: Joi.any(),
+                  items: Joi.any() }), Joi.number()).label(collectionName + "ListModel") :
+                Joi.alternatives().try(
+                    Joi.object({ docs: Joi.array().items(Joi.any()).label(collectionName + "ArrayModel"),
+                      pages: Joi.any(), items: Joi.any() }), Joi.number() ).label(collectionName + "ListModel")
           }
         }
       });
