@@ -24,7 +24,7 @@ const internals = {};
  * @returns {*}: A Joi object
  */
 internals.generateJoiReadModel = function (model, Log) {
-  // validationHelper.validateModel(model, Log);
+  validationHelper.validateModel(model, Log);
 
   var readModelBase = {};
 
@@ -97,7 +97,7 @@ internals.generateJoiReadModel = function (model, Log) {
  * @returns {*}: A Joi object
  */
 internals.generateJoiUpdateModel = function (model, Log) {
-  // validationHelper.validateModel(model, Log);
+  validationHelper.validateModel(model, Log);
 
   var updateModelBase = {};
 
@@ -140,7 +140,7 @@ internals.generateJoiUpdateModel = function (model, Log) {
  * @returns {*}: A Joi object
  */
 internals.generateJoiCreateModel = function (model, Log) {
-  // validationHelper.validateModel(model, Log);
+  validationHelper.validateModel(model, Log);
 
   var createModelBase = {};
 
