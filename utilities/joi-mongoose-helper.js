@@ -5,6 +5,8 @@ Joi.objectId = require('joi-objectid')(Joi);
 var _ = require('lodash');
 var assert = require('assert');
 var validationHelper = require("./validation-helper");
+var queryHelper = require('./query-helper');
+var config = require("../config");
 var mongoose = require('mongoose');
 
 //TODO: support "allowNull"
@@ -132,7 +134,7 @@ internals.generateJoiUpdateModel = function (model, Log) {
 };
 
 /**
- * Generates a Joi object that validates a query request payload for creating a document
+ * Generates a Joi object that validates a request payload for creating a document
  * @param model: A mongoose model object.
  * @param Log: A logging object.
  * @returns {*}: A Joi object
@@ -176,8 +178,74 @@ internals.generateJoiCreateModel = function (model, Log) {
   return createModel;
 };
 
+/**
+ * Generates a Joi object that validates a request query for the list function
+ * @param model: A mongoose model object.
+ * @param Log: A logging object.
+ * @returns {*}: A Joi object
+ */
 internals.generateJoiListQueryModel = function (model, Log) {
 
+  var queryModel = {
+    $skip: Joi.number().integer().min(0).optional()
+        .description('The number of records to skip in the database. This is typically used in pagination.'),
+    $page: Joi.number().integer().min(0).optional()
+        .description('The number of records to skip based on the $limit parameter. This is typically used in pagination.'),
+    $limit: Joi.number().integer().min(0).optional()
+        .description('The maximum number of records to return. This is typically used in pagination.')
+  };
+
+  var queryableFields = queryHelper.getQueryableFields(model, Log);
+
+  var readableFields = queryHelper.getReadableFields(model, Log);
+
+  var sortableFields = queryHelper.getSortableFields(model, Log);
+
+  if (queryableFields && readableFields) {
+    queryModel.$select = Joi.alternatives().try(Joi.array().items(Joi.string().valid(readableFields))
+        .description('A list of basic fields to be included in each resource. Valid values include: ' + readableFields.toString().replace(/,/g,', ')), Joi.string().valid(readableFields));
+    queryModel.$text = Joi.string().optional()
+        .description('A full text search parameter. Takes advantage of indexes for efficient searching. Also implements stemming ' +
+            'with searches. Prefixing search terms with a "-" will exclude results that match that term.');
+    queryModel.$term = Joi.string().optional()
+        .description('A regex search parameter. Slower than `$text` search but supports partial matches and doesn\'t require ' +
+            'indexing. This can be refined using the `$searchFields` parameter.');
+    queryModel.$searchFields = Joi.alternatives().try(Joi.array().items(Joi.string().valid(queryableFields))
+        .description('A set of fields to apply the `$term` search parameter to. If this parameter is not included, the `$term` ' +
+            'search parameter is applied to all searchable fields. Valid values include: ' + queryableFields.toString().replace(/,/g,', ')), Joi.string().valid(queryableFields));
+    queryModel.$sort = Joi.alternatives().try(Joi.array().items(Joi.string().valid(sortableFields))
+        .description('A set of fields to sort by. Including field name indicates it should be sorted ascending, while prepending ' +
+            '\'-\' indicates descending. The default sort direction is \'ascending\' (lowest value to highest value). Listing multiple' +
+            'fields prioritizes the sort starting with the first field listed. Valid values include: ' + sortableFields.toString().replace(/,/g,', ')), Joi.string().valid(sortableFields));
+    queryModel.$exclude = Joi.alternatives().try(Joi.array().items(Joi.objectId())
+        .description('A list of objectIds to exclude in the result.'), Joi.objectId());
+    queryModel.$count = Joi.boolean()
+        .description('If set to true, only a count of the query results will be returned.');
+    queryModel.$where = Joi.any().optional()
+        .description('An optional field for raw mongoose queries.');
+
+    _.each(queryableFields, function (fieldName) {
+      const joiModel = internals.generateJoiModelFromFieldType(model.schema.paths[fieldName].options, Log);
+      queryModel[fieldName] = Joi.alternatives().try(Joi.array().items(joiModel)
+          .description('Match values for the ' + fieldName + ' property.'), joiModel);
+    })
+  }
+
+  queryModel = Joi.object(queryModel);
+
+  if (!config.enableQueryValidation) {
+    queryModel = queryModel.unknown();
+  }
+
+  var associations = model.routeOptions ? model.routeOptions.associations : null;
+  if (associations) {
+    queryModel.$embed = Joi.alternatives().try(Joi.array().items(Joi.string())
+        .description('A set of complex object properties to populate. Valid first level values include ' + Object.keys(associations).toString().replace(/,/g,', ')), Joi.string());
+    queryModel.$flatten = Joi.boolean()
+        .description('Set to true to flatten embedded arrays, i.e. remove linking-model data.');
+  }
+
+  return queryModel;
 };
 
 /**

@@ -129,64 +129,7 @@ module.exports = function (logger, mongoose, server) {
 
       var handler = HandlerHelper.generateListHandler(model, options, Log);
 
-      var queryValidation = {
-        $skip: Joi.number().integer().min(0).optional()
-          .description('The number of records to skip in the database. This is typically used in pagination.'),
-        $page: Joi.number().integer().min(0).optional()
-            .description('The number of records to skip based on the $limit parameter. This is typically used in pagination.'),
-        $limit: Joi.number().integer().min(0).optional()
-          .description('The maximum number of records to return. This is typically used in pagination.')
-      };
-
-      var queryableFields = queryHelper.getQueryableFields(model, Log);
-
-      var readableFields = queryHelper.getReadableFields(model, Log);
-
-      var sortableFields = queryHelper.getSortableFields(model, Log);
-
-      if (queryableFields && readableFields) {
-        queryValidation.$select = Joi.alternatives().try(Joi.array().items(Joi.string().valid(readableFields))
-            .description('A list of basic fields to be included in each resource. Valid values include: ' + readableFields.toString().replace(/,/g,', ')), Joi.string().valid(readableFields));
-        queryValidation.$text = Joi.string().optional()
-            .description('A full text search parameter. Takes advantage of indexes for efficient searching. Also implements stemming ' +
-                'with searches. Prefixing search terms with a "-" will exclude results that match that term.');
-        queryValidation.$term = Joi.string().optional()
-            .description('A regex search parameter. Slower than `$text` search but supports partial matches and doesn\'t require ' +
-                'indexing. This can be refined using the `$searchFields` parameter.');
-        queryValidation.$searchFields = Joi.alternatives().try(Joi.array().items(Joi.string().valid(queryableFields))
-            .description('A set of fields to apply the `$term` search parameter to. If this parameter is not included, the `$term` ' +
-            'search parameter is applied to all searchable fields. Valid values include: ' + queryableFields.toString().replace(/,/g,', ')), Joi.string().valid(queryableFields));
-        queryValidation.$sort = Joi.alternatives().try(Joi.array().items(Joi.string().valid(sortableFields))
-            .description('A set of fields to sort by. Including field name indicates it should be sorted ascending, while prepending ' +
-            '\'-\' indicates descending. The default sort direction is \'ascending\' (lowest value to highest value). Listing multiple' +
-            'fields prioritizes the sort starting with the first field listed. Valid values include: ' + sortableFields.toString().replace(/,/g,', ')), Joi.string().valid(sortableFields));
-        queryValidation.$exclude = Joi.alternatives().try(Joi.array().items(Joi.objectId())
-            .description('A list of objectIds to exclude in the result.'), Joi.objectId());
-        queryValidation.$count = Joi.boolean()
-            .description('If set to true, only a count of the query results will be returned.');
-        queryValidation.$where = Joi.any().optional()
-            .description('An optional field for raw mongoose queries.');
-
-        _.each(queryableFields, function (fieldName) {
-          const joiModel = joiMongooseHelper.generateJoiModelFromFieldType(model.schema.paths[fieldName].options, Log);
-          queryValidation[fieldName] = Joi.alternatives().try(Joi.array().items(joiModel)
-              .description('Match values for the ' + fieldName + ' property.'), joiModel);
-        })
-      }
-
-      queryValidation = Joi.object(queryValidation);
-
-      if (!config.enableQueryValidation) {
-        queryValidation = queryValidation.unknown();
-      }
-
-      var associations = model.routeOptions ? model.routeOptions.associations : null;
-      if (associations) {
-        queryValidation.$embed = Joi.alternatives().try(Joi.array().items(Joi.string())
-            .description('A set of complex object properties to populate. Valid first level values include ' + Object.keys(associations).toString().replace(/,/g,', ')), Joi.string());
-        queryValidation.$flatten = Joi.boolean()
-            .description('Set to true to flatten embedded arrays, i.e. remove linking-model data.');
-      }
+      var queryModel = joiMongooseHelper.generateJoiListQueryModel(model, Log);
 
       var readModel = joiMongooseHelper.generateJoiReadModel(model, Log);
 
@@ -226,7 +169,7 @@ module.exports = function (logger, mongoose, server) {
           tags: ['api', collectionName],
           cors: config.cors,
           validate: {
-            query: queryValidation,
+            query: queryModel,
             headers: headersValidation
           },
           plugins: {
@@ -1183,64 +1126,7 @@ module.exports = function (logger, mongoose, server) {
 
       var handler = HandlerHelper.generateAssociationGetAllHandler(ownerModel, association, options, Log);
 
-      var queryValidation = {
-        $skip: Joi.number().integer().min(0).optional()
-        .description('The number of records to skip in the database. This is typically used in pagination.'),
-        $page: Joi.number().integer().min(0).optional()
-            .description('The number of records to skip based on the $limit parameter. This is typically used in pagination.'),
-        $limit: Joi.number().integer().min(0).optional()
-        .description('The maximum number of records to return. This is typically used in pagination.')
-      };
-
-      var queryableFields = queryHelper.getQueryableFields(childModel, Log);
-
-      var readableFields = queryHelper.getReadableFields(childModel, Log);
-
-      var sortableFields = queryHelper.getSortableFields(childModel, Log);
-
-      if (queryableFields && readableFields) {
-        queryValidation.$select = Joi.alternatives().try(Joi.array().items(Joi.string().valid(readableFields))
-            .description('A list of basic fields to be included in each resource. Valid values include: ' + readableFields.toString().replace(/,/g,', ')), Joi.string().valid(readableFields));
-        queryValidation.$text = Joi.string().optional()
-            .description('A full text search parameter. Takes advantage of indexes for efficient searching. Also implements stemming ' +
-                'with searches. Prefixing search terms with a "-" will exclude results that match that term.');
-        queryValidation.$term = Joi.string().optional()
-            .description('A regex search parameter. Slower than `$text` search but supports partial matches and doesn\'t require ' +
-                'indexing. This can be refined using the `$searchFields` parameter.');
-        queryValidation.$searchFields = Joi.alternatives().try(Joi.array().items(Joi.string().valid(queryableFields))
-            .description('A set of fields to apply the `$term` search parameter to. If this parameter is not included, the `$term` ' +
-                'search parameter is applied to all searchable fields. Valid values include: ' + queryableFields.toString().replace(/,/g,', ')), Joi.string().valid(queryableFields));
-        queryValidation.$sort = Joi.alternatives().try(Joi.array().items(Joi.string().valid(sortableFields))
-            .description('A set of fields to sort by. Including field name indicates it should be sorted ascending, while prepending ' +
-                '\'-\' indicates descending. The default sort direction is \'ascending\' (lowest value to highest value). Listing multiple' +
-                'fields prioritizes the sort starting with the first field listed. Valid values include: ' + sortableFields.toString().replace(/,/g,', ')), Joi.string().valid(sortableFields));
-        queryValidation.$exclude = Joi.alternatives().try(Joi.array().items(Joi.objectId())
-            .description('A list of objectIds to exclude in the result.'), Joi.objectId());
-        queryValidation.$count = Joi.boolean()
-            .description('If set to true, only a count of the query results will be returned.');
-        queryValidation.$where = Joi.any().optional()
-            .description('An optional field for raw mongoose queries.');
-
-        _.each(queryableFields, function (fieldName) {
-          const joiModel = joiMongooseHelper.generateJoiModelFromFieldType(childModel.schema.paths[fieldName].options, Log);
-          queryValidation[fieldName] = Joi.alternatives().try(Joi.array().items(joiModel)
-              .description('Match values for the ' + fieldName + ' property.'), joiModel);
-        })
-      }
-
-      var associations = childModel.routeOptions ? childModel.routeOptions.associations : null;
-      if (associations) {
-        queryValidation.$embed = Joi.alternatives().try(Joi.array().items(Joi.string())
-            .description('A set of complex object properties to populate. Valid first level values include ' + Object.keys(associations).toString().replace(/,/g,', ')), Joi.string());
-        queryValidation.$flatten = Joi.boolean()
-            .description('Set to true to flatten embedded arrays, i.e. remove linking-model data.');
-      }
-
-      queryValidation = Joi.object(queryValidation);
-
-      if (!config.enableQueryValidation) {
-        queryValidation = queryValidation.unknown();
-      }
+      var queryModel = joiMongooseHelper.generateJoiListQueryModel(childModel, Log);
 
       var readModel = joiMongooseHelper.generateJoiReadModel(childModel, Log);
 
@@ -1289,7 +1175,7 @@ module.exports = function (logger, mongoose, server) {
           description: 'Get all of the ' + associationName + ' for a ' + ownerModelName,
           tags: ['api', associationName, ownerModelName],
           validate: {
-            query: queryValidation,
+            query: queryModel,
             params: {
               ownerId: Joi.objectId().required()
             },
