@@ -371,9 +371,14 @@ internals.joiObjectId = function () {
 };
 
 internals.isValidField = function (fieldName, field, model) {
-  const invalidFieldNames = ['__t', '__v', 'id', 'type'];
+  const invalidFieldNames = ['__t', '__v', 'id'];
 
   if (!_.isObject(field)) {
+    return false;
+  }
+
+  //EXPL: avoid adding schema types
+  if (fieldName === 'type' && (field.schemaName || (field[0] && field[0].schemaName) || field.name === 'Mixed')) {
     return false;
   }
 
