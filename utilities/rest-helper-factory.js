@@ -222,22 +222,7 @@ module.exports = function (logger, mongoose, server) {
 
       var handler = HandlerHelper.generateFindHandler(model, options, Log);
 
-      var queryValidation = {};
-
-      var readableFields = queryHelper.getReadableFields(model, Log);
-
-      if (readableFields) {
-        queryValidation.$select = Joi.alternatives().try(Joi.array().items(Joi.string().valid(readableFields))
-            .description('A list of basic fields to be included in each resource. Valid values include: ' + readableFields.toString().replace(/,/g,', ')), Joi.string().valid(readableFields));
-      }
-
-      var associations = model.routeOptions ? model.routeOptions.associations : null;
-      if (associations) {
-        queryValidation.$embed = Joi.alternatives().try(Joi.array().items(Joi.string())
-            .description('A set of complex object properties to populate. Valid first level values include ' + Object.keys(associations).toString().replace(/,/g,', ')), Joi.string());
-        queryValidation.$flatten = Joi.boolean()
-            .description('Set to true to flatten embedded arrays, i.e. remove linking-model data.');
-      }
+      var queryModel = joiMongooseHelper.generateJoiFindQueryModel(model, Log);
 
       var readModel = model.readModel || joiMongooseHelper.generateJoiReadModel(model, Log);
 
@@ -277,7 +262,7 @@ module.exports = function (logger, mongoose, server) {
           tags: ['api', collectionName],
           cors: config.cors,
           validate: {
-            query: config.enableQueryValidation ? queryValidation : Joi.any(),
+            query: queryModel,
             params: {
               _id: Joi.objectId().required()
             },

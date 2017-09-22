@@ -231,10 +231,38 @@ internals.generateJoiListQueryModel = function (model, Log) {
     })
   }
 
+  var associations = model.routeOptions ? model.routeOptions.associations : null;
+  if (associations) {
+    queryModel.$embed = Joi.alternatives().try(Joi.array().items(Joi.string())
+        .description('A set of complex object properties to populate. Valid first level values include ' + Object.keys(associations).toString().replace(/,/g,', ')), Joi.string());
+    queryModel.$flatten = Joi.boolean()
+        .description('Set to true to flatten embedded arrays, i.e. remove linking-model data.');
+  }
+
   queryModel = Joi.object(queryModel);
 
   if (!config.enableQueryValidation) {
     queryModel = queryModel.unknown();
+  }
+
+  return queryModel;
+};
+
+/**
+ * Generates a Joi object that validates a request query for the find function
+ * @param model: A mongoose model object.
+ * @param Log: A logging object.
+ * @returns {*}: A Joi object
+ */
+internals.generateJoiFindQueryModel = function (model, Log) {
+
+  var queryModel = {};
+
+  var readableFields = queryHelper.getReadableFields(model, Log);
+
+  if (readableFields) {
+    queryModel.$select = Joi.alternatives().try(Joi.array().items(Joi.string().valid(readableFields))
+        .description('A list of basic fields to be included in each resource. Valid values include: ' + readableFields.toString().replace(/,/g,', ')), Joi.string().valid(readableFields));
   }
 
   var associations = model.routeOptions ? model.routeOptions.associations : null;
@@ -243,6 +271,12 @@ internals.generateJoiListQueryModel = function (model, Log) {
         .description('A set of complex object properties to populate. Valid first level values include ' + Object.keys(associations).toString().replace(/,/g,', ')), Joi.string());
     queryModel.$flatten = Joi.boolean()
         .description('Set to true to flatten embedded arrays, i.e. remove linking-model data.');
+  }
+
+  queryModel = Joi.object(queryModel);
+
+  if (!config.enableQueryValidation) {
+    queryModel = queryModel.unknown();
   }
 
   return queryModel;
@@ -472,6 +506,8 @@ module.exports = {
   generateJoiCreateModel: internals.generateJoiCreateModel,
 
   generateJoiListQueryModel: internals.generateJoiListQueryModel,
+
+  generateJoiFindQueryModel: internals.generateJoiFindQueryModel,
 
   generateJoiFieldModel: internals.generateJoiFieldModel,
 
