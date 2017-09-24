@@ -204,6 +204,14 @@ config.enableCreatedAt = true;
 config.enableUpdatedAt = true;
 
 /**
+ * Flag specifying whether to text index all string fields for all models to enable text search.
+ * WARNING: enabling this adds overhead to add inserts and updates, as well as added storage requirements.
+ * Default is false.
+ * @type {boolean}
+ */
+config.enableTextSearch = false;
+
+/**
  * Soft delete options
  * - enableSoftDelete: adds "isDeleted" property to each model. Delete endpoints set "isDeleted" to true
  * unless the payload contains { hardDelete: true }, in which case the document is actually deleted (default false)
@@ -224,6 +232,15 @@ config.enablePayloadValidation = true;
 config.enableResponseValidation = true;
 
 /**
+ * Determines the hapi failAction of each response. If true, responses that fail validation will return
+ * a 500 error.  If set to false, responses that fail validation will just log the offense and send
+ * the response as-is.
+ * default: false
+ * @type {boolean}
+ */
+config.enableResponseFail = false;
+
+/**
  * If set to true, (and authStrategy is not false) then endpoints will be generated with pre-defined
  * scopes based on the model definition.
  * default: false
@@ -237,15 +254,6 @@ config.generateScopes = false;
  * @type {boolean}
  */
 config.logScopes = false;
-
-/**
- * Flag specifying whether to text index all string fields for all models to enable text search.
- * WARNING: enabling this adds overhead to add inserts and updates, as well as added storage requirements.
- * Default is false.
- * @type {boolean}
- */
-config.enableTextSearch = false;
-
 
 /**
  * If set to true, each route will be logged as it is generated.
@@ -1245,7 +1253,7 @@ rest-hapi exposes the helper methods it uses to generate Joi models through the 
  * @param Log: A logging object.
  * @returns {*}: A Joi object
  */
-generateJoiReadModel: function (model, Log) {...},
+generateJoiReadModel = function (model, Log) {...};
 
 /**
  * Generates a Joi object that validates a query request payload for updating a document
@@ -1253,23 +1261,42 @@ generateJoiReadModel: function (model, Log) {...},
  * @param Log: A logging object.
  * @returns {*}: A Joi object
  */
-generateJoiUpdateModel: function (model, Log) {...},
+generateJoiUpdateModel = function (model, Log) {...};
 
 /**
- * Generates a Joi object that validates a query request payload for creating a document
+ * Generates a Joi object that validates a request payload for creating a document
  * @param model: A mongoose model object.
  * @param Log: A logging object.
  * @returns {*}: A Joi object
  */
-generateJoiCreateModel: function (model, Log) {...},
+generateJoiCreateModel = function (model, Log) {...};
 
 /**
- * Generates a Joi object that validates a query request payload for adding a association
+ * Generates a Joi object that validates a request query for the list function
  * @param model: A mongoose model object.
  * @param Log: A logging object.
  * @returns {*}: A Joi object
  */
-generateJoiAssociationModel: function (model, Log) {...},
+generateJoiListQueryModel = function (model, Log) {...};
+
+/**
+ * Generates a Joi object that validates a request query for the find function
+ * @param model: A mongoose model object.
+ * @param Log: A logging object.
+ * @returns {*}: A Joi object
+ */
+generateJoiFindQueryModel = function (model, Log) {...};
+
+/**
+ * Generates a Joi object for a model field
+ * @param model: A mongoose model object
+ * @param field: A model field
+ * @param fieldName: The name of the field
+ * @param modelType: The type of CRUD model being generated
+ * @param Log: A logging object
+ * @returns {*}: A Joi object
+ */
+generateJoiFieldModel = function (model, field, fieldName, modelType, Log) {...};
 
 /**
  * Returns a Joi object based on the mongoose field type.
@@ -1277,13 +1304,22 @@ generateJoiAssociationModel: function (model, Log) {...},
  * @param Log: A logging object.
  * @returns {*}: A Joi object.
  */
-generateJoiModelFromFieldType: function (field, Log) {...},
+generateJoiModelFromFieldType = function (field, Log) {...};
 
 /**
  * Provides easy access to the Joi ObjectId type.
  * @returns {*|{type}}
  */
-joiObjectId: function() {...}
+joiObjectId = function () {...};
+
+/**
+ * Checks to see if a field is a valid model property
+ * @param fieldName: The name of the field
+ * @param field: The field being checked
+ * @param model: A mongoose model object
+ * @returns {boolean}
+ */
+isValidField = function (fieldName, field, model) {...};
 ```
 
 [Back to top](#readme-contents)
