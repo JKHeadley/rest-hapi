@@ -1404,6 +1404,46 @@ test('joi-mongoose-helper.generateJoiFieldModel', function (t) {
     //</editor-fold>
   });
 
+  t.test('joi-mongoose-helper.generateJoiFieldModel makes a copy of the nested field before deleting so original properties aren\'t affected', function (t) {
+    //<editor-fold desc="Arrange">
+    t.plan(1);
+
+    var joiMongooseHelper = rewire('../utilities/joi-mongoose-helper');
+    var generateJoiUpdateModel = sinon.spy(function () { return Joi.any() });
+    joiMongooseHelper.__set__("internals.generateJoiUpdateModel", generateJoiUpdateModel);
+    var generateJoiFieldModel = joiMongooseHelper.__get__("internals.generateJoiFieldModel");
+
+
+    var userSchema = new mongoose.Schema({
+      name: {
+        first: { type: Types.String },
+        last: { type: Types.String },
+        type: Types.Object,
+        exclude: true
+      }
+    });
+
+    userSchema.statics = {routeOptions: {}};
+    var userModel = mongoose.model("user", userSchema);
+
+    var nameField = userModel.schema.tree["name"];
+    //</editor-fold>
+
+    //<editor-fold desc="Act">
+    var fieldModel = generateJoiFieldModel(userModel, nameField, "name", "update" , Log);
+
+    //</editor-fold>
+
+    //<editor-fold desc="Assert">
+    t.ok(userModel.schema.tree.name.exclude, "exclude field not deleted from original model");
+    //</editor-fold>
+
+    //<editor-fold desc="Restore">
+    delete mongoose.models.user;
+    delete mongoose.modelSchemas.user;
+    //</editor-fold>
+  });
+
   t.test('joi-mongoose-helper.generateJoiFieldModel creates correct nestedModel out of fields', function (t) {
     //<editor-fold desc="Arrange">
     t.plan(9);

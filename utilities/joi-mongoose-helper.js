@@ -329,6 +329,8 @@ internals.generateJoiFieldModel = function (model, field, fieldName, modelType, 
     }
 
     field = _.isObject(field[0]) ? field[0] : field;
+    //EXPL: make a copy so field properties aren't deleted from the original model
+    field = _.extend({}, field);
     //EXPL: remove all fields that aren't objects, since they can cause issues with the schema
     for (var subField in field) {
       if (!_.isObject(field[subField])) {
