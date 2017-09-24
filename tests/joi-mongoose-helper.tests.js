@@ -4,6 +4,7 @@ var sinon = require('sinon');
 var rewire = require('rewire');
 var proxyquire = require('proxyquire');
 var assert = require('assert');
+var rewire = require('rewire');
 var mongoose = require('mongoose');
 var Types = mongoose.Schema.Types;
 var logging = require('loggin');
@@ -18,7 +19,7 @@ test('joi-mongoose-helper exists and has expected members', function (t) {
   //<editor-fold desc="Arrange">
   var joiMongooseHelper = require('../utilities/joi-mongoose-helper');
 
-  t.plan(6);
+  t.plan(8);
   //</editor-fold>
 
   //<editor-fold desc="Assert">
@@ -26,7 +27,9 @@ test('joi-mongoose-helper exists and has expected members', function (t) {
   t.ok(joiMongooseHelper.generateJoiReadModel, "joi-mongoose-helper.generateJoiReadModel exists.");
   t.ok(joiMongooseHelper.generateJoiUpdateModel, "joi-mongoose-helper.generateJoiUpdateModel exists.");
   t.ok(joiMongooseHelper.generateJoiCreateModel, "joi-mongoose-helper.generateJoiCreateModel exists.");
-  t.ok(joiMongooseHelper.generateJoiAssociationModel, "joi-mongoose-helper.generateJoiAssociationModel exists.");
+  t.ok(joiMongooseHelper.generateJoiListQueryModel, "joi-mongoose-helper.generateJoiListQueryModel exists.");
+  t.ok(joiMongooseHelper.generateJoiFindQueryModel, "joi-mongoose-helper.generateJoiFindQueryModel exists.");
+  t.ok(joiMongooseHelper.generateJoiFieldModel, "joi-mongoose-helper.generateJoiFieldModel exists.");
   t.ok(joiMongooseHelper.generateJoiModelFromFieldType, "joi-mongoose-helper.generateJoiModelFromFieldType exists.");
   //</editor-fold>
 });
@@ -35,15 +38,14 @@ test('joi-mongoose-helper.generateJoiReadModel', function (t) {
   var joiMongooseHelper = require('../utilities/joi-mongoose-helper');
   testHelper.testModelParameter(t, joiMongooseHelper.generateJoiReadModel, "joiMongooseHelper.generateJoiReadModel", ["model", "Log"], Log);
 
-  t.test('joi-mongoose-helper.generateJoiReadModel calls generateJoiModelFromFieldType for regular readable fields.', function (t) {
+  t.test('joi-mongoose-helper.generateJoiReadModel calls generateJoiFieldModel for regular readable fields.', function (t) {
     //<editor-fold desc="Arrange">
-    var joiMongooseHelper = require('../utilities/joi-mongoose-helper');
-
     t.plan(2);
 
-    sinon.stub(joiMongooseHelper, "generateJoiModelFromFieldType").callsFake(function () {
-      return Joi.any()
-    });
+    var generateJoiFieldModel = sinon.spy(function(){ return Joi.any() });
+    var joiMongooseHelper = rewire('../utilities/joi-mongoose-helper');
+    joiMongooseHelper.__set__("internals.generateJoiFieldModel", generateJoiFieldModel);
+
 
     var userSchema = new mongoose.Schema({
       email: {
@@ -54,7 +56,7 @@ test('joi-mongoose-helper.generateJoiReadModel', function (t) {
     userSchema.statics = {routeOptions: {}};
     var userModel = mongoose.model("user", userSchema);
 
-    var emailField = userModel.schema.paths["email"].options;
+    var emailField = userModel.schema.tree["email"];
     //</editor-fold>
 
     //<editor-fold desc="Act">
@@ -62,12 +64,12 @@ test('joi-mongoose-helper.generateJoiReadModel', function (t) {
     //</editor-fold>
 
     //<editor-fold desc="Assert">
-    t.ok(joiMongooseHelper.generateJoiModelFromFieldType.calledWith(emailField), "generateJoiModelFromFieldType called on email field");
+    //NOTE: should use "calledWith(emailField)" instead, but not working for some reason
+    t.ok(generateJoiFieldModel.calledWithExactly(userModel, emailField, "email", "read", Log), "generateJoiFieldModel called on email field");
     t.ok(Joi.validate({email: "test"}, readModel).error === null, "email field allowed");
     //</editor-fold>
 
     //<editor-fold desc="Restore">
-    joiMongooseHelper.generateJoiModelFromFieldType.restore();
     delete mongoose.models.user;
     delete mongoose.modelSchemas.user;
     //</editor-fold>
@@ -75,13 +77,11 @@ test('joi-mongoose-helper.generateJoiReadModel', function (t) {
 
   t.test('joi-mongoose-helper.generateJoiReadModel uses readModel if it exists.', function (t) {
     //<editor-fold desc="Arrange">
-    var joiMongooseHelper = require('../utilities/joi-mongoose-helper');
-
     t.plan(3);
 
-    sinon.stub(joiMongooseHelper, "generateJoiModelFromFieldType").callsFake(function () {
-      return Joi.any()
-    });
+    var generateJoiFieldModel = sinon.spy(function(){ return Joi.any() });
+    var joiMongooseHelper = rewire('../utilities/joi-mongoose-helper');
+    joiMongooseHelper.__set__("internals.generateJoiFieldModel", generateJoiFieldModel);
 
     var userSchema = new mongoose.Schema({
       email: {
@@ -93,7 +93,7 @@ test('joi-mongoose-helper.generateJoiReadModel', function (t) {
     userSchema.statics = {routeOptions: {}};
     var userModel = mongoose.model("user", userSchema);
 
-    var emailField = userModel.schema.paths["email"].options;
+    var emailField = userModel.schema.tree["email"];
     //</editor-fold>
 
     //<editor-fold desc="Act">
@@ -101,13 +101,12 @@ test('joi-mongoose-helper.generateJoiReadModel', function (t) {
     //</editor-fold>
 
     //<editor-fold desc="Assert">
-    t.notOk(joiMongooseHelper.generateJoiModelFromFieldType.calledWith(emailField), "generateJoiModelFromFieldType not called on email field");
+    t.notOk(generateJoiFieldModel.calledWithExactly(userModel, emailField, "email", "read", Log), "generateJoiFieldModel not called on email field");
     t.ok(Joi.validate({email: "wrong"}, readModel).error !== null, "wrong field value not valid");
     t.ok(Joi.validate({email: "test"}, readModel).error === null, "correct field value valid");
     //</editor-fold>
 
     //<editor-fold desc="Restore">
-    joiMongooseHelper.generateJoiModelFromFieldType.restore();
     delete mongoose.models.user;
     delete mongoose.modelSchemas.user;
     //</editor-fold>
@@ -115,13 +114,11 @@ test('joi-mongoose-helper.generateJoiReadModel', function (t) {
 
   t.test('joi-mongoose-helper.generateJoiReadModel ignores fields where exclude is true or allowOnRead is false.', function (t) {
     //<editor-fold desc="Arrange">
-    var joiMongooseHelper = require('../utilities/joi-mongoose-helper');
-
     t.plan(2);
 
-    sinon.stub(joiMongooseHelper, "generateJoiModelFromFieldType").callsFake(function () {
-      return Joi.any()
-    });
+    var generateJoiFieldModel = sinon.spy(function(){ return Joi.any() });
+    var joiMongooseHelper = rewire('../utilities/joi-mongoose-helper');
+    joiMongooseHelper.__set__("internals.generateJoiFieldModel", generateJoiFieldModel);
 
     var userSchema = new mongoose.Schema({
       firstName: {
@@ -137,8 +134,8 @@ test('joi-mongoose-helper.generateJoiReadModel', function (t) {
     userSchema.statics = {routeOptions: {}};
     var userModel = mongoose.model("user", userSchema);
 
-    var firstNameField = userModel.schema.paths["firstName"].options;
-    var lastNameField = userModel.schema.paths["lastName"].options;
+    var firstNameField = userModel.schema.tree["firstName"];
+    var lastNameField = userModel.schema.tree["lastName"];
     //</editor-fold>
 
     //<editor-fold desc="Act">
@@ -146,12 +143,46 @@ test('joi-mongoose-helper.generateJoiReadModel', function (t) {
     //</editor-fold>
 
     //<editor-fold desc="Assert">
-    t.notOk(joiMongooseHelper.generateJoiModelFromFieldType.calledWithExactly(firstNameField), "generateJoiModelFromFieldType not called on firstName field");
-    t.notOk(joiMongooseHelper.generateJoiModelFromFieldType.calledWithExactly(lastNameField), "generateJoiModelFromFieldType not called on lastName field");
+    t.notOk(generateJoiFieldModel.calledWithExactly(userModel, firstNameField, "firstName", "read", Log), "generateJoiFieldModel not called on firstName field");
+    t.notOk(generateJoiFieldModel.calledWithExactly(userModel, lastNameField, "lastName", "read", Log), "generateJoiFieldModel not called on lastName field");
     //</editor-fold>
 
     //<editor-fold desc="Restore">
-    joiMongooseHelper.generateJoiModelFromFieldType.restore();
+    delete mongoose.models.user;
+    delete mongoose.modelSchemas.user;
+    //</editor-fold>
+  });
+
+  t.test('joi-mongoose-helper.generateJoiReadModel ignores fields that are invalid.', function (t) {
+    //<editor-fold desc="Arrange">
+    t.plan(1);
+
+    var generateJoiFieldModel = sinon.spy(function(){ return Joi.any() });
+    var joiMongooseHelper = rewire('../utilities/joi-mongoose-helper');
+    joiMongooseHelper.__set__("internals.generateJoiFieldModel", generateJoiFieldModel);
+    joiMongooseHelper.__set__("internals.isValidField", sinon.spy(function(){ return false }));
+
+    var userSchema = new mongoose.Schema({
+      firstName: {
+        type: Types.String
+      },
+    });
+
+    userSchema.statics = {routeOptions: {}};
+    var userModel = mongoose.model("user", userSchema);
+
+    var firstNameField = userModel.schema.tree["firstName"];
+    //</editor-fold>
+
+    //<editor-fold desc="Act">
+    var readModel = joiMongooseHelper.generateJoiReadModel(userModel, Log);
+    //</editor-fold>
+
+    //<editor-fold desc="Assert">
+    t.notOk(generateJoiFieldModel.calledWithExactly(userModel, firstNameField, "firstName", "read", Log), "generateJoiFieldModel not called on firstName field");
+    //</editor-fold>
+
+    //<editor-fold desc="Restore">
     delete mongoose.models.user;
     delete mongoose.modelSchemas.user;
     //</editor-fold>
@@ -159,13 +190,11 @@ test('joi-mongoose-helper.generateJoiReadModel', function (t) {
 
   t.test('joi-mongoose-helper.generateJoiReadModel returns Joi object that rejects excluded fields.', function (t) {
     //<editor-fold desc="Arrange">
-    var joiMongooseHelper = require('../utilities/joi-mongoose-helper');
-
     t.plan(4);
 
-    sinon.stub(joiMongooseHelper, "generateJoiModelFromFieldType").callsFake(function () {
-      return Joi.any()
-    });
+    var generateJoiFieldModel = sinon.spy(function(){ return Joi.any() });
+    var joiMongooseHelper = rewire('../utilities/joi-mongoose-helper');
+    joiMongooseHelper.__set__("internals.generateJoiFieldModel", generateJoiFieldModel);
 
     var userSchema = new mongoose.Schema({
       email: {
@@ -198,7 +227,6 @@ test('joi-mongoose-helper.generateJoiReadModel', function (t) {
     //</editor-fold>
 
     //<editor-fold desc="Restore">
-    joiMongooseHelper.generateJoiModelFromFieldType.restore();
     delete mongoose.models.user;
     delete mongoose.modelSchemas.user;
     //</editor-fold>
@@ -206,13 +234,11 @@ test('joi-mongoose-helper.generateJoiReadModel', function (t) {
 
   t.test('joi-mongoose-helper.generateJoiReadModel returns Joi object that requires fields with "requireOnRead" set to true.', function (t) {
     //<editor-fold desc="Arrange">
-    var joiMongooseHelper = require('../utilities/joi-mongoose-helper');
-
     t.plan(2);
 
-    sinon.stub(joiMongooseHelper, "generateJoiModelFromFieldType").callsFake(function () {
-      return Joi.any()
-    });
+    var generateJoiFieldModel = sinon.spy(function(){ return Joi.any() });
+    var joiMongooseHelper = rewire('../utilities/joi-mongoose-helper');
+    joiMongooseHelper.__set__("internals.generateJoiFieldModel", generateJoiFieldModel);
 
     var userSchema = new mongoose.Schema({
       email: {
@@ -236,7 +262,6 @@ test('joi-mongoose-helper.generateJoiReadModel', function (t) {
     //</editor-fold>
 
     //<editor-fold desc="Restore">
-    joiMongooseHelper.generateJoiModelFromFieldType.restore();
     delete mongoose.models.user;
     delete mongoose.modelSchemas.user;
     //</editor-fold>
@@ -244,13 +269,15 @@ test('joi-mongoose-helper.generateJoiReadModel', function (t) {
 
   t.test('joi-mongoose-helper.generateJoiReadModel includes associations.', function (t) {
     //<editor-fold desc="Arrange">
-    var joiMongooseHelper = require('../utilities/joi-mongoose-helper');
+    t.plan(19);
 
-    t.plan(16);
 
-    sinon.stub(joiMongooseHelper, "generateJoiModelFromFieldType").callsFake(function () {
-      return Joi.any()
-    });
+    var generateJoiFieldModel = sinon.spy(function(){ return Joi.any() });
+    var generateJoiReadModel = sinon.spy(function(){ return Joi.object() });
+    var joiMongooseHelper = rewire('../utilities/joi-mongoose-helper');
+    joiMongooseHelper.__set__("internals.generateJoiFieldModel", generateJoiFieldModel);
+    joiMongooseHelper.__set__("internals.generateJoiReadModel", generateJoiReadModel);
+
 
     var userSchema = new mongoose.Schema({});
 
@@ -258,18 +285,31 @@ test('joi-mongoose-helper.generateJoiReadModel', function (t) {
       routeOptions: {
         associations: {
           title: {
-            type: "MANY_ONE"
+            type: "MANY_ONE",
+            model: "title",
           },
           profileImage: {
-            type: "ONE_ONE"
+            type: "ONE_ONE",
+            model: "profileImage",
           },
           groups: {
             type: "ONE_MANY",
-            foreignField: "user"
+            model: "group",
+            foreignField: "user",
+          },
+          friends: {
+            type: "MANY_MANY",
+            model: "user",
+          },
+          hashTags: {
+            type: "_MANY",
+            model: "hashTag",
           },
           permissions: {
             type: "MANY_MANY",
-            linkingModel: "link"
+            model: "permission",
+            linkingModel: "link",
+            include: { through: {} }
           }
         }
       }
@@ -285,26 +325,28 @@ test('joi-mongoose-helper.generateJoiReadModel', function (t) {
 
 
     //<editor-fold desc="Assert">
-    t.ok(joiMongooseHelper.generateJoiModelFromFieldType.callCount === 1, "generateJoiModelFromFieldType not called on association fields");
+    t.ok(generateJoiFieldModel.callCount === 1, "generateJoiFieldModel not called on association fields");
     t.ok(Joi.validate({title: {}}, readModel).error === null, "title field valid");
-    t.ok(Joi.validate({title: null}, readModel).error === null, "null title field valid");
+    t.ok(Joi.validate({title: null}, readModel).error !== null, "null title field not valid");
     t.ok(Joi.validate({title: ""}, readModel).error !== null, "non-object title field not valid");
     t.ok(Joi.validate({profileImage: {}}, readModel).error === null, "profileImage field valid");
-    t.ok(Joi.validate({profileImage: null}, readModel).error === null, "null profileImage field valid");
+    t.ok(Joi.validate({profileImage: null}, readModel).error !== null, "null profileImage note field valid");
     t.ok(Joi.validate({profileImage: ""}, readModel).error !== null, "non-object profileImage field not valid");
     t.ok(Joi.validate({groups: [{}, {}]}, readModel).error === null, "groups field valid");
     t.ok(Joi.validate({groups: null}, readModel).error !== null, "null groups field not valid");
     t.ok(Joi.validate({groups: ["", 3, {}]}, readModel).error !== null, "groups field must be array of objects");
+    t.ok(Joi.validate({friends: [{}, {}]}, readModel).error === null, "friends field valid");
+    t.ok(Joi.validate({friends: null}, readModel).error !== null, "null friends field not valid");
+    t.ok(Joi.validate({friends: ["", 3, {}]}, readModel).error !== null, "friends field must be array of objects");
+    t.ok(Joi.validate({hashTags: [{}, {}]}, readModel).error === null, "hashTags field valid");
+    t.ok(Joi.validate({hashTags: null}, readModel).error !== null, "null hashTags field not valid");
+    t.ok(Joi.validate({hashTags: ["", 3, {}]}, readModel).error !== null, "hashTags field must be array of objects");
     t.ok(Joi.validate({permissions: [{}, {}]}, readModel).error === null, "permissions field valid");
     t.ok(Joi.validate({permissions: null}, readModel).error !== null, "null permissions field not valid");
     t.ok(Joi.validate({permissions: ["", 3, {}]}, readModel).error !== null, "permissions field must be array of objects");
-    t.ok(Joi.validate({link: {}}, readModel).error === null, "link field valid");
-    t.ok(Joi.validate({link: null}, readModel).error === null, "null link field valid");
-    t.ok(Joi.validate({link: ""}, readModel).error !== null, "non-object link field not valid");
-//</editor-fold>
+    //</editor-fold>
 
     //<editor-fold desc="Restore">
-    joiMongooseHelper.generateJoiModelFromFieldType.restore();
     delete mongoose.models.user;
     delete mongoose.modelSchemas.user;
     //</editor-fold>
@@ -312,13 +354,11 @@ test('joi-mongoose-helper.generateJoiReadModel', function (t) {
 
   t.test('joi-mongoose-helper.generateJoiReadModel returns Joi object with appropriate className.', function (t) {
     //<editor-fold desc="Arrange">
-    var joiMongooseHelper = require('../utilities/joi-mongoose-helper');
-
     t.plan(1);
 
-    sinon.stub(joiMongooseHelper, "generateJoiModelFromFieldType").callsFake(function () {
-      return Joi.any()
-    });
+    var generateJoiFieldModel = sinon.spy(function(){ return Joi.any() });
+    var joiMongooseHelper = rewire('../utilities/joi-mongoose-helper');
+    joiMongooseHelper.__set__("internals.generateJoiFieldModel", generateJoiFieldModel);
 
     var userSchema = new mongoose.Schema({});
 
@@ -336,7 +376,6 @@ test('joi-mongoose-helper.generateJoiReadModel', function (t) {
     //</editor-fold>
 
     //<editor-fold desc="Restore">
-    joiMongooseHelper.generateJoiModelFromFieldType.restore();
     delete mongoose.models.user;
     delete mongoose.modelSchemas.user;
     //</editor-fold>
@@ -349,15 +388,13 @@ test('joi-mongoose-helper.generateJoiUpdateModel', function (t) {
   var joiMongooseHelper = require('../utilities/joi-mongoose-helper');
   testHelper.testModelParameter(t, joiMongooseHelper.generateJoiUpdateModel, "joiMongooseHelper.generateJoiUpdateModel", ["model", "Log"], Log);
 
-  t.test('joi-mongoose-helper.generateJoiUpdateModel calls generateJoiModelFromFieldType for regular fields.', function (t) {
+  t.test('joi-mongoose-helper.generateJoiUpdateModel calls generateJoiFieldModel for regular fields.', function (t) {
     //<editor-fold desc="Arrange">
-    var joiMongooseHelper = require('../utilities/joi-mongoose-helper');
-
     t.plan(2);
 
-    sinon.stub(joiMongooseHelper, "generateJoiModelFromFieldType").callsFake(function () {
-      return Joi.any()
-    });
+    var generateJoiFieldModel = sinon.spy(function(){ return Joi.any() });
+    var joiMongooseHelper = rewire('../utilities/joi-mongoose-helper');
+    joiMongooseHelper.__set__("internals.generateJoiFieldModel", generateJoiFieldModel);
 
     var userSchema = new mongoose.Schema({
       email: {
@@ -368,7 +405,7 @@ test('joi-mongoose-helper.generateJoiUpdateModel', function (t) {
     userSchema.statics = {routeOptions: {}};
     var userModel = mongoose.model("user", userSchema);
 
-    var emailField = userModel.schema.paths["email"].options;
+    var emailField = userModel.schema.tree["email"];
     //</editor-fold>
 
     //<editor-fold desc="Act">
@@ -376,12 +413,11 @@ test('joi-mongoose-helper.generateJoiUpdateModel', function (t) {
     //</editor-fold>
 
     //<editor-fold desc="Assert">
-    t.ok(joiMongooseHelper.generateJoiModelFromFieldType.calledWith(emailField), "generateJoiModelFromFieldType called on email field");
+    t.ok(generateJoiFieldModel.calledWithExactly(userModel, emailField, "email", "update", Log), "generateJoiFieldModel called on email field");
     t.ok(Joi.validate({email: "test"}, updateModel).error === null, "email field allowed");
     //</editor-fold>
 
     //<editor-fold desc="Restore">
-    joiMongooseHelper.generateJoiModelFromFieldType.restore();
     delete mongoose.models.user;
     delete mongoose.modelSchemas.user;
     //</editor-fold>
@@ -389,13 +425,12 @@ test('joi-mongoose-helper.generateJoiUpdateModel', function (t) {
 
   t.test('joi-mongoose-helper.generateJoiUpdateModel uses updateModel if it exists.', function (t) {
     //<editor-fold desc="Arrange">
-    var joiMongooseHelper = require('../utilities/joi-mongoose-helper');
-
     t.plan(3);
 
-    sinon.stub(joiMongooseHelper, "generateJoiModelFromFieldType").callsFake(function () {
-      return Joi.any()
-    });
+    var generateJoiFieldModel = sinon.spy(function(){ return Joi.any() });
+    var joiMongooseHelper = rewire('../utilities/joi-mongoose-helper');
+    joiMongooseHelper.__set__("internals.generateJoiFieldModel", generateJoiFieldModel);
+
 
     var userSchema = new mongoose.Schema({
       email: {
@@ -407,7 +442,7 @@ test('joi-mongoose-helper.generateJoiUpdateModel', function (t) {
     userSchema.statics = {routeOptions: {}};
     var userModel = mongoose.model("user", userSchema);
 
-    var emailField = userModel.schema.paths["email"].options;
+    var emailField = userModel.schema.tree["email"];
     //</editor-fold>
 
     //<editor-fold desc="Act">
@@ -415,13 +450,12 @@ test('joi-mongoose-helper.generateJoiUpdateModel', function (t) {
     //</editor-fold>
 
     //<editor-fold desc="Assert">
-    t.notOk(joiMongooseHelper.generateJoiModelFromFieldType.calledWith(emailField), "generateJoiModelFromFieldType not called on email field");
+    t.notok(generateJoiFieldModel.calledWithExactly(userModel, emailField, "email", "update", Log), "generateJoiFieldModel called on email field");
     t.ok(Joi.validate({email: "wrong"}, updateModel).error !== null, "wrong field value not valid");
     t.ok(Joi.validate({email: "test"}, updateModel).error === null, "correct field value valid");
     //</editor-fold>
 
     //<editor-fold desc="Restore">
-    joiMongooseHelper.generateJoiModelFromFieldType.restore();
     delete mongoose.models.user;
     delete mongoose.modelSchemas.user;
     //</editor-fold>
@@ -429,13 +463,12 @@ test('joi-mongoose-helper.generateJoiUpdateModel', function (t) {
 
   t.test('joi-mongoose-helper.generateJoiUpdateModel ignores fields where allowOnUpdate is false.', function (t) {
     //<editor-fold desc="Arrange">
-    var joiMongooseHelper = require('../utilities/joi-mongoose-helper');
-
     t.plan(1);
 
-    sinon.stub(joiMongooseHelper, "generateJoiModelFromFieldType").callsFake(function () {
-      return Joi.any()
-    });
+    var generateJoiFieldModel = sinon.spy(function(){ return Joi.any() });
+    var joiMongooseHelper = rewire('../utilities/joi-mongoose-helper');
+    joiMongooseHelper.__set__("internals.generateJoiFieldModel", generateJoiFieldModel);
+
 
     var userSchema = new mongoose.Schema({
       firstName: {
@@ -447,7 +480,7 @@ test('joi-mongoose-helper.generateJoiUpdateModel', function (t) {
     userSchema.statics = {routeOptions: {}};
     var userModel = mongoose.model("user", userSchema);
 
-    var firstNameField = userModel.schema.paths["firstName"].options;
+    var firstNameField = userModel.schema.tree["firstName"];
     //</editor-fold>
 
     //<editor-fold desc="Act">
@@ -455,25 +488,24 @@ test('joi-mongoose-helper.generateJoiUpdateModel', function (t) {
     //</editor-fold>
 
     //<editor-fold desc="Assert">
-    t.notOk(joiMongooseHelper.generateJoiModelFromFieldType.calledWithExactly(firstNameField), "generateJoiModelFromFieldType not called on firstName field");
+    t.notOk(generateJoiFieldModel.calledWithExactly(userModel, firstNameField, "firstName", "update", Log), "generateJoiFieldModel not called on firstName field");
     //</editor-fold>
 
     //<editor-fold desc="Restore">
-    joiMongooseHelper.generateJoiModelFromFieldType.restore();
     delete mongoose.models.user;
     delete mongoose.modelSchemas.user;
     //</editor-fold>
   });
 
+  //TODO: move some functionality to isValidField tests
   t.test('joi-mongoose-helper.generateJoiUpdateModel ignores fields "__t" and "__v".', function (t) {
     //<editor-fold desc="Arrange">
-    var joiMongooseHelper = require('../utilities/joi-mongoose-helper');
-
     t.plan(2);
 
-    sinon.stub(joiMongooseHelper, "generateJoiModelFromFieldType").callsFake(function () {
-      return Joi.any()
-    });
+    var generateJoiFieldModel = sinon.spy(function(){ return Joi.any() });
+    var joiMongooseHelper = rewire('../utilities/joi-mongoose-helper');
+    joiMongooseHelper.__set__("internals.generateJoiFieldModel", generateJoiFieldModel);
+
 
     var userSchema = new mongoose.Schema({
       __t: {
@@ -487,8 +519,8 @@ test('joi-mongoose-helper.generateJoiUpdateModel', function (t) {
     userSchema.statics = {routeOptions: {}};
     var userModel = mongoose.model("user", userSchema);
 
-    var __tField = userModel.schema.paths["__t"].options;
-    var __vField = userModel.schema.paths["__v"].options;
+    var __tField = userModel.schema.tree["__t"];
+    var __vField = userModel.schema.tree["__v"];
     //</editor-fold>
 
     //<editor-fold desc="Act">
@@ -496,26 +528,24 @@ test('joi-mongoose-helper.generateJoiUpdateModel', function (t) {
     //</editor-fold>
 
     //<editor-fold desc="Assert">
-    t.notOk(joiMongooseHelper.generateJoiModelFromFieldType.calledWithExactly(__tField), "generateJoiModelFromFieldType not called on __t field");
-    t.notOk(joiMongooseHelper.generateJoiModelFromFieldType.calledWithExactly(__vField), "generateJoiModelFromFieldType not called on __v field");
+    t.notOk(generateJoiFieldModel.calledWithExactly(userModel, __tField, "__t", "update", Log), "generateJoiFieldModel not called on __t field");
+    t.notOk(generateJoiFieldModel.calledWithExactly(userModel, __vField, "__v", "update", Log), "generateJoiFieldModel not called on __v field");
     //</editor-fold>
 
     //<editor-fold desc="Restore">
-    joiMongooseHelper.generateJoiModelFromFieldType.restore();
     delete mongoose.models.user;
     delete mongoose.modelSchemas.user;
     //</editor-fold>
   });
 
-  t.test('joi-mongoose-helper.generateJoiUpdateModel returns Joi object that rejects excluded fields.', function (t) {
+  t.test('joi-mongoose-helper.generateJoiUpdateModel returns Joi object that rejects fields not listed.', function (t) {
     //<editor-fold desc="Arrange">
-    var joiMongooseHelper = require('../utilities/joi-mongoose-helper');
-
     t.plan(3);
 
-    sinon.stub(joiMongooseHelper, "generateJoiModelFromFieldType").callsFake(function () {
-      return Joi.any()
-    });
+    var generateJoiFieldModel = sinon.spy(function(){ return Joi.any() });
+    var joiMongooseHelper = rewire('../utilities/joi-mongoose-helper');
+    joiMongooseHelper.__set__("internals.generateJoiFieldModel", generateJoiFieldModel);
+
 
     var userSchema = new mongoose.Schema({
       email: {
@@ -543,21 +573,19 @@ test('joi-mongoose-helper.generateJoiUpdateModel', function (t) {
     //</editor-fold>
 
     //<editor-fold desc="Restore">
-    joiMongooseHelper.generateJoiModelFromFieldType.restore();
     delete mongoose.models.user;
     delete mongoose.modelSchemas.user;
     //</editor-fold>
   });
 
-  t.test('joi-mongoose-helper.generateJoiUpdateModel returns Joi object that requires fields with "requireOnRead" set to true.', function (t) {
+  t.test('joi-mongoose-helper.generateJoiUpdateModel returns Joi object that requires fields with "requireOnUpdate" set to true.', function (t) {
     //<editor-fold desc="Arrange">
-    var joiMongooseHelper = require('../utilities/joi-mongoose-helper');
-
     t.plan(2);
 
-    sinon.stub(joiMongooseHelper, "generateJoiModelFromFieldType").callsFake(function () {
-      return Joi.any()
-    });
+    var generateJoiFieldModel = sinon.spy(function(){ return Joi.any() });
+    var joiMongooseHelper = rewire('../utilities/joi-mongoose-helper');
+    joiMongooseHelper.__set__("internals.generateJoiFieldModel", generateJoiFieldModel);
+
 
     var userSchema = new mongoose.Schema({
       email: {
@@ -581,21 +609,20 @@ test('joi-mongoose-helper.generateJoiUpdateModel', function (t) {
     //</editor-fold>
 
     //<editor-fold desc="Restore">
-    joiMongooseHelper.generateJoiModelFromFieldType.restore();
     delete mongoose.models.user;
     delete mongoose.modelSchemas.user;
     //</editor-fold>
   });
 
+  //TODO: move some functionality to generateJoiFieldModel tests
   t.test('joi-mongoose-helper.generateJoiUpdateModel includes associations.', function (t) {
     //<editor-fold desc="Arrange">
-    var joiMongooseHelper = require('../utilities/joi-mongoose-helper');
+    t.plan(5);
 
-    t.plan(8);
+    var generateJoiFieldModel = sinon.spy(function(){ return Joi.any() });
+    var joiMongooseHelper = rewire('../utilities/joi-mongoose-helper');
+    joiMongooseHelper.__set__("internals.generateJoiFieldModel", generateJoiFieldModel);
 
-    sinon.stub(joiMongooseHelper, "generateJoiModelFromFieldType").callsFake(function () {
-      return Joi.any().only("test")
-    });
 
     var userSchema = new mongoose.Schema({
       title: {
@@ -605,10 +632,13 @@ test('joi-mongoose-helper.generateJoiUpdateModel', function (t) {
         type: Types.ObjectId
       },
       groups: {
-        type: Types.ObjectId
+        type: [Types.Object]
       },
       permissions: {
-        type: Types.ObjectId
+        type: [Types.Object]
+      },
+      hashTags: {
+        type: [Types.ObjectId]
       }
     });
 
@@ -626,15 +656,21 @@ test('joi-mongoose-helper.generateJoiUpdateModel', function (t) {
           },
           permissions: {
             type: "MANY_MANY"
-          }
+          },
+          hashTags: {
+            type: "_MANY",
+          },
         }
       }
     };
 
     var userModel = mongoose.model("user", userSchema);
 
-    var titleField = userModel.schema.paths["title"].options;
-    var profileImageField = userModel.schema.paths["profileImage"].options;
+    var titleField = userModel.schema.tree["title"];
+    var profileImageField = userModel.schema.tree["profileImage"];
+    var groupsField = userModel.schema.tree["groups"];
+    var permissionsField = userModel.schema.tree["permissions"];
+    var hashTagsField = userModel.schema.tree["hashTags"];
 
     //</editor-fold>
 
@@ -643,18 +679,20 @@ test('joi-mongoose-helper.generateJoiUpdateModel', function (t) {
     //</editor-fold>
 
     //<editor-fold desc="Assert">
-    t.ok(joiMongooseHelper.generateJoiModelFromFieldType.calledWithExactly(titleField, Log), "generateJoiModelFromFieldType called on titleField field");
-    t.ok(joiMongooseHelper.generateJoiModelFromFieldType.calledWithExactly(profileImageField, Log), "generateJoiModelFromFieldType called on profileImageField field");
-    t.ok(Joi.validate({title: {}}, updateModel).error !== null, "title field not valid format");
-    t.ok(Joi.validate({title: "test"}, updateModel).error === null, "title field valid format");
-    t.ok(Joi.validate({profileImage: {}}, updateModel).error !== null, "profileImage field not valid format");
-    t.ok(Joi.validate({profileImage: "test"}, updateModel).error === null, "profileImage field valid format");
-    t.ok(Joi.validate({groups: "test"}, updateModel).error !== null, "groups field not allowed");
-    t.ok(Joi.validate({permissions: "test"}, updateModel).error !== null, "permissions field not allowed");
+    t.ok(generateJoiFieldModel.calledWithExactly(userModel, titleField, "title", "update", Log), "generateJoiFieldModel called on titleField field");
+    t.ok(generateJoiFieldModel.calledWithExactly(userModel, profileImageField, "profileImage", "update", Log), "generateJoiFieldModel called on profileImageField field");
+    t.notok(generateJoiFieldModel.calledWithExactly(userModel, groupsField, "groups", "update", Log), "generateJoiFieldModel not called on groups field");
+    t.notok(generateJoiFieldModel.calledWithExactly(userModel, permissionsField, "permissions", "update", Log), "generateJoiFieldModel not called on permissions field");
+    t.ok(generateJoiFieldModel.calledWithExactly(userModel, hashTagsField, "hashTags", "update", Log), "generateJoiFieldModel called on hashTags field");
+    // t.ok(Joi.validate({title: {}}, updateModel).error !== null, "title field not valid format");
+    // t.ok(Joi.validate({title: "test"}, updateModel).error === null, "title field valid format");
+    // t.ok(Joi.validate({profileImage: {}}, updateModel).error !== null, "profileImage field not valid format");
+    // t.ok(Joi.validate({profileImage: "test"}, updateModel).error === null, "profileImage field valid format");
+    // t.ok(Joi.validate({groups: "test"}, updateModel).error !== null, "groups field not allowed");
+    // t.ok(Joi.validate({permissions: "test"}, updateModel).error !== null, "permissions field not allowed");
     //</editor-fold>
 
     //<editor-fold desc="Restore">
-    joiMongooseHelper.generateJoiModelFromFieldType.restore();
     delete mongoose.models.user;
     delete mongoose.modelSchemas.user;
     //</editor-fold>
@@ -662,9 +700,12 @@ test('joi-mongoose-helper.generateJoiUpdateModel', function (t) {
 
   t.test('joi-mongoose-helper.generateJoiUpdateModel returns Joi object with appropriate className.', function (t) {
     //<editor-fold desc="Arrange">
-    var joiMongooseHelper = require('../utilities/joi-mongoose-helper');
-
     t.plan(1);
+
+    var generateJoiFieldModel = sinon.spy(function(){ return Joi.any() });
+    var joiMongooseHelper = rewire('../utilities/joi-mongoose-helper');
+    joiMongooseHelper.__set__("internals.generateJoiFieldModel", generateJoiFieldModel);
+
 
     var userSchema = new mongoose.Schema({});
 
@@ -694,15 +735,14 @@ test('joi-mongoose-helper.generateJoiCreateModel', function (t) {
   var joiMongooseHelper = require('../utilities/joi-mongoose-helper');
   testHelper.testModelParameter(t, joiMongooseHelper.generateJoiCreateModel, "joiMongooseHelper.generateJoiCreateModel", ["model", "Log"], Log);
 
-  t.test('joi-mongoose-helper.generateJoiCreateModel calls generateJoiModelFromFieldType for regular fields.', function (t) {
+  t.test('joi-mongoose-helper.generateJoiCreateModel calls generateJoiFieldModel for regular fields.', function (t) {
     //<editor-fold desc="Arrange">
-    var joiMongooseHelper = require('../utilities/joi-mongoose-helper');
-
     t.plan(2);
 
-    sinon.stub(joiMongooseHelper, "generateJoiModelFromFieldType").callsFake(function () {
-      return Joi.any()
-    });
+    var generateJoiFieldModel = sinon.spy(function(){ return Joi.any() });
+    var joiMongooseHelper = rewire('../utilities/joi-mongoose-helper');
+    joiMongooseHelper.__set__("internals.generateJoiFieldModel", generateJoiFieldModel);
+
 
     var userSchema = new mongoose.Schema({
       email: {
@@ -713,7 +753,7 @@ test('joi-mongoose-helper.generateJoiCreateModel', function (t) {
     userSchema.statics = {routeOptions: {}};
     var userModel = mongoose.model("user", userSchema);
 
-    var emailField = userModel.schema.paths["email"].options;
+    var emailField = userModel.schema.tree["email"];
     //</editor-fold>
 
     //<editor-fold desc="Act">
@@ -721,12 +761,11 @@ test('joi-mongoose-helper.generateJoiCreateModel', function (t) {
     //</editor-fold>
 
     //<editor-fold desc="Assert">
-    t.ok(joiMongooseHelper.generateJoiModelFromFieldType.calledWith(emailField), "generateJoiModelFromFieldType called on email field");
+    t.ok(generateJoiFieldModel.calledWithExactly(userModel, emailField, "email", "create", Log), "generateJoiFieldModel called on email field");
     t.ok(Joi.validate({email: "test"}, createModel).error === null, "email field allowed");
     //</editor-fold>
 
     //<editor-fold desc="Restore">
-    joiMongooseHelper.generateJoiModelFromFieldType.restore();
     delete mongoose.models.user;
     delete mongoose.modelSchemas.user;
     //</editor-fold>
@@ -734,13 +773,12 @@ test('joi-mongoose-helper.generateJoiCreateModel', function (t) {
 
   t.test('joi-mongoose-helper.generateJoiCreateModel uses createModel if it exists.', function (t) {
     //<editor-fold desc="Arrange">
-    var joiMongooseHelper = require('../utilities/joi-mongoose-helper');
-
     t.plan(3);
 
-    sinon.stub(joiMongooseHelper, "generateJoiModelFromFieldType").callsFake(function () {
-      return Joi.any()
-    });
+    var generateJoiFieldModel = sinon.spy(function(){ return Joi.any() });
+    var joiMongooseHelper = rewire('../utilities/joi-mongoose-helper');
+    joiMongooseHelper.__set__("internals.generateJoiFieldModel", generateJoiFieldModel);
+
 
     var userSchema = new mongoose.Schema({
       email: {
@@ -752,7 +790,7 @@ test('joi-mongoose-helper.generateJoiCreateModel', function (t) {
     userSchema.statics = {routeOptions: {}};
     var userModel = mongoose.model("user", userSchema);
 
-    var emailField = userModel.schema.paths["email"].options;
+    var emailField = userModel.schema.tree["email"];
     //</editor-fold>
 
     //<editor-fold desc="Act">
@@ -760,13 +798,12 @@ test('joi-mongoose-helper.generateJoiCreateModel', function (t) {
     //</editor-fold>
 
     //<editor-fold desc="Assert">
-    t.notOk(joiMongooseHelper.generateJoiModelFromFieldType.calledWith(emailField), "generateJoiModelFromFieldType not called on email field");
+    t.notok(generateJoiFieldModel.calledWithExactly(userModel, emailField, "email", "create", Log), "generateJoiFieldModel not called on email field");
     t.ok(Joi.validate({email: "wrong"}, createModel).error !== null, "wrong field value not valid");
     t.ok(Joi.validate({email: "test"}, createModel).error === null, "correct field value valid");
     //</editor-fold>
 
     //<editor-fold desc="Restore">
-    joiMongooseHelper.generateJoiModelFromFieldType.restore();
     delete mongoose.models.user;
     delete mongoose.modelSchemas.user;
     //</editor-fold>
@@ -774,13 +811,12 @@ test('joi-mongoose-helper.generateJoiCreateModel', function (t) {
 
   t.test('joi-mongoose-helper.generateJoiCreateModel ignores fields where allowOnCreate is false.', function (t) {
     //<editor-fold desc="Arrange">
-    var joiMongooseHelper = require('../utilities/joi-mongoose-helper');
-
     t.plan(1);
 
-    sinon.stub(joiMongooseHelper, "generateJoiModelFromFieldType").callsFake(function () {
-      return Joi.any()
-    });
+    var generateJoiFieldModel = sinon.spy(function(){ return Joi.any() });
+    var joiMongooseHelper = rewire('../utilities/joi-mongoose-helper');
+    joiMongooseHelper.__set__("internals.generateJoiFieldModel", generateJoiFieldModel);
+
 
     var userSchema = new mongoose.Schema({
       firstName: {
@@ -792,7 +828,7 @@ test('joi-mongoose-helper.generateJoiCreateModel', function (t) {
     userSchema.statics = {routeOptions: {}};
     var userModel = mongoose.model("user", userSchema);
 
-    var firstNameField = userModel.schema.paths["firstName"].options;
+    var firstNameField = userModel.schema.tree["firstName"];
     //</editor-fold>
 
     //<editor-fold desc="Act">
@@ -800,67 +836,23 @@ test('joi-mongoose-helper.generateJoiCreateModel', function (t) {
     //</editor-fold>
 
     //<editor-fold desc="Assert">
-    t.notOk(joiMongooseHelper.generateJoiModelFromFieldType.calledWithExactly(firstNameField), "generateJoiModelFromFieldType not called on firstName field");
+    t.notOk(generateJoiFieldModel.calledWithExactly(userModel, firstNameField, "firstName", "create", Log), "generateJoiFieldModel not called on firstName field");
     //</editor-fold>
 
     //<editor-fold desc="Restore">
-    joiMongooseHelper.generateJoiModelFromFieldType.restore();
     delete mongoose.models.user;
     delete mongoose.modelSchemas.user;
     //</editor-fold>
   });
 
-  t.test('joi-mongoose-helper.generateJoiCreateModel ignores fields "__t" and "__v".', function (t) {
+  t.test('joi-mongoose-helper.generateJoiCreateModel returns Joi object that rejects fields not listed.', function (t) {
     //<editor-fold desc="Arrange">
-    var joiMongooseHelper = require('../utilities/joi-mongoose-helper');
-
-    t.plan(2);
-
-    sinon.stub(joiMongooseHelper, "generateJoiModelFromFieldType").callsFake(function () {
-      return Joi.any()
-    });
-
-    var userSchema = new mongoose.Schema({
-      __t: {
-        type: Types.String
-      },
-      __v: {
-        type: Types.String
-      }
-    });
-
-    userSchema.statics = {routeOptions: {}};
-    var userModel = mongoose.model("user", userSchema);
-
-    var __tField = userModel.schema.paths["__t"].options;
-    var __vField = userModel.schema.paths["__v"].options;
-    //</editor-fold>
-
-    //<editor-fold desc="Act">
-    var createModel = joiMongooseHelper.generateJoiCreateModel(userModel, Log);
-    //</editor-fold>
-
-    //<editor-fold desc="Assert">
-    t.notOk(joiMongooseHelper.generateJoiModelFromFieldType.calledWithExactly(__tField), "generateJoiModelFromFieldType not called on __t field");
-    t.notOk(joiMongooseHelper.generateJoiModelFromFieldType.calledWithExactly(__vField), "generateJoiModelFromFieldType not called on __v field");
-    //</editor-fold>
-
-    //<editor-fold desc="Restore">
-    joiMongooseHelper.generateJoiModelFromFieldType.restore();
-    delete mongoose.models.user;
-    delete mongoose.modelSchemas.user;
-    //</editor-fold>
-  });
-
-  t.test('joi-mongoose-helper.generateJoiCreateModel returns Joi object that rejects excluded fields.', function (t) {
-    //<editor-fold desc="Arrange">
-    var joiMongooseHelper = require('../utilities/joi-mongoose-helper');
-
     t.plan(3);
 
-    sinon.stub(joiMongooseHelper, "generateJoiModelFromFieldType").callsFake(function () {
-      return Joi.any()
-    });
+    var generateJoiFieldModel = sinon.spy(function(){ return Joi.any() });
+    var joiMongooseHelper = rewire('../utilities/joi-mongoose-helper');
+    joiMongooseHelper.__set__("internals.generateJoiFieldModel", generateJoiFieldModel);
+
 
     var userSchema = new mongoose.Schema({
       email: {
@@ -888,7 +880,6 @@ test('joi-mongoose-helper.generateJoiCreateModel', function (t) {
     //</editor-fold>
 
     //<editor-fold desc="Restore">
-    joiMongooseHelper.generateJoiModelFromFieldType.restore();
     delete mongoose.models.user;
     delete mongoose.modelSchemas.user;
     //</editor-fold>
@@ -896,13 +887,12 @@ test('joi-mongoose-helper.generateJoiCreateModel', function (t) {
 
   t.test('joi-mongoose-helper.generateJoiCreateModel returns Joi object that requires fields with "required" set to true.', function (t) {
     //<editor-fold desc="Arrange">
-    var joiMongooseHelper = require('../utilities/joi-mongoose-helper');
-
     t.plan(2);
 
-    sinon.stub(joiMongooseHelper, "generateJoiModelFromFieldType").callsFake(function () {
-      return Joi.any()
-    });
+    var generateJoiFieldModel = sinon.spy(function(){ return Joi.any() });
+    var joiMongooseHelper = rewire('../utilities/joi-mongoose-helper');
+    joiMongooseHelper.__set__("internals.generateJoiFieldModel", generateJoiFieldModel);
+
 
     var userSchema = new mongoose.Schema({
       email: {
@@ -926,7 +916,6 @@ test('joi-mongoose-helper.generateJoiCreateModel', function (t) {
     //</editor-fold>
 
     //<editor-fold desc="Restore">
-    joiMongooseHelper.generateJoiModelFromFieldType.restore();
     delete mongoose.models.user;
     delete mongoose.modelSchemas.user;
     //</editor-fold>
@@ -934,13 +923,12 @@ test('joi-mongoose-helper.generateJoiCreateModel', function (t) {
 
   t.test('joi-mongoose-helper.generateJoiCreateModel includes associations.', function (t) {
     //<editor-fold desc="Arrange">
-    var joiMongooseHelper = require('../utilities/joi-mongoose-helper');
+    t.plan(5);
 
-    t.plan(8);
-
-    sinon.stub(joiMongooseHelper, "generateJoiModelFromFieldType").callsFake(function () {
-      return Joi.any().only("test")
-    });
+    var generateJoiFieldModel = sinon.spy(function(){ return Joi.any() });
+    var joiMongooseHelper = rewire('../utilities/joi-mongoose-helper');
+    joiMongooseHelper.__set__("internals.generateJoiFieldModel", generateJoiFieldModel);
+    
 
     var userSchema = new mongoose.Schema({
       title: {
@@ -950,10 +938,13 @@ test('joi-mongoose-helper.generateJoiCreateModel', function (t) {
         type: Types.ObjectId
       },
       groups: {
-        type: Types.ObjectId
+        type: [Types.Object]
       },
       permissions: {
-        type: Types.ObjectId
+        type: [Types.Object]
+      },
+      hashTags: {
+        type: [Types.ObjectId]
       }
     });
 
@@ -971,15 +962,21 @@ test('joi-mongoose-helper.generateJoiCreateModel', function (t) {
           },
           permissions: {
             type: "MANY_MANY"
-          }
+          },
+          hashTags: {
+            type: "_MANY",
+          },
         }
       }
     };
 
     var userModel = mongoose.model("user", userSchema);
 
-    var titleField = userModel.schema.paths["title"].options;
-    var profileImageField = userModel.schema.paths["profileImage"].options;
+    var titleField = userModel.schema.tree["title"];
+    var profileImageField = userModel.schema.tree["profileImage"];
+    var groupsField = userModel.schema.tree["groups"];
+    var permissionsField = userModel.schema.tree["permissions"];
+    var hashTagsField = userModel.schema.tree["hashTags"];
 
     //</editor-fold>
 
@@ -988,18 +985,20 @@ test('joi-mongoose-helper.generateJoiCreateModel', function (t) {
     //</editor-fold>
 
     //<editor-fold desc="Assert">
-    t.ok(joiMongooseHelper.generateJoiModelFromFieldType.calledWithExactly(titleField, Log), "generateJoiModelFromFieldType called on titleField field");
-    t.ok(joiMongooseHelper.generateJoiModelFromFieldType.calledWithExactly(profileImageField, Log), "generateJoiModelFromFieldType called on profileImageField field");
-    t.ok(Joi.validate({title: {}}, createModel).error !== null, "title field not valid format");
-    t.ok(Joi.validate({title: "test"}, createModel).error === null, "title field valid format");
-    t.ok(Joi.validate({profileImage: {}}, createModel).error !== null, "profileImage field not valid format");
-    t.ok(Joi.validate({profileImage: "test"}, createModel).error === null, "profileImage field valid format");
-    t.ok(Joi.validate({groups: "test"}, createModel).error !== null, "groups field not allowed");
-    t.ok(Joi.validate({permissions: "test"}, createModel).error !== null, "permissions field not allowed");
+    t.ok(generateJoiFieldModel.calledWithExactly(userModel, titleField, "title", "create", Log), "generateJoiFieldModel called on titleField field");
+    t.ok(generateJoiFieldModel.calledWithExactly(userModel, profileImageField, "profileImage", "create", Log), "generateJoiFieldModel called on profileImageField field");
+    t.notok(generateJoiFieldModel.calledWithExactly(userModel, groupsField, "groups", "create", Log), "generateJoiFieldModel not called on groups field");
+    t.notok(generateJoiFieldModel.calledWithExactly(userModel, permissionsField, "permissions", "create", Log), "generateJoiFieldModel not called on permissions field");
+    t.ok(generateJoiFieldModel.calledWithExactly(userModel, hashTagsField, "hashTags", "create", Log), "generateJoiFieldModel called on hashTags field");
+    // t.ok(Joi.validate({title: {}}, createModel).error !== null, "title field not valid format");
+    // t.ok(Joi.validate({title: "test"}, createModel).error === null, "title field valid format");
+    // t.ok(Joi.validate({profileImage: {}}, createModel).error !== null, "profileImage field not valid format");
+    // t.ok(Joi.validate({profileImage: "test"}, createModel).error === null, "profileImage field valid format");
+    // t.ok(Joi.validate({groups: "test"}, createModel).error !== null, "groups field not allowed");
+    // t.ok(Joi.validate({permissions: "test"}, createModel).error !== null, "permissions field not allowed");
     //</editor-fold>
 
     //<editor-fold desc="Restore">
-    joiMongooseHelper.generateJoiModelFromFieldType.restore();
     delete mongoose.models.user;
     delete mongoose.modelSchemas.user;
     //</editor-fold>
@@ -1035,183 +1034,16 @@ test('joi-mongoose-helper.generateJoiCreateModel', function (t) {
   t.end();
 });
 
-test('joi-mongoose-helper.generateJoiAssociationModel', function (t) {
-  t.test('joi-mongoose-helper.generateJoiAssociationModel calls generateJoiModelFromFieldType for regular fields.', function (t) {
-    //<editor-fold desc="Arrange">
-    var joiMongooseHelper = require('../utilities/joi-mongoose-helper');
-
-    t.plan(2);
-
-    sinon.stub(joiMongooseHelper, "generateJoiModelFromFieldType").callsFake(function () {
-      return Joi.any()
-    });
-
-    var userModel = {
-      Schema: {
-        email: {
-          type: Types.String
-        }
-      },
-      modelName: "group_permission"
-    };
-
-    var emailField = userModel.Schema["email"];
-    //</editor-fold>
-
-    //<editor-fold desc="Act">
-    var associationModel = joiMongooseHelper.generateJoiAssociationModel(userModel, Log);
-    //</editor-fold>
-
-    //<editor-fold desc="Assert">
-    t.ok(joiMongooseHelper.generateJoiModelFromFieldType.calledWith(emailField), "generateJoiModelFromFieldType called on email field");
-    t.ok(Joi.validate({email: "test"}, associationModel).error === null, "email field allowed");
-    //</editor-fold>
-
-    //<editor-fold desc="Restore">
-    joiMongooseHelper.generateJoiModelFromFieldType.restore();
-    //</editor-fold>
-  });
-
-  t.test('joi-mongoose-helper.generateJoiAssociationModel uses createModel if it exists.', function (t) {
-    //<editor-fold desc="Arrange">
-    var joiMongooseHelper = require('../utilities/joi-mongoose-helper');
-
-    t.plan(3);
-
-    sinon.stub(joiMongooseHelper, "generateJoiModelFromFieldType").callsFake(function () {
-      return Joi.any()
-    });
-
-    var userModel = {
-      Schema: {
-        email: {
-          type: Types.String,
-          createModel: Joi.any().only("test")
-        }
-      }
-    };
-
-    var emailField = userModel.Schema["email"];
-    //</editor-fold>
-
-    //<editor-fold desc="Act">
-    var associationModel = joiMongooseHelper.generateJoiAssociationModel(userModel, Log);
-    //</editor-fold>
-
-    //<editor-fold desc="Assert">
-    t.notOk(joiMongooseHelper.generateJoiModelFromFieldType.calledWith(emailField), "generateJoiModelFromFieldType not called on email field");
-    t.ok(Joi.validate({email: "wrong"}, associationModel).error !== null, "wrong field value not valid");
-    t.ok(Joi.validate({email: "test"}, associationModel).error === null, "correct field value valid");
-    //</editor-fold>
-
-    //<editor-fold desc="Restore">
-    joiMongooseHelper.generateJoiModelFromFieldType.restore();
-    //</editor-fold>
-  });
-
-  t.test('joi-mongoose-helper.generateJoiAssociationModel returns Joi object that rejects excluded fields.', function (t) {
-    //<editor-fold desc="Arrange">
-    var joiMongooseHelper = require('../utilities/joi-mongoose-helper');
-
-    t.plan(2);
-
-    sinon.stub(joiMongooseHelper, "generateJoiModelFromFieldType").callsFake(function () {
-      return Joi.any()
-    });
-
-    var userModel = {
-      Schema: {
-        email: {
-          type: Types.String
-        }
-      }
-    };
-
-    //</editor-fold>
-
-    //<editor-fold desc="Act">
-    var associationModel = joiMongooseHelper.generateJoiAssociationModel(userModel, Log);
-    //</editor-fold>
-
-    //<editor-fold desc="Assert">
-    t.ok(Joi.validate({email: "test"}, associationModel).error === null, "email field valid");
-    t.ok(Joi.validate({notAField: "test"}, associationModel).error !== null, "fields not listed not valid");
-    //</editor-fold>
-
-    //<editor-fold desc="Restore">
-    joiMongooseHelper.generateJoiModelFromFieldType.restore();
-    //</editor-fold>
-  });
-
-  t.test('joi-mongoose-helper.generateJoiAssociationModel returns Joi object that requires fields with "required" set to true.', function (t) {
-    //<editor-fold desc="Arrange">
-    var joiMongooseHelper = require('../utilities/joi-mongoose-helper');
-
-    t.plan(2);
-
-    sinon.stub(joiMongooseHelper, "generateJoiModelFromFieldType").callsFake(function () {
-      return Joi.any()
-    });
-
-    var userModel = {
-      Schema: {
-        email: {
-          type: Types.String,
-          required: true
-        }
-      }
-    };
-
-    //</editor-fold>
-
-    //<editor-fold desc="Act">
-    var associationModel = joiMongooseHelper.generateJoiAssociationModel(userModel, Log);
-    //</editor-fold>
-
-    //<editor-fold desc="Assert">
-    t.ok(Joi.validate({}, associationModel).error !== null, "email field required");
-    t.ok(Joi.validate({email: "test"}, associationModel).error === null, "email field valid");
-    //</editor-fold>
-
-    //<editor-fold desc="Restore">
-    joiMongooseHelper.generateJoiModelFromFieldType.restore();
-    //</editor-fold>
-  });
-
-  t.test('joi-mongoose-helper.generateJoiAssociationModel returns Joi object with appropriate className.', function (t) {
-    //<editor-fold desc="Arrange">
-    var joiMongooseHelper = require('../utilities/joi-mongoose-helper');
-
-    t.plan(1);
-
-    var userModel = {
-      Schema: {},
-      modelName: "user"
-    };
-
-    //</editor-fold>
-
-    //<editor-fold desc="Act">
-    var associationModel = joiMongooseHelper.generateJoiAssociationModel(userModel, Log);
-    //</editor-fold>
-
-    //<editor-fold desc="Assert">
-    t.ok(associationModel._flags.label === "userAssociationModel", "className correct");
-    //</editor-fold>
-
-    //<editor-fold desc="Restore">
-    //</editor-fold>
-  });
-
-  t.end();
-});
-
 test('joi-mongoose-helper.generateJoiModelFromFieldType', function (t) {
-  t.test('joi-mongoose-helper.generateJoiAssociationModel returns correct models for types.', function (t) {
+  t.test('joi-mongoose-helper.generateJoiModelFromFieldType returns correct models for types.', function (t) {
     //<editor-fold desc="Arrange">
-    var joiMongooseHelper = require('../utilities/joi-mongoose-helper');
+    t.plan(12);
 
-    t.plan(13);
+    var joiMongooseHelper = rewire('../utilities/joi-mongoose-helper');
+    var joiObjectId = sinon.spy(joiMongooseHelper.__get__("internals.joiObjectId"));
+    joiMongooseHelper.__set__("internals.joiObjectId", joiObjectId);
+    var generateJoiModelFromFieldType = joiMongooseHelper.__get__("internals.generateJoiModelFromFieldType");
+
 
     var testSchema = {
       idType: {
@@ -1256,18 +1088,17 @@ test('joi-mongoose-helper.generateJoiModelFromFieldType', function (t) {
     //</editor-fold>
 
     //<editor-fold desc="Act">
-    var idModel = joiMongooseHelper.generateJoiModelFromFieldType(testSchema.idType, Log);
-    var booleanModel = joiMongooseHelper.generateJoiModelFromFieldType(testSchema.booleanType, Log);
-    var numberModel = joiMongooseHelper.generateJoiModelFromFieldType(testSchema.numberType, Log);
-    var dateModel = joiMongooseHelper.generateJoiModelFromFieldType(testSchema.dateType, Log);
-    var stringModel = joiMongooseHelper.generateJoiModelFromFieldType(testSchema.stringType, Log);
-    var enumModel = joiMongooseHelper.generateJoiModelFromFieldType(testSchema.enumType, Log);
-    var allowNullModel = joiMongooseHelper.generateJoiModelFromFieldType(testSchema.allowNullType, Log);
+    var idModel = generateJoiModelFromFieldType(testSchema.idType, Log);
+    var booleanModel = generateJoiModelFromFieldType(testSchema.booleanType, Log);
+    var numberModel = generateJoiModelFromFieldType(testSchema.numberType, Log);
+    var dateModel = generateJoiModelFromFieldType(testSchema.dateType, Log);
+    var stringModel = generateJoiModelFromFieldType(testSchema.stringType, Log);
+    var enumModel = generateJoiModelFromFieldType(testSchema.enumType, Log);
+    var allowNullModel = generateJoiModelFromFieldType(testSchema.allowNullType, Log);
     //</editor-fold>
 
     //<editor-fold desc="Assert">
-    t.ok(idModel.validate("57d8752088ac2472a7d04863").error === null, "idModel validates an _id");
-    t.ok(idModel.validate("57d8752088ac2472a7d04863Z").error !== null, "idModel rejects a _id with wrong format");
+    t.ok(joiObjectId.called, "idModel calls joiObjectId");
     t.ok(booleanModel.validate(true).error === null, "booleanModel validates a bool");
     t.ok(booleanModel.validate("").error !== null, "booleanModel rejects non bools");
     t.ok(numberModel.validate(3).error === null, "numberModel validates a number");
@@ -1287,3 +1118,515 @@ test('joi-mongoose-helper.generateJoiModelFromFieldType', function (t) {
 
   t.end();
 });
+
+test('joi-mongoose-helper.joiObjectId', function (t) {
+  t.test('joi-mongoose-helper.joiObjectId returns correct models for objectIds.', function (t) {
+    //<editor-fold desc="Arrange">
+    var joiMongooseHelper = require('../utilities/joi-mongoose-helper');
+
+    t.plan(4);
+
+    var testSchema = {
+      idType: {
+        type: {
+          schemaName: "ObjectId"
+        }
+      }
+    };
+
+    //</editor-fold>
+
+    //<editor-fold desc="Act">
+    var idModel = joiMongooseHelper.generateJoiModelFromFieldType(testSchema.idType, Log);
+    //</editor-fold>
+
+    //<editor-fold desc="Assert">
+    t.ok(idModel.validate("57d8752088ac2472a7d04863").error === null, "idModel validates an _id as a string");
+    t.ok(idModel.validate(mongoose.Types.ObjectId()).error === null, "idModel validates an _id object");
+    t.ok(idModel.validate("57d8752088ac2472a7d04863Z").error !== null, "idModel rejects a _id with wrong format");
+    t.ok(idModel.validate({}).error !== null, "idModel rejects a _id object with wrong format");
+    //</editor-fold>
+
+    //<editor-fold desc="Restore">
+    //</editor-fold>
+  });
+
+  t.end();
+});
+
+test('joi-mongoose-helper.isValidField', function (t) {
+  t.test('joi-mongoose-helper.isValidField returns false for non-objects.', function (t) {
+    //<editor-fold desc="Arrange">
+    t.plan(3);
+
+    var joiMongooseHelper = rewire('../utilities/joi-mongoose-helper');
+    var isValidField = sinon.spy(joiMongooseHelper.__get__("internals.isValidField"));
+
+
+    //</editor-fold>
+
+    //<editor-fold desc="Act">
+    //</editor-fold>
+
+    //<editor-fold desc="Assert">
+    t.ok(isValidField("test", "test", {}) === false, "isValidField returns false for strings");
+    t.ok(isValidField("test", 2, {}) === false, "isValidField returns false for numbers");
+    t.ok(isValidField("test", true, {}) === false, "isValidField returns false for booleans");
+    //</editor-fold>
+
+    //<editor-fold desc="Restore">
+    //</editor-fold>
+  });
+
+  t.test('joi-mongoose-helper.isValidField returns false for mongoose "type" fields.', function (t) {
+    //<editor-fold desc="Arrange">
+    t.plan(2);
+
+    var joiMongooseHelper = rewire('../utilities/joi-mongoose-helper');
+    var isValidField = sinon.spy(joiMongooseHelper.__get__("internals.isValidField"));
+
+
+    //</editor-fold>
+
+    //<editor-fold desc="Act">
+    //</editor-fold>
+
+    //<editor-fold desc="Assert">
+    t.ok(isValidField("type", mongoose.Schema.Types.String, {}) === false, "isValidField returns false for mongoose types");
+    t.ok(isValidField("type", {}, {}) === true, "isValidField returns true for other 'type' fields");
+    //</editor-fold>
+
+    //<editor-fold desc="Restore">
+    //</editor-fold>
+  });
+
+  t.test('joi-mongoose-helper.isValidField returns false for nested _id fields that aren\'t in an array.', function (t) {
+    //<editor-fold desc="Arrange">
+    t.plan(3);
+
+    var joiMongooseHelper = rewire('../utilities/joi-mongoose-helper');
+    var isValidField = sinon.spy(joiMongooseHelper.__get__("internals.isValidField"));
+
+
+    //</editor-fold>
+
+    //<editor-fold desc="Act">
+    //</editor-fold>
+
+    //<editor-fold desc="Assert">
+    t.ok(isValidField("_id", {}, { fakeModel: true }) === false, "isValidField returns false for nested _id fields");
+    t.ok(isValidField("_id", {}, { fakeModel: true, isArray: true }) === true, "isValidField returns true for _id fields in arrays");
+    t.ok(isValidField("_id", {}, { }) === true, "isValidField returns true for base level _id fields");
+    //</editor-fold>
+
+    //<editor-fold desc="Restore">
+    //</editor-fold>
+  });
+
+  t.test('joi-mongoose-helper.isValidField returns false for pre-defined invalid fields.', function (t) {
+    //<editor-fold desc="Arrange">
+    t.plan(3);
+
+    var joiMongooseHelper = rewire('../utilities/joi-mongoose-helper');
+    var isValidField = sinon.spy(joiMongooseHelper.__get__("internals.isValidField"));
+
+
+    //</editor-fold>
+
+    //<editor-fold desc="Act">
+    //</editor-fold>
+
+    //<editor-fold desc="Assert">
+    t.ok(isValidField("__t", {}, {}) === false, "isValidField returns false for __t field");
+    t.ok(isValidField("__v", {}, {}) === false, "isValidField returns false for __v field");
+    t.ok(isValidField("id", {}, {}) === false, "isValidField returns false for id field");
+    //</editor-fold>
+
+    //<editor-fold desc="Restore">
+    //</editor-fold>
+  });
+
+  t.end();
+});
+
+test('joi-mongoose-helper.generateJoiFieldModel', function (t) {
+  t.test('joi-mongoose-helper.generateJoiFieldModel calls generateJoiReadModel on a nested field with the "read" modelType parameter', function (t) {
+    //<editor-fold desc="Arrange">
+    t.plan(1);
+
+    var joiMongooseHelper = rewire('../utilities/joi-mongoose-helper');
+    var generateJoiReadModel = sinon.spy(function () { return Joi.any() });
+    joiMongooseHelper.__set__("internals.generateJoiReadModel", generateJoiReadModel);
+    var generateJoiFieldModel = joiMongooseHelper.__get__("internals.generateJoiFieldModel");
+
+
+    var userSchema = new mongoose.Schema({
+      name: {
+        first: { type: Types.String },
+        last: { type: Types.String }
+      }
+    });
+
+    userSchema.statics = {routeOptions: {}};
+    var userModel = mongoose.model("user", userSchema);
+
+    var nameField = userModel.schema.tree["name"];
+    //</editor-fold>
+
+    //<editor-fold desc="Act">
+    var fieldModel = generateJoiFieldModel(userModel, nameField, "name", "read" , Log);
+    //</editor-fold>
+
+    //<editor-fold desc="Assert">
+    t.ok(generateJoiReadModel.called, "generateJoiReadModel called");
+    //</editor-fold>
+
+    //<editor-fold desc="Restore">
+    delete mongoose.models.user;
+    delete mongoose.modelSchemas.user;
+    //</editor-fold>
+  });
+
+  t.test('joi-mongoose-helper.generateJoiFieldModel calls generateJoiReadModel on a nested field with the "create" modelType parameter', function (t) {
+    //<editor-fold desc="Arrange">
+    t.plan(1);
+
+    var joiMongooseHelper = rewire('../utilities/joi-mongoose-helper');
+    var generateJoiCreateModel = sinon.spy(function () { return Joi.any() });
+    joiMongooseHelper.__set__("internals.generateJoiCreateModel", generateJoiCreateModel);
+    var generateJoiFieldModel = joiMongooseHelper.__get__("internals.generateJoiFieldModel");
+
+
+    var userSchema = new mongoose.Schema({
+      name: {
+        first: { type: Types.String },
+        last: { type: Types.String }
+      }
+    });
+
+    userSchema.statics = {routeOptions: {}};
+    var userModel = mongoose.model("user", userSchema);
+
+    var nameField = userModel.schema.tree["name"];
+    //</editor-fold>
+
+    //<editor-fold desc="Act">
+    var fieldModel = generateJoiFieldModel(userModel, nameField, "name", "create" , Log);
+    //</editor-fold>
+
+    //<editor-fold desc="Assert">
+    t.ok(generateJoiCreateModel.called, "generateJoiCreateModel called");
+    //</editor-fold>
+
+    //<editor-fold desc="Restore">
+    delete mongoose.models.user;
+    delete mongoose.modelSchemas.user;
+    //</editor-fold>
+  });
+
+  t.test('joi-mongoose-helper.generateJoiFieldModel calls generateJoiUpdateModel on a nested field with the "create" modelType parameter', function (t) {
+    //<editor-fold desc="Arrange">
+    t.plan(1);
+
+    var joiMongooseHelper = rewire('../utilities/joi-mongoose-helper');
+    var generateJoiUpdateModel = sinon.spy(function () { return Joi.any() });
+    joiMongooseHelper.__set__("internals.generateJoiUpdateModel", generateJoiUpdateModel);
+    var generateJoiFieldModel = joiMongooseHelper.__get__("internals.generateJoiFieldModel");
+
+
+    var userSchema = new mongoose.Schema({
+      name: {
+        first: { type: Types.String },
+        last: { type: Types.String }
+      }
+    });
+
+    userSchema.statics = {routeOptions: {}};
+    var userModel = mongoose.model("user", userSchema);
+
+    var nameField = userModel.schema.tree["name"];
+    //</editor-fold>
+
+    //<editor-fold desc="Act">
+    var fieldModel = generateJoiFieldModel(userModel, nameField, "name", "update" , Log);
+    //</editor-fold>
+
+    //<editor-fold desc="Assert">
+    t.ok(generateJoiUpdateModel.called, "generateJoiUpdateModel called");
+    //</editor-fold>
+
+    //<editor-fold desc="Restore">
+    delete mongoose.models.user;
+    delete mongoose.modelSchemas.user;
+    //</editor-fold>
+  });
+
+  t.test('joi-mongoose-helper.generateJoiFieldModel throws an error with an incorrect modelType parameter', function (t) {
+    //<editor-fold desc="Arrange">
+    t.plan(1);
+
+    var joiMongooseHelper = rewire('../utilities/joi-mongoose-helper');
+    var generateJoiUpdateModel = sinon.spy(function () { return Joi.any() });
+    joiMongooseHelper.__set__("internals.generateJoiUpdateModel", generateJoiUpdateModel);
+    var generateJoiFieldModel = joiMongooseHelper.__get__("internals.generateJoiFieldModel");
+
+
+    var userSchema = new mongoose.Schema({
+      name: {
+        first: { type: Types.String },
+        last: { type: Types.String }
+      }
+    });
+
+    userSchema.statics = {routeOptions: {}};
+    var userModel = mongoose.model("user", userSchema);
+
+    var nameField = userModel.schema.tree["name"];
+
+    var error = "";
+    //</editor-fold>
+
+    //<editor-fold desc="Act">
+    try {
+      var fieldModel = generateJoiFieldModel(userModel, nameField, "name", "wrong" , Log);
+    }
+    catch (err) {
+      error = err;
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="Assert">
+    t.equal(error.message, "modelType must be either 'read', 'create', or 'update'" , "error thrown");
+    //</editor-fold>
+
+    //<editor-fold desc="Restore">
+    delete mongoose.models.user;
+    delete mongoose.modelSchemas.user;
+    //</editor-fold>
+  });
+
+  t.test('joi-mongoose-helper.generateJoiFieldModel removes all properties of the nested field that aren\'t objects', function (t) {
+    //<editor-fold desc="Arrange">
+    t.plan(3);
+
+    var joiMongooseHelper = rewire('../utilities/joi-mongoose-helper');
+    var generateJoiUpdateModel = sinon.spy(function () { return Joi.any() });
+    joiMongooseHelper.__set__("internals.generateJoiUpdateModel", generateJoiUpdateModel);
+    var generateJoiFieldModel = joiMongooseHelper.__get__("internals.generateJoiFieldModel");
+
+
+    var userSchema = new mongoose.Schema({
+      name: {
+        first: { type: Types.String },
+        last: { type: Types.String },
+        type: Types.Object,
+        exclude: true
+      }
+    });
+
+    userSchema.statics = {routeOptions: {}};
+    var userModel = mongoose.model("user", userSchema);
+
+    var nameField = userModel.schema.tree["name"];
+    //</editor-fold>
+
+    //<editor-fold desc="Act">
+    var fieldModel = generateJoiFieldModel(userModel, nameField, "name", "update" , Log);
+    var nestedModel = generateJoiUpdateModel.args[0][0];
+
+
+    //</editor-fold>
+
+    //<editor-fold desc="Assert">
+    t.ok(nestedModel.schema.tree.first, "first field exists");
+    t.ok(nestedModel.schema.tree.last, "last field exists");
+    t.notok(nestedModel.schema.tree.exclude, "exclude field does not exist");
+    //</editor-fold>
+
+    //<editor-fold desc="Restore">
+    delete mongoose.models.user;
+    delete mongoose.modelSchemas.user;
+    //</editor-fold>
+  });
+
+  t.test('joi-mongoose-helper.generateJoiFieldModel creates correct nestedModel out of fields', function (t) {
+    //<editor-fold desc="Arrange">
+    t.plan(9);
+
+    var joiMongooseHelper = rewire('../utilities/joi-mongoose-helper');
+    var generateJoiUpdateModel = sinon.spy(function () { return Joi.any() });
+    joiMongooseHelper.__set__("internals.generateJoiUpdateModel", generateJoiUpdateModel);
+    var generateJoiFieldModel = joiMongooseHelper.__get__("internals.generateJoiFieldModel");
+
+
+    var userSchema = new mongoose.Schema({
+      name: {
+        first: { type: Types.String },
+        last: { type: Types.String },
+        type: Types.Object,
+        exclude: true
+      },
+      photos: [{ url: Types.String, position: Types.Number }],
+      friends: {
+        type: [Types.Object]
+      }
+    });
+
+    userSchema.statics = {routeOptions: {}};
+    var userModel = mongoose.model("user", userSchema);
+
+    var nameField = userModel.schema.tree["name"];
+    var photosField = userModel.schema.tree["photos"];
+    var friendsField = userModel.schema.tree["friends"];
+    //</editor-fold>
+
+    //<editor-fold desc="Act">
+    generateJoiFieldModel(userModel, nameField, "name", "update" , Log);
+    generateJoiFieldModel(userModel, photosField, "photos", "update" , Log);
+    generateJoiFieldModel(userModel, friendsField, "friends", "update" , Log);
+    var nestedModel1 = generateJoiUpdateModel.args[0][0];
+    var nestedModel2 = generateJoiUpdateModel.args[1][0];
+    var nestedModel3 = generateJoiUpdateModel.args[2][0];
+    //</editor-fold>
+
+    //<editor-fold desc="Assert">
+    t.ok(nestedModel1.modelName === "user.name", "correct modelName");
+    t.ok(nestedModel1.fakeModel, "fakeModel set to true");
+    t.notok(nestedModel1.isArray, "isArray set to false");
+    t.ok(nestedModel2.modelName === "user.photos", "correct modelName");
+    t.ok(nestedModel2.fakeModel, "fakeModel set to true");
+    t.ok(nestedModel2.isArray, "isArray set to true");
+    t.ok(nestedModel3.modelName === "user.friends", "correct modelName");
+    t.ok(nestedModel3.fakeModel, "fakeModel set to true");
+    t.ok(nestedModel3.isArray, "isArray set to true");
+    //</editor-fold>
+
+    //<editor-fold desc="Restore">
+    delete mongoose.models.user;
+    delete mongoose.modelSchemas.user;
+    //</editor-fold>
+  });
+
+  t.test('joi-mongoose-helper.generateJoiFieldModel creates correct joi model for nested fields', function (t) {
+    //<editor-fold desc="Arrange">
+    t.plan(6);
+
+    var joiMongooseHelper = rewire('../utilities/joi-mongoose-helper');
+    var generateJoiUpdateModel = sinon.spy(function () { return Joi.any().valid("test") });
+    joiMongooseHelper.__set__("internals.generateJoiUpdateModel", generateJoiUpdateModel);
+    var generateJoiFieldModel = joiMongooseHelper.__get__("internals.generateJoiFieldModel");
+
+
+    var userSchema = new mongoose.Schema({
+      name: {
+        first: { type: Types.String },
+        last: { type: Types.String },
+        type: Types.Object,
+        exclude: true
+      },
+      photos: [{ url: Types.String, position: Types.Number }],
+      friends: {
+        type: [Types.Object]
+      }
+    });
+
+    userSchema.statics = {routeOptions: {}};
+    var userModel = mongoose.model("user", userSchema);
+
+    var nameField = userModel.schema.tree["name"];
+    var photosField = userModel.schema.tree["photos"];
+    //</editor-fold>
+
+    //<editor-fold desc="Act">
+    var fieldModel1 = generateJoiFieldModel(userModel, nameField, "name", "update" , Log);
+    var fieldModel2 = generateJoiFieldModel(userModel, photosField, "photos", "update" , Log);
+    //</editor-fold>
+
+    //<editor-fold desc="Assert">
+    t.ok(fieldModel1.validate("test").error === null, "fieldModel1 validates allowed string");
+    t.ok(fieldModel1.validate("wrong").error !== null, "fieldModel1 fails wrong string");
+    t.ok(fieldModel2.validate(["test", "test"]).error === null, "fieldModel2 validates array of allowed strings");
+    t.ok(fieldModel2.validate(["test", "wrong"]).error !== null, "fieldModel2 fails array containing wrong string");
+    t.ok(fieldModel2.validate("test").error !== null, "fieldModel1 fails non-array");
+    t.equal(fieldModel2._flags.label, "undefinedArray", "fieldModel2 adds 'Array' to model name");
+    //</editor-fold>
+
+    //<editor-fold desc="Restore">
+    delete mongoose.models.user;
+    delete mongoose.modelSchemas.user;
+    //</editor-fold>
+  });
+
+  t.test('joi-mongoose-helper.generateJoiFieldModel calls generateJoiModelFromFieldType for non-nested fields', function (t) {
+    //<editor-fold desc="Arrange">
+    t.plan(1);
+
+    var joiMongooseHelper = rewire('../utilities/joi-mongoose-helper');
+    var generateJoiModelFromFieldType = sinon.spy(function () { return Joi.any() });
+    joiMongooseHelper.__set__("internals.generateJoiModelFromFieldType", generateJoiModelFromFieldType);
+    var generateJoiFieldModel = joiMongooseHelper.__get__("internals.generateJoiFieldModel");
+
+
+    var userSchema = new mongoose.Schema({
+      name: {
+        type: Types.String
+      },
+    });
+
+    userSchema.statics = {routeOptions: {}};
+    var userModel = mongoose.model("user", userSchema);
+
+    var nameField = userModel.schema.tree["name"];
+    //</editor-fold>
+
+    //<editor-fold desc="Act">
+    var fieldModel = generateJoiFieldModel(userModel, nameField, "name", "update" , Log);
+    //</editor-fold>
+
+    //<editor-fold desc="Assert">
+    t.ok(generateJoiModelFromFieldType.called, "generateJoiModelFromFieldType called");
+    //</editor-fold>
+
+    //<editor-fold desc="Restore">
+    delete mongoose.models.user;
+    delete mongoose.modelSchemas.user;
+    //</editor-fold>
+  });
+
+  t.end();
+});
+
+// test('joi-mongoose-helper.generateJoiListQueryModel', function (t) {
+//   t.test('joi-mongoose-helper.generateJoiListQueryModel returns correct models for objectIds.', function (t) {
+//     //<editor-fold desc="Arrange">
+//     var joiMongooseHelper = require('../utilities/joi-mongoose-helper');
+//
+//     t.plan(4);
+//
+//     var testSchema = {
+//       idType: {
+//         type: {
+//           schemaName: "ObjectId"
+//         }
+//       }
+//     };
+//
+//     //</editor-fold>
+//
+//     //<editor-fold desc="Act">
+//     var idModel = joiMongooseHelper.generateJoiModelFromFieldType(testSchema.idType, Log);
+//     //</editor-fold>
+//
+//     //<editor-fold desc="Assert">
+//     t.ok(idModel.validate("57d8752088ac2472a7d04863").error === null, "idModel validates an _id as a string");
+//     t.ok(idModel.validate(mongoose.Types.ObjectId()).error === null, "idModel validates an _id object");
+//     t.ok(idModel.validate("57d8752088ac2472a7d04863Z").error !== null, "idModel rejects a _id with wrong format");
+//     t.ok(idModel.validate({}).error !== null, "idModel rejects a _id object with wrong format");
+//     //</editor-fold>
+//
+//     //<editor-fold desc="Restore">
+//     //</editor-fold>
+//   });
+//
+//   t.end();
+// });

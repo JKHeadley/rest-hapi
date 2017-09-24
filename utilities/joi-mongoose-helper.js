@@ -58,13 +58,16 @@ internals.generateJoiReadModel = function (model, Log) {
 
       var associationModel = Joi.object();
 
+
       if (association.type === "MANY_MANY") {
         if (association.linkingModel) {
-          associationModel = internals.generateJoiReadModel(association.include.through);
+          associationModel = internals.generateJoiReadModel(association.include.through, Log);
         }
         var associationBase = {};
-        associationBase[association.model] = Joi.object().unknown().allow(null);
+        associationBase[association.model] = Joi.object();
+        associationBase._id = internals.joiObjectId();
         associationModel = associationModel.keys(associationBase);
+        //EXPL: also accept MANY_MANY flattened embeddings
         associationModel = Joi.alternatives().try(associationModel, Joi.object());
       }
       else if (association.type === "_MANY") {
@@ -336,6 +339,7 @@ internals.generateJoiFieldModel = function (model, field, fieldName, modelType, 
     var nestedModel = {
       modelName: model.modelName + '.' + fieldName,
       fakeModel: true,
+      isArray: isArray,
       routeOptions: {},
       schema: new mongoose.Schema(field)
     };
@@ -467,11 +471,18 @@ internals.generateJoiModelFromFieldType = function (field, Log) {
  */
 internals.joiObjectId = function () {
   //EXPL: Rather than converting all objectIds to string for response, we allow raw mongoose.Types.ObjectId objects
-  let objectIdModel = Joi.object({ "_bsontype": Joi.any(), "id": Joi.any() });
+  let objectIdModel = Joi.object({ "_bsontype": Joi.any().required(), "id": Joi.any().required() });
   let model = Joi.alternatives().try(Joi.objectId().description("ObjectId"), objectIdModel);
   return model;
 };
 
+/**
+ * Checks to see if a field is a valid model property
+ * @param fieldName: The name of the field
+ * @param field: The field being checked
+ * @param model: A mongoose model object
+ * @returns {boolean}
+ */
 internals.isValidField = function (fieldName, field, model) {
   const invalidFieldNames = ['__t', '__v', 'id'];
 
@@ -485,7 +496,7 @@ internals.isValidField = function (fieldName, field, model) {
   }
 
   //EXPL: ignore the '_id' field for fake models
-  if (model.fakeModel) {
+  if (model.fakeModel && !model.isArray) {
     invalidFieldNames.push('_id');
   }
 
