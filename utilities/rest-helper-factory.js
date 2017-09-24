@@ -187,6 +187,7 @@ module.exports = function (logger, mongoose, server) {
             }
           },
           response: {
+            failAction: config.enableResponseFail ? 'error' : 'log',
             schema: Joi.alternatives().try(
                 Joi.object({ docs: Joi.array().items(readModel).label(collectionName + "ArrayModel"), pages: Joi.any(),
                   items: Joi.any() }), Joi.number()).label(collectionName + "ListModel")
@@ -284,6 +285,7 @@ module.exports = function (logger, mongoose, server) {
             }
           },
           response: {
+            failAction: config.enableResponseFail ? 'error' : 'log',
             schema: readModel
           }
         }
@@ -386,6 +388,7 @@ module.exports = function (logger, mongoose, server) {
             }
           },
           response: {
+            failAction: config.enableResponseFail ? 'error' : 'log',
             schema: readModel
           }
         }
@@ -483,6 +486,7 @@ module.exports = function (logger, mongoose, server) {
           },
           response: {
             //TODO: add a response schema if needed
+            // failAction: config.enableResponseFail ? 'error' : 'log',
             //schema: model.readModel ? model.readModel : Joi.object().unknown().optional()
           }
         }
@@ -582,6 +586,7 @@ module.exports = function (logger, mongoose, server) {
           },
           response: {
             //TODO: add a response schema if needed
+            // failAction: config.enableResponseFail ? 'error' : 'log',
             //schema: model.readModel ? model.readModel : Joi.object().unknown().optional()
           }
         }
@@ -683,6 +688,7 @@ module.exports = function (logger, mongoose, server) {
             }
           },
           response: {
+            failAction: config.enableResponseFail ? 'error' : 'log',
             schema: readModel
           }
         }
@@ -787,7 +793,10 @@ module.exports = function (logger, mongoose, server) {
               ]
             }
           },
-          response: {}//TODO: verify what response schema is needed here
+          response: {
+
+            // failAction: config.enableResponseFail ? 'error' : 'log',
+          }//TODO: verify what response schema is needed here
         }
       });
     },
@@ -874,7 +883,9 @@ module.exports = function (logger, mongoose, server) {
               ]
             }
           },
-          response: {}
+          response: {
+            // failAction: config.enableResponseFail ? 'error' : 'log',
+          }
         }
       });
     },
@@ -981,7 +992,9 @@ module.exports = function (logger, mongoose, server) {
               ]
             }
           },
-          response: {}
+          response: {
+            // failAction: config.enableResponseFail ? 'error' : 'log',
+          }
         }
       })
     },
@@ -1074,7 +1087,9 @@ module.exports = function (logger, mongoose, server) {
               ]
             }
           },
-          response: {}
+          response: {
+            // failAction: config.enableResponseFail ? 'error' : 'log',
+          }
         }
       })
     },
@@ -1179,6 +1194,7 @@ module.exports = function (logger, mongoose, server) {
             }
           },
           response: {
+            failAction: config.enableResponseFail ? 'error' : 'log',
             schema: Joi.alternatives().try(
                 Joi.object({ docs: Joi.array().items(readModel).label(ownerModelName + "_" + associationName + "ArrayModel"), pages: Joi.any(), items: Joi.any() }),
                 Joi.number()).label(ownerModelName + "_" + associationName + "ListModel")
