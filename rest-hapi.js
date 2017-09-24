@@ -72,7 +72,8 @@ function register(server, options, next) {
                     title: config.appTitle,
                     version: config.version
                 },
-                expanded: config.docExpansion
+                expanded: config.docExpansion,
+                reuseDefinitions: false
             };
 
             server.register([
