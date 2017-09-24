@@ -207,10 +207,10 @@ internals.generateJoiListQueryModel = function (model, Log) {
   if (queryableFields && readableFields) {
     queryModel.$select = Joi.alternatives().try(Joi.array().items(Joi.string().valid(readableFields))
         .description('A list of basic fields to be included in each resource. Valid values include: ' + readableFields.toString().replace(/,/g,', ')), Joi.string().valid(readableFields));
-    queryModel.$text = Joi.string().optional()
+    queryModel.$text = Joi.any()
         .description('A full text search parameter. Takes advantage of indexes for efficient searching. Also implements stemming ' +
             'with searches. Prefixing search terms with a "-" will exclude results that match that term.');
-    queryModel.$term = Joi.string().optional()
+    queryModel.$term = Joi.any()
         .description('A regex search parameter. Slower than `$text` search but supports partial matches and doesn\'t require ' +
             'indexing. This can be refined using the `$searchFields` parameter.');
     queryModel.$searchFields = Joi.alternatives().try(Joi.array().items(Joi.string().valid(queryableFields))
@@ -220,8 +220,8 @@ internals.generateJoiListQueryModel = function (model, Log) {
         .description('A set of fields to sort by. Including field name indicates it should be sorted ascending, while prepending ' +
             '\'-\' indicates descending. The default sort direction is \'ascending\' (lowest value to highest value). Listing multiple' +
             'fields prioritizes the sort starting with the first field listed. Valid values include: ' + sortableFields.toString().replace(/,/g,', ')), Joi.string().valid(sortableFields));
-    queryModel.$exclude = Joi.alternatives().try(Joi.array().items(Joi.objectId())
-        .description('A list of objectIds to exclude in the result.'), Joi.objectId());
+    queryModel.$exclude = Joi.alternatives().try(Joi.array().items(internals.joiObjectId())
+        .description('A list of objectIds to exclude in the result.'), internals.joiObjectId());
     queryModel.$count = Joi.boolean()
         .description('If set to true, only a count of the query results will be returned.');
     queryModel.$where = Joi.any().optional()

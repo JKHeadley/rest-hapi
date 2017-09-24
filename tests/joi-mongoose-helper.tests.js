@@ -1,6 +1,8 @@
 var test = require('tape');
 var _ = require('lodash');
 var sinon = require('sinon');
+var sinonTestFactory = require('sinon-test');
+var sinonTest = sinonTestFactory(sinon);
 var rewire = require('rewire');
 var proxyquire = require('proxyquire');
 var assert = require('assert');
@@ -14,6 +16,7 @@ Log = Log.bind("joi-mongoose-helper");
 var testHelper = require("./test-helper");
 var Joi = require('joi');
 
+sinon.test = sinonTest;
 
 test('joi-mongoose-helper exists and has expected members', function (t) {
   //<editor-fold desc="Arrange">
@@ -497,47 +500,6 @@ test('joi-mongoose-helper.generateJoiUpdateModel', function (t) {
     //</editor-fold>
   });
 
-  //TODO: move some functionality to isValidField tests
-  t.test('joi-mongoose-helper.generateJoiUpdateModel ignores fields "__t" and "__v".', function (t) {
-    //<editor-fold desc="Arrange">
-    t.plan(2);
-
-    var generateJoiFieldModel = sinon.spy(function(){ return Joi.any() });
-    var joiMongooseHelper = rewire('../utilities/joi-mongoose-helper');
-    joiMongooseHelper.__set__("internals.generateJoiFieldModel", generateJoiFieldModel);
-
-
-    var userSchema = new mongoose.Schema({
-      __t: {
-        type: Types.String
-      },
-      __v: {
-        type: Types.String
-      }
-    });
-
-    userSchema.statics = {routeOptions: {}};
-    var userModel = mongoose.model("user", userSchema);
-
-    var __tField = userModel.schema.tree["__t"];
-    var __vField = userModel.schema.tree["__v"];
-    //</editor-fold>
-
-    //<editor-fold desc="Act">
-    var updateModel = joiMongooseHelper.generateJoiUpdateModel(userModel, Log);
-    //</editor-fold>
-
-    //<editor-fold desc="Assert">
-    t.notOk(generateJoiFieldModel.calledWithExactly(userModel, __tField, "__t", "update", Log), "generateJoiFieldModel not called on __t field");
-    t.notOk(generateJoiFieldModel.calledWithExactly(userModel, __vField, "__v", "update", Log), "generateJoiFieldModel not called on __v field");
-    //</editor-fold>
-
-    //<editor-fold desc="Restore">
-    delete mongoose.models.user;
-    delete mongoose.modelSchemas.user;
-    //</editor-fold>
-  });
-
   t.test('joi-mongoose-helper.generateJoiUpdateModel returns Joi object that rejects fields not listed.', function (t) {
     //<editor-fold desc="Arrange">
     t.plan(3);
@@ -614,7 +576,6 @@ test('joi-mongoose-helper.generateJoiUpdateModel', function (t) {
     //</editor-fold>
   });
 
-  //TODO: move some functionality to generateJoiFieldModel tests
   t.test('joi-mongoose-helper.generateJoiUpdateModel includes associations.', function (t) {
     //<editor-fold desc="Arrange">
     t.plan(5);
@@ -684,12 +645,6 @@ test('joi-mongoose-helper.generateJoiUpdateModel', function (t) {
     t.notok(generateJoiFieldModel.calledWithExactly(userModel, groupsField, "groups", "update", Log), "generateJoiFieldModel not called on groups field");
     t.notok(generateJoiFieldModel.calledWithExactly(userModel, permissionsField, "permissions", "update", Log), "generateJoiFieldModel not called on permissions field");
     t.ok(generateJoiFieldModel.calledWithExactly(userModel, hashTagsField, "hashTags", "update", Log), "generateJoiFieldModel called on hashTags field");
-    // t.ok(Joi.validate({title: {}}, updateModel).error !== null, "title field not valid format");
-    // t.ok(Joi.validate({title: "test"}, updateModel).error === null, "title field valid format");
-    // t.ok(Joi.validate({profileImage: {}}, updateModel).error !== null, "profileImage field not valid format");
-    // t.ok(Joi.validate({profileImage: "test"}, updateModel).error === null, "profileImage field valid format");
-    // t.ok(Joi.validate({groups: "test"}, updateModel).error !== null, "groups field not allowed");
-    // t.ok(Joi.validate({permissions: "test"}, updateModel).error !== null, "permissions field not allowed");
     //</editor-fold>
 
     //<editor-fold desc="Restore">
@@ -1596,37 +1551,536 @@ test('joi-mongoose-helper.generateJoiFieldModel', function (t) {
   t.end();
 });
 
-// test('joi-mongoose-helper.generateJoiListQueryModel', function (t) {
-//   t.test('joi-mongoose-helper.generateJoiListQueryModel returns correct models for objectIds.', function (t) {
-//     //<editor-fold desc="Arrange">
-//     var joiMongooseHelper = require('../utilities/joi-mongoose-helper');
-//
-//     t.plan(4);
-//
-//     var testSchema = {
-//       idType: {
-//         type: {
-//           schemaName: "ObjectId"
-//         }
-//       }
-//     };
-//
-//     //</editor-fold>
-//
-//     //<editor-fold desc="Act">
-//     var idModel = joiMongooseHelper.generateJoiModelFromFieldType(testSchema.idType, Log);
-//     //</editor-fold>
-//
-//     //<editor-fold desc="Assert">
-//     t.ok(idModel.validate("57d8752088ac2472a7d04863").error === null, "idModel validates an _id as a string");
-//     t.ok(idModel.validate(mongoose.Types.ObjectId()).error === null, "idModel validates an _id object");
-//     t.ok(idModel.validate("57d8752088ac2472a7d04863Z").error !== null, "idModel rejects a _id with wrong format");
-//     t.ok(idModel.validate({}).error !== null, "idModel rejects a _id object with wrong format");
-//     //</editor-fold>
-//
-//     //<editor-fold desc="Restore">
-//     //</editor-fold>
-//   });
-//
-//   t.end();
-// });
+test('joi-mongoose-helper.generateJoiListQueryModel', function (t) {
+
+  t.test('joi-mongoose-helper.generateJoiListQueryModel calls queryHelper.getQueryableFields, getReadableFields, and getSortableFields', sinon.test(function (t) {
+    //<editor-fold desc="Arrange">
+    t.plan(3);
+
+    var queryHelperStub = this.stub(require('../utilities/query-helper'));
+    var joiMongooseHelper = proxyquire('../utilities/joi-mongoose-helper', {
+      './query-helper': queryHelperStub
+    });
+
+
+    var userSchema = new mongoose.Schema({});
+    userSchema.statics = {routeOptions: {}};
+
+    var userModel = mongoose.model("user", userSchema);
+    //</editor-fold>
+
+    //<editor-fold desc="Act">
+    joiMongooseHelper.generateJoiListQueryModel(userModel, Log);
+    //</editor-fold>
+
+    //<editor-fold desc="Assert">
+    t.ok(queryHelperStub.getQueryableFields.called, "getQueryableFields called");
+    t.ok(queryHelperStub.getReadableFields.called, "getReadableFields called");
+    t.ok(queryHelperStub.getSortableFields.called, "getSortableFields called");
+    //</editor-fold>
+
+    //<editor-fold desc="Restore">
+    delete mongoose.models.user;
+    delete mongoose.modelSchemas.user;
+    //</editor-fold>
+  }));
+
+  t.test('joi-mongoose-helper.generateJoiListQueryModel returns correct queryModel for model with no associations and queryValidation enabled', sinon.test(function (t) {
+    //<editor-fold desc="Arrange">
+    t.plan(30);
+
+    var queryHelperStub = this.stub(require('../utilities/query-helper'));
+    queryHelperStub.getQueryableFields = this.spy(function () {
+      return ["queryable"]
+    });
+    queryHelperStub.getReadableFields = this.spy(function () {
+      return ["readable"]
+    });
+    queryHelperStub.getSortableFields = this.spy(function () {
+      return ["sortable"]
+    });
+
+
+    var generateJoiModelFromFieldType = sinon.spy(function(test){
+      return Joi.any()
+    });
+    var joiObjectId = sinon.spy(function(){ return Joi.any().valid("objectId") });
+    var joiMongooseHelper = rewire('../utilities/joi-mongoose-helper');
+    joiMongooseHelper.__set__("internals.generateJoiModelFromFieldType", generateJoiModelFromFieldType);
+    joiMongooseHelper.__set__("internals.joiObjectId", joiObjectId);
+    joiMongooseHelper.__set__("queryHelper", queryHelperStub);
+    joiMongooseHelper.__set__("config", { enableQueryValidation: true });
+
+
+
+    var userSchema = new mongoose.Schema({
+      queryable: {
+        type: Types.String
+      },
+      readable: {
+        type: Types.String
+      },
+      sortable: {
+        type: Types.String
+      }
+    });
+
+    userSchema.statics = {routeOptions: {}};
+
+    var userModel = mongoose.model("user", userSchema);
+
+    //</editor-fold>
+
+    //<editor-fold desc="Act">
+    var queryModel = joiMongooseHelper.generateJoiListQueryModel(userModel, Log);
+    //</editor-fold>
+
+    //<editor-fold desc="Assert">
+    t.ok(Joi.validate({ $skip: 0 }, queryModel).error === null, "$skip: 0 allowed");
+    t.ok(Joi.validate({ $skip: -1 }, queryModel).error !== null, "$skip: -1 not allowed");
+    t.ok(Joi.validate({ $skip: "notint" }, queryModel).error !== null, "$skip: 'notint' not allowed");
+
+    t.ok(Joi.validate({ $page: 0 }, queryModel).error === null, "$page: 0 allowed");
+    t.ok(Joi.validate({ $page: -1 }, queryModel).error !== null, "$page: -1 not allowed");
+    t.ok(Joi.validate({ $page: "notint" }, queryModel).error !== null, "$page: 'notint' not allowed");
+
+    t.ok(Joi.validate({ $limit: 0 }, queryModel).error === null, "$skip: 0 allowed");
+    t.ok(Joi.validate({ $limit: -1 }, queryModel).error !== null, "$skip: -1 not allowed");
+    t.ok(Joi.validate({ $limit: "notint" }, queryModel).error !== null, "$skip: 'notint' not allowed");
+
+    t.ok(Joi.validate({ $select: "readable" }, queryModel).error === null, "$select: 'readable' allowed");
+    t.ok(Joi.validate({ $select: ["readable"] }, queryModel).error === null, "$select: ['readable'] allowed");
+    t.ok(Joi.validate({ $select: "notreadable" }, queryModel).error !== null, "$select: 'notreadable' not allowed");
+
+    t.ok(Joi.validate({ $text: "text" }, queryModel).error === null, "$text field allowed");
+    t.ok(Joi.validate({ $term: "text" }, queryModel).error === null, "$term field allowed");
+
+    t.ok(Joi.validate({ $searchFields: "queryable" }, queryModel).error === null, "$searchFields: 'queryable' allowed");
+    t.ok(Joi.validate({ $searchFields: ["queryable"] }, queryModel).error === null, "$searchFields: ['queryable'] allowed");
+    t.ok(Joi.validate({ $searchFields: "notqueryable" }, queryModel).error !== null, "$searchFields: 'notqueryable' not allowed");
+
+    t.ok(Joi.validate({ $sort: "sortable" }, queryModel).error === null, "$sort: 'sortable' allowed");
+    t.ok(Joi.validate({ $sort: ["sortable"] }, queryModel).error === null, "$sort: ['sortable'] allowed");
+    t.ok(Joi.validate({ $sort: "notsortable" }, queryModel).error !== null, "$sort: 'notsortable' not allowed");
+
+    t.ok(Joi.validate({ $exclude: "objectId" }, queryModel).error === null, "$exclude: 'objectId' allowed");
+    t.ok(Joi.validate({ $exclude: ["objectId"] }, queryModel).error === null, "$exclude: ['objectId'] allowed");
+    t.ok(Joi.validate({ $exclude: "notobjectId" }, queryModel).error !== null, "$exclude: 'notobjectId' not allowed");
+
+    t.ok(Joi.validate({ $count: true }, queryModel).error === null, "$count: true allowed");
+    t.ok(Joi.validate({ $count: "notbool" }, queryModel).error !== null, "$count: 'notbool' not allowed");
+
+    t.ok(Joi.validate({ $where: "text" }, queryModel).error === null, "$where field allowed");
+
+    t.ok(Joi.validate({ queryable: "text" }, queryModel).error === null, "queryable field allowed");
+    t.ok(Joi.validate({ notafield: "text" }, queryModel).error !== null, "notafield field not allowed");
+
+    t.ok(Joi.validate({ $embed: "text" }, queryModel).error !== null, "$embed field not allowed");
+    t.ok(Joi.validate({ $flatten: true }, queryModel).error !== null, "$flatten field not allowed");
+
+    //</editor-fold>
+
+    //<editor-fold desc="Restore">
+    delete mongoose.models.user;
+    delete mongoose.modelSchemas.user;
+    //</editor-fold>
+  }));
+
+  t.test('joi-mongoose-helper.generateJoiListQueryModel returns correct queryModel for model with no associations and queryValidation disabled', sinon.test(function (t) {
+    //<editor-fold desc="Arrange">
+    t.plan(28);
+
+    var queryHelperStub = this.stub(require('../utilities/query-helper'));
+    queryHelperStub.getQueryableFields = this.spy(function () {
+      return ["queryable"]
+    });
+    queryHelperStub.getReadableFields = this.spy(function () {
+      return ["readable"]
+    });
+    queryHelperStub.getSortableFields = this.spy(function () {
+      return ["sortable"]
+    });
+
+
+    var generateJoiModelFromFieldType = sinon.spy(function(test){
+      return Joi.any()
+    });
+    var joiObjectId = sinon.spy(function(){ return Joi.any().valid("objectId") });
+    var joiMongooseHelper = rewire('../utilities/joi-mongoose-helper');
+    joiMongooseHelper.__set__("internals.generateJoiModelFromFieldType", generateJoiModelFromFieldType);
+    joiMongooseHelper.__set__("internals.joiObjectId", joiObjectId);
+    joiMongooseHelper.__set__("queryHelper", queryHelperStub);
+    joiMongooseHelper.__set__("config", { enableQueryValidation: false });
+
+
+
+    var userSchema = new mongoose.Schema({
+      queryable: {
+        type: Types.String
+      },
+      readable: {
+        type: Types.String
+      },
+      sortable: {
+        type: Types.String
+      }
+    });
+
+    userSchema.statics = {routeOptions: {}};
+
+    var userModel = mongoose.model("user", userSchema);
+
+    //</editor-fold>
+
+    //<editor-fold desc="Act">
+    var queryModel = joiMongooseHelper.generateJoiListQueryModel(userModel, Log);
+    //</editor-fold>
+
+    //<editor-fold desc="Assert">
+    t.ok(Joi.validate({ $skip: 0 }, queryModel).error === null, "$skip: 0 allowed");
+    t.ok(Joi.validate({ $skip: -1 }, queryModel).error !== null, "$skip: -1 not allowed");
+    t.ok(Joi.validate({ $skip: "notint" }, queryModel).error !== null, "$skip: 'notint' not allowed");
+
+    t.ok(Joi.validate({ $page: 0 }, queryModel).error === null, "$page: 0 allowed");
+    t.ok(Joi.validate({ $page: -1 }, queryModel).error !== null, "$page: -1 not allowed");
+    t.ok(Joi.validate({ $page: "notint" }, queryModel).error !== null, "$page: 'notint' not allowed");
+
+    t.ok(Joi.validate({ $limit: 0 }, queryModel).error === null, "$skip: 0 allowed");
+    t.ok(Joi.validate({ $limit: -1 }, queryModel).error !== null, "$skip: -1 not allowed");
+    t.ok(Joi.validate({ $limit: "notint" }, queryModel).error !== null, "$skip: 'notint' not allowed");
+
+    t.ok(Joi.validate({ $select: "readable" }, queryModel).error === null, "$select: 'readable' allowed");
+    t.ok(Joi.validate({ $select: ["readable"] }, queryModel).error === null, "$select: ['readable'] allowed");
+    t.ok(Joi.validate({ $select: "notreadable" }, queryModel).error !== null, "$select: 'notreadable' not allowed");
+
+    t.ok(Joi.validate({ $text: "text" }, queryModel).error === null, "$text field allowed");
+    t.ok(Joi.validate({ $term: "text" }, queryModel).error === null, "$term field allowed");
+
+    t.ok(Joi.validate({ $searchFields: "queryable" }, queryModel).error === null, "$searchFields: 'queryable' allowed");
+    t.ok(Joi.validate({ $searchFields: ["queryable"] }, queryModel).error === null, "$searchFields: ['queryable'] allowed");
+    t.ok(Joi.validate({ $searchFields: "notqueryable" }, queryModel).error !== null, "$searchFields: 'notqueryable' not allowed");
+
+    t.ok(Joi.validate({ $sort: "sortable" }, queryModel).error === null, "$sort: 'sortable' allowed");
+    t.ok(Joi.validate({ $sort: ["sortable"] }, queryModel).error === null, "$sort: ['sortable'] allowed");
+    t.ok(Joi.validate({ $sort: "notsortable" }, queryModel).error !== null, "$sort: 'notsortable' not allowed");
+
+    t.ok(Joi.validate({ $exclude: "objectId" }, queryModel).error === null, "$exclude: 'objectId' allowed");
+    t.ok(Joi.validate({ $exclude: ["objectId"] }, queryModel).error === null, "$exclude: ['objectId'] allowed");
+    t.ok(Joi.validate({ $exclude: "notobjectId" }, queryModel).error !== null, "$exclude: 'notobjectId' not allowed");
+
+    t.ok(Joi.validate({ $count: true }, queryModel).error === null, "$count: true allowed");
+    t.ok(Joi.validate({ $count: "notbool" }, queryModel).error !== null, "$count: 'notbool' not allowed");
+
+    t.ok(Joi.validate({ $where: "text" }, queryModel).error === null, "$where field allowed");
+
+    t.ok(Joi.validate({ queryable: "text" }, queryModel).error === null, "queryable field allowed");
+    t.ok(Joi.validate({ notafield: "text" }, queryModel).error === null, "notafield field allowed");
+    //</editor-fold>
+
+    //<editor-fold desc="Restore">
+    delete mongoose.models.user;
+    delete mongoose.modelSchemas.user;
+    //</editor-fold>
+  }));
+
+  t.test('joi-mongoose-helper.generateJoiListQueryModel returns correct queryModel for model with no associations and queryValidation enabled', sinon.test(function (t) {
+    //<editor-fold desc="Arrange">
+    t.plan(5);
+
+    var queryHelperStub = this.stub(require('../utilities/query-helper'));
+    queryHelperStub.getQueryableFields = this.spy(function () {
+      return ["queryable"]
+    });
+    queryHelperStub.getReadableFields = this.spy(function () {
+      return ["readable"]
+    });
+    queryHelperStub.getSortableFields = this.spy(function () {
+      return ["sortable"]
+    });
+
+
+    var generateJoiModelFromFieldType = sinon.spy(function(test){
+      return Joi.any()
+    });
+    var joiObjectId = sinon.spy(function(){ return Joi.any().valid("objectId") });
+    var joiMongooseHelper = rewire('../utilities/joi-mongoose-helper');
+    joiMongooseHelper.__set__("internals.generateJoiModelFromFieldType", generateJoiModelFromFieldType);
+    joiMongooseHelper.__set__("internals.joiObjectId", joiObjectId);
+    joiMongooseHelper.__set__("queryHelper", queryHelperStub);
+    joiMongooseHelper.__set__("config", { enableQueryValidation: true });
+
+
+
+    var userSchema = new mongoose.Schema({
+      queryable: {
+        type: Types.String
+      },
+      readable: {
+        type: Types.String
+      },
+      sortable: {
+        type: Types.String
+      }
+    });
+
+    userSchema.statics = {routeOptions: { associations: {} }};
+
+    var userModel = mongoose.model("user", userSchema);
+
+    //</editor-fold>
+
+    //<editor-fold desc="Act">
+    var queryModel = joiMongooseHelper.generateJoiListQueryModel(userModel, Log);
+    //</editor-fold>
+
+    //<editor-fold desc="Assert">
+    t.ok(Joi.validate({ $embed: "text" }, queryModel).error === null, "$embed: 'text' allowed");
+    t.ok(Joi.validate({ $embed: ["text"] }, queryModel).error === null, "$embed: ['text'] allowed");
+    t.ok(Joi.validate({ $embed: 0 }, queryModel).error !== null, "$embed: 0 not allowed");
+    t.ok(Joi.validate({ $flatten: true }, queryModel).error === null, "$flatten: true allowed");
+    t.ok(Joi.validate({ $flatten: "text" }, queryModel).error !== null, "$flatten: 'text' not allowed");
+
+    //</editor-fold>
+
+    //<editor-fold desc="Restore">
+    delete mongoose.models.user;
+    delete mongoose.modelSchemas.user;
+    //</editor-fold>
+  }));
+
+
+  t.end();
+});
+
+test('joi-mongoose-helper.generateJoiFindQueryModel', function (t) {
+
+  t.test('joi-mongoose-helper.generateJoiFindQueryModel calls queryHelper.getReadableFields', sinon.test(function (t) {
+    //<editor-fold desc="Arrange">
+    t.plan(1);
+
+    var queryHelperStub = this.stub(require('../utilities/query-helper'));
+    var joiMongooseHelper = proxyquire('../utilities/joi-mongoose-helper', {
+      './query-helper': queryHelperStub
+    });
+
+
+    var userSchema = new mongoose.Schema({});
+    userSchema.statics = {routeOptions: {}};
+
+    var userModel = mongoose.model("user", userSchema);
+    //</editor-fold>
+
+    //<editor-fold desc="Act">
+    joiMongooseHelper.generateJoiFindQueryModel(userModel, Log);
+    //</editor-fold>
+
+    //<editor-fold desc="Assert">
+    t.ok(queryHelperStub.getReadableFields.called, "getReadableFields called");
+    //</editor-fold>
+
+    //<editor-fold desc="Restore">
+    delete mongoose.models.user;
+    delete mongoose.modelSchemas.user;
+    //</editor-fold>
+  }));
+
+  t.test('joi-mongoose-helper.generateJoiFindQueryModel returns correct queryModel for model with no associations and queryValidation enabled', sinon.test(function (t) {
+    //<editor-fold desc="Arrange">
+    t.plan(6);
+
+    var queryHelperStub = this.stub(require('../utilities/query-helper'));
+    queryHelperStub.getQueryableFields = this.spy(function () {
+      return ["queryable"]
+    });
+    queryHelperStub.getReadableFields = this.spy(function () {
+      return ["readable"]
+    });
+    queryHelperStub.getSortableFields = this.spy(function () {
+      return ["sortable"]
+    });
+
+
+    var generateJoiModelFromFieldType = sinon.spy(function(test){
+      return Joi.any()
+    });
+    var joiObjectId = sinon.spy(function(){ return Joi.any().valid("objectId") });
+    var joiMongooseHelper = rewire('../utilities/joi-mongoose-helper');
+    joiMongooseHelper.__set__("internals.generateJoiModelFromFieldType", generateJoiModelFromFieldType);
+    joiMongooseHelper.__set__("internals.joiObjectId", joiObjectId);
+    joiMongooseHelper.__set__("queryHelper", queryHelperStub);
+    joiMongooseHelper.__set__("config", { enableQueryValidation: true });
+
+
+
+    var userSchema = new mongoose.Schema({
+      queryable: {
+        type: Types.String
+      },
+      readable: {
+        type: Types.String
+      },
+      sortable: {
+        type: Types.String
+      }
+    });
+
+    userSchema.statics = {routeOptions: {}};
+
+    var userModel = mongoose.model("user", userSchema);
+
+    //</editor-fold>
+
+    //<editor-fold desc="Act">
+    var queryModel = joiMongooseHelper.generateJoiFindQueryModel(userModel, Log);
+    //</editor-fold>
+
+    //<editor-fold desc="Assert">
+    t.ok(Joi.validate({ $select: "readable" }, queryModel).error === null, "$select: 'readable' allowed");
+    t.ok(Joi.validate({ $select: ["readable"] }, queryModel).error === null, "$select: ['readable'] allowed");
+    t.ok(Joi.validate({ $select: "notreadable" }, queryModel).error !== null, "$select: 'notreadable' not allowed");
+
+    t.ok(Joi.validate({ notafield: "text" }, queryModel).error !== null, "notafield field not allowed");
+
+    t.ok(Joi.validate({ $embed: "text" }, queryModel).error !== null, "$embed field not allowed");
+    t.ok(Joi.validate({ $flatten: true }, queryModel).error !== null, "$flatten field not allowed");
+
+    //</editor-fold>
+
+    //<editor-fold desc="Restore">
+    delete mongoose.models.user;
+    delete mongoose.modelSchemas.user;
+    //</editor-fold>
+  }));
+
+  t.test('joi-mongoose-helper.generateJoiFindQueryModel returns correct queryModel for model with no associations and queryValidation disabled', sinon.test(function (t) {
+    //<editor-fold desc="Arrange">
+    t.plan(4);
+
+    var queryHelperStub = this.stub(require('../utilities/query-helper'));
+    queryHelperStub.getQueryableFields = this.spy(function () {
+      return ["queryable"]
+    });
+    queryHelperStub.getReadableFields = this.spy(function () {
+      return ["readable"]
+    });
+    queryHelperStub.getSortableFields = this.spy(function () {
+      return ["sortable"]
+    });
+
+
+    var generateJoiModelFromFieldType = sinon.spy(function(test){
+      return Joi.any()
+    });
+    var joiObjectId = sinon.spy(function(){ return Joi.any().valid("objectId") });
+    var joiMongooseHelper = rewire('../utilities/joi-mongoose-helper');
+    joiMongooseHelper.__set__("internals.generateJoiModelFromFieldType", generateJoiModelFromFieldType);
+    joiMongooseHelper.__set__("internals.joiObjectId", joiObjectId);
+    joiMongooseHelper.__set__("queryHelper", queryHelperStub);
+    joiMongooseHelper.__set__("config", { enableQueryValidation: false });
+
+
+
+    var userSchema = new mongoose.Schema({
+      queryable: {
+        type: Types.String
+      },
+      readable: {
+        type: Types.String
+      },
+      sortable: {
+        type: Types.String
+      }
+    });
+
+    userSchema.statics = {routeOptions: {}};
+
+    var userModel = mongoose.model("user", userSchema);
+
+    //</editor-fold>
+
+    //<editor-fold desc="Act">
+    var queryModel = joiMongooseHelper.generateJoiFindQueryModel(userModel, Log);
+    //</editor-fold>
+
+    //<editor-fold desc="Assert">
+    t.ok(Joi.validate({ $select: "readable" }, queryModel).error === null, "$select: 'readable' allowed");
+    t.ok(Joi.validate({ $select: ["readable"] }, queryModel).error === null, "$select: ['readable'] allowed");
+    t.ok(Joi.validate({ $select: "notreadable" }, queryModel).error !== null, "$select: 'notreadable' not allowed");
+
+    t.ok(Joi.validate({ notafield: "text" }, queryModel).error === null, "notafield field allowed");
+    //</editor-fold>
+
+    //<editor-fold desc="Restore">
+    delete mongoose.models.user;
+    delete mongoose.modelSchemas.user;
+    //</editor-fold>
+  }));
+
+  t.test('joi-mongoose-helper.generateJoiFindQueryModel returns correct queryModel for model with no associations and queryValidation enabled', sinon.test(function (t) {
+    //<editor-fold desc="Arrange">
+    t.plan(5);
+
+    var queryHelperStub = this.stub(require('../utilities/query-helper'));
+    queryHelperStub.getQueryableFields = this.spy(function () {
+      return ["queryable"]
+    });
+    queryHelperStub.getReadableFields = this.spy(function () {
+      return ["readable"]
+    });
+    queryHelperStub.getSortableFields = this.spy(function () {
+      return ["sortable"]
+    });
+
+
+    var generateJoiModelFromFieldType = sinon.spy(function(test){
+      return Joi.any()
+    });
+    var joiObjectId = sinon.spy(function(){ return Joi.any().valid("objectId") });
+    var joiMongooseHelper = rewire('../utilities/joi-mongoose-helper');
+    joiMongooseHelper.__set__("internals.generateJoiModelFromFieldType", generateJoiModelFromFieldType);
+    joiMongooseHelper.__set__("internals.joiObjectId", joiObjectId);
+    joiMongooseHelper.__set__("queryHelper", queryHelperStub);
+    joiMongooseHelper.__set__("config", { enableQueryValidation: true });
+
+
+
+    var userSchema = new mongoose.Schema({
+      queryable: {
+        type: Types.String
+      },
+      readable: {
+        type: Types.String
+      },
+      sortable: {
+        type: Types.String
+      }
+    });
+
+    userSchema.statics = {routeOptions: { associations: {} }};
+
+    var userModel = mongoose.model("user", userSchema);
+
+    //</editor-fold>
+
+    //<editor-fold desc="Act">
+    var queryModel = joiMongooseHelper.generateJoiFindQueryModel(userModel, Log);
+    //</editor-fold>
+
+    //<editor-fold desc="Assert">
+    t.ok(Joi.validate({ $embed: "text" }, queryModel).error === null, "$embed: 'text' allowed");
+    t.ok(Joi.validate({ $embed: ["text"] }, queryModel).error === null, "$embed: ['text'] allowed");
+    t.ok(Joi.validate({ $embed: 0 }, queryModel).error !== null, "$embed: 0 not allowed");
+    t.ok(Joi.validate({ $flatten: true }, queryModel).error === null, "$flatten: true allowed");
+    t.ok(Joi.validate({ $flatten: "text" }, queryModel).error !== null, "$flatten: 'text' not allowed");
+
+    //</editor-fold>
+
+    //<editor-fold desc="Restore">
+    delete mongoose.models.user;
+    delete mongoose.modelSchemas.user;
+    //</editor-fold>
+  }));
+
+
+  t.end();
+});

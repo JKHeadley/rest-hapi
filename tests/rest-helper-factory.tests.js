@@ -494,6 +494,7 @@ test('rest-helper-factory.generateListEndpoint', function (t) {
     //</editor-fold>
   }));
 
+  //TODO: calls generateJoiListQueryModel
   t.test('rest-helper-factory.generateListEndpoint calls queryHelper.getQueryableFields, getReadableFields, and getSortableFields', sinon.test(function (t) {
     //<editor-fold desc="Arrange">
     var server = this.stub({
