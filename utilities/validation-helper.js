@@ -12,6 +12,7 @@ module.exports = {
   validateModel: function(model, Log) {
     assert(model.schema, "model not mongoose format. 'schema' property required.");
     assert(model.schema.paths, "model not mongoose format. 'schema.paths' property required.");
+    assert(model.schema.tree, "model not mongoose format. 'schema.tree' property required.");
 
     var fields = model.schema.paths;
     var fieldNames = Object.keys(fields);

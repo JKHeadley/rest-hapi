@@ -15,242 +15,48 @@ var _ = require('lodash');
 
 module.exports = {
 
-  /**
-   * List function exposed as a mongoose wrapper.
-   * @param model: A mongoose model.
-   * @param query: rest-hapi query parameters to be converted to a mongoose query.
-   * @param Log: A logging object.
-   * @returns {object} A promise for the resulting model documents or the count of the query results.
-   */
   list: _list,
 
-  /**
-   * Finds a list of model documents.
-   * @param model: A mongoose model.
-   * @param request: The Hapi request object, or a container for the wrapper query.
-   * @param Log: A logging object.
-   * @returns {object} A promise for the resulting model documents or the count of the query results.
-   * @private
-   */
   listHandler: _listHandler,
 
-  /**
-   * Find function exposed as a mongoose wrapper.
-   * @param model: A mongoose model.
-   * @param query: rest-hapi query parameters to be converted to a mongoose query.
-   * @param Log: A logging object.
-   * @returns {object} A promise for the resulting model documents or the count of the query results.
-   */
   find: _find,
 
-  /**
-   * Finds a model document
-   * @param model: A mongoose model.
-   * @param _id: The document id.
-   * @param request: The Hapi request object, or a container for the wrapper query.
-   * @param Log: A logging object.
-   * @returns {object} A promise for the resulting model document.
-   */
   findHandler: _findHandler,
 
-  /**
-   * Create function exposed as a mongoose wrapper.
-   * @param model: A mongoose model.
-   * @param payload: Data used to create the model document/s.
-   * @param Log: A logging object.
-   * @returns {object} A promise for the resulting model document/s.
-   */
   create: _create,
 
-  /**
-   * Creates one or more model documents.
-   * @param model: A mongoose model.
-   * @param request: The Hapi request object, or a container for the wrapper payload.
-   * @param Log: A logging object.
-   * @returns {object} A promise for the resulting model document/s.
-   */
   createHandler: _createHandler,
 
-  /**
-   * Update function exposed as a mongoose wrapper.
-   * @param model: A mongoose model.
-   * @param _id: The document id.
-   * @param payload: Data used to update the model document.
-   * @param Log: A logging object.
-   * @returns {object} A promise for the resulting model document.
-   */
   update: _update,
 
-  /**
-   * Updates a model document.
-   * @param model: A mongoose model.
-   * @param _id: The document id.
-   * @param request: The Hapi request object, or a container for the wrapper payload.
-   * @param Log: A logging object.
-   * @returns {object} A promise for the resulting model document.
-   */
   updateHandler: _updateHandler,
 
-  /**
-   * Delete function exposed as a mongoose wrapper.
-   * @param model: A mongoose model.
-   * @param _id: The document id.
-   * @param hardDelete: Flag used to determine a soft or hard delete.
-   * @param Log: A logging object.
-   * @returns {object} A promise returning true if the delete succeeds.
-   */
   deleteOne: _deleteOne,
 
-  /**
-   * Deletes a model document
-   * @param model: A mongoose model.
-   * @param _id: The document id.
-   * @param hardDelete: Flag used to determine a soft or hard delete.
-   * @param request: The Hapi request object.
-   * @param Log: A logging object.
-   * @returns {object} A promise returning true if the delete succeeds.
-   */
   deleteOneHandler: _deleteOneHandler,
 
-  /**
-   * DeleteMany function exposed as a mongoose wrapper.
-   * @param model: A mongoose model.
-   * @param payload: Either an array of ids or an array of objects containing an id and a "hardDelete" flag.
-   * @param Log: A logging object.
-   * @returns {object} A promise returning true if the delete succeeds.
-   */
   deleteMany: _deleteMany,
 
-  /**
-   * Deletes multiple documents.
-   * @param model: A mongoose model.
-   * @param request: The Hapi request object, or a container for the wrapper payload.
-   * @param Log: A logging object.
-   * @returns {object} A promise returning true if the delete succeeds.
-   */
   deleteManyHandler: _deleteManyHandler,
 
-  /**
-   * AddOne function exposed as a mongoose wrapper.
-   * @param ownerModel: The model that is being added to.
-   * @param ownerId: The id of the owner document.
-   * @param childModel: The model that is being added.
-   * @param childId: The id of the child document.
-   * @param associationName: The name of the association from the ownerModel's perspective.
-   * @param payload: An object containing an extra linking-model fields.
-   * @param Log: A logging object
-   * @returns {object} A promise returning true if the add succeeds.
-   */
   addOne: _addOne,
 
-  /**
-   * Adds an association to a document
-   * @param ownerModel: The model that is being added to.
-   * @param ownerId: The id of the owner document.
-   * @param childModel: The model that is being added.
-   * @param childId: The id of the child document.
-   * @param associationName: The name of the association from the ownerModel's perspective.
-   * @param request: The Hapi request object, or a container for the wrapper payload.
-   * @param Log: A logging object
-   * @returns {object} A promise returning true if the add succeeds.
-   */
   addOneHandler: _addOneHandler,
 
-  /**
-   * RemoveOne function exposed as a mongoose wrapper.
-   * @param ownerModel: The model that is being removed from.
-   * @param ownerId: The id of the owner document.
-   * @param childModel: The model that is being removed.
-   * @param childId: The id of the child document.
-   * @param associationName: The name of the association from the ownerModel's perspective.
-   * @param Log: A logging object
-   * @returns {object} A promise returning true if the remove succeeds.
-   */
   removeOne: _removeOne,
 
-  /**
-   * Removes an association to a document
-   * @param ownerModel: The model that is being removed from.
-   * @param ownerId: The id of the owner document.
-   * @param childModel: The model that is being removed.
-   * @param childId: The id of the child document.
-   * @param associationName: The name of the association from the ownerModel's perspective.
-   * @param request: The Hapi request object.
-   * @param Log: A logging object
-   * @returns {object} A promise returning true if the remove succeeds.
-   */
   removeOneHandler: _removeOneHandler,
 
-  /**
-   * AddMany function exposed as a mongoose wrapper.
-   * @param ownerModel: The model that is being added to.
-   * @param ownerId: The id of the owner document.
-   * @param childModel: The model that is being added.
-   * @param associationName: The name of the association from the ownerModel's perspective.
-   * @param payload: Either a list of id's or a list of id's along with extra linking-model fields.
-   * @param Log: A logging object
-   * @returns {object} A promise returning true if the add succeeds.
-   */
   addMany: _addMany,
 
-  /**
-   * Adds multiple associations to a document.
-   * @param ownerModel: The model that is being added to.
-   * @param ownerId: The id of the owner document.
-   * @param childModel: The model that is being added.
-   * @param associationName: The name of the association from the ownerModel's perspective.
-   * @param request: The Hapi request object, or a container for the wrapper payload.
-   * @param Log: A logging object
-   * @returns {object} A promise returning true if the add succeeds.
-   */
   addManyHandler: _addManyHandler,
 
-  /**
-   * RemoveMany function exposed as a mongoose wrapper.
-   * @param ownerModel: The model that is being removed from.
-   * @param ownerId: The id of the owner document.
-   * @param childModel: The model that is being removed.
-   * @param associationName: The name of the association from the ownerModel's perspective.
-   * @param payload: A list of ids
-   * @param Log: A logging object
-   * @returns {object} A promise returning true if the remove succeeds.
-   */
   removeMany: _removeMany,
 
-  /**
-   * Removes multiple associations from a document
-   * @param ownerModel: The model that is being removed from.
-   * @param ownerId: The id of the owner document.
-   * @param childModel: The model that is being removed.
-   * @param associationName: The name of the association from the ownerModel's perspective.
-   * @param request: The Hapi request object, or a container for the wrapper payload.
-   * @param Log: A logging object
-   * @returns {object} A promise returning true if the remove succeeds.
-   */
   removeManyHandler: _removeManyHandler,
 
-  /**
-   * GetAll function exposed as a mongoose wrapper.
-   * @param ownerModel: The model that is being added to.
-   * @param ownerId: The id of the owner document.
-   * @param childModel: The model that is being added.
-   * @param associationName: The name of the association from the ownerModel's perspective.
-   * @param query: rest-hapi query parameters to be converted to a mongoose query.
-   * @param Log: A logging object
-   * @returns {object} A promise for the resulting model documents or the count of the query results.
-   */
   getAll: _getAll,
 
-  /**
-   * Get all of the associations for a document
-   * @param ownerModel: The model that is being added to.
-   * @param ownerId: The id of the owner document.
-   * @param childModel: The model that is being added.
-   * @param associationName: The name of the association from the ownerModel's perspective.
-   * @param request: The Hapi request object, or a container for the wrapper query.
-   * @param Log: A logging object
-   * @returns {object} A promise for the resulting model documents or the count of the query results.
-   */
   getAllHandler: _getAllHandler
 
 };
@@ -1223,6 +1029,9 @@ function _addManyHandler(ownerModel, ownerId, childModel, associationName, reque
   let payload = extend([], request.payload);
   let logError = false;
   try {
+    if (_.isEmpty(request.payload)) {
+      throw "Payload is empty."
+    }
     return ownerModel.findOne({ '_id': ownerId })
         .then(function (ownerObject) {
           if (ownerObject) {
@@ -1284,7 +1093,10 @@ function _addManyHandler(ownerModel, ownerId, childModel, associationName, reque
         })
   }
   catch(error) {
-    const message = "There was an error processing the request.";
+    let message = "There was an error processing the request.";
+    if (_.isString(error)) {
+      message = error;
+    }
     if (!logError) {
       Log.error(message);
       logError = true;
@@ -1382,7 +1194,10 @@ function _removeManyHandler(ownerModel, ownerId, childModel, associationName, re
         })
   }
   catch(error) {
-    const message = "There was an error processing the request.";
+    let message = "There was an error processing the request.";
+    if (_.isString(error)) {
+      message = error;
+    }
     if (!logError) {
       Log.error(message);
       logError = true;

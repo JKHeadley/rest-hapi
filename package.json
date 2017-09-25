@@ -1,6 +1,6 @@
 {
   "name": "rest-hapi",
-  "version": "0.23.0",
+  "version": "0.26.1",
   "description": "A RESTful API generator for hapi",
   "main": "rest-hapi.js",
   "bin": {
@@ -65,7 +65,7 @@
     "require-dir": "~0.3.2",
     "rewire": "^2.5.2",
     "rmdir": "^1.2.0",
-    "sinon": "^2.3.8",
+    "sinon": "^3.3.0",
     "sinon-test": "^2.1.0",
     "tap-colorize": "latest",
     "tape": "latest",

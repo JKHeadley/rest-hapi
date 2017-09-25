@@ -87,6 +87,14 @@ config.enableCreatedAt = true;
 config.enableUpdatedAt = true;
 
 /**
+ * Flag specifying whether to text index all string fields for all models to enable text search.
+ * WARNING: enabling this adds overhead to add inserts and updates, as well as added storage requirements.
+ * Default is false.
+ * @type {boolean}
+ */
+config.enableTextSearch = false;
+
+/**
  * Soft delete options
  * - enableSoftDelete: adds "isDeleted" property to each model. Delete endpoints set "isDeleted" to true
  * unless the payload contains { hardDelete: true }, in which case the document is actually deleted (default false)
@@ -107,6 +115,15 @@ config.enablePayloadValidation = true;
 config.enableResponseValidation = true;
 
 /**
+ * Determines the hapi failAction of each response. If true, responses that fail validation will return
+ * a 500 error.  If set to false, responses that fail validation will just log the offense and send
+ * the response as-is.
+ * default: false
+ * @type {boolean}
+ */
+config.enableResponseFail = false;
+
+/**
  * If set to true, (and authStrategy is not false) then endpoints will be generated with pre-defined
  * scopes based on the model definition.
  * default: false
@@ -115,12 +132,18 @@ config.enableResponseValidation = true;
 config.generateScopes = false;
 
 /**
- * Flag specifying whether to text index all string fields for all models to enable text search.
- * WARNING: enabling this adds overhead to add inserts and updates, as well as added storage requirements.
- * Default is false.
+ * If set to true, the scope for each endpoint will be logged when then endpoint is generated.
+ * default: false
  * @type {boolean}
  */
-config.enableTextSearch = false;
+config.logScopes = false;
+
+/**
+ * If set to true, each route will be logged as it is generated.
+ * default: false
+ * @type {boolean}
+ */
+config.logRoutes = false;
 
 /**
  * Log level options:

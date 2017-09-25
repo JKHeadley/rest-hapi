@@ -114,7 +114,9 @@ module.exports = function (logger, mongoose, server) {
       Log = Log.bind(chalk.yellow("List"));
       options = options || {};
 
-      Log.note("Generating List endpoint for " + collectionName);
+      if (config.logRoutes) {
+        Log.note("Generating List endpoint for " + collectionName);
+      }
 
       var resourceAliasForRoute;
 
@@ -127,60 +129,14 @@ module.exports = function (logger, mongoose, server) {
 
       var handler = HandlerHelper.generateListHandler(model, options, Log);
 
-      var queryValidation = {
-        $skip: Joi.number().integer().min(0).optional()
-          .description('The number of records to skip in the database. This is typically used in pagination.'),
-        $page: Joi.number().integer().min(0).optional()
-            .description('The number of records to skip based on the $limit parameter. This is typically used in pagination.'),
-        $limit: Joi.number().integer().min(0).optional()
-          .description('The maximum number of records to return. This is typically used in pagination.')
-      };
-
-      var queryableFields = queryHelper.getQueryableFields(model, Log);
-
-      var readableFields = queryHelper.getReadableFields(model, Log);
-
-      var sortableFields = queryHelper.getSortableFields(model, Log);
-
-      if (queryableFields && readableFields) {
-        queryValidation.$select = Joi.alternatives().try(Joi.array().items(Joi.string().valid(readableFields))
-            .description('A list of basic fields to be included in each resource. Valid values include: ' + readableFields.toString().replace(/,/g,', ')), Joi.string().valid(readableFields));
-        queryValidation.$text = Joi.string().optional()
-            .description('A full text search parameter. Takes advantage of indexes for efficient searching. Also implements stemming ' +
-                'with searches. Prefixing search terms with a "-" will exclude results that match that term.');
-        queryValidation.$term = Joi.string().optional()
-            .description('A regex search parameter. Slower than `$text` search but supports partial matches and doesn\'t require ' +
-                'indexing. This can be refined using the `$searchFields` parameter.');
-        queryValidation.$searchFields = Joi.alternatives().try(Joi.array().items(Joi.string().valid(queryableFields))
-            .description('A set of fields to apply the `$term` search parameter to. If this parameter is not included, the `$term` ' +
-            'search parameter is applied to all searchable fields. Valid values include: ' + queryableFields.toString().replace(/,/g,', ')), Joi.string().valid(queryableFields));
-        queryValidation.$sort = Joi.alternatives().try(Joi.array().items(Joi.string().valid(sortableFields))
-            .description('A set of fields to sort by. Including field name indicates it should be sorted ascending, while prepending ' +
-            '\'-\' indicates descending. The default sort direction is \'ascending\' (lowest value to highest value). Listing multiple' +
-            'fields prioritizes the sort starting with the first field listed. Valid values include: ' + sortableFields.toString().replace(/,/g,', ')), Joi.string().valid(sortableFields));
-        queryValidation.$exclude = Joi.alternatives().try(Joi.array().items(Joi.objectId())
-            .description('A list of objectIds to exclude in the result.'), Joi.objectId());
-        queryValidation.$count = Joi.boolean()
-            .description('If set to true, only a count of the query results will be returned.');
-        queryValidation.$where = Joi.any().optional()
-            .description('An optional field for raw mongoose queries.');
-
-        _.each(queryableFields, function (fieldName) {
-          const joiModel = joiMongooseHelper.generateJoiModelFromFieldType(model.schema.paths[fieldName].options, Log);
-          queryValidation[fieldName] = Joi.alternatives().try(Joi.array().items(joiModel)
-              .description('Match values for the ' + fieldName + ' property.'), joiModel);
-        })
-      }
-
-      var associations = model.routeOptions ? model.routeOptions.associations : null;
-      if (associations) {
-        queryValidation.$embed = Joi.alternatives().try(Joi.array().items(Joi.string())
-            .description('A set of complex object properties to populate. Valid first level values include ' + Object.keys(associations).toString().replace(/,/g,', ')), Joi.string());
-        queryValidation.$flatten = Joi.boolean()
-            .description('Set to true to flatten embedded arrays, i.e. remove linking-model data.');
-      }
+      var queryModel = joiMongooseHelper.generateJoiListQueryModel(model, Log);
 
       var readModel = joiMongooseHelper.generateJoiReadModel(model, Log);
+
+      if (!config.enableResponseValidation) {
+        var label =  readModel._flags.label;
+        readModel = Joi.alternatives().try(readModel, Joi.any()).label(label);
+      }
 
       var auth = false;
 
@@ -193,7 +149,9 @@ module.exports = function (logger, mongoose, server) {
 
         if (!_.isEmpty(scope)) {
           auth.scope = scope;
-          Log.debug("Scope for GET/" + resourceAliasForRoute + ":", scope);
+          if (config.logScopes) {
+            Log.debug("Scope for GET/" + resourceAliasForRoute + ":", scope);
+          }
         }
       }
       else {
@@ -211,7 +169,7 @@ module.exports = function (logger, mongoose, server) {
           tags: ['api', collectionName],
           cors: config.cors,
           validate: {
-            query: config.enableQueryValidation ? queryValidation : Joi.any(),
+            query: queryModel,
             headers: headersValidation
           },
           plugins: {
@@ -229,8 +187,10 @@ module.exports = function (logger, mongoose, server) {
             }
           },
           response: {
-            schema: config.enableResponseValidation ? Joi.alternatives().try(Joi.object({ docs: Joi.array().items(readModel), pages: Joi.any(), items: Joi.any() }), Joi.number()) :
-                Joi.alternatives().try(Joi.object({ docs: Joi.array().items(Joi.any()), pages: Joi.any(), items: Joi.any() }), Joi.number() )
+            failAction: config.enableResponseFail ? 'error' : 'log',
+            schema: Joi.alternatives().try(
+                Joi.object({ docs: Joi.array().items(readModel).label(collectionName + "ArrayModel"), pages: Joi.any(),
+                  items: Joi.any() }), Joi.number()).label(collectionName + "ListModel")
           }
         }
       });
@@ -248,7 +208,9 @@ module.exports = function (logger, mongoose, server) {
 
       var collectionName = model.collectionDisplayName || model.modelName;
       Log = Log.bind(chalk.yellow("Find"));
-      Log.note("Generating Find endpoint for " + collectionName);
+      if (config.logRoutes) {
+        Log.note("Generating Find endpoint for " + collectionName);
+      }
 
       var resourceAliasForRoute;
 
@@ -261,24 +223,14 @@ module.exports = function (logger, mongoose, server) {
 
       var handler = HandlerHelper.generateFindHandler(model, options, Log);
 
-      var queryValidation = {};
-
-      var readableFields = queryHelper.getReadableFields(model, Log);
-
-      if (readableFields) {
-        queryValidation.$select = Joi.alternatives().try(Joi.array().items(Joi.string().valid(readableFields))
-            .description('A list of basic fields to be included in each resource. Valid values include: ' + readableFields.toString().replace(/,/g,', ')), Joi.string().valid(readableFields));
-      }
-
-      var associations = model.routeOptions ? model.routeOptions.associations : null;
-      if (associations) {
-        queryValidation.$embed = Joi.alternatives().try(Joi.array().items(Joi.string())
-            .description('A set of complex object properties to populate. Valid first level values include ' + Object.keys(associations).toString().replace(/,/g,', ')), Joi.string());
-        queryValidation.$flatten = Joi.boolean()
-            .description('Set to true to flatten embedded arrays, i.e. remove linking-model data.');
-      }
+      var queryModel = joiMongooseHelper.generateJoiFindQueryModel(model, Log);
 
       var readModel = model.readModel || joiMongooseHelper.generateJoiReadModel(model, Log);
+
+      if (!config.enableResponseValidation) {
+        var label =  readModel._flags.label;
+        readModel = Joi.alternatives().try(readModel, Joi.any()).label(label);
+      }
 
       var auth = false;
 
@@ -291,7 +243,9 @@ module.exports = function (logger, mongoose, server) {
 
         if (!_.isEmpty(scope)) {
           auth.scope = scope;
-          Log.debug("Scope for GET/" + resourceAliasForRoute + '/{_id}' + ":", scope);
+          if (config.logScopes) {
+            Log.debug("Scope for GET/" + resourceAliasForRoute + '/{_id}' + ":", scope);
+          }
         }
 
       }
@@ -309,7 +263,7 @@ module.exports = function (logger, mongoose, server) {
           tags: ['api', collectionName],
           cors: config.cors,
           validate: {
-            query: config.enableQueryValidation ? queryValidation : Joi.any(),
+            query: queryModel,
             params: {
               _id: Joi.objectId().required()
             },
@@ -331,7 +285,8 @@ module.exports = function (logger, mongoose, server) {
             }
           },
           response: {
-            schema: config.enableResponseValidation ? readModel : Joi.any()
+            failAction: config.enableResponseFail ? 'error' : 'log',
+            schema: readModel
           }
         }
       });
@@ -349,7 +304,9 @@ module.exports = function (logger, mongoose, server) {
 
       var collectionName = model.collectionDisplayName || model.modelName;
       Log = Log.bind(chalk.yellow("Create"));
-      Log.note("Generating Create endpoint for " + collectionName);
+      if (config.logRoutes) {
+        Log.note("Generating Create endpoint for " + collectionName);
+      }
 
       options = options || {};
 
@@ -366,12 +323,22 @@ module.exports = function (logger, mongoose, server) {
 
       var createModel = joiMongooseHelper.generateJoiCreateModel(model, Log);
 
+      if (!config.enablePayloadValidation) {
+        var label =  createModel._flags.label;
+        createModel = Joi.alternatives().try(createModel, Joi.any()).label(label);
+      }
+
       //EXPL: support bulk creates
       createModel = Joi.alternatives().try(Joi.array().items(createModel), createModel);
 
       var readModel = joiMongooseHelper.generateJoiReadModel(model, Log);
+      var label =  readModel._flags.label;
 
-      readModel = Joi.alternatives().try(Joi.array().items(readModel), readModel);
+      readModel = Joi.alternatives().try(Joi.array().items(readModel), readModel).label(label);
+
+      if (!config.enableResponseValidation) {
+        readModel = Joi.alternatives().try(readModel, Joi.any()).label(label);
+      }
 
       var auth = false;
 
@@ -384,7 +351,9 @@ module.exports = function (logger, mongoose, server) {
 
         if (!_.isEmpty(scope)) {
           auth.scope = scope;
-          Log.debug("Scope for POST/" + resourceAliasForRoute + ":", scope);
+          if (config.logScopes) {
+            Log.debug("Scope for POST/" + resourceAliasForRoute + ":", scope);
+          }
         }
       }
       else {
@@ -401,7 +370,7 @@ module.exports = function (logger, mongoose, server) {
           description: 'Create one or more new ' + collectionName + 's',
           tags: ['api', collectionName],
           validate: {
-            payload: config.enablePayloadValidation ? createModel : Joi.any(),
+            payload: createModel,
             headers: headersValidation
           },
           plugins: {
@@ -419,7 +388,8 @@ module.exports = function (logger, mongoose, server) {
             }
           },
           response: {
-            schema: config.enableResponseValidation ? readModel : Joi.any()
+            failAction: config.enableResponseFail ? 'error' : 'log',
+            schema: readModel
           }
         }
       });
@@ -437,7 +407,9 @@ module.exports = function (logger, mongoose, server) {
 
       var collectionName = model.collectionDisplayName || model.modelName;
       Log = Log.bind(chalk.yellow("DeleteOne"));
-      Log.note("Generating Delete One endpoint for " + collectionName);
+      if (config.logRoutes) {
+        Log.note("Generating Delete One endpoint for " + collectionName);
+      }
 
       options = options || {};
 
@@ -455,6 +427,10 @@ module.exports = function (logger, mongoose, server) {
       var payloadModel = null;
       if (config.enableSoftDelete) {
         payloadModel = Joi.object({ hardDelete: Joi.bool() }).allow(null);
+
+        if (!config.enablePayloadValidation) {
+          payloadModel = Joi.alternatives().try(payloadModel, Joi.any());
+        }
       }
 
       var auth = false;
@@ -468,7 +444,9 @@ module.exports = function (logger, mongoose, server) {
 
         if (!_.isEmpty(scope)) {
           auth.scope = scope;
-          Log.debug("Scope for DELETE/" + resourceAliasForRoute + "/{_id}" + ":", scope);
+          if (config.logScopes) {
+            Log.debug("Scope for DELETE/" + resourceAliasForRoute + "/{_id}" + ":", scope);
+          }
         }
       }
       else {
@@ -488,7 +466,7 @@ module.exports = function (logger, mongoose, server) {
             params: {
               _id: Joi.objectId().required()
             },
-            payload: config.enablePayloadValidation ? payloadModel : Joi.any(),
+            payload: payloadModel,
             headers: headersValidation
           },
           plugins: {
@@ -508,6 +486,7 @@ module.exports = function (logger, mongoose, server) {
           },
           response: {
             //TODO: add a response schema if needed
+            // failAction: config.enableResponseFail ? 'error' : 'log',
             //schema: model.readModel ? model.readModel : Joi.object().unknown().optional()
           }
         }
@@ -527,7 +506,9 @@ module.exports = function (logger, mongoose, server) {
 
       var collectionName = model.collectionDisplayName || model.modelName;
       Log = Log.bind(chalk.yellow("DeleteMany"));
-      Log.note("Generating Delete Many endpoint for " + collectionName);
+      if (config.logRoutes) {
+        Log.note("Generating Delete Many endpoint for " + collectionName);
+      }
 
       options = options || {};
 
@@ -550,6 +531,11 @@ module.exports = function (logger, mongoose, server) {
         payloadModel = Joi.array().items(Joi.objectId());
       }
 
+      if (!config.enablePayloadValidation) {
+        payloadModel = Joi.alternatives().try(payloadModel, Joi.any());
+      }
+
+
       var auth = false;
 
       if (config.authStrategy && model.routeOptions.deleteAuth !== false) {
@@ -561,7 +547,9 @@ module.exports = function (logger, mongoose, server) {
 
         if (!_.isEmpty(scope)) {
           auth.scope = scope;
-          Log.debug("Scope for DELETE/" + resourceAliasForRoute + ":", scope);
+          if (config.logScopes) {
+            Log.debug("Scope for DELETE/" + resourceAliasForRoute + ":", scope);
+          }
         }
       }
       else {
@@ -578,7 +566,7 @@ module.exports = function (logger, mongoose, server) {
           description: 'Delete multiple ' + collectionName + 's',
           tags: ['api', collectionName],
           validate: {
-            payload: config.enablePayloadValidation ? payloadModel : Joi.any(),
+            payload: payloadModel,
             headers: headersValidation
           },
           plugins: {
@@ -598,6 +586,7 @@ module.exports = function (logger, mongoose, server) {
           },
           response: {
             //TODO: add a response schema if needed
+            // failAction: config.enableResponseFail ? 'error' : 'log',
             //schema: model.readModel ? model.readModel : Joi.object().unknown().optional()
           }
         }
@@ -616,7 +605,9 @@ module.exports = function (logger, mongoose, server) {
 
       var collectionName = model.collectionDisplayName || model.modelName;
       Log = Log.bind(chalk.yellow("Update"));
-      Log.note("Generating Update endpoint for " + collectionName);
+      if (config.logRoutes) {
+        Log.note("Generating Update endpoint for " + collectionName);
+      }
 
       options = options || {};
 
@@ -633,7 +624,17 @@ module.exports = function (logger, mongoose, server) {
 
       var updateModel = joiMongooseHelper.generateJoiUpdateModel(model, Log);
 
+      if (!config.enablePayloadValidation) {
+        var label =  updateModel._flags.label;
+        updateModel = Joi.alternatives().try(updateModel, Joi.any()).label(label);
+      }
+
       var readModel = joiMongooseHelper.generateJoiReadModel(model, Log);
+
+      if (!config.enableResponseValidation) {
+        var label =  readModel._flags.label;
+        readModel = Joi.alternatives().try(readModel, Joi.any()).label(label);
+      }
 
       var auth = false;
 
@@ -646,7 +647,9 @@ module.exports = function (logger, mongoose, server) {
 
         if (!_.isEmpty(scope)) {
           auth.scope = scope;
-          Log.debug("Scope for PUT/" + resourceAliasForRoute + '/{_id}' + ":", scope);
+          if (config.logScopes) {
+            Log.debug("Scope for PUT/" + resourceAliasForRoute + '/{_id}' + ":", scope);
+          }
         }
       }
       else {
@@ -666,7 +669,7 @@ module.exports = function (logger, mongoose, server) {
             params: {
               _id: Joi.objectId().required()
             },
-            payload: config.enablePayloadValidation ? updateModel : Joi.any(),
+            payload: updateModel,
             headers: headersValidation
           },
           plugins: {
@@ -685,7 +688,8 @@ module.exports = function (logger, mongoose, server) {
             }
           },
           response: {
-            schema: config.enableResponseValidation ? readModel : Joi.any()
+            failAction: config.enableResponseFail ? 'error' : 'log',
+            schema: readModel
           }
         }
       });
@@ -712,7 +716,9 @@ module.exports = function (logger, mongoose, server) {
       var childModelName = childModel.collectionDisplayName || childModel.modelName;
 
       Log = Log.bind(chalk.yellow("AddOne"));
-      Log.note("Generating addOne association endpoint for " + ownerModelName + " -> " + associationName);
+      if (config.logRoutes) {
+        Log.note("Generating addOne association endpoint for " + ownerModelName + " -> " + associationName);
+      }
 
       options = options || {};
 
@@ -725,7 +731,12 @@ module.exports = function (logger, mongoose, server) {
 
       //EXPL: A payload is only relevant if a through model is defined
       if (association.include.through) {
-        payloadValidation = joiMongooseHelper.generateJoiAssociationModel(association.include.through, Log);
+        payloadValidation = joiMongooseHelper.generateJoiCreateModel(association.include.through, Log);
+
+        if (!config.enablePayloadValidation) {
+          var label =  payloadValidation._flags.label;
+          payloadValidation = Joi.alternatives().try(payloadValidation, Joi.any()).label(label);
+        }
       }
 
       var auth = false;
@@ -741,7 +752,9 @@ module.exports = function (logger, mongoose, server) {
 
         if (!_.isEmpty(scope)) {
           auth.scope = scope;
-          Log.debug("Scope for PUT/" + ownerAlias + '/{ownerId}/' + childAlias + "/{childId}" + ":", scope);
+          if (config.logScopes) {
+            Log.debug("Scope for PUT/" + ownerAlias + '/{ownerId}/' + childAlias + "/{childId}" + ":", scope);
+          }
         }
       }
       else {
@@ -762,7 +775,7 @@ module.exports = function (logger, mongoose, server) {
               ownerId: Joi.objectId().required(),
               childId: Joi.objectId().required()
             },
-            payload: config.enablePayloadValidation ? payloadValidation : Joi.any(),
+            payload: payloadValidation,
             headers: headersValidation
           },
           plugins: {
@@ -780,7 +793,10 @@ module.exports = function (logger, mongoose, server) {
               ]
             }
           },
-          response: {}//TODO: verify what response schema is needed here
+          response: {
+
+            // failAction: config.enableResponseFail ? 'error' : 'log',
+          }//TODO: verify what response schema is needed here
         }
       });
     },
@@ -806,7 +822,9 @@ module.exports = function (logger, mongoose, server) {
       var childModelName = childModel.collectionDisplayName || childModel.modelName;
 
       Log = Log.bind(chalk.yellow("RemoveOne"));
-      Log.note("Generating removeOne association endpoint for " + ownerModelName + " -> " + associationName);
+      if (config.logRoutes) {
+        Log.note("Generating removeOne association endpoint for " + ownerModelName + " -> " + associationName);
+      }
 
       options = options || {};
 
@@ -828,7 +846,9 @@ module.exports = function (logger, mongoose, server) {
 
         if (!_.isEmpty(scope)) {
           auth.scope = scope;
-          Log.debug("Scope for DELETE/" + ownerAlias + '/{ownerId}/' + childAlias + "/{childId}" + ":", scope);
+          if (config.logScopes) {
+            Log.debug("Scope for DELETE/" + ownerAlias + '/{ownerId}/' + childAlias + "/{childId}" + ":", scope);
+          }
         }
       }
       else {
@@ -863,7 +883,9 @@ module.exports = function (logger, mongoose, server) {
               ]
             }
           },
-          response: {}
+          response: {
+            // failAction: config.enableResponseFail ? 'error' : 'log',
+          }
         }
       });
     },
@@ -889,7 +911,9 @@ module.exports = function (logger, mongoose, server) {
       var childModelName = childModel.collectionDisplayName || childModel.modelName;
 
       Log = Log.bind(chalk.yellow("AddMany"));
-      Log.note("Generating addMany association endpoint for " + ownerModelName + " -> " + associationName);
+      if (config.logRoutes) {
+        Log.note("Generating addMany association endpoint for " + ownerModelName + " -> " + associationName);
+      }
 
       options = options || {};
 
@@ -899,17 +923,23 @@ module.exports = function (logger, mongoose, server) {
       var handler = HandlerHelper.generateAssociationAddManyHandler(ownerModel, association, options, Log);
 
       var payloadValidation;
+      var label = "";
 
       if (association.include && association.include.through) {
-        payloadValidation = joiMongooseHelper.generateJoiAssociationModel(association.include.through, Log);
-        var label =  payloadValidation._flags.label + "_many";
+        payloadValidation = joiMongooseHelper.generateJoiCreateModel(association.include.through, Log);
+        label =  payloadValidation._flags.label + "_many";
         payloadValidation = payloadValidation.keys({
-          childId: Joi.objectId()
+          childId: Joi.objectId().description("the " + childModelName + "'s _id")
         }).label(label);
         payloadValidation = Joi.array().items(payloadValidation).required();
       } 
       else {
         payloadValidation = Joi.array().items(Joi.objectId()).required();
+      }
+
+      if (!config.enablePayloadValidation) {
+        label =  payloadValidation._flags.label;
+        payloadValidation = Joi.alternatives().try(payloadValidation, Joi.any()).label(label || "blank");
       }
 
       var auth = false;
@@ -925,7 +955,9 @@ module.exports = function (logger, mongoose, server) {
 
         if (!_.isEmpty(scope)) {
           auth.scope = scope;
-          Log.debug("Scope for POST/" + ownerAlias + '/{ownerId}/' + childAlias + ":", scope);
+          if (config.logScopes) {
+            Log.debug("Scope for POST/" + ownerAlias + '/{ownerId}/' + childAlias + ":", scope);
+          }
         }
       }
       else {
@@ -945,7 +977,7 @@ module.exports = function (logger, mongoose, server) {
             params: {
               ownerId: Joi.objectId().required()
             },
-            payload: config.enablePayloadValidation ? payloadValidation : Joi.any(),
+            payload: payloadValidation,
             headers: headersValidation
           },
           plugins: {
@@ -960,7 +992,9 @@ module.exports = function (logger, mongoose, server) {
               ]
             }
           },
-          response: {}
+          response: {
+            // failAction: config.enableResponseFail ? 'error' : 'log',
+          }
         }
       })
     },
@@ -986,7 +1020,9 @@ module.exports = function (logger, mongoose, server) {
       var childModelName = childModel.collectionDisplayName || childModel.modelName;
 
       Log = Log.bind(chalk.yellow("RemoveMany"));
-      Log.note("Generating removeMany association endpoint for " + ownerModelName + " -> " + associationName);
+      if (config.logRoutes) {
+        Log.note("Generating removeMany association endpoint for " + ownerModelName + " -> " + associationName);
+      }
 
       options = options || {};
 
@@ -996,6 +1032,10 @@ module.exports = function (logger, mongoose, server) {
       var handler = HandlerHelper.generateAssociationRemoveManyHandler(ownerModel, association, options, Log);
 
       var payloadValidation = Joi.array().items(Joi.objectId()).required();
+
+      if (!config.enablePayloadValidation) {
+        payloadValidation = Joi.alternatives().try(payloadValidation, Joi.any());
+      }
 
       var auth = false;
 
@@ -1010,7 +1050,9 @@ module.exports = function (logger, mongoose, server) {
 
         if (!_.isEmpty(scope)) {
           auth.scope = scope;
-          Log.debug("Scope for DELETE/" + ownerAlias + '/{ownerId}/' + childAlias + ":", scope);
+          if (config.logScopes) {
+            Log.debug("Scope for DELETE/" + ownerAlias + '/{ownerId}/' + childAlias + ":", scope);
+          }
         }
       }
       else {
@@ -1030,7 +1072,7 @@ module.exports = function (logger, mongoose, server) {
             params: {
               ownerId: Joi.objectId().required()
             },
-            payload: config.enablePayloadValidation ? payloadValidation : Joi.any(),
+            payload: payloadValidation,
             headers: headersValidation
           },
           plugins: {
@@ -1045,7 +1087,9 @@ module.exports = function (logger, mongoose, server) {
               ]
             }
           },
-          response: {}
+          response: {
+            // failAction: config.enableResponseFail ? 'error' : 'log',
+          }
         }
       })
     },
@@ -1068,7 +1112,9 @@ module.exports = function (logger, mongoose, server) {
       var ownerModelName = ownerModel.collectionDisplayName || ownerModel.modelName;
       
       Log = Log.bind(chalk.yellow("GetAll"));
-      Log.note("Generating list association endpoint for " + ownerModelName + " -> " + associationName);
+      if (config.logRoutes) {
+        Log.note("Generating list association endpoint for " + ownerModelName + " -> " + associationName);
+      }
       
       options = options || {};
 
@@ -1080,60 +1126,22 @@ module.exports = function (logger, mongoose, server) {
 
       var handler = HandlerHelper.generateAssociationGetAllHandler(ownerModel, association, options, Log);
 
-      var queryValidation = {
-        $skip: Joi.number().integer().min(0).optional()
-        .description('The number of records to skip in the database. This is typically used in pagination.'),
-        $page: Joi.number().integer().min(0).optional()
-            .description('The number of records to skip based on the $limit parameter. This is typically used in pagination.'),
-        $limit: Joi.number().integer().min(0).optional()
-        .description('The maximum number of records to return. This is typically used in pagination.')
-      };
-
-      var queryableFields = queryHelper.getQueryableFields(childModel, Log);
-
-      var readableFields = queryHelper.getReadableFields(childModel, Log);
-
-      var sortableFields = queryHelper.getSortableFields(childModel, Log);
-
-      if (queryableFields && readableFields) {
-        queryValidation.$select = Joi.alternatives().try(Joi.array().items(Joi.string().valid(readableFields))
-            .description('A list of basic fields to be included in each resource. Valid values include: ' + readableFields.toString().replace(/,/g,', ')), Joi.string().valid(readableFields));
-        queryValidation.$text = Joi.string().optional()
-            .description('A full text search parameter. Takes advantage of indexes for efficient searching. Also implements stemming ' +
-                'with searches. Prefixing search terms with a "-" will exclude results that match that term.');
-        queryValidation.$term = Joi.string().optional()
-            .description('A regex search parameter. Slower than `$text` search but supports partial matches and doesn\'t require ' +
-                'indexing. This can be refined using the `$searchFields` parameter.');
-        queryValidation.$searchFields = Joi.alternatives().try(Joi.array().items(Joi.string().valid(queryableFields))
-            .description('A set of fields to apply the `$term` search parameter to. If this parameter is not included, the `$term` ' +
-                'search parameter is applied to all searchable fields. Valid values include: ' + queryableFields.toString().replace(/,/g,', ')), Joi.string().valid(queryableFields));
-        queryValidation.$sort = Joi.alternatives().try(Joi.array().items(Joi.string().valid(sortableFields))
-            .description('A set of fields to sort by. Including field name indicates it should be sorted ascending, while prepending ' +
-                '\'-\' indicates descending. The default sort direction is \'ascending\' (lowest value to highest value). Listing multiple' +
-                'fields prioritizes the sort starting with the first field listed. Valid values include: ' + sortableFields.toString().replace(/,/g,', ')), Joi.string().valid(sortableFields));
-        queryValidation.$exclude = Joi.alternatives().try(Joi.array().items(Joi.objectId())
-            .description('A list of objectIds to exclude in the result.'), Joi.objectId());
-        queryValidation.$count = Joi.boolean()
-            .description('If set to true, only a count of the query results will be returned.');
-        queryValidation.$where = Joi.any().optional()
-            .description('An optional field for raw mongoose queries.');
-
-        _.each(queryableFields, function (fieldName) {
-          const joiModel = joiMongooseHelper.generateJoiModelFromFieldType(childModel.schema.paths[fieldName].options, Log);
-          queryValidation[fieldName] = Joi.alternatives().try(Joi.array().items(joiModel)
-              .description('Match values for the ' + fieldName + ' property.'), joiModel);
-        })
-      }
-
-      var associations = childModel.routeOptions ? childModel.routeOptions.associations : null;
-      if (associations) {
-        queryValidation.$embed = Joi.alternatives().try(Joi.array().items(Joi.string())
-            .description('A set of complex object properties to populate. Valid first level values include ' + Object.keys(associations).toString().replace(/,/g,', ')), Joi.string());
-        queryValidation.$flatten = Joi.boolean()
-            .description('Set to true to flatten embedded arrays, i.e. remove linking-model data.');
-      }
+      var queryModel = joiMongooseHelper.generateJoiListQueryModel(childModel, Log);
 
       var readModel = joiMongooseHelper.generateJoiReadModel(childModel, Log);
+
+      if (association.linkingModel) {
+        var associationModel = {};
+        associationModel[association.linkingModel] = joiMongooseHelper.generateJoiReadModel(association.include.through, Log);
+        readModel = readModel.keys(associationModel);
+      }
+
+      readModel = readModel.label(ownerModelName + "_" + associationName + "ReadModel");
+
+      if (!config.enableResponseValidation) {
+        var label =  readModel._flags.label;
+        readModel = Joi.alternatives().try(readModel, Joi.any()).label(label);
+      }
 
       var auth = false;
 
@@ -1148,7 +1156,9 @@ module.exports = function (logger, mongoose, server) {
 
         if (!_.isEmpty(scope)) {
           auth.scope = scope;
-          Log.debug("Scope for GET/" + ownerAlias + '/{ownerId}/' + childAlias + ":", scope);
+          if (config.logScopes) {
+            Log.debug("Scope for GET/" + ownerAlias + '/{ownerId}/' + childAlias + ":", scope);
+          }
         }
       }
       else {
@@ -1165,7 +1175,7 @@ module.exports = function (logger, mongoose, server) {
           description: 'Get all of the ' + associationName + ' for a ' + ownerModelName,
           tags: ['api', associationName, ownerModelName],
           validate: {
-            query: config.enableQueryValidation ? queryValidation : Joi.any(),
+            query: queryModel,
             params: {
               ownerId: Joi.objectId().required()
             },
@@ -1184,8 +1194,10 @@ module.exports = function (logger, mongoose, server) {
             }
           },
           response: {
-            schema: config.enableResponseValidation ? Joi.alternatives().try(Joi.object({ docs: Joi.array().items(readModel), pages: Joi.any(), items: Joi.any() }), Joi.number()) :
-                Joi.alternatives().try(Joi.object({ docs: Joi.array().items(Joi.any()), pages: Joi.any(), items: Joi.any() }), Joi.number() )
+            failAction: config.enableResponseFail ? 'error' : 'log',
+            schema: Joi.alternatives().try(
+                Joi.object({ docs: Joi.array().items(readModel).label(ownerModelName + "_" + associationName + "ArrayModel"), pages: Joi.any(), items: Joi.any() }),
+                Joi.number()).label(ownerModelName + "_" + associationName + "ListModel")
           }
         }
       });

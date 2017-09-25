@@ -25,9 +25,9 @@ rest-hapi is a hapi plugin intended to abstract the work involved in setting up 
 
 View the swagger docs for the live demos:
 
-appy: http://ec2-35-164-131-1.us-west-2.compute.amazonaws.com:8125
+appy: http://ec2-52-25-112-131.us-west-2.compute.amazonaws.com:8125
 
-rest-hapi-demo: http://ec2-35-164-131-1.us-west-2.compute.amazonaws.com:8124
+rest-hapi-demo: http://ec2-52-25-112-131.us-west-2.compute.amazonaws.com:8124
 
 ## Example Projects
 
@@ -204,6 +204,14 @@ config.enableCreatedAt = true;
 config.enableUpdatedAt = true;
 
 /**
+ * Flag specifying whether to text index all string fields for all models to enable text search.
+ * WARNING: enabling this adds overhead to add inserts and updates, as well as added storage requirements.
+ * Default is false.
+ * @type {boolean}
+ */
+config.enableTextSearch = false;
+
+/**
  * Soft delete options
  * - enableSoftDelete: adds "isDeleted" property to each model. Delete endpoints set "isDeleted" to true
  * unless the payload contains { hardDelete: true }, in which case the document is actually deleted (default false)
@@ -224,6 +232,15 @@ config.enablePayloadValidation = true;
 config.enableResponseValidation = true;
 
 /**
+ * Determines the hapi failAction of each response. If true, responses that fail validation will return
+ * a 500 error.  If set to false, responses that fail validation will just log the offense and send
+ * the response as-is.
+ * default: false
+ * @type {boolean}
+ */
+config.enableResponseFail = false;
+
+/**
  * If set to true, (and authStrategy is not false) then endpoints will be generated with pre-defined
  * scopes based on the model definition.
  * default: false
@@ -232,12 +249,18 @@ config.enableResponseValidation = true;
 config.generateScopes = false;
 
 /**
- * Flag specifying whether to text index all string fields for all models to enable text search.
- * WARNING: enabling this adds overhead to add inserts and updates, as well as added storage requirements.
- * Default is false.
+ * If set to true, the scope for each endpoint will be logged when then endpoint is generated.
+ * default: false
  * @type {boolean}
  */
-config.enableTextSearch = false;
+config.logScopes = false;
+
+/**
+ * If set to true, each route will be logged as it is generated.
+ * default: false
+ * @type {boolean}
+ */
+config.logRoutes = false;
 
 /**
  * Log level options:
@@ -1173,6 +1196,7 @@ parameter: ``/group?$embed=users.title`` which could result in the following res
 [Back to top](#readme-contents)
 
 ## Validation
+### Route Validation
 Validation in the rest-hapi framework is implemented with [joi](https://github.com/hapijs/joi).  
 This includes validation of headers, query parameters, payloads, and responses.  joi validation models
 are based primarily off of each model's field properties.  Below is a list of mongoose schema types 
@@ -1218,6 +1242,85 @@ allowOnCreate: false | field excluded from create model
 queryable: false | field cannot be included as a query parameter
 exclude: true | field cannot be included in a response or as part of a query
 allowNull: true | field accepts ``null`` as a valid value
+
+### Joi Helper Methods
+rest-hapi exposes the helper methods it uses to generate Joi models through the `joiHelper` property. Combined with the exposed [mongoose wrapper methods](#mongoose-wrapper-methods), this allows you to easily create [custom endpoints](#standalone-endpoints). You can see a description of these methods below:
+
+```javascript
+/**
+ * Generates a Joi object that validates a query result for a specific model
+ * @param model: A mongoose model object.
+ * @param Log: A logging object.
+ * @returns {*}: A Joi object
+ */
+generateJoiReadModel = function (model, Log) {...};
+
+/**
+ * Generates a Joi object that validates a query request payload for updating a document
+ * @param model: A mongoose model object.
+ * @param Log: A logging object.
+ * @returns {*}: A Joi object
+ */
+generateJoiUpdateModel = function (model, Log) {...};
+
+/**
+ * Generates a Joi object that validates a request payload for creating a document
+ * @param model: A mongoose model object.
+ * @param Log: A logging object.
+ * @returns {*}: A Joi object
+ */
+generateJoiCreateModel = function (model, Log) {...};
+
+/**
+ * Generates a Joi object that validates a request query for the list function
+ * @param model: A mongoose model object.
+ * @param Log: A logging object.
+ * @returns {*}: A Joi object
+ */
+generateJoiListQueryModel = function (model, Log) {...};
+
+/**
+ * Generates a Joi object that validates a request query for the find function
+ * @param model: A mongoose model object.
+ * @param Log: A logging object.
+ * @returns {*}: A Joi object
+ */
+generateJoiFindQueryModel = function (model, Log) {...};
+
+/**
+ * Generates a Joi object for a model field
+ * @param model: A mongoose model object
+ * @param field: A model field
+ * @param fieldName: The name of the field
+ * @param modelType: The type of CRUD model being generated
+ * @param Log: A logging object
+ * @returns {*}: A Joi object
+ */
+generateJoiFieldModel = function (model, field, fieldName, modelType, Log) {...};
+
+/**
+ * Returns a Joi object based on the mongoose field type.
+ * @param field: A field from a mongoose model.
+ * @param Log: A logging object.
+ * @returns {*}: A Joi object.
+ */
+generateJoiModelFromFieldType = function (field, Log) {...};
+
+/**
+ * Provides easy access to the Joi ObjectId type.
+ * @returns {*|{type}}
+ */
+joiObjectId = function () {...};
+
+/**
+ * Checks to see if a field is a valid model property
+ * @param fieldName: The name of the field
+ * @param field: The field being checked
+ * @param model: A mongoose model object
+ * @returns {boolean}
+ */
+isValidField = function (fieldName, field, model) {...};
+```
 
 [Back to top](#readme-contents)
 
@@ -1496,7 +1599,7 @@ A more detailed description of each method can be found below:
  * @param Log: A logging object.
  * @returns {object} A promise for the resulting model documents.
  */
-function list(model, query, Log)
+function list(model, query, Log) {...},
 
 /**
  * Finds a model document
@@ -1506,7 +1609,7 @@ function list(model, query, Log)
  * @param Log: A logging object.
  * @returns {object} A promise for the resulting model document.
  */
-function find(model, _id, query, Log) {...}
+function find(model, _id, query, Log) {...},
 
 /**
  * Creates a model document
@@ -1515,7 +1618,7 @@ function find(model, _id, query, Log) {...}
  * @param Log: A logging object.
  * @returns {object} A promise for the resulting model document.
  */
-function create(model, payload, Log) {...}
+function create(model, payload, Log) {...},
 
 /**
  * Updates a model document
@@ -1525,7 +1628,7 @@ function create(model, payload, Log) {...}
  * @param Log: A logging object.
  * @returns {object} A promise for the resulting model document.
  */
-function update(model, _id, payload, Log) {...}
+function update(model, _id, payload, Log) {...},
 
 /**
  * Deletes a model document
@@ -1535,7 +1638,7 @@ function update(model, _id, payload, Log) {...}
  * @param Log: A logging object.
  * @returns {object} A promise returning true if the delete succeeds.
  */
-function deleteOne(model, _id, hardDelete, Log) {...}
+function deleteOne(model, _id, hardDelete, Log) {...},
 
 /**
  * Deletes multiple documents
@@ -1544,7 +1647,7 @@ function deleteOne(model, _id, hardDelete, Log) {...}
  * @param Log: A logging object.
  * @returns {object} A promise returning true if the delete succeeds.
  */
-function deleteMany(model, payload, Log) {...}
+function deleteMany(model, payload, Log) {...},
 
 /**
  * Adds an association to a document
@@ -1557,7 +1660,7 @@ function deleteMany(model, payload, Log) {...}
  * @param Log: A logging object
  * @returns {object} A promise returning true if the add succeeds.
  */
-function addOne(ownerModel, ownerId, childModel, childId, associationName, payload, Log) {...}
+function addOne(ownerModel, ownerId, childModel, childId, associationName, payload, Log) {...},
 
 /**
  * Removes an association to a document
@@ -1569,7 +1672,7 @@ function addOne(ownerModel, ownerId, childModel, childId, associationName, paylo
  * @param Log: A logging object
  * @returns {object} A promise returning true if the remove succeeds.
  */
-function removeOne(ownerModel, ownerId, childModel, childId, associationName, Log) {...}
+function removeOne(ownerModel, ownerId, childModel, childId, associationName, Log) {...},
 
 /**
  * Adds multiple associations to a document
@@ -1581,7 +1684,7 @@ function removeOne(ownerModel, ownerId, childModel, childId, associationName, Lo
  * @param Log: A logging object
  * @returns {object} A promise returning true if the add succeeds.
  */
-function addMany(ownerModel, ownerId, childModel, associationName, payload, Log) {...}
+function addMany(ownerModel, ownerId, childModel, associationName, payload, Log) {...},
 
 /**
  * Removes multiple associations from a document
@@ -1593,7 +1696,7 @@ function addMany(ownerModel, ownerId, childModel, associationName, payload, Log)
  * @param Log: A logging object
  * @returns {object} A promise returning true if the remove succeeds.
  */
-function removeMany(ownerModel, ownerId, childModel, associationName, payload, Log) {...}
+function removeMany(ownerModel, ownerId, childModel, associationName, payload, Log) {...},
 
 /**
  * Get all of the associations for a document
