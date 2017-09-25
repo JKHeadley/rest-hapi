@@ -1423,7 +1423,8 @@ function _setAssociation(ownerModel, ownerObject, childModel, childId, associati
             }
 
             //EXPL: if linking models aren't embeded, just upsert the linking model collection
-            if (!config.embedLinkingModels) {
+            var embedAssociation = association.embedAssociation === undefined ? config.embedAssociations : association.embedAssociation;
+            if (!embedAssociation) {
               const linkingModel = association.include.through;
               let query = {};
               query[ownerModel.modelName + "Id"] = ownerObject._id;
@@ -1569,40 +1570,52 @@ function _removeAssociation(ownerModel, ownerObject, childModel, childId, associ
           }
           else if (associationType === "MANY_MANY") {//EXPL: remove references from both models
 
-            //EXPL: remove the associated child from the owner
-            var deleteChild = ownerObject[associationName].filter(function(child) {
-              return child[childModel.modelName].toString() === childObject._id.toString();
-            });
-            deleteChild = deleteChild[0];
+            //EXPL: if linking models aren't embeded, just upsert the linking model collection
+            var embedAssociation = association.embedAssociation === undefined ? config.embedAssociations : association.embedAssociation;
+            if (!embedAssociation) {
+              const linkingModel = association.include.through;
+              let query = {};
+              query[ownerModel.modelName + "Id"] = ownerObject._id;
+              query[childModel.modelName + "Id"] = childObject._id;
 
-            var index = ownerObject[associationName].indexOf(deleteChild);
-            if (index > -1) {
-              ownerObject[associationName].splice(index, 1);
+              promise = linkingModel.findOneAndRemove(query);
             }
+            else {
+              //EXPL: remove the associated child from the owner
+              var deleteChild = ownerObject[associationName].filter(function(child) {
+                return child[childModel.modelName].toString() === childObject._id.toString();
+              });
+              deleteChild = deleteChild[0];
 
-            //EXPL: get the child association name
-            var childAssociation = {};
-            var childAssociations = childModel.routeOptions.associations;
-            for (var childAssociationKey in childAssociations) {
-              var association = childAssociations[childAssociationKey];
-              if (association.model === ownerModel.modelName) {
-                childAssociation = association;
+              var index = ownerObject[associationName].indexOf(deleteChild);
+              if (index > -1) {
+                ownerObject[associationName].splice(index, 1);
               }
+
+              //EXPL: get the child association name
+              var childAssociation = {};
+              var childAssociations = childModel.routeOptions.associations;
+              for (var childAssociationKey in childAssociations) {
+                var association = childAssociations[childAssociationKey];
+                if (association.model === ownerModel.modelName) {
+                  childAssociation = association;
+                }
+              }
+              var childAssociationName = childAssociation.include.as;
+
+              //EXPL: remove the associated owner from the child
+              var deleteOwner = childObject[childAssociationName].filter(function(owner) {
+                return owner[ownerModel.modelName].toString() === ownerObject._id.toString();
+              });
+              deleteOwner = deleteOwner[0];
+
+              index = childObject[childAssociationName].indexOf(deleteOwner);
+              if (index > -1) {
+                childObject[childAssociationName].splice(index, 1);
+              }
+
+              promise = Q.all([ownerModel.findByIdAndUpdate(ownerObject._id, ownerObject), childModel.findByIdAndUpdate(childObject._id, childObject)]);
             }
-            var childAssociationName = childAssociation.include.as;
-
-            //EXPL: remove the associated owner from the child
-            var deleteOwner = childObject[childAssociationName].filter(function(owner) {
-              return owner[ownerModel.modelName].toString() === ownerObject._id.toString();
-            });
-            deleteOwner = deleteOwner[0];
-
-            index = childObject[childAssociationName].indexOf(deleteOwner);
-            if (index > -1) {
-              childObject[childAssociationName].splice(index, 1);
-            }
-
-            promise = Q.all([ownerModel.findByIdAndUpdate(ownerObject._id, ownerObject), childModel.findByIdAndUpdate(childObject._id, childObject)]);
           }
           else if (associationType === "_MANY") {//EXPL: remove reference from owner model
 
