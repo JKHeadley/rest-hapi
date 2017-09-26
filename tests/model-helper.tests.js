@@ -199,7 +199,7 @@ test('model-helper.extendSchemaAssociations', function (t) {
 
   t.test('model-helper.extendSchemaAssociations uses linkingModel to extend schema if it exists and the association is embedded.', sinon.test(function (t) {
     //<editor-fold desc="Arrange">
-    t.plan(1);
+    t.plan(2);
 
     var modelHelper = rewire('../utilities/model-helper');
     var config = {
@@ -274,6 +274,19 @@ test('model-helper.extendSchemaAssociations', function (t) {
         }
         deferred.resolve();
       });
+
+      var linkingModel = {
+        Schema: {
+          linkingModel: {
+            type: Types.ObjectId
+          }
+        },
+        modelName: "test_linking"
+      };
+
+      var linkingModelSchema = new mongoose.Schema(linkingModel.Schema, { collection: linkingModel.modelName });
+
+      var linkingModel = mongoose.model(linkingModel.modelName, linkingModelSchema);
       //</editor-fold>
 
       deferred.promise.then(function () {
@@ -289,11 +302,14 @@ test('model-helper.extendSchemaAssociations', function (t) {
 
         //<editor-fold desc="Assert">
         t.ok(userSchema.add.calledWithExactly(extendObject), "Schema.add was called with extendObject");
+        t.deepEqual(userSchema.statics.routeOptions.associations.groups.include.through.schema, linkingModel.schema, "linking model schema valid");
         //</editor-fold>
 
         //<editor-fold desc="Restore">
         // rmdir(__dirname + "/../models");
         // fs.unlinkSync(linkingModelPath);
+        delete mongoose.models.test_linking;
+        delete mongoose.modelSchemas.test_linking;
         //</editor-fold>
       });
     });
@@ -446,8 +462,8 @@ test('model-helper.extendSchemaAssociations', function (t) {
 
     //<editor-fold desc="Restore">
     rmdir(__dirname + "/../models");
-    delete mongoose.models.user_group;
-    delete mongoose.modelSchemas.user_group;
+    delete mongoose.models.test_linking;
+    delete mongoose.modelSchemas.test_linking;
     //</editor-fold>
   }));
 

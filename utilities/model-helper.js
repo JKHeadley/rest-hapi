@@ -107,15 +107,16 @@ internals.extendSchemaAssociations = function (Schema, mongoose, modelPath) {
 
           association.include = {};
 
+          let modelExists = true;
+          try {
+            association.include.through = mongoose.model(linkingModel.modelName);
+          }
+          catch(error) {
+            modelExists = false;
+          }
+
           //EXPL: if the association isn't embedded, create separate collection for linking model
           if (!embedAssociation) {
-            let modelExists = true;
-            try {
-              association.include.through = mongoose.model(linkingModel.modelName);
-            }
-            catch(error) {
-              modelExists = false;
-            }
             if (!modelExists) {
               const modelName = Schema.options.collection;
               const Types = mongoose.Schema.Types;
@@ -127,11 +128,11 @@ internals.extendSchemaAssociations = function (Schema, mongoose, modelPath) {
                 type: Types.ObjectId,
                 ref: association.model
               };
-              var linkingModelSchema = new mongoose.Schema(linkingModel.Schema, { collection: linkingModel.modelName });
 
+              var linkingModelSchema = new mongoose.Schema(linkingModel.Schema, { collection: linkingModel.modelName });
               association.include.through = mongoose.model(linkingModel.modelName, linkingModelSchema);
             }
-            association.include.through.routeOptions = {};
+
             //EXPL: we use virtual relationships for linking model collections
             Schema.virtual(associationKey, {
               ref: linkingModel.modelName,
@@ -141,6 +142,11 @@ internals.extendSchemaAssociations = function (Schema, mongoose, modelPath) {
           }
           //EXPL: if the association is embedded, extend original schema with linking model schema
           else {
+            if (!modelExists) {
+              var linkingModelSchema = new mongoose.Schema(linkingModel.Schema, { collection: linkingModel.modelName });
+              association.include.through = mongoose.model(linkingModel.modelName, linkingModelSchema);
+            }
+
             for (var objectKey in linkingModel.Schema) {
               var object = linkingModel.Schema[objectKey];
               dataObject[objectKey] = object;
@@ -149,6 +155,8 @@ internals.extendSchemaAssociations = function (Schema, mongoose, modelPath) {
             extendObject[associationKey] = [dataObject];
             Schema.add(extendObject);
           }
+
+          association.include.through.routeOptions = {};
         }
         else {
           //EXPL: if the association isn't embedded and a linking model isn't defined, then we need to create a basic linking collection
