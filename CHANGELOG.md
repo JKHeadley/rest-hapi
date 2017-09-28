@@ -105,5 +105,6 @@ post(hardDelete, deleted, Log) | post(hardDelete, deleted, request, Log)
 [0.24.0]: https://github.com/jkheadley/rest-hapi/compare/v0.23.0...v0.24.0
 [0.25.0]: https://github.com/jkheadley/rest-hapi/compare/v0.24.0...v0.25.0
 [0.26.0]: https://github.com/jkheadley/rest-hapi/compare/v0.25.0...v0.26.0
+[0.27.0]: https://github.com/jkheadley/rest-hapi/compare/v0.26.0...v0.27.0
 
 [BREAKING]: https://github.com/JKHeadley/rest-hapi/releases
