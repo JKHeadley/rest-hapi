@@ -4399,7 +4399,7 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function (t) {
       return Joi.any()
     });
     joiMongooseHelperStub.generateJoiCreateModel = function () {
-      return Joi.any().valid("TEST")
+      return Joi.object({ test: "test" });
     };
     var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
       './handler-helper-factory': handlerHelperStubWrapper,
@@ -4440,7 +4440,7 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function (t) {
     var serverObject2 = server.route.args[1][0];
     // Log.debug(JSON.stringify(serverObject));
     t.deepEqual(serverObject1.config.validate.payload, null, "correct payload validation");
-    t.deepEqual(serverObject2.config.validate.payload, Joi.any().valid("TEST"), "correct payload validation");
+    t.deepEqual(serverObject2.config.validate.payload, Joi.object({ test: "test" }), "correct payload validation");
     //</editor-fold>
 
     //<editor-fold desc="Restore">
@@ -6094,7 +6094,7 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function (t) {
       return Joi.any()
     });
     joiMongooseHelperStub.generateJoiCreateModel = function () {
-      return Joi.object().unknown()
+      return Joi.object({ test: "test" }).unknown()
     };
     var joiStub = require('joi');
 
@@ -6134,7 +6134,7 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function (t) {
     var association1 = {include: {model: {modelName: "TEST1", schema: {methods: {}}}}};
     var association2 = {include: {model: {modelName: "TEST2", schema: {methods: {}}}, through: {}}, alias: "TEST2"};
 
-    var payloadValidation1 = Joi.array().items(Joi.object().unknown().keys({childId: Joi.any().valid("objectId").description("the " + "TEST2" + "'s _id")}).label("undefined_many")).required();
+    var payloadValidation1 = Joi.array().items(Joi.object({ test: "test" }).unknown().keys({childId: Joi.any().valid("objectId").description("the " + "TEST2" + "'s _id")}).label("undefined_many")).required();
     var payloadValidation2 = Joi.array().items(Joi.any().valid("objectId")).required();
     //</editor-fold>
 
