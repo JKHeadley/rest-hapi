@@ -196,6 +196,19 @@ config.mongo.URI = 'mongodb://localhost/rest_hapi';
 config.authStrategy = false;
 
 /**
+ * If set to false, MANY_MANY associations (including linking model data) will be saved in their own collection in th db.  This is useful if a single document
+ * will be associated with many other documents, which could cause the document size to become very large. For example,
+ * a business might be associated with thousands of users.
+ *
+ * Embedding the associations will be more efficient for population/association queries but less efficient for memory/document size.
+ *
+ * This setting can be individually overwritten by setting the "embedAssociation" association property.
+ * default: false
+ * @type {boolean}
+ */
+config.embedAssociations = false;
+
+/**
  * MetaData options:
  * default: true
  * @type {boolean}
@@ -824,7 +837,7 @@ The extra field ``friendsSince`` could contain a date representing how long the 
 associated users have known each other.  This example also displays how models can contain a 
 reference to themselves.  
 
-**NOTE** The linking model filename does not have to match the model name, however the ``linkingModel``
+**NOTE:** The linking model filename does not have to match the model name, however the ``linkingModel``
 association property **must** match the linking model ``modleName`` property.
 
 
@@ -892,6 +905,98 @@ module.exports = function () {
   return Model;
 };
 ```
+
+#### MANY\_MANY data storage
+
+By nature every new instance of a MANY_MANY association adds new data to the database. At minimum this data must contain the `\_id`s of the associated documents, but this can be extended to include extra fields through a [linking model](#many_many-linking-models). rest-hapi provides two options as to how this data is stored in the db (controlled by the `config.embedAssociations` property):
+
+- `config.embedAssociations`: true
+    * The data is embeded as an array property within the related documents.
+    * Pros:
+        - The data is easy to access and quick to read from the db (theoretically, not proven).
+        - Fewer collections in the db.
+        - The association data is more human readable.
+    * Cons:
+        - Linking model data is duplicated for each related document.
+        - Exists as an array that grows without bound, which is a [MonboDB anti-pattern](https://docs.mongodb.com/manual/tutorial/model-referenced-one-to-many-relationships-between-documents/)
+- `config.embedAssociations`: false (default)
+    * The data is stored in an auto-generated linking collection.
+    * Pros:
+        - Data is offloaded to the linking collections, leaving the associated documents smaller and less cluttered.
+        - Prevents unbounded arrays and takes full advantage of [mongoose virtual references](http://thecodebarbarian.com/mongoose-virtual-populate)
+        - Linking model data isn't duplicated.
+    * Cons:
+        - Reading data is slower (theoretically, not proven).
+        - Less human readable.
+        
+The `config.embedAssociations` can be overwritten for individual associations through the `embedAssociation` property. See the example below:
+
+```javascript
+'use strict';
+
+module.exports = function (mongoose) {
+    var modelName = "group";
+    var Types = mongoose.Schema.Types;
+    var Schema = new mongoose.Schema({
+        name: {
+            type: Types.String,
+            required: true,
+            unique: true
+        },
+        description: {
+            type: Types.String
+        }
+    }, { collection: modelName });
+
+    Schema.statics = {
+        collectionName: modelName,
+        routeOptions: {
+            associations: {
+                users: {
+                    type: "MANY_MANY",
+                    alias: "user",
+                    model: "user",
+                    embedAssociation: true              //<-----overrides the config.embedAssociations property
+                }
+            }
+        }
+    };
+
+    return Schema;
+};
+```
+```javascript
+'use strict';
+
+module.exports = function (mongoose) {
+    var modelName = "user";
+    var Types = mongoose.Schema.Types;
+    var Schema = new mongoose.Schema({
+        name: {
+            type: Types.String,
+            required: true
+        }
+    }, { collection: modelName });
+
+    Schema.statics = {
+        collectionName: modelName,
+        routeOptions: {
+            associations: {
+                groups: {
+                    type: "MANY_MANY",
+                    alias: "group",
+                    model: "group",
+                    embedAssociation: true              //<-----overrides the config.embedAssociations property
+                }
+            }
+        }
+    };
+
+    return Schema;
+};
+```
+
+**NOTE:** If the `embedAssociation` property is set, then it must be set to the same value for both association definitions as seen above.
 
 ### \_MANY
 

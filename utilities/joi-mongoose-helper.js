@@ -66,6 +66,13 @@ internals.generateJoiReadModel = function (model, Log) {
         var associationBase = {};
         associationBase[association.model] = Joi.object();
         associationBase._id = internals.joiObjectId();
+        //EXPL: remove the key for the current model
+        if (associationModel._inner.children) {
+          associationModel._inner.children = associationModel._inner.children.filter(function(key) {
+            return key.key !== model.modelName;
+          });
+        }
+        //EXPL: add the keys for the association model and the _id
         associationModel = associationModel.keys(associationBase);
         //EXPL: also accept MANY_MANY flattened embeddings
         associationModel = Joi.alternatives().try(associationModel, Joi.object());

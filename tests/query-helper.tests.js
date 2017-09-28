@@ -694,7 +694,8 @@ test('query-helper.populateEmbeddedDocs', function (t) {
         model: {},
         include: {
           model: {}
-        }
+        },
+        embedAssociation: true
       }
     };
     //</editor-fold>
@@ -732,7 +733,8 @@ test('query-helper.populateEmbeddedDocs', function (t) {
         model: "role",
         include: {
           model: {}
-        }
+        },
+        embedAssociation: true
       }
     };
 
@@ -742,7 +744,8 @@ test('query-helper.populateEmbeddedDocs', function (t) {
         model: "role",
         include: {
           model: {}
-        }
+        },
+        embedAssociation: true
       }
     };
 
@@ -774,19 +777,32 @@ test('query-helper.populateEmbeddedDocs', function (t) {
 
     var nestPopulate = queryHelper.__get__("nestPopulate");
 
-    t.plan(8);
+    t.plan(13);
 
     var query = {};
 
-    var embeds = ["title", "users", "one", "groups"];
+    var embeds = ["title", "users", "one", "groups", "teams"];
+
+    var associations_five = {
+      teams: {
+        type: "MANY_MANY",
+        model: "team",
+        include: {
+          model: {routeOptions: {associations: {}}},
+          through: { modelName: "user_team" }
+        },
+        embedAssociation: false
+      }
+    };
 
     var associations_four = {
       groups: {
         type: "MANY_MANY",
         model: "group",
         include: {
-          model: {routeOptions: {associations: {}}}
-        }
+          model: {routeOptions: {associations: associations_five}}
+        },
+        embedAssociation: true
       }
     };
 
@@ -834,7 +850,12 @@ test('query-helper.populateEmbeddedDocs', function (t) {
     t.equals(populate.populate.populate.path, "one");
     t.equals(populate.populate.populate.select, "test groups.group groups");
     t.equals(populate.populate.populate.populate.path, "groups.group");
-    t.equals(populate.populate.populate.populate.select, "test");
+    t.equals(populate.populate.populate.populate.select, "test teams teams");
+    t.equals(populate.populate.populate.populate.populate.path, "teams");
+    t.equals(populate.populate.populate.populate.populate.select, "test team team");
+    t.equals(populate.populate.populate.populate.populate.model, "user_team");
+    t.equals(populate.populate.populate.populate.populate.populate.path, "team");
+    t.equals(populate.populate.populate.populate.populate.populate.select, "test");
     //</editor-fold>
 
     //<editor-fold desc="Restore">
