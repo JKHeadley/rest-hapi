@@ -732,6 +732,9 @@ module.exports = function (logger, mongoose, server) {
       //EXPL: A payload is only relevant if a through model is defined
       if (association.include.through) {
         payloadValidation = joiMongooseHelper.generateJoiCreateModel(association.include.through, Log);
+        payloadValidation._inner.children = payloadValidation._inner.children.filter(function(key) {
+          return key.key !== ownerModelName && key.key !== childModelName;
+        });
 
         if (!config.enablePayloadValidation) {
           var label =  payloadValidation._flags.label;
@@ -927,6 +930,9 @@ module.exports = function (logger, mongoose, server) {
 
       if (association.include && association.include.through) {
         payloadValidation = joiMongooseHelper.generateJoiCreateModel(association.include.through, Log);
+        payloadValidation._inner.children = payloadValidation._inner.children.filter(function(key) {
+          return key.key !== ownerModelName && key.key !== childModelName;
+        });
         label =  payloadValidation._flags.label + "_many";
         payloadValidation = payloadValidation.keys({
           childId: Joi.objectId().description("the " + childModelName + "'s _id")
