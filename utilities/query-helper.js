@@ -476,7 +476,12 @@ function nestPopulate(query, populate, index, embeds, associations, model, Log) 
   var populatePath = "";
   var select = "";
   if (query.populateSelect) {
-    select = query.populateSelect.replace(/,/g,' ') + " _id";
+    if (association.type === "MANY_MANY" && !embedAssociation && !inserted) {
+      select = module.exports.createAttributesFilter({}, association.include.through, Log);
+    }
+    else {
+      select = query.populateSelect.replace(/,/g,' ') + " _id";
+    }
   }
   else if (association.type === "MANY_MANY" && !embedAssociation && !inserted) {
     select = module.exports.createAttributesFilter({}, association.include.through, Log);
