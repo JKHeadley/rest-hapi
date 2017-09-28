@@ -6,6 +6,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [0.27.0] - 2017-09-28
+### Added
+- Added option (`config.embedAssociations`) to use linking model collections.
+ * See [docs](https://github.com/JKHeadley/rest-hapi#many_many-data-storage) for details.
+
+### Changed
+- [BREAKING] `config.embedAssociations` set to `false` by default to take advantage of mongoose virtuals.  If you already have documents in your db, set this option to `true` to continue with the same functionality.
+ * If possible, future versions will include a cli command to convert existing db data between MANY_MANY structures.
+
 ## [0.26.0] - 2017-09-24
 ### Added
 - Added config option to disable 500 response for response validation (disabled by default).
