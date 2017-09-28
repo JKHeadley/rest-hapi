@@ -349,17 +349,17 @@ test('model-helper.extendSchemaAssociations', function (t) {
     var virtualArg = {
       ref: "user_group",
       localField: "_id",
-      foreignField: "groupId"
+      foreignField: "user"
     };
 
 
     var linkingModel = { Schema: {} };
 
-    linkingModel.Schema["userId"] = {
+    linkingModel.Schema["user"] = {
       type: Types.ObjectId,
       ref: "user"
     };
-    linkingModel.Schema["groupId"] = {
+    linkingModel.Schema["group"] = {
       type: Types.ObjectId,
       ref: "group"
     };
@@ -406,17 +406,17 @@ test('model-helper.extendSchemaAssociations', function (t) {
     var virtualArg = {
       ref: "test_linking",
       localField: "_id",
-      foreignField: "groupId"
+      foreignField: "user"
     };
 
 
     var linkingModel = { Schema: {} };
 
-    linkingModel.Schema["userId"] = {
+    linkingModel.Schema["user"] = {
       type: Types.ObjectId,
       ref: "user"
     };
-    linkingModel.Schema["groupId"] = {
+    linkingModel.Schema["group"] = {
       type: Types.ObjectId,
       ref: "group"
     };
