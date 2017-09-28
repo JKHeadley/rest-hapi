@@ -799,7 +799,8 @@ test('query-helper.populateEmbeddedDocs', function (t) {
         include: {
           model: {routeOptions: {associations: associations_five}}
         }
-      }
+      },
+      embedAssociation: true
     };
 
     var associations_three = {
