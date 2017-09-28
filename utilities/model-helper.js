@@ -117,14 +117,14 @@ internals.extendSchemaAssociations = function (Schema, mongoose, modelPath) {
 
           //EXPL: if the association isn't embedded, create separate collection for linking model
           if (!embedAssociation) {
+            const modelName = Schema.options.collection;
             if (!modelExists) {
-              const modelName = Schema.options.collection;
               const Types = mongoose.Schema.Types;
-              linkingModel.Schema[modelName + "Id"] = {
+              linkingModel.Schema[modelName] = {
                 type: Types.ObjectId,
                 ref: modelName
               };
-              linkingModel.Schema[association.model + "Id"] = {
+              linkingModel.Schema[association.model] = {
                 type: Types.ObjectId,
                 ref: association.model
               };
@@ -137,7 +137,7 @@ internals.extendSchemaAssociations = function (Schema, mongoose, modelPath) {
             Schema.virtual(associationKey, {
               ref: linkingModel.modelName,
               localField: '_id',
-              foreignField: association.model + "Id"
+              foreignField: modelName
             });
           }
           //EXPL: if the association is embedded, extend original schema with linking model schema
@@ -182,17 +182,17 @@ internals.extendSchemaAssociations = function (Schema, mongoose, modelPath) {
             catch(error) {
               modelExists[1] = false;
             }
+            const modelName = Schema.options.collection;
             if (!modelExists[0] && !modelExists[1]) {
-              const modelName = Schema.options.collection;
               const Types = mongoose.Schema.Types;
 
               linkingModel = { Schema: {} };
 
-              linkingModel.Schema[modelName + "Id"] = {
+              linkingModel.Schema[modelName] = {
                 type: Types.ObjectId,
                 ref: modelName
               };
-              linkingModel.Schema[association.model + "Id"] = {
+              linkingModel.Schema[association.model] = {
                 type: Types.ObjectId,
                 ref: association.model
               };
@@ -205,7 +205,7 @@ internals.extendSchemaAssociations = function (Schema, mongoose, modelPath) {
             Schema.virtual(associationKey, {
               ref: linkingModelName,
               localField: '_id',
-              foreignField: association.model + "Id"
+              foreignField: modelName
             });
           }
           //EXPL: if the association is embedded, extend the original schema to support the association data

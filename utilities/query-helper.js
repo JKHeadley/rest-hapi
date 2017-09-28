@@ -6,6 +6,7 @@ var validationHelper = require("./validation-helper");
 var qs = require('qs');
 var extend = require('util')._extend;
 let globals = require('../components/globals');
+let config = require("../config");
 
 //TODO-DONE: mulit-level/multi-priority sorting (i.e. sort first by lastName, then by firstName) implemented via comma seperated sort list
 //TODO: sorting through populate fields (Ex: sort users through role.name)
@@ -467,26 +468,53 @@ function nestPopulate(query, populate, index, embeds, associations, model, Log) 
     }
   }
 
+  var embedAssociation = association.embedAssociation === undefined ? config.embedAssociations : association.embedAssociation;
+  //EXPL: MANY_MANY associations where embedAssociation is false require an extra level of populating due to the linking collection,
+  //therefore an extra embed is "inserted" into the embeds array
+  var inserted = associations[embed] === associations[embeds[index - 1]];
+
   var populatePath = "";
   var select = "";
   if (query.populateSelect) {
     select = query.populateSelect.replace(/,/g,' ') + " _id";
   }
+  else if (association.type === "MANY_MANY" && !embedAssociation && !inserted) {
+    select = module.exports.createAttributesFilter({}, association.include.through, Log);
+  }
   else {
     select = module.exports.createAttributesFilter({}, association.include.model, Log);
   }
 
+
   if (association.type === "MANY_MANY") {
-    populatePath = embed + '.' + association.model;
+    if (embedAssociation && !inserted) {
+      populatePath = embed + '.' + association.model;
+    }
+    else if (!inserted){
+      //EXPL: "insert" the extra embed level for the linking collection
+      embeds.splice(index + 1, 0, association.model);
+      populatePath = embed;
+    }
+    else {
+      populatePath = embed;
+    }
   }
   else {
     populatePath = embed;
   }
 
   if (index < embeds.length - 1) {
-
-    associations = association.include.model.routeOptions.associations;
-    populate = nestPopulate(query, populate, index + 1, embeds, associations, association.include.model, Log);
+    let nextModel = association.include.model;
+    //EXPL: if the next embed was inserted, repeat the same association
+    if (!embedAssociation && association.type === "MANY_MANY" && !inserted) {
+      nextModel = model;
+      associations = extend({}, associations);
+      associations[association.model] = associations[embed];
+    }
+    else {
+      associations = association.include.model.routeOptions.associations;
+    }
+    populate = nestPopulate(query, populate, index + 1, embeds, associations, nextModel, Log);
     populate.populate = extend({}, populate);//EXPL: prevent circular reference
     populate.path = populatePath;
 
@@ -497,7 +525,14 @@ function nestPopulate(query, populate, index, embeds, associations, model, Log) 
       populate.select = select + " " + populate.populate.path;//EXPL: have to add the path to the select to include nested ONE_MANY embeds
     }
 
-    populate.model = association.model;
+    if (!embedAssociation && association.type === "MANY_MANY" && !inserted) {
+      populate.model = association.include.through.modelName;
+    }
+
+    else {
+      populate.model = association.model;
+    }
+
 
     return populate;
   }

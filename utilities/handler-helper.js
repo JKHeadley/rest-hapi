@@ -1427,11 +1427,11 @@ function _setAssociation(ownerModel, ownerObject, childModel, childId, associati
             if (!embedAssociation) {
               const linkingModel = association.include.through;
               let query = {};
-              query[ownerModel.modelName + "Id"] = ownerObject._id;
-              query[childModel.modelName + "Id"] = childObject._id;
+              query[ownerModel.modelName] = ownerObject._id;
+              query[childModel.modelName] = childObject._id;
 
-              payload[ownerModel.modelName + "Id"] = ownerObject._id;
-              payload[childModel.modelName + "Id"] = childObject._id;
+              payload[ownerModel.modelName] = ownerObject._id;
+              payload[childModel.modelName] = childObject._id;
 
               promise = linkingModel.findOneAndUpdate(query, payload, { new: true, upsert: true });
             }
@@ -1575,8 +1575,8 @@ function _removeAssociation(ownerModel, ownerObject, childModel, childId, associ
             if (!embedAssociation) {
               const linkingModel = association.include.through;
               let query = {};
-              query[ownerModel.modelName + "Id"] = ownerObject._id;
-              query[childModel.modelName + "Id"] = childObject._id;
+              query[ownerModel.modelName] = ownerObject._id;
+              query[childModel.modelName] = childObject._id;
 
               promise = linkingModel.findOneAndRemove(query);
             }
