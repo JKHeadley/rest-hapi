@@ -694,7 +694,8 @@ test('query-helper.populateEmbeddedDocs', function (t) {
         model: {},
         include: {
           model: {}
-        }
+        },
+        embedAssociation: true
       }
     };
     //</editor-fold>
@@ -732,7 +733,8 @@ test('query-helper.populateEmbeddedDocs', function (t) {
         model: "role",
         include: {
           model: {}
-        }
+        },
+        embedAssociation: true
       }
     };
 
@@ -742,7 +744,8 @@ test('query-helper.populateEmbeddedDocs', function (t) {
         model: "role",
         include: {
           model: {}
-        }
+        },
+        embedAssociation: true
       }
     };
 
@@ -798,9 +801,9 @@ test('query-helper.populateEmbeddedDocs', function (t) {
         model: "group",
         include: {
           model: {routeOptions: {associations: associations_five}}
-        }
-      },
-      embedAssociation: true
+        },
+        embedAssociation: true
+      }
     };
 
     var associations_three = {
