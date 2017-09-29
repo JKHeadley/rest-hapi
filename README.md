@@ -55,10 +55,20 @@ rest-hapi-demo: http://ec2-52-25-112-131.us-west-2.compute.amazonaws.com:8124
             * [Updating MANY_MANY db data](#updating-many_many-db-data)
     * [\_MANY](#_many)
 - [Route customization](#route-customization)
+    * [Custom path names](#custom-path-names)
+    * [Omitting routes](#omitting-routes)
 - [Querying](#querying)
+    * [Pagination](#pagination)
+    * [Populate nested associations](#populate-nested-associations)
 - [Validation](#validation)
+    * [Route validation](#route-validation)
+    * [Joi helper methods](#joi-helper-methods)
 - [Middleware](#middleware)
+    * [CRUD](#crud)
+    * [Association](#association)
 - [Authorization](#authorization)
+    * [Generating scopes](#generating-scopes)
+    * [Disabling scopes](#disabling-scopes)
 - [Mongoose wrapper methods](#mongoose-wrapper-methods)
 - [Soft delete](#soft-delete)
 - [Metadata](#metadata)
@@ -1330,7 +1340,7 @@ parameter: ``/group?$embed=users.title`` which could result in the following res
 [Back to top](#readme-contents)
 
 ## Validation
-### Route Validation
+### Route validation
 Validation in the rest-hapi framework is implemented with [joi](https://github.com/hapijs/joi).  
 This includes validation of headers, query parameters, payloads, and responses.  joi validation models
 are based primarily off of each model's field properties.  Below is a list of mongoose schema types 
