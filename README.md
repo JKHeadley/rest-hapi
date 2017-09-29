@@ -43,7 +43,17 @@ rest-hapi-demo: http://ec2-52-25-112-131.us-west-2.compute.amazonaws.com:8124
 - [Configuration](#configuration)
 - [Swagger documentation](#swagger-documentation)
 - [Creating endpoints](#creating-endpoints)
+    * [Model endpoints](#model-endpoints)
+    * [Standalone endpoints](#standalone-endpoints)
+    * [Additional endpoints](#additional-endpoints)
 - [Associations](#associations)
+    * [ONE_ONE](#one_one)
+    * [ONE_MANY/MANY_ONE](#one_manymany_one)
+    * [MANY_MANY](#many_many)
+        - [MANY_MANY linking models](#many_many-linking-models)
+        - [MANY_MANY data storage](#many_many-data-storage)
+            * [Updating MANY_MANY db data](#updating-many_many-db-data)
+    * [\_MANY](#_many)
 - [Route customization](#route-customization)
 - [Querying](#querying)
 - [Validation](#validation)
@@ -58,6 +68,7 @@ rest-hapi-demo: http://ec2-52-25-112-131.us-west-2.compute.amazonaws.com:8124
 - [Questions](#questions)
 - [Future work](#future-work)
 - [Contributing](#contributing)
+
 
 
 ## Requirements
@@ -906,7 +917,7 @@ module.exports = function () {
 };
 ```
 
-#### MANY\_MANY data storage
+#### MANY_MANY data storage
 
 By nature every new instance of a MANY_MANY association adds new data to the database. At minimum this data must contain the `\_id`s of the associated documents, but this can be extended to include extra fields through a [linking model](#many_many-linking-models). rest-hapi provides two options as to how this data is stored in the db (controlled by the `config.embedAssociations` property):
 
