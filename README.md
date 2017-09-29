@@ -998,6 +998,24 @@ module.exports = function (mongoose) {
 
 **NOTE:** If the `embedAssociation` property is set, then it must be set to the same value for both association definitions as seen above.
 
+##### Updating MANY_MANY db data
+
+As of v0.28.0 the rest-hapi cli includes an `update-associations` command that can update your db data to match your desired MANY_MANY structure. This command follows the following format:
+
+`$ ./node_modules/.bin/rest-hapi-cli update-associations mongoURI [embedAssociations] [modelPath]`
+
+where:
+
+- mongoURI: The URI to you mongodb database
+- embedAssociations: (optional, defaults to `false`) This must match your current `config.embedAssociations` value.
+- modelPath: (options, defaults to `models`) This must match your `config.modelPath` value if you have `config.absoluteModelPath` set to `true`.
+
+This is useful if you have a db populated with documents and you decide to change the `embedAssociaion` property of one or more associations. 
+
+For instance, consider a MANY_MANY relationship between `user` (groups) and `group`  (users) with `config.embedAssociations` set to `true`. Each `user` document will contain the array `groups` and each `group` document will contain the array `users`. Lets say you implement this structure in a project, but several months into the project some of your `group` documents have collected thousands of `users`, resulting in very large document sizes. You decide it would be better to move the data out of the parent documents and into a linking collection, `user_group`. You can do this by setting the `embedAssociation` property for `users` and `groups` to `false`, and running the following command:
+
+`$ ./node_modules/.bin/rest-hapi-cli update-associations mongodb://localhost:27017/mydb true`
+
 ### \_MANY
 
 A one-sided -many relationship can exists between two models. This allows the parent model to have direct control over the reference Ids. Below is an example of a -many relationship between the ``post`` and ``hashtag`` models. 
