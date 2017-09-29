@@ -43,12 +43,32 @@ rest-hapi-demo: http://ec2-52-25-112-131.us-west-2.compute.amazonaws.com:8124
 - [Configuration](#configuration)
 - [Swagger documentation](#swagger-documentation)
 - [Creating endpoints](#creating-endpoints)
+    * [Model endpoints](#model-endpoints)
+    * [Standalone endpoints](#standalone-endpoints)
+    * [Additional endpoints](#additional-endpoints)
 - [Associations](#associations)
+    * [ONE_ONE](#one_one)
+    * [ONE_MANY/MANY_ONE](#one_manymany_one)
+    * [MANY_MANY](#many_many)
+        - [MANY_MANY linking models](#many_many-linking-models)
+        - [MANY_MANY data storage](#many_many-data-storage)
+            * [Updating MANY_MANY db data](#updating-many_many-db-data)
+    * [\_MANY](#_many)
 - [Route customization](#route-customization)
+    * [Custom path names](#custom-path-names)
+    * [Omitting routes](#omitting-routes)
 - [Querying](#querying)
+    * [Pagination](#pagination)
+    * [Populate nested associations](#populate-nested-associations)
 - [Validation](#validation)
+    * [Route validation](#route-validation)
+    * [Joi helper methods](#joi-helper-methods)
 - [Middleware](#middleware)
+    * [CRUD](#crud)
+    * [Association](#association)
 - [Authorization](#authorization)
+    * [Generating scopes](#generating-scopes)
+    * [Disabling scopes](#disabling-scopes)
 - [Mongoose wrapper methods](#mongoose-wrapper-methods)
 - [Soft delete](#soft-delete)
 - [Metadata](#metadata)
@@ -58,6 +78,7 @@ rest-hapi-demo: http://ec2-52-25-112-131.us-west-2.compute.amazonaws.com:8124
 - [Questions](#questions)
 - [Future work](#future-work)
 - [Contributing](#contributing)
+
 
 
 ## Requirements
@@ -906,7 +927,7 @@ module.exports = function () {
 };
 ```
 
-#### MANY\_MANY data storage
+#### MANY_MANY data storage
 
 By nature every new instance of a MANY_MANY association adds new data to the database. At minimum this data must contain the `\_id`s of the associated documents, but this can be extended to include extra fields through a [linking model](#many_many-linking-models). rest-hapi provides two options as to how this data is stored in the db (controlled by the `config.embedAssociations` property):
 
@@ -997,6 +1018,24 @@ module.exports = function (mongoose) {
 ```
 
 **NOTE:** If the `embedAssociation` property is set, then it must be set to the same value for both association definitions as seen above.
+
+##### Updating MANY_MANY db data
+
+As of v0.28.0 the rest-hapi cli includes an `update-associations` command that can update your db data to match your desired MANY_MANY structure. This command follows the following format:
+
+`$ ./node_modules/.bin/rest-hapi-cli update-associations mongoURI [embedAssociations] [modelPath]`
+
+where:
+
+- `mongoURI`: The URI to you mongodb database
+- `embedAssociations`: (optional, defaults to `false`) This must match your current `config.embedAssociations` value.
+- `modelPath`: (optional, defaults to `models`) This must match your `config.modelPath` value if you have `config.absoluteModelPath` set to `true`.
+
+This is useful if you have a db populated with documents and you decide to change the `embedAssociaion` property of one or more associations. 
+
+For instance, consider a MANY_MANY relationship between `user` (groups) and `group`  (users) with `config.embedAssociations` set to `true`. Each `user` document will contain the array `groups` and each `group` document will contain the array `users`. Lets say you implement this structure in a project, but several months into the project some of your `group` documents have collected thousands of `users`, resulting in very large document sizes. You decide it would be better to move the data out of the parent documents and into a linking collection, `user_group`. You can do this by setting the `embedAssociation` property for `users` and `groups` to `false`, and running the following command:
+
+`$ ./node_modules/.bin/rest-hapi-cli update-associations mongodb://localhost:27017/mydb true`
 
 ### \_MANY
 
@@ -1301,7 +1340,7 @@ parameter: ``/group?$embed=users.title`` which could result in the following res
 [Back to top](#readme-contents)
 
 ## Validation
-### Route Validation
+### Route validation
 Validation in the rest-hapi framework is implemented with [joi](https://github.com/hapijs/joi).  
 This includes validation of headers, query parameters, payloads, and responses.  joi validation models
 are based primarily off of each model's field properties.  Below is a list of mongoose schema types 
