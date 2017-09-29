@@ -1006,9 +1006,9 @@ As of v0.28.0 the rest-hapi cli includes an `update-associations` command that c
 
 where:
 
-- mongoURI: The URI to you mongodb database
-- embedAssociations: (optional, defaults to `false`) This must match your current `config.embedAssociations` value.
-- modelPath: (options, defaults to `models`) This must match your `config.modelPath` value if you have `config.absoluteModelPath` set to `true`.
+- `mongoURI`: The URI to you mongodb database
+- `embedAssociations`: (optional, defaults to `false`) This must match your current `config.embedAssociations` value.
+- `modelPath`: (optional, defaults to `models`) This must match your `config.modelPath` value if you have `config.absoluteModelPath` set to `true`.
 
 This is useful if you have a db populated with documents and you decide to change the `embedAssociaion` property of one or more associations. 
 
