@@ -49,7 +49,7 @@
     "gulp-exit": "0.0.2",
     "gulp-tape": "latest",
     "hapi": "^16.4.3",
-    "hapi-swagger": "7.7.0",
+    "hapi-swagger": "7.8.1",
     "inert": "^4.2.0",
     "joi": "^10.6.0",
     "joi-objectid": "^2.0.0",
