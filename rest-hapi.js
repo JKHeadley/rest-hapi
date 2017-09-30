@@ -52,6 +52,14 @@ function register(server, options, next) {
 
     module.exports.logger = logger;
 
+    //EXPL: add the logger object to the request object for access later
+    server.ext('onRequest', function (request, reply) {
+
+        request.logger = logger;
+
+        return reply.continue();
+    });
+
     let mongoose = require('./components/mongoose-init')(options.mongoose, logger, config);
 
     logUtil.logActionStart(logger, "Initializing Server");
@@ -65,8 +73,11 @@ function register(server, options, next) {
         promise = modelGenerator(mongoose, logger, config);
     }
 
+    let models = {};
+
     promise
-        .then(function(models) {
+        .then(function(result) {
+            models = result;
 
             //EXPL: setup hapi-swagger plugin
             //region Hapi-Swagger Plugin
@@ -86,72 +97,79 @@ function register(server, options, next) {
             };
             //endregion
 
+            return server.register([
+                Inert,
+                Vision,
+                HapiSwagger,
+            ])
+        })
+        .then(function () {
 
             //EXPL: setup mrhorse policy plugin
             //region Mrhorse Plugin
             let policyPath = "";
-            let Mrhorse = {};
+            let Mrhorse = null;
 
             if (config.enablePolicies) {
                 if (config.absolutePolicyPath === true) {
                     policyPath = config.policyPath;
                 }
                 else {
-                    policyPath = __dirname + '/../../../' + config.policyPath;
+                    policyPath = __dirname.replace('node_modules/rest-hapi', config.policyPath);
                 }
 
-                let pathExists = true;
-                try {
-                    fs.accessSync(policyPath);
-                } catch (e) {
-                    pathExists = false;
-                    logger.error("Policy path does not exist.")
-                }
-
-                if (pathExists) {
-                    Mrhorse = {
-                        register: MH,
-                        options: {
-                            policyDirectory: policyPath
-                        }
+                Mrhorse = {
+                    register: MH,
+                    options: {
+                        policyDirectory: policyPath
                     }
                 }
             }
             //endregion
 
-            server.register([
-                    Inert,
-                    Vision,
-                    HapiSwagger,
+            if (Mrhorse) {
+                return server.register([
                     Mrhorse
-                ],
-                function (err) {
-                    if (err) {
-                        logger.error(err);
-                        return next(err);
-                    }
-
-                    const restHelper = restHelperFactory(logger, mongoose, server);
-
-                    for (let modelKey in models) {//EXPL: generate endpoints for all of the models
-                        let model = models[modelKey];
-                        restHelper.generateRoutes(server, model, {models:models})
-                    }
-
-                    apiGenerator(server, mongoose, logger, config)
-                        .then(function() {
-                            next();
-                        })
-                        .catch(function(error) {
-                            logger.error(error);
-                            next(error);
-                        })
-
-                });
+                ])
+                    .then(function(result) {
+                        server.plugins.mrhorse.loadPolicies(server, {
+                            policyDirectory: __dirname + '/policies'
+                        }, function(err) {
+                            if (err) {
+                                logger.error("ERROR:", err);
+                            }
+                        });
+                    });
+            }
+            else {
+                return null;
+            }
         })
-        .catch(function(error) {
+        .catch(function (error) {
+            if (error.message.includes('no such file')) {
+                logger.error("The policies directory provided does not exist. " +
+                    "Try setting the 'policyPath' property of the config file.");
+            }
+            else {
+                throw error;
+            }
+        })
+        .then(function() {
+            const restHelper = restHelperFactory(logger, mongoose, server);
+
+            for (let modelKey in models) {//EXPL: generate endpoints for all of the models
+                let model = models[modelKey];
+                restHelper.generateRoutes(server, model, {models: models})
+            }
+
+            return apiGenerator(server, mongoose, logger, config)
+        })
+        .then(function() {
+            next();
+        })
+        .catch(function (error) {
             logger.error(error);
-            next(error);
+            return next(error);
         })
 }
 

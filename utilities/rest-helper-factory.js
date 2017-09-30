@@ -163,6 +163,8 @@ module.exports = function (logger, mongoose, server) {
       if (model.routeOptions.policies) {
         policies = model.routeOptions.policies;
         policies = (policies.policies || []).concat(policies.readPolicies || []);
+        policies.push("testrh");
+        Log.debug("POLICIES:", policies);
       }
 
 
@@ -814,8 +816,8 @@ module.exports = function (logger, mongoose, server) {
 
       var policies = [];
 
-      if (ownerModelName.routeOptions.policies) {
-        policies = model.routeOptions.policies;
+      if (ownerModel.routeOptions.policies) {
+        policies = ownerModel.routeOptions.policies;
         policies = (policies.policies || []).concat(policies.associatePolicies || []);
       }
 
@@ -916,8 +918,8 @@ module.exports = function (logger, mongoose, server) {
 
       var policies = [];
 
-      if (ownerModelName.routeOptions.policies) {
-        policies = model.routeOptions.policies;
+      if (ownerModel.routeOptions.policies) {
+        policies = ownerModel.routeOptions.policies;
         policies = (policies.policies || []).concat(policies.associatePolicies || []);
       }
 
@@ -1036,8 +1038,8 @@ module.exports = function (logger, mongoose, server) {
 
       var policies = [];
 
-      if (ownerModelName.routeOptions.policies) {
-        policies = model.routeOptions.policies;
+      if (ownerModel.routeOptions.policies) {
+        policies = ownerModel.routeOptions.policies;
         policies = (policies.policies || []).concat(policies.associatePolicies || []);
       }
 
@@ -1111,9 +1113,8 @@ module.exports = function (logger, mongoose, server) {
 
       var payloadValidation = Joi.array().items(Joi.objectId()).required();
 
-      if (!config.enablePayloadValidation) {
-        payloadValidation = Joi.alternatives().try(payloadValidation, Joi.any());
-      }
+      payloadValidation = config.enablePayloadValidation ? payloadValidation : Joi.any();
+      payloadValidation = payloadValidation.description("An array of _ids to remove.")
 
       var auth = false;
 
@@ -1139,8 +1140,8 @@ module.exports = function (logger, mongoose, server) {
 
       var policies = [];
 
-      if (ownerModelName.routeOptions.policies) {
-        policies = model.routeOptions.policies;
+      if (ownerModel.routeOptions.policies) {
+        policies = ownerModel.routeOptions.policies;
         policies = (policies.policies || []).concat(policies.associatePolicies || []);
       }
 
@@ -1253,8 +1254,8 @@ module.exports = function (logger, mongoose, server) {
 
       var policies = [];
 
-      if (ownerModelName.routeOptions.policies) {
-        policies = model.routeOptions.policies;
+      if (ownerModel.routeOptions.policies) {
+        policies = ownerModel.routeOptions.policies;
         policies = (policies.policies || []).concat(policies.readPolicies || []);
       }
 
