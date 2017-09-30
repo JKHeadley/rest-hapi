@@ -52,7 +52,7 @@ rest-hapi-demo: http://ec2-52-25-112-131.us-west-2.compute.amazonaws.com:8124
     * [MANY_MANY](#many_many)
         - [MANY_MANY linking models](#many_many-linking-models)
         - [MANY_MANY data storage](#many_many-data-storage)
-            * [Updating MANY_MANY db data](#updating-many_many-db-data)
+            * [Migrating MANY_MANY data](#migrating-many_many-data)
     * [\_MANY](#_many)
 - [Route customization](#route-customization)
     * [Custom path names](#custom-path-names)
@@ -1019,7 +1019,7 @@ module.exports = function (mongoose) {
 
 **NOTE:** If the `embedAssociation` property is set, then it must be set to the same value for both association definitions as seen above.
 
-##### Updating MANY_MANY db data
+##### Migrating MANY_MANY data
 
 As of v0.28.0 the rest-hapi cli includes an `update-associations` command that can update your db data to match your desired MANY_MANY structure. This command follows the following format:
 
