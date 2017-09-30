@@ -67,6 +67,7 @@ rest-hapi-demo: http://ec2-52-25-112-131.us-west-2.compute.amazonaws.com:8124
     * [CRUD](#crud)
     * [Association](#association)
 - [Authorization](#authorization)
+    * [Route scopes](#route-scopes)
     * [Generating scopes](#generating-scopes)
     * [Disabling scopes](#disabling-scopes)
 - [Mongoose wrapper methods](#mongoose-wrapper-methods)
@@ -1598,6 +1599,7 @@ Association middleware is defined similar to CRUD middleware, with the only diff
 [Back to top](#readme-contents)
 
 ## Authorization
+### Route scopes
 rest-hapi takes advantage of the ``scope`` property within the ``auth`` route config object of a hapi endpoint.  Each generated endpoint has its ``scope`` property set based on model properties within the ``routeOptions.scope`` object. There are three types of scopes that can be set: a general scope property, action scope properties, and association scope properties. A description of these can be seen below.
 
 The first type of scope is a ``scope`` property that, when set, is applied to all generated endpoints for that model. 
