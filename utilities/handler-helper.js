@@ -2,6 +2,7 @@
 
 var QueryHelper = require('./query-helper');
 var Q = require('q');
+var Mongoose = require('mongoose');
 var errorHelper = require('./error-helper');
 var extend = require('util')._extend;
 var config = require('../config');
@@ -14,130 +15,55 @@ var _ = require('lodash');
 
 module.exports = {
 
-  /**
-   * Finds a list of model documents
-   * @param model: A mongoose model.
-   * @param query: rest-hapi query parameters to be converted to a mongoose query.
-   * @param Log: A logging object.
-   * @returns {object} A promise for the resulting model documents.
-   */
   list: _list,
 
-  /**
-   * Finds a model document
-   * @param model: A mongoose model.
-   * @param _id: The document id.
-   * @param query: rest-hapi query parameters to be converted to a mongoose query.
-   * @param Log: A logging object.
-   * @returns {object} A promise for the resulting model document.
-   */
+  listHandler: _listHandler,
+
   find: _find,
 
-  /**
-   * Creates a model document
-   * @param model: A mongoose model.
-   * @param payload: Data used to create the model document.
-   * @param Log: A logging object.
-   * @returns {object} A promise for the resulting model document.
-   */
+  findHandler: _findHandler,
+
   create: _create,
 
-  /**
-   * Updates a model document
-   * @param model: A mongoose model.
-   * @param _id: The document id.
-   * @param payload: Data used to update the model document.
-   * @param Log: A logging object.
-   * @returns {object} A promise for the resulting model document.
-   */
+  createHandler: _createHandler,
+
   update: _update,
 
-  /**
-   * Deletes a model document
-   * @param model: A mongoose model.
-   * @param _id: The document id.
-   * @param payload: Data used to determine a soft or hard delete.
-   * @param Log: A logging object.
-   * @returns {object} A promise returning true if the delete succeeds.
-   */
+  updateHandler: _updateHandler,
+
   deleteOne: _deleteOne,
 
-  /**
-   * Deletes multiple documents
-   * @param model: A mongoose model.
-   * @param payload: Either an array of ids or an array of objects containing an id and a "hardDelete" flag.
-   * @param Log: A logging object.
-   * @returns {object} A promise returning true if the delete succeeds.
-   */
+  deleteOneHandler: _deleteOneHandler,
+
   deleteMany: _deleteMany,
 
-  /**
-   * Adds an association to a document
-   * @param ownerModel: The model that is being added to.
-   * @param ownerId: The id of the owner document.
-   * @param childModel: The model that is being added.
-   * @param childId: The id of the child document.
-   * @param associationName: The name of the association from the ownerModel's perspective.
-   * @param payload: Either an id or an object containing an id and extra linking-model fields.
-   * @param Log: A logging object
-   * @returns {object} A promise returning true if the add succeeds.
-   */
+  deleteManyHandler: _deleteManyHandler,
+
   addOne: _addOne,
 
-  /**
-   * Removes an association to a document
-   * @param ownerModel: The model that is being removed from.
-   * @param ownerId: The id of the owner document.
-   * @param childModel: The model that is being removed.
-   * @param childId: The id of the child document.
-   * @param associationName: The name of the association from the ownerModel's perspective.
-   * @param Log: A logging object
-   * @returns {object} A promise returning true if the remove succeeds.
-   */
+  addOneHandler: _addOneHandler,
+
   removeOne: _removeOne,
 
-  /**
-   * Adds multiple associations to a document
-   * @param ownerModel: The model that is being added to.
-   * @param ownerId: The id of the owner document.
-   * @param childModel: The model that is being added.
-   * @param associationName: The name of the association from the ownerModel's perspective.
-   * @param payload: Either a list of ids or a list of id's along with extra linking-model fields.
-   * @param Log: A logging object
-   * @returns {object} A promise returning true if the add succeeds.
-   */
+  removeOneHandler: _removeOneHandler,
+
   addMany: _addMany,
 
-  /**
-   * Removes multiple associations from a document
-   * @param ownerModel: The model that is being removed from.
-   * @param ownerId: The id of the owner document.
-   * @param childModel: The model that is being removed.
-   * @param associationName: The name of the association from the ownerModel's perspective.
-   * @param payload: A list of ids
-   * @param Log: A logging object
-   * @returns {object} A promise returning true if the remove succeeds.
-   */
-   removeMany: _removeMany,
+  addManyHandler: _addManyHandler,
 
-  /**
-   * Get all of the associations for a document
-   * @param ownerModel: The model that is being added to.
-   * @param ownerId: The id of the owner document.
-   * @param childModel: The model that is being added.
-   * @param associationName: The name of the association from the ownerModel's perspective.
-   * @param query: rest-hapi query parameters to be converted to a mongoose query.
-   * @param Log: A logging object
-   * @returns {object} A promise returning true if the add succeeds.
-   * @private
-   */
-  getAll: _getAll
+  removeMany: _removeMany,
+
+  removeManyHandler: _removeManyHandler,
+
+  getAll: _getAll,
+
+  getAllHandler: _getAllHandler
 
 };
 
 
 /**
- * Finds a list of model documents
+ * List function exposed as a mongoose wrapper.
  * @param model: A mongoose model.
  * @param query: rest-hapi query parameters to be converted to a mongoose query.
  * @param Log: A logging object.
@@ -145,131 +71,169 @@ module.exports = {
  * @private
  */
 function _list(model, query, Log) {
+  let request = { query: query };
+  return _listHandler(model, request, Log);
+}
+/**
+ * Finds a list of model documents.
+ * @param model: A mongoose model.
+ * @param request: The Hapi request object, or a container for the wrapper query.
+ * @param Log: A logging object.
+ * @returns {object} A promise for the resulting model documents or the count of the query results.
+ * @private
+ */
+function _listHandler(model, request, Log) {
+  let query = extend({}, request.query);
   let logError = false;
   try {
-    var mongooseQuery = {};
-    var originalQuery = extend({}, query);
-    var count = "";
-    var flatten = false;
-    if (query.$flatten) {
-      flatten = true;
+    var promise = {};
+    if (model.routeOptions && model.routeOptions.list && model.routeOptions.list.pre) {
+      promise = Q.fcall(model.routeOptions.list.pre, query, request, Log);
     }
-    delete query.$flatten;
-    if (query.$count) {
-      mongooseQuery = model.count();
-      mongooseQuery = QueryHelper.createMongooseQuery(model, query, mongooseQuery, Log).lean();
-      return mongooseQuery.exec()
-          .then(function(result) {
-            Log.log("Result: %s", JSON.stringify(result));
-            return result;
-          })
+    else {
+      promise = Q.when(query);
     }
 
-    mongooseQuery = model.find();
-    mongooseQuery = QueryHelper.createMongooseQuery(model, query, mongooseQuery, Log).lean();
-    return mongooseQuery.count()
-        .then(function (result) {
-          count = result;
-          mongooseQuery = QueryHelper.paginate(query, mongooseQuery, Log);
-          return mongooseQuery.exec('find')
-        })
-        .then(function (result) {
-
-          var promise = {};
-          if (model.routeOptions && model.routeOptions.list && model.routeOptions.list.post) {
-            promise = model.routeOptions.list.post(originalQuery, result, Log);
+    return promise
+        .then(function (query){
+          var mongooseQuery = {};
+          var count = "";
+          var flatten = false;
+          if (query.$flatten) {
+            flatten = true;
           }
-          else {
-            promise = Q.when(result);
-          }
-
-          return promise
-              .then(function (result) {
-                result = result.map(function (data) {
-                  var result = data;
-                  if (model.routeOptions) {
-                    var associations = model.routeOptions.associations;
-                    for (var associationKey in associations) {
-                      var association = associations[associationKey];
-                      if (association.type === "ONE_MANY" && data[associationKey]) {//EXPL: we have to manually populate the return value for virtual (e.g. ONE_MANY) associations
-                        if (data[associationKey].toJSON) {//TODO: look into .toJSON and see why it appears sometimes and not other times
-                          result[associationKey] = data[associationKey].toJSON();
-                        }
-                        else {
-                          result[associationKey] = data[associationKey];
-                        }
-                      }
-                      if (association.type === "MANY_MANY" && flatten === true) {//EXPL: remove additional fields and return a flattened array
-                        if (result[associationKey]) {
-                          result[associationKey] = result[associationKey].map(function(object) {
-                            object = object[association.model];
-                            return object;
-                          })
-                        }
-                      }
-                    }
-                  }
-
-                  if (config.enableSoftDelete && config.filterDeletedEmbeds) {//EXPL: remove soft deleted documents from populated properties
-                    filterDeletedEmbeds(result, {}, "", 0, Log);
-                  }
-
-                  if (result._id) {
-                    result._id = result._id.toString();//EXPL: _id must be a string to pass validation
-                  }
-
+          delete query.$flatten;
+          if (query.$count) {
+            mongooseQuery = model.count();
+            mongooseQuery = QueryHelper.createMongooseQuery(model, query, mongooseQuery, Log).lean();
+            return mongooseQuery.exec()
+                .then(function(result) {
                   Log.log("Result: %s", JSON.stringify(result));
-                  return result
-                });
+                  return result;
+                })
+          }
 
-                
-                const pages = {
-                    current: query.$page || 1,
-                    prev: 0,
-                    hasPrev: false,
-                    next: 0,
-                    hasNext: false,
-                    total: 0
-                };
-                const items = {
-                    limit: query.$limit,
-                    begin: ((query.$page * query.$limit) - query.$limit) + 1,
-                    end: query.$page * query.$limit,
-                    total: count
-                };
+          mongooseQuery = model.find();
+          mongooseQuery = QueryHelper.createMongooseQuery(model, query, mongooseQuery, Log).lean();
+          return mongooseQuery.count()
+              .then(function (result) {
+                count = result;
+                mongooseQuery = QueryHelper.paginate(query, mongooseQuery, Log);
+                return mongooseQuery.exec('find')
+              })
+              .then(function (result) {
 
-                pages.total = Math.ceil(count / query.$limit);
-                pages.next = pages.current + 1;
-                pages.hasNext = pages.next <= pages.total;
-                pages.prev = pages.current - 1;
-                pages.hasPrev = pages.prev !== 0;
-                if (items.begin > items.total) {
-                  items.begin = items.total;
+                var promise = {};
+                if (model.routeOptions && model.routeOptions.list && model.routeOptions.list.post) {
+                  promise = Q.fcall(model.routeOptions.list.post, request, result, Log);
                 }
-                if (items.end > items.total) {
-                  items.end = items.total;
+                else {
+                  promise = Q.when(result);
                 }
 
-                return { docs: result, pages: pages, items: items };
+                return promise
+                    .then(function (result) {
+                      result = result.map(function (data) {
+                        var result = data;
+                        if (model.routeOptions) {
+                          var associations = model.routeOptions.associations;
+                          for (var associationKey in associations) {
+                            var association = associations[associationKey];
+                            if (association.type === "ONE_MANY" && data[associationKey]) {//EXPL: we have to manually populate the return value for virtual (e.g. ONE_MANY) associations
+                              if (data[associationKey].toJSON) {//TODO: look into .toJSON and see why it appears sometimes and not other times
+                                result[associationKey] = data[associationKey].toJSON();
+                              }
+                              else {
+                                result[associationKey] = data[associationKey];
+                              }
+                            }
+                            if (association.type === "MANY_MANY" && flatten === true) {//EXPL: remove additional fields and return a flattened array
+                              if (result[associationKey]) {
+                                result[associationKey] = result[associationKey].map(function(object) {
+                                  object = object[association.model];
+                                  return object;
+                                })
+                              }
+                            }
+                          }
+                        }
+
+                        if (config.enableSoftDelete && config.filterDeletedEmbeds) {//EXPL: remove soft deleted documents from populated properties
+                          filterDeletedEmbeds(result, {}, "", 0, Log);
+                        }
+
+                        if (result._id) {
+                          result._id = result._id.toString();//EXPL: _id must be a string to pass validation
+                        }
+
+                        Log.log("Result: %s", JSON.stringify(result));
+                        return result
+                      });
+
+
+                      const pages = {
+                        current: query.$page || 1,
+                        prev: 0,
+                        hasPrev: false,
+                        next: 0,
+                        hasNext: false,
+                        total: 0
+                      };
+                      const items = {
+                        limit: query.$limit,
+                        begin: (((query.$page || 1) * query.$limit) - query.$limit) + 1,
+                        end: (query.$page || 1) * query.$limit,
+                        total: count
+                      };
+
+                      pages.total = Math.ceil(count / query.$limit);
+                      pages.next = pages.current + 1;
+                      pages.hasNext = pages.next <= pages.total;
+                      pages.prev = pages.current - 1;
+                      pages.hasPrev = pages.prev !== 0;
+                      if (items.begin > items.total) {
+                        items.begin = items.total;
+                      }
+                      if (items.end > items.total) {
+                        items.end = items.total;
+                      }
+
+                      return { docs: result, pages: pages, items: items };
+                    })
+                    .catch(function (error) {
+                      let message = "There was a postprocessing error.";
+                      if (_.isString(error)) {
+                        message = error;
+                      }
+                      if (!logError) {
+                        Log.error(message);
+                        logError = true;
+                        delete error.type;
+                      }
+                      errorHelper.handleError(error, message, errorHelper.types.BAD_REQUEST, Log);
+                    })
               })
               .catch(function (error) {
-                const message = "There was a postprocessing error.";
+                const message = "There was an error accessing the database.";
                 if (!logError) {
                   Log.error(message);
                   logError = true;
                   delete error.type;
                 }
-                errorHelper.handleError(error, message, errorHelper.types.BAD_REQUEST, Log);
-              })
+                errorHelper.handleError(error, message, errorHelper.types.BAD_IMPLEMENTATION, Log);
+              });
         })
         .catch(function (error) {
-          const message = "There was an error accessing the database.";
+          let message = "There was a preprocessing error.";
+          if (_.isString(error)) {
+            message = error;
+          }
           if (!logError) {
             Log.error(message);
             logError = true;
             delete error.type;
           }
-          errorHelper.handleError(error, message, errorHelper.types.SERVER_TIMEOUT, Log);
+          errorHelper.handleError(error, message, errorHelper.types.BAD_REQUEST, Log);
         });
   }
   catch(error) {
@@ -288,8 +252,9 @@ function _list(model, query, Log) {
   }
 }
 
+
 /**
- * Finds a model document
+ * Find function exposed as a mongoose wrapper.
  * @param model: A mongoose model.
  * @param _id: The document id.
  * @param query: rest-hapi query parameters to be converted to a mongoose query.
@@ -298,84 +263,123 @@ function _list(model, query, Log) {
  * @private
  */
 function _find(model, _id, query, Log) {
+  let request = { query: query };
+  return _findHandler(model, _id, request, Log);
+}
+/**
+ * Finds a model document.
+ * @param model: A mongoose model.
+ * @param _id: The document id.
+ * @param request: The Hapi request object, or a container for the wrapper query.
+ * @param Log: A logging object.
+ * @returns {object} A promise for the resulting model document.
+ * @private
+ */
+function _findHandler(model, _id, request, Log) {
+  let query = extend({}, request.query);
   let logError = false;
   try {
-    var flatten = false;
-    if (query.$flatten) {
-      flatten = true;
+    var promise = {};
+    if (model.routeOptions && model.routeOptions.find && model.routeOptions.find.pre) {
+      promise = Q.fcall(model.routeOptions.find.pre, _id, query, request, Log);
+    } else {
+      promise = Q.when(query);
     }
-    delete query.$flatten;
-    var mongooseQuery = model.findOne({ '_id': _id });
-    mongooseQuery = QueryHelper.createMongooseQuery(model, query, mongooseQuery, Log).lean();
-    return mongooseQuery.exec()
-        .then(function (result) {
-          if (result) {
-            var promise = {};
-            if (model.routeOptions && model.routeOptions.find && model.routeOptions.find.post) {
-              promise = model.routeOptions.find.post(query, result, Log);
-            } else {
-              promise = Q.when(result);
-            }
 
-            return promise
-                .then(function(data) {
-                  if (model.routeOptions) {
-                    var associations = model.routeOptions.associations;
-                    for (var associationKey in associations) {
-                      var association = associations[associationKey];
-                      if (association.type === "ONE_MANY" && data[associationKey]) {//EXPL: we have to manually populate the return value for virtual (e.g. ONE_MANY) associations
-                        result[associationKey] = data[associationKey];
-                      }
-                      if (association.type === "MANY_MANY" && flatten === true) {//EXPL: remove additional fields and return a flattened array
-                        if (result[associationKey]) {
-                          result[associationKey] = result[associationKey].map(function(object) {
-                            object = object[association.model];
-                            return object;
-                          })
+    return promise
+        .then(function (query){
+          var flatten = false;
+          if (query.$flatten) {
+            flatten = true;
+          }
+          delete query.$flatten;
+          var mongooseQuery = model.findOne({ '_id': _id });
+          mongooseQuery = QueryHelper.createMongooseQuery(model, query, mongooseQuery, Log).lean();
+          return mongooseQuery.exec()
+              .then(function (result) {
+                if (result) {
+                  var promise = {};
+                  if (model.routeOptions && model.routeOptions.find && model.routeOptions.find.post) {
+                    promise = Q.fcall(model.routeOptions.find.post, request, result, Log);
+                  } else {
+                    promise = Q.when(result);
+                  }
+
+                  return promise
+                      .then(function(data) {
+                        if (model.routeOptions) {
+                          var associations = model.routeOptions.associations;
+                          for (var associationKey in associations) {
+                            var association = associations[associationKey];
+                            if (association.type === "ONE_MANY" && data[associationKey]) {//EXPL: we have to manually populate the return value for virtual (e.g. ONE_MANY) associations
+                              result[associationKey] = data[associationKey];
+                            }
+                            if (association.type === "MANY_MANY" && flatten === true) {//EXPL: remove additional fields and return a flattened array
+                              if (result[associationKey]) {
+                                result[associationKey] = result[associationKey].map(function(object) {
+                                  object = object[association.model];
+                                  return object;
+                                })
+                              }
+                            }
+                          }
                         }
-                      }
-                    }
-                  }
 
-                  if (config.enableSoftDelete && config.filterDeletedEmbeds) {//EXPL: remove soft deleted documents from populated properties
-                    filterDeletedEmbeds(result, {}, "", 0, Log);
-                  }
+                        if (config.enableSoftDelete && config.filterDeletedEmbeds) {//EXPL: remove soft deleted documents from populated properties
+                          filterDeletedEmbeds(result, {}, "", 0, Log);
+                        }
 
-                  if (result._id) {//TODO: handle this with mongoose/global preware
-                    result._id = result._id.toString();//EXPL: _id must be a string to pass validation
-                  }
+                        if (result._id) {//TODO: handle this with mongoose/global preware
+                          result._id = result._id.toString();//EXPL: _id must be a string to pass validation
+                        }
 
-                  Log.log("Result: %s", JSON.stringify(result));
+                        Log.log("Result: %s", JSON.stringify(result));
 
-                  return result;
-                })
-                .catch(function (error) {
-                  const message = "There was a postprocessing error.";
+                        return result;
+                      })
+                      .catch(function (error) {
+                        let message = "There was a postprocessing error.";
+                        if (_.isString(error)) {
+                          message = error;
+                        }
+                        if (!logError) {
+                          Log.error(message);
+                          logError = true;
+                          delete error.type;
+                        }
+                        errorHelper.handleError(error, message, errorHelper.types.BAD_REQUEST, Log);
+                      });
+                }
+                else {
+                  const message = "No resource was found with that id.";
                   if (!logError) {
                     Log.error(message);
                     logError = true;
-                    delete error.type;
                   }
-                  errorHelper.handleError(error, message, errorHelper.types.BAD_REQUEST, Log);
-                });
-          }
-          else {
-            const message = "No resource was found with that id.";
-            if (!logError) {
-              Log.error(message);
-              logError = true;
-            }
-            errorHelper.handleError(message, message, errorHelper.types.NOT_FOUND, Log);
-          }
+                  errorHelper.handleError(message, message, errorHelper.types.NOT_FOUND, Log);
+                }
+              })
+              .catch(function (error) {
+                const message = "There was an error accessing the database.";
+                if (!logError) {
+                  Log.error(message);
+                  logError = true;
+                  delete error.type;
+                }
+                errorHelper.handleError(error, message, errorHelper.types.BAD_IMPLEMENTATION, Log);
+              });
         })
-        .catch(function (error) {
-          const message = "There was an error accessing the database.";
+        .catch(function(error) {
+          let message = "There was a preprocessing error.";
+          if (_.isString(error)) {
+            message = error;
+          }
           if (!logError) {
             Log.error(message);
             logError = true;
             delete error.type;
           }
-          errorHelper.handleError(error, message, errorHelper.types.SERVER_TIMEOUT, Log);
+          errorHelper.handleError(error, message, errorHelper.types.BAD_REQUEST, Log);
         });
   }
   catch(error) {
@@ -395,28 +399,46 @@ function _find(model, _id, query, Log) {
 
 }
 
-//TODO: make sure errors are catching in correct order
+
 /**
- * Creates a model document
+ * Create function exposed as a mongoose wrapper.
  * @param model: A mongoose model.
- * @param payload: Data used to create the model document.
+ * @param payload: Data used to create the model document/s.
  * @param Log: A logging object.
- * @returns {object} A promise for the resulting model document.
+ * @returns {object} A promise for the resulting model document/s.
  * @private
  */
 function _create(model, payload, Log) {
+  let request = { payload: payload };
+  return _createHandler(model, request, Log);
+}
+//TODO: make sure errors are catching in correct order
+/**
+ * Creates one or more model documents.
+ * @param model: A mongoose model.
+ * @param request: The Hapi request object, or a container for the wrapper payload.
+ * @param Log: A logging object.
+ * @returns {object} A promise for the resulting model document/s.
+ * @private
+ */
+function _createHandler(model, request, Log) {
+  let payload = null;
+
   let logError = false;
   try {
     var isArray = true;
-    if (!_.isArray(payload)) {
-      payload = [payload];
+    if (!_.isArray(request.payload)) {
+      payload = [extend({}, request.payload)];
       isArray = false;
+    }
+    else {
+      payload = extend([], request.payload);
     }
 
     var promises =  [];
     if (model.routeOptions && model.routeOptions.create && model.routeOptions.create.pre){
       payload.forEach(function(document) {
-        promises.push(model.routeOptions.create.pre(document, Log));
+        promises.push(Q.fcall(model.routeOptions.create.pre, document, request, Log));
       });
     }
     else {
@@ -442,18 +464,15 @@ function _create(model, payload, Log) {
                   return item._id;
                 });
 
-                return model.find().where({'_id': { $in: data } }).select(attributes).exec()
+                return model.find().where({'_id': { $in: data } }).select(attributes).lean().exec()
                     .then(function(result) {
-                      result = result.map(function(item) {
-                        return item.toJSON();
-                      });
 
                       //TODO: include eventLogs
 
                       var promises = [];
                       if (model.routeOptions && model.routeOptions.create && model.routeOptions.create.post) {
                         result.forEach(function(document) {
-                          promises.push(model.routeOptions.create.post(document, result, Log));
+                          promises.push(Q.fcall(model.routeOptions.create.post, document, request, result, Log));
                         });
                       }
                       else {
@@ -462,10 +481,6 @@ function _create(model, payload, Log) {
 
                       return Q.all(promises)
                           .then(function (result) {
-                            result = result.map(function(item) {
-                              item._id = item._id.toString();//TODO: handle this with preware
-                              return item;
-                            });
                             if (isArray) {
                               return result;
                             }
@@ -474,7 +489,10 @@ function _create(model, payload, Log) {
                             }
                           })
                           .catch(function (error) {
-                            const message = "There was a postprocessing error creating the resource.";
+                            let message = "There was a postprocessing error creating the resource.";
+                            if (_.isString(error)) {
+                              message = error;
+                            }
                             if (!logError) {
                               Log.error(message);
                               logError = true;
@@ -491,11 +509,14 @@ function _create(model, payload, Log) {
                   logError = true;
                   delete error.type;
                 }
-                errorHelper.handleError(error, message, errorHelper.types.SERVER_TIMEOUT, Log);
+                errorHelper.handleError(error, message, errorHelper.types.BAD_IMPLEMENTATION, Log);
               });
         })
         .catch(function (error) {
-          const message = "There was a preprocessing error creating the resource.";
+          let message = "There was a preprocessing error creating the resource.";
+          if (_.isString(error)) {
+            message = error;
+          }
           if (!logError) {
             Log.error(message);
             logError = true;
@@ -520,8 +541,9 @@ function _create(model, payload, Log) {
   }
 }
 
+
 /**
- * Updates a model document
+ * Update function exposed as a mongoose wrapper.
  * @param model: A mongoose model.
  * @param _id: The document id.
  * @param payload: Data used to update the model document.
@@ -530,11 +552,25 @@ function _create(model, payload, Log) {
  * @private
  */
 function _update(model, _id, payload, Log) {
+  let request = { payload: payload };
+  return _updateHandler(model, _id, request, Log);
+}
+/**
+ * Updates a model document.
+ * @param model: A mongoose model.
+ * @param _id: The document id.
+ * @param request: The Hapi request object, or a container for the wrapper payload.
+ * @param Log: A logging object.
+ * @returns {object} A promise for the resulting model document.
+ * @private
+ */
+function _updateHandler(model, _id, request, Log) {
+  let payload = extend({}, request.payload);
   let logError = false;
   try {
     var promise =  {};
     if (model.routeOptions && model.routeOptions.update && model.routeOptions.update.pre){
-      promise = model.routeOptions.update.pre(_id, payload, Log);
+      promise = Q.fcall(model.routeOptions.update.pre, _id, request, Log);
     }
     else {
       promise = Q.when(payload);
@@ -556,10 +592,9 @@ function _update(model, _id, payload, Log) {
 
                   return model.findOne({'_id': result._id}, attributes).lean()
                       .then(function (result) {
-                        // result = result.toJSON();
 
                         if (model.routeOptions && model.routeOptions.update && model.routeOptions.update.post) {
-                          promise = model.routeOptions.update.post(payload, result, Log);
+                          promise = Q.fcall(model.routeOptions.update.post, request, result, Log);
                         }
                         else {
                           promise = Q.when(result);
@@ -567,11 +602,13 @@ function _update(model, _id, payload, Log) {
 
                         return promise
                             .then(function (result) {
-                              result._id = result._id.toString();//TODO: handle this with preware
                               return result;
                             })
                             .catch(function (error) {
-                              const message = "There was a postprocessing error updating the resource.";
+                              let message = "There was a postprocessing error updating the resource.";
+                              if (_.isString(error)) {
+                                message = error;
+                              }
                               if (!logError) {
                                 Log.error(message);
                                 logError = true;
@@ -597,11 +634,14 @@ function _update(model, _id, payload, Log) {
                   logError = true;
                   delete error.type;
                 }
-                errorHelper.handleError(error, message, errorHelper.types.SERVER_TIMEOUT, Log);
+                errorHelper.handleError(error, message, errorHelper.types.BAD_IMPLEMENTATION, Log);
               });
         })
         .catch(function (error) {
-          const message = "There was a preprocessing error updating the resource.";
+          let message = "There was a preprocessing error updating the resource.";
+          if (_.isString(error)) {
+            message = error;
+          }
           if (!logError) {
             Log.error(message);
             logError = true;
@@ -626,8 +666,9 @@ function _update(model, _id, payload, Log) {
   }
 }
 
+
 /**
- * Deletes a model document
+ * DeleteOne function exposed as a mongoose wrapper.
  * @param model: A mongoose model.
  * @param _id: The document id.
  * @param hardDelete: Flag used to determine a soft or hard delete.
@@ -635,13 +676,26 @@ function _update(model, _id, payload, Log) {
  * @returns {object} A promise returning true if the delete succeeds.
  * @private
  */
-//TODO: only update "deleteAt" the first time a document is deleted
 function _deleteOne(model, _id, hardDelete, Log) {
+  return _deleteOneHandler(model, _id, hardDelete, {}, Log);
+}
+/**
+ * Deletes a model document
+ * @param model: A mongoose model.
+ * @param _id: The document id.
+ * @param hardDelete: Flag used to determine a soft or hard delete.
+ * @param request: The Hapi request object.
+ * @param Log: A logging object.
+ * @returns {object} A promise returning true if the delete succeeds.
+ * @private
+ */
+//TODO: only update "deleteAt" the first time a document is deleted
+function _deleteOneHandler(model, _id, hardDelete, request, Log) {
   let logError = false;
   try {
     var promise = {};
     if (model.routeOptions && model.routeOptions.delete && model.routeOptions.delete.pre) {
-      promise = model.routeOptions.delete.pre(_id, hardDelete, Log);
+      promise = Q.fcall(model.routeOptions.delete.pre, _id, hardDelete, request, Log);
     }
     else {
       promise = Q.when();
@@ -662,7 +716,7 @@ function _deleteOne(model, _id, hardDelete, Log) {
 
                   var promise = {};
                   if (model.routeOptions && model.routeOptions.delete && model.routeOptions.delete.post) {
-                    promise = model.routeOptions.delete.post(hardDelete, deleted, Log);
+                    promise = Q.fcall(model.routeOptions.delete.post, hardDelete, deleted, request, Log);
                   }
                   else {
                     promise = Q.when();
@@ -673,7 +727,10 @@ function _deleteOne(model, _id, hardDelete, Log) {
                         return true;
                       })
                       .catch(function (error) {
-                        const message = "There was a postprocessing error deleting the resource.";
+                        let message = "There was a postprocessing error deleting the resource.";
+                        if (_.isString(error)) {
+                          message = error;
+                        }
                         if (!logError) {
                           Log.error(message);
                           logError = true;
@@ -698,11 +755,14 @@ function _deleteOne(model, _id, hardDelete, Log) {
                   logError = true;
                   delete error.type;
                 }
-                errorHelper.handleError(error, message, errorHelper.types.SERVER_TIMEOUT, Log);
+                errorHelper.handleError(error, message, errorHelper.types.BAD_IMPLEMENTATION, Log);
               });
         })
         .catch(function (error) {
-          const message = "There was a preprocessing error deleting the resource.";
+          let message = "There was a preprocessing error deleting the resource.";
+          if (_.isString(error)) {
+            message = error;
+          }
           if (!logError) {
             Log.error(message);
             logError = true;
@@ -727,25 +787,39 @@ function _deleteOne(model, _id, hardDelete, Log) {
   }
 }
 
+
 /**
- * Deletes multiple documents
+ * DeleteMany function exposed as a mongoose wrapper.
  * @param model: A mongoose model.
  * @param payload: Either an array of ids or an array of objects containing an id and a "hardDelete" flag.
  * @param Log: A logging object.
  * @returns {object} A promise returning true if the delete succeeds.
  * @private
  */
+function _deleteMany(model, payload, Log) {
+  let request = { payload: payload };
+  return _deleteManyHandler(model, request, Log);
+}
+/**
+ * Deletes multiple documents.
+ * @param model: A mongoose model.
+ * @param request: The Hapi request object, or a container for the wrapper payload.
+ * @param Log: A logging object.
+ * @returns {object} A promise returning true if the delete succeeds.
+ * @private
+ */
 //TODO: prevent Q.all from catching first error and returning early. Catch individual errors and return a list
 //TODO(cont) of ids that failed
-function _deleteMany(model, payload, Log) {
+function _deleteManyHandler(model, request, Log) {
+  let payload = extend([], request.payload);
   try {
     let promises = [];
     payload.forEach(function(arg) {
       if (_.isString(arg)) {
-        promises.push(_deleteOne(model, arg, false, Log));
+        promises.push(_deleteOneHandler(model, arg, false, request, Log));
       }
       else {
-        promises.push(_deleteOne(model, arg._id, arg.hardDelete, Log));
+        promises.push(_deleteOneHandler(model, arg._id, arg.hardDelete, request, Log));
       }
     });
 
@@ -770,8 +844,9 @@ function _deleteMany(model, payload, Log) {
   }
 }
 
+
 /**
- * Adds an association to a document
+ * AddOne function exposed as a mongoose wrapper.
  * @param ownerModel: The model that is being added to.
  * @param ownerId: The id of the owner document.
  * @param childModel: The model that is being added.
@@ -783,6 +858,23 @@ function _deleteMany(model, payload, Log) {
  * @private
  */
 function _addOne(ownerModel, ownerId, childModel, childId, associationName, payload, Log) {
+  let request = { payload: payload };
+  return _addOneHandler(ownerModel, ownerId, childModel, childId, associationName, request, Log);
+}
+/**
+ * Adds an association to a document
+ * @param ownerModel: The model that is being added to.
+ * @param ownerId: The id of the owner document.
+ * @param childModel: The model that is being added.
+ * @param childId: The id of the child document.
+ * @param associationName: The name of the association from the ownerModel's perspective.
+ * @param request: The Hapi request object, or a container for the wrapper payload.
+ * @param Log: A logging object
+ * @returns {object} A promise returning true if the add succeeds.
+ * @private
+ */
+function _addOneHandler(ownerModel, ownerId, childModel, childId, associationName, request, Log) {
+  let payload = extend({}, request.payload);
   let logError = false;
   try {
     return ownerModel.findOne({ '_id': ownerId })
@@ -833,8 +925,9 @@ function _addOne(ownerModel, ownerId, childModel, childId, associationName, payl
   }
 }
 
+
 /**
- * Removes an association to a document
+ * RemoveOne function exposed as a mongoose wrapper.
  * @param ownerModel: The model that is being removed from.
  * @param ownerId: The id of the owner document.
  * @param childModel: The model that is being removed.
@@ -845,6 +938,21 @@ function _addOne(ownerModel, ownerId, childModel, childId, associationName, payl
  * @private
  */
 function _removeOne(ownerModel, ownerId, childModel, childId, associationName, Log) {
+  return _removeOneHandler(ownerModel, ownerId, childModel, childId, associationName, {}, Log)
+}
+/**
+ * Removes an association to a document
+ * @param ownerModel: The model that is being removed from.
+ * @param ownerId: The id of the owner document.
+ * @param childModel: The model that is being removed.
+ * @param childId: The id of the child document.
+ * @param associationName: The name of the association from the ownerModel's perspective.
+ * @param request: The Hapi request object.
+ * @param Log: A logging object
+ * @returns {object} A promise returning true if the remove succeeds.
+ * @private
+ */
+function _removeOneHandler(ownerModel, ownerId, childModel, childId, associationName, request, Log) {
   let logError = false;
   try {
     return ownerModel.findOne({ '_id': ownerId })
@@ -890,8 +998,9 @@ function _removeOne(ownerModel, ownerId, childModel, childId, associationName, L
   }
 }
 
+
 /**
- * Adds multiple associations to a document
+ * AddMany function exposed as a mongoose wrapper.
  * @param ownerModel: The model that is being added to.
  * @param ownerId: The id of the owner document.
  * @param childModel: The model that is being added.
@@ -902,13 +1011,33 @@ function _removeOne(ownerModel, ownerId, childModel, childId, associationName, L
  * @private
  */
 function _addMany(ownerModel, ownerId, childModel, associationName, payload, Log) {
+  let request = { payload: payload };
+  return _addManyHandler(ownerModel, ownerId, childModel, associationName, request, Log)
+}
+/**
+ * Adds multiple associations to a document.
+ * @param ownerModel: The model that is being added to.
+ * @param ownerId: The id of the owner document.
+ * @param childModel: The model that is being added.
+ * @param associationName: The name of the association from the ownerModel's perspective.
+ * @param request: The Hapi request object, or a container for the wrapper payload.
+ * @param Log: A logging object
+ * @returns {object} A promise returning true if the add succeeds.
+ * @private
+ */
+function _addManyHandler(ownerModel, ownerId, childModel, associationName, request, Log) {
+  let payload = extend([], request.payload);
   let logError = false;
   try {
+    if (_.isEmpty(request.payload)) {
+      throw "Payload is empty."
+    }
     return ownerModel.findOne({ '_id': ownerId })
         .then(function (ownerObject) {
           if (ownerObject) {
             var childIds = [];
-            if (typeof payload[0] === 'string' || payload[0] instanceof String) {//EXPL: the payload is an array of Ids
+            //EXPL: the payload is an array of Ids
+            if (typeof payload[0] === 'string' || payload[0] instanceof String || payload[0]._bsontype === "ObjectID") {
               childIds = payload;
             }
             else {//EXPL: the payload contains extra fields
@@ -964,7 +1093,10 @@ function _addMany(ownerModel, ownerId, childModel, associationName, payload, Log
         })
   }
   catch(error) {
-    const message = "There was an error processing the request.";
+    let message = "There was an error processing the request.";
+    if (_.isString(error)) {
+      message = error;
+    }
     if (!logError) {
       Log.error(message);
       logError = true;
@@ -979,8 +1111,9 @@ function _addMany(ownerModel, ownerId, childModel, associationName, payload, Log
   }
 }
 
+
 /**
- * Removes multiple associations from a document
+ * RemoveMany function exposed as a mongoose wrapper.
  * @param ownerModel: The model that is being removed from.
  * @param ownerId: The id of the owner document.
  * @param childModel: The model that is being removed.
@@ -991,6 +1124,22 @@ function _addMany(ownerModel, ownerId, childModel, associationName, payload, Log
  * @private
  */
 function _removeMany(ownerModel, ownerId, childModel, associationName, payload, Log) {
+  let request = { payload: payload };
+  return _removeManyHandler(ownerModel, ownerId, childModel, associationName, request, Log);
+}
+/**
+ * Removes multiple associations from a document
+ * @param ownerModel: The model that is being removed from.
+ * @param ownerId: The id of the owner document.
+ * @param childModel: The model that is being removed.
+ * @param associationName: The name of the association from the ownerModel's perspective.
+ * @param request: The Hapi request object, or a container for the wrapper payload.
+ * @param Log: A logging object
+ * @returns {object} A promise returning true if the remove succeeds.
+ * @private
+ */
+function _removeManyHandler(ownerModel, ownerId, childModel, associationName, request, Log) {
+  let payload = extend([], request.payload);
   let logError = false;
   try {
     return ownerModel.findOne({ '_id': ownerId })
@@ -1045,7 +1194,10 @@ function _removeMany(ownerModel, ownerId, childModel, associationName, payload, 
         })
   }
   catch(error) {
-    const message = "There was an error processing the request.";
+    let message = "There was an error processing the request.";
+    if (_.isString(error)) {
+      message = error;
+    }
     if (!logError) {
       Log.error(message);
       logError = true;
@@ -1060,8 +1212,9 @@ function _removeMany(ownerModel, ownerId, childModel, associationName, payload, 
   }
 }
 
+
 /**
- * Get all of the associations for a document
+ * GetAll function exposed as a mongoose wrapper.
  * @param ownerModel: The model that is being added to.
  * @param ownerId: The id of the owner document.
  * @param childModel: The model that is being added.
@@ -1072,7 +1225,24 @@ function _removeMany(ownerModel, ownerId, childModel, associationName, payload, 
  * @private
  */
 function _getAll(ownerModel, ownerId, childModel, associationName, query, Log) {
+  let request = { query: query };
+  return _getAllHandler(ownerModel, ownerId, childModel, associationName, request, Log)
+}
+/**
+ * Get all of the associations for a document
+ * @param ownerModel: The model that is being added to.
+ * @param ownerId: The id of the owner document.
+ * @param childModel: The model that is being added.
+ * @param associationName: The name of the association from the ownerModel's perspective.
+ * @param request: The Hapi request object, or a container for the wrapper query.
+ * @param Log: A logging object
+ * @returns {object} A promise for the resulting model documents or the count of the query results.
+ * @private
+ */
+function _getAllHandler(ownerModel, ownerId, childModel, associationName, request, Log) {
+  let logError = false;
   try {
+    let query = request.query;
 
     var association = ownerModel.routeOptions.associations[associationName];
     var foreignField = association.foreignField;
@@ -1115,12 +1285,14 @@ function _getAll(ownerModel, ownerId, childModel, associationName, query, Log) {
             }
             childIds = childIds.filter(function(id) {
               return query._id.indexOf(id.toString()) > -1
-            })
+            });
             delete query._id
           }
           query.$where = extend({'_id': { $in: childIds }}, query.$where);
 
-          var promise = _list(childModel, query, Log);
+          request.query = query;
+
+          var promise = _listHandler(childModel, request, Log);
 
           if (many_many && association.linkingModel) {//EXPL: we have to manually insert the extra fields into the result
             var extraFieldData = result;
@@ -1141,7 +1313,33 @@ function _getAll(ownerModel, ownerId, childModel, associationName, query, Log) {
                     });
                   }
 
-                  return result;
+                  var promise = {};
+                  if (ownerModel.routeOptions && ownerModel.routeOptions.getAll &&
+                      ownerModel.routeOptions.getAll[associationName] && ownerModel.routeOptions.getAll[associationName].post) {
+                    promise = Q.fcall(ownerModel.routeOptions.getAll[associationName].post, request, result.docs, Log);
+                  }
+                  else {
+                    promise = Q.when(result.docs);
+                  }
+
+                  return promise
+                      .then(function(docs) {
+                        result.docs = docs;
+
+                        return result;
+                      })
+                      .catch(function(error) {
+                        let message = "There was a postprocessing error.";
+                        if (_.isString(error)) {
+                          message = error;
+                        }
+                        if (!logError) {
+                          Log.error(message);
+                          logError = true;
+                          delete error.type;
+                        }
+                        errorHelper.handleError(error, message, errorHelper.types.BAD_REQUEST, Log);
+                      });
                 })
           }
           else {
@@ -1153,16 +1351,20 @@ function _getAll(ownerModel, ownerId, childModel, associationName, query, Log) {
         })
         .catch(function (error) {
           const message = "There was an error processing the request.";
-          if (!error.type) {
+          if (!logError) {
             Log.error(message);
+            logError = true;
+            delete error.type;
           }
           errorHelper.handleError(error, message, errorHelper.types.BAD_REQUEST, Log);
         });
   }
   catch(error) {
     const message = "There was an error processing the request.";
-    if (!error.type) {
+    if (!logError) {
       Log.error(message);
+      logError = true;
+      delete error.type;
     }
     try {
       errorHelper.handleError(error, message, errorHelper.types.BAD_REQUEST, Log)
@@ -1172,6 +1374,7 @@ function _getAll(ownerModel, ownerId, childModel, associationName, query, Log) {
     }
   }
 }
+
 
 /**
  * Create an association instance between two resources
@@ -1199,78 +1402,114 @@ function _setAssociation(ownerModel, ownerObject, childModel, childId, associati
             promise = childObject.save();
           }
           else if (association.type === "MANY_MANY") {
-            if (typeof payload[0] === 'string' || payload[0] instanceof String) {//EXPL: the payload is an array of Ids. No extra fields
+            //EXPL: the payload is an array of Ids. No extra fields
+            if (typeof payload[0] === 'string' || payload[0] instanceof String || payload[0]._bsontype === "ObjectID") {
               payload = {};
 
               extraFields = false;
             }
             else {
               payload = payload.filter(function(object) {//EXPL: the payload contains extra fields
-                return object.childId === childObject._id.toString();
+                return object.childId.toString() === childObject._id.toString();
               });
 
               payload = payload[0];
+
+              payload = extend({}, payload);//EXPL: break the reference to the original payload
+
               delete payload.childId;
 
               extraFields = true;
             }
-            payload[childModel.modelName] = childObject._id;
 
-            var duplicate = ownerObject[associationName].filter(function (associationObject) {
-              return associationObject[childModel.modelName].toString() === childId;
+            //EXPL: if linking models aren't embeded, just upsert the linking model collection
+            var embedAssociation = association.embedAssociation === undefined ? config.embedAssociations : association.embedAssociation;
+            if (!embedAssociation) {
+              const linkingModel = association.include.through;
+              let query = {};
+              query[ownerModel.modelName] = ownerObject._id;
+              query[childModel.modelName] = childObject._id;
+
+              payload[ownerModel.modelName] = ownerObject._id;
+              payload[childModel.modelName] = childObject._id;
+
+              promise = linkingModel.findOneAndUpdate(query, payload, { new: true, upsert: true });
+            }
+            else {
+              payload[childModel.modelName] = childObject._id;
+
+              var duplicate = ownerObject[associationName].filter(function (associationObject) {
+                return associationObject[childModel.modelName].toString() === childId;
+              });
+              duplicate = duplicate[0];
+
+              var duplicateIndex = ownerObject[associationName].indexOf(duplicate);
+
+              if (duplicateIndex < 0) {//EXPL: if the association doesn't already exist, create it, otherwise update the extra fields
+                ownerObject[associationName].push(payload);
+              }
+              else if (extraFields) {//EXPL: only update if there are extra fields TODO: reference MANY_MANY bug where updating association that's just an id (i.e. no extra fields) causes an error and reference this as the fix
+                payload._id = ownerObject[associationName][duplicateIndex]._id;//EXPL: retain the association instance id for consistency
+                ownerObject[associationName][duplicateIndex] = payload;
+              }
+
+              payload = extend({}, payload);//EXPL: break the reference to the original payload
+              delete payload._id;
+
+              delete payload[childModel.modelName];
+              payload[ownerModel.modelName] = ownerObject._id;
+              var childAssociation = {};
+              var childAssociations = childModel.routeOptions.associations;
+              for (var childAssociationKey in childAssociations) {
+                var association = childAssociations[childAssociationKey];
+                if (association.model === ownerModel.modelName && association.type === "MANY_MANY") {//TODO: Add issue referencing a conflict when a model has two associations of the same model and one is a MANY_MANY, and reference this change as the fix
+                  childAssociation = association;
+                }
+              }
+
+              if (!childAssociation.include) {
+                throw new Error("Missing association between " + ownerModel.modelName + " and " + childModel.modelName + ".");
+              }
+
+              var childAssociationName = childAssociation.include.as;
+
+              if (!childObject[childAssociationName]) {
+                throw new Error(childAssociationName + " association does not exist.");
+              }
+
+              duplicate = childObject[childAssociationName].filter(function (associationObject) {
+                return associationObject[ownerModel.modelName].toString() === ownerObject._id.toString();
+              });
+              duplicate = duplicate[0];
+
+              duplicateIndex = childObject[childAssociationName].indexOf(duplicate);
+
+              if (duplicateIndex < 0) {//EXPL: if the association doesn't already exist, create it, otherwise update the extra fields
+                childObject[childAssociationName].push(payload);
+              }
+              else {
+                payload._id = childObject[childAssociationName][duplicateIndex]._id;//EXPL: retain the association instance id for consistency
+                childObject[childAssociationName][duplicateIndex] = payload;
+              }
+
+              promise = Q.all([ownerModel.findByIdAndUpdate(ownerObject._id, ownerObject), childModel.findByIdAndUpdate(childObject._id, childObject)]);
+            }
+
+          }
+          else if (association.type === "_MANY") {
+
+            var duplicate = ownerObject[associationName].filter(function (_childId) {
+              return _childId.toString() === childId;
             });
             duplicate = duplicate[0];
 
             var duplicateIndex = ownerObject[associationName].indexOf(duplicate);
 
-            if (duplicateIndex < 0) {//EXPL: if the association doesn't already exist, create it, otherwise update the extra fields
-              ownerObject[associationName].push(payload);
-            }
-            else if (extraFields) {//EXPL: only update if there are extra fields TODO: reference MANY_MANY bug where updating association that's just an id (i.e. no extra fields) causes an error and reference this as the fix
-              payload._id = ownerObject[associationName][duplicateIndex]._id;//EXPL: retain the association instance id for consistency
-              ownerObject[associationName][duplicateIndex] = payload;
+            if (duplicateIndex < 0) {//EXPL: if the association doesn't already exist, create it
+              ownerObject[associationName].push(childId);
             }
 
-            payload = extend({}, payload);//EXPL: break the reference to the original payload
-            delete payload._id;
-
-            delete payload[childModel.modelName];
-            payload[ownerModel.modelName] = ownerObject._id;
-            var childAssociation = {};
-            var childAssociations = childModel.routeOptions.associations;
-            for (var childAssociationKey in childAssociations) {
-              var association = childAssociations[childAssociationKey];
-              if (association.model === ownerModel.modelName && association.type === "MANY_MANY") {//TODO: Add issue referencing a conflict when a model has two associations of the same model and one is a MANY_MANY, and reference this change as the fix
-                childAssociation = association;
-              }
-            }
-
-            if (!childAssociation.include) {
-              throw new Error("Missing association between " + ownerModel.modelName + " and " + childModel.modelName + ".");
-            }
-
-            var childAssociationName = childAssociation.include.as;
-
-            if (!childObject[childAssociationName]) {
-              throw new Error(childAssociationName + " association does not exist.");
-            }
-
-            duplicate = childObject[childAssociationName].filter(function (associationObject) {
-              return associationObject[ownerModel.modelName].toString() === ownerObject._id.toString();
-            });
-            duplicate = duplicate[0];
-
-            duplicateIndex = childObject[childAssociationName].indexOf(duplicate);
-
-            if (duplicateIndex < 0) {//EXPL: if the association doesn't already exist, create it, otherwise update the extra fields
-              childObject[childAssociationName].push(payload);
-            }
-            else {
-              payload._id = childObject[childAssociationName][duplicateIndex]._id;//EXPL: retain the association instance id for consistency
-              childObject[childAssociationName][duplicateIndex] = payload;
-            }
-
-            promise = Q.all([ownerModel.findByIdAndUpdate(ownerObject._id, ownerObject), childModel.findByIdAndUpdate(childObject._id, childObject)]);
+            promise = Q.all([ownerModel.findByIdAndUpdate(ownerObject._id, ownerObject)]);
           }
           else {
             deferred.reject(new Error("Association type incorrectly defined."));
@@ -1299,6 +1538,7 @@ function _setAssociation(ownerModel, ownerObject, childModel, childId, associati
 
   return deferred.promise;
 }
+
 
 /**
  * Remove an association instance between two resources
@@ -1330,9 +1570,58 @@ function _removeAssociation(ownerModel, ownerObject, childModel, childId, associ
           }
           else if (associationType === "MANY_MANY") {//EXPL: remove references from both models
 
+            //EXPL: if linking models aren't embeded, just upsert the linking model collection
+            var embedAssociation = association.embedAssociation === undefined ? config.embedAssociations : association.embedAssociation;
+            if (!embedAssociation) {
+              const linkingModel = association.include.through;
+              let query = {};
+              query[ownerModel.modelName] = ownerObject._id;
+              query[childModel.modelName] = childObject._id;
+
+              promise = linkingModel.findOneAndRemove(query);
+            }
+            else {
+              //EXPL: remove the associated child from the owner
+              var deleteChild = ownerObject[associationName].filter(function(child) {
+                return child[childModel.modelName].toString() === childObject._id.toString();
+              });
+              deleteChild = deleteChild[0];
+
+              var index = ownerObject[associationName].indexOf(deleteChild);
+              if (index > -1) {
+                ownerObject[associationName].splice(index, 1);
+              }
+
+              //EXPL: get the child association name
+              var childAssociation = {};
+              var childAssociations = childModel.routeOptions.associations;
+              for (var childAssociationKey in childAssociations) {
+                var association = childAssociations[childAssociationKey];
+                if (association.model === ownerModel.modelName) {
+                  childAssociation = association;
+                }
+              }
+              var childAssociationName = childAssociation.include.as;
+
+              //EXPL: remove the associated owner from the child
+              var deleteOwner = childObject[childAssociationName].filter(function(owner) {
+                return owner[ownerModel.modelName].toString() === ownerObject._id.toString();
+              });
+              deleteOwner = deleteOwner[0];
+
+              index = childObject[childAssociationName].indexOf(deleteOwner);
+              if (index > -1) {
+                childObject[childAssociationName].splice(index, 1);
+              }
+
+              promise = Q.all([ownerModel.findByIdAndUpdate(ownerObject._id, ownerObject), childModel.findByIdAndUpdate(childObject._id, childObject)]);
+            }
+          }
+          else if (associationType === "_MANY") {//EXPL: remove reference from owner model
+
             //EXPL: remove the associated child from the owner
-            var deleteChild = ownerObject[associationName].filter(function(child) {
-              return child[childModel.modelName].toString() === childObject._id.toString();
+            var deleteChild = ownerObject[associationName].filter(function(childId) {
+              return childId.toString() === childObject._id.toString();
             });
             deleteChild = deleteChild[0];
 
@@ -1341,29 +1630,7 @@ function _removeAssociation(ownerModel, ownerObject, childModel, childId, associ
               ownerObject[associationName].splice(index, 1);
             }
 
-            //EXPL: get the child association name
-            var childAssociation = {};
-            var childAssociations = childModel.routeOptions.associations;
-            for (var childAssociationKey in childAssociations) {
-              var association = childAssociations[childAssociationKey];
-              if (association.model === ownerModel.modelName) {
-                childAssociation = association;
-              }
-            }
-            var childAssociationName = childAssociation.include.as;
-
-            //EXPL: remove the associated owner from the child
-            var deleteOwner = childObject[childAssociationName].filter(function(owner) {
-              return owner[ownerModel.modelName].toString() === ownerObject._id.toString();
-            });
-            deleteOwner = deleteOwner[0];
-
-            index = childObject[childAssociationName].indexOf(deleteOwner);
-            if (index > -1) {
-              childObject[childAssociationName].splice(index, 1);
-            }
-
-            promise = Q.all([ownerModel.findByIdAndUpdate(ownerObject._id, ownerObject), childModel.findByIdAndUpdate(childObject._id, childObject)]);
+            promise = Q.all([ownerModel.findByIdAndUpdate(ownerObject._id, ownerObject)]);
           }
           else {
             deferred.reject(new Error("Association type incorrectly defined."));
@@ -1391,6 +1658,7 @@ function _removeAssociation(ownerModel, ownerObject, childModel, childId, associ
 
   return deferred.promise;
 }
+
 
 /**
  * This function is called after embedded associations have been populated so that any associations

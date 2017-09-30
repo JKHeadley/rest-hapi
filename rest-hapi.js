@@ -13,6 +13,7 @@ const _ = require('lodash'),
     fs = require("fs"),
     restHelperFactory = require('./utilities/rest-helper-factory'),
     handlerHelper = require('./utilities/handler-helper'),
+    joiHelper = require('./utilities/joi-mongoose-helper'),
     modelGenerator = require('./utilities/model-generator'),
     apiGenerator = require('./utilities/api-generator'),
     defaultConfig = require('./config');
@@ -33,10 +34,12 @@ module.exports = {
     addOne: handlerHelper.addOne,
     removeOne: handlerHelper.removeOne,
     addMany: handlerHelper.addMany,
+    removeMany: handlerHelper.removeMany,
     getAll: handlerHelper.getAll,
     logger: {},
     getLogger: getLogger,
-    logUtil: logUtil
+    logUtil: logUtil,
+    joiHelper: joiHelper
 };
 
 function register(server, options, next) {
@@ -73,7 +76,8 @@ function register(server, options, next) {
                     title: config.appTitle,
                     version: config.version
                 },
-                expanded: config.docExpansion
+                expanded: config.docExpansion,
+                reuseDefinitions: false
             };
 
             let HapiSwagger = {

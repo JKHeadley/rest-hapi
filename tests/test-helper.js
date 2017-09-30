@@ -23,7 +23,7 @@ module.exports = {
     parameters[logIndex] = Log;
 
     test(methodName + ' fails if model parameter isn\'t a mongoose model', function (t) {
-      t.plan(8);
+      t.plan(10);
 
       var model = {};
 
@@ -33,7 +33,7 @@ module.exports = {
         methodToTest.apply(null, paramCopy);
         t.fail("No error was thrown.");
       } catch (error) {
-        t.equal(error.name, "AssertionError", "error is an AssertionError");
+        t.ok(/^AssertionError/.test(error.name), "error is an AssertionError");
         t.ok(error.message.indexOf("schema") > -1, "assertion message contains 'schema' text.");
       }
 
@@ -47,7 +47,7 @@ module.exports = {
         methodToTest.apply(null, paramCopy);
         t.fail("No error was thrown.");
       } catch (error) {
-        t.equal(error.name, "AssertionError", "error is an AssertionError");
+        t.ok(/^AssertionError/.test(error.name), "error is an AssertionError");
         t.ok(error.message.indexOf("schema.paths") > -1, "assertion message contains 'schema.paths' text.");
       }
 
@@ -63,7 +63,24 @@ module.exports = {
         methodToTest.apply(null, paramCopy);
         t.fail("No error was thrown.");
       } catch (error) {
-        t.equal(error.name, "AssertionError", "error is an AssertionError");
+        t.ok(/^AssertionError/.test(error.name), "error is an AssertionError");
+        t.ok(error.message.indexOf("schema.tree") > -1, "assertion message contains 'schema.tree' text.");
+      }
+
+      model = {
+        schema: {
+          paths: {},
+          tree: {}
+        }
+      };
+
+      paramCopy = _.extend([], parameters);
+      paramCopy[modelIndex] = model;
+      try {
+        methodToTest.apply(null, paramCopy);
+        t.fail("No error was thrown.");
+      } catch (error) {
+        t.ok(/^AssertionError/.test(error.name), "error is an AssertionError");
         t.ok(error.message.indexOf("routeOptions") > -1, "assertion message contains 'routeOptions' text.");
       }
 
@@ -75,7 +92,8 @@ module.exports = {
             field2: {},
             field3: {},
             field4: {}
-          }
+          },
+          tree: {}
         },
         routeOptions: {}
       };
@@ -86,7 +104,7 @@ module.exports = {
         methodToTest.apply(null, paramCopy);
         t.fail("No error was thrown.");
       } catch (error) {
-        t.equal(error.name, "AssertionError", "error is an AssertionError");
+        t.ok(/^AssertionError/.test(error.name), "error is an AssertionError");
         t.ok(error.message.indexOf("options") > -1, "assertion message contains 'options' text.");
       }
     });

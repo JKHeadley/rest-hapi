@@ -85,12 +85,33 @@ config.mongo.URI = 'mongodb://localhost/rest_hapi';
 config.authStrategy = false;
 
 /**
- * MetaData options:
- * default: true
+ * If set to false, MANY_MANY associations (including linking model data) will be saved in their own collection in th db.  This is useful if a single document
+ * will be associated with many other documents, which could cause the document size to become very large. For example,
+ * a business might be associated with thousands of users.
+ *
+ * Embedding the associations will be more efficient for population/association queries but less efficient for memory/document size.
+ *
+ * This setting can be individually overwritten by setting the "embedAssociation" association property.
+ * default: false
  * @type {boolean}
  */
+config.embedAssociations = false;
+
+/**
+* MetaData options:
+    * default: true
+* @type {boolean}
+*/
 config.enableCreatedAt = true;
 config.enableUpdatedAt = true;
+
+/**
+ * Flag specifying whether to text index all string fields for all models to enable text search.
+ * WARNING: enabling this adds overhead to add inserts and updates, as well as added storage requirements.
+ * Default is false.
+ * @type {boolean}
+ */
+config.enableTextSearch = false;
 
 /**
  * Soft delete options
@@ -113,6 +134,15 @@ config.enablePayloadValidation = true;
 config.enableResponseValidation = true;
 
 /**
+ * Determines the hapi failAction of each response. If true, responses that fail validation will return
+ * a 500 error.  If set to false, responses that fail validation will just log the offense and send
+ * the response as-is.
+ * default: false
+ * @type {boolean}
+ */
+config.enableResponseFail = false;
+
+/**
  * If set to true, (and authStrategy is not false) then endpoints will be generated with pre-defined
  * scopes based on the model definition.
  * default: false
@@ -121,12 +151,18 @@ config.enableResponseValidation = true;
 config.generateScopes = false;
 
 /**
- * Flag specifying whether to text index all string fields for all models to enable text search.
- * WARNING: enabling this adds overhead to add inserts and updates, as well as added storage requirements.
- * Default is false.
+ * If set to true, the scope for each endpoint will be logged when then endpoint is generated.
+ * default: false
  * @type {boolean}
  */
-config.enableTextSearch = false;
+config.logScopes = false;
+
+/**
+ * If set to true, each route will be logged as it is generated.
+ * default: false
+ * @type {boolean}
+ */
+config.logRoutes = false;
 
 /**
  * Log level options:

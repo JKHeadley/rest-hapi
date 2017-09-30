@@ -379,7 +379,7 @@ test('query-helper.getSortableFields', function (t) {
 
     t.plan(1);
 
-    sinon.stub(queryHelper, "getReadableFields", function () {
+    sinon.stub(queryHelper, "getReadableFields").callsFake(function () {
       return []
     });
 
@@ -410,7 +410,7 @@ test('query-helper.getSortableFields', function (t) {
 
     t.plan(1);
 
-    sinon.stub(queryHelper, "getReadableFields", function () {
+    sinon.stub(queryHelper, "getReadableFields").callsFake(function () {
       return ["email", "firstName", "lastName"]
     });
 
@@ -636,7 +636,7 @@ test('query-helper.populateEmbeddedDocs', function (t) {
     //<editor-fold desc="Arrange">
     var queryHelper = rewire('../utilities/query-helper');
 
-    sinon.stub(queryHelper, "createAttributesFilter", sinon.spy());
+    sinon.stub(queryHelper, "createAttributesFilter").callsFake(sinon.spy());
 
     var nestPopulate = queryHelper.__get__("nestPopulate");
 
@@ -679,7 +679,7 @@ test('query-helper.populateEmbeddedDocs', function (t) {
     //<editor-fold desc="Arrange">
     var queryHelper = rewire('../utilities/query-helper');
 
-    sinon.stub(queryHelper, "createAttributesFilter", sinon.spy());
+    sinon.stub(queryHelper, "createAttributesFilter").callsFake(sinon.spy());
 
     var nestPopulate = queryHelper.__get__("nestPopulate");
 
@@ -694,7 +694,8 @@ test('query-helper.populateEmbeddedDocs', function (t) {
         model: {},
         include: {
           model: {}
-        }
+        },
+        embedAssociation: true
       }
     };
     //</editor-fold>
@@ -716,7 +717,7 @@ test('query-helper.populateEmbeddedDocs', function (t) {
     //<editor-fold desc="Arrange">
     var queryHelper = rewire('../utilities/query-helper');
 
-    sinon.stub(queryHelper, "createAttributesFilter", sinon.spy());
+    sinon.stub(queryHelper, "createAttributesFilter").callsFake(sinon.spy());
 
     var nestPopulate = queryHelper.__get__("nestPopulate");
 
@@ -732,7 +733,8 @@ test('query-helper.populateEmbeddedDocs', function (t) {
         model: "role",
         include: {
           model: {}
-        }
+        },
+        embedAssociation: true
       }
     };
 
@@ -742,7 +744,8 @@ test('query-helper.populateEmbeddedDocs', function (t) {
         model: "role",
         include: {
           model: {}
-        }
+        },
+        embedAssociation: true
       }
     };
 
@@ -770,23 +773,36 @@ test('query-helper.populateEmbeddedDocs', function (t) {
     var createAttributesFilter = sinon.stub();
     createAttributesFilter.returns("test");
 
-    sinon.stub(queryHelper, "createAttributesFilter", createAttributesFilter);
+    sinon.stub(queryHelper, "createAttributesFilter").callsFake(createAttributesFilter);
 
     var nestPopulate = queryHelper.__get__("nestPopulate");
 
-    t.plan(8);
+    t.plan(13);
 
     var query = {};
 
-    var embeds = ["title", "users", "one", "groups"];
+    var embeds = ["title", "users", "one", "groups", "teams"];
+
+    var associations_five = {
+      teams: {
+        type: "MANY_MANY",
+        model: "team",
+        include: {
+          model: {routeOptions: {associations: {}}},
+          through: { modelName: "user_team" }
+        },
+        embedAssociation: false
+      }
+    };
 
     var associations_four = {
       groups: {
         type: "MANY_MANY",
         model: "group",
         include: {
-          model: {routeOptions: {associations: {}}}
-        }
+          model: {routeOptions: {associations: associations_five}}
+        },
+        embedAssociation: true
       }
     };
 
@@ -834,7 +850,12 @@ test('query-helper.populateEmbeddedDocs', function (t) {
     t.equals(populate.populate.populate.path, "one");
     t.equals(populate.populate.populate.select, "test groups.group groups");
     t.equals(populate.populate.populate.populate.path, "groups.group");
-    t.equals(populate.populate.populate.populate.select, "test");
+    t.equals(populate.populate.populate.populate.select, "test teams teams");
+    t.equals(populate.populate.populate.populate.populate.path, "teams");
+    t.equals(populate.populate.populate.populate.populate.select, "test team team");
+    t.equals(populate.populate.populate.populate.populate.model, "user_team");
+    t.equals(populate.populate.populate.populate.populate.populate.path, "team");
+    t.equals(populate.populate.populate.populate.populate.populate.select, "test");
     //</editor-fold>
 
     //<editor-fold desc="Restore">
@@ -1108,13 +1129,13 @@ test('query-helper.createMongooseQuery', function (t) {
       select: sinon.spy(),
       where: sinon.spy()
     };
-    sinon.stub(queryHelper, "createAttributesFilter", function () {
+    sinon.stub(queryHelper, "createAttributesFilter").callsFake(function () {
       return mongooseQuery
     });
-    sinon.stub(queryHelper, "populateEmbeddedDocs", function () {
+    sinon.stub(queryHelper, "populateEmbeddedDocs").callsFake(function () {
       return mongooseQuery
     });
-    sinon.stub(queryHelper, "setSort", function () {
+    sinon.stub(queryHelper, "setSort").callsFake(function () {
       return mongooseQuery
     });
 
@@ -1174,19 +1195,19 @@ test('query-helper.createMongooseQuery', function (t) {
       select: sinon.spy(),
       where: sinon.spy()
     };
-    sinon.stub(queryHelper, "setSkip", function () {
+    sinon.stub(queryHelper, "setSkip").callsFake(function () {
       return mongooseQuery
     });
-    sinon.stub(queryHelper, "setLimit", function () {
+    sinon.stub(queryHelper, "setLimit").callsFake(function () {
       return mongooseQuery
     });
-    sinon.stub(queryHelper, "createAttributesFilter", function () {
+    sinon.stub(queryHelper, "createAttributesFilter").callsFake(function () {
       return mongooseQuery
     });
-    sinon.stub(queryHelper, "populateEmbeddedDocs", function () {
+    sinon.stub(queryHelper, "populateEmbeddedDocs").callsFake(function () {
       return mongooseQuery
     });
-    sinon.stub(queryHelper, "setSort", function () {
+    sinon.stub(queryHelper, "setSort").callsFake(function () {
       return mongooseQuery
     });
 
@@ -1233,19 +1254,19 @@ test('query-helper.createMongooseQuery', function (t) {
       select: sinon.spy(),
       where: sinon.spy()
     };
-    sinon.stub(queryHelper, "setSkip", function () {
+    sinon.stub(queryHelper, "setSkip").callsFake(function () {
       return mongooseQuery
     });
-    sinon.stub(queryHelper, "setLimit", function () {
+    sinon.stub(queryHelper, "setLimit").callsFake(function () {
       return mongooseQuery
     });
-    sinon.stub(queryHelper, "createAttributesFilter", function () {
+    sinon.stub(queryHelper, "createAttributesFilter").callsFake(function () {
       return mongooseQuery
     });
-    sinon.stub(queryHelper, "populateEmbeddedDocs", function () {
+    sinon.stub(queryHelper, "populateEmbeddedDocs").callsFake(function () {
       return mongooseQuery
     });
-    sinon.stub(queryHelper, "setSort", function () {
+    sinon.stub(queryHelper, "setSort").callsFake(function () {
       return mongooseQuery
     });
 
@@ -1310,13 +1331,13 @@ test('query-helper.paginate', function (t) {
       select: sinon.spy(),
       where: sinon.spy()
     };
-    sinon.stub(queryHelper, "setLimit", function () {
+    sinon.stub(queryHelper, "setLimit").callsFake(function () {
       return mongooseQuery
     });
-    sinon.stub(queryHelper, "setSkip", function () {
+    sinon.stub(queryHelper, "setSkip").callsFake(function () {
       return mongooseQuery
     });
-    sinon.stub(queryHelper, "setPage", function () {
+    sinon.stub(queryHelper, "setPage").callsFake(function () {
       return mongooseQuery
     });
 

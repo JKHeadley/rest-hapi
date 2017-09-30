@@ -7,7 +7,7 @@ A RESTful API generator for the [hapi](https://github.com/hapijs/hapi) framework
 
 rest-hapi is a hapi plugin intended to abstract the work involved in setting up API routes/validation/handlers/etc. for the purpose of rapid app development.  At the same time it provides a powerful combination of [relational](#associations) structure with [NoSQL](#creating-endpoints) flexibility.  You define your models and the rest is done for you.  Have your own API server up and running in minutes!
 
-##NOTE: Breaking change in GET requests from v0.13.0->v0.14.0   See the [Pagination](#pagination) section for details.
+# NOTE: If updating from a version previous to v0.27.0, make sure to set `config.embedAssociations` to `true`. Please refer to the [changelog](https://github.com/JKHeadley/rest-hapi/blob/master/CHANGELOG.md) for details.
 
 ## Features
 
@@ -25,9 +25,9 @@ rest-hapi is a hapi plugin intended to abstract the work involved in setting up 
 
 View the swagger docs for the live demos:
 
-appy: http://ec2-35-164-131-1.us-west-2.compute.amazonaws.com:8125
+appy: http://ec2-52-25-112-131.us-west-2.compute.amazonaws.com:8125
 
-rest-hapi-demo: http://ec2-35-164-131-1.us-west-2.compute.amazonaws.com:8124
+rest-hapi-demo: http://ec2-52-25-112-131.us-west-2.compute.amazonaws.com:8124
 
 ## Example Projects
 
@@ -43,12 +43,32 @@ rest-hapi-demo: http://ec2-35-164-131-1.us-west-2.compute.amazonaws.com:8124
 - [Configuration](#configuration)
 - [Swagger documentation](#swagger-documentation)
 - [Creating endpoints](#creating-endpoints)
+    * [Model endpoints](#model-endpoints)
+    * [Standalone endpoints](#standalone-endpoints)
+    * [Additional endpoints](#additional-endpoints)
 - [Associations](#associations)
+    * [ONE_ONE](#one_one)
+    * [ONE_MANY/MANY_ONE](#one_manymany_one)
+    * [MANY_MANY](#many_many)
+        - [MANY_MANY linking models](#many_many-linking-models)
+        - [MANY_MANY data storage](#many_many-data-storage)
+            * [Updating MANY_MANY db data](#updating-many_many-db-data)
+    * [\_MANY](#_many)
 - [Route customization](#route-customization)
+    * [Custom path names](#custom-path-names)
+    * [Omitting routes](#omitting-routes)
 - [Querying](#querying)
+    * [Pagination](#pagination)
+    * [Populate nested associations](#populate-nested-associations)
 - [Validation](#validation)
+    * [Route validation](#route-validation)
+    * [Joi helper methods](#joi-helper-methods)
 - [Middleware](#middleware)
+    * [CRUD](#crud)
+    * [Association](#association)
 - [Authorization](#authorization)
+    * [Generating scopes](#generating-scopes)
+    * [Disabling scopes](#disabling-scopes)
 - [Mongoose wrapper methods](#mongoose-wrapper-methods)
 - [Soft delete](#soft-delete)
 - [Metadata](#metadata)
@@ -58,6 +78,7 @@ rest-hapi-demo: http://ec2-35-164-131-1.us-west-2.compute.amazonaws.com:8124
 - [Questions](#questions)
 - [Future work](#future-work)
 - [Contributing](#contributing)
+
 
 
 ## Requirements
@@ -196,12 +217,33 @@ config.mongo.URI = 'mongodb://localhost/rest_hapi';
 config.authStrategy = false;
 
 /**
+ * If set to false, MANY_MANY associations (including linking model data) will be saved in their own collection in th db.  This is useful if a single document
+ * will be associated with many other documents, which could cause the document size to become very large. For example,
+ * a business might be associated with thousands of users.
+ *
+ * Embedding the associations will be more efficient for population/association queries but less efficient for memory/document size.
+ *
+ * This setting can be individually overwritten by setting the "embedAssociation" association property.
+ * default: false
+ * @type {boolean}
+ */
+config.embedAssociations = false;
+
+/**
  * MetaData options:
  * default: true
  * @type {boolean}
  */
 config.enableCreatedAt = true;
 config.enableUpdatedAt = true;
+
+/**
+ * Flag specifying whether to text index all string fields for all models to enable text search.
+ * WARNING: enabling this adds overhead to add inserts and updates, as well as added storage requirements.
+ * Default is false.
+ * @type {boolean}
+ */
+config.enableTextSearch = false;
 
 /**
  * Soft delete options
@@ -224,6 +266,15 @@ config.enablePayloadValidation = true;
 config.enableResponseValidation = true;
 
 /**
+ * Determines the hapi failAction of each response. If true, responses that fail validation will return
+ * a 500 error.  If set to false, responses that fail validation will just log the offense and send
+ * the response as-is.
+ * default: false
+ * @type {boolean}
+ */
+config.enableResponseFail = false;
+
+/**
  * If set to true, (and authStrategy is not false) then endpoints will be generated with pre-defined
  * scopes based on the model definition.
  * default: false
@@ -232,12 +283,18 @@ config.enableResponseValidation = true;
 config.generateScopes = false;
 
 /**
- * Flag specifying whether to text index all string fields for all models to enable text search.
- * WARNING: enabling this adds overhead to add inserts and updates, as well as added storage requirements.
- * Default is false.
+ * If set to true, the scope for each endpoint will be logged when then endpoint is generated.
+ * default: false
  * @type {boolean}
  */
-config.enableTextSearch = false;
+config.logScopes = false;
+
+/**
+ * If set to true, each route will be logged as it is generated.
+ * default: false
+ * @type {boolean}
+ */
+config.logRoutes = false;
 
 /**
  * Log level options:
@@ -489,13 +546,9 @@ module.exports = function (mongoose) {
 
 ## Associations
 
-The rest-hapi framework supports model associations that mimic associations in 
-a relational database.  This includes one-one, one-many, many-one, and many-many
-relationships.  Associations are created by adding the relevant schema fields
-and populating the ``associations`` object within ``routeOptions``.  Associations
-exists as references to a document's ``_id`` field, and can be populated to return 
-the associated object.  See [Querying](#querying) for more details on how to populate
-associations.
+The rest-hapi framework supports model associations that mimic associations in a relational database.  This includes [one-one](#one_one), [one-many](#one_manymany_one), [many-one](#one_manymany_one), and [many-many](#many_many) relationships.  Associations are created by adding the relevant schema fields and populating the ``associations`` object within ``routeOptions``.  Associations exists as references to a document's ``_id`` field, and can be populated to return the associated object.  See [Querying](#querying) for more details on how to populate associations.
+
+***Update: One sided [-many](#_many) relationships are available as of v0.19.0***
 
 ### ONE_ONE
 
@@ -805,7 +858,7 @@ The extra field ``friendsSince`` could contain a date representing how long the 
 associated users have known each other.  This example also displays how models can contain a 
 reference to themselves.  
 
-**NOTE** The linking model filename does not have to match the model name, however the ``linkingModel``
+**NOTE:** The linking model filename does not have to match the model name, however the ``linkingModel``
 association property **must** match the linking model ``modleName`` property.
 
 
@@ -872,6 +925,185 @@ module.exports = function () {
 
   return Model;
 };
+```
+
+#### MANY_MANY data storage
+
+By nature every new instance of a MANY_MANY association adds new data to the database. At minimum this data must contain the `\_id`s of the associated documents, but this can be extended to include extra fields through a [linking model](#many_many-linking-models). rest-hapi provides two options as to how this data is stored in the db (controlled by the `config.embedAssociations` property):
+
+- `config.embedAssociations`: true
+    * The data is embeded as an array property within the related documents.
+    * Pros:
+        - The data is easy to access and quick to read from the db (theoretically, not proven).
+        - Fewer collections in the db.
+        - The association data is more human readable.
+    * Cons:
+        - Linking model data is duplicated for each related document.
+        - Exists as an array that grows without bound, which is a [MonboDB anti-pattern](https://docs.mongodb.com/manual/tutorial/model-referenced-one-to-many-relationships-between-documents/)
+- `config.embedAssociations`: false (default)
+    * The data is stored in an auto-generated linking collection.
+    * Pros:
+        - Data is offloaded to the linking collections, leaving the associated documents smaller and less cluttered.
+        - Prevents unbounded arrays and takes full advantage of [mongoose virtual references](http://thecodebarbarian.com/mongoose-virtual-populate)
+        - Linking model data isn't duplicated.
+    * Cons:
+        - Reading data is slower (theoretically, not proven).
+        - Less human readable.
+        
+The `config.embedAssociations` can be overwritten for individual associations through the `embedAssociation` property. See the example below:
+
+```javascript
+'use strict';
+
+module.exports = function (mongoose) {
+    var modelName = "group";
+    var Types = mongoose.Schema.Types;
+    var Schema = new mongoose.Schema({
+        name: {
+            type: Types.String,
+            required: true,
+            unique: true
+        },
+        description: {
+            type: Types.String
+        }
+    }, { collection: modelName });
+
+    Schema.statics = {
+        collectionName: modelName,
+        routeOptions: {
+            associations: {
+                users: {
+                    type: "MANY_MANY",
+                    alias: "user",
+                    model: "user",
+                    embedAssociation: true              //<-----overrides the config.embedAssociations property
+                }
+            }
+        }
+    };
+
+    return Schema;
+};
+```
+```javascript
+'use strict';
+
+module.exports = function (mongoose) {
+    var modelName = "user";
+    var Types = mongoose.Schema.Types;
+    var Schema = new mongoose.Schema({
+        name: {
+            type: Types.String,
+            required: true
+        }
+    }, { collection: modelName });
+
+    Schema.statics = {
+        collectionName: modelName,
+        routeOptions: {
+            associations: {
+                groups: {
+                    type: "MANY_MANY",
+                    alias: "group",
+                    model: "group",
+                    embedAssociation: true              //<-----overrides the config.embedAssociations property
+                }
+            }
+        }
+    };
+
+    return Schema;
+};
+```
+
+**NOTE:** If the `embedAssociation` property is set, then it must be set to the same value for both association definitions as seen above.
+
+##### Updating MANY_MANY db data
+
+As of v0.28.0 the rest-hapi cli includes an `update-associations` command that can update your db data to match your desired MANY_MANY structure. This command follows the following format:
+
+`$ ./node_modules/.bin/rest-hapi-cli update-associations mongoURI [embedAssociations] [modelPath]`
+
+where:
+
+- `mongoURI`: The URI to you mongodb database
+- `embedAssociations`: (optional, defaults to `false`) This must match your current `config.embedAssociations` value.
+- `modelPath`: (optional, defaults to `models`) This must match your `config.modelPath` value if you have `config.absoluteModelPath` set to `true`.
+
+This is useful if you have a db populated with documents and you decide to change the `embedAssociaion` property of one or more associations. 
+
+For instance, consider a MANY_MANY relationship between `user` (groups) and `group`  (users) with `config.embedAssociations` set to `true`. Each `user` document will contain the array `groups` and each `group` document will contain the array `users`. Lets say you implement this structure in a project, but several months into the project some of your `group` documents have collected thousands of `users`, resulting in very large document sizes. You decide it would be better to move the data out of the parent documents and into a linking collection, `user_group`. You can do this by setting the `embedAssociation` property for `users` and `groups` to `false`, and running the following command:
+
+`$ ./node_modules/.bin/rest-hapi-cli update-associations mongodb://localhost:27017/mydb true`
+
+### \_MANY
+
+A one-sided -many relationship can exists between two models. This allows the parent model to have direct control over the reference Ids. Below is an example of a -many relationship between the ``post`` and ``hashtag`` models. 
+
+``/models/post.model.js``:
+
+```javascript
+'use strict';
+
+module.exports = function (mongoose) {
+  var modelName = "post";
+  var Types = mongoose.Schema.Types;
+  var Schema = new mongoose.Schema({
+    caption: {
+      type: Types.String
+    }
+    user: {
+      type: Types.ObjectId,
+      ref: "user",
+      required: true
+    }
+  });
+  
+  Schema.statics = {
+    collectionName:modelName,
+    routeOptions: {
+      associations: {
+        hashtags: {
+          type: "_MANY",
+          model: "hashtag"
+        },
+        user: {
+          type: "MANY_ONE",
+          model: "user"
+        }
+      }
+    }
+  };
+  
+  return Schema;
+};
+```
+
+In this example, a ``post`` contains many hashtags, but the ``hashtag`` model will have no association with the ``post`` model. 
+
+Similar to one-many or many-many relationships the following association 
+endpoints will be generated for the ``post`` model:
+
+```
+GET /post/{ownerId}/hashtag                Get all of the hashtags for a post
+POST /post/{ownerId}/hashtag               Add multiple hashtags to a post
+DELETE /post/{ownerId}/hashtag             Remove multiple hashtags from a post's list of hashtags
+PUT /post/{ownerId}/hashtag/{childId}      Add a single hashtag object to a post's list of hashtags
+DELETE /post/{ownerId}/hashtag/{childId}   Remove a single hashtag object from a post's list of hashtags
+```
+
+However, unlike a one-many or many-many relationship, the -many relationship will exist as a mutable model property which is simply an array of objectIds. This means the associations can be directly modified through the parent model ``create`` and         ``update`` endpoints. For example, the following json could be used as a payload for either the ``POST /post`` or ``PUT /post/{_id}`` endpoints:
+
+```javascript
+{
+  "caption": "Having a great day!",
+  "user":"59960dce22a535c8edfa1317",
+  "hashtags": [
+    "59960dce22a535c8edfa132d",
+    "59960dce22a535c8edfa132e"
+  ]
+}
 ```
 
 [Back to top](#readme-contents)
@@ -1108,6 +1340,7 @@ parameter: ``/group?$embed=users.title`` which could result in the following res
 [Back to top](#readme-contents)
 
 ## Validation
+### Route validation
 Validation in the rest-hapi framework is implemented with [joi](https://github.com/hapijs/joi).  
 This includes validation of headers, query parameters, payloads, and responses.  joi validation models
 are based primarily off of each model's field properties.  Below is a list of mongoose schema types 
@@ -1154,37 +1387,124 @@ queryable: false | field cannot be included as a query parameter
 exclude: true | field cannot be included in a response or as part of a query
 allowNull: true | field accepts ``null`` as a valid value
 
+### Joi Helper Methods
+rest-hapi exposes the helper methods it uses to generate Joi models through the `joiHelper` property. Combined with the exposed [mongoose wrapper methods](#mongoose-wrapper-methods), this allows you to easily create [custom endpoints](#standalone-endpoints). You can see a description of these methods below:
+
+```javascript
+/**
+ * Generates a Joi object that validates a query result for a specific model
+ * @param model: A mongoose model object.
+ * @param Log: A logging object.
+ * @returns {*}: A Joi object
+ */
+generateJoiReadModel = function (model, Log) {...};
+
+/**
+ * Generates a Joi object that validates a query request payload for updating a document
+ * @param model: A mongoose model object.
+ * @param Log: A logging object.
+ * @returns {*}: A Joi object
+ */
+generateJoiUpdateModel = function (model, Log) {...};
+
+/**
+ * Generates a Joi object that validates a request payload for creating a document
+ * @param model: A mongoose model object.
+ * @param Log: A logging object.
+ * @returns {*}: A Joi object
+ */
+generateJoiCreateModel = function (model, Log) {...};
+
+/**
+ * Generates a Joi object that validates a request query for the list function
+ * @param model: A mongoose model object.
+ * @param Log: A logging object.
+ * @returns {*}: A Joi object
+ */
+generateJoiListQueryModel = function (model, Log) {...};
+
+/**
+ * Generates a Joi object that validates a request query for the find function
+ * @param model: A mongoose model object.
+ * @param Log: A logging object.
+ * @returns {*}: A Joi object
+ */
+generateJoiFindQueryModel = function (model, Log) {...};
+
+/**
+ * Generates a Joi object for a model field
+ * @param model: A mongoose model object
+ * @param field: A model field
+ * @param fieldName: The name of the field
+ * @param modelType: The type of CRUD model being generated
+ * @param Log: A logging object
+ * @returns {*}: A Joi object
+ */
+generateJoiFieldModel = function (model, field, fieldName, modelType, Log) {...};
+
+/**
+ * Returns a Joi object based on the mongoose field type.
+ * @param field: A field from a mongoose model.
+ * @param Log: A logging object.
+ * @returns {*}: A Joi object.
+ */
+generateJoiModelFromFieldType = function (field, Log) {...};
+
+/**
+ * Provides easy access to the Joi ObjectId type.
+ * @returns {*|{type}}
+ */
+joiObjectId = function () {...};
+
+/**
+ * Checks to see if a field is a valid model property
+ * @param fieldName: The name of the field
+ * @param field: The field being checked
+ * @param model: A mongoose model object
+ * @returns {boolean}
+ */
+isValidField = function (fieldName, field, model) {...};
+```
+
 [Back to top](#readme-contents)
 
 ## Middleware
-Models can support middleware functions for CRUD operations. These
-exist under the ``routeOptions`` object. Middleware functions must return
- a promise.  The following middleware functions
-are available:
+### CRUD
+Models can support middleware functions for CRUD operations. These exist under the ``routeOptions`` object. The following middleware functions are available:
 
-* list: 
-    - post(query, result, Log)
-* find: 
-    - post(query, result, Log)
+* list:
+    - pre(query, request, Log)
+        * returns: `query`
+    - post(request, result, Log)
+        * returns: `result`
+* find:
+    - pre(\_id, query, request, Log)
+        * returns: `query`
+    - post(request, result, Log)
+        * returns: `result`
 * create:
-    - pre(payload, Log)
-    - post(document, result, Log)
-* update: 
-    - pre(\_id, payload, Log)
-    - post(payload, result, Log)
-* delete: 
-    - pre(\_id, hardDelete, Log)
-    - post(hardDelete, deleted, Log)
-
+    - pre(payload, request, Log) 
+        * **NOTE:** _For payloads with multiple documents, the pre function will be called for each document individually (passed in through the `payload` parameter) i.e. `request.payload` = array of documents, `payload` = single document_
+        * returns: `payload`
+    - post(document, request, result, Log)
+        * returns: `result`
+* update:
+    - pre(\_id, request, Log)
+        * returns: `request.payload`
+    - post(request, result, Log)
+        * returns: `result`
+* delete:
+    - pre(\_id, hardDelete, request, Log)
+        * returns: `null`
+    - post(hardDelete, deleted, request, Log)
+        * returns: `null`
 
 For example, a ``create: pre`` function can be defined to encrypt a users password
-using a static method ``generatePasswordHash``.  Notice the use of the ``Q`` library
-to return a promise.
- 
+using a static method ``generatePasswordHash``.
+
 ```javascript
 'use strict';
 
-var Q = require('q');
 var bcrypt = require('bcrypt');
 
 module.exports = function (mongoose) {
@@ -1202,18 +1522,17 @@ module.exports = function (mongoose) {
       allowOnUpdate: false
     }
   });
-  
+
   Schema.statics = {
     collectionName:modelName,
     routeOptions: {
       create: {
-        pre: function (payload, Log) {
-          var deferred = Q.defer();
+        pre: function (payload, request, Log) {
           var hashedPassword = mongoose.model('user').generatePasswordHash(payload.password);
 
           payload.password = hashedPassword;
-          deferred.resolve(payload);
-          return deferred.promise;
+          
+          return payload;
         }
       }
     },
@@ -1224,9 +1543,56 @@ module.exports = function (mongoose) {
       return hash;
     }
   };
-  
+
   return Schema;
 };
+```
+
+Custom errors can be returned in middleware functions simply by throwing the error message as a string.  This will result in a 400 error response with your custom message. Ex:
+
+```javascript
+      create: {
+        pre: function (payload, request, Log) {
+          throw "TEST ERROR"
+        }
+      }
+```
+
+will result in a response body of:
+
+```javascript
+{
+  "statusCode": 400,
+  "error": "Bad Request",
+  "message": "TEST ERROR"
+}
+```
+
+### Association
+Support is being added for association middlware. Currently the following association middleware exist:
+
+* getAll:
+    - post(request, result, Log)
+        * returns: result
+    
+Association middleware is defined similar to CRUD middleware, with the only difference being the association name must be specified.  See below for an example:
+
+```javascript
+        routeOptions: {
+          associations: {
+            groups: {
+              type: "MANY_MANY",
+              model: "group"
+            }
+          }
+        },
+        getAll: {
+          groups: {                                 //<---this must match the association name
+            post: function(request, result, Log) {
+              /** modify and return result **/
+            }
+          }
+        }
 ```
 
 [Back to top](#readme-contents)
@@ -1377,7 +1743,7 @@ A more detailed description of each method can be found below:
  * @param Log: A logging object.
  * @returns {object} A promise for the resulting model documents.
  */
-function list(model, query, Log)
+function list(model, query, Log) {...},
 
 /**
  * Finds a model document
@@ -1387,7 +1753,7 @@ function list(model, query, Log)
  * @param Log: A logging object.
  * @returns {object} A promise for the resulting model document.
  */
-function find(model, _id, query, Log) {...}
+function find(model, _id, query, Log) {...},
 
 /**
  * Creates a model document
@@ -1396,7 +1762,7 @@ function find(model, _id, query, Log) {...}
  * @param Log: A logging object.
  * @returns {object} A promise for the resulting model document.
  */
-function create(model, payload, Log) {...}
+function create(model, payload, Log) {...},
 
 /**
  * Updates a model document
@@ -1406,7 +1772,7 @@ function create(model, payload, Log) {...}
  * @param Log: A logging object.
  * @returns {object} A promise for the resulting model document.
  */
-function update(model, _id, payload, Log) {...}
+function update(model, _id, payload, Log) {...},
 
 /**
  * Deletes a model document
@@ -1416,7 +1782,7 @@ function update(model, _id, payload, Log) {...}
  * @param Log: A logging object.
  * @returns {object} A promise returning true if the delete succeeds.
  */
-function deleteOne(model, _id, hardDelete, Log) {...}
+function deleteOne(model, _id, hardDelete, Log) {...},
 
 /**
  * Deletes multiple documents
@@ -1425,7 +1791,7 @@ function deleteOne(model, _id, hardDelete, Log) {...}
  * @param Log: A logging object.
  * @returns {object} A promise returning true if the delete succeeds.
  */
-function deleteMany(model, payload, Log) {...}
+function deleteMany(model, payload, Log) {...},
 
 /**
  * Adds an association to a document
@@ -1438,7 +1804,7 @@ function deleteMany(model, payload, Log) {...}
  * @param Log: A logging object
  * @returns {object} A promise returning true if the add succeeds.
  */
-function addOne(ownerModel, ownerId, childModel, childId, associationName, payload, Log) {...}
+function addOne(ownerModel, ownerId, childModel, childId, associationName, payload, Log) {...},
 
 /**
  * Removes an association to a document
@@ -1450,7 +1816,7 @@ function addOne(ownerModel, ownerId, childModel, childId, associationName, paylo
  * @param Log: A logging object
  * @returns {object} A promise returning true if the remove succeeds.
  */
-function removeOne(ownerModel, ownerId, childModel, childId, associationName, Log) {...}
+function removeOne(ownerModel, ownerId, childModel, childId, associationName, Log) {...},
 
 /**
  * Adds multiple associations to a document
@@ -1462,7 +1828,7 @@ function removeOne(ownerModel, ownerId, childModel, childId, associationName, Lo
  * @param Log: A logging object
  * @returns {object} A promise returning true if the add succeeds.
  */
-function addMany(ownerModel, ownerId, childModel, associationName, payload, Log) {...}
+function addMany(ownerModel, ownerId, childModel, associationName, payload, Log) {...},
 
 /**
  * Removes multiple associations from a document
@@ -1474,7 +1840,7 @@ function addMany(ownerModel, ownerId, childModel, associationName, payload, Log)
  * @param Log: A logging object
  * @returns {object} A promise returning true if the remove succeeds.
  */
-function removeMany(ownerModel, ownerId, childModel, associationName, payload, Log) {...}
+function removeMany(ownerModel, ownerId, childModel, associationName, payload, Log) {...},
 
 /**
  * Get all of the associations for a document
