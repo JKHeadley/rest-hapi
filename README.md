@@ -1021,7 +1021,7 @@ module.exports = function (mongoose) {
 
 ##### Migrating MANY_MANY data
 
-As of v0.28.0 the rest-hapi cli includes an `update-associations` command that can update your db data to match your desired MANY_MANY structure. This command follows the following format:
+As of v0.28.0 the rest-hapi cli includes an `update-associations` command that can migrate your db data to match your desired MANY_MANY structure. This command follows the following format:
 
 `$ ./node_modules/.bin/rest-hapi-cli update-associations mongoURI [embedAssociations] [modelPath]`
 
@@ -1033,7 +1033,7 @@ where:
 
 This is useful if you have a db populated with documents and you decide to change the `embedAssociaion` property of one or more associations. 
 
-For instance, consider a MANY_MANY relationship between `user` (groups) and `group`  (users) with `config.embedAssociations` set to `true`. Each `user` document will contain the array `groups` and each `group` document will contain the array `users`. Lets say you implement this structure in a project, but several months into the project some of your `group` documents have collected thousands of `users`, resulting in very large document sizes. You decide it would be better to move the data out of the parent documents and into a linking collection, `user_group`. You can do this by setting the `embedAssociation` property for `users` and `groups` to `false`, and running the following command:
+For instance, consider a MANY_MANY relationship between `user` (groups) and `group`  (users) with `config.embedAssociations` set to `true`. Each `user` document will contain the array `groups` and each `group` document will contain the array `users`. Lets say you implement this structure in a project, but several months into the project some of your `group` documents have collected thousands of `users`, resulting in very large document sizes. You decide it would be better to migrate the data out of the parent documents and into a linking collection, `user_group`. You can do this by setting the `embedAssociation` property for `users` and `groups` to `false`, and running the following command:
 
 `$ ./node_modules/.bin/rest-hapi-cli update-associations mongodb://localhost:27017/mydb true`
 
