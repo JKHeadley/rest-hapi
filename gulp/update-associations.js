@@ -187,7 +187,15 @@ function addEmbeddedAssociation(model, associationName, linkingModel, data, Log)
     let promise = linkingModel.find(query)
         .then(function(result) {
           if (_.isEmpty(result)) {
-            return Q.when();
+            //EXPL: need to do this or else the empty association property will be erased
+            if (!document[associationName] || _.isEmpty(document[associationName])) {
+              let payload = {};
+              payload[associationName] = [];
+              return model.findByIdAndUpdate(document._id, payload, {new: true});
+            }
+            else {
+              return Q.when();
+            }
           }
           else {
             result.forEach(function(linkingDocument) {
