@@ -55,21 +55,12 @@ gulp.task('update-associations', [], function() {
       modelsArray.push(models[modelName])
     }
 
-    modelsArray.forEach(function(model) {
-      var promise_link = function() {
+    modelsArray.forEach(function (model) {
+      var promise_link = function () {
         var deferred = Q.defer();
 
         addEmbedded(model, embedAssociations, Log)
-            .then(function(result) {
-              return removeLinking(model, embedAssociations, Log);
-            })
-            .then(function(result) {
-              return addLinking(model, embedAssociations, Log);
-            })
-            .then(function(result) {
-              return removeEmbedded(model, embedAssociations, Log);
-            })
-            .then(function(result) {
+            .then(function (result) {
               deferred.resolve(result);
             })
             .catch(function (error) {
@@ -79,30 +70,110 @@ gulp.task('update-associations', [], function() {
       };
 
       promise_chain = promise_chain
-          .then(function(result) {
-          })
           .then(promise_link)
-          .catch(function(error) {
+          .catch(function (error) {
             throw error;
           });
     });
 
     return promise_chain
-        .then(function() {
+        .then(function () {
+
+          promise_chain = Q.when();
+
+          modelsArray.forEach(function (model) {
+            var promise_link = function () {
+              var deferred = Q.defer();
+
+              removeLinking(model, embedAssociations, Log)
+                  .then(function (result) {
+                    deferred.resolve(result);
+                  })
+                  .catch(function (error) {
+                    deferred.reject(error);
+                  });
+              return deferred.promise;
+            };
+
+            promise_chain = promise_chain
+                .then(promise_link)
+                .catch(function (error) {
+                  throw error;
+                });
+          });
+
+          return promise_chain;
+        })
+        .then(function () {
+
+          promise_chain = Q.when();
+
+          modelsArray.forEach(function (model) {
+            var promise_link = function () {
+              var deferred = Q.defer();
+
+              addLinking(model, embedAssociations, Log)
+                  .then(function (result) {
+                    deferred.resolve(result);
+                  })
+                  .catch(function (error) {
+                    deferred.reject(error);
+                  });
+              return deferred.promise;
+            };
+
+            promise_chain = promise_chain
+                .then(promise_link)
+                .catch(function (error) {
+                  throw error;
+                });
+          });
+
+          return promise_chain;
+        })
+        .then(function () {
+
+          promise_chain = Q.when();
+
+          modelsArray.forEach(function (model) {
+            var promise_link = function () {
+              var deferred = Q.defer();
+
+              removeEmbedded(model, embedAssociations, Log)
+                  .then(function (result) {
+                    deferred.resolve(result);
+                  })
+                  .catch(function (error) {
+                    deferred.reject(error);
+                  });
+              return deferred.promise;
+            };
+
+            promise_chain = promise_chain
+                .then(promise_link)
+                .catch(function (error) {
+                  throw error;
+                });
+          });
+
+          return promise_chain;
+        })
+        .then(function () {
+
           Log.debug("DONE");
           return gulp.src("")
               .pipe(exit());
         })
         .catch(function (error) {
-            Log.error(error);
+          Log.error(error);
           return gulp.src("")
               .pipe(exit());
         });
+  });
 
-  })
 });
 
-function getLinkingModel(model, association) {
+function getLinkingModel(model, association, Log) {
   let linkingModel = null;
   let linkingModelExists = false;
   try {
@@ -205,7 +276,7 @@ function removeLinking(model, embedAssociations, Log) {
     if (association.type === "MANY_MANY") {
       var embedAssociation = association.embedAssociation === undefined ? embedAssociations : association.embedAssociation;
 
-      let linkingModel = getLinkingModel(model, association);
+      let linkingModel = getLinkingModel(model, association, Log);
 
       if (linkingModel) {
         if (embedAssociation) {
@@ -234,7 +305,7 @@ function addLinking(model, embedAssociations, Log) {
           if (association.type === "MANY_MANY") {
             var embedAssociation = association.embedAssociation === undefined ? embedAssociations : association.embedAssociation;
 
-            let linkingModel = getLinkingModel(model, association);
+            let linkingModel = getLinkingModel(model, association, Log);
 
             if (linkingModel) {
               if (!embedAssociation) {
@@ -286,7 +357,7 @@ function removeEmbedded(model, embedAssociations, Log) {
           if (association.type === "MANY_MANY") {
             var embedAssociation = association.embedAssociation === undefined ? embedAssociations : association.embedAssociation;
 
-            let linkingModel = getLinkingModel(model, association);
+            let linkingModel = getLinkingModel(model, association, Log);
 
             if (linkingModel) {
               if (!embedAssociation) {
