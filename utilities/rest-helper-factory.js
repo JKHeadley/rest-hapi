@@ -10,6 +10,7 @@ var validationHelper = require("./validation-helper");
 var authHelper = require('./auth-helper');
 var chalk = require('chalk');
 var config = require("../config");
+var restHapiPolicies = require("./policy-generator");
 
 //TODO: remove "options"?
 //TODO: change model "alias" to "routeAlias" (or remove the option)
@@ -163,11 +164,13 @@ module.exports = function (logger, mongoose, server) {
       if (model.routeOptions.policies) {
         policies = model.routeOptions.policies;
         policies = (policies.policies || []).concat(policies.readPolicies || []);
-        policies.push("testrh");
-        Log.debug("POLICIES:", policies);
       }
 
-
+      if (config.enableDocumentScopes) {
+        policies.push(restHapiPolicies.enforceDocumentScopePre(model));
+        policies.push(restHapiPolicies.enforceDocumentScopePost(model));
+      }
+      
       server.route({
         method: 'GET',
         path: '/' + resourceAliasForRoute,
@@ -195,6 +198,7 @@ module.exports = function (logger, mongoose, server) {
               ]
             },
             'policies': policies
+
           },
           response: {
             failAction: config.enableResponseFail ? 'error' : 'log',
@@ -268,6 +272,11 @@ module.exports = function (logger, mongoose, server) {
       if (model.routeOptions.policies) {
         policies = model.routeOptions.policies;
         policies = (policies.policies || []).concat(policies.readPolicies || []);
+      }
+
+      if (config.enableDocumentScopes) {
+        policies.push(restHapiPolicies.enforceDocumentScopePre(model));
+        policies.push(restHapiPolicies.enforceDocumentScopePost(model));
       }
 
       server.route({
@@ -385,6 +394,11 @@ module.exports = function (logger, mongoose, server) {
         policies = (policies.policies || []).concat(policies.createPolicies || []);
       }
 
+      if (config.enableDocumentScopes) {
+        policies.push(restHapiPolicies.enforceDocumentScopePre(model));
+        policies.push(restHapiPolicies.enforceDocumentScopePost(model));
+      }
+
       server.route({
         method: 'POST',
         path: '/' + resourceAliasForRoute,
@@ -484,6 +498,11 @@ module.exports = function (logger, mongoose, server) {
       if (model.routeOptions.policies) {
         policies = model.routeOptions.policies;
         policies = (policies.policies || []).concat(policies.deletePolicies || []);
+      }
+
+      if (config.enableDocumentScopes) {
+        policies.push(restHapiPolicies.enforceDocumentScopePre(model));
+        policies.push(restHapiPolicies.enforceDocumentScopePost(model));
       }
 
       server.route({
@@ -597,6 +616,11 @@ module.exports = function (logger, mongoose, server) {
         policies = (policies.policies || []).concat(policies.deletePolicies || []);
       }
 
+      if (config.enableDocumentScopes) {
+        policies.push(restHapiPolicies.enforceDocumentScopePre(model));
+        policies.push(restHapiPolicies.enforceDocumentScopePost(model));
+      }
+
       server.route({
         method: 'DELETE',
         path: '/' + resourceAliasForRoute,
@@ -703,6 +727,11 @@ module.exports = function (logger, mongoose, server) {
       if (model.routeOptions.policies) {
         policies = model.routeOptions.policies;
         policies = (policies.policies || []).concat(policies.updatePolicies || []);
+      }
+
+      if (config.enableDocumentScopes) {
+        policies.push(restHapiPolicies.enforceDocumentScopePre(model));
+        policies.push(restHapiPolicies.enforceDocumentScopePost(model));
       }
 
       server.route({
@@ -821,6 +850,11 @@ module.exports = function (logger, mongoose, server) {
         policies = (policies.policies || []).concat(policies.associatePolicies || []);
       }
 
+      if (config.enableDocumentScopes) {
+        policies.push(restHapiPolicies.enforceDocumentScopePre(ownerModel));
+        policies.push(restHapiPolicies.enforceDocumentScopePost(ownerModel));
+      }
+
       server.route({
         method: 'PUT',
         path: '/' + ownerAlias + '/{ownerId}/' + childAlias + "/{childId}",
@@ -921,6 +955,11 @@ module.exports = function (logger, mongoose, server) {
       if (ownerModel.routeOptions.policies) {
         policies = ownerModel.routeOptions.policies;
         policies = (policies.policies || []).concat(policies.associatePolicies || []);
+      }
+
+      if (config.enableDocumentScopes) {
+        policies.push(restHapiPolicies.enforceDocumentScopePre(ownerModel));
+        policies.push(restHapiPolicies.enforceDocumentScopePost(ownerModel));
       }
 
       server.route({
@@ -1043,6 +1082,11 @@ module.exports = function (logger, mongoose, server) {
         policies = (policies.policies || []).concat(policies.associatePolicies || []);
       }
 
+      if (config.enableDocumentScopes) {
+        policies.push(restHapiPolicies.enforceDocumentScopePre(ownerModel));
+        policies.push(restHapiPolicies.enforceDocumentScopePost(ownerModel));
+      }
+
       server.route({
         method: 'POST',
         path: '/' + ownerAlias + '/{ownerId}/' + childAlias,
@@ -1143,6 +1187,11 @@ module.exports = function (logger, mongoose, server) {
       if (ownerModel.routeOptions.policies) {
         policies = ownerModel.routeOptions.policies;
         policies = (policies.policies || []).concat(policies.associatePolicies || []);
+      }
+
+      if (config.enableDocumentScopes) {
+        policies.push(restHapiPolicies.enforceDocumentScopePre(ownerModel));
+        policies.push(restHapiPolicies.enforceDocumentScopePost(ownerModel));
       }
 
       server.route({
@@ -1257,6 +1306,11 @@ module.exports = function (logger, mongoose, server) {
       if (ownerModel.routeOptions.policies) {
         policies = ownerModel.routeOptions.policies;
         policies = (policies.policies || []).concat(policies.readPolicies || []);
+      }
+
+      if (config.enableDocumentScopes) {
+        policies.push(restHapiPolicies.enforceDocumentScopePre(ownerModel));
+        policies.push(restHapiPolicies.enforceDocumentScopePost(ownerModel));
       }
 
       server.route({

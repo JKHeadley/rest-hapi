@@ -106,6 +106,14 @@ config.enableCreatedAt = true;
 config.enableUpdatedAt = true;
 
 /**
+ * Flag specifying
+ * @type {boolean}
+ */
+config.enableDocumentScopes = true;
+
+config.enablePolicies = true;
+
+/**
  * Flag specifying whether to text index all string fields for all models to enable text search.
  * WARNING: enabling this adds overhead to add inserts and updates, as well as added storage requirements.
  * Default is false.

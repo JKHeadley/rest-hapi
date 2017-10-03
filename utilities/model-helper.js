@@ -35,11 +35,12 @@ const internals = {};
  * @returns {*}: The resulting mongoose model.
  */
 internals.createModel = function(Schema, mongoose) {
+  const Types = mongoose.Schema.Types;
   //TODO: require createdAt and updatedAt
   if (config.enableCreatedAt) {
     let createdAt = {
       createdAt: {
-        type: mongoose.Schema.Types.Date,
+        type: Types.Date,
         allowOnCreate: false,
         allowOnUpdate: false
       }
@@ -49,7 +50,7 @@ internals.createModel = function(Schema, mongoose) {
   if (config.enableUpdatedAt) {
     let updatedAt = {
       updatedAt: {
-        type: mongoose.Schema.Types.Date,
+        type: Types.Date,
         allowOnCreate: false,
         allowOnUpdate: false
       }
@@ -59,7 +60,7 @@ internals.createModel = function(Schema, mongoose) {
   if (config.enableSoftDelete) {
     let deletedAt = {
       deletedAt: {
-        type: mongoose.Schema.Types.Date,
+        type: Types.Date,
         allowOnCreate: false,
         allowOnUpdate: false,
       }
@@ -67,13 +68,38 @@ internals.createModel = function(Schema, mongoose) {
     Schema.add(deletedAt);
     let isDeleted = {
       isDeleted: {
-        type: mongoose.Schema.Types.Boolean,
+        type: Types.Boolean,
         allowOnCreate: false,
         allowOnUpdate: false,
         default: false
       }
     };
     Schema.add(isDeleted);
+  }
+  if (config.enableDocumentScopes) {
+    let scope = {
+      scope: {
+        scope: {
+          type: [Types.String]
+        },
+        readScope: {
+          type: [Types.String]
+        },
+        updateScope: {
+          type: [Types.String]
+        },
+        deleteScope: {
+          type: [Types.String]
+        },
+        associateScope: {
+          type: [Types.String]
+        },
+        type: Types.Object,
+        allowOnUpdate: false,
+        allowOnCreate: false
+      }
+    };
+    Schema.add(scope);
   }
   return mongoose.model(Schema.statics.collectionName, Schema);
 };
