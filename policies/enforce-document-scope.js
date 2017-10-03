@@ -74,44 +74,58 @@ internals.enforceDocumentScopePost = function(model) {
 
 internals.verifyScope = function(model, documentIds, type, userScope, Log) {
   const query = {
-    _id: documentIds,
+    _id: {
+      $in: documentIds
+    },
   };
   return model.find(query, 'scope')
       .then(function(documents) {
-        documents.forEach(function(document) {
-          if (document.scope && !_.isEmpty(document.scope)) {
+        try {
+          documents.forEach(function(document) {
+            if (document.scope && !_.isEmpty(document.scope)) {
 
-            let documentScope = document.scope.scope;
-            let methodScope = [];
+              let documentScope = document.scope.scope || [];
+              let methodScope = [];
 
-            switch (type) {
-              case "update":
-                methodScope = document.scope.updateScope;
-                break;
-              case "delete":
-                methodScope = document.scope.deleteScope;
-                break;
-              case "associate":
-                methodScope = document.scope.associateScope;
-                break;
-              default:
-                throw "Invalid method type.";
+              switch (type) {
+                case "update":
+                  methodScope = document.scope.updateScope;
+                  break;
+                case "delete":
+                  methodScope = document.scope.deleteScope;
+                  break;
+                case "associate":
+                  methodScope = document.scope.associateScope;
+                  break;
+                default:
+                  throw "Invalid method type.";
+              }
+
+              if (documentScope && documentScope[0]) {
+                documentScope = documentScope.concat(methodScope);
+              }
+              else if (methodScope){
+                documentScope = methodScope;
+              }
+
+              var matchingScope = userScope.filter((scopeValue) => documentScope.includes(scopeValue));
+
+              if (!_.isEmpty(documentScope) && _.isEmpty(matchingScope)) {
+                throw false;
+              }
             }
-
-            if (documentScope) {
-              documentScope = documentScope.concat(methodScope);
-            }
-            else if (methodScope){
-              documentScope = methodScope;
-            }
-
-            var matchingScope = userScope.filter((scopeValue) => documentScope.includes(scopeValue));
-
-            if (!_.isEmpty(documentScope) && _.isEmpty(matchingScope)) {
-              return false;
-            }
+          });
+        }
+        catch (err) {
+          if (err === false) {
+            return false;
           }
-        });
+          else {
+            Log.error("ERROR:", err);
+            throw err;
+          }
+        }
+
 
         return true;
       })
