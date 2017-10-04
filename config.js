@@ -21,12 +21,14 @@ config.version = '1.0.0';
 
 /**
  * Flag signifying whether the absolute path to the models directory is provided
+ * default: false
  * @type {boolean}
  */
 config.absoluteModelPath = false;
 
 /**
- * Path to the models directory (default 'models')
+ * Path to the models directory
+ * default: 'models'
  * @type {string}
  */
 config.modelPath = 'models';
@@ -38,26 +40,31 @@ config.modelPath = 'models';
 config.absoluteApiPath = false;
 
 /**
- * Path to the directory for additional endpoints (default 'api')
+ * Path to the directory for additional endpoints
+ * default: 'api'
  * @type {string}
  */
 config.apiPath = 'api';
 
+
 /**
- * Flag to enable mrhorse policy plugin (https://github.com/mark-bradshaw/mrhorse)
- * @type {string}
+ * Enables policies via mrhorse (https://github.com/mark-bradshaw/mrhorse).
+ * NOTE: disabling policies will by default disable document level scopes/authorization.
  * default: false
+ * @type {boolean}
  */
 config.enablePolicies = false;
 
 /**
  * Flag signifying whether the absolute path to the policies directory is provided
+ * default: false
  * @type {boolean}
  */
 config.absolutePolicyPath = false;
 
 /**
- * Path to the directory for mrhorse policies (https://github.com/mark-bradshaw/mrhorse) (default 'policies')
+ * Path to the directory for mrhorse policies (https://github.com/mark-bradshaw/mrhorse)
+ * default: 'policies'
  * @type {string}
  */
 config.policyPath = 'policies';
@@ -79,7 +86,8 @@ config.mongo.URI = 'mongodb://localhost/rest_hapi';
 
 /**
  * Authentication strategy to be used for all generated endpoints.
- * Set to false for no authentication (default).
+ * Set to false for no authentication.
+ * default: false
  * @type {boolean/string}
  */
 config.authStrategy = false;
@@ -106,17 +114,26 @@ config.enableCreatedAt = true;
 config.enableUpdatedAt = true;
 
 /**
- * Flag specifying
+ * Enables document level authorization.
+ * default: true
  * @type {boolean}
  */
 config.enableDocumentScopes = true;
 
-config.enablePolicies = true;
+/**
+ * Determines what action takes place when one or more document scope checks fail for requests dealing with multiple
+ * documents (Ex: deleteMany or list). Options are:
+ * - true: if one or more documents fail, the request responds with a 403.
+ * - false: documents that don't pass are simply removed from the request (Ex: not deleted or not retrieved)
+ * default: false
+ * @type {boolean}
+ */
+config.enableDocumentScopeFail = false;
 
 /**
  * Flag specifying whether to text index all string fields for all models to enable text search.
  * WARNING: enabling this adds overhead to add inserts and updates, as well as added storage requirements.
- * Default is false.
+ * default: false.
  * @type {boolean}
  */
 config.enableTextSearch = false;
@@ -142,9 +159,9 @@ config.enablePayloadValidation = true;
 config.enableResponseValidation = true;
 
 /**
- * Determines the hapi failAction of each response. If true, responses that fail validation will return
- * a 500 error.  If set to false, responses that fail validation will just log the offense and send
- * the response as-is.
+ * Determines the hapi failAction of each response. Options are:
+ * - true: responses that fail validation will return a 500 error.
+ * - false: responses that fail validation will just log the offense and send the response as-is.
  * default: false
  * @type {boolean}
  */
@@ -188,6 +205,7 @@ config.loglevel = "DEBUG";
 /**
  * Determines the initial expansion state of the swagger docs
  * - options: 'none', 'list', 'full' (default: 'none')
+ * default: 'none'
  * @type {string}
  */
 config.docExpansion = 'none';
