@@ -154,35 +154,45 @@ internals.verifyScope = function(model, documents, action, userScope, Log) {
       if (document.scope && !_.isEmpty(document.scope)) {
 
         let documentScope = document.scope.scope || [];
-        let methodScope = [];
+        let actionScope = [];
+        let authorizedForDocument = false;
 
         switch (action) {
           case "read":
-            methodScope = document.scope.readScope;
+            actionScope = document.scope.readScope;
             break;
           case "update":
-            methodScope = document.scope.updateScope;
+            actionScope = document.scope.updateScope;
             break;
           case "delete":
-            methodScope = document.scope.deleteScope;
+            actionScope = document.scope.deleteScope;
             break;
           case "associate":
-            methodScope = document.scope.associateScope;
+            actionScope = document.scope.associateScope;
             break;
           default:
             throw "Invalid method type.";
         }
 
+        //EXPL: combine the document global scope with the action specific scope
         if (documentScope && documentScope[0]) {
-          documentScope = documentScope.concat(methodScope);
+          documentScope = documentScope.concat(actionScope);
         }
-        else if (methodScope){
-          documentScope = methodScope;
+        else if (actionScope){
+          documentScope = actionScope;
+        }
+        
+        //EXPL: if there is no applicable document scope, the user is authorized for this document
+        if (_.isEmpty(documentScope)) {
+          return false;
         }
 
-        var matchingScope = userScope.filter((scopeValue) => documentScope.includes(scopeValue));
+        authorizedForDocument = internals.compareScopes(userScope, documentScope);
 
-        if (!_.isEmpty(documentScope) && _.isEmpty(matchingScope)) {
+        if (authorizedForDocument) {
+          return false;
+        }
+        else {
           authorized = false;
           if (config.enableDocumentScopeFail) {
             throw false;
@@ -190,9 +200,6 @@ internals.verifyScope = function(model, documents, action, userScope, Log) {
           else {
             return true;
           }
-        }
-        else {
-          return false;
         }
       }
       else {
@@ -213,6 +220,67 @@ internals.verifyScope = function(model, documents, action, userScope, Log) {
   return { authorized: authorized, unauthorizedDocs: unauthorizedDocs };
 };
 
+internals.compareScopes = function(userScope, documentScope) {
+  let fobiddenScope = [];
+  let requiredScope = [];
+  let generalScope = [];
+  let scopeSatisfied = false;
+
+
+  //EXPL: if the user scope contains any of the forbidden scope values, the user is unauthorized
+  fobiddenScope = documentScope.reduce(function(scope, scopeValue) {
+    if (scopeValue[0] === '!') {
+      scope.push(scopeValue.substr(1));
+    }
+  }, []);
+
+  scopeSatisfied = fobiddenScope.reduce(function(satisfied, scopeValue) {
+    if (userScope.includes(scopeValue)) {
+      return false;
+    }
+  }, true);
+
+  if (!scopeSatisfied) {
+    return false;
+  }
+
+
+  //EXPL: if the user scope does not contain all of the required scope values, the user is unauthorized
+  requiredScope = documentScope.reduce(function(scope, scopeValue) {
+    if (scopeValue[0] === '+') {
+      return scope.push(scopeValue.substr(1));
+    }
+  }, []);
+
+  scopeSatisfied = requiredScope.reduce(function(satisfied, scopeValue) {
+    if (!userScope.includes(scopeValue)) {
+      return false;
+    }
+  }, true);
+
+  if (!scopeSatisfied) {
+    return false;
+  }
+
+
+  //EXPL: if the user scope does not contain any of the genera scope values, the user is unauthorized
+  generalScope = documentScope.filter(function(scopeValue) {
+    return scopeValue[0] !== '!' && scopeValue[0] !== '+';
+  });
+
+  scopeSatisfied = generalScope.reduce(function(satisfied, scopeValue) {
+    if (userScope.includes(scopeValue)) {
+      return true;
+    }
+  }, false);
+
+  if (!scopeSatisfied) {
+    return false;
+  }
+
+
+  return true;
+};
 
 
 module.exports = {
