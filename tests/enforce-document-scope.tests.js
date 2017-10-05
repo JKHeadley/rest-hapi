@@ -13,6 +13,7 @@ const Types = mongoose.Schema.Types;
 const logging = require('loggin');
 const testHelper = require("./test-helper");
 const Joi = require('joi');
+const Boom = require('boom');
 const Q = require('q');
 
 let Log = logging.getLogger("tests");
@@ -604,5 +605,334 @@ test('enforce-document-scope.verifyScopeById', function (t) {
     //<editor-fold desc="Restore">
     //</editor-fold>
   }));
+  t.end();
+});
+
+test('enforce-document-scope.enforceDocumentScopePostForModel', function (t) {
+  t.test('enforce-document-scope.enforceDocumentScopePostForModel returns authorized if request method is not "get".', sinon.test(function (t) {
+    //<editor-fold desc="Arrange">
+    t.plan(1);
+
+    let enforceDocumentScope = rewire('../policies/enforce-document-scope');
+    let verifyScope = this.spy(function() { throw "ERROR" });
+    enforceDocumentScope.__set__("internals.verifyScope", verifyScope);
+    let model = {};
+    let enforceDocumentScopePostForModel = enforceDocumentScope.enforceDocumentScopePost(model, Log);
+    let reply = this.spy();
+    let next = this.spy();
+
+    let request = {
+      auth: {
+        credentials: {
+          scope: []
+        }
+      },
+      method: "not_get"
+    };
+    //</editor-fold>
+
+    //<editor-fold desc="Act">
+    let result = enforceDocumentScopePostForModel(request, reply, next);
+    //</editor-fold>
+
+    //<editor-fold desc="Assert">
+    t.ok(next.calledWithExactly(null, true), "next called with correct args");
+    //</editor-fold>
+
+    //<editor-fold desc="Restore">
+    //</editor-fold>
+  }));
+
+  t.test('enforce-document-scope.enforceDocumentScopePostForModel calls verifyScope if request method is get and "_id" is in request params (a "find" endpoint).', sinon.test(function (t) {
+    //<editor-fold desc="Arrange">
+    t.plan(1);
+
+    let enforceDocumentScope = rewire('../policies/enforce-document-scope');
+    let verifyScope = this.spy(function() {
+      return { authorized: true }
+    });
+    enforceDocumentScope.__set__("internals.verifyScope", verifyScope);
+    let model = {};
+    let enforceDocumentScopePostForModel = enforceDocumentScope.enforceDocumentScopePost(model, Log);
+    let reply = this.spy();
+    let next = this.spy();
+    let mockLog = Log.bind("enforceDocumentScopePost");
+
+    let request = {
+      auth: {
+        credentials: {
+          scope: ['mock user scope']
+        }
+      },
+      method: "get",
+      params: {
+        _id: "mock _id"
+      },
+      response: {
+        source: "mock source"
+      }
+    };
+
+    const userScope = request.auth.credentials.scope;
+
+    const source = request.response.source;
+    //</editor-fold>
+
+    //<editor-fold desc="Act">
+    let result = enforceDocumentScopePostForModel(request, reply, next);
+    //</editor-fold>
+
+    //<editor-fold desc="Assert">
+    t.deepEqual(verifyScope.args[0], [[source], "read", userScope, mockLog], "verifyScope called with correct args");
+    //</editor-fold>
+
+    //<editor-fold desc="Restore">
+    //</editor-fold>
+  }));
+
+  t.test('enforce-document-scope.enforceDocumentScopePostForModel calls verifyScope if request method is get and "_id" is not in request params (a "list" endpoint).', sinon.test(function (t) {
+    //<editor-fold desc="Arrange">
+    t.plan(1);
+
+    let enforceDocumentScope = rewire('../policies/enforce-document-scope');
+    let verifyScope = this.spy(function() {
+      return { authorized: true }
+    });
+    enforceDocumentScope.__set__("internals.verifyScope", verifyScope);
+    let model = {};
+    let enforceDocumentScopePostForModel = enforceDocumentScope.enforceDocumentScopePost(model, Log);
+    let reply = this.spy();
+    let next = this.spy();
+    let mockLog = Log.bind("enforceDocumentScopePost");
+
+    let request = {
+      auth: {
+        credentials: {
+          scope: ['mock user scope']
+        }
+      },
+      method: "get",
+      params: {
+      },
+      response: {
+        source: {
+          docs: ["mock docs"]
+        }
+      }
+    };
+
+    const userScope = request.auth.credentials.scope;
+
+    const docs = request.response.source.docs;
+    //</editor-fold>
+
+    //<editor-fold desc="Act">
+    let result = enforceDocumentScopePostForModel(request, reply, next);
+    //</editor-fold>
+
+    //<editor-fold desc="Assert">
+    t.deepEqual(verifyScope.args[0], [docs, "read", userScope, mockLog], "verifyScope called with correct args");
+    //</editor-fold>
+
+    //<editor-fold desc="Restore">
+    //</editor-fold>
+  }));
+
+  t.test('enforce-document-scope.enforceDocumentScopePostForModel returns authorized if verifyScope returns authorized.', sinon.test(function (t) {
+    //<editor-fold desc="Arrange">
+    t.plan(1);
+
+    let enforceDocumentScope = rewire('../policies/enforce-document-scope');
+    let verifyScope = this.spy(function() {
+      return { authorized: true }
+    });
+    enforceDocumentScope.__set__("internals.verifyScope", verifyScope);
+    let model = {};
+    let enforceDocumentScopePostForModel = enforceDocumentScope.enforceDocumentScopePost(model, Log);
+    let reply = this.spy();
+    let next = this.spy();
+    let mockLog = Log.bind("enforceDocumentScopePost");
+
+    let request = {
+      auth: {
+        credentials: {
+          scope: ['mock user scope']
+        }
+      },
+      method: "get",
+      params: {
+      },
+      response: {
+        source: {
+          docs: ["mock docs"]
+        }
+      }
+    };
+
+    const userScope = request.auth.credentials.scope;
+
+    const docs = request.response.source.docs;
+    //</editor-fold>
+
+    //<editor-fold desc="Act">
+    let result = enforceDocumentScopePostForModel(request, reply, next);
+    //</editor-fold>
+
+    //<editor-fold desc="Assert">
+    t.deepEqual(next.args[0], [null, true], "next called with correct args");
+    //</editor-fold>
+
+    //<editor-fold desc="Restore">
+    //</editor-fold>
+  }));
+
+  t.test('enforce-document-scope.enforceDocumentScopePostForModel returns forbidden error if verifyScope returns not authorized and "request.params._id" exists.', sinon.test(function (t) {
+    //<editor-fold desc="Arrange">
+    t.plan(1);
+
+    let enforceDocumentScope = rewire('../policies/enforce-document-scope');
+    let verifyScope = this.spy(function() {
+      return { authorized: false }
+    });
+    enforceDocumentScope.__set__("internals.verifyScope", verifyScope);
+    enforceDocumentScope.__set__("config.enableDocumentScopeFail", false);
+    let model = {};
+    let enforceDocumentScopePostForModel = enforceDocumentScope.enforceDocumentScopePost(model, Log);
+    let reply = this.spy();
+    let next = this.spy();
+    let mockLog = Log.bind("enforceDocumentScopePost");
+
+    let request = {
+      auth: {
+        credentials: {
+          scope: ['mock user scope']
+        }
+      },
+      method: "get",
+      params: {
+        _id: "mock _id"
+      },
+      response: {
+        source: {
+          docs: ["mock docs"]
+        }
+      }
+    };
+
+    const userScope = request.auth.credentials.scope;
+
+    const docs = request.response.source.docs;
+    //</editor-fold>
+
+    //<editor-fold desc="Act">
+    let result = enforceDocumentScopePostForModel(request, reply, next);
+    //</editor-fold>
+
+    //<editor-fold desc="Assert">
+    t.deepEqual(next.args[0], [Boom.forbidden("Insufficient document scope."), false], "next called with correct args");
+    //</editor-fold>
+
+    //<editor-fold desc="Restore">
+    //</editor-fold>
+  }));
+
+  t.test('enforce-document-scope.enforceDocumentScopePostForModel returns forbidden error if verifyScope returns not authorized and "config.enableDocumentScopeFail" is true.', sinon.test(function (t) {
+    //<editor-fold desc="Arrange">
+    t.plan(1);
+
+    let enforceDocumentScope = rewire('../policies/enforce-document-scope');
+    let verifyScope = this.spy(function() {
+      return { authorized: false }
+    });
+    enforceDocumentScope.__set__("internals.verifyScope", verifyScope);
+    enforceDocumentScope.__set__("config.enableDocumentScopeFail", true);
+    let model = {};
+    let enforceDocumentScopePostForModel = enforceDocumentScope.enforceDocumentScopePost(model, Log);
+    let reply = this.spy();
+    let next = this.spy();
+    let mockLog = Log.bind("enforceDocumentScopePost");
+
+    let request = {
+      auth: {
+        credentials: {
+          scope: ['mock user scope']
+        }
+      },
+      method: "get",
+      params: {
+      },
+      response: {
+        source: {
+          docs: ["mock docs"]
+        }
+      }
+    };
+
+    const userScope = request.auth.credentials.scope;
+
+    const docs = request.response.source.docs;
+    //</editor-fold>
+
+    //<editor-fold desc="Act">
+    let result = enforceDocumentScopePostForModel(request, reply, next);
+    //</editor-fold>
+
+    //<editor-fold desc="Assert">
+    t.deepEqual(next.args[0], [Boom.forbidden("Insufficient document scope."), false], "next called with correct args");
+    //</editor-fold>
+
+    //<editor-fold desc="Restore">
+    //</editor-fold>
+  }));
+
+  t.test('enforce-document-scope.enforceDocumentScopePostForModel replaces unauthorized docs for "list" requests that fail if "config.enableDocumentScopeFail" is false.', sinon.test(function (t) {
+    //<editor-fold desc="Arrange">
+    t.plan(2);
+
+    let enforceDocumentScope = rewire('../policies/enforce-document-scope');
+    let verifyScope = this.spy(function() {
+      return { authorized: false, unauthorizedDocs: [{ _id: "failed doc" }] }
+    });
+    enforceDocumentScope.__set__("internals.verifyScope", verifyScope);
+    enforceDocumentScope.__set__("config.enableDocumentScopeFail", false);
+    let model = {};
+    let enforceDocumentScopePostForModel = enforceDocumentScope.enforceDocumentScopePost(model, Log);
+    let reply = this.spy();
+    let next = this.spy();
+    let mockLog = Log.bind("enforceDocumentScopePost");
+
+    let request = {
+      auth: {
+        credentials: {
+          scope: ['mock user scope']
+        }
+      },
+      method: "get",
+      params: {
+      },
+      response: {
+        source: {
+          docs: [{ _id: "failed doc" }, { _id: "authorized doc" }]
+        }
+      }
+    };
+
+    const userScope = request.auth.credentials.scope;
+
+    //</editor-fold>
+
+    //<editor-fold desc="Act">
+    let result = enforceDocumentScopePostForModel(request, reply, next);
+    //</editor-fold>
+
+    //<editor-fold desc="Assert">
+    t.deepEqual(request.response.source.docs, [{ "error": "Insufficient document scope." }, { _id: "authorized doc" }], "unauthorized docs replaced");
+    t.deepEqual(next.args[0], [null, true], "next called with correct args");
+    //</editor-fold>
+
+    //<editor-fold desc="Restore">
+    //</editor-fold>
+  }));
+
   t.end();
 });

@@ -92,9 +92,11 @@ internals.enforceDocumentScopePost = function(model, Log) {
 
     //READ AUTHORIZATION
     if (request.method === "get") {
+      //EXPL: the request is for a "find" endpoint
       if (request.params._id) {
         result = internals.verifyScope([request.response.source], "read", userScope, Log);
       }
+      //EXPL: the request is for a "list" endpoint
       else {
         result = internals.verifyScope(request.response.source.docs, "read", userScope, Log);
       }
@@ -115,7 +117,7 @@ internals.enforceDocumentScopePost = function(model, Log) {
             return document;
           }
           else {
-            return { "error": "Insufficient document scope."}
+            return { "error": "Insufficient document scope." }
           }
         });
 
