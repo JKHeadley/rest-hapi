@@ -1,3 +1,5 @@
+'use strict';
+
 const Boom = require('boom');
 const _ = require('lodash');
 const config = require('../config');
@@ -5,10 +7,10 @@ const config = require('../config');
 const internals = {};
 
 
-internals.enforceDocumentScopePre = function(model) {
+internals.enforceDocumentScopePre = function(model, Log) {
 
   const enforceDocumentScopePreForModel = function enforceDocumentScopePreForModel(request, reply, next) {
-    const Log = request.logger.bind("enforceDocumentScopePre");
+    Log = Log.bind("enforceDocumentScopePre");
 
     const userScope = request.auth.credentials.scope;
 
@@ -80,10 +82,10 @@ internals.enforceDocumentScopePre.applyPoint = 'onPreHandler';
 
 
 
-internals.enforceDocumentScopePost = function(model) {
+internals.enforceDocumentScopePost = function(model, Log) {
 
   const enforceDocumentScopePostForModel = function enforceDocumentScopePostForModel(request, reply, next) {
-    const Log = request.logger.bind("enforceDocumentScopePost");
+    Log = Log.bind("enforceDocumentScopePost");
 
     const userScope = request.auth.credentials.scope;
     let result = {};
@@ -91,10 +93,10 @@ internals.enforceDocumentScopePost = function(model) {
     //READ AUTHORIZATION
     if (request.method === "get") {
       if (request.params._id) {
-        result = internals.verifyScope(model, [request.response.source], "read", userScope, Log);
+        result = internals.verifyScope([request.response.source], "read", userScope, Log);
       }
       else {
-        result = internals.verifyScope(model, request.response.source.docs, "read", userScope, Log);
+        result = internals.verifyScope(request.response.source.docs, "read", userScope, Log);
       }
 
       if (result.authorized) {
@@ -142,11 +144,11 @@ internals.verifyScopeById = function(model, documentIds, action, userScope, Log)
   };
   return model.find(query, 'scope')
       .then(function(documents) {
-        return internals.verifyScope(model, documents, action, userScope, Log);
+        return internals.verifyScope(documents, action, userScope, Log);
       })
 };
 
-internals.verifyScope = function(model, documents, action, userScope, Log) {
+internals.verifyScope = function(documents, action, userScope, Log) {
   let authorized = true;
   let unauthorizedDocs = [];
   try {
@@ -187,7 +189,7 @@ internals.verifyScope = function(model, documents, action, userScope, Log) {
           return false;
         }
 
-        authorizedForDocument = internals.compareScopes(userScope, documentScope);
+        authorizedForDocument = internals.compareScopes(userScope, documentScope, Log);
 
         if (authorizedForDocument) {
           return false;
@@ -220,7 +222,7 @@ internals.verifyScope = function(model, documents, action, userScope, Log) {
   return { authorized: authorized, unauthorizedDocs: unauthorizedDocs };
 };
 
-internals.compareScopes = function(userScope, documentScope) {
+internals.compareScopes = function(userScope, documentScope, Log) {
   let fobiddenScope = [];
   let requiredScope = [];
   let generalScope = [];
@@ -232,12 +234,14 @@ internals.compareScopes = function(userScope, documentScope) {
     if (scopeValue[0] === '!') {
       scope.push(scopeValue.substr(1));
     }
+    return scope;
   }, []);
 
   scopeSatisfied = fobiddenScope.reduce(function(satisfied, scopeValue) {
     if (userScope.includes(scopeValue)) {
       return false;
     }
+    return satisfied;
   }, true);
 
   if (!scopeSatisfied) {
@@ -248,14 +252,16 @@ internals.compareScopes = function(userScope, documentScope) {
   //EXPL: if the user scope does not contain all of the required scope values, the user is unauthorized
   requiredScope = documentScope.reduce(function(scope, scopeValue) {
     if (scopeValue[0] === '+') {
-      return scope.push(scopeValue.substr(1));
+      scope.push(scopeValue.substr(1));
     }
+    return scope;
   }, []);
 
   scopeSatisfied = requiredScope.reduce(function(satisfied, scopeValue) {
     if (!userScope.includes(scopeValue)) {
       return false;
     }
+    return satisfied;
   }, true);
 
   if (!scopeSatisfied) {
@@ -272,6 +278,7 @@ internals.compareScopes = function(userScope, documentScope) {
     if (userScope.includes(scopeValue)) {
       return true;
     }
+    return satisfied;
   }, false);
 
   if (!scopeSatisfied) {

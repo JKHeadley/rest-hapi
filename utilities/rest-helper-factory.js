@@ -167,8 +167,8 @@ module.exports = function (logger, mongoose, server) {
       }
 
       if (config.enableDocumentScopes) {
-        policies.push(restHapiPolicies.enforceDocumentScopePre(model));
-        policies.push(restHapiPolicies.enforceDocumentScopePost(model));
+        policies.push(restHapiPolicies.enforceDocumentScopePre(model, Log));
+        policies.push(restHapiPolicies.enforceDocumentScopePost(model, Log));
       }
       
       server.route({
@@ -275,8 +275,8 @@ module.exports = function (logger, mongoose, server) {
       }
 
       if (config.enableDocumentScopes) {
-        policies.push(restHapiPolicies.enforceDocumentScopePre(model));
-        policies.push(restHapiPolicies.enforceDocumentScopePost(model));
+        policies.push(restHapiPolicies.enforceDocumentScopePre(model, Log));
+        policies.push(restHapiPolicies.enforceDocumentScopePost(model, Log));
       }
 
       server.route({
@@ -395,8 +395,8 @@ module.exports = function (logger, mongoose, server) {
       }
 
       if (config.enableDocumentScopes) {
-        policies.push(restHapiPolicies.enforceDocumentScopePre(model));
-        policies.push(restHapiPolicies.enforceDocumentScopePost(model));
+        policies.push(restHapiPolicies.enforceDocumentScopePre(model, Log));
+        policies.push(restHapiPolicies.enforceDocumentScopePost(model, Log));
       }
 
       server.route({
@@ -501,8 +501,8 @@ module.exports = function (logger, mongoose, server) {
       }
 
       if (config.enableDocumentScopes) {
-        policies.push(restHapiPolicies.enforceDocumentScopePre(model));
-        policies.push(restHapiPolicies.enforceDocumentScopePost(model));
+        policies.push(restHapiPolicies.enforceDocumentScopePre(model, Log));
+        policies.push(restHapiPolicies.enforceDocumentScopePost(model, Log));
       }
 
       server.route({
@@ -617,8 +617,8 @@ module.exports = function (logger, mongoose, server) {
       }
 
       if (config.enableDocumentScopes) {
-        policies.push(restHapiPolicies.enforceDocumentScopePre(model));
-        policies.push(restHapiPolicies.enforceDocumentScopePost(model));
+        policies.push(restHapiPolicies.enforceDocumentScopePre(model, Log));
+        policies.push(restHapiPolicies.enforceDocumentScopePost(model, Log));
       }
 
       server.route({
@@ -730,8 +730,8 @@ module.exports = function (logger, mongoose, server) {
       }
 
       if (config.enableDocumentScopes) {
-        policies.push(restHapiPolicies.enforceDocumentScopePre(model));
-        policies.push(restHapiPolicies.enforceDocumentScopePost(model));
+        policies.push(restHapiPolicies.enforceDocumentScopePre(model, Log));
+        policies.push(restHapiPolicies.enforceDocumentScopePost(model, Log));
       }
 
       server.route({
