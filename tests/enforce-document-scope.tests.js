@@ -936,3 +936,466 @@ test('enforce-document-scope.enforceDocumentScopePostForModel', function (t) {
 
   t.end();
 });
+
+test('enforce-document-scope.enforceDocumentScopePreForModel', function (t) {
+  t.test('enforce-document-scope.enforceDocumentScopePreForModel returns authorized if request is not an update, association call, or a delete.', sinon.test(function (t) {
+    //<editor-fold desc="Arrange">
+    t.plan(1);
+
+    let enforceDocumentScope = rewire('../policies/enforce-document-scope');
+    let verifyScopeById = this.spy(function() { throw "ERROR" });
+    enforceDocumentScope.__set__("internals.verifyScopeById", verifyScopeById);
+    let model = {};
+    let enforceDocumentScopePreForModel = enforceDocumentScope.enforceDocumentScopePre(model, Log);
+    let reply = this.spy();
+    let next = this.spy();
+
+    let request = {
+      auth: {
+        credentials: {
+          scope: []
+        }
+      },
+      method: "not_relevant",
+      params: {}
+    };
+    //</editor-fold>
+
+    //<editor-fold desc="Act">
+    let result = enforceDocumentScopePreForModel(request, reply, next);
+    //</editor-fold>
+
+    //<editor-fold desc="Assert">
+    t.ok(next.calledWithExactly(null, true), "next called with correct args");
+    //</editor-fold>
+
+    //<editor-fold desc="Restore">
+    //</editor-fold>
+  }));
+
+  t.test('enforce-document-scope.enforceDocumentScopePreForModel calls verifyScopeById with "update" action if relevant.', sinon.test(function (t) {
+    //<editor-fold desc="Arrange">
+    t.plan(1);
+
+    let enforceDocumentScope = rewire('../policies/enforce-document-scope');
+    let verifyScopeById = this.spy(function() {
+      return Q.when({ authorized: true })
+    });
+    enforceDocumentScope.__set__("internals.verifyScopeById", verifyScopeById);
+    let model = {};
+    let enforceDocumentScopePreForModel = enforceDocumentScope.enforceDocumentScopePre(model, Log);
+    let reply = this.spy();
+    let next = this.spy();
+    let mockLog = Log.bind("enforceDocumentScopePre");
+
+    let request = {
+      auth: {
+        credentials: {
+          scope: ['mock user scope']
+        }
+      },
+      method: "put",
+      params: {
+        _id: "mock _id"
+      }
+    };
+
+    const userScope = request.auth.credentials.scope;
+
+    const ids = [request.params._id];
+    //</editor-fold>
+
+    //<editor-fold desc="Act">
+    let result = enforceDocumentScopePreForModel(request, reply, next);
+    //</editor-fold>
+
+    //<editor-fold desc="Assert">
+    t.deepEqual(verifyScopeById.args[0], [model, ids, "update", userScope, mockLog], "verifyScopeById called with correct args");
+    //</editor-fold>
+
+    //<editor-fold desc="Restore">
+    //</editor-fold>
+  }));
+
+  t.test('enforce-document-scope.enforceDocumentScopePreForModel calls verifyScopeById with "read" action if relevant.', sinon.test(function (t) {
+    //<editor-fold desc="Arrange">
+    t.plan(1);
+
+    let enforceDocumentScope = rewire('../policies/enforce-document-scope');
+    let verifyScopeById = this.spy(function() {
+      return Q.when({ authorized: true })
+    });
+    enforceDocumentScope.__set__("internals.verifyScopeById", verifyScopeById);
+    let model = {};
+    let enforceDocumentScopePreForModel = enforceDocumentScope.enforceDocumentScopePre(model, Log);
+    let reply = this.spy();
+    let next = this.spy();
+    let mockLog = Log.bind("enforceDocumentScopePre");
+
+    let request = {
+      auth: {
+        credentials: {
+          scope: ['mock user scope']
+        }
+      },
+      method: "get",
+      params: {
+        ownerId: "mock _id"
+      }
+    };
+
+    const userScope = request.auth.credentials.scope;
+
+    const ids = [request.params.ownerId];
+    //</editor-fold>
+
+    //<editor-fold desc="Act">
+    let result = enforceDocumentScopePreForModel(request, reply, next);
+    //</editor-fold>
+
+    //<editor-fold desc="Assert">
+    t.deepEqual(verifyScopeById.args[0], [model, ids, "read", userScope, mockLog], "verifyScopeById called with correct args");
+    //</editor-fold>
+
+    //<editor-fold desc="Restore">
+    //</editor-fold>
+  }));
+
+  t.test('enforce-document-scope.enforceDocumentScopePreForModel calls verifyScopeById with "associate" action if relevant.', sinon.test(function (t) {
+    //<editor-fold desc="Arrange">
+    t.plan(1);
+
+    let enforceDocumentScope = rewire('../policies/enforce-document-scope');
+    let verifyScopeById = this.spy(function() {
+      return Q.when({ authorized: true })
+    });
+    enforceDocumentScope.__set__("internals.verifyScopeById", verifyScopeById);
+    let model = {};
+    let enforceDocumentScopePreForModel = enforceDocumentScope.enforceDocumentScopePre(model, Log);
+    let reply = this.spy();
+    let next = this.spy();
+    let mockLog = Log.bind("enforceDocumentScopePre");
+
+    let request = {
+      auth: {
+        credentials: {
+          scope: ['mock user scope']
+        }
+      },
+      method: "put",
+      params: {
+        ownerId: "mock _id"
+      }
+    };
+
+    const userScope = request.auth.credentials.scope;
+
+    const ids = [request.params.ownerId];
+    //</editor-fold>
+
+    //<editor-fold desc="Act">
+    let result = enforceDocumentScopePreForModel(request, reply, next);
+    //</editor-fold>
+
+    //<editor-fold desc="Assert">
+    t.deepEqual(verifyScopeById.args[0], [model, ids, "associate", userScope, mockLog], "verifyScopeById called with correct args");
+    //</editor-fold>
+
+    //<editor-fold desc="Restore">
+    //</editor-fold>
+  }));
+
+  t.test('enforce-document-scope.enforceDocumentScopePreForModel calls verifyScopeById with "delete" action and "_id" param if relevant.', sinon.test(function (t) {
+    //<editor-fold desc="Arrange">
+    t.plan(1);
+
+    let enforceDocumentScope = rewire('../policies/enforce-document-scope');
+    let verifyScopeById = this.spy(function() {
+      return Q.when({ authorized: true })
+    });
+    enforceDocumentScope.__set__("internals.verifyScopeById", verifyScopeById);
+    let model = {};
+    let enforceDocumentScopePreForModel = enforceDocumentScope.enforceDocumentScopePre(model, Log);
+    let reply = this.spy();
+    let next = this.spy();
+    let mockLog = Log.bind("enforceDocumentScopePre");
+
+    let request = {
+      auth: {
+        credentials: {
+          scope: ['mock user scope']
+        }
+      },
+      method: "delete",
+      params: {
+        _id: "mock _id"
+      }
+    };
+
+    const userScope = request.auth.credentials.scope;
+
+    const ids = [request.params._id];
+    //</editor-fold>
+
+    //<editor-fold desc="Act">
+    let result = enforceDocumentScopePreForModel(request, reply, next);
+    //</editor-fold>
+
+    //<editor-fold desc="Assert">
+    t.deepEqual(verifyScopeById.args[0], [model, ids, "delete", userScope, mockLog], "verifyScopeById called with correct args");
+    //</editor-fold>
+
+    //<editor-fold desc="Restore">
+    //</editor-fold>
+  }));
+
+  t.test('enforce-document-scope.enforceDocumentScopePreForModel calls verifyScopeById with "delete" action and payload _ids if relevant.', sinon.test(function (t) {
+    //<editor-fold desc="Arrange">
+    t.plan(1);
+
+    let enforceDocumentScope = rewire('../policies/enforce-document-scope');
+    let verifyScopeById = this.spy(function() {
+      return Q.when({ authorized: true })
+    });
+    enforceDocumentScope.__set__("internals.verifyScopeById", verifyScopeById);
+    let model = {};
+    let enforceDocumentScopePreForModel = enforceDocumentScope.enforceDocumentScopePre(model, Log);
+    let reply = this.spy();
+    let next = this.spy();
+    let mockLog = Log.bind("enforceDocumentScopePre");
+
+    let request = {
+      auth: {
+        credentials: {
+          scope: ['mock user scope']
+        }
+      },
+      method: "delete",
+      params: {
+      },
+      payload: [{ _id: "testId1" }, { _id: "testId2" }]
+    };
+
+    const userScope = request.auth.credentials.scope;
+
+    const ids = ["testId1", "testId2"];
+    //</editor-fold>
+
+    //<editor-fold desc="Act">
+    let result = enforceDocumentScopePreForModel(request, reply, next);
+    //</editor-fold>
+
+    //<editor-fold desc="Assert">
+    t.deepEqual(verifyScopeById.args[0], [model, ids, "delete", userScope, mockLog], "verifyScopeById called with correct args");
+    //</editor-fold>
+
+    //<editor-fold desc="Restore">
+    //</editor-fold>
+  }));
+
+  t.test('enforce-document-scope.enforceDocumentScopePreForModel calls returns authorized if verifyScopeById returns authorized.', sinon.test(function (t) {
+    //<editor-fold desc="Arrange">
+    t.plan(1);
+
+    let deferred = Q.defer();
+    let enforceDocumentScope = rewire('../policies/enforce-document-scope');
+    let verifyScopeById = this.spy(function() {
+      return Q.when({ authorized: true })
+    });
+    enforceDocumentScope.__set__("internals.verifyScopeById", verifyScopeById);
+    let model = {};
+    let enforceDocumentScopePreForModel = enforceDocumentScope.enforceDocumentScopePre(model, Log);
+    let reply = this.spy();
+    let next = this.spy(function() {
+      deferred.resolve();
+    });
+    let mockLog = Log.bind("enforceDocumentScopePre");
+
+    let request = {
+      auth: {
+        credentials: {
+          scope: ['mock user scope']
+        }
+      },
+      method: "delete",
+      params: {
+      },
+      payload: [{ _id: "testId1" }, { _id: "testId2" }]
+    };
+
+    const userScope = request.auth.credentials.scope;
+
+    const ids = ["testId1", "testId2"];
+    //</editor-fold>
+
+    //<editor-fold desc="Act">
+    let result = enforceDocumentScopePreForModel(request, reply, next);
+    //</editor-fold>
+
+    //<editor-fold desc="Assert">
+    deferred.promise
+        .then(function(result) {
+          t.deepEqual(next.args[0], [null, true], "next called with correct args");
+        });
+    //</editor-fold>
+
+    //<editor-fold desc="Restore">
+    //</editor-fold>
+  }));
+
+  t.test('enforce-document-scope.enforceDocumentScopePreForModel calls returns forbidden error if verifyScopeById returns unauthorized and config.enableDocumentScopeFail is true.', sinon.test(function (t) {
+    //<editor-fold desc="Arrange">
+    t.plan(1);
+
+    let deferred = Q.defer();
+    let enforceDocumentScope = rewire('../policies/enforce-document-scope');
+    let verifyScopeById = this.spy(function() {
+      return Q.when({ authorized: false })
+    });
+    enforceDocumentScope.__set__("internals.verifyScopeById", verifyScopeById);
+    enforceDocumentScope.__set__("config.enableDocumentScopeFail", true);
+    let model = {};
+    let enforceDocumentScopePreForModel = enforceDocumentScope.enforceDocumentScopePre(model, Log);
+    let reply = this.spy();
+    let next = this.spy(function() {
+      deferred.resolve();
+    });
+    let mockLog = Log.bind("enforceDocumentScopePre");
+
+    let request = {
+      auth: {
+        credentials: {
+          scope: ['mock user scope']
+        }
+      },
+      method: "delete",
+      params: {
+      },
+      payload: [{ _id: "testId1" }, { _id: "testId2" }]
+    };
+
+    const userScope = request.auth.credentials.scope;
+
+    const ids = ["testId1", "testId2"];
+    //</editor-fold>
+
+    //<editor-fold desc="Act">
+    let result = enforceDocumentScopePreForModel(request, reply, next);
+    //</editor-fold>
+
+    //<editor-fold desc="Assert">
+    deferred.promise
+        .then(function(result) {
+          t.deepEqual(next.args[0], [Boom.forbidden("Insufficient document scope."), false], "next called with correct args");
+        });
+    //</editor-fold>
+
+    //<editor-fold desc="Restore">
+    //</editor-fold>
+  }));
+
+  t.test('enforce-document-scope.enforceDocumentScopePreForModel calls returns forbidden error if verifyScopeById returns unauthorized and action is not "delete.', sinon.test(function (t) {
+    //<editor-fold desc="Arrange">
+    t.plan(1);
+
+    let deferred = Q.defer();
+    let enforceDocumentScope = rewire('../policies/enforce-document-scope');
+    let verifyScopeById = this.spy(function() {
+      return Q.when({ authorized: false })
+    });
+    enforceDocumentScope.__set__("internals.verifyScopeById", verifyScopeById);
+    enforceDocumentScope.__set__("config.enableDocumentScopeFail", false);
+    let model = {};
+    let enforceDocumentScopePreForModel = enforceDocumentScope.enforceDocumentScopePre(model, Log);
+    let reply = this.spy();
+    let next = this.spy(function() {
+      deferred.resolve();
+    });
+    let mockLog = Log.bind("enforceDocumentScopePre");
+
+    let request = {
+      auth: {
+        credentials: {
+          scope: ['mock user scope']
+        }
+      },
+      method: "put",
+      params: {
+        _id: "testId"
+      },
+    };
+
+    const userScope = request.auth.credentials.scope;
+
+    const ids = ["testId1", "testId2"];
+    //</editor-fold>
+
+    //<editor-fold desc="Act">
+    let result = enforceDocumentScopePreForModel(request, reply, next);
+    //</editor-fold>
+
+    //<editor-fold desc="Assert">
+    deferred.promise
+        .then(function(result) {
+          t.deepEqual(next.args[0], [Boom.forbidden("Insufficient document scope."), false], "next called with correct args");
+        });
+    //</editor-fold>
+
+    //<editor-fold desc="Restore">
+    //</editor-fold>
+  }));
+
+
+  t.test('enforce-document-scope.enforceDocumentScopePreForModel modifies payload if verifyScopeById returns unauthorized and action is "delete" and config.enableDocumentScopeFail is false.', sinon.test(function (t) {
+    //<editor-fold desc="Arrange">
+    t.plan(1);
+
+    let deferred = Q.defer();
+    let enforceDocumentScope = rewire('../policies/enforce-document-scope');
+    let verifyScopeById = this.spy(function() {
+      return Q.when({ authorized: false, unauthorizedDocs: [{ _id: "failedId" }] })
+    });
+    enforceDocumentScope.__set__("internals.verifyScopeById", verifyScopeById);
+    enforceDocumentScope.__set__("config.enableDocumentScopeFail", false);
+    let model = {};
+    let enforceDocumentScopePreForModel = enforceDocumentScope.enforceDocumentScopePre(model, Log);
+    let reply = this.spy();
+    let next = this.spy(function() {
+      deferred.resolve();
+    });
+    let mockLog = Log.bind("enforceDocumentScopePre");
+
+    let request = {
+      auth: {
+        credentials: {
+          scope: ['mock user scope']
+        }
+      },
+      method: "delete",
+      params: {
+      },
+      payload: [{ _id: "failedId" }, { _id: "authorizedId" }]
+    };
+
+    const userScope = request.auth.credentials.scope;
+
+    const ids = ["testId1", "testId2"];
+    //</editor-fold>
+
+    //<editor-fold desc="Act">
+    let result = enforceDocumentScopePreForModel(request, reply, next);
+    //</editor-fold>
+
+    //<editor-fold desc="Assert">
+    deferred.promise
+        .then(function(result) {
+          t.deepEqual(request.payload, [{ _id: "authorizedId" }], "payload correctly filtered");
+        });
+    //</editor-fold>
+
+    //<editor-fold desc="Restore">
+    //</editor-fold>
+  }));
+
+  t.end();
+});
