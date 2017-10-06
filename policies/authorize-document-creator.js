@@ -150,18 +150,21 @@ internals.addScope = function(action, request, reply, next, Log) {
       Log.error("User _id not found in auth credentials.");
       return next(Boom.badRequest("User _id not found in auth credentials."), false);
     }
-    
-    let scope = {};
-    scope[scopeType] = [];
 
     if (_.isArray(request.payload)) {
       request.payload.forEach(function(document) {
+        let scope = {};
+        scope[scopeType] = [];
+
         document.scope = document.scope || scope;
         document.scope[scopeType] = document.scope[scopeType] || [];
         document.scope[scopeType].push("user-" + userId)
       })
     }
     else {
+      let scope = {};
+      scope[scopeType] = [];
+
       request.payload.scope = request.payload.scope || scope;
       request.payload.scope[scopeType] = request.payload.scope[scopeType] || [];
       request.payload.scope[scopeType].push("user-" + userId)

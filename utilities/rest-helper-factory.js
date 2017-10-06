@@ -416,6 +416,10 @@ module.exports = function (logger, mongoose, server) {
         policies.push(restHapiPolicies.authorizeDocumentCreatorToAssociate(model, Log));
       }
 
+      if (model.routeOptions.documentScope) {
+        policies.push(restHapiPolicies.addDocumentScope(model, Log));
+      }
+
       server.route({
         method: 'POST',
         path: '/' + resourceAliasForRoute,

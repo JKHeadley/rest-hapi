@@ -1324,7 +1324,7 @@ test('enforce-document-scope.enforceDocumentScopePreForModel', function (t) {
     //</editor-fold>
   }));
 
-  t.test('enforce-document-scope.enforceDocumentScopePreForModel calls returns forbidden error if verifyScopeById returns unauthorized and action is not "delete.', sinon.test(function (t) {
+  t.test('enforce-document-scope.enforceDocumentScopePreForModel calls returns forbidden error if verifyScopeById returns unauthorized and action is not "delete".', sinon.test(function (t) {
     //<editor-fold desc="Arrange">
     t.plan(1);
 
@@ -1375,6 +1375,56 @@ test('enforce-document-scope.enforceDocumentScopePreForModel', function (t) {
     //</editor-fold>
   }));
 
+  t.test('enforce-document-scope.enforceDocumentScopePreForModel calls returns forbidden error if verifyScopeById returns unauthorized and request.params._id exists', sinon.test(function (t) {
+    //<editor-fold desc="Arrange">
+    t.plan(1);
+
+    let deferred = Q.defer();
+    let enforceDocumentScope = rewire('../policies/enforce-document-scope');
+    let verifyScopeById = this.spy(function() {
+      return Q.when({ authorized: false })
+    });
+    enforceDocumentScope.__set__("internals.verifyScopeById", verifyScopeById);
+    enforceDocumentScope.__set__("config.enableDocumentScopeFail", false);
+    let model = {};
+    let enforceDocumentScopePreForModel = enforceDocumentScope.enforceDocumentScopePre(model, Log);
+    let reply = this.spy();
+    let next = this.spy(function() {
+      deferred.resolve();
+    });
+    let mockLog = Log.bind("enforceDocumentScopePre");
+
+    let request = {
+      auth: {
+        credentials: {
+          scope: ['mock user scope']
+        }
+      },
+      method: "delete",
+      params: {
+        _id: "testId"
+      },
+    };
+
+    const userScope = request.auth.credentials.scope;
+
+    const ids = ["testId1", "testId2"];
+    //</editor-fold>
+
+    //<editor-fold desc="Act">
+    let result = enforceDocumentScopePreForModel(request, reply, next);
+    //</editor-fold>
+
+    //<editor-fold desc="Assert">
+    deferred.promise
+        .then(function(result) {
+          t.deepEqual(next.args[0], [Boom.forbidden("Insufficient document scope."), false], "next called with correct args");
+        });
+    //</editor-fold>
+
+    //<editor-fold desc="Restore">
+    //</editor-fold>
+  }));
 
   t.test('enforce-document-scope.enforceDocumentScopePreForModel modifies payload if verifyScopeById returns unauthorized and action is "delete" and config.enableDocumentScopeFail is false.', sinon.test(function (t) {
     //<editor-fold desc="Arrange">

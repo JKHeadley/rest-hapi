@@ -55,7 +55,7 @@ internals.enforceDocumentScopePre = function(model, Log) {
               return next(null, true);
             }
             //EXPL: only delete authorized docs
-            else if (action === 'delete' && !config.enableDocumentScopeFail) {
+            else if (action === 'delete' && !config.enableDocumentScopeFail && !request.params._id) {
               let unauthorizedIds = result.unauthorizedDocs.map(function(document) {
                 return document._id.toString();
               });
