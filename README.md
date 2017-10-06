@@ -1616,7 +1616,7 @@ The third type of scope is property that relates to a specific association actio
 
 -{action}{modelName}{associationName}Scope
 
-In the example below, users with the ``Admin`` scope in their authentication credentials can access all of the generated endpoints for the user model, users with the ``User`` scope are granted read access for the user model, and users with the ``addUserGroupsScope`` are capable of adding group associations to a user document.
+In the example below, users with the ``Admin`` scope in their authentication credentials can access all of the generated endpoints for the user model, users with the ``User`` scope are granted read access for the user model, and users with the ``Project Lead`` scope are capable of adding group associations to a user document.
 
 ```javascript
 'use strict';
