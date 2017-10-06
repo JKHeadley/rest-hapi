@@ -395,9 +395,25 @@ module.exports = function (logger, mongoose, server) {
       }
 
       var authorizeDocumentCreator = model.routeOptions.authorizeDocumentCreator === undefined ? config.authorizeDocumentCreator : model.routeOptions.authorizeDocumentCreator;
+      var authorizeDocumentCreatorToRead = model.routeOptions.authorizeDocumentCreatorToRead === undefined ? config.authorizeDocumentCreatorToRead : model.routeOptions.authorizeDocumentCreatorToRead;
+      var authorizeDocumentCreatorToUpdate = model.routeOptions.authorizeDocumentCreatorToUpdate === undefined ? config.authorizeDocumentCreatorToUpdate : model.routeOptions.authorizeDocumentCreatorToUpdate;
+      var authorizeDocumentCreatorToDelete = model.routeOptions.authorizeDocumentCreatorToDelete === undefined ? config.authorizeDocumentCreatorToDelete : model.routeOptions.authorizeDocumentCreatorToDelete;
+      var authorizeDocumentCreatorToAssociate = model.routeOptions.authorizeDocumentCreatorToAssociate === undefined ? config.authorizeDocumentCreatorToAssociate : model.routeOptions.authorizeDocumentCreatorToAssociate;
 
       if (authorizeDocumentCreator) {
         policies.push(restHapiPolicies.authorizeDocumentCreator(model, Log));
+      }
+      if (authorizeDocumentCreatorToRead) {
+        policies.push(restHapiPolicies.authorizeDocumentCreatorToRead(model, Log));
+      }
+      if (authorizeDocumentCreatorToUpdate) {
+        policies.push(restHapiPolicies.authorizeDocumentCreatorToUpdate(model, Log));
+      }
+      if (authorizeDocumentCreatorToDelete) {
+        policies.push(restHapiPolicies.authorizeDocumentCreatorToDelete(model, Log));
+      }
+      if (authorizeDocumentCreatorToAssociate) {
+        policies.push(restHapiPolicies.authorizeDocumentCreatorToAssociate(model, Log));
       }
 
       server.route({

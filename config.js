@@ -128,10 +128,39 @@ config.enableDocumentScopes = true;
  * a "user" object with a "_id" property, or a "userId" property set to the current user's _id.
  * - This also assumes that the user creating the document will have "user-{userId}" within their scope.
  * - Requires both "config.enablePolicies" and "config.enableDocumentScopes" to be "true".
+ * - This setting can be individually overwritten by setting the "authorizeDocumentCreator" routeOptions property.
  * default: false
  * @type {boolean}
  */
 config.authorizeDocumentCreator = false;
+
+/**
+ * Same as "authorizeDocumentCreator", but modifies the "readScope" rather than the global scope.
+ * default: false
+ * @type {boolean}
+ */
+config.authorizeDocumentCreatorToRead = false;
+
+/**
+ * Same as "authorizeDocumentCreator", but modifies the "updateScope" rather than the global scope.
+ * default: false
+ * @type {boolean}
+ */
+config.authorizeDocumentCreatorToUpdate = false;
+
+/**
+ * Same as "authorizeDocumentCreator", but modifies the "deleteScope" rather than the global scope.
+ * default: false
+ * @type {boolean}
+ */
+config.authorizeDocumentCreatorToRead = false;
+
+/**
+ * Same as "authorizeDocumentCreator", but modifies the "associateScope" rather than the global scope.
+ * default: false
+ * @type {boolean}
+ */
+config.authorizeDocumentCreatorToAssociate = false;
 
 /**
  * Determines what action takes place when one or more document scope checks fail for requests dealing with multiple
