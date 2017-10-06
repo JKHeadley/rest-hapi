@@ -70,7 +70,7 @@ module.exports = {
 
     const scope = {};
     
-    scope.scope = "root";
+    scope.scope = ["root", model.collectionName];
     scope.createScope = ["create", "create" + modelName];
     scope.readScope = ["read", "read" + modelName];
     scope.updateScope = ["update", "update" + modelName];
