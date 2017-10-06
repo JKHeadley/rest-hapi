@@ -46,29 +46,6 @@ config.absoluteApiPath = false;
  */
 config.apiPath = 'api';
 
-
-/**
- * Enables policies via mrhorse (https://github.com/mark-bradshaw/mrhorse).
- * NOTE: disabling policies will by default disable document level scopes/authorization.
- * default: false
- * @type {boolean}
- */
-config.enablePolicies = false;
-
-/**
- * Flag signifying whether the absolute path to the policies directory is provided
- * default: false
- * @type {boolean}
- */
-config.absolutePolicyPath = false;
-
-/**
- * Path to the directory for mrhorse policies (https://github.com/mark-bradshaw/mrhorse)
- * default: 'policies'
- * @type {string}
- */
-config.policyPath = 'policies';
-
 /**
  * Cors settings for generated endpoints. Can be set to false to disable.
  * @type {{additionalHeaders: string[], additionalExposedHeaders: string[]}}
@@ -106,19 +83,55 @@ config.authStrategy = false;
 config.embedAssociations = false;
 
 /**
-* MetaData options:
-    * default: true
-* @type {boolean}
-*/
+ * MetaData options:
+ * - createdAt: (default: true) date specifying when the document was created.
+ * - updatedAt: (default: true) date specifying when the document was last updated.
+ */
 config.enableCreatedAt = true;
 config.enableUpdatedAt = true;
 
 /**
+ * Enables policies via mrhorse (https://github.com/mark-bradshaw/mrhorse).
+ * NOTE: disabling policies will by default disable document level scopes/authorization.
+ * default: false
+ * @type {boolean}
+ */
+config.enablePolicies = true;
+
+/**
+ * Flag signifying whether the absolute path to the policies directory is provided.
+ * default: false
+ * @type {boolean}
+ */
+config.absolutePolicyPath = false;
+
+/**
+ * Path to the directory for mrhorse policies (https://github.com/mark-bradshaw/mrhorse).
+ * default: 'policies'
+ * @type {string}
+ */
+config.policyPath = 'policies';
+
+/**
  * Enables document level authorization.
+ * NOTE: requires "config.enablePolicies" to be "true".
  * default: true
  * @type {boolean}
  */
 config.enableDocumentScopes = true;
+
+/**
+ * If true, modifies the global scope of any document to allow access to the document's creator.
+ * The scope value added is in the form: "user-{userId}".
+ * NOTE:
+ * - This assumes that your authentication credentials (request.auth.credentials) will contain either
+ * a "user" object with a "_id" property, or a "userId" property set to the current user's _id.
+ * - This also assumes that the user creating the document will have "user-{userId}" within their scope.
+ * - Requires both "config.enablePolicies" and "config.enableDocumentScopes" to be "true".
+ * default: false
+ * @type {boolean}
+ */
+config.authorizeDocumentCreator = false;
 
 /**
  * Determines what action takes place when one or more document scope checks fail for requests dealing with multiple

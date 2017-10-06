@@ -394,9 +394,10 @@ module.exports = function (logger, mongoose, server) {
         policies = (policies.policies || []).concat(policies.createPolicies || []);
       }
 
-      if (config.enableDocumentScopes) {
-        policies.push(restHapiPolicies.enforceDocumentScopePre(model, Log));
-        policies.push(restHapiPolicies.enforceDocumentScopePost(model, Log));
+      var authorizeDocumentCreator = model.routeOptions.authorizeDocumentCreator === undefined ? config.authorizeDocumentCreator : model.routeOptions.authorizeDocumentCreator;
+
+      if (authorizeDocumentCreator) {
+        policies.push(restHapiPolicies.authorizeDocumentCreator(model, Log));
       }
 
       server.route({
