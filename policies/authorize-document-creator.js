@@ -158,13 +158,13 @@ internals.addScope = function(action, request, reply, next, Log) {
       request.payload.forEach(function(document) {
         document.scope = document.scope || scope;
         document.scope[scopeType] = document.scope[scopeType] || [];
-        document.scope[scopeType].push("user-" + request.auth.credentials.user._id)
+        document.scope[scopeType].push("user-" + userId)
       })
     }
     else {
       request.payload.scope = request.payload.scope || scope;
       request.payload.scope[scopeType] = request.payload.scope[scopeType] || [];
-      request.payload.scope[scopeType].push("user-" + request.auth.credentials.user._id)
+      request.payload.scope[scopeType].push("user-" + userId)
     }
 
     return next(null, true);
