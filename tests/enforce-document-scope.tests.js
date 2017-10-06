@@ -426,6 +426,36 @@ test('enforce-document-scope.verifyScope', function (t) {
     //</editor-fold>
   }));
 
+  t.test('enforce-document-scope.verifyScope calls compareScope with just global scope if no action scope exists.', sinon.test(function (t) {
+    //<editor-fold desc="Arrange">
+    t.plan(1);
+
+    let enforceDocumentScope = rewire('../policies/enforce-document-scope');
+    let compareScopes = this.spy(function(){ return true });
+    enforceDocumentScope.__set__("internals.compareScopes", compareScopes);
+    let verifyScope = this.spy(enforceDocumentScope.__get__("internals.verifyScope"));
+
+    let document = {
+      scope: {
+        scope: ['testGlobal']
+      }
+    };
+
+    let userScope = ['testUserScope'];
+    //</editor-fold>
+
+    //<editor-fold desc="Act">
+    let result = verifyScope([document], 'associate', userScope, Log);
+    //</editor-fold>
+
+    //<editor-fold desc="Assert">
+    t.ok(compareScopes.calledWithExactly(userScope, ['testGlobal'], Log), "scope correct");
+    //</editor-fold>
+
+    //<editor-fold desc="Restore">
+    //</editor-fold>
+  }));
+
   t.test('enforce-document-scope.verifyScope returns authorized if no document scope is defined.', sinon.test(function (t) {
     //<editor-fold desc="Arrange">
     t.plan(1);

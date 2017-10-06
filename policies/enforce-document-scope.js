@@ -179,7 +179,7 @@ internals.verifyScope = function(documents, action, userScope, Log) {
         }
 
         //EXPL: combine the document global scope with the action specific scope
-        if (documentScope && documentScope[0]) {
+        if (documentScope && documentScope[0] && actionScope) {
           documentScope = documentScope.concat(actionScope);
         }
         else if (actionScope){
