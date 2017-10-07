@@ -268,7 +268,7 @@ test('enforce-document-scope.verifyScope', function (t) {
 
     let document = {
       scope: {
-        scope: ['testGlobal'],
+        rootScope: ['testRoot'],
         readScope: ['testRead'],
         updateScope: ['testUpdate'],
         deleteScope: ['testDelete'],
@@ -284,7 +284,7 @@ test('enforce-document-scope.verifyScope', function (t) {
     //</editor-fold>
 
     //<editor-fold desc="Assert">
-    t.ok(compareScopes.calledWithExactly(userScope, ['testGlobal', 'testRead'], Log), "read scope correct");
+    t.ok(compareScopes.calledWithExactly(userScope, ['testRoot', 'testRead'], Log), "read scope correct");
     //</editor-fold>
 
     //<editor-fold desc="Restore">
@@ -302,7 +302,7 @@ test('enforce-document-scope.verifyScope', function (t) {
 
     let document = {
       scope: {
-        scope: ['testGlobal'],
+        rootScope: ['testRoot'],
         readScope: ['testRead'],
         updateScope: ['testUpdate'],
         deleteScope: ['testDelete'],
@@ -318,7 +318,7 @@ test('enforce-document-scope.verifyScope', function (t) {
     //</editor-fold>
 
     //<editor-fold desc="Assert">
-    t.ok(compareScopes.calledWithExactly(userScope, ['testGlobal', 'testUpdate'], Log), "update scope correct");
+    t.ok(compareScopes.calledWithExactly(userScope, ['testRoot', 'testUpdate'], Log), "update scope correct");
     //</editor-fold>
 
     //<editor-fold desc="Restore">
@@ -336,7 +336,7 @@ test('enforce-document-scope.verifyScope', function (t) {
 
     let document = {
       scope: {
-        scope: ['testGlobal'],
+        rootScope: ['testRoot'],
         readScope: ['testRead'],
         updateScope: ['testUpdate'],
         deleteScope: ['testDelete'],
@@ -352,7 +352,7 @@ test('enforce-document-scope.verifyScope', function (t) {
     //</editor-fold>
 
     //<editor-fold desc="Assert">
-    t.ok(compareScopes.calledWithExactly(userScope, ['testGlobal', 'testDelete'], Log), "delete scope correct");
+    t.ok(compareScopes.calledWithExactly(userScope, ['testRoot', 'testDelete'], Log), "delete scope correct");
     //</editor-fold>
 
     //<editor-fold desc="Restore">
@@ -370,7 +370,7 @@ test('enforce-document-scope.verifyScope', function (t) {
 
     let document = {
       scope: {
-        scope: ['testGlobal'],
+        rootScope: ['testRoot'],
         readScope: ['testRead'],
         updateScope: ['testUpdate'],
         deleteScope: ['testDelete'],
@@ -386,14 +386,14 @@ test('enforce-document-scope.verifyScope', function (t) {
     //</editor-fold>
 
     //<editor-fold desc="Assert">
-    t.ok(compareScopes.calledWithExactly(userScope, ['testGlobal', 'testAssociate'], Log), "associate scope correct");
+    t.ok(compareScopes.calledWithExactly(userScope, ['testRoot', 'testAssociate'], Log), "associate scope correct");
     //</editor-fold>
 
     //<editor-fold desc="Restore">
     //</editor-fold>
   }));
 
-  t.test('enforce-document-scope.verifyScope calls compareScope with just action scope if no global scope exists.', sinon.test(function (t) {
+  t.test('enforce-document-scope.verifyScope calls compareScope with just action scope if no root scope exists.', sinon.test(function (t) {
     //<editor-fold desc="Arrange">
     t.plan(1);
 
@@ -426,7 +426,7 @@ test('enforce-document-scope.verifyScope', function (t) {
     //</editor-fold>
   }));
 
-  t.test('enforce-document-scope.verifyScope calls compareScope with just global scope if no action scope exists.', sinon.test(function (t) {
+  t.test('enforce-document-scope.verifyScope calls compareScope with just root scope if no action scope exists.', sinon.test(function (t) {
     //<editor-fold desc="Arrange">
     t.plan(1);
 
@@ -437,7 +437,7 @@ test('enforce-document-scope.verifyScope', function (t) {
 
     let document = {
       scope: {
-        scope: ['testGlobal']
+        rootScope: ['testRoot']
       }
     };
 
@@ -449,7 +449,7 @@ test('enforce-document-scope.verifyScope', function (t) {
     //</editor-fold>
 
     //<editor-fold desc="Assert">
-    t.ok(compareScopes.calledWithExactly(userScope, ['testGlobal'], Log), "scope correct");
+    t.ok(compareScopes.calledWithExactly(userScope, ['testRoot'], Log), "scope correct");
     //</editor-fold>
 
     //<editor-fold desc="Restore">
@@ -497,7 +497,7 @@ test('enforce-document-scope.verifyScope', function (t) {
 
     let document = {
       scope: {
-        scope: ['testGlobal'],
+        rootScope: ['testRoot'],
         readScope: ['testRead'],
         updateScope: ['testUpdate'],
         deleteScope: ['testDelete'],
@@ -532,7 +532,7 @@ test('enforce-document-scope.verifyScope', function (t) {
 
     let document = {
       scope: {
-        scope: ['testGlobal'],
+        rootScope: ['testRoot'],
         readScope: ['testRead'],
         updateScope: ['testUpdate'],
         deleteScope: ['testDelete'],

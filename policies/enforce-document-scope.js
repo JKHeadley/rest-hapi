@@ -166,7 +166,7 @@ internals.verifyScope = function(documents, action, userScope, Log) {
     unauthorizedDocs = documents.filter(function(document) {
       if (document.scope && !_.isEmpty(document.scope)) {
 
-        let documentScope = document.scope.scope || [];
+        let documentScope = document.scope.rootScope || [];
         let actionScope = [];
         let authorizedForDocument = false;
 
@@ -187,7 +187,7 @@ internals.verifyScope = function(documents, action, userScope, Log) {
             throw "Invalid action.";
         }
 
-        //EXPL: combine the document global scope with the action specific scope
+        //EXPL: combine the document root scope with the action specific scope
         if (documentScope && documentScope[0] && actionScope) {
           documentScope = documentScope.concat(actionScope);
         }
@@ -280,7 +280,7 @@ internals.compareScopes = function(userScope, documentScope, Log) {
   }
 
 
-  //EXPL: if the user scope does not contain any of the genera scope values, the user is unauthorized
+  //EXPL: if the user scope does not contain any of the general scope values, the user is unauthorized
   generalScope = documentScope.filter(function(scopeValue) {
     return scopeValue[0] !== '!' && scopeValue[0] !== '+';
   });

@@ -127,7 +127,7 @@ config.policyPath = 'policies';
 config.enableDocumentScopes = true;
 
 /**
- * If true, modifies the global scope of any document to allow access to the document's creator.
+ * If true, modifies the root scope of any document to allow access to the document's creator.
  * The scope value added is in the form: "user-{userId}".
  * NOTE:
  * - This assumes that your authentication credentials (request.auth.credentials) will contain either
@@ -141,28 +141,28 @@ config.enableDocumentScopes = true;
 config.authorizeDocumentCreator = false;
 
 /**
- * Same as "authorizeDocumentCreator", but modifies the "readScope" rather than the global scope.
+ * Same as "authorizeDocumentCreator", but modifies the "readScope" rather than the root scope.
  * default: false
  * @type {boolean}
  */
 config.authorizeDocumentCreatorToRead = false;
 
 /**
- * Same as "authorizeDocumentCreator", but modifies the "updateScope" rather than the global scope.
+ * Same as "authorizeDocumentCreator", but modifies the "updateScope" rather than the root scope.
  * default: false
  * @type {boolean}
  */
 config.authorizeDocumentCreatorToUpdate = false;
 
 /**
- * Same as "authorizeDocumentCreator", but modifies the "deleteScope" rather than the global scope.
+ * Same as "authorizeDocumentCreator", but modifies the "deleteScope" rather than the root scope.
  * default: false
  * @type {boolean}
  */
 config.authorizeDocumentCreatorToDelete = false;
 
 /**
- * Same as "authorizeDocumentCreator", but modifies the "associateScope" rather than the global scope.
+ * Same as "authorizeDocumentCreator", but modifies the "associateScope" rather than the root scope.
  * default: false
  * @type {boolean}
  */
@@ -226,9 +226,18 @@ config.enableResponseFail = false;
  * If set to true, (and authStrategy is not false) then endpoints will be generated with pre-defined
  * scopes based on the model definition.
  * default: false
+ * @deprecated since v0.29.0, use "config.generateRouteScopes" instead
  * @type {boolean}
  */
 config.generateScopes = false;
+
+/**
+ * If set to true, (and authStrategy is not false) then endpoints will be generated with pre-defined
+ * scopes based on the model definition.
+ * default: false
+ * @type {boolean}
+ */
+config.generateRouteScopes = false;
 
 /**
  * If set to true, the scope for each endpoint will be logged when then endpoint is generated.

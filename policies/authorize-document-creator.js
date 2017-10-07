@@ -17,7 +17,7 @@ internals.authorizeDocumentCreator = function(model, Log) {
   const authorizeDocumentCreatorForModel = function authorizeDocumentCreatorForModel(request, reply, next) {
     Log = Log.bind("authorizeDocumentCreator");
 
-    return internals.addScope('global', request, reply, next, Log);
+    return internals.addScope('root', request, reply, next, Log);
   };
 
   authorizeDocumentCreatorForModel.applyPoint = 'onPreHandler';
@@ -115,8 +115,8 @@ internals.addScope = function(action, request, reply, next, Log) {
   try {
     let scopeType = "";
     switch (action) {
-      case "global":
-        scopeType = "scope";
+      case "root":
+        scopeType = "rootScope";
         break;
       case "read":
         scopeType = "readScope";

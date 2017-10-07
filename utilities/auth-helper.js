@@ -17,7 +17,7 @@ module.exports = {
     if (!model.routeOptions.scope) {
       model.routeOptions.scope = {};
     }
-    var generalScope = model.routeOptions.scope.scope;
+    var rootScope = model.routeOptions.scope.rootScope || model.routeOptions.scope.scope;
 
     var additionalScope = null;
 
@@ -48,11 +48,11 @@ module.exports = {
         break;
     }
 
-    if (generalScope && _.isArray(generalScope)) {
-      scope = scope.concat(generalScope);
+    if (rootScope && _.isArray(rootScope)) {
+      scope = scope.concat(rootScope);
     }
-    else if (generalScope) {
-      scope.push(generalScope);
+    else if (rootScope) {
+      scope.push(rootScope);
     }
 
     if (additionalScope && _.isArray(additionalScope)) {
@@ -70,7 +70,9 @@ module.exports = {
 
     const scope = {};
     
+    //NOTE: "scope" is deprecated as of v0.29.0
     scope.scope = ["root", model.collectionName];
+    scope.rootScope = ["root", model.collectionName];
     scope.createScope = ["create", "create" + modelName];
     scope.readScope = ["read", "read" + modelName];
     scope.updateScope = ["update", "update" + modelName];
