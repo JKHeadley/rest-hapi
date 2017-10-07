@@ -61,12 +61,16 @@ test('model-helper.createModel', function(t) {
 
   t.test('model-helper.createModel adds metadata properties if enabled.', sinon.test(function (t) {
     //<editor-fold desc="Arrange">
-    t.plan(4);
+    t.plan(7);
 
     var modelHelper = rewire('../utilities/model-helper');
     var config = {
       enableCreatedAt: true,
       enableUpdatedAt: true,
+      enableDeletedAt: true,
+      enableCreatedBy: true,
+      enableUpdatedBy: true,
+      enableDeletedBy: true,
       enableSoftDelete: true
     };
     modelHelper.__set__("config", config);
@@ -103,6 +107,28 @@ test('model-helper.createModel', function(t) {
       }
     };
 
+    let createdBy = {
+      createdBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        allowOnCreate: false,
+        allowOnUpdate: false
+      }
+    };
+    let updatedBy = {
+      updatedBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        allowOnCreate: false,
+        allowOnUpdate: false
+      }
+    };
+    let deletedBy = {
+      deletedBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        allowOnCreate: false,
+        allowOnUpdate: false,
+      }
+    };
+
     var collectionName = "user";
     var Schema = { add: this.spy(),statics: { collectionName: collectionName } };
     //</editor-fold>
@@ -113,9 +139,12 @@ test('model-helper.createModel', function(t) {
 
     //<editor-fold desc="Assert">
     t.ok(Schema.add.calledWithExactly(createdAt), "Schema.add called with createdAt");
-    t.ok(Schema.add.calledWithExactly(updatedAt), "Schema.add called with createdAt");
-    t.ok(Schema.add.calledWithExactly(deletedAt), "Schema.add called with createdAt");
-    t.ok(Schema.add.calledWithExactly(isDeleted), "Schema.add called with createdAt");
+    t.ok(Schema.add.calledWithExactly(updatedAt), "Schema.add called with updatedAt");
+    t.ok(Schema.add.calledWithExactly(deletedAt), "Schema.add called with deletedAt");
+    t.ok(Schema.add.calledWithExactly(isDeleted), "Schema.add called with isDeleted");
+    t.ok(Schema.add.calledWithExactly(createdBy), "Schema.add called with createdBy");
+    t.ok(Schema.add.calledWithExactly(updatedBy), "Schema.add called with updatedBy");
+    t.ok(Schema.add.calledWithExactly(deletedBy), "Schema.add called with deletedBy");
     //</editor-fold>
   }));
 
