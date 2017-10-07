@@ -6,6 +6,9 @@ const config = require('../config');
 
 const internals = {};
 
+//TODO: enforce scopes for embedded docs
+//TODO: update get query to filter based on scopes in pre rather than "commenting out" unauthorized docs
+//TODO (cont): in post. This should make authorization "transparent" and work with pagination
 
 internals.enforceDocumentScopePre = function(model, Log) {
 
