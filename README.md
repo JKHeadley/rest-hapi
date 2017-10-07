@@ -1600,9 +1600,9 @@ Association middleware is defined similar to CRUD middleware, with the only diff
 
 ## Authorization
 ### Route scopes
-rest-hapi takes advantage of the ``scope`` property within the ``auth`` route config object of a hapi endpoint.  Each generated endpoint has its ``scope`` property set based on model properties within the ``routeOptions.scope`` object. There are three types of scopes that can be set: a global scope property, action scope properties, and association scope properties. A description of these can be seen below.
+rest-hapi takes advantage of the ``scope`` property within the ``auth`` route config object of a hapi endpoint.  Each generated endpoint has its ``scope`` property set based on model properties within the ``routeOptions.scope`` object. There are three types of scopes that can be set: a root scope property, action scope properties, and association scope properties. A description of these can be seen below.
 
-The first type of scope is a global ``scope`` property that, when set, is applied to all generated endpoints for that model. 
+The first type of scope is a ``rootScope`` property that, when set, is applied to all generated endpoints for that model. 
 
 The second is an action specific scope property that only applies to endpoints corresponding with the action. A list of these action scope properties can be seen below:
 
@@ -1642,7 +1642,7 @@ module.exports = function (mongoose) {
     collectionName: modelName
     routeOptions: {
       scope: {
-        scope: "Admin",
+        rootScope: "Admin",
         readScope: "User",
         addUserGroupsScope: "Project Lead"
       },
