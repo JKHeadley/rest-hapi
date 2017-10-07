@@ -185,6 +185,7 @@ module.exports = function (logger, mongoose, server) {
             headers: headersValidation
           },
           plugins: {
+            'model': model,
             'hapi-swagger': {
               responseMessages: [
                 {code: 200, message: 'The resource(s) was/were found successfully.'},
@@ -296,6 +297,7 @@ module.exports = function (logger, mongoose, server) {
             headers: headersValidation
           },
           plugins: {
+            'model': model,
             'hapi-swagger': {
               responseMessages: [
                 {code: 200, message: 'The resource(s) was/were found successfully.'},
@@ -440,6 +442,7 @@ module.exports = function (logger, mongoose, server) {
             headers: headersValidation
           },
           plugins: {
+            'model': model,
             'hapi-swagger': {
               responseMessages: [
                 {code: 201, message: 'The resource was created successfully.'},
@@ -553,6 +556,7 @@ module.exports = function (logger, mongoose, server) {
             headers: headersValidation
           },
           plugins: {
+            'model': model,
             'hapi-swagger': {
               responseMessages: [
                 {code: 200, message: 'The resource was deleted successfully.'},
@@ -670,6 +674,7 @@ module.exports = function (logger, mongoose, server) {
             headers: headersValidation
           },
           plugins: {
+            'model': model,
             'hapi-swagger': {
               responseMessages: [
                 {code: 200, message: 'The resource was deleted successfully.'},
@@ -790,6 +795,7 @@ module.exports = function (logger, mongoose, server) {
             headers: headersValidation
           },
           plugins: {
+            'model': model,
             'hapi-swagger': {
               responseMessages: [
                 {code: 200, message: 'The resource was updated successfully.'},
@@ -912,6 +918,8 @@ module.exports = function (logger, mongoose, server) {
             headers: headersValidation
           },
           plugins: {
+            'ownerModel': ownerModel,
+            'association': association,
             'hapi-swagger': {
               responseMessages: [
                 {code: 204, message: 'The association was added successfully.'},
@@ -1018,6 +1026,8 @@ module.exports = function (logger, mongoose, server) {
             headers: headersValidation
           },
           plugins: {
+            'ownerModel': ownerModel,
+            'association': association,
             'hapi-swagger': {
               responseMessages: [
                 {code: 204, message: 'The association was deleted successfully.'},
@@ -1143,6 +1153,8 @@ module.exports = function (logger, mongoose, server) {
             headers: headersValidation
           },
           plugins: {
+            'ownerModel': ownerModel,
+            'association': association,
             'hapi-swagger': {
               responseMessages: [
                 {code: 204, message: 'The association was set successfully.'},
@@ -1250,6 +1262,8 @@ module.exports = function (logger, mongoose, server) {
             headers: headersValidation
           },
           plugins: {
+            'ownerModel': ownerModel,
+            'association': association,
             'hapi-swagger': {
               responseMessages: [
                 {code: 204, message: 'The association was set successfully.'},
@@ -1369,6 +1383,8 @@ module.exports = function (logger, mongoose, server) {
             headers: headersValidation
           },
           plugins: {
+            'ownerModel': ownerModel,
+            'association': association,
             'hapi-swagger': {
               responseMessages: [
                 {code: 200, message: 'The association was set successfully.'},
