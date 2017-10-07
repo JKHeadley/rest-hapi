@@ -159,7 +159,7 @@ config.authorizeDocumentCreatorToUpdate = false;
  * default: false
  * @type {boolean}
  */
-config.authorizeDocumentCreatorToRead = false;
+config.authorizeDocumentCreatorToDelete = false;
 
 /**
  * Same as "authorizeDocumentCreator", but modifies the "associateScope" rather than the global scope.
