@@ -133,12 +133,13 @@ internals.addScope = function(action, request, reply, next, Log) {
       default:
         throw "Invalid action.";
     }
-    
-    let userId = request.auth.credentials.user._id || request.auth.credentials.userId;
+
+    let userId = _.get(request.auth.credentials, config.userIdKey);
 
     if (!userId) {
-      Log.error("User _id not found in auth credentials.");
-      return next(Boom.badRequest("User _id not found in auth credentials."), false);
+      let message = 'User _id not found in auth credentials. Please specify the user _id path in "config.userIdKey"';
+      Log.error(message);
+      return next(Boom.badRequest(message), false);
     }
 
     if (_.isArray(request.payload)) {

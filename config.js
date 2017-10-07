@@ -169,6 +169,13 @@ config.authorizeDocumentCreatorToDelete = false;
 config.authorizeDocumentCreatorToAssociate = false;
 
 /**
+ * This is the path/key to the user _id stored in your request.auth.credentials object.
+ * default: "user._id"
+ * @type {string}
+ */
+config.userIdKey = "user._id";
+
+/**
  * Determines what action takes place when one or more document scope checks fail for requests dealing with multiple
  * documents (Ex: deleteMany or list). Options are:
  * - true: if one or more documents fail, the request responds with a 403.
