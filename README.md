@@ -1599,8 +1599,8 @@ Association middleware is defined similar to CRUD middleware, with the only diff
 [Back to top](#readme-contents)
 
 ## Authorization
-### Route scopes
-rest-hapi takes advantage of the ``scope`` property within the ``auth`` route config object of a hapi endpoint.  Each generated endpoint has its ``scope`` property set based on model properties within the ``routeOptions.scope`` object. There are three types of scopes that can be set: a root scope property, action scope properties, and association scope properties. A description of these can be seen below.
+### Route authorization
+rest-hapi takes advantage of the ``scope`` property within the ``auth`` route config object of a hapi endpoint.  Each generated endpoint has its ``scope`` property set based on model properties within the ``routeOptions.routeScope`` object. There are three types of scopes that can be set: a root scope property, action scope properties, and association scope properties. A description of these can be seen below.
 
 The first type of scope is a ``rootScope`` property that, when set, is applied to all generated endpoints for that model. 
 
@@ -1641,7 +1641,7 @@ module.exports = function (mongoose) {
   Schema.statics = {
     collectionName: modelName
     routeOptions: {
-      scope: {
+      routeScope: {
         rootScope: "Admin",
         readScope: "User",
         addUserGroupsScope: "Project Lead"
@@ -1662,10 +1662,10 @@ module.exports = function (mongoose) {
 
 **NOTE** Use of route scope properties requires that an authentication strategy be defined and implemented. If the ``config.authStrategy`` property is set to ``false``, then no route scopes will be applied, even if they are defined in the model.  For an example of route scopes in action, check out [appy](https://github.com/JKHeadley/appy):
 
-### Generating route scopes
+#### Generating route scopes
 If the ``config.generateScopes`` property is set to true, then generated endpoints will come pre-defined with scope values.  These values will exist in addition to any route scope values defined in the ``routeOptions.scope`` object. For instance, the tables below show two possibilities for the user model scope: the first is with no model route scope defined, and the second is with a model route scope defined as in the example above.
 
-#### Without Model Route Scope Defined
+##### Without Model Route Scope Defined
 
 Endpoint | Scope
 --- | ---
@@ -1681,7 +1681,7 @@ DELETE /user/{ownerId}/group | [ 'root', 'associate', 'associateUser', 'removeUs
 PUT /user/{ownerId}/group/{childId} | [ 'root', 'associate', 'associateUser', 'addUserGroups' ]
 DELETE /user/{ownerId}/group/{childId} | [ 'root', 'associate', 'associateUser', 'removeUserGroups' ]
 
-#### With Model Route Scope Defined
+##### With Model Route Scope Defined
 
 Endpoint | Scope
 --- | ---
@@ -1697,8 +1697,9 @@ DELETE /user/{ownerId}/group | [ 'root', 'Admin', 'associate', 'associateUser', 
 PUT /user/{ownerId}/group/{childId} | [ 'root', 'Admin', 'associate', 'associateUser', 'addUserGroups', 'Project Lead' ]
 DELETE /user/{ownerId}/group/{childId} | [ 'root', 'Admin', 'associate', 'associateUser', 'removeUserGroups' ]
 
-### Disabling route scopes
+#### Disabling route scopes
 Authentication (and as such Authorization) can be disabled for certain routes by adding a property under a model's ``routeOptions`` property with the value set to ``false``.  Below is a list of options and their effects:
+
 
 Property | Effect
 --- | ---
@@ -1707,6 +1708,9 @@ readAuth: false | auth is disabled for any endpoint that retrieves documents and
 updateAuth: false | auth is disabled for any endpoint that directly updates documents
 deleteAuth: false | auth is disabled for any endpoint that deletes documents
 associateAuth: false | auth is disabled for any endpoint that modifies an association
+
+### Document authorization
+In addition to route-level authorization, rest-hapi supports document-specific authorization.
 
 [Back to top](#readme-contents)
 
