@@ -80,12 +80,9 @@ internals.enforceDocumentScopePre = function(model, Log) {
   };
 
   enforceDocumentScopePreForModel.applyPoint = 'onPreHandler';
-
   return enforceDocumentScopePreForModel;
 };
-
 internals.enforceDocumentScopePre.applyPoint = 'onPreHandler';
-
 
 
 internals.enforceDocumentScopePost = function(model, Log) {
@@ -142,12 +139,9 @@ internals.enforceDocumentScopePost = function(model, Log) {
   };
 
   enforceDocumentScopePostForModel.applyPoint = 'onPostHandler';
-
   return enforceDocumentScopePostForModel;
 };
-
 internals.enforceDocumentScopePost.applyPoint = 'onPostHandler';
-
 
 
 internals.verifyScopeById = function(model, documentIds, action, userScope, Log) {

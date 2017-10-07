@@ -161,7 +161,7 @@ module.exports = function (logger, mongoose, server) {
 
       var policies = [];
 
-      if (model.routeOptions.policies) {
+      if (model.routeOptions.policies && config.enablePolicies) {
         policies = model.routeOptions.policies;
         policies = (policies.policies || []).concat(policies.readPolicies || []);
       }
@@ -269,7 +269,7 @@ module.exports = function (logger, mongoose, server) {
 
       var policies = [];
 
-      if (model.routeOptions.policies) {
+      if (model.routeOptions.policies && config.enablePolicies) {
         policies = model.routeOptions.policies;
         policies = (policies.policies || []).concat(policies.readPolicies || []);
       }
@@ -389,35 +389,41 @@ module.exports = function (logger, mongoose, server) {
 
       var policies = [];
 
-      if (model.routeOptions.policies) {
+      if (model.routeOptions.policies && config.enablePolicies) {
         policies = model.routeOptions.policies;
         policies = (policies.policies || []).concat(policies.createPolicies || []);
       }
 
-      var authorizeDocumentCreator = model.routeOptions.authorizeDocumentCreator === undefined ? config.authorizeDocumentCreator : model.routeOptions.authorizeDocumentCreator;
-      var authorizeDocumentCreatorToRead = model.routeOptions.authorizeDocumentCreatorToRead === undefined ? config.authorizeDocumentCreatorToRead : model.routeOptions.authorizeDocumentCreatorToRead;
-      var authorizeDocumentCreatorToUpdate = model.routeOptions.authorizeDocumentCreatorToUpdate === undefined ? config.authorizeDocumentCreatorToUpdate : model.routeOptions.authorizeDocumentCreatorToUpdate;
-      var authorizeDocumentCreatorToDelete = model.routeOptions.authorizeDocumentCreatorToDelete === undefined ? config.authorizeDocumentCreatorToDelete : model.routeOptions.authorizeDocumentCreatorToDelete;
-      var authorizeDocumentCreatorToAssociate = model.routeOptions.authorizeDocumentCreatorToAssociate === undefined ? config.authorizeDocumentCreatorToAssociate : model.routeOptions.authorizeDocumentCreatorToAssociate;
+      if (config.enableDocumentScopes) {
+        var authorizeDocumentCreator = model.routeOptions.authorizeDocumentCreator === undefined ? config.authorizeDocumentCreator : model.routeOptions.authorizeDocumentCreator;
+        var authorizeDocumentCreatorToRead = model.routeOptions.authorizeDocumentCreatorToRead === undefined ? config.authorizeDocumentCreatorToRead : model.routeOptions.authorizeDocumentCreatorToRead;
+        var authorizeDocumentCreatorToUpdate = model.routeOptions.authorizeDocumentCreatorToUpdate === undefined ? config.authorizeDocumentCreatorToUpdate : model.routeOptions.authorizeDocumentCreatorToUpdate;
+        var authorizeDocumentCreatorToDelete = model.routeOptions.authorizeDocumentCreatorToDelete === undefined ? config.authorizeDocumentCreatorToDelete : model.routeOptions.authorizeDocumentCreatorToDelete;
+        var authorizeDocumentCreatorToAssociate = model.routeOptions.authorizeDocumentCreatorToAssociate === undefined ? config.authorizeDocumentCreatorToAssociate : model.routeOptions.authorizeDocumentCreatorToAssociate;
 
-      if (authorizeDocumentCreator) {
-        policies.push(restHapiPolicies.authorizeDocumentCreator(model, Log));
-      }
-      if (authorizeDocumentCreatorToRead) {
-        policies.push(restHapiPolicies.authorizeDocumentCreatorToRead(model, Log));
-      }
-      if (authorizeDocumentCreatorToUpdate) {
-        policies.push(restHapiPolicies.authorizeDocumentCreatorToUpdate(model, Log));
-      }
-      if (authorizeDocumentCreatorToDelete) {
-        policies.push(restHapiPolicies.authorizeDocumentCreatorToDelete(model, Log));
-      }
-      if (authorizeDocumentCreatorToAssociate) {
-        policies.push(restHapiPolicies.authorizeDocumentCreatorToAssociate(model, Log));
+        if (authorizeDocumentCreator) {
+          policies.push(restHapiPolicies.authorizeDocumentCreator(model, Log));
+        }
+        if (authorizeDocumentCreatorToRead) {
+          policies.push(restHapiPolicies.authorizeDocumentCreatorToRead(model, Log));
+        }
+        if (authorizeDocumentCreatorToUpdate) {
+          policies.push(restHapiPolicies.authorizeDocumentCreatorToUpdate(model, Log));
+        }
+        if (authorizeDocumentCreatorToDelete) {
+          policies.push(restHapiPolicies.authorizeDocumentCreatorToDelete(model, Log));
+        }
+        if (authorizeDocumentCreatorToAssociate) {
+          policies.push(restHapiPolicies.authorizeDocumentCreatorToAssociate(model, Log));
+        }
+
+        if (model.routeOptions.documentScope) {
+          policies.push(restHapiPolicies.addDocumentScope(model, Log));
+        }
       }
 
-      if (model.routeOptions.documentScope) {
-        policies.push(restHapiPolicies.addDocumentScope(model, Log));
+      if (config.enableCreatedBy) {
+        policies.push(restHapiPolicies.addCreatedBy(model, Log));
       }
 
       server.route({
@@ -516,7 +522,7 @@ module.exports = function (logger, mongoose, server) {
 
       var policies = [];
 
-      if (model.routeOptions.policies) {
+      if (model.routeOptions.policies && config.enablePolicies) {
         policies = model.routeOptions.policies;
         policies = (policies.policies || []).concat(policies.deletePolicies || []);
       }
@@ -524,6 +530,10 @@ module.exports = function (logger, mongoose, server) {
       if (config.enableDocumentScopes) {
         policies.push(restHapiPolicies.enforceDocumentScopePre(model, Log));
         policies.push(restHapiPolicies.enforceDocumentScopePost(model, Log));
+      }
+
+      if (config.enableDeletedBy && config.enableSoftDelete) {
+        policies.push(restHapiPolicies.addDeletedBy(model, Log));
       }
 
       server.route({
@@ -632,7 +642,7 @@ module.exports = function (logger, mongoose, server) {
 
       var policies = [];
 
-      if (model.routeOptions.policies) {
+      if (model.routeOptions.policies && config.enablePolicies) {
         policies = model.routeOptions.policies;
         policies = (policies.policies || []).concat(policies.deletePolicies || []);
       }
@@ -640,6 +650,10 @@ module.exports = function (logger, mongoose, server) {
       if (config.enableDocumentScopes) {
         policies.push(restHapiPolicies.enforceDocumentScopePre(model, Log));
         policies.push(restHapiPolicies.enforceDocumentScopePost(model, Log));
+      }
+
+      if (config.enableDeletedBy && config.enableSoftDelete) {
+        policies.push(restHapiPolicies.addDeletedBy(model, Log));
       }
 
       server.route({
@@ -745,7 +759,7 @@ module.exports = function (logger, mongoose, server) {
 
       var policies = [];
 
-      if (model.routeOptions.policies) {
+      if (model.routeOptions.policies && config.enablePolicies) {
         policies = model.routeOptions.policies;
         policies = (policies.policies || []).concat(policies.updatePolicies || []);
       }
@@ -753,6 +767,10 @@ module.exports = function (logger, mongoose, server) {
       if (config.enableDocumentScopes) {
         policies.push(restHapiPolicies.enforceDocumentScopePre(model, Log));
         policies.push(restHapiPolicies.enforceDocumentScopePost(model, Log));
+      }
+
+      if (config.enableUpdatedBy) {
+        policies.push(restHapiPolicies.addUpdatedBy(model, Log));
       }
 
       server.route({

@@ -57,7 +57,7 @@ internals.createModel = function(Schema, mongoose) {
     };
     Schema.add(updatedAt);
   }
-  if (config.enableSoftDelete) {
+  if (config.enableDeletedAt) {
     let deletedAt = {
       deletedAt: {
         type: Types.Date,
@@ -66,6 +66,38 @@ internals.createModel = function(Schema, mongoose) {
       }
     };
     Schema.add(deletedAt);
+  }
+  if (config.enableCreatedBy) {
+    let createdBy = {
+      createdBy: {
+        type: Types.ObjectId,
+        allowOnCreate: false,
+        allowOnUpdate: false
+      }
+    };
+    Schema.add(createdBy);
+  }
+  if (config.enableUpdatedBy) {
+    let updatedBy = {
+      updatedBy: {
+        type: Types.ObjectId,
+        allowOnCreate: false,
+        allowOnUpdate: false
+      }
+    };
+    Schema.add(updatedBy);
+  }
+  if (config.enableDeletedBy) {
+    let deletedBy = {
+      deletedBy: {
+        type: Types.ObjectId,
+        allowOnCreate: false,
+        allowOnUpdate: false,
+      }
+    };
+    Schema.add(deletedBy);
+  }
+  if (config.enableSoftDelete) {
     let isDeleted = {
       isDeleted: {
         type: Types.Boolean,

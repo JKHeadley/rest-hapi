@@ -449,7 +449,6 @@ function _createHandler(model, request, Log) {
           if (config.enableCreatedAt) {
             payload.forEach(function(item) {
               item.createdAt = new Date();
-              item.updatedAt = new Date();
             });
           }
 
@@ -703,7 +702,15 @@ function _deleteOneHandler(model, _id, hardDelete, request, Log) {
     return promise
         .then(function () {
           if (config.enableSoftDelete && !hardDelete) {
-            promise = model.findByIdAndUpdate(_id, { isDeleted: true, deletedAt: new Date() }, {new: true});
+            let payload = { isDeleted: true };
+            if (config.enableDeletedAt) {
+              payload.deletedAt = new Date();
+            }
+            let deletedBy = request.payload.deletedBy || request.payload[0].deletedBy;
+            if (deletedBy) {
+              payload.deletedBy = deletedBy;
+            }
+            promise = model.findByIdAndUpdate(_id, payload, {new: true});
           }
           else {
             promise = model.findByIdAndRemove(_id);

@@ -118,13 +118,17 @@ function register(server, options, next) {
                     policyPath = __dirname.replace('node_modules/rest-hapi', config.policyPath);
                 }
 
-                Mrhorse = {
-                    register: MH,
-                    options: {
-                        policyDirectory: policyPath
-                    }
-                }
             }
+            else {
+                policyPath = __dirname + '/policies'
+            }
+
+            Mrhorse = {
+                register: MH,
+                options: {
+                    policyDirectory: policyPath
+                }
+            };
             //endregion
 
             if (Mrhorse) {
@@ -132,13 +136,15 @@ function register(server, options, next) {
                     Mrhorse
                 ])
                     .then(function(result) {
-                        server.plugins.mrhorse.loadPolicies(server, {
-                            policyDirectory: __dirname + '/policies'
-                        }, function(err) {
-                            if (err) {
-                                logger.error("ERROR:", err);
-                            }
-                        });
+                        if (config.enablePolicies) {
+                            server.plugins.mrhorse.loadPolicies(server, {
+                                policyDirectory: __dirname + '/policies'
+                            }, function(err) {
+                                if (err) {
+                                    logger.error("ERROR:", err);
+                                }
+                            });
+                        }
                     });
             }
             else {

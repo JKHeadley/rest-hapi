@@ -21,10 +21,8 @@ internals.authorizeDocumentCreator = function(model, Log) {
   };
 
   authorizeDocumentCreatorForModel.applyPoint = 'onPreHandler';
-
   return authorizeDocumentCreatorForModel;
 };
-
 internals.authorizeDocumentCreator.applyPoint = 'onPreHandler';
 
 /**
@@ -42,10 +40,8 @@ internals.authorizeDocumentCreatorToRead = function(model, Log) {
   };
 
   authorizeDocumentCreatorToReadForModel.applyPoint = 'onPreHandler';
-
   return authorizeDocumentCreatorToReadForModel;
 };
-
 internals.authorizeDocumentCreatorToRead.applyPoint = 'onPreHandler';
 
 /**
@@ -63,10 +59,8 @@ internals.authorizeDocumentCreatorToUpdate = function(model, Log) {
   };
 
   authorizeDocumentCreatorToUpdateForModel.applyPoint = 'onPreHandler';
-
   return authorizeDocumentCreatorToUpdateForModel;
 };
-
 internals.authorizeDocumentCreatorToUpdate.applyPoint = 'onPreHandler';
 
 /**
@@ -84,10 +78,8 @@ internals.authorizeDocumentCreatorToDelete = function(model, Log) {
   };
 
   authorizeDocumentCreatorToDeleteForModel.applyPoint = 'onPreHandler';
-
   return authorizeDocumentCreatorToDeleteForModel;
 };
-
 internals.authorizeDocumentCreatorToDelete.applyPoint = 'onPreHandler';
 
 /**
@@ -105,10 +97,8 @@ internals.authorizeDocumentCreatorToAssociate = function(model, Log) {
   };
 
   authorizeDocumentCreatorToAssociateForModel.applyPoint = 'onPreHandler';
-
   return authorizeDocumentCreatorToAssociateForModel;
 };
-
 internals.authorizeDocumentCreatorToAssociate.applyPoint = 'onPreHandler';
 
 /**

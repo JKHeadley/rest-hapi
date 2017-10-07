@@ -86,17 +86,24 @@ config.embedAssociations = false;
  * MetaData options:
  * - createdAt: (default: true) date specifying when the document was created.
  * - updatedAt: (default: true) date specifying when the document was last updated.
+ * - deletedAt: (default: true) date specifying when the document was soft deleted.
+ * - createdBy: (default: false) _id of user that created the document.
+ * - updatedBy: (default: false) _id of user that last updated the document.
+ * - updatedBy: (default: false) _id of user that soft deleted the document.
  */
 config.enableCreatedAt = true;
 config.enableUpdatedAt = true;
+config.enableDeletedAt = true;
+config.enableCreatedBy = false;
+config.enableUpdatedBy = false;
+config.enableDeletedBy = false;
 
 /**
  * Enables policies via mrhorse (https://github.com/mark-bradshaw/mrhorse).
- * NOTE: disabling policies will by default disable document level scopes/authorization.
  * default: false
  * @type {boolean}
  */
-config.enablePolicies = true;
+config.enablePolicies = false;
 
 /**
  * Flag signifying whether the absolute path to the policies directory is provided.
@@ -114,7 +121,6 @@ config.policyPath = 'policies';
 
 /**
  * Enables document level authorization.
- * NOTE: requires "config.enablePolicies" to be "true".
  * default: true
  * @type {boolean}
  */
@@ -127,7 +133,7 @@ config.enableDocumentScopes = true;
  * - This assumes that your authentication credentials (request.auth.credentials) will contain either
  * a "user" object with a "_id" property, or a "userId" property set to the current user's _id.
  * - This also assumes that the user creating the document will have "user-{userId}" within their scope.
- * - Requires both "config.enablePolicies" and "config.enableDocumentScopes" to be "true".
+ * - Requires "config.enableDocumentScopes" to be "true".
  * - This setting can be individually overwritten by setting the "authorizeDocumentCreator" routeOptions property.
  * default: false
  * @type {boolean}
