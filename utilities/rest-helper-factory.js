@@ -896,8 +896,8 @@ module.exports = function (logger, mongoose, server) {
       }
 
       if (config.enableDocumentScopes) {
-        policies.push(restHapiPolicies.enforceDocumentScopePre(ownerModel));
-        policies.push(restHapiPolicies.enforceDocumentScopePost(ownerModel));
+        policies.push(restHapiPolicies.enforceDocumentScopePre(ownerModel, Log));
+        policies.push(restHapiPolicies.enforceDocumentScopePost(ownerModel, Log));
       }
 
       server.route({
@@ -1005,8 +1005,8 @@ module.exports = function (logger, mongoose, server) {
       }
 
       if (config.enableDocumentScopes) {
-        policies.push(restHapiPolicies.enforceDocumentScopePre(ownerModel));
-        policies.push(restHapiPolicies.enforceDocumentScopePost(ownerModel));
+        policies.push(restHapiPolicies.enforceDocumentScopePre(ownerModel, Log));
+        policies.push(restHapiPolicies.enforceDocumentScopePost(ownerModel, Log));
       }
 
       server.route({
@@ -1132,8 +1132,8 @@ module.exports = function (logger, mongoose, server) {
       }
 
       if (config.enableDocumentScopes) {
-        policies.push(restHapiPolicies.enforceDocumentScopePre(ownerModel));
-        policies.push(restHapiPolicies.enforceDocumentScopePost(ownerModel));
+        policies.push(restHapiPolicies.enforceDocumentScopePre(ownerModel, Log));
+        policies.push(restHapiPolicies.enforceDocumentScopePost(ownerModel, Log));
       }
 
       server.route({
@@ -1241,8 +1241,8 @@ module.exports = function (logger, mongoose, server) {
       }
 
       if (config.enableDocumentScopes) {
-        policies.push(restHapiPolicies.enforceDocumentScopePre(ownerModel));
-        policies.push(restHapiPolicies.enforceDocumentScopePost(ownerModel));
+        policies.push(restHapiPolicies.enforceDocumentScopePre(ownerModel, Log));
+        policies.push(restHapiPolicies.enforceDocumentScopePost(ownerModel, Log));
       }
 
       server.route({
@@ -1362,8 +1362,8 @@ module.exports = function (logger, mongoose, server) {
       }
 
       if (config.enableDocumentScopes) {
-        policies.push(restHapiPolicies.enforceDocumentScopePre(ownerModel));
-        policies.push(restHapiPolicies.enforceDocumentScopePost(ownerModel));
+        policies.push(restHapiPolicies.enforceDocumentScopePre(ownerModel, Log));
+        policies.push(restHapiPolicies.enforceDocumentScopePost(ownerModel, Log));
       }
 
       server.route({
