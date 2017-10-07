@@ -1600,9 +1600,9 @@ Association middleware is defined similar to CRUD middleware, with the only diff
 
 ## Authorization
 ### Route scopes
-rest-hapi takes advantage of the ``scope`` property within the ``auth`` route config object of a hapi endpoint.  Each generated endpoint has its ``scope`` property set based on model properties within the ``routeOptions.scope`` object. There are three types of scopes that can be set: a general scope property, action scope properties, and association scope properties. A description of these can be seen below.
+rest-hapi takes advantage of the ``scope`` property within the ``auth`` route config object of a hapi endpoint.  Each generated endpoint has its ``scope`` property set based on model properties within the ``routeOptions.scope`` object. There are three types of scopes that can be set: a global scope property, action scope properties, and association scope properties. A description of these can be seen below.
 
-The first type of scope is a ``scope`` property that, when set, is applied to all generated endpoints for that model. 
+The first type of scope is a global ``scope`` property that, when set, is applied to all generated endpoints for that model. 
 
 The second is an action specific scope property that only applies to endpoints corresponding with the action. A list of these action scope properties can be seen below:
 
@@ -1657,15 +1657,15 @@ module.exports = function (mongoose) {
   };
   
   return Schema;
-};
+};r
 ```
 
-**NOTE** Use of scope properties requires that an authentication strategy be defined and implemented. If the ``config.authStrategy`` property is set to ``false``, then no scopes will be applied, even if they are defined in the model.  For an example of scopes in action, check out [appy](https://github.com/JKHeadley/appy):
+**NOTE** Use of route scope properties requires that an authentication strategy be defined and implemented. If the ``config.authStrategy`` property is set to ``false``, then no route scopes will be applied, even if they are defined in the model.  For an example of route scopes in action, check out [appy](https://github.com/JKHeadley/appy):
 
-### Generating scopes
-If the ``config.generateScopes`` property is set to true, then generated endpoints will come pre-defined with scope values.  These values will exist in addition to any scope values defined in the ``routeOptions.scope`` object. For instance, the tables below show two possibilities for the user model scope: the first is with no model scope defined, and the second is with a model scope defined as in the example above.
+### Generating route scopes
+If the ``config.generateScopes`` property is set to true, then generated endpoints will come pre-defined with scope values.  These values will exist in addition to any route scope values defined in the ``routeOptions.scope`` object. For instance, the tables below show two possibilities for the user model scope: the first is with no model route scope defined, and the second is with a model route scope defined as in the example above.
 
-#### Without Model Scope Defined
+#### Without Model Route Scope Defined
 
 Endpoint | Scope
 --- | ---
@@ -1681,7 +1681,7 @@ DELETE /user/{ownerId}/group | [ 'root', 'associate', 'associateUser', 'removeUs
 PUT /user/{ownerId}/group/{childId} | [ 'root', 'associate', 'associateUser', 'addUserGroups' ]
 DELETE /user/{ownerId}/group/{childId} | [ 'root', 'associate', 'associateUser', 'removeUserGroups' ]
 
-#### With Model Scope Defined
+#### With Model Route Scope Defined
 
 Endpoint | Scope
 --- | ---
@@ -1697,7 +1697,7 @@ DELETE /user/{ownerId}/group | [ 'root', 'Admin', 'associate', 'associateUser', 
 PUT /user/{ownerId}/group/{childId} | [ 'root', 'Admin', 'associate', 'associateUser', 'addUserGroups', 'Project Lead' ]
 DELETE /user/{ownerId}/group/{childId} | [ 'root', 'Admin', 'associate', 'associateUser', 'removeUserGroups' ]
 
-### Disabling scopes
+### Disabling route scopes
 Authentication (and as such Authorization) can be disabled for certain routes by adding a property under a model's ``routeOptions`` property with the value set to ``false``.  Below is a list of options and their effects:
 
 Property | Effect
