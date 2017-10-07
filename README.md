@@ -52,7 +52,7 @@ rest-hapi-demo: http://ec2-52-25-112-131.us-west-2.compute.amazonaws.com:8124
     * [MANY_MANY](#many_many)
         - [MANY_MANY linking models](#many_many-linking-models)
         - [MANY_MANY data storage](#many_many-data-storage)
-            * [Updating MANY_MANY db data](#updating-many_many-db-data)
+            * [Migrating MANY_MANY data](#migrating-many_many-data)
     * [\_MANY](#_many)
 - [Route customization](#route-customization)
     * [Custom path names](#custom-path-names)
@@ -67,6 +67,7 @@ rest-hapi-demo: http://ec2-52-25-112-131.us-west-2.compute.amazonaws.com:8124
     * [CRUD](#crud)
     * [Association](#association)
 - [Authorization](#authorization)
+    * [Route scopes](#route-scopes)
     * [Generating scopes](#generating-scopes)
     * [Disabling scopes](#disabling-scopes)
 - [Mongoose wrapper methods](#mongoose-wrapper-methods)
@@ -1019,9 +1020,9 @@ module.exports = function (mongoose) {
 
 **NOTE:** If the `embedAssociation` property is set, then it must be set to the same value for both association definitions as seen above.
 
-##### Updating MANY_MANY db data
+##### Migrating MANY_MANY data
 
-As of v0.28.0 the rest-hapi cli includes an `update-associations` command that can update your db data to match your desired MANY_MANY structure. This command follows the following format:
+As of v0.28.0 the rest-hapi cli includes an `update-associations` command that can migrate your db data to match your desired MANY_MANY structure. This command follows the following format:
 
 `$ ./node_modules/.bin/rest-hapi-cli update-associations mongoURI [embedAssociations] [modelPath]`
 
@@ -1033,7 +1034,7 @@ where:
 
 This is useful if you have a db populated with documents and you decide to change the `embedAssociaion` property of one or more associations. 
 
-For instance, consider a MANY_MANY relationship between `user` (groups) and `group`  (users) with `config.embedAssociations` set to `true`. Each `user` document will contain the array `groups` and each `group` document will contain the array `users`. Lets say you implement this structure in a project, but several months into the project some of your `group` documents have collected thousands of `users`, resulting in very large document sizes. You decide it would be better to move the data out of the parent documents and into a linking collection, `user_group`. You can do this by setting the `embedAssociation` property for `users` and `groups` to `false`, and running the following command:
+For instance, consider a MANY_MANY relationship between `user` (groups) and `group`  (users) with `config.embedAssociations` set to `true`. Each `user` document will contain the array `groups` and each `group` document will contain the array `users`. Lets say you implement this structure in a project, but several months into the project some of your `group` documents have collected thousands of `users`, resulting in very large document sizes. You decide it would be better to migrate the data out of the parent documents and into a linking collection, `user_group`. You can do this by setting the `embedAssociation` property for `users` and `groups` to `false`, and running the following command:
 
 `$ ./node_modules/.bin/rest-hapi-cli update-associations mongodb://localhost:27017/mydb true`
 
@@ -1598,6 +1599,7 @@ Association middleware is defined similar to CRUD middleware, with the only diff
 [Back to top](#readme-contents)
 
 ## Authorization
+### Route scopes
 rest-hapi takes advantage of the ``scope`` property within the ``auth`` route config object of a hapi endpoint.  Each generated endpoint has its ``scope`` property set based on model properties within the ``routeOptions.scope`` object. There are three types of scopes that can be set: a general scope property, action scope properties, and association scope properties. A description of these can be seen below.
 
 The first type of scope is a ``scope`` property that, when set, is applied to all generated endpoints for that model. 
@@ -1614,7 +1616,7 @@ The third type of scope is property that relates to a specific association actio
 
 -{action}{modelName}{associationName}Scope
 
-In the example below, users with the ``Admin`` scope in their authentication credentials can access all of the generated endpoints for the user model, users with the ``User`` scope are granted read access for the user model, and users with the ``addUserGroupsScope`` are capable of adding group associations to a user document.
+In the example below, users with the ``Admin`` scope in their authentication credentials can access all of the generated endpoints for the user model, users with the ``User`` scope are granted read access for the user model, and users with the ``Project Lead`` scope are capable of adding group associations to a user document.
 
 ```javascript
 'use strict';

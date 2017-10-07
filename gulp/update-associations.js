@@ -55,54 +55,32 @@ gulp.task('update-associations', [], function() {
       modelsArray.push(models[modelName])
     }
 
-    modelsArray.forEach(function(model) {
-      var promise_link = function() {
-        var deferred = Q.defer();
+    return applyActionToModels(addEmbedded, modelsArray, embedAssociations, Log)
+        .then(function () {
+          return applyActionToModels(removeLinking, modelsArray, embedAssociations, Log);
+        })
+        .then(function () {
+          return applyActionToModels(addLinking, modelsArray, embedAssociations, Log);
+        })
+        .then(function () {
+          return applyActionToModels(removeEmbedded, modelsArray, embedAssociations, Log);
+        })
+        .then(function () {
 
-        addEmbedded(model, embedAssociations, Log)
-            .then(function(result) {
-              return removeLinking(model, embedAssociations, Log);
-            })
-            .then(function(result) {
-              return addLinking(model, embedAssociations, Log);
-            })
-            .then(function(result) {
-              return removeEmbedded(model, embedAssociations, Log);
-            })
-            .then(function(result) {
-              deferred.resolve(result);
-            })
-            .catch(function (error) {
-              deferred.reject(error);
-            });
-        return deferred.promise;
-      };
-
-      promise_chain = promise_chain
-          .then(function(result) {
-          })
-          .then(promise_link)
-          .catch(function(error) {
-            throw error;
-          });
-    });
-
-    return promise_chain
-        .then(function() {
           Log.debug("DONE");
           return gulp.src("")
               .pipe(exit());
         })
         .catch(function (error) {
-            Log.error(error);
+          Log.error(error);
           return gulp.src("")
               .pipe(exit());
         });
+  });
 
-  })
 });
 
-function getLinkingModel(model, association) {
+function getLinkingModel(model, association, Log) {
   let linkingModel = null;
   let linkingModelExists = false;
   try {
@@ -143,6 +121,33 @@ function getLinkingModel(model, association) {
   return linkingModel;
 }
 
+function applyActionToModels(action, models, embedAssociations, Log) {
+  let promise_chain = Q.when();
+
+  models.forEach(function (model) {
+    var promise_link = function () {
+      var deferred = Q.defer();
+
+      action(model, embedAssociations, Log)
+          .then(function (result) {
+            deferred.resolve(result);
+          })
+          .catch(function (error) {
+            deferred.reject(error);
+          });
+      return deferred.promise;
+    };
+
+    promise_chain = promise_chain
+        .then(promise_link)
+        .catch(function (error) {
+          throw error;
+        });
+  });
+
+  return promise_chain;
+}
+
 function addEmbedded(model, embedAssociations, Log) {
 
   return model.find()
@@ -181,15 +186,28 @@ function addEmbeddedAssociation(model, associationName, linkingModel, data, Log)
     query[model.modelName] = document._id;
     let promise = linkingModel.find(query)
         .then(function(result) {
-          result.forEach(function(linkingDocument) {
-            linkingDocument[model.modelName] = undefined;
-            embedArray.push(linkingDocument);
-          });
+          if (_.isEmpty(result)) {
+            //EXPL: need to do this or else the empty association property will be erased
+            if (!document[associationName] || _.isEmpty(document[associationName])) {
+              let payload = {};
+              payload[associationName] = [];
+              return model.findByIdAndUpdate(document._id, payload, {new: true});
+            }
+            else {
+              return Q.when();
+            }
+          }
+          else {
+            result.forEach(function(linkingDocument) {
+              linkingDocument[model.modelName] = undefined;
+              embedArray.push(linkingDocument);
+            });
 
-          let payload = {};
-          payload[associationName] = embedArray;
+            let payload = {};
+            payload[associationName] = embedArray;
 
-          return model.findByIdAndUpdate(document._id, payload, {new: true});
+            return model.findByIdAndUpdate(document._id, payload, {new: true});
+          }
         });
     promises.push(promise);
   });
@@ -205,7 +223,7 @@ function removeLinking(model, embedAssociations, Log) {
     if (association.type === "MANY_MANY") {
       var embedAssociation = association.embedAssociation === undefined ? embedAssociations : association.embedAssociation;
 
-      let linkingModel = getLinkingModel(model, association);
+      let linkingModel = getLinkingModel(model, association, Log);
 
       if (linkingModel) {
         if (embedAssociation) {
@@ -234,7 +252,7 @@ function addLinking(model, embedAssociations, Log) {
           if (association.type === "MANY_MANY") {
             var embedAssociation = association.embedAssociation === undefined ? embedAssociations : association.embedAssociation;
 
-            let linkingModel = getLinkingModel(model, association);
+            let linkingModel = getLinkingModel(model, association, Log);
 
             if (linkingModel) {
               if (!embedAssociation) {
@@ -286,7 +304,7 @@ function removeEmbedded(model, embedAssociations, Log) {
           if (association.type === "MANY_MANY") {
             var embedAssociation = association.embedAssociation === undefined ? embedAssociations : association.embedAssociation;
 
-            let linkingModel = getLinkingModel(model, association);
+            let linkingModel = getLinkingModel(model, association, Log);
 
             if (linkingModel) {
               if (!embedAssociation) {
