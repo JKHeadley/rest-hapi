@@ -1934,6 +1934,35 @@ config.userIdKey = "user._id";
 [Back to top](#readme-contents)
 
 ## Policies
+rest-hapi comes with built-in support for policies via the [mrhorse](https://github.com/mark-bradshaw/mrhorse) plugin. Policies provide a powerful method of applying the same business logic to multiple routes declaratively. They can be inserted at any point in the [hapi request lifecycle](https://hapijs.com/api#request-lifecycle), allowing you to layer your business logic in a clean, organized, and centralized manner. We highly recommend you learn more about the details and benefits of policies in the [mrhorse readme](https://hapijs.com/api#request-lifecycle).
+
+Internally, rest-hapi uses policies to implement features such as [document authorization](#document-authorization) and certain [metadata](#user-tags).
+
+You can enable your own custom policies in rest-hapi by setting `config.enablePolicies` to `true` and adding your policy files to your `policies` directory. You can then apply policies to your generated routes through the `routeOptions.policies` property, which has the following structure:
+
+```javascript
+routeOptions: {
+   policies: {
+      rootPolicies: [/* policies applied to all routes for this model */],
+      createPolicies: [/* policies applied to any endpoint that creates model documents */],
+      readPolicies: [/* policies applied to any endpoint that retrieves documents and can be queried against */],
+      updatePolicies: [/* policies applied to any endpoint that directly updates documents */],
+      deletePolicies: [/* policies applied to any endpoint that deletes documents */],
+      associatePolicies: [/* policies applied to any endpoint that modifies an association */],
+   }
+}
+```
+
+**NOTE:** If your ``policies`` directory is not in your projects root directory, you will need to specify the path (relative to your projects root directory) by assigning the path to the ``config.policyPath`` property and you will need to set the ``config.absolutePolicyPath`` property to ``true``.
+
+### Policies vs middleware
+Since policies and [middleware functions](#middleware) seem to provide similar funcitonality, it's important to understand their differences in order to determine which is best suited for your use case. Listed below are a few of the major differences:
+
+Policies | Middleware
+--- | ---
+Policies are most useful when applied to multiple routes for multiple models, which is why they are located in a centralized place | Middleware functions are meant to be both model and endpoint specific
+Policies are only active when an endpoint is called | Middleware functions are active when either an endpoint is called or when a [wrapper method](#mongoose-wrapper-methods) is used
+Policies can run before (`onPreHandler`) or after (`onPostHander`) the handler function | Since middleware functions are run as part of the handler, a `pre` middleware function will run after any `onPreHandler` policy, and a `post` middlware function will run before any `onPostHandler` policy
 
 
 [Back to top](#readme-contents)
