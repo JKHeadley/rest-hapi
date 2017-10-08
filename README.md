@@ -73,6 +73,8 @@ rest-hapi-demo: http://ec2-52-25-112-131.us-west-2.compute.amazonaws.com:8124
       - [Disabling route scopes](#disabling-route-scopes)
     * [Document authorization](#document-authorization)
 - [Policies](#policies)
+    * [Policies vs middleware](#policies-vs-middleware)
+    * [Example: custom authorization via policies](#example-custom-authorization-via-policies)
 - [Mongoose wrapper methods](#mongoose-wrapper-methods)
 - [Soft delete](#soft-delete)
 - [Metadata](#metadata)
