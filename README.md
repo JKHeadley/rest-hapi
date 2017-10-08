@@ -14,9 +14,10 @@ rest-hapi is a hapi plugin intended to abstract the work involved in setting up 
 * Automatic generation of [CRUD](#creating-endpoints) endpoints with [middleware](#middleware) support
 * Automatic generation of [association](#associations) endpoints
 * [joi](https://github.com/hapijs/joi) [validation](#validation)
-* Built in [authorization](#authorization)
+* Built in route-level and document-level [authorization](#authorization)
 * [Swagger docs](#swagger-documentation) for all generated endpoints via [hapi-swagger](https://github.com/glennjones/hapi-swagger)
 * [Query parameter](#querying) support for searching, sorting, filtering, pagination, and embedding of associated models
+* Support for [policies](#policies) via [mrhorse](https://github.com/mark-bradshaw/mrhorse)
 * Support for ["soft" delete](#soft-delete)
 * Built in [metadata](#metadata)
 * Mongoose [wrapper methods](#mongoose-wrapper-methods)
@@ -71,6 +72,7 @@ rest-hapi-demo: http://ec2-52-25-112-131.us-west-2.compute.amazonaws.com:8124
       - [Generating route scopes](#generating-route-scopes)
       - [Disabling route scopes](#disabling-route-scopes)
     * [Document authorization](#document-authorization)
+- [Policies](#policies)
 - [Mongoose wrapper methods](#mongoose-wrapper-methods)
 - [Soft delete](#soft-delete)
 - [Metadata](#metadata)
@@ -1928,6 +1930,11 @@ config.authorizeDocumentCreatorToAssociate = false;
  */
 config.userIdKey = "user._id";
 ```
+
+[Back to top](#readme-contents)
+
+## Policies
+
 
 [Back to top](#readme-contents)
 
