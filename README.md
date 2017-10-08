@@ -1955,6 +1955,8 @@ routeOptions: {
 
 **NOTE:** If your ``policies`` directory is not in your projects root directory, you will need to specify the path (relative to your projects root directory) by assigning the path to the ``config.policyPath`` property and you will need to set the ``config.absolutePolicyPath`` property to ``true``.
 
+**NOTE:** You can access the current model within a policy funtion through `request.route.settings.plugins.model` (see the [example](#example-custom-authorization-via-policies) below).
+
 ### Policies vs middleware
 Since policies and [middleware functions](#middleware) seem to provide similar funcitonality, it's important to understand their differences in order to determine which is best suited for your use case. Listed below are a few of the major differences:
 
@@ -1964,6 +1966,79 @@ Policies are most useful when applied to multiple routes for multiple models, wh
 Policies are only active when an endpoint is called | Middleware functions are active when either an endpoint is called or when a [wrapper method](#mongoose-wrapper-methods) is used
 Policies can run before (`onPreHandler`) or after (`onPostHander`) the handler function | Since middleware functions are run as part of the handler, a `pre` middleware function will run after any `onPreHandler` policy, and a `post` middlware function will run before any `onPostHandler` policy
 
+### Example: custom authorization via policies
+To provide an example of the power of policies within rest-hapi, consider the following example:
+
+A developer wants to implement document authorization, but wants to maintain control over the implementation and have the option of providing functionality outside of what is available with rest-hapi's built in [document authorization](#document-authorization). They want to only allow the user that creates a document to be able to modify the document. They decide to implement this via the policy below (`docAuth.js`).
+
+```javascript
+'use strict';
+
+const Boom = require('boom');
+
+let docAuth = function(request, reply, next) {
+    let Log = request.logger;
+    try {
+        let model = request.route.settings.plugins.model;
+
+        let userId = request.auth.credentials.user._id;
+
+        return model.findById(request.params._id)
+            .then(function(document) {
+                if (document && document.createdBy.toString() === userId.toString()) {
+                    return next(null, true);
+                }
+                else {
+                    return next(Boom.notFound("No resource was found with that id."), false);
+                }
+            })
+
+    }
+    catch (err) {
+        Log.error("ERROR", err);
+        return next(Boom.badImplementation(err), false);
+    }
+};
+
+docAuth.applyPoint = 'onPreHandler';
+
+module.exports = docAuth;
+```
+**NOTE:** This assumes that `config.enableCreatedBy` is set to `true`.
+
+They can then apply this policy to their model routes like so:
+
+``/models/blog.model.js``:
+
+```javascript
+'use strict';
+
+module.exports = function (mongoose) {
+  var modelName = "blog";
+  var Types = mongoose.Schema.Types;
+  var Schema = new mongoose.Schema({
+    title: {
+      type: Types.String,
+      required: true
+    },
+    description: {
+      type: Types.String
+    }
+  });
+
+  Schema.statics = {
+    collectionName:modelName,
+    routeOptions: {
+      policies: {
+         updatePolicies: ['docAuth'],
+         deletePolicies: ['docAuth']
+      }
+    }
+  };
+
+  return Schema;
+};
+```
 
 [Back to top](#readme-contents)
 
