@@ -1757,7 +1757,7 @@ Then users with the `Admin` scope value would have full access to the scope whil
 
 rest-hapi provides several options for populating a document's scope. One option is through the `routeOptions.documentScope` property. Any values added to this property will be copied over to a document's `scope` property upon its creation. 
 
-Another option is to set `config.authorizeDocumentCreator` to `true`. Setting this option will add the \_id of the user who created the doucment to the document's `rootScope` property (in the form of `user-{_id}`, where `_id` is the \_id of the user). Assuming `user-{_id}` is in the user's scope, this will grant the user full access to any document the user creates. Consider the example document below created by a user with an \_id of `59d93c673401e16f0f66a5d4`:
+Another option is to set `config.authorizeDocumentCreator` to `true`. Setting this option will add the \_id of the user who created the document to the document's `rootScope` property (in the form of `user-{_id}`, where `{_id}` is the \_id of the user). Assuming `user-{_id}` is in the user's scope, this will grant the user full access to any document the user creates. Consider the example document below created by a user with an \_id of `59d93c673401e16f0f66a5d4`:
 
 ```javascript
 name: "Test doc",
@@ -1767,6 +1767,59 @@ scope: {
 ```
 
 This document scope will allow the user with `user-59d93c673401e16f0f66a5d4` in their scope full access while all other users will be denied.
+
+For more details and alternatives to this option see the config docs below:
+
+```javascript
+/**
+ * If true, modifies the root scope of any document to allow access to the document's creator.
+ * The scope value added is in the form: "user-{_id}" where "{_id}" is the _id of the user.
+ * NOTE:
+ * - This assumes that your authentication credentials (request.auth.credentials) will contain either
+ * a "user" object with a "_id" property, or the user's _id stored in a property defined by "config.userIdKey".
+ * - This also assumes that the user creating the document will have "user-{_id}" within their scope.
+ * - Requires "config.enableDocumentScopes" to be "true".
+ * - This setting can be individually overwritten by setting the "authorizeDocumentCreator" routeOptions property.
+ * default: false
+ * @type {boolean}
+ */
+config.authorizeDocumentCreator = false;
+
+/**
+ * Same as "authorizeDocumentCreator", but modifies the "readScope" rather than the root scope.
+ * default: false
+ * @type {boolean}
+ */
+config.authorizeDocumentCreatorToRead = false;
+
+/**
+ * Same as "authorizeDocumentCreator", but modifies the "updateScope" rather than the root scope.
+ * default: false
+ * @type {boolean}
+ */
+config.authorizeDocumentCreatorToUpdate = false;
+
+/**
+ * Same as "authorizeDocumentCreator", but modifies the "deleteScope" rather than the root scope.
+ * default: false
+ * @type {boolean}
+ */
+config.authorizeDocumentCreatorToDelete = false;
+
+/**
+ * Same as "authorizeDocumentCreator", but modifies the "associateScope" rather than the root scope.
+ * default: false
+ * @type {boolean}
+ */
+config.authorizeDocumentCreatorToAssociate = false;
+
+/**
+ * This is the path/key to the user _id stored in your request.auth.credentials object.
+ * default: "user._id"
+ * @type {string}
+ */
+config.userIdKey = "user._id";
+```
 
 [Back to top](#readme-contents)
 
