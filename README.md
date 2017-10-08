@@ -1955,7 +1955,7 @@ routeOptions: {
 
 **NOTE:** If your ``policies`` directory is not in your projects root directory, you will need to specify the path (relative to your projects root directory) by assigning the path to the ``config.policyPath`` property and you will need to set the ``config.absolutePolicyPath`` property to ``true``.
 
-**NOTE:** You can access the current model within a policy funtion through `request.route.settings.plugins.model` (see the [example](#example-custom-authorization-via-policies) below).
+**NOTE:** You can access the current model within a policy function through `request.route.settings.plugins.model` (see the [example](#example-custom-authorization-via-policies) below).
 
 ### Policies vs middleware
 Since policies and [middleware functions](#middleware) seem to provide similar funcitonality, it's important to understand their differences in order to determine which is best suited for your use case. Listed below are a few of the major differences:
