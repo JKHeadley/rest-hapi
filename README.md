@@ -1602,9 +1602,7 @@ Association middleware is defined similar to CRUD middleware, with the only diff
 ### Route authorization
 rest-hapi takes advantage of the ``scope`` property within the ``auth`` route config object of a hapi endpoint. When a request is made, an endpoint's scope (if it is populated) is compared to the user's scope (stored in `request.auth.credentials.scope`) to determine if the requesting user is authorized to access the endpoint. Below is an exerpt from the hapi docs describing scopes in more detail:
 
-```
-scope - the application scope required to access the route. Value can be a scope string or an array of scope strings. The authenticated credentials object scope property must contain at least one of the scopes defined to access the route. If a scope string begins with a + character, that scope is required. If a scope string begins with a ! character, that scope is forbidden. For example, the scope ['!a', '+b', 'c', 'd'] means the incoming request credentials' scope must not include 'a', must include 'b', and must include one of 'c' or 'd'. You may also access properties on the request object (query and params) to populate a dynamic scope by using {} characters around the property name, such as 'user-{params.id}'. Defaults to false (no scope requirements).
-```
+> scope - the application scope required to access the route. Value can be a scope string or an array of scope strings. The authenticated credentials object scope property must contain at least one of the scopes defined to access the route. If a scope string begins with a + character, that scope is required. If a scope string begins with a ! character, that scope is forbidden. For example, the scope ['!a', '+b', 'c', 'd'] means the incoming request credentials' scope must not include 'a', must include 'b', and must include one of 'c' or 'd'. You may also access properties on the request object (query and params) to populate a dynamic scope by using {} characters around the property name, such as 'user-{params.id}'. Defaults to false (no scope requirements).
 
 In rest-hapi, each generated endpoint has its ``scope`` property set based on model properties within the ``routeOptions.routeScope`` object. There are three types of scopes that can be set: a root scope property, action scope properties, and association scope properties. A description of these can be seen below.
 
@@ -1620,7 +1618,7 @@ The second is an action specific scope property that only applies to endpoints c
 * ``deleteScope``: value is added to the scope of any endpoint that deletes documents
 * ``associateScope``: value is added to the scope of any endpoint that modifies an association
 
-The third type of scope is property that relates to a specific association action, with an action prefix of ``add``, ``remove``, or ``get``.  These scope properties are specific to the associations defined in the model and take the form of :
+The third type of scope is property that relates to a specific association action, with an action prefix of ``add``, ``remove``, or ``get``.  These scope properties are specific to the associations defined in the model and take the form of:
 
 -{action}{modelName}{associationName}Scope
 
@@ -1753,7 +1751,7 @@ scope: {
 }
 ```
 
-Then users with the `Admin` scope value would have full access to the scope while users with the `User` scope value would only have read access. Users without either scope value would have no access to the document.
+Then users with the `Admin` scope value would have full access to the document while users with the `User` scope value would only have read access. Users without either scope value would have no access to the document.
 
 rest-hapi provides several options for populating a document's scope. One option is through the `routeOptions.documentScope` property. Any values added to this property will be copied over to a document's `scope` property upon its creation. 
 
