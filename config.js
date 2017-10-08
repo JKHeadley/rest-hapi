@@ -128,11 +128,11 @@ config.enableDocumentScopes = true;
 
 /**
  * If true, modifies the root scope of any document to allow access to the document's creator.
- * The scope value added is in the form: "user-{userId}".
+ * The scope value added is in the form: "user-{_id}" where "{_id}" is the _id of the user.
  * NOTE:
  * - This assumes that your authentication credentials (request.auth.credentials) will contain either
- * a "user" object with a "_id" property, or a "userId" property set to the current user's _id.
- * - This also assumes that the user creating the document will have "user-{userId}" within their scope.
+ * a "user" object with a "_id" property, or the user's _id stored in a property defined by "config.userIdKey".
+ * - This also assumes that the user creating the document will have "user-{_id}" within their scope.
  * - Requires "config.enableDocumentScopes" to be "true".
  * - This setting can be individually overwritten by setting the "authorizeDocumentCreator" routeOptions property.
  * default: false

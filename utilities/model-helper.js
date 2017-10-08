@@ -111,7 +111,7 @@ internals.createModel = function(Schema, mongoose) {
   if (config.enableDocumentScopes) {
     let scope = {
       scope: {
-        scope: {
+        rootScope: {
           type: [Types.String]
         },
         readScope: {
