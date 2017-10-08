@@ -152,15 +152,13 @@ You can then run ``$ node api.js`` and point your browser to [http://localhost:8
 
 ## Configuration
 
-Configuration of the generated API is handled through the ``restHapi.config`` object.  Below is a description of the current configuration options/properties.
+Configuration of rest-hapi is handled through the ``restHapi.config`` object.  Below is a description of the current configuration options/properties.
 
 ```javascript
 /**
- * config.js - Configuration settings for the generated API
+ * config.js - Configuration settings for rest-hapi
  */
 var config = {};
-config.server = {};
-config.mongo = {};
 
 /**
  * Your app title goes here.
@@ -176,12 +174,14 @@ config.version = '1.0.0';
 
 /**
  * Flag signifying whether the absolute path to the models directory is provided
+ * default: false
  * @type {boolean}
  */
 config.absoluteModelPath = false;
 
 /**
- * Path to the models directory (default 'models')
+ * Path to the models directory
+ * default: 'models'
  * @type {string}
  */
 config.modelPath = 'models';
@@ -193,7 +193,8 @@ config.modelPath = 'models';
 config.absoluteApiPath = false;
 
 /**
- * Path to the directory for additional endpoints (default 'api')
+ * Path to the directory for additional endpoints
+ * default: 'api'
  * @type {string}
  */
 config.apiPath = 'api';
@@ -215,7 +216,8 @@ config.mongo.URI = 'mongodb://localhost/rest_hapi';
 
 /**
  * Authentication strategy to be used for all generated endpoints.
- * Set to false for no authentication (default).
+ * Set to false for no authentication.
+ * default: false
  * @type {boolean/string}
  */
 config.authStrategy = false;
@@ -235,16 +237,111 @@ config.embedAssociations = false;
 
 /**
  * MetaData options:
- * default: true
- * @type {boolean}
+ * - createdAt: (default: true) date specifying when the document was created.
+ * - updatedAt: (default: true) date specifying when the document was last updated.
+ * - deletedAt: (default: true) date specifying when the document was soft deleted.
+ * - createdBy: (default: false) _id of user that created the document.
+ * - updatedBy: (default: false) _id of user that last updated the document.
+ * - updatedBy: (default: false) _id of user that soft deleted the document.
  */
 config.enableCreatedAt = true;
 config.enableUpdatedAt = true;
+config.enableDeletedAt = true;
+config.enableCreatedBy = false;
+config.enableUpdatedBy = false;
+config.enableDeletedBy = false;
+
+/**
+ * Enables policies via mrhorse (https://github.com/mark-bradshaw/mrhorse).
+ * default: false
+ * @type {boolean}
+ */
+config.enablePolicies = false;
+
+/**
+ * Flag signifying whether the absolute path to the policies directory is provided.
+ * default: false
+ * @type {boolean}
+ */
+config.absolutePolicyPath = false;
+
+/**
+ * Path to the directory for mrhorse policies (https://github.com/mark-bradshaw/mrhorse).
+ * default: 'policies'
+ * @type {string}
+ */
+config.policyPath = 'policies';
+
+/**
+ * Enables document level authorization.
+ * default: true
+ * @type {boolean}
+ */
+config.enableDocumentScopes = true;
+
+/**
+ * If true, modifies the root scope of any document to allow access to the document's creator.
+ * The scope value added is in the form: "user-{_id}" where "{_id}" is the _id of the user.
+ * NOTE:
+ * - This assumes that your authentication credentials (request.auth.credentials) will contain either
+ * a "user" object with a "_id" property, or the user's _id stored in a property defined by "config.userIdKey".
+ * - This also assumes that the user creating the document will have "user-{_id}" within their scope.
+ * - Requires "config.enableDocumentScopes" to be "true".
+ * - This setting can be individually overwritten by setting the "authorizeDocumentCreator" routeOptions property.
+ * default: false
+ * @type {boolean}
+ */
+config.authorizeDocumentCreator = false;
+
+/**
+ * Same as "authorizeDocumentCreator", but modifies the "readScope" rather than the root scope.
+ * default: false
+ * @type {boolean}
+ */
+config.authorizeDocumentCreatorToRead = false;
+
+/**
+ * Same as "authorizeDocumentCreator", but modifies the "updateScope" rather than the root scope.
+ * default: false
+ * @type {boolean}
+ */
+config.authorizeDocumentCreatorToUpdate = false;
+
+/**
+ * Same as "authorizeDocumentCreator", but modifies the "deleteScope" rather than the root scope.
+ * default: false
+ * @type {boolean}
+ */
+config.authorizeDocumentCreatorToDelete = false;
+
+/**
+ * Same as "authorizeDocumentCreator", but modifies the "associateScope" rather than the root scope.
+ * default: false
+ * @type {boolean}
+ */
+config.authorizeDocumentCreatorToAssociate = false;
+
+/**
+ * This is the path/key to the user _id stored in your request.auth.credentials object.
+ * default: "user._id"
+ * @type {string}
+ */
+config.userIdKey = "user._id";
+
+/**
+ * Determines what action takes place when one or more document scope checks fail for requests dealing with multiple
+ * documents (Ex: deleteMany or list). Options are:
+ * - true: if one or more documents fail, the request responds with a 403.
+ * - false: documents that don't pass are simply removed from the request (Ex: not deleted or not retrieved)
+ * default: false
+ * @type {boolean}
+ */
+config.enableDocumentScopeFail = false;
 
 /**
  * Flag specifying whether to text index all string fields for all models to enable text search.
  * WARNING: enabling this adds overhead to add inserts and updates, as well as added storage requirements.
- * Default is false.
+ * default: false.
  * @type {boolean}
  */
 config.enableTextSearch = false;
@@ -270,9 +367,9 @@ config.enablePayloadValidation = true;
 config.enableResponseValidation = true;
 
 /**
- * Determines the hapi failAction of each response. If true, responses that fail validation will return
- * a 500 error.  If set to false, responses that fail validation will just log the offense and send
- * the response as-is.
+ * Determines the hapi failAction of each response. Options are:
+ * - true: responses that fail validation will return a 500 error.
+ * - false: responses that fail validation will just log the offense and send the response as-is.
  * default: false
  * @type {boolean}
  */
@@ -282,9 +379,18 @@ config.enableResponseFail = false;
  * If set to true, (and authStrategy is not false) then endpoints will be generated with pre-defined
  * scopes based on the model definition.
  * default: false
+ * @deprecated since v0.29.0, use "config.generateRouteScopes" instead
  * @type {boolean}
  */
 config.generateScopes = false;
+
+/**
+ * If set to true, (and authStrategy is not false) then endpoints will be generated with pre-defined
+ * scopes based on the model definition.
+ * default: false
+ * @type {boolean}
+ */
+config.generateRouteScopes = false;
 
 /**
  * If set to true, the scope for each endpoint will be logged when then endpoint is generated.
@@ -316,6 +422,7 @@ config.loglevel = "DEBUG";
 /**
  * Determines the initial expansion state of the swagger docs
  * - options: 'none', 'list', 'full' (default: 'none')
+ * default: 'none'
  * @type {string}
  */
 config.docExpansion = 'none';
