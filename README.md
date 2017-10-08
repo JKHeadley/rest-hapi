@@ -67,9 +67,10 @@ rest-hapi-demo: http://ec2-52-25-112-131.us-west-2.compute.amazonaws.com:8124
     * [CRUD](#crud)
     * [Association](#association)
 - [Authorization](#authorization)
-    * [Route scopes](#route-scopes)
-    * [Generating scopes](#generating-scopes)
-    * [Disabling scopes](#disabling-scopes)
+    * [Route authorization](#route-authorization)
+      - [Generating route scopes](#generating-route-scopes)
+      - [Disabling route scopes](#disabling-route-scopes)
+    * [Document authorization](#document-authorization)
 - [Mongoose wrapper methods](#mongoose-wrapper-methods)
 - [Soft delete](#soft-delete)
 - [Metadata](#metadata)
@@ -1600,7 +1601,7 @@ Association middleware is defined similar to CRUD middleware, with the only diff
 
 ## Authorization
 ### Route authorization
-rest-hapi takes advantage of the ``scope`` property within the ``auth`` route config object of a hapi endpoint. When a request is made, an endpoint's scope (if it is populated) is compared to the user's scope (stored in `request.auth.credentials.scope`) to determine if the requesting user is authorized to access the endpoint. Below is an exerpt from the hapi docs describing scopes in more detail:
+rest-hapi takes advantage of the ``scope`` property within the ``auth`` route config object of a hapi endpoint. When a request is made, an endpoint's scope (if it is populated) is compared to the user's scope (stored in `request.auth.credentials.scope`) to determine if the requesting user is authorized to access the endpoint. Below is an quote from the hapi docs describing scopes in more detail:
 
 > scope - the application scope required to access the route. Value can be a scope string or an array of scope strings. The authenticated credentials object scope property must contain at least one of the scopes defined to access the route. If a scope string begins with a + character, that scope is required. If a scope string begins with a ! character, that scope is forbidden. For example, the scope ['!a', '+b', 'c', 'd'] means the incoming request credentials' scope must not include 'a', must include 'b', and must include one of 'c' or 'd'. You may also access properties on the request object (query and params) to populate a dynamic scope by using {} characters around the property name, such as 'user-{params.id}'. Defaults to false (no scope requirements).
 
