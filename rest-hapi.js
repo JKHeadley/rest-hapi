@@ -4,11 +4,13 @@ const _ = require('lodash'),
     extend = require('extend'),
     Inert = require('inert'),
     Vision = require('vision'),
-    HapiSwagger = require('hapi-swagger'),
+    HS = require('hapi-swagger'),
+    MH = require('mrhorse'),
     logging = require('loggin'),
     logUtil = require('./utilities/log-util'),
     chalk = require('chalk'),
     Q = require("q"),
+    fs = require("fs"),
     restHelperFactory = require('./utilities/rest-helper-factory'),
     handlerHelper = require('./utilities/handler-helper'),
     joiHelper = require('./utilities/joi-mongoose-helper'),
@@ -50,6 +52,14 @@ function register(server, options, next) {
 
     module.exports.logger = logger;
 
+    //EXPL: add the logger object to the request object for access later
+    server.ext('onRequest', function (request, reply) {
+
+        request.logger = logger;
+
+        return reply.continue();
+    });
+
     let mongoose = require('./components/mongoose-init')(options.mongoose, logger, config);
 
     logUtil.logActionStart(logger, "Initializing Server");
@@ -63,9 +73,14 @@ function register(server, options, next) {
         promise = modelGenerator(mongoose, logger, config);
     }
 
-    promise
-        .then(function(models) {
+    let models = {};
 
+    promise
+        .then(function(result) {
+            models = result;
+
+            //EXPL: setup hapi-swagger plugin
+            //region Hapi-Swagger Plugin
             let swaggerOptions = {
                 documentationPath: '/',
                 info: {
@@ -76,40 +91,91 @@ function register(server, options, next) {
                 reuseDefinitions: false
             };
 
-            server.register([
-                    Inert,
-                    Vision,
-                    {
-                        register: HapiSwagger,
-                        options: swaggerOptions
-                    }],
-                function (err) {
-                    if (err) {
-                        logger.error(err);
-                        return next(err);
-                    }
+            let HapiSwagger = {
+                register: HS,
+                options: swaggerOptions
+            };
+            //endregion
 
-                    const restHelper = restHelperFactory(logger, mongoose, server);
-
-                    for (let modelKey in models) {//EXPL: generate endpoints for all of the models
-                        let model = models[modelKey];
-                        restHelper.generateRoutes(server, model, {models:models})
-                    }
-
-                    apiGenerator(server, mongoose, logger, config)
-                        .then(function() {
-                            next();
-                        })
-                        .catch(function(error) {
-                            logger.error(error);
-                            next(error);
-                        })
-
-                });
+            return server.register([
+                Inert,
+                Vision,
+                HapiSwagger,
+            ])
         })
-        .catch(function(error) {
+        .then(function () {
+
+            //EXPL: setup mrhorse policy plugin
+            //region Mrhorse Plugin
+            let policyPath = "";
+            let Mrhorse = null;
+
+            if (config.enablePolicies) {
+                if (config.absolutePolicyPath === true) {
+                    policyPath = config.policyPath;
+                }
+                else {
+                    policyPath = __dirname.replace('node_modules/rest-hapi', config.policyPath);
+                }
+
+            }
+            else {
+                policyPath = __dirname + '/policies'
+            }
+
+            Mrhorse = {
+                register: MH,
+                options: {
+                    policyDirectory: policyPath
+                }
+            };
+            //endregion
+
+            if (Mrhorse) {
+                return server.register([
+                    Mrhorse
+                ])
+                    .then(function(result) {
+                        if (config.enablePolicies) {
+                            server.plugins.mrhorse.loadPolicies(server, {
+                                policyDirectory: __dirname + '/policies'
+                            }, function(err) {
+                                if (err) {
+                                    logger.error("ERROR:", err);
+                                }
+                            });
+                        }
+                    });
+            }
+            else {
+                return null;
+            }
+        })
+        .catch(function (error) {
+            if (error.message.includes('no such file')) {
+                logger.error("The policies directory provided does not exist. " +
+                    "Try setting the 'policyPath' property of the config file.");
+            }
+            else {
+                throw error;
+            }
+        })
+        .then(function() {
+            const restHelper = restHelperFactory(logger, mongoose, server);
+
+            for (let modelKey in models) {//EXPL: generate endpoints for all of the models
+                let model = models[modelKey];
+                restHelper.generateRoutes(server, model, {models: models})
+            }
+
+            return apiGenerator(server, mongoose, logger, config)
+        })
+        .then(function() {
+            next();
+        })
+        .catch(function (error) {
             logger.error(error);
-            next(error);
+            return next(error);
         })
 }
 

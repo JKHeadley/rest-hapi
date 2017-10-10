@@ -35,11 +35,12 @@ const internals = {};
  * @returns {*}: The resulting mongoose model.
  */
 internals.createModel = function(Schema, mongoose) {
+  const Types = mongoose.Schema.Types;
   //TODO: require createdAt and updatedAt
   if (config.enableCreatedAt) {
     let createdAt = {
       createdAt: {
-        type: mongoose.Schema.Types.Date,
+        type: Types.Date,
         allowOnCreate: false,
         allowOnUpdate: false
       }
@@ -49,31 +50,88 @@ internals.createModel = function(Schema, mongoose) {
   if (config.enableUpdatedAt) {
     let updatedAt = {
       updatedAt: {
-        type: mongoose.Schema.Types.Date,
+        type: Types.Date,
         allowOnCreate: false,
         allowOnUpdate: false
       }
     };
     Schema.add(updatedAt);
   }
-  if (config.enableSoftDelete) {
+  if (config.enableDeletedAt) {
     let deletedAt = {
       deletedAt: {
-        type: mongoose.Schema.Types.Date,
+        type: Types.Date,
         allowOnCreate: false,
         allowOnUpdate: false,
       }
     };
     Schema.add(deletedAt);
+  }
+  if (config.enableCreatedBy) {
+    let createdBy = {
+      createdBy: {
+        type: Types.ObjectId,
+        allowOnCreate: false,
+        allowOnUpdate: false
+      }
+    };
+    Schema.add(createdBy);
+  }
+  if (config.enableUpdatedBy) {
+    let updatedBy = {
+      updatedBy: {
+        type: Types.ObjectId,
+        allowOnCreate: false,
+        allowOnUpdate: false
+      }
+    };
+    Schema.add(updatedBy);
+  }
+  if (config.enableDeletedBy) {
+    let deletedBy = {
+      deletedBy: {
+        type: Types.ObjectId,
+        allowOnCreate: false,
+        allowOnUpdate: false,
+      }
+    };
+    Schema.add(deletedBy);
+  }
+  if (config.enableSoftDelete) {
     let isDeleted = {
       isDeleted: {
-        type: mongoose.Schema.Types.Boolean,
+        type: Types.Boolean,
         allowOnCreate: false,
         allowOnUpdate: false,
         default: false
       }
     };
     Schema.add(isDeleted);
+  }
+  if (config.enableDocumentScopes) {
+    let scope = {
+      scope: {
+        rootScope: {
+          type: [Types.String]
+        },
+        readScope: {
+          type: [Types.String]
+        },
+        updateScope: {
+          type: [Types.String]
+        },
+        deleteScope: {
+          type: [Types.String]
+        },
+        associateScope: {
+          type: [Types.String]
+        },
+        type: Types.Object,
+        allowOnUpdate: false,
+        allowOnCreate: false
+      }
+    };
+    Schema.add(scope);
   }
   return mongoose.model(Schema.statics.collectionName, Schema);
 };

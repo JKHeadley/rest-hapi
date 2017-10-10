@@ -6,11 +6,22 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+
+## [0.29.0] - 2017-10-10
+### Added
+- Support for policies via [mrhorse](https://github.com/mark-bradshaw/mrhorse) plugin.
+- Support for [document-level authorization]
+- Built in policies for [authorizing document creators]
+- `createdBy`, `updatedBy`, and `deletedBy` [metadata options].
+
+### Changed
+- Deprecated `routeOptions.scope` and `routeOptions.scope.scope` and replaced with `routeOptions.routeScope` and `routeOptions.routeScope.rootScope`.
+
 ## [0.28.0] - 2017-09-29
 ### Added
 - Added `update-associations` [cli tool](https://github.com/JKHeadley/rest-hapi#updating-many_many-db-data).
 
-## [0.27.0] - 2017-09-28
+## [0.27.0] - 2017-09-28 [BREAKING]
 ### Added
 - Added option (`config.embedAssociations`) to use linking model collections.
  * See [docs](https://github.com/JKHeadley/rest-hapi#many_many-data-storage) for details.
@@ -99,7 +110,7 @@ post(hardDelete, deleted, Log) | post(hardDelete, deleted, request, Log)
 
 
 
-[Unreleased]: https://github.com/jkheadley/rest-hapi/compare/v0.28.0...HEAD
+[Unreleased]: https://github.com/jkheadley/rest-hapi/compare/v0.29.0...HEAD
 [0.20.0]: https://github.com/jkheadley/rest-hapi/compare/v0.19.2...v0.20.0
 [0.20.2]: https://github.com/jkheadley/rest-hapi/compare/v0.20.0...v0.20.2
 [0.20.3]: https://github.com/jkheadley/rest-hapi/compare/v0.20.2...v0.20.3
@@ -111,5 +122,6 @@ post(hardDelete, deleted, Log) | post(hardDelete, deleted, request, Log)
 [0.26.0]: https://github.com/jkheadley/rest-hapi/compare/v0.25.0...v0.26.0
 [0.27.0]: https://github.com/jkheadley/rest-hapi/compare/v0.26.0...v0.27.0
 [0.28.0]: https://github.com/jkheadley/rest-hapi/compare/v0.27.0...v0.28.0
+[0.29.0]: https://github.com/jkheadley/rest-hapi/compare/v0.28.0...v0.29.0
 
 [BREAKING]: https://github.com/JKHeadley/rest-hapi/releases

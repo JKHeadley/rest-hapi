@@ -10,6 +10,7 @@ var validationHelper = require("./validation-helper");
 var authHelper = require('./auth-helper');
 var chalk = require('chalk');
 var config = require("../config");
+var restHapiPolicies = require("./policy-generator");
 
 //TODO: remove "options"?
 //TODO: change model "alias" to "routeAlias" (or remove the option)
@@ -158,7 +159,18 @@ module.exports = function (logger, mongoose, server) {
         headersValidation = null;
       }
 
+      var policies = [];
 
+      if (model.routeOptions.policies && config.enablePolicies) {
+        policies = model.routeOptions.policies;
+        policies = (policies.rootPolicies || []).concat(policies.readPolicies || []);
+      }
+
+      if (config.enableDocumentScopes) {
+        policies.push(restHapiPolicies.enforceDocumentScopePre(model, Log));
+        policies.push(restHapiPolicies.enforceDocumentScopePost(model, Log));
+      }
+      
       server.route({
         method: 'GET',
         path: '/' + resourceAliasForRoute,
@@ -173,6 +185,7 @@ module.exports = function (logger, mongoose, server) {
             headers: headersValidation
           },
           plugins: {
+            'model': model,
             'hapi-swagger': {
               responseMessages: [
                 {code: 200, message: 'The resource(s) was/were found successfully.'},
@@ -184,7 +197,9 @@ module.exports = function (logger, mongoose, server) {
                 {code: 500, message: 'There was an unknown error.'},
                 {code: 503, message: 'There was a problem with the database.'}
               ]
-            }
+            },
+            'policies': policies
+
           },
           response: {
             failAction: config.enableResponseFail ? 'error' : 'log',
@@ -253,6 +268,18 @@ module.exports = function (logger, mongoose, server) {
         headersValidation = null;
       }
 
+      var policies = [];
+
+      if (model.routeOptions.policies && config.enablePolicies) {
+        policies = model.routeOptions.policies;
+        policies = (policies.rootPolicies || []).concat(policies.readPolicies || []);
+      }
+
+      if (config.enableDocumentScopes) {
+        policies.push(restHapiPolicies.enforceDocumentScopePre(model, Log));
+        policies.push(restHapiPolicies.enforceDocumentScopePost(model, Log));
+      }
+
       server.route({
         method: 'GET',
         path: '/' + resourceAliasForRoute + '/{_id}',
@@ -270,6 +297,7 @@ module.exports = function (logger, mongoose, server) {
             headers: headersValidation
           },
           plugins: {
+            'model': model,
             'hapi-swagger': {
               responseMessages: [
                 {code: 200, message: 'The resource(s) was/were found successfully.'},
@@ -282,7 +310,8 @@ module.exports = function (logger, mongoose, server) {
                 {code: 500, message: 'There was an unknown error.'},
                 {code: 503, message: 'There was a problem with the database.'}
               ]
-            }
+            },
+            'policies': policies
           },
           response: {
             failAction: config.enableResponseFail ? 'error' : 'log',
@@ -360,6 +389,45 @@ module.exports = function (logger, mongoose, server) {
         headersValidation = null;
       }
 
+      var policies = [];
+
+      if (model.routeOptions.policies && config.enablePolicies) {
+        policies = model.routeOptions.policies;
+        policies = (policies.rootPolicies || []).concat(policies.createPolicies || []);
+      }
+
+      if (config.enableDocumentScopes) {
+        var authorizeDocumentCreator = model.routeOptions.authorizeDocumentCreator === undefined ? config.authorizeDocumentCreator : model.routeOptions.authorizeDocumentCreator;
+        var authorizeDocumentCreatorToRead = model.routeOptions.authorizeDocumentCreatorToRead === undefined ? config.authorizeDocumentCreatorToRead : model.routeOptions.authorizeDocumentCreatorToRead;
+        var authorizeDocumentCreatorToUpdate = model.routeOptions.authorizeDocumentCreatorToUpdate === undefined ? config.authorizeDocumentCreatorToUpdate : model.routeOptions.authorizeDocumentCreatorToUpdate;
+        var authorizeDocumentCreatorToDelete = model.routeOptions.authorizeDocumentCreatorToDelete === undefined ? config.authorizeDocumentCreatorToDelete : model.routeOptions.authorizeDocumentCreatorToDelete;
+        var authorizeDocumentCreatorToAssociate = model.routeOptions.authorizeDocumentCreatorToAssociate === undefined ? config.authorizeDocumentCreatorToAssociate : model.routeOptions.authorizeDocumentCreatorToAssociate;
+
+        if (authorizeDocumentCreator) {
+          policies.push(restHapiPolicies.authorizeDocumentCreator(model, Log));
+        }
+        if (authorizeDocumentCreatorToRead) {
+          policies.push(restHapiPolicies.authorizeDocumentCreatorToRead(model, Log));
+        }
+        if (authorizeDocumentCreatorToUpdate) {
+          policies.push(restHapiPolicies.authorizeDocumentCreatorToUpdate(model, Log));
+        }
+        if (authorizeDocumentCreatorToDelete) {
+          policies.push(restHapiPolicies.authorizeDocumentCreatorToDelete(model, Log));
+        }
+        if (authorizeDocumentCreatorToAssociate) {
+          policies.push(restHapiPolicies.authorizeDocumentCreatorToAssociate(model, Log));
+        }
+
+        if (model.routeOptions.documentScope) {
+          policies.push(restHapiPolicies.addDocumentScope(model, Log));
+        }
+      }
+
+      if (config.enableCreatedBy) {
+        policies.push(restHapiPolicies.addCreatedBy(model, Log));
+      }
+
       server.route({
         method: 'POST',
         path: '/' + resourceAliasForRoute,
@@ -374,6 +442,7 @@ module.exports = function (logger, mongoose, server) {
             headers: headersValidation
           },
           plugins: {
+            'model': model,
             'hapi-swagger': {
               responseMessages: [
                 {code: 201, message: 'The resource was created successfully.'},
@@ -385,7 +454,8 @@ module.exports = function (logger, mongoose, server) {
                 {code: 500, message: 'There was an unknown error.'},
                 {code: 503, message: 'There was a problem with the database.'}
               ]
-            }
+            },
+            'policies': policies
           },
           response: {
             failAction: config.enableResponseFail ? 'error' : 'log',
@@ -453,6 +523,22 @@ module.exports = function (logger, mongoose, server) {
         headersValidation = null;
       }
 
+      var policies = [];
+
+      if (model.routeOptions.policies && config.enablePolicies) {
+        policies = model.routeOptions.policies;
+        policies = (policies.rootPolicies || []).concat(policies.deletePolicies || []);
+      }
+
+      if (config.enableDocumentScopes) {
+        policies.push(restHapiPolicies.enforceDocumentScopePre(model, Log));
+        policies.push(restHapiPolicies.enforceDocumentScopePost(model, Log));
+      }
+
+      if (config.enableDeletedBy && config.enableSoftDelete) {
+        policies.push(restHapiPolicies.addDeletedBy(model, Log));
+      }
+
       server.route({
         method: 'DELETE',
         path: '/' + resourceAliasForRoute + "/{_id}",
@@ -470,6 +556,7 @@ module.exports = function (logger, mongoose, server) {
             headers: headersValidation
           },
           plugins: {
+            'model': model,
             'hapi-swagger': {
               responseMessages: [
                 {code: 200, message: 'The resource was deleted successfully.'},
@@ -482,7 +569,8 @@ module.exports = function (logger, mongoose, server) {
                 {code: 500, message: 'There was an unknown error.'},
                 {code: 503, message: 'There was a problem with the database.'}
               ]
-            }
+            },
+            'policies': policies
           },
           response: {
             //TODO: add a response schema if needed
@@ -556,6 +644,22 @@ module.exports = function (logger, mongoose, server) {
         headersValidation = null;
       }
 
+      var policies = [];
+
+      if (model.routeOptions.policies && config.enablePolicies) {
+        policies = model.routeOptions.policies;
+        policies = (policies.rootPolicies || []).concat(policies.deletePolicies || []);
+      }
+
+      if (config.enableDocumentScopes) {
+        policies.push(restHapiPolicies.enforceDocumentScopePre(model, Log));
+        policies.push(restHapiPolicies.enforceDocumentScopePost(model, Log));
+      }
+
+      if (config.enableDeletedBy && config.enableSoftDelete) {
+        policies.push(restHapiPolicies.addDeletedBy(model, Log));
+      }
+
       server.route({
         method: 'DELETE',
         path: '/' + resourceAliasForRoute,
@@ -570,6 +674,7 @@ module.exports = function (logger, mongoose, server) {
             headers: headersValidation
           },
           plugins: {
+            'model': model,
             'hapi-swagger': {
               responseMessages: [
                 {code: 200, message: 'The resource was deleted successfully.'},
@@ -582,7 +687,8 @@ module.exports = function (logger, mongoose, server) {
                 {code: 500, message: 'There was an unknown error.'},
                 {code: 503, message: 'There was a problem with the database.'}
               ]
-            }
+            },
+            'policies': policies
           },
           response: {
             //TODO: add a response schema if needed
@@ -656,6 +762,22 @@ module.exports = function (logger, mongoose, server) {
         headersValidation = null;
       }
 
+      var policies = [];
+
+      if (model.routeOptions.policies && config.enablePolicies) {
+        policies = model.routeOptions.policies;
+        policies = (policies.rootPolicies || []).concat(policies.updatePolicies || []);
+      }
+
+      if (config.enableDocumentScopes) {
+        policies.push(restHapiPolicies.enforceDocumentScopePre(model, Log));
+        policies.push(restHapiPolicies.enforceDocumentScopePost(model, Log));
+      }
+
+      if (config.enableUpdatedBy) {
+        policies.push(restHapiPolicies.addUpdatedBy(model, Log));
+      }
+
       server.route({
         method: 'PUT',
         path: '/' + resourceAliasForRoute + '/{_id}',
@@ -673,6 +795,7 @@ module.exports = function (logger, mongoose, server) {
             headers: headersValidation
           },
           plugins: {
+            'model': model,
             'hapi-swagger': {
               responseMessages: [
                 {code: 200, message: 'The resource was updated successfully.'},
@@ -685,7 +808,8 @@ module.exports = function (logger, mongoose, server) {
                 {code: 500, message: 'There was an unknown error.'},
                 {code: 503, message: 'There was a problem with the database.'}
               ]
-            }
+            },
+            'policies': policies
           },
           response: {
             failAction: config.enableResponseFail ? 'error' : 'log',
@@ -764,6 +888,18 @@ module.exports = function (logger, mongoose, server) {
         headersValidation = null;
       }
 
+      var policies = [];
+
+      if (ownerModel.routeOptions.policies) {
+        policies = ownerModel.routeOptions.policies;
+        policies = (policies.rootPolicies || []).concat(policies.associatePolicies || []);
+      }
+
+      if (config.enableDocumentScopes) {
+        policies.push(restHapiPolicies.enforceDocumentScopePre(ownerModel, Log));
+        policies.push(restHapiPolicies.enforceDocumentScopePost(ownerModel, Log));
+      }
+
       server.route({
         method: 'PUT',
         path: '/' + ownerAlias + '/{ownerId}/' + childAlias + "/{childId}",
@@ -782,6 +918,8 @@ module.exports = function (logger, mongoose, server) {
             headers: headersValidation
           },
           plugins: {
+            'ownerModel': ownerModel,
+            'association': association,
             'hapi-swagger': {
               responseMessages: [
                 {code: 204, message: 'The association was added successfully.'},
@@ -794,7 +932,8 @@ module.exports = function (logger, mongoose, server) {
                 {code: 500, message: 'There was an unknown error.'},
                 {code: 503, message: 'There was a problem with the database.'}
               ]
-            }
+            },
+            'policies': policies
           },
           response: {
 
@@ -858,6 +997,18 @@ module.exports = function (logger, mongoose, server) {
         headersValidation = null;
       }
 
+      var policies = [];
+
+      if (ownerModel.routeOptions.policies) {
+        policies = ownerModel.routeOptions.policies;
+        policies = (policies.rootPolicies || []).concat(policies.associatePolicies || []);
+      }
+
+      if (config.enableDocumentScopes) {
+        policies.push(restHapiPolicies.enforceDocumentScopePre(ownerModel, Log));
+        policies.push(restHapiPolicies.enforceDocumentScopePost(ownerModel, Log));
+      }
+
       server.route({
         method: 'DELETE',
         path: '/' + ownerAlias + '/{ownerId}/' + childAlias + "/{childId}",
@@ -875,6 +1026,8 @@ module.exports = function (logger, mongoose, server) {
             headers: headersValidation
           },
           plugins: {
+            'ownerModel': ownerModel,
+            'association': association,
             'hapi-swagger': {
               responseMessages: [
                 {code: 204, message: 'The association was deleted successfully.'},
@@ -884,7 +1037,8 @@ module.exports = function (logger, mongoose, server) {
                 {code: 500, message: 'There was an unknown error.'},
                 {code: 503, message: 'There was a problem with the database.'}
               ]
-            }
+            },
+            'policies': policies
           },
           response: {
             // failAction: config.enableResponseFail ? 'error' : 'log',
@@ -970,6 +1124,18 @@ module.exports = function (logger, mongoose, server) {
         headersValidation = null;
       }
 
+      var policies = [];
+
+      if (ownerModel.routeOptions.policies) {
+        policies = ownerModel.routeOptions.policies;
+        policies = (policies.rootPolicies || []).concat(policies.associatePolicies || []);
+      }
+
+      if (config.enableDocumentScopes) {
+        policies.push(restHapiPolicies.enforceDocumentScopePre(ownerModel, Log));
+        policies.push(restHapiPolicies.enforceDocumentScopePost(ownerModel, Log));
+      }
+
       server.route({
         method: 'POST',
         path: '/' + ownerAlias + '/{ownerId}/' + childAlias,
@@ -987,6 +1153,8 @@ module.exports = function (logger, mongoose, server) {
             headers: headersValidation
           },
           plugins: {
+            'ownerModel': ownerModel,
+            'association': association,
             'hapi-swagger': {
               responseMessages: [
                 {code: 204, message: 'The association was set successfully.'},
@@ -996,7 +1164,8 @@ module.exports = function (logger, mongoose, server) {
                 {code: 500, message: 'There was an unknown error.'},
                 {code: 503, message: 'There was a problem with the database.'}
               ]
-            }
+            },
+            'policies': policies
           },
           response: {
             // failAction: config.enableResponseFail ? 'error' : 'log',
@@ -1039,9 +1208,8 @@ module.exports = function (logger, mongoose, server) {
 
       var payloadValidation = Joi.array().items(Joi.objectId()).required();
 
-      if (!config.enablePayloadValidation) {
-        payloadValidation = Joi.alternatives().try(payloadValidation, Joi.any());
-      }
+      payloadValidation = config.enablePayloadValidation ? payloadValidation : Joi.any();
+      payloadValidation = payloadValidation.description("An array of _ids to remove.")
 
       var auth = false;
 
@@ -1065,6 +1233,18 @@ module.exports = function (logger, mongoose, server) {
         headersValidation = null;
       }
 
+      var policies = [];
+
+      if (ownerModel.routeOptions.policies) {
+        policies = ownerModel.routeOptions.policies;
+        policies = (policies.rootPolicies || []).concat(policies.associatePolicies || []);
+      }
+
+      if (config.enableDocumentScopes) {
+        policies.push(restHapiPolicies.enforceDocumentScopePre(ownerModel, Log));
+        policies.push(restHapiPolicies.enforceDocumentScopePost(ownerModel, Log));
+      }
+
       server.route({
         method: 'DELETE',
         path: '/' + ownerAlias + '/{ownerId}/' + childAlias,
@@ -1082,6 +1262,8 @@ module.exports = function (logger, mongoose, server) {
             headers: headersValidation
           },
           plugins: {
+            'ownerModel': ownerModel,
+            'association': association,
             'hapi-swagger': {
               responseMessages: [
                 {code: 204, message: 'The association was set successfully.'},
@@ -1091,7 +1273,8 @@ module.exports = function (logger, mongoose, server) {
                 {code: 500, message: 'There was an unknown error.'},
                 {code: 503, message: 'There was a problem with the database.'}
               ]
-            }
+            },
+            'policies': policies
           },
           response: {
             // failAction: config.enableResponseFail ? 'error' : 'log',
@@ -1171,6 +1354,18 @@ module.exports = function (logger, mongoose, server) {
         headersValidation = null;
       }
 
+      var policies = [];
+
+      if (ownerModel.routeOptions.policies) {
+        policies = ownerModel.routeOptions.policies;
+        policies = (policies.rootPolicies || []).concat(policies.readPolicies || []);
+      }
+
+      if (config.enableDocumentScopes) {
+        policies.push(restHapiPolicies.enforceDocumentScopePre(ownerModel, Log));
+        policies.push(restHapiPolicies.enforceDocumentScopePost(ownerModel, Log));
+      }
+
       server.route({
         method: 'GET',
         path: '/' + ownerAlias + '/{ownerId}/' + childAlias,
@@ -1188,6 +1383,8 @@ module.exports = function (logger, mongoose, server) {
             headers: headersValidation
           },
           plugins: {
+            'ownerModel': ownerModel,
+            'association': association,
             'hapi-swagger': {
               responseMessages: [
                 {code: 200, message: 'The association was set successfully.'},
@@ -1197,7 +1394,8 @@ module.exports = function (logger, mongoose, server) {
                 {code: 500, message: 'There was an unknown error.'},
                 {code: 503, message: 'There was a problem with the database.'}
               ]
-            }
+            },
+            'policies': policies
           },
           response: {
             failAction: config.enableResponseFail ? 'error' : 'log',

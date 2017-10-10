@@ -170,20 +170,19 @@ function _listHandler(model, request, Log) {
                         return result
                       });
 
-
                       const pages = {
-                        current: query.$page || 1,
-                        prev: 0,
-                        hasPrev: false,
-                        next: 0,
-                        hasNext: false,
-                        total: 0
+                          current: query.$page || 1,
+                          prev: 0,
+                          hasPrev: false,
+                          next: 0,
+                          hasNext: false,
+                          total: 0
                       };
                       const items = {
-                        limit: query.$limit,
-                        begin: (((query.$page || 1) * query.$limit) - query.$limit) + 1,
-                        end: (query.$page || 1) * query.$limit,
-                        total: count
+                          limit: query.$limit,
+                          begin: (((query.$page || 1) * query.$limit) - query.$limit) + 1,
+                          end: (query.$page || 1) * query.$limit,
+                          total: count
                       };
 
                       pages.total = Math.ceil(count / query.$limit);
@@ -450,7 +449,6 @@ function _createHandler(model, request, Log) {
           if (config.enableCreatedAt) {
             payload.forEach(function(item) {
               item.createdAt = new Date();
-              item.updatedAt = new Date();
             });
           }
 
@@ -704,7 +702,15 @@ function _deleteOneHandler(model, _id, hardDelete, request, Log) {
     return promise
         .then(function () {
           if (config.enableSoftDelete && !hardDelete) {
-            promise = model.findByIdAndUpdate(_id, { isDeleted: true, deletedAt: new Date() }, {new: true});
+            let payload = { isDeleted: true };
+            if (config.enableDeletedAt) {
+              payload.deletedAt = new Date();
+            }
+            let deletedBy = request.payload.deletedBy || request.payload[0].deletedBy;
+            if (deletedBy) {
+              payload.deletedBy = deletedBy;
+            }
+            promise = model.findByIdAndUpdate(_id, payload, {new: true});
           }
           else {
             promise = model.findByIdAndRemove(_id);

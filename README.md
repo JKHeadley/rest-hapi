@@ -14,9 +14,10 @@ rest-hapi is a hapi plugin intended to abstract the work involved in setting up 
 * Automatic generation of [CRUD](#creating-endpoints) endpoints with [middleware](#middleware) support
 * Automatic generation of [association](#associations) endpoints
 * [joi](https://github.com/hapijs/joi) [validation](#validation)
-* Built in [authorization](#authorization)
+* Built in route-level and document-level [authorization](#authorization)
 * [Swagger docs](#swagger-documentation) for all generated endpoints via [hapi-swagger](https://github.com/glennjones/hapi-swagger)
 * [Query parameter](#querying) support for searching, sorting, filtering, pagination, and embedding of associated models
+* Support for [policies](#policies) via [mrhorse](https://github.com/mark-bradshaw/mrhorse)
 * Support for ["soft" delete](#soft-delete)
 * Built in [metadata](#metadata)
 * Mongoose [wrapper methods](#mongoose-wrapper-methods)
@@ -67,12 +68,18 @@ rest-hapi-demo: http://ec2-52-25-112-131.us-west-2.compute.amazonaws.com:8124
     * [CRUD](#crud)
     * [Association](#association)
 - [Authorization](#authorization)
-    * [Route scopes](#route-scopes)
-    * [Generating scopes](#generating-scopes)
-    * [Disabling scopes](#disabling-scopes)
+    * [Route authorization](#route-authorization)
+      - [Generating route scopes](#generating-route-scopes)
+      - [Disabling route scopes](#disabling-route-scopes)
+    * [Document authorization](#document-authorization)
+- [Policies](#policies)
+    * [Policies vs middleware](#policies-vs-middleware)
+    * [Example: custom authorization via policies](#example-custom-authorization-via-policies)
 - [Mongoose wrapper methods](#mongoose-wrapper-methods)
 - [Soft delete](#soft-delete)
 - [Metadata](#metadata)
+    * [Timestamps](#timestamps)
+    * [User tags](#user-tags)
 - [Model generation](#model-generation)
 - [Testing](#testing)
 - [License](#license)
@@ -149,15 +156,13 @@ You can then run ``$ node api.js`` and point your browser to [http://localhost:8
 
 ## Configuration
 
-Configuration of the generated API is handled through the ``restHapi.config`` object.  Below is a description of the current configuration options/properties.
+Configuration of rest-hapi is handled through the ``restHapi.config`` object.  Below is a description of the current configuration options/properties.
 
 ```javascript
 /**
- * config.js - Configuration settings for the generated API
+ * config.js - Configuration settings for rest-hapi
  */
 var config = {};
-config.server = {};
-config.mongo = {};
 
 /**
  * Your app title goes here.
@@ -173,12 +178,14 @@ config.version = '1.0.0';
 
 /**
  * Flag signifying whether the absolute path to the models directory is provided
+ * default: false
  * @type {boolean}
  */
 config.absoluteModelPath = false;
 
 /**
- * Path to the models directory (default 'models')
+ * Path to the models directory
+ * default: 'models'
  * @type {string}
  */
 config.modelPath = 'models';
@@ -190,7 +197,8 @@ config.modelPath = 'models';
 config.absoluteApiPath = false;
 
 /**
- * Path to the directory for additional endpoints (default 'api')
+ * Path to the directory for additional endpoints
+ * default: 'api'
  * @type {string}
  */
 config.apiPath = 'api';
@@ -212,7 +220,8 @@ config.mongo.URI = 'mongodb://localhost/rest_hapi';
 
 /**
  * Authentication strategy to be used for all generated endpoints.
- * Set to false for no authentication (default).
+ * Set to false for no authentication.
+ * default: false
  * @type {boolean/string}
  */
 config.authStrategy = false;
@@ -232,16 +241,111 @@ config.embedAssociations = false;
 
 /**
  * MetaData options:
- * default: true
- * @type {boolean}
+ * - createdAt: (default: true) date specifying when the document was created.
+ * - updatedAt: (default: true) date specifying when the document was last updated.
+ * - deletedAt: (default: true) date specifying when the document was soft deleted.
+ * - createdBy: (default: false) _id of user that created the document.
+ * - updatedBy: (default: false) _id of user that last updated the document.
+ * - updatedBy: (default: false) _id of user that soft deleted the document.
  */
 config.enableCreatedAt = true;
 config.enableUpdatedAt = true;
+config.enableDeletedAt = true;
+config.enableCreatedBy = false;
+config.enableUpdatedBy = false;
+config.enableDeletedBy = false;
+
+/**
+ * Enables policies via mrhorse (https://github.com/mark-bradshaw/mrhorse).
+ * default: false
+ * @type {boolean}
+ */
+config.enablePolicies = false;
+
+/**
+ * Flag signifying whether the absolute path to the policies directory is provided.
+ * default: false
+ * @type {boolean}
+ */
+config.absolutePolicyPath = false;
+
+/**
+ * Path to the directory for mrhorse policies (https://github.com/mark-bradshaw/mrhorse).
+ * default: 'policies'
+ * @type {string}
+ */
+config.policyPath = 'policies';
+
+/**
+ * Enables document level authorization.
+ * default: true
+ * @type {boolean}
+ */
+config.enableDocumentScopes = true;
+
+/**
+ * If true, modifies the root scope of any document to allow access to the document's creator.
+ * The scope value added is in the form: "user-{_id}" where "{_id}" is the _id of the user.
+ * NOTE:
+ * - This assumes that your authentication credentials (request.auth.credentials) will contain either
+ * a "user" object with a "_id" property, or the user's _id stored in a property defined by "config.userIdKey".
+ * - This also assumes that the user creating the document will have "user-{_id}" within their scope.
+ * - Requires "config.enableDocumentScopes" to be "true".
+ * - This setting can be individually overwritten by setting the "authorizeDocumentCreator" routeOptions property.
+ * default: false
+ * @type {boolean}
+ */
+config.authorizeDocumentCreator = false;
+
+/**
+ * Same as "authorizeDocumentCreator", but modifies the "readScope" rather than the root scope.
+ * default: false
+ * @type {boolean}
+ */
+config.authorizeDocumentCreatorToRead = false;
+
+/**
+ * Same as "authorizeDocumentCreator", but modifies the "updateScope" rather than the root scope.
+ * default: false
+ * @type {boolean}
+ */
+config.authorizeDocumentCreatorToUpdate = false;
+
+/**
+ * Same as "authorizeDocumentCreator", but modifies the "deleteScope" rather than the root scope.
+ * default: false
+ * @type {boolean}
+ */
+config.authorizeDocumentCreatorToDelete = false;
+
+/**
+ * Same as "authorizeDocumentCreator", but modifies the "associateScope" rather than the root scope.
+ * default: false
+ * @type {boolean}
+ */
+config.authorizeDocumentCreatorToAssociate = false;
+
+/**
+ * This is the path/key to the user _id stored in your request.auth.credentials object.
+ * default: "user._id"
+ * @type {string}
+ */
+config.userIdKey = "user._id";
+
+/**
+ * Determines what action takes place when one or more document scope checks fail for requests dealing with multiple
+ * documents (Ex: deleteMany or list). Options are:
+ * - true: if one or more documents fail, the request responds with a 403.
+ * - false: documents that don't pass are simply removed from the request (Ex: not deleted or not retrieved)
+ * default: false
+ * @type {boolean}
+ */
+config.enableDocumentScopeFail = false;
 
 /**
  * Flag specifying whether to text index all string fields for all models to enable text search.
  * WARNING: enabling this adds overhead to add inserts and updates, as well as added storage requirements.
- * Default is false.
+ * default: false.
  * @type {boolean}
  */
 config.enableTextSearch = false;
@@ -267,9 +371,9 @@ config.enablePayloadValidation = true;
 config.enableResponseValidation = true;
 
 /**
- * Determines the hapi failAction of each response. If true, responses that fail validation will return
- * a 500 error.  If set to false, responses that fail validation will just log the offense and send
- * the response as-is.
+ * Determines the hapi failAction of each response. Options are:
+ * - true: responses that fail validation will return a 500 error.
+ * - false: responses that fail validation will just log the offense and send the response as-is.
  * default: false
  * @type {boolean}
  */
@@ -279,9 +383,18 @@ config.enableResponseFail = false;
  * If set to true, (and authStrategy is not false) then endpoints will be generated with pre-defined
  * scopes based on the model definition.
  * default: false
+ * @deprecated since v0.29.0, use "config.generateRouteScopes" instead
  * @type {boolean}
  */
 config.generateScopes = false;
+
+/**
+ * If set to true, (and authStrategy is not false) then endpoints will be generated with pre-defined
+ * scopes based on the model definition.
+ * default: false
+ * @type {boolean}
+ */
+config.generateRouteScopes = false;
 
 /**
  * If set to true, the scope for each endpoint will be logged when then endpoint is generated.
@@ -313,6 +426,7 @@ config.loglevel = "DEBUG";
 /**
  * Determines the initial expansion state of the swagger docs
  * - options: 'none', 'list', 'full' (default: 'none')
+ * default: 'none'
  * @type {string}
  */
 config.docExpansion = 'none';
@@ -1599,10 +1713,16 @@ Association middleware is defined similar to CRUD middleware, with the only diff
 [Back to top](#readme-contents)
 
 ## Authorization
-### Route scopes
-rest-hapi takes advantage of the ``scope`` property within the ``auth`` route config object of a hapi endpoint.  Each generated endpoint has its ``scope`` property set based on model properties within the ``routeOptions.scope`` object. There are three types of scopes that can be set: a general scope property, action scope properties, and association scope properties. A description of these can be seen below.
+### Route authorization
+rest-hapi takes advantage of the ``scope`` property within the ``auth`` route config object of a hapi endpoint. When a request is made, an endpoint's scope (if it is populated) is compared to the user's scope (stored in `request.auth.credentials.scope`) to determine if the requesting user is authorized to access the endpoint. Below is an quote from the hapi docs describing scopes in more detail:
 
-The first type of scope is a ``scope`` property that, when set, is applied to all generated endpoints for that model. 
+> scope - the application scope required to access the route. Value can be a scope string or an array of scope strings. The authenticated credentials object scope property must contain at least one of the scopes defined to access the route. If a scope string begins with a + character, that scope is required. If a scope string begins with a ! character, that scope is forbidden. For example, the scope ['!a', '+b', 'c', 'd'] means the incoming request credentials' scope must not include 'a', must include 'b', and must include one of 'c' or 'd'. You may also access properties on the request object (query and params) to populate a dynamic scope by using {} characters around the property name, such as 'user-{params.id}'. Defaults to false (no scope requirements).
+
+In rest-hapi, each generated endpoint has its ``scope`` property set based on model properties within the ``routeOptions.routeScope`` object. There are three types of scopes that can be set: a root scope property, action scope properties, and association scope properties. A description of these can be seen below.
+
+**NOTE:** As of v0.29.0 `routeOptions.scope` and `routeOptions.scope.scope` have been deprecated and replaced with `routeOptions.routeScope` and `routeOptions.routeScope.rootScope`
+
+The first type of scope is a ``rootScope`` property that, when set, is applied to all generated endpoints for that model. 
 
 The second is an action specific scope property that only applies to endpoints corresponding with the action. A list of these action scope properties can be seen below:
 
@@ -1612,7 +1732,7 @@ The second is an action specific scope property that only applies to endpoints c
 * ``deleteScope``: value is added to the scope of any endpoint that deletes documents
 * ``associateScope``: value is added to the scope of any endpoint that modifies an association
 
-The third type of scope is property that relates to a specific association action, with an action prefix of ``add``, ``remove``, or ``get``.  These scope properties are specific to the associations defined in the model and take the form of :
+The third type of scope is property that relates to a specific association action, with an action prefix of ``add``, ``remove``, or ``get``.  These scope properties are specific to the associations defined in the model and take the form of:
 
 -{action}{modelName}{associationName}Scope
 
@@ -1641,8 +1761,8 @@ module.exports = function (mongoose) {
   Schema.statics = {
     collectionName: modelName
     routeOptions: {
-      scope: {
-        scope: "Admin",
+      routeScope: {
+        rootScope: "Admin",
         readScope: "User",
         addUserGroupsScope: "Project Lead"
       },
@@ -1657,15 +1777,15 @@ module.exports = function (mongoose) {
   };
   
   return Schema;
-};
+};r
 ```
 
-**NOTE** Use of scope properties requires that an authentication strategy be defined and implemented. If the ``config.authStrategy`` property is set to ``false``, then no scopes will be applied, even if they are defined in the model.  For an example of scopes in action, check out [appy](https://github.com/JKHeadley/appy):
+**NOTE:** Use of route scope properties requires that an authentication strategy be defined and implemented. If the ``config.authStrategy`` property is set to ``false``, then no route scopes will be applied, even if they are defined in the model.  For an example of route scopes in action, check out [appy](https://github.com/JKHeadley/appy):
 
-### Generating scopes
-If the ``config.generateScopes`` property is set to true, then generated endpoints will come pre-defined with scope values.  These values will exist in addition to any scope values defined in the ``routeOptions.scope`` object. For instance, the tables below show two possibilities for the user model scope: the first is with no model scope defined, and the second is with a model scope defined as in the example above.
+#### Generating route scopes
+If the ``config.generateScopes`` property is set to true, then generated endpoints will come pre-defined with scope values.  These values will exist in addition to any route scope values defined in the ``routeOptions.routeScope`` object. For instance, the tables below show two possibilities for the user model scope: the first is with no model route scope defined, and the second is with a model route scope defined as in the example above.
 
-#### Without Model Scope Defined
+##### Without Model Route Scope Defined
 
 Endpoint | Scope
 --- | ---
@@ -1681,7 +1801,7 @@ DELETE /user/{ownerId}/group | [ 'root', 'associate', 'associateUser', 'removeUs
 PUT /user/{ownerId}/group/{childId} | [ 'root', 'associate', 'associateUser', 'addUserGroups' ]
 DELETE /user/{ownerId}/group/{childId} | [ 'root', 'associate', 'associateUser', 'removeUserGroups' ]
 
-#### With Model Scope Defined
+##### With Model Route Scope Defined
 
 Endpoint | Scope
 --- | ---
@@ -1697,8 +1817,9 @@ DELETE /user/{ownerId}/group | [ 'root', 'Admin', 'associate', 'associateUser', 
 PUT /user/{ownerId}/group/{childId} | [ 'root', 'Admin', 'associate', 'associateUser', 'addUserGroups', 'Project Lead' ]
 DELETE /user/{ownerId}/group/{childId} | [ 'root', 'Admin', 'associate', 'associateUser', 'removeUserGroups' ]
 
-### Disabling scopes
+#### Disabling route scopes
 Authentication (and as such Authorization) can be disabled for certain routes by adding a property under a model's ``routeOptions`` property with the value set to ``false``.  Below is a list of options and their effects:
+
 
 Property | Effect
 --- | ---
@@ -1707,6 +1828,219 @@ readAuth: false | auth is disabled for any endpoint that retrieves documents and
 updateAuth: false | auth is disabled for any endpoint that directly updates documents
 deleteAuth: false | auth is disabled for any endpoint that deletes documents
 associateAuth: false | auth is disabled for any endpoint that modifies an association
+
+### Document authorization
+In addition to route-level authorization, rest-hapi supports document-specific authorization. For consistency, document authorization is implemented through the use of scopes similar to the hapi scope system. To enable document scopes, `config.enableDocumentScopes` must be set to `true`. Once set, the `scope` field shown below will be added to the schema of every model:
+
+```javascript
+{
+   scope: {
+     rootScope: {
+       type: [Types.String]
+     },
+     readScope: {
+       type: [Types.String]
+     },
+     updateScope: {
+       type: [Types.String]
+     },
+     deleteScope: {
+       type: [Types.String]
+     },
+     associateScope: {
+       type: [Types.String]
+     },
+     type: Types.Object,
+     allowOnUpdate: false,
+     allowOnCreate: false
+   }
+};
+```
+If a document's `scope` property is populated with values, it will be compared to a requesting user's scope to determine whether the user is authorized to perform a certain action on the document. For example, if the document's `scope` property looked like the following:
+
+```javascript
+scope: {
+   rootScope: ['Admin']
+   readScope: ['User']
+}
+```
+
+Then users with the `Admin` scope value would have full access to the document while users with the `User` scope value would only have read access. Users without either scope value would have no access to the document.
+
+rest-hapi provides several options for populating a document's scope. One option is through the `routeOptions.documentScope` property. Any values added to this property will be copied over to a document's `scope` property upon its creation. 
+
+Another option is to set `config.authorizeDocumentCreator` to `true`. Setting this option will add the \_id of the user who created the document to the document's `rootScope` property (in the form of `user-{_id}`, where `{_id}` is the \_id of the user). Assuming `user-{_id}` is in the user's scope, this will grant the user full access to any document the user creates. Consider the example document below created by a user with an \_id of `59d93c673401e16f0f66a5d4`:
+
+```javascript
+name: "Test doc",
+scope: {
+   rootScope: ['user-59d93c673401e16f0f66a5d4']
+}
+```
+
+This document scope will allow the user with `user-59d93c673401e16f0f66a5d4` in their scope full access while all other users will be denied.
+
+For more details and alternatives to this option see the config docs below:
+
+```javascript
+/**
+ * If true, modifies the root scope of any document to allow access to the document's creator.
+ * The scope value added is in the form: "user-{_id}" where "{_id}" is the _id of the user.
+ * NOTE:
+ * - This assumes that your authentication credentials (request.auth.credentials) will contain either
+ * a "user" object with a "_id" property, or the user's _id stored in a property defined by "config.userIdKey".
+ * - This also assumes that the user creating the document will have "user-{_id}" within their scope.
+ * - Requires "config.enableDocumentScopes" to be "true".
+ * - This setting can be individually overwritten by setting the "authorizeDocumentCreator" routeOptions property.
+ * default: false
+ * @type {boolean}
+ */
+config.authorizeDocumentCreator = false;
+
+/**
+ * Same as "authorizeDocumentCreator", but modifies the "readScope" rather than the root scope.
+ * default: false
+ * @type {boolean}
+ */
+config.authorizeDocumentCreatorToRead = false;
+
+/**
+ * Same as "authorizeDocumentCreator", but modifies the "updateScope" rather than the root scope.
+ * default: false
+ * @type {boolean}
+ */
+config.authorizeDocumentCreatorToUpdate = false;
+
+/**
+ * Same as "authorizeDocumentCreator", but modifies the "deleteScope" rather than the root scope.
+ * default: false
+ * @type {boolean}
+ */
+config.authorizeDocumentCreatorToDelete = false;
+
+/**
+ * Same as "authorizeDocumentCreator", but modifies the "associateScope" rather than the root scope.
+ * default: false
+ * @type {boolean}
+ */
+config.authorizeDocumentCreatorToAssociate = false;
+
+/**
+ * This is the path/key to the user _id stored in your request.auth.credentials object.
+ * default: "user._id"
+ * @type {string}
+ */
+config.userIdKey = "user._id";
+```
+
+[Back to top](#readme-contents)
+
+## Policies
+rest-hapi comes with built-in support for policies via the [mrhorse](https://github.com/mark-bradshaw/mrhorse) plugin. Policies provide a powerful method of applying the same business logic to multiple routes declaratively. They can be inserted at any point in the [hapi request lifecycle](https://hapijs.com/api#request-lifecycle), allowing you to layer your business logic in a clean, organized, and centralized manner. We highly recommend you learn more about the details and benefits of policies in the [mrhorse readme](https://github.com/mark-bradshaw/mrhorse).
+
+Internally, rest-hapi uses policies to implement features such as [document authorization](#document-authorization) and certain [metadata](#user-tags).
+
+You can enable your own custom policies in rest-hapi by setting `config.enablePolicies` to `true` and adding your policy files to your `policies` directory. You can then apply policies to your generated routes through the `routeOptions.policies` property, which has the following structure:
+
+```javascript
+routeOptions: {
+   policies: {
+      rootPolicies: [/* policies applied to all routes for this model */],
+      createPolicies: [/* policies applied to any endpoint that creates model documents */],
+      readPolicies: [/* policies applied to any endpoint that retrieves documents and can be queried against */],
+      updatePolicies: [/* policies applied to any endpoint that directly updates documents */],
+      deletePolicies: [/* policies applied to any endpoint that deletes documents */],
+      associatePolicies: [/* policies applied to any endpoint that modifies an association */],
+   }
+}
+```
+
+**NOTE:** If your ``policies`` directory is not in your projects root directory, you will need to specify the path (relative to your projects root directory) by assigning the path to the ``config.policyPath`` property and you will need to set the ``config.absolutePolicyPath`` property to ``true``.
+
+**NOTE:** You can access the current model within a policy function through `request.route.settings.plugins.model` (see the [example](#example-custom-authorization-via-policies) below).
+
+### Policies vs middleware
+Since policies and [middleware functions](#middleware) seem to provide similar funcitonality, it's important to understand their differences in order to determine which is best suited for your use case. Listed below are a few of the major differences:
+
+Policies | Middleware
+--- | ---
+Policies are most useful when applied to multiple routes for multiple models, which is why they are located in a centralized place | Middleware functions are meant to be both model and endpoint specific
+Policies are only active when an endpoint is called | Middleware functions are active when either an endpoint is called or when a [wrapper method](#mongoose-wrapper-methods) is used
+Policies can run before (`onPreHandler`) or after (`onPostHander`) the handler function | Since middleware functions are run as part of the handler, a `pre` middleware function will run after any `onPreHandler` policy, and a `post` middlware function will run before any `onPostHandler` policy
+
+### Example: custom authorization via policies
+To provide an example of the power of policies within rest-hapi, consider the following example:
+
+A developer wants to implement document authorization, but wants to maintain control over the implementation and have the option of providing functionality outside of what is available with rest-hapi's built in [document authorization](#document-authorization). They want to only allow the user that creates a document to be able to modify the document. They decide to implement this via the policy below (`docAuth.js`).
+
+```javascript
+'use strict';
+
+const Boom = require('boom');
+
+let docAuth = function(request, reply, next) {
+    let Log = request.logger;
+    try {
+        let model = request.route.settings.plugins.model;
+
+        let userId = request.auth.credentials.user._id;
+
+        return model.findById(request.params._id)
+            .then(function(document) {
+                if (document && document.createdBy.toString() === userId.toString()) {
+                    return next(null, true);
+                }
+                else {
+                    return next(Boom.notFound("No resource was found with that id."), false);
+                }
+            })
+
+    }
+    catch (err) {
+        Log.error("ERROR", err);
+        return next(Boom.badImplementation(err), false);
+    }
+};
+
+docAuth.applyPoint = 'onPreHandler';
+
+module.exports = docAuth;
+```
+**NOTE:** This assumes that `config.enableCreatedBy` is set to `true`.
+
+They can then apply this policy to their model routes like so:
+
+``/models/blog.model.js``:
+
+```javascript
+'use strict';
+
+module.exports = function (mongoose) {
+  var modelName = "blog";
+  var Types = mongoose.Schema.Types;
+  var Schema = new mongoose.Schema({
+    title: {
+      type: Types.String,
+      required: true
+    },
+    description: {
+      type: Types.String
+    }
+  });
+
+  Schema.statics = {
+    collectionName:modelName,
+    routeOptions: {
+      policies: {
+         updatePolicies: ['docAuth'],
+         deletePolicies: ['docAuth']
+      }
+    }
+  };
+
+  return Schema;
+};
+```
 
 [Back to top](#readme-contents)
 
@@ -1860,7 +2194,7 @@ function getAll(ownerModel, ownerId, childModel, associationName, query, Log) {.
 [Back to top](#readme-contents)
 
 ## Soft delete
-rest-hapi supports soft delete functionality for documents.  When the ``enableSoftDelete`` config property is set to ``true``, documents will gain an ``isDeleted`` property when they are created that will be set to ``false``.  Whenever that document is deleted (via a rest-hapi endpoint or method), the document will remain in the collection, its ``isDeleted`` property will be set to ``true``, and the ``deletedAt`` property will be populated.  
+rest-hapi supports soft delete functionality for documents.  When the ``enableSoftDelete`` config property is set to ``true``, documents will gain an ``isDeleted`` property when they are created that will be set to ``false``.  Whenever that document is deleted (via a rest-hapi endpoint or method), the document will remain in the collection, its ``isDeleted`` property will be set to ``true``, and the ``deletedAt`` and ``deletedBy`` properties (if enabled) will be populated.  
 
 "Hard" deletion is still possible when soft delete is enabled. In order to hard delete a document (i.e. remove a document from it's collection) via the api, a payload must be sent with the ``hardDelete`` property set to ``true``. 
 
@@ -1871,10 +2205,11 @@ The rest-hapi delete methods include a ``hardDelete`` flag as a parameter. The f
 [Back to top](#readme-contents)
 
 ## Metadata
-rest-hapi supports the following optional metadata:
-- createdAt (default enabled)
-- updatedAt (default enabled)
-- deletedAt (default disabled) (see [Soft delete](#soft-delete))
+### Timestamps
+rest-hapi supports the following optional timestamp metadata:
+- createdAt (default enabled, activated via `config.enableCreatedAt`)
+- updatedAt (default enabled, activated via `config.enableUpdatedAt`)
+- deletedAt (default enabled, activated via `config.enableDeletedAt`) (see [Soft delete](#soft-delete))
 
 When enabled, these properties will automatically be populated during CRUD operations. For example, say I create a user with a payload of:
 
@@ -1891,8 +2226,7 @@ If I then query for this document I might get:
  {
     "_id": "588077dfe8b75a830dc53e8b",
     "email": "test@email.com",
-    "createdAt": "2017-01-19T08:25:03.577Z",
-    "updatedAt": "2017-01-19T08:25:03.577Z"
+    "createdAt": "2017-01-19T08:25:03.577Z"
  }
 ```
 
@@ -1909,12 +2243,24 @@ If I later update that user's email then an additional query might return:
 
 The ``deletedAt`` property marks when a document was [soft deleted](#soft-delete).
 
-**NOTE**: Metadata properties are only set/updated if the document is created/modified using rest-hapi endpoints/methods.
+**NOTE**: Timestamp metadata properties are only set/updated if the document is created/modified using rest-hapi endpoints/methods.
 Ex: 
 
 ``mongoose.model('user').findByIdAndUpdate(_id, payload)`` will not modify ``updatedAt`` whereas
 
 ``restHapi.update(mongoose.model('user'), _id, payload)`` will. (see [Mongoose wrapper methods](#mongoose-wrapper-methods))
+
+### User tags
+In addition to timestamps, the following user tag metadata can be added to a document:
+- createdBy (default disabled, activated via `config.enableCreatedBy`)
+- updatedBy (default disabled, activated via `config.enableUpdatedBy`)
+- deletedBy (default disabled, activated via `config.enableDeletedBy`) (see [Soft delete](#soft-delete))
+
+If enabled, these properties will record the `_id` of the user performing the corresponding action. 
+
+This assumes that your authentication credentials (request.auth.credentials) will contain either a `user` object with a `\_id` property, or the user's \_id stored in a property defined by `config.userIdKey`.
+
+**NOTE**: Unlike timestamp metadata, user tag properties are only set/updated if the document is created/modified using rest-hapi endpoints, (not rest-hapi [methods](#mongoose-wrapper-methods)).
 
 [Back to top](#readme-contents)
 
