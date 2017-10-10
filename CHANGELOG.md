@@ -110,7 +110,7 @@ post(hardDelete, deleted, Log) | post(hardDelete, deleted, request, Log)
 
 
 
-[Unreleased]: https://github.com/jkheadley/rest-hapi/compare/v0.28.0...HEAD
+[Unreleased]: https://github.com/jkheadley/rest-hapi/compare/v0.29.0...HEAD
 [0.20.0]: https://github.com/jkheadley/rest-hapi/compare/v0.19.2...v0.20.0
 [0.20.2]: https://github.com/jkheadley/rest-hapi/compare/v0.20.0...v0.20.2
 [0.20.3]: https://github.com/jkheadley/rest-hapi/compare/v0.20.2...v0.20.3
@@ -122,5 +122,6 @@ post(hardDelete, deleted, Log) | post(hardDelete, deleted, request, Log)
 [0.26.0]: https://github.com/jkheadley/rest-hapi/compare/v0.25.0...v0.26.0
 [0.27.0]: https://github.com/jkheadley/rest-hapi/compare/v0.26.0...v0.27.0
 [0.28.0]: https://github.com/jkheadley/rest-hapi/compare/v0.27.0...v0.28.0
+[0.29.0]: https://github.com/jkheadley/rest-hapi/compare/v0.28.0...v0.29.0
 
 [BREAKING]: https://github.com/JKHeadley/rest-hapi/releases
