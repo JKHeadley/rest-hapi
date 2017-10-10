@@ -158,6 +158,10 @@ module.exports = function (logger, mongoose, server) {
         headersValidation = null;
       }
 
+      let tags = [];
+      if (model.routeOptions.enableReadSwagger !== false) {
+          tags = ['api', collectionName];
+      }
 
       server.route({
         method: 'GET',
@@ -166,7 +170,7 @@ module.exports = function (logger, mongoose, server) {
           handler: handler,
           auth: auth,
           description: 'Get a list of ' + collectionName + 's',
-          tags: ['api', collectionName],
+          tags: tags,
           cors: config.cors,
           validate: {
             query: queryModel,
@@ -253,6 +257,11 @@ module.exports = function (logger, mongoose, server) {
         headersValidation = null;
       }
 
+      let tags = [];
+      if (model.routeOptions.enableReadSwagger !== false) {
+          tags = ['api', collectionName];
+      }
+
       server.route({
         method: 'GET',
         path: '/' + resourceAliasForRoute + '/{_id}',
@@ -260,7 +269,7 @@ module.exports = function (logger, mongoose, server) {
           handler: handler,
           auth: auth,
           description: 'Get a specific ' + collectionName,
-          tags: ['api', collectionName],
+          tags: tags,
           cors: config.cors,
           validate: {
             query: queryModel,
@@ -360,6 +369,11 @@ module.exports = function (logger, mongoose, server) {
         headersValidation = null;
       }
 
+      let tags = [];
+      if (model.routeOptions.enableCreateSwagger !== false) {
+          tags = ['api', collectionName];
+      }
+
       server.route({
         method: 'POST',
         path: '/' + resourceAliasForRoute,
@@ -368,7 +382,7 @@ module.exports = function (logger, mongoose, server) {
           auth: auth,
           cors: config.cors,
           description: 'Create one or more new ' + collectionName + 's',
-          tags: ['api', collectionName],
+          tags: tags,
           validate: {
             payload: createModel,
             headers: headersValidation
@@ -453,7 +467,12 @@ module.exports = function (logger, mongoose, server) {
         headersValidation = null;
       }
 
-      server.route({
+      let tags = [];
+      if (model.routeOptions.enableDeleteSwagger !== false) {
+          tags = ['api', collectionName];
+      }
+
+        server.route({
         method: 'DELETE',
         path: '/' + resourceAliasForRoute + "/{_id}",
         config: {
@@ -461,7 +480,7 @@ module.exports = function (logger, mongoose, server) {
           auth: auth,
           cors: config.cors,
           description: 'Delete a ' + collectionName,
-          tags: ['api', collectionName],
+          tags: tags,
           validate: {
             params: {
               _id: Joi.objectId().required()
@@ -556,7 +575,12 @@ module.exports = function (logger, mongoose, server) {
         headersValidation = null;
       }
 
-      server.route({
+      let tags = [];
+      if (model.routeOptions.enableDeleteSwagger !== false) {
+          tags = ['api', collectionName];
+      }
+
+        server.route({
         method: 'DELETE',
         path: '/' + resourceAliasForRoute,
         config: {
@@ -564,7 +588,7 @@ module.exports = function (logger, mongoose, server) {
           auth: auth,
           cors: config.cors,
           description: 'Delete multiple ' + collectionName + 's',
-          tags: ['api', collectionName],
+          tags: tags,
           validate: {
             payload: payloadModel,
             headers: headersValidation
@@ -656,7 +680,13 @@ module.exports = function (logger, mongoose, server) {
         headersValidation = null;
       }
 
-      server.route({
+      let tags = [];
+      if (model.routeOptions.enableUpdateSwagger !== false) {
+          tags = ['api', collectionName];
+      }
+
+
+        server.route({
         method: 'PUT',
         path: '/' + resourceAliasForRoute + '/{_id}',
         config: {
@@ -664,7 +694,7 @@ module.exports = function (logger, mongoose, server) {
           auth: auth,
           cors: config.cors,
           description: 'Update a ' + collectionName,
-          tags: ['api', collectionName],
+          tags: tags,
           validate: {
             params: {
               _id: Joi.objectId().required()
@@ -764,7 +794,12 @@ module.exports = function (logger, mongoose, server) {
         headersValidation = null;
       }
 
-      server.route({
+      let tags = [];
+      if (association.enableAddSwagger !== false) {
+          tags = ['api', associationName, ownerModelName];
+      }
+
+        server.route({
         method: 'PUT',
         path: '/' + ownerAlias + '/{ownerId}/' + childAlias + "/{childId}",
         config: {
@@ -772,7 +807,7 @@ module.exports = function (logger, mongoose, server) {
           auth: auth,
           cors: config.cors,
           description: 'Add a single ' + childModelName + ' to a ' + ownerModelName + '\'s list of ' + associationName,
-          tags: ['api', associationName, ownerModelName],
+          tags: tags,
           validate: {
             params: {
               ownerId: Joi.objectId().required(),
@@ -858,6 +893,11 @@ module.exports = function (logger, mongoose, server) {
         headersValidation = null;
       }
 
+      let tags = [];
+      if (association.enableRemoveSwagger !== false) {
+          tags = ['api', associationName, ownerModelName];
+      }
+
       server.route({
         method: 'DELETE',
         path: '/' + ownerAlias + '/{ownerId}/' + childAlias + "/{childId}",
@@ -866,7 +906,7 @@ module.exports = function (logger, mongoose, server) {
           auth: auth,
           cors: config.cors,
           description: 'Remove a single ' + childModelName + ' from a ' + ownerModelName + '\'s list of ' + associationName,
-          tags: ['api', associationName, ownerModelName],
+          tags: tags,
           validate: {
             params: {
               ownerId: Joi.objectId().required(),
@@ -970,6 +1010,11 @@ module.exports = function (logger, mongoose, server) {
         headersValidation = null;
       }
 
+      let tags = [];
+      if (association.enableAddSwagger !== false) {
+          tags = ['api', associationName, ownerModelName];
+      }
+
       server.route({
         method: 'POST',
         path: '/' + ownerAlias + '/{ownerId}/' + childAlias,
@@ -978,7 +1023,7 @@ module.exports = function (logger, mongoose, server) {
           auth: auth,
           cors: config.cors,
           description: 'Add multiple ' + childModelName + 's to a ' + ownerModelName + '\'s list of ' + associationName,
-          tags: ['api', associationName, ownerModelName],
+          tags: tags,
           validate: {
             params: {
               ownerId: Joi.objectId().required()
@@ -1065,6 +1110,11 @@ module.exports = function (logger, mongoose, server) {
         headersValidation = null;
       }
 
+      let tags = [];
+      if (association.enableRemoveSwagger !== false) {
+          tags = ['api', associationName, ownerModelName];
+      }
+
       server.route({
         method: 'DELETE',
         path: '/' + ownerAlias + '/{ownerId}/' + childAlias,
@@ -1073,7 +1123,7 @@ module.exports = function (logger, mongoose, server) {
           auth: auth,
           cors: config.cors,
           description: 'Remove multiple ' + childModelName + 's from a ' + ownerModelName + '\'s list of ' + associationName,
-          tags: ['api', associationName, ownerModelName],
+          tags: tags,
           validate: {
             params: {
               ownerId: Joi.objectId().required()
@@ -1171,6 +1221,11 @@ module.exports = function (logger, mongoose, server) {
         headersValidation = null;
       }
 
+      let tags = [];
+      if (association.enableReadSwagger !== false) {
+          tags = ['api', associationName, ownerModelName];
+      }
+
       server.route({
         method: 'GET',
         path: '/' + ownerAlias + '/{ownerId}/' + childAlias,
@@ -1179,7 +1234,7 @@ module.exports = function (logger, mongoose, server) {
           auth: auth,
           cors: config.cors,
           description: 'Get all of the ' + associationName + ' for a ' + ownerModelName,
-          tags: ['api', associationName, ownerModelName],
+          tags: tags,
           validate: {
             query: queryModel,
             params: {

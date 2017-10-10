@@ -328,6 +328,39 @@ Swagger documentation is automatically generated for all endpoints and can be vi
 at the server URL.  By default this will be [http://localhost:8124/](http://localhost:8124/).  The swagger docs provide quick 
 access to testing your endpoints along with model schema descriptions and query options.
 
+You can prevent Swagger documentation on CRUD endpoints by setting the correct property to ``false`` within the ``routeOptions`` object. Below is a list of properties and their effect:
+
+Property | Effect when false
+--- | --- 
+enableReadSwagger    |      omits ``GET /path`` and ``GET /path/{_id}`` endpoints
+enableCreateSwagger  |      omits ``POST /path`` endpoint
+enableUpdateSwagger  |      omits ``PUT /path/{_id}`` endpoint
+enableDeleteSwagger  |      omits ``DELETE /path`` and ``DELETE /path/{_id}`` endpoints
+
+Similarly, you can prevent association endpoints from generating through the following properties within each association object:
+
+Property | Effect when false
+--- | --- 
+enableAddSwagger     |      omits ``POST /owner/{ownerId}/child`` and ``PUT /owner/{ownerId}/child/{childId}`` endpoints
+enableRemoveSwagger  |      omits ``DELETE /owner/{ownerId}/child`` and ``ELETE /owner/{ownerId}/child/{childId}`` endpoints
+enableReadSwagger    |      omits ``GET /owner/{ownerId}/child`` endpoint
+
+For example, a routeOption object that omits endpoints for creating objects and removing a specific association could look like this:
+
+```javascript
+routeOptions: {
+    enableReadSwagger: false,
+    associations: {
+        users: {
+            type: "MANY_ONE",
+            alias: "user",
+            model: "user",
+            enableReadSwagger: false
+        }
+    }
+}
+```
+
 [Back to top](#readme-contents)
 
 ## Creating endpoints

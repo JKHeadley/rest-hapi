@@ -198,7 +198,11 @@ test('rest-helper-factory.generateRoutes', function (t) {
         allowRead: false,
         allowCreate: false,
         allowUpdate: false,
-        allowDelete: false
+        allowDelete: false,
+        enableReadSwagger: false,
+        enableCreateSwagger: false,
+        enableUpdateSwagger: false,
+        enableDeleteSwagger: false
       }
     };
     var userModel = mongoose.model("user", userSchema);
@@ -343,7 +347,10 @@ test('rest-helper-factory.generateRoutes', function (t) {
             type: "MANY_MANY",
             allowAdd: false,
             allowRemove: false,
-            allowRead: false
+            allowRead: false,
+            enableAddSwagger: false,
+            enableRemoveSwagger: false,
+            enableReadSwagger: false
           }
         }
       }
