@@ -10,9 +10,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [0.29.0] - 2017-10-10
 ### Added
 - Support for policies via [mrhorse](https://github.com/mark-bradshaw/mrhorse) plugin.
-- Support for [document-level authorization]
-- Built in policies for [authorizing document creators]
-- `createdBy`, `updatedBy`, and `deletedBy` [metadata options].
+- Support for [document-level authorization](https://github.com/JKHeadley/rest-hapi#document-authorization)
+- Built in policies for [authorizing document creators](https://github.com/JKHeadley/rest-hapi#document-authorization)
+- `createdBy`, `updatedBy`, and `deletedBy` [metadata options](https://github.com/JKHeadley/rest-hapi#user-tags).
 
 ### Changed
 - Deprecated `routeOptions.scope` and `routeOptions.scope.scope` and replaced with `routeOptions.routeScope` and `routeOptions.routeScope.rootScope`.
