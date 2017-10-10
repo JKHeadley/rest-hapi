@@ -1269,6 +1269,9 @@ function _getAllHandler(ownerModel, ownerId, childModel, associationName, reques
           var many_many = false;
           if (association.type === "MANY_MANY") {
             childIds = result.map(function(object) {
+              if (!object[association.model]) {
+                throw new Error('association object "' + association.model + '" does not exist');
+              }
               return object[association.model]._id;
             });
             many_many = true;
