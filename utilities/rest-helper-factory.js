@@ -163,7 +163,7 @@ module.exports = function (logger, mongoose, server) {
 
       if (model.routeOptions.policies && config.enablePolicies) {
         policies = model.routeOptions.policies;
-        policies = (policies.policies || []).concat(policies.readPolicies || []);
+        policies = (policies.rootPolicies || []).concat(policies.readPolicies || []);
       }
 
       if (config.enableDocumentScopes) {
@@ -272,7 +272,7 @@ module.exports = function (logger, mongoose, server) {
 
       if (model.routeOptions.policies && config.enablePolicies) {
         policies = model.routeOptions.policies;
-        policies = (policies.policies || []).concat(policies.readPolicies || []);
+        policies = (policies.rootPolicies || []).concat(policies.readPolicies || []);
       }
 
       if (config.enableDocumentScopes) {
@@ -393,7 +393,7 @@ module.exports = function (logger, mongoose, server) {
 
       if (model.routeOptions.policies && config.enablePolicies) {
         policies = model.routeOptions.policies;
-        policies = (policies.policies || []).concat(policies.createPolicies || []);
+        policies = (policies.rootPolicies || []).concat(policies.createPolicies || []);
       }
 
       if (config.enableDocumentScopes) {
@@ -527,7 +527,7 @@ module.exports = function (logger, mongoose, server) {
 
       if (model.routeOptions.policies && config.enablePolicies) {
         policies = model.routeOptions.policies;
-        policies = (policies.policies || []).concat(policies.deletePolicies || []);
+        policies = (policies.rootPolicies || []).concat(policies.deletePolicies || []);
       }
 
       if (config.enableDocumentScopes) {
@@ -648,7 +648,7 @@ module.exports = function (logger, mongoose, server) {
 
       if (model.routeOptions.policies && config.enablePolicies) {
         policies = model.routeOptions.policies;
-        policies = (policies.policies || []).concat(policies.deletePolicies || []);
+        policies = (policies.rootPolicies || []).concat(policies.deletePolicies || []);
       }
 
       if (config.enableDocumentScopes) {
@@ -766,7 +766,7 @@ module.exports = function (logger, mongoose, server) {
 
       if (model.routeOptions.policies && config.enablePolicies) {
         policies = model.routeOptions.policies;
-        policies = (policies.policies || []).concat(policies.updatePolicies || []);
+        policies = (policies.rootPolicies || []).concat(policies.updatePolicies || []);
       }
 
       if (config.enableDocumentScopes) {
@@ -892,7 +892,7 @@ module.exports = function (logger, mongoose, server) {
 
       if (ownerModel.routeOptions.policies) {
         policies = ownerModel.routeOptions.policies;
-        policies = (policies.policies || []).concat(policies.associatePolicies || []);
+        policies = (policies.rootPolicies || []).concat(policies.associatePolicies || []);
       }
 
       if (config.enableDocumentScopes) {
@@ -1001,7 +1001,7 @@ module.exports = function (logger, mongoose, server) {
 
       if (ownerModel.routeOptions.policies) {
         policies = ownerModel.routeOptions.policies;
-        policies = (policies.policies || []).concat(policies.associatePolicies || []);
+        policies = (policies.rootPolicies || []).concat(policies.associatePolicies || []);
       }
 
       if (config.enableDocumentScopes) {
@@ -1128,7 +1128,7 @@ module.exports = function (logger, mongoose, server) {
 
       if (ownerModel.routeOptions.policies) {
         policies = ownerModel.routeOptions.policies;
-        policies = (policies.policies || []).concat(policies.associatePolicies || []);
+        policies = (policies.rootPolicies || []).concat(policies.associatePolicies || []);
       }
 
       if (config.enableDocumentScopes) {
@@ -1237,7 +1237,7 @@ module.exports = function (logger, mongoose, server) {
 
       if (ownerModel.routeOptions.policies) {
         policies = ownerModel.routeOptions.policies;
-        policies = (policies.policies || []).concat(policies.associatePolicies || []);
+        policies = (policies.rootPolicies || []).concat(policies.associatePolicies || []);
       }
 
       if (config.enableDocumentScopes) {
@@ -1358,7 +1358,7 @@ module.exports = function (logger, mongoose, server) {
 
       if (ownerModel.routeOptions.policies) {
         policies = ownerModel.routeOptions.policies;
-        policies = (policies.policies || []).concat(policies.readPolicies || []);
+        policies = (policies.rootPolicies || []).concat(policies.readPolicies || []);
       }
 
       if (config.enableDocumentScopes) {
