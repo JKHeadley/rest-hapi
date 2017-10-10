@@ -21,7 +21,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 - Added `update-associations` [cli tool](https://github.com/JKHeadley/rest-hapi#updating-many_many-db-data).
 
-## [0.27.0] - 2017-09-28
+## [0.27.0] - 2017-09-28 [BREAKING]
 ### Added
 - Added option (`config.embedAssociations`) to use linking model collections.
  * See [docs](https://github.com/JKHeadley/rest-hapi#many_many-data-storage) for details.
