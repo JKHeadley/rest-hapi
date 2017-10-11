@@ -706,9 +706,11 @@ function _deleteOneHandler(model, _id, hardDelete, request, Log) {
             if (config.enableDeletedAt) {
               payload.deletedAt = new Date();
             }
-            let deletedBy = request.payload.deletedBy || request.payload[0].deletedBy;
-            if (deletedBy) {
-              payload.deletedBy = deletedBy;
+            if (config.enableDeletedBy && config.enableSoftDelete) {
+              let deletedBy = request.payload.deletedBy || request.payload[0].deletedBy;
+              if (deletedBy) {
+                payload.deletedBy = deletedBy;
+              }
             }
             promise = model.findByIdAndUpdate(_id, payload, {new: true});
           }
