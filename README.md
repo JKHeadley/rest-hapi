@@ -1969,7 +1969,7 @@ Policies are only active when an endpoint is called | Middleware functions are a
 Policies can run before (`onPreHandler`) or after (`onPostHander`) the handler function | Since middleware functions are run as part of the handler, a `pre` middleware function will run after any `onPreHandler` policy, and a `post` middlware function will run before any `onPostHandler` policy
 
 ### Example: custom authorization via policies
-To provide an example of the power of policies within rest-hapi, consider the following example:
+To provide an example of the power of policies within rest-hapi, consider the following scenario:
 
 A developer wants to implement document authorization, but wants to maintain control over the implementation and have the option of providing functionality outside of what is available with rest-hapi's built in [document authorization](#document-authorization). They want to only allow the user that creates a document to be able to modify the document. They decide to implement this via the policy below (`docAuth.js`).
 
