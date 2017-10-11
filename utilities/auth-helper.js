@@ -15,8 +15,8 @@ module.exports = {
 
     //NOTE: As of v0.29.0 routeOptions.scope is replaced with routeOptions.routeScope and
     //routeOptions.scope.scope is replaced with routeOptions.routeScope.rootScope
-    let routeScope = model.routeOptions.routeScope || model.routeOptions.scope || {};
-    let rootScope = routeScope.rootScope || routeScope.scope;
+    let routeScope = model.routeOptions.routeScope || {};
+    let rootScope = routeScope.rootScope;
     let scope = [];
 
     let additionalScope = null;
@@ -71,10 +71,14 @@ module.exports = {
     //NOTE: As of v0.29.0 routeOptions.scope is replaced with routeOptions.routeScope and
     //routeOptions.scope.scope is replaced with routeOptions.routeScope.rootScope
     let routeScope = model.routeOptions.routeScope || model.routeOptions.scope || {};
+    routeScope.rootScope = routeScope.rootScope || routeScope.scope;
+    delete routeScope.scope;
+    if (!routeScope.rootScope) {
+      delete routeScope.rootScope;
+    }
 
     const scope = {};
 
-    scope.scope = ["root", model.collectionName];
     scope.rootScope = ["root", model.collectionName];
     scope.createScope = ["create", "create" + modelName];
     scope.readScope = ["read", "read" + modelName];
