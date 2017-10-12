@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased]
 
 
+## [0.30.0] - 2017-10-12
+### Added
+- Added "add" [association middleware](https://github.com/JKHeadley/rest-hapi#association) for "addOne" and "addMany" endpoints."
+
 ## [0.29.0] - 2017-10-10
 ### Added
 - Support for policies via [mrhorse](https://github.com/mark-bradshaw/mrhorse) plugin.
@@ -43,6 +47,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Added config option to enable logging of routes and scopes (disabled by default).
 
 ## [0.24.0] - 2017-09-19
+
 ### Added
 - Exposed [joi helper methods](https://github.com/JKHeadley/rest-hapi#joi-helper-methods), including the rest-hapi version of Joi ObjectId.
 ### Fixed
@@ -110,7 +115,7 @@ post(hardDelete, deleted, Log) | post(hardDelete, deleted, request, Log)
 
 
 
-[Unreleased]: https://github.com/jkheadley/rest-hapi/compare/v0.29.0...HEAD
+[Unreleased]: https://github.com/jkheadley/rest-hapi/compare/v0.30.0...HEAD
 [0.20.0]: https://github.com/jkheadley/rest-hapi/compare/v0.19.2...v0.20.0
 [0.20.2]: https://github.com/jkheadley/rest-hapi/compare/v0.20.0...v0.20.2
 [0.20.3]: https://github.com/jkheadley/rest-hapi/compare/v0.20.2...v0.20.3
@@ -123,5 +128,6 @@ post(hardDelete, deleted, Log) | post(hardDelete, deleted, request, Log)
 [0.27.0]: https://github.com/jkheadley/rest-hapi/compare/v0.26.0...v0.27.0
 [0.28.0]: https://github.com/jkheadley/rest-hapi/compare/v0.27.0...v0.28.0
 [0.29.0]: https://github.com/jkheadley/rest-hapi/compare/v0.28.0...v0.29.0
+[0.30.0]: https://github.com/jkheadley/rest-hapi/compare/v0.29.0...v0.30.0
 
 [BREAKING]: https://github.com/JKHeadley/rest-hapi/releases
