@@ -893,18 +893,44 @@ function _addOneHandler(ownerModel, ownerId, childModel, childId, associationNam
             }
             payload.childId = childId;
             payload = [payload];
-            return _setAssociation(ownerModel, ownerObject, childModel, childId, associationName, payload, Log)
-                .then(function() {
-                  return true;
+
+            var promise =  {};
+            if (ownerModel.routeOptions && ownerModel.routeOptions.add && ownerModel.routeOptions.add[associationName]
+                && ownerModel.routeOptions.add[associationName].pre) {
+              promise = Q.fcall(ownerModel.routeOptions.add[associationName].pre, request, payload, Log);
+            }
+            else {
+              promise = Q.when(payload);
+            }
+
+            return promise
+                .then(function (payload) {
+
+                  return _setAssociation(ownerModel, ownerObject, childModel, childId, associationName, payload, Log)
+                      .then(function() {
+                        return true;
+                      })
+                      .catch(function (error) {
+                        const message = "There was a database error while setting the association.";
+                        if (!logError) {
+                          Log.error(message);
+                          logError = true;
+                          delete error.type;
+                        }
+                        errorHelper.handleError(error, message, errorHelper.types.GATEWAY_TIMEOUT, Log);
+                      });
                 })
                 .catch(function (error) {
-                  const message = "There was a database error while setting the association.";
+                  let message = "There was a preprocessing error while setting the association.";
+                  if (_.isString(error)) {
+                    message = error;
+                  }
                   if (!logError) {
                     Log.error(message);
                     logError = true;
                     delete error.type;
                   }
-                  errorHelper.handleError(error, message, errorHelper.types.GATEWAY_TIMEOUT, Log);
+                  errorHelper.handleError(error, message, errorHelper.types.BAD_REQUEST, Log);
                 });
           }
           else {
@@ -1054,40 +1080,64 @@ function _addManyHandler(ownerModel, ownerId, childModel, associationName, reque
               });
             }
 
-            var promise_chain = Q.when();
+            var promise =  {};
+            if (ownerModel.routeOptions && ownerModel.routeOptions.add && ownerModel.routeOptions.add[associationName]
+                && ownerModel.routeOptions.add[associationName].pre) {
+              promise = Q.fcall(ownerModel.routeOptions.add[associationName].pre, request, payload, Log);
+            }
+            else {
+              promise = Q.when(payload);
+            }
 
-            childIds.forEach(function(childId) {
-              var promise_link = function() {
-                var deferred = Q.defer();
-                _setAssociation(ownerModel, ownerObject, childModel, childId, associationName, payload, Log)
-                    .then(function(result) {
-                      deferred.resolve(result);
-                    })
-                    .catch(function (error) {
-                      deferred.reject(error);
-                    });
-                return deferred.promise;
-              };
+            return promise
+                .then(function(payload) {
+                  var promise_chain = Q.when();
 
-              promise_chain = promise_chain
-                  .then(promise_link)
-                  .catch(function(error) {
-                    throw error;
+                  childIds.forEach(function(childId) {
+                    var promise_link = function() {
+                      var deferred = Q.defer();
+                      _setAssociation(ownerModel, ownerObject, childModel, childId, associationName, payload, Log)
+                          .then(function(result) {
+                            deferred.resolve(result);
+                          })
+                          .catch(function (error) {
+                            deferred.reject(error);
+                          });
+                      return deferred.promise;
+                    };
+
+                    promise_chain = promise_chain
+                        .then(promise_link)
+                        .catch(function(error) {
+                          throw error;
+                        });
                   });
-            });
 
-            return promise_chain
-                .then(function() {
-                  return true;
+                  return promise_chain
+                      .then(function() {
+                        return true;
+                      })
+                      .catch(function (error) {
+                        const message = "There was an internal error while setting the associations.";
+                        if (!logError) {
+                          Log.error(message);
+                          logError = true;
+                          delete error.type;
+                        }
+                        errorHelper.handleError(error, message, errorHelper.types.GATEWAY_TIMEOUT, Log);
+                      });
                 })
                 .catch(function (error) {
-                  const message = "There was an internal error while setting the associations.";
+                  let message = "There was a preprocessing error while setting the association.";
+                  if (_.isString(error)) {
+                    message = error;
+                  }
                   if (!logError) {
                     Log.error(message);
                     logError = true;
                     delete error.type;
                   }
-                  errorHelper.handleError(error, message, errorHelper.types.GATEWAY_TIMEOUT, Log);
+                  errorHelper.handleError(error, message, errorHelper.types.BAD_REQUEST, Log);
                 });
           }
           else {
