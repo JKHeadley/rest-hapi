@@ -72,5 +72,8 @@
     "tape": "latest",
     "vision": "^4.1.1"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "mockgoose": "^7.3.3",
+    "query-string": "^5.0.0"
+  }
 }

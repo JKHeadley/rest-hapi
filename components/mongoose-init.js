@@ -14,7 +14,7 @@ module.exports = function (mongoose, logger, config) {
 
   logUtil.logActionStart(logger, "Connecting to Database", _.omit(config.mongo, ['pass']));
   
-  mongoose.connect(config.mongo.URI);
+  mongoose.connect(config.mongo.URI, { useMongoClient: true });
 
   globals.mongoose = mongoose;
 
