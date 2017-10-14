@@ -234,6 +234,7 @@ internals.verifyScope = function(documents, action, userScope, Log) {
 };
 
 internals.compareScopes = function(userScope, documentScope, Log) {
+  userScope = userScope || [];
   let fobiddenScope = [];
   let requiredScope = [];
   let generalScope = [];

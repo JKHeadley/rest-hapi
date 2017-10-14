@@ -1,5 +1,42 @@
 var test = require('tape');
 var _ = require('lodash');
+const QueryString = require('query-string');
+
+const internals = {};
+
+internals.mockStrategy = function(server, strategyName) {
+  // Mock scheme for testing
+  server.auth.scheme('mock', function(server, options) {
+
+    return {
+      authenticate: function(request, reply) {
+
+        reply.continue();
+      }
+    };
+  });
+
+// To register a strategy that logs you in with this canned record
+  server.auth.strategy(strategyName, 'mock');
+};
+
+internals.mockInjection = function(request) {
+  let fullUrl = request.url;
+  for (const key in request.params) {
+    fullUrl = fullUrl.replace('{' + key + '}', request.params[key]);
+  }
+  fullUrl = fullUrl + '?' + QueryString.stringify(request.query);
+
+  const injectOptions = {
+    method: request.method,
+    url: fullUrl,
+    payload: request.payload,
+    credentials: request.credentials,
+    headers: request.headers
+  };
+
+  return injectOptions;
+};
 
 module.exports = {
   /**
@@ -109,6 +146,10 @@ module.exports = {
       }
     });
   },
+
+  mockStrategy: internals.mockStrategy,
+
+  mockInjection: internals.mockInjection
 };
 
 /**
