@@ -1,11 +1,5 @@
 const Test = require('blue-tape');
 const _ = require('lodash');
-const Sinon = require('sinon');
-const SinonTestFactory = require('sinon-test');
-const SinonTest = SinonTestFactory(Sinon);
-const rewire = require('rewire');
-const Proxyquire = require('proxyquire');
-const Assert = require('assert');
 const Logging = require('loggin');
 const TestHelper = require("./test-helper");
 const Decache = require('decache');
@@ -22,8 +16,6 @@ const mockgoose = new Mockgoose(Mongoose);
 let Log = Logging.getLogger("tests");
 Log.logLevel = "DEBUG";
 Log = Log.bind("end-to-end");
-
-Sinon.test = SinonTest;
 
 const internals = {
   previous: {}
@@ -590,6 +582,16 @@ Test('end to end tests', function (t) {
                       });
                   //</editor-fold>
                 });
+              })
+        })
+      })
+      .then(function() {
+        return t.test('clearing cache', function (t) {
+          return Q.when()
+              .then(function() {
+                Object.keys(require.cache).forEach(function(key) { delete require.cache[key] })
+
+                t.ok(true, "DONE");
               })
         })
       })
