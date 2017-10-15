@@ -2,10 +2,9 @@ var gulp = require('gulp');
 var tape = require('gulp-tape');
 var tapColorize = require('tap-colorize');
 
-gulp.task('test', [], function() {
+gulp.task('test', ['test-unit'], function() {
   return gulp.src([
-    gulp.paths.src + '/**/*.tests.js',
-    '!' + gulp.paths.src + '/**/end-to-end.tests.js'
+    gulp.paths.src + '/**/end-to-end.tests.js'
   ])
       .pipe(tape({
         reporter: tapColorize()
