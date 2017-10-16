@@ -885,7 +885,7 @@ function _addOneHandler(ownerModel, ownerId, childModel, childId, associationNam
   let payload = extend({}, request.payload);
   let logError = false;
   try {
-    return ownerModel.findOne({ '_id': ownerId })
+    return ownerModel.findOne({ '_id': ownerId }).select(associationName)
         .then(function (ownerObject) {
           if (ownerObject) {
             if (!payload) {
@@ -989,7 +989,7 @@ function _removeOne(ownerModel, ownerId, childModel, childId, associationName, L
 function _removeOneHandler(ownerModel, ownerId, childModel, childId, associationName, request, Log) {
   let logError = false;
   try {
-    return ownerModel.findOne({ '_id': ownerId })
+    return ownerModel.findOne({ '_id': ownerId }).select(associationName)
         .then(function (ownerObject) {
           if (ownerObject) {
             _removeAssociation(ownerModel, ownerObject, childModel, childId, associationName, Log)
@@ -1066,7 +1066,7 @@ function _addManyHandler(ownerModel, ownerId, childModel, associationName, reque
     if (_.isEmpty(request.payload)) {
       throw "Payload is empty."
     }
-    return ownerModel.findOne({ '_id': ownerId })
+    return ownerModel.findOne({ '_id': ownerId }).select(associationName)
         .then(function (ownerObject) {
           if (ownerObject) {
             var childIds = [];
@@ -1200,7 +1200,7 @@ function _removeManyHandler(ownerModel, ownerId, childModel, associationName, re
   let payload = extend([], request.payload);
   let logError = false;
   try {
-    return ownerModel.findOne({ '_id': ownerId })
+    return ownerModel.findOne({ '_id': ownerId }).select(associationName)
         .then(function (ownerObject) {
           if (ownerObject) {
             var childIds = payload;
