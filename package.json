@@ -61,20 +61,20 @@
     "qs": "^6.2.1",
     "require-all": "^2.1.0",
     "require-dir": "~0.3.2",
-    "vision": "^4.1.1"
+    "vision": "^4.1.1",
+    "tap-colorize": "latest",
+    "tape": "latest",
+    "gulp-tape": "latest",
+    "blue-tape": "^1.0.0"
   },
   "devDependencies": {
     "rewire": "^2.5.2",
     "proxyquire": "^1.7.10",
     "sinon": "^3.3.0",
     "sinon-test": "^2.1.0",
-    "tap-colorize": "latest",
-    "tape": "latest",
-    "gulp-tape": "latest",
-    "blue-tape": "^1.0.0",
     "decache": "^4.1.0",
     "mockgoose": "^7.3.3",
     "query-string": "^5.0.0",
-    "rmdir": "^1.2.0",
+    "rmdir": "^1.2.0"
   }
 }
