@@ -167,7 +167,7 @@ internals.runTestFile = function(path) {
     var tape = require('gulp-tape');
     var tapColorize = require('tap-colorize');
 
-    gulp.src([
+    return gulp.src([
       pathToTestFile
     ])
         .pipe(tape({
