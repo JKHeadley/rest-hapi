@@ -21,7 +21,12 @@ const internals = {
   previous: {}
 };
 
+internals.onFinish = function() {
+  process.exit();
+};
 
+
+Test.onFinish(internals.onFinish);
 
 Test('end to end tests', function (t) {
 
@@ -29,7 +34,7 @@ Test('end to end tests', function (t) {
       .then(function() {
         return t.test('basic CRUD tests', function (t) {
           return mockgoose.prepareStorage()
-          //basic "Create" works
+              //basic "Create" works
               .then(function () {
                 return t.test('basic "Create" works', function (t) {
                   //<editor-fold desc="Arrange">
@@ -597,3 +602,4 @@ Test('end to end tests', function (t) {
       })
 
 });
+
