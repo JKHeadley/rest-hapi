@@ -128,7 +128,7 @@ test('handler-helper.listHandler', function (t) {
 
           //<editor-fold desc="Assert">
           return promise.then(function () {
-            t.ok(queryHelperStub.createMongooseQuery.calledWithExactly(userModel, query, "TEST", Log), "createMongooseQuery called");
+            t.ok(queryHelperStub.createMongooseQuery.calledWithExactly(userModel, query, "TEST2", Log), "createMongooseQuery called");
           })
           //</editor-fold>
 
