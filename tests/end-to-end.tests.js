@@ -596,7 +596,7 @@ Test('end to end tests', function (t) {
               .then(function() {
                 Object.keys(require.cache).forEach(function(key) { delete require.cache[key] })
 
-                t.ok(true, "DONE");
+                t.ok(false, "DONE");
               })
         })
       })
