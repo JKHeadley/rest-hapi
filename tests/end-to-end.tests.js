@@ -1,3 +1,5 @@
+'use strict';
+
 const Test = require('blue-tape');
 const _ = require('lodash');
 const Logging = require('loggin');
@@ -658,6 +660,7 @@ Test('end to end tests', function (t) {
                       //<editor-fold desc="Restore">
                       .then(function () {
                         Decache('../rest-hapi');
+                        Decache('../config');
                         delete Mongoose.models.role;
                         delete Mongoose.modelSchemas.role;
 
@@ -807,6 +810,7 @@ Test('end to end tests', function (t) {
                       //<editor-fold desc="Restore">
                       .then(function () {
                         Decache('../rest-hapi');
+                        Decache('../config');
                         delete Mongoose.models.role;
                         delete Mongoose.modelSchemas.role;
                         delete Mongoose.models.hashtag;
@@ -1037,6 +1041,7 @@ Test('end to end tests', function (t) {
                       //<editor-fold desc="Restore">
                       .then(function () {
                         Decache('../rest-hapi');
+                        Decache('../config');
                         delete Mongoose.models.role;
                         delete Mongoose.modelSchemas.role;
                         delete Mongoose.models.hashtag;
