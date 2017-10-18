@@ -1349,6 +1349,9 @@ function _getAllHandler(ownerModel, ownerId, childModel, associationName, reques
             });
             delete query._id
           }
+          if (typeof query.$where === 'string') {
+            query.$where = JSON.parse(query.$where);
+          }
           query.$where = extend({'_id': { $in: childIds }}, query.$where);
 
           request.query = query;
