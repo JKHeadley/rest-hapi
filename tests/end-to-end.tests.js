@@ -1056,230 +1056,582 @@ Test('end to end tests', function (t) {
                   //</editor-fold>
                 });
               })
-              // //MAN_MANY associations work
-              // .then(function () {
-              //   return t.test('MAN_MANY associations work', function (t) {
-              //     //<editor-fold desc="Arrange">
-              //     const RestHapi = require('../rest-hapi');
-              //     const server = new Hapi.Server();
-              //     server.connection(RestHapi.config.server.connection);
-              //
-              //     const config = {
-              //       loglevel: 'ERROR',
-              //       absoluteModelPath: true,
-              //       modelPath: __dirname + '/test-scenarios/scenario-3/models',
-              //       embedAssociations: true
-              //     };
-              //
-              //     let promises = [];
-              //
-              //     RestHapi.config = config;
-              //
-              //     return server.register({
-              //       register: RestHapi,
-              //       options: {
-              //         mongoose: Mongoose
-              //       }
-              //     })
-              //         .then(function () {
-              //           server.start();
-              //
-              //           let payload = [
-              //             {
-              //               name: "root",
-              //               description: "Access to all endpoints"
-              //             },
-              //             {
-              //               name: "create",
-              //               description: "Access to all create endpoints"
-              //             },
-              //             {
-              //               name: "read",
-              //               description: "Access to all read endpoints"
-              //             },
-              //             {
-              //               name: "update",
-              //               description: "Access to all update endpoints"
-              //             },
-              //             {
-              //               name: "delete",
-              //               description: "Access to all delete endpoints"
-              //             },
-              //             {
-              //               name: "associate",
-              //               description: "Access to all association endpoints"
-              //             },
-              //             {
-              //               name: "nothing",
-              //               description: "Permission with no use."
-              //             }
-              //           ];
-              //
-              //           const request = {
-              //             method: 'POST',
-              //             url: '/permission',
-              //             params: {},
-              //             query: {},
-              //             payload: payload,
-              //             credentials: {},
-              //             headers: {}
-              //           };
-              //
-              //           const injectOptions = TestHelper.mockInjection(request);
-              //
-              //           return server.inject(injectOptions);
-              //         })
-              //         .then(function (response) {
-              //
-              //           permissions = permissions.concat(response.result);
-              //
-              //           let payload = [
-              //             permissions.find(function (p) { return p.name === 'create'; })._id,
-              //             permissions.find(function (p) { return p.name === 'read'; })._id,
-              //             permissions.find(function (p) { return p.name === 'update'; })._id,
-              //             permissions.find(function (p) { return p.name === 'delete'; })._id
-              //           ];
-              //
-              //           const request = {
-              //             method: 'POST',
-              //             url: '/role/{ownerId}/permission',
-              //             params: { ownerId: roles[1]._id },
-              //             query: {},
-              //             payload: payload,
-              //             credentials: {},
-              //             headers: {}
-              //           };
-              //
-              //           const injectOptions = TestHelper.mockInjection(request);
-              //
-              //           return server.inject(injectOptions);
-              //         })
-              //         .then(function (response) {
-              //
-              //           let payload = [
-              //             { enabled: true, childId: permissions.find(function (p) { return p.name === 'nothing'; })._id },
-              //             { enabled: false, childId: permissions.find(function (p) { return p.name === 'associate'; })._id },
-              //             { enabled: false, childId: permissions.find(function (p) { return p.name === 'root'; })._id }
-              //           ];
-              //
-              //           const request = {
-              //             method: 'POST',
-              //             url: '/user/{ownerId}/permissions',
-              //             params: { ownerId: users[0]._id },
-              //             query: {},
-              //             payload: payload,
-              //             credentials: {},
-              //             headers: {}
-              //           };
-              //
-              //           const injectOptions = TestHelper.mockInjection(request);
-              //
-              //           return server.inject(injectOptions);
-              //         })
-              //         .then(function (response) {
-              //
-              //           let payload = [
-              //             permissions.find(function (p) { return p.name === 'root'; })._id,
-              //           ];
-              //
-              //           const request = {
-              //             method: 'POST',
-              //             url: '/role/{ownerId}/permission',
-              //             params: { ownerId: users[2]._id },
-              //             query: {},
-              //             payload: payload,
-              //             credentials: {},
-              //             headers: {}
-              //           };
-              //
-              //           const injectOptions = TestHelper.mockInjection(request);
-              //
-              //           return server.inject(injectOptions);
-              //         })
-              //         .then(function (response) {
-              //
-              //           users[0] = response.result;
-              //
-              //           const request = {
-              //             method: 'GET',
-              //             url: '/role',
-              //             params: {},
-              //             query: { $embed: ['permissions'] },
-              //             payload: {},
-              //             credentials: {},
-              //             headers: {}
-              //           };
-              //
-              //           const injectOptions = TestHelper.mockInjection(request);
-              //
-              //           promises.push(server.inject(injectOptions));
-              //         })
-              //         .then(function (response) {
-              //
-              //           const request = {
-              //             method: 'GET',
-              //             url: '/role/{ownerId}/permission',
-              //             params: { ownerId: roles[1]._id },
-              //             query: {},
-              //             payload: {},
-              //             credentials: {},
-              //             headers: {}
-              //           };
-              //
-              //           const injectOptions = TestHelper.mockInjection(request);
-              //
-              //           promises.push(server.inject(injectOptions));
-              //         })
-              //         .then(function (response) {
-              //
-              //           const request = {
-              //             method: 'GET',
-              //             url: '/user',
-              //             params: {},
-              //             query: { $embed: ['permissions'] },
-              //             payload: {},
-              //             credentials: {},
-              //             headers: {}
-              //           };
-              //
-              //           const injectOptions = TestHelper.mockInjection(request);
-              //
-              //           promises.push(server.inject(injectOptions));
-              //         })
-              //         //</editor-fold>
-              //
-              //         //<editor-fold desc="Act">
-              //         .then(function () {
-              //           return Q.all(promises)
-              //         })
-              //         //</editor-fold>
-              //
-              //         //<editor-fold desc="Assert">
-              //         .then(function (response) {
-              //           let result1 = [users[0], users[1]];
-              //           let result2 = [response[2].result.docs[0], response[2].result.docs[1]];
-              //           t.deepEquals(response[0].result.docs[0].users, result1, 'ONE_MANY association correct');
-              //           t.deepEquals(response[1].result.docs, result2, 'MANY_ONE association correct');
-              //         })
-              //         //</editor-fold>
-              //
-              //         //<editor-fold desc="Restore">
-              //         .then(function () {
-              //           Decache('../rest-hapi');
-              //           delete Mongoose.models.role;
-              //           delete Mongoose.modelSchemas.role;
-              //           delete Mongoose.models.hashtag;
-              //           delete Mongoose.modelSchemas.hashtag;
-              //           delete Mongoose.models.user;
-              //           delete Mongoose.modelSchemas.user;
-              //           delete Mongoose.models.userProfile;
-              //           delete Mongoose.modelSchemas.userProfile;
-              //           delete Mongoose.models.permission;
-              //           delete Mongoose.modelSchemas.permission;
-              //         });
-              //     //</editor-fold>
-              //   });
-              // })
+              //adding and retrieving MAN_MANY associations works
+              .then(function () {
+                return t.test('adding and retrieving MAN_MANY associations works', function (t) {
+                  //<editor-fold desc="Arrange">
+                  const RestHapi = require('../rest-hapi');
+                  const server = new Hapi.Server();
+                  server.connection(RestHapi.config.server.connection);
+
+                  const config = {
+                    loglevel: 'ERROR',
+                    absoluteModelPath: true,
+                    modelPath: __dirname + '/test-scenarios/scenario-3/models',
+                    embedAssociations: true
+                  };
+
+                  let promises = [];
+
+                  RestHapi.config = config;
+
+                  return server.register({
+                    register: RestHapi,
+                    options: {
+                      mongoose: Mongoose
+                    }
+                  })
+                      .then(function () {
+                        server.start();
+
+                        let payload = [
+                          {
+                            name: "root",
+                            description: "Access to all endpoints"
+                          },
+                          {
+                            name: "create",
+                            description: "Access to all create endpoints"
+                          },
+                          {
+                            name: "read",
+                            description: "Access to all read endpoints"
+                          },
+                          {
+                            name: "update",
+                            description: "Access to all update endpoints"
+                          },
+                          {
+                            name: "delete",
+                            description: "Access to all delete endpoints"
+                          },
+                          {
+                            name: "associate",
+                            description: "Access to all association endpoints"
+                          },
+                          {
+                            name: "nothing",
+                            description: "Permission with no use."
+                          }
+                        ];
+
+                        const request = {
+                          method: 'POST',
+                          url: '/permission',
+                          params: {},
+                          query: {},
+                          payload: payload,
+                          credentials: {},
+                          headers: {}
+                        };
+
+                        const injectOptions = TestHelper.mockInjection(request);
+
+                        return server.inject(injectOptions);
+                      })
+                      .then(function (response) {
+
+                        permissions = permissions.concat(response.result);
+
+                        let payload = [
+                          permissions.find(function (p) { return p.name === 'create'; })._id,
+                          permissions.find(function (p) { return p.name === 'read'; })._id,
+                          permissions.find(function (p) { return p.name === 'update'; })._id,
+                          permissions.find(function (p) { return p.name === 'delete'; })._id
+                        ];
+
+                        const request = {
+                          method: 'POST',
+                          url: '/role/{ownerId}/permission',
+                          params: { ownerId: roles[1]._id },
+                          query: {},
+                          payload: payload,
+                          credentials: {},
+                          headers: {}
+                        };
+
+                        const injectOptions = TestHelper.mockInjection(request);
+
+                        return server.inject(injectOptions);
+                      })
+                      .then(function (response) {
+
+                        let payload = [
+                          { enabled: true, childId: permissions.find(function (p) { return p.name === 'nothing'; })._id },
+                          { enabled: false, childId: permissions.find(function (p) { return p.name === 'associate'; })._id }
+                        ];
+
+                        const request = {
+                          method: 'POST',
+                          url: '/user/{ownerId}/permissions',
+                          params: { ownerId: users[0]._id },
+                          query: {},
+                          payload: payload,
+                          credentials: {},
+                          headers: {}
+                        };
+
+                        const injectOptions = TestHelper.mockInjection(request);
+
+                        return server.inject(injectOptions);
+                      })
+                      .then(function (response) {
+
+                        let childId = permissions.find(function (p) { return p.name === 'root'; })._id;
+
+                        const request = {
+                          method: 'PUT',
+                          url: '/role/{ownerId}/permission/{childId}',
+                          params: { ownerId: roles[1]._id, childId: childId },
+                          query: {},
+                          payload: {},
+                          credentials: {},
+                          headers: {}
+                        };
+
+                        const injectOptions = TestHelper.mockInjection(request);
+
+                        return server.inject(injectOptions);
+                      })
+                      .then(function (response) {
+
+                        let childId = permissions.find(function (p) { return p.name === 'root'; })._id;
+                        let payload = { enabled: false };
+                        const request = {
+                          method: 'PUT',
+                          url: '/user/{ownerId}/permissions/{childId}',
+                          params: { ownerId: users[0]._id, childId: childId },
+                          query: {},
+                          payload: payload,
+                          credentials: {},
+                          headers: {}
+                        };
+
+                        const injectOptions = TestHelper.mockInjection(request);
+
+                        return server.inject(injectOptions);
+                      })
+                      .then(function (response) {
+
+                        const request = {
+                          method: 'GET',
+                          url: '/role/{_id}',
+                          params: { _id: roles[1]._id },
+                          query: { $embed: ['permissions'] },
+                          payload: {},
+                          credentials: {},
+                          headers: {}
+                        };
+
+                        const injectOptions = TestHelper.mockInjection(request);
+
+                        promises.push(server.inject(injectOptions));
+                      })
+                      .then(function (response) {
+
+                        const request = {
+                          method: 'GET',
+                          url: '/role/{ownerId}/permission',
+                          params: { ownerId: roles[1]._id },
+                          query: {},
+                          payload: {},
+                          credentials: {},
+                          headers: {}
+                        };
+
+                        const injectOptions = TestHelper.mockInjection(request);
+
+                        promises.push(server.inject(injectOptions));
+                      })
+                      .then(function (response) {
+
+                        const request = {
+                          method: 'GET',
+                          url: '/user/{_id}',
+                          params: { _id: users[0]._id },
+                          query: { $embed: ['permissions'] },
+                          payload: {},
+                          credentials: {},
+                          headers: {}
+                        };
+
+                        const injectOptions = TestHelper.mockInjection(request);
+
+                        promises.push(server.inject(injectOptions));
+                      })
+                      .then(function (response) {
+
+                        const request = {
+                          method: 'GET',
+                          url: '/user/{ownerId}/permissions',
+                          params: { ownerId: users[0]._id },
+                          query: {},
+                          payload: {},
+                          credentials: {},
+                          headers: {}
+                        };
+
+                        const injectOptions = TestHelper.mockInjection(request);
+
+                        promises.push(server.inject(injectOptions));
+                      })
+                      //</editor-fold>
+
+                      //<editor-fold desc="Act">
+                      .then(function () {
+                        return Q.all(promises)
+                      })
+                      //</editor-fold>
+
+                      //<editor-fold desc="Assert">
+                      .then(function (response) {
+                        let result1_orig = response[0].result.permissions.map(function(obj) {
+                          return obj.permission;
+                        });
+                        let result2_orig = response[2].result.permissions.map(function(obj) {
+                          obj.permission.user_permission = { enabled: obj.enabled };
+                          return obj.permission;
+                        });
+                        //EXPL: rearrange results to match order
+                        let result1 = [];
+                        response[1].result.docs.forEach(function(permission) {
+                          result1.push(result1_orig.find(function(perm) { return perm.name === permission.name }));
+                        });
+                        let result2 = [];
+                        response[3].result.docs.forEach(function(permission) {
+                          result2.push(result2_orig.find(function(perm) { return perm.name === permission.name }));
+                        });
+                        t.deepEquals(response[1].result.docs, result1, 'MANY_MANY association correct');
+                        t.deepEquals(response[3].result.docs, result2, 'MANY_MANY association correct');
+                      })
+                      //</editor-fold>
+
+                      //<editor-fold desc="Restore">
+                      .then(function () {
+                        Decache('../rest-hapi');
+                        delete Mongoose.models.role;
+                        delete Mongoose.modelSchemas.role;
+                        delete Mongoose.models.hashtag;
+                        delete Mongoose.modelSchemas.hashtag;
+                        delete Mongoose.models.user;
+                        delete Mongoose.modelSchemas.user;
+                        delete Mongoose.models.userProfile;
+                        delete Mongoose.modelSchemas.userProfile;
+                        delete Mongoose.models.permission;
+                        delete Mongoose.modelSchemas.permission;
+                      });
+                  //</editor-fold>
+                });
+              })
+              //removing ONE_MANY/MANY_ONE associations works
+              .then(function () {
+                return t.test('removing ONE_MANY/MANY_ONE associations works', function (t) {
+                  //<editor-fold desc="Arrange">
+                  const RestHapi = require('../rest-hapi');
+                  const server = new Hapi.Server();
+                  server.connection(RestHapi.config.server.connection);
+
+                  const config = {
+                    loglevel: 'ERROR',
+                    absoluteModelPath: true,
+                    modelPath: __dirname + '/test-scenarios/scenario-3/models',
+                    embedAssociations: true
+                  };
+
+                  let promises = [];
+
+                  RestHapi.config = config;
+
+                  return server.register({
+                    register: RestHapi,
+                    options: {
+                      mongoose: Mongoose
+                    }
+                  })
+                      .then(function (response) {
+
+                        const request = {
+                          method: 'DELETE',
+                          url: '/role/{ownerId}/people/{childId}',
+                          params: { ownerId: roles[0]._id, childId: users[0]._id },
+                          query: {},
+                          payload: {},
+                          credentials: {},
+                          headers: {}
+                        };
+
+                        const injectOptions = TestHelper.mockInjection(request);
+
+                        return server.inject(injectOptions);
+                      })
+                      .then(function (response) {
+
+                        let payload = [
+                          users[1]._id,
+                          users[2]._id,
+                          users[3]._id //NOTE: this user doesn't belong to the role, so shouldn't be removed
+                        ];
+
+                        const request = {
+                          method: 'DELETE',
+                          url: '/role/{ownerId}/people',
+                          params: { ownerId: roles[0]._id },
+                          query: {},
+                          payload: payload,
+                          credentials: {},
+                          headers: {}
+                        };
+
+                        const injectOptions = TestHelper.mockInjection(request);
+
+                        return server.inject(injectOptions);
+                      })
+                      .then(function (response) {
+
+                        const request = {
+                          method: 'GET',
+                          url: '/role/{ownerId}/people',
+                          params: { ownerId: roles[0]._id },
+                          query: { $embed: ['title'] },
+                          payload: {},
+                          credentials: {},
+                          headers: {}
+                        };
+
+                        const injectOptions = TestHelper.mockInjection(request);
+
+                        promises.push(server.inject(injectOptions));
+                      })
+                      .then(function (response) {
+
+                        const request = {
+                          method: 'GET',
+                          url: '/user',
+                          params: {},
+                          query: {},
+                          payload: {},
+                          credentials: {},
+                          headers: {}
+                        };
+
+                        const injectOptions = TestHelper.mockInjection(request);
+
+                        promises.push(server.inject(injectOptions));
+                      })
+                      //</editor-fold>
+
+                      //<editor-fold desc="Act">
+                      .then(function () {
+                        return Q.all(promises)
+                      })
+                      //</editor-fold>
+
+                      //<editor-fold desc="Assert">
+                      .then(function (response) {
+                        let result2 = true;
+                        let result3 = false;
+                        response[1].result.docs.forEach(function(user) {
+                          if (user.title && user.title.toString() !== roles[1]._id.toString()) {
+                            result2 = false;
+                          }
+                          if (user.title && user.title.toString() === roles[1]._id.toString()) {
+                            result3 = true;
+                          }
+                        });
+                        t.deepEquals(response[0].result.docs, [], 'ONE_MANY associations removed');
+                        t.ok(result2, "MANY_ONE associations removed");
+                        t.ok(result3, "Admin role not removed")
+                      })
+                      //</editor-fold>
+
+                      //<editor-fold desc="Restore">
+                      .then(function () {
+                        Decache('../rest-hapi');
+                        Decache('../config');
+                        delete Mongoose.models.role;
+                        delete Mongoose.modelSchemas.role;
+                        delete Mongoose.models.hashtag;
+                        delete Mongoose.modelSchemas.hashtag;
+                        delete Mongoose.models.user;
+                        delete Mongoose.modelSchemas.user;
+                        delete Mongoose.models.userProfile;
+                        delete Mongoose.modelSchemas.userProfile;
+                        delete Mongoose.models.permission;
+                        delete Mongoose.modelSchemas.permission;
+                      });
+                  //</editor-fold>
+                });
+              })
+              //removing MANY_MANY associations works
+              .then(function () {
+                return t.test('removing MANY_MANY associations works', function (t) {
+                  //<editor-fold desc="Arrange">
+                  const RestHapi = require('../rest-hapi');
+                  const server = new Hapi.Server();
+                  server.connection(RestHapi.config.server.connection);
+
+                  const config = {
+                    loglevel: 'ERROR',
+                    absoluteModelPath: true,
+                    modelPath: __dirname + '/test-scenarios/scenario-3/models',
+                    embedAssociations: true
+                  };
+
+                  let promises = [];
+
+                  RestHapi.config = config;
+
+                  return server.register({
+                    register: RestHapi,
+                    options: {
+                      mongoose: Mongoose
+                    }
+                  })
+                      .then(function (response) {
+
+                        let childId = permissions.find(function (p) { return p.name === 'root'; })._id;
+
+                        const request = {
+                          method: 'DELETE',
+                          url: '/role/{ownerId}/permission/{childId}',
+                          params: { ownerId: roles[1]._id, childId: childId},
+                          query: {},
+                          payload: {},
+                          credentials: {},
+                          headers: {}
+                        };
+
+                        const injectOptions = TestHelper.mockInjection(request);
+
+                        return server.inject(injectOptions);
+                      })
+                      .then(function (response) {
+
+                        let childId = permissions.find(function (p) { return p.name === 'root'; })._id;
+                        let payload = { enabled: false };
+                        const request = {
+                          method: 'DELETE',
+                          url: '/user/{ownerId}/permissions/{childId}',
+                          params: { ownerId: users[0]._id, childId: childId },
+                          query: {},
+                          payload: payload,
+                          credentials: {},
+                          headers: {}
+                        };
+
+                        const injectOptions = TestHelper.mockInjection(request);
+
+                        return server.inject(injectOptions);
+                      })
+                      .then(function (response) {
+
+                        let payload = [
+                          permissions.find(function (p) { return p.name === 'create'; })._id,
+                          permissions.find(function (p) { return p.name === 'read'; })._id,
+                          permissions.find(function (p) { return p.name === 'update'; })._id,
+                          permissions.find(function (p) { return p.name === 'delete'; })._id
+                        ];
+
+                        const request = {
+                          method: 'DELETE',
+                          url: '/role/{ownerId}/permission',
+                          params: { ownerId: roles[1]._id },
+                          query: {},
+                          payload: payload,
+                          credentials: {},
+                          headers: {}
+                        };
+
+                        const injectOptions = TestHelper.mockInjection(request);
+
+                        return server.inject(injectOptions);
+                      })
+                      .then(function (response) {
+
+                        let payload = [
+                          permissions.find(function (p) { return p.name === 'nothing'; })._id,
+                          permissions.find(function (p) { return p.name === 'associate'; })._id
+                        ];
+
+                        const request = {
+                          method: 'DELETE',
+                          url: '/user/{ownerId}/permissions',
+                          params: { ownerId: users[0]._id },
+                          query: {},
+                          payload: payload,
+                          credentials: {},
+                          headers: {}
+                        };
+
+                        const injectOptions = TestHelper.mockInjection(request);
+
+                        return server.inject(injectOptions);
+                      })
+                      .then(function (response) {
+
+                        const request = {
+                          method: 'GET',
+                          url: '/role/{ownerId}/permission',
+                          params: { ownerId: roles[1]._id },
+                          query: {},
+                          payload: {},
+                          credentials: {},
+                          headers: {}
+                        };
+
+                        const injectOptions = TestHelper.mockInjection(request);
+
+                        promises.push(server.inject(injectOptions));
+                      })
+                      .then(function (response) {
+
+                        const request = {
+                          method: 'GET',
+                          url: '/user/{ownerId}/permissions',
+                          params: { ownerId: users[0]._id },
+                          query: {},
+                          payload: {},
+                          credentials: {},
+                          headers: {}
+                        };
+
+                        const injectOptions = TestHelper.mockInjection(request);
+
+                        promises.push(server.inject(injectOptions));
+                      })
+                      //</editor-fold>
+
+                      //<editor-fold desc="Act">
+                      .then(function () {
+                        return Q.all(promises)
+                      })
+                      //</editor-fold>
+
+                      //<editor-fold desc="Assert">
+                      .then(function (response) {
+                        t.deepEquals(response[0].result.docs, [], 'MANY_MANY associations removed');
+                        t.deepEquals(response[1].result.docs, [], 'MANY_MANY associations removed');
+                      })
+                      //</editor-fold>
+
+                      //<editor-fold desc="Restore">
+                      .then(function () {
+                        Decache('../rest-hapi');
+                        Decache('../config');
+                        delete Mongoose.models.role;
+                        delete Mongoose.modelSchemas.role;
+                        delete Mongoose.models.hashtag;
+                        delete Mongoose.modelSchemas.hashtag;
+                        delete Mongoose.models.user;
+                        delete Mongoose.modelSchemas.user;
+                        delete Mongoose.models.userProfile;
+                        delete Mongoose.modelSchemas.userProfile;
+                        delete Mongoose.models.permission;
+                        delete Mongoose.modelSchemas.permission;
+                      });
+                  //</editor-fold>
+                });
+              })
         })
       })
       .then(function() {
