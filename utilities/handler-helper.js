@@ -162,9 +162,9 @@ function _listHandler(model, request, Log) {
                           filterDeletedEmbeds(result, {}, "", 0, Log);
                         }
 
-                        if (result._id) {
-                          result._id = result._id.toString();//EXPL: _id must be a string to pass validation
-                        }
+                        // if (result._id) {
+                        //   result._id = result._id.toString();//EXPL: _id must be a string to pass validation
+                        // }
 
                         Log.log("Result: %s", JSON.stringify(result));
                         return result
@@ -1362,7 +1362,7 @@ function _getAllHandler(ownerModel, ownerId, childModel, associationName, reques
                   if (_.isArray(result.docs)) {
                     result.docs.forEach(function(object) {
                       var data = extraFieldData.find(function(data) {
-                        return data[association.model]._id.toString() === object._id
+                        return data[association.model]._id.toString() === object._id.toString()
                       });
                       if (!data) {
                         throw new Error("child object not found")
@@ -1626,7 +1626,10 @@ function _removeAssociation(ownerModel, ownerObject, childModel, childId, associ
           var associationType = association.type;
           if (associationType === "ONE_MANY") {//EXPL: one-many associations are virtual, so only update the child reference
             // childObject[association.foreignField] = null; //TODO: set reference to null instead of deleting it?
-            childObject[association.foreignField] = undefined;
+            //EXPL: only delete the reference if the ids match
+            if (childObject[association.foreignField] && childObject[association.foreignField].toString() === ownerObject._id.toString()) {
+              childObject[association.foreignField] = undefined;
+            }
             promise = childObject.save()
           }
           else if (associationType === "MANY_MANY") {//EXPL: remove references from both models
