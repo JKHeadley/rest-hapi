@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Fixed
+- Fixed bug preventing "$where" association queries.
 
 ## [0.30.0] - 2017-10-12
 ### Added
