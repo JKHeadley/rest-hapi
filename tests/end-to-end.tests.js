@@ -985,7 +985,7 @@ Test('end to end tests', function (t) {
                           method: 'GET',
                           url: '/user',
                           params: {},
-                          query: { $embed: ['title'] },
+                          query: { $embed: ['title'], email: [users[0].email, users[1].email, users[2].email] },
                           payload: {},
                           credentials: {},
                           headers: {}
@@ -1001,7 +1001,7 @@ Test('end to end tests', function (t) {
                           method: 'GET',
                           url: '/user',
                           params: {},
-                          query: {},
+                          query: { email: [users[0].email, users[1].email, users[2].email] },
                           payload: {},
                           credentials: {},
                           headers: {}
@@ -1021,8 +1021,20 @@ Test('end to end tests', function (t) {
 
                       //<editor-fold desc="Assert">
                       .then(function (response) {
-                        let result1 = [response[3].result.docs[0], response[3].result.docs[1], response[3].result.docs[2]];
-                        let result2 = [response[2].result.docs[0], response[2].result.docs[1], response[2].result.docs[2]];
+
+                        //EXPL: rearrange results to match order
+                        let result1 = [];
+                        response[0].result.users.forEach(function(user) {
+                          result1.push(response[3].result.docs.find(function(u) { return u.email === user.email }));
+                        });
+                        let result2 = [];
+                        response[1].result.docs.forEach(function(user) {
+                          result2.push(response[2].result.docs.find(function(u) { return u.email === user.email }));
+                        });
+                        t.equals(response[0].result.users.length, 3, "users length correct 1");
+                        t.equals(response[1].result.docs.length, 3, "users length correct 2");
+                        t.equals(response[2].result.docs.length, 3, "users length correct 3");
+                        t.equals(response[3].result.docs.length, 3, "users length correct 4");
                         t.deepEquals(response[0].result.users, result1, 'ONE_MANY association correct');
                         t.deepEquals(response[1].result.docs, result2, 'MANY_ONE association correct');
                       })
@@ -2218,7 +2230,7 @@ Test('end to end tests', function (t) {
                           method: 'GET',
                           url: '/user',
                           params: {},
-                          query: { $embed: ['title'] },
+                          query: { $embed: ['title'], email: [users[0].email, users[1].email, users[2].email] },
                           payload: {},
                           credentials: {},
                           headers: {}
@@ -2234,7 +2246,7 @@ Test('end to end tests', function (t) {
                           method: 'GET',
                           url: '/user',
                           params: {},
-                          query: {},
+                          query: { email: [users[0].email, users[1].email, users[2].email] },
                           payload: {},
                           credentials: {},
                           headers: {}
@@ -2254,8 +2266,20 @@ Test('end to end tests', function (t) {
 
                       //<editor-fold desc="Assert">
                       .then(function (response) {
-                        let result1 = [response[3].result.docs[0], response[3].result.docs[1], response[3].result.docs[2]];
-                        let result2 = [response[2].result.docs[0], response[2].result.docs[1], response[2].result.docs[2]];
+
+                        //EXPL: rearrange results to match order
+                        let result1 = [];
+                        response[0].result.users.forEach(function(user) {
+                          result1.push(response[3].result.docs.find(function(u) { return u.email === user.email }));
+                        });
+                        let result2 = [];
+                        response[1].result.docs.forEach(function(user) {
+                          result2.push(response[2].result.docs.find(function(u) { return u.email === user.email }));
+                        });
+                        t.equals(response[0].result.users.length, 3, "users length correct 1");
+                        t.equals(response[1].result.docs.length, 3, "users length correct 2");
+                        t.equals(response[2].result.docs.length, 3, "users length correct 3");
+                        t.equals(response[3].result.docs.length, 3, "users length correct 4");
                         t.deepEquals(response[0].result.users, result1, 'ONE_MANY association correct');
                         t.deepEquals(response[1].result.docs, result2, 'MANY_ONE association correct');
                       })
