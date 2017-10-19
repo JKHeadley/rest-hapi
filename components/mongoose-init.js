@@ -8,7 +8,7 @@ let globals = require('./globals');
 // var mongoose = require('mongoose');
 
 module.exports = function (mongoose, logger, config) {
-  mongoose.Promise = require('q').Promise;
+  mongoose.Promise = Promise;
   
   logger = logUtil.bindHelper(logger, "mongoose");
 
