@@ -3127,9 +3127,10 @@ Test('end to end tests', function (t) {
                       .then(function () {
                         Decache('../rest-hapi');
                         Decache('../config');
-                        delete Mongoose.models.role;
                         Object.keys(Mongoose.models).forEach(function(key) { delete Mongoose.models[key]; });
                         Object.keys(Mongoose.modelSchemas).forEach(function(key) { delete Mongoose.modelSchemas[key]; });
+
+                        return mockgoose.helper.reset();
                       });
                   //</editor-fold>
                 });
