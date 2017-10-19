@@ -162,10 +162,6 @@ function _listHandler(model, request, Log) {
                           filterDeletedEmbeds(result, {}, "", 0, Log);
                         }
 
-                        // if (result._id) {
-                        //   result._id = result._id.toString();//EXPL: _id must be a string to pass validation
-                        // }
-
                         Log.log("Result: %s", JSON.stringify(result));
                         return result
                       });
@@ -326,10 +322,6 @@ function _findHandler(model, _id, request, Log) {
 
                         if (config.enableSoftDelete && config.filterDeletedEmbeds) {//EXPL: remove soft deleted documents from populated properties
                           filterDeletedEmbeds(result, {}, "", 0, Log);
-                        }
-
-                        if (result._id) {//TODO: handle this with mongoose/global preware
-                          result._id = result._id.toString();//EXPL: _id must be a string to pass validation
                         }
 
                         Log.log("Result: %s", JSON.stringify(result));
