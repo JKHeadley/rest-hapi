@@ -99,6 +99,22 @@ config.enableUpdatedBy = false;
 config.enableDeletedBy = false;
 
 /**
+ * When enabled, all create, update, associate, and delete events are recorded in an Audit Log collection.
+ * default: true
+ * @type {boolean}
+ */
+config.enableAuditLog = true;
+
+/**
+ * Specifiies the TTL (time to live/lifetime/expiration) of Audit Log entries. Accepts values in seconds unless specified
+ * (Ex: 60 = 60 seconds, '1w' = 1 week, or '1d' = 1 day)
+ * See: http://nicoll.io/mongottl/
+ * default: 0 (does not expire)
+ * @type {string}
+ */
+config.auditLogTTL = 0;
+
+/**
  * Enables policies via mrhorse (https://github.com/mark-bradshaw/mrhorse).
  * default: false
  * @type {boolean}
