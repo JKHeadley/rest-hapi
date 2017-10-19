@@ -175,7 +175,7 @@ internals.extendSchemaAssociations = function (Schema, mongoose, modelPath) {
 
           //EXPL: if the association isn't embedded, create separate collection for linking model
           if (!embedAssociation) {
-            const modelName = Schema.options.collection;
+            const modelName = Schema.statics.collectionName;
             if (!modelExists) {
               const Types = mongoose.Schema.Types;
               linkingModel.Schema[modelName] = {
@@ -219,8 +219,8 @@ internals.extendSchemaAssociations = function (Schema, mongoose, modelPath) {
         else {
           //EXPL: if the association isn't embedded and a linking model isn't defined, then we need to create a basic linking collection
           if (!embedAssociation) {
-            const linkingModelName_1 = Schema.options.collection + "_" + association.model;
-            const linkingModelName_2 = association.model + "_" + Schema.options.collection;
+            const linkingModelName_1 = Schema.statics.collectionName + "_" + association.model;
+            const linkingModelName_2 = association.model + "_" + Schema.statics.collectionName;
             let linkingModelName = linkingModelName_1;
 
             association.include = {};
@@ -240,7 +240,7 @@ internals.extendSchemaAssociations = function (Schema, mongoose, modelPath) {
             catch(error) {
               modelExists[1] = false;
             }
-            const modelName = Schema.options.collection;
+            const modelName = Schema.statics.collectionName;
             if (!modelExists[0] && !modelExists[1]) {
               const Types = mongoose.Schema.Types;
 
