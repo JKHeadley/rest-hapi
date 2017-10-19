@@ -1,3 +1,5 @@
+'use strict';
+
 var test = require('blue-tape');
 var _ = require('lodash');
 var sinon = require('sinon');

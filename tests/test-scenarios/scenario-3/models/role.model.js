@@ -1,0 +1,36 @@
+'use strict';
+
+module.exports = function (mongoose) {
+  var modelName = "role";
+  var Types = mongoose.Schema.Types;
+  var Schema = new mongoose.Schema({
+    name: {
+      type: Types.String,
+      enum: ["User", "Admin", "SuperAdmin"],
+      required: true
+    },
+    description: {
+      type: Types.String
+    }
+  }, { collection: modelName });
+    
+  Schema.statics = {
+    collectionName:modelName,
+    routeOptions: {
+      associations: {
+        users: {
+          type: "ONE_MANY",
+          alias: "people",
+          foreignField: "title",
+          model: "user"
+        },
+        permissions: {
+          type: "MANY_MANY",
+          model: "permission"
+        }
+      }
+    }
+  };
+
+  return Schema;
+};

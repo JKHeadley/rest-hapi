@@ -166,7 +166,7 @@ module.exports = function (logger, mongoose, server) {
         policies = (policies.rootPolicies || []).concat(policies.readPolicies || []);
       }
 
-      if (config.enableDocumentScopes) {
+      if (config.enableDocumentScopes && auth) {
         policies.push(restHapiPolicies.enforceDocumentScopePre(model, Log));
         policies.push(restHapiPolicies.enforceDocumentScopePost(model, Log));
       }
@@ -275,7 +275,7 @@ module.exports = function (logger, mongoose, server) {
         policies = (policies.rootPolicies || []).concat(policies.readPolicies || []);
       }
 
-      if (config.enableDocumentScopes) {
+      if (config.enableDocumentScopes && auth) {
         policies.push(restHapiPolicies.enforceDocumentScopePre(model, Log));
         policies.push(restHapiPolicies.enforceDocumentScopePost(model, Log));
       }
@@ -396,7 +396,7 @@ module.exports = function (logger, mongoose, server) {
         policies = (policies.rootPolicies || []).concat(policies.createPolicies || []);
       }
 
-      if (config.enableDocumentScopes) {
+      if (config.enableDocumentScopes && auth) {
         var authorizeDocumentCreator = model.routeOptions.authorizeDocumentCreator === undefined ? config.authorizeDocumentCreator : model.routeOptions.authorizeDocumentCreator;
         var authorizeDocumentCreatorToRead = model.routeOptions.authorizeDocumentCreatorToRead === undefined ? config.authorizeDocumentCreatorToRead : model.routeOptions.authorizeDocumentCreatorToRead;
         var authorizeDocumentCreatorToUpdate = model.routeOptions.authorizeDocumentCreatorToUpdate === undefined ? config.authorizeDocumentCreatorToUpdate : model.routeOptions.authorizeDocumentCreatorToUpdate;
@@ -530,7 +530,7 @@ module.exports = function (logger, mongoose, server) {
         policies = (policies.rootPolicies || []).concat(policies.deletePolicies || []);
       }
 
-      if (config.enableDocumentScopes) {
+      if (config.enableDocumentScopes && auth) {
         policies.push(restHapiPolicies.enforceDocumentScopePre(model, Log));
         policies.push(restHapiPolicies.enforceDocumentScopePost(model, Log));
       }
@@ -651,7 +651,7 @@ module.exports = function (logger, mongoose, server) {
         policies = (policies.rootPolicies || []).concat(policies.deletePolicies || []);
       }
 
-      if (config.enableDocumentScopes) {
+      if (config.enableDocumentScopes && auth) {
         policies.push(restHapiPolicies.enforceDocumentScopePre(model, Log));
         policies.push(restHapiPolicies.enforceDocumentScopePost(model, Log));
       }
@@ -769,7 +769,7 @@ module.exports = function (logger, mongoose, server) {
         policies = (policies.rootPolicies || []).concat(policies.updatePolicies || []);
       }
 
-      if (config.enableDocumentScopes) {
+      if (config.enableDocumentScopes && auth) {
         policies.push(restHapiPolicies.enforceDocumentScopePre(model, Log));
         policies.push(restHapiPolicies.enforceDocumentScopePost(model, Log));
       }
@@ -895,7 +895,7 @@ module.exports = function (logger, mongoose, server) {
         policies = (policies.rootPolicies || []).concat(policies.associatePolicies || []);
       }
 
-      if (config.enableDocumentScopes) {
+      if (config.enableDocumentScopes && auth) {
         policies.push(restHapiPolicies.enforceDocumentScopePre(ownerModel, Log));
         policies.push(restHapiPolicies.enforceDocumentScopePost(ownerModel, Log));
       }
@@ -1004,7 +1004,7 @@ module.exports = function (logger, mongoose, server) {
         policies = (policies.rootPolicies || []).concat(policies.associatePolicies || []);
       }
 
-      if (config.enableDocumentScopes) {
+      if (config.enableDocumentScopes && auth) {
         policies.push(restHapiPolicies.enforceDocumentScopePre(ownerModel, Log));
         policies.push(restHapiPolicies.enforceDocumentScopePost(ownerModel, Log));
       }
@@ -1131,7 +1131,7 @@ module.exports = function (logger, mongoose, server) {
         policies = (policies.rootPolicies || []).concat(policies.associatePolicies || []);
       }
 
-      if (config.enableDocumentScopes) {
+      if (config.enableDocumentScopes && auth) {
         policies.push(restHapiPolicies.enforceDocumentScopePre(ownerModel, Log));
         policies.push(restHapiPolicies.enforceDocumentScopePost(ownerModel, Log));
       }
@@ -1240,7 +1240,7 @@ module.exports = function (logger, mongoose, server) {
         policies = (policies.rootPolicies || []).concat(policies.associatePolicies || []);
       }
 
-      if (config.enableDocumentScopes) {
+      if (config.enableDocumentScopes && auth) {
         policies.push(restHapiPolicies.enforceDocumentScopePre(ownerModel, Log));
         policies.push(restHapiPolicies.enforceDocumentScopePost(ownerModel, Log));
       }
@@ -1361,7 +1361,7 @@ module.exports = function (logger, mongoose, server) {
         policies = (policies.rootPolicies || []).concat(policies.readPolicies || []);
       }
 
-      if (config.enableDocumentScopes) {
+      if (config.enableDocumentScopes && auth) {
         policies.push(restHapiPolicies.enforceDocumentScopePre(ownerModel, Log));
         policies.push(restHapiPolicies.enforceDocumentScopePost(ownerModel, Log));
       }

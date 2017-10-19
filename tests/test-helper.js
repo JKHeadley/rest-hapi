@@ -1,132 +1,189 @@
+'use strict';
+
 var test = require('tape');
 var _ = require('lodash');
+const QueryString = require('query-string');
 
-module.exports = {
-  /**
-   * Tests a given function (methodToTest) to verify that it's "model" parameter follows
-   * the mongoose model format.
-   * @param t: Parent test object.
-   * @param methodToTest: The method being tested.
-   * @param methodName: The name of the method being called.
-   * @param parameters: A string array containing the parameter names for the method.
-   * @param Log: A logging object.
-   */
-  testModelParameter: function(t, methodToTest, methodName, parameters, Log) {
-    if (t) {
-      test = t.test;
+const internals = {};
+
+/**
+ * Tests a given function (methodToTest) to verify that it's "model" parameter follows
+ * the mongoose model format.
+ * @param t: Parent test object.
+ * @param methodToTest: The method being tested.
+ * @param methodName: The name of the method being called.
+ * @param parameters: A string array containing the parameter names for the method.
+ * @param Log: A logging object.
+ */
+internals.testModelParameter = function(t, methodToTest, methodName, parameters, Log) {
+  if (t) {
+    test = t.test;
+  }
+
+  var modelIndex = parameters.indexOf("model");
+  var logIndex = parameters.indexOf("Log");
+  var paramCopy = {};
+
+  parameters[logIndex] = Log;
+
+  test(methodName + ' fails if model parameter isn\'t a mongoose model', function (t) {
+    t.plan(10);
+
+    var model = {};
+
+    paramCopy = _.extend([], parameters);
+    paramCopy[modelIndex] = model;
+    try {
+      methodToTest.apply(null, paramCopy);
+      t.fail("No error was thrown.");
+    } catch (error) {
+      t.ok(/^AssertionError/.test(error.name), "error is an AssertionError");
+      t.ok(error.message.indexOf("schema") > -1, "assertion message contains 'schema' text.");
     }
 
-    var modelIndex = parameters.indexOf("model");
-    var logIndex = parameters.indexOf("Log");
-    var paramCopy = {};
+    model = {
+      schema: {}
+    };
 
-    parameters[logIndex] = Log;
+    paramCopy = _.extend([], parameters);
+    paramCopy[modelIndex] = model;
+    try {
+      methodToTest.apply(null, paramCopy);
+      t.fail("No error was thrown.");
+    } catch (error) {
+      t.ok(/^AssertionError/.test(error.name), "error is an AssertionError");
+      t.ok(error.message.indexOf("schema.paths") > -1, "assertion message contains 'schema.paths' text.");
+    }
 
-    test(methodName + ' fails if model parameter isn\'t a mongoose model', function (t) {
-      t.plan(10);
-
-      var model = {};
-
-      paramCopy = _.extend([], parameters);
-      paramCopy[modelIndex] = model;
-      try {
-        methodToTest.apply(null, paramCopy);
-        t.fail("No error was thrown.");
-      } catch (error) {
-        t.ok(/^AssertionError/.test(error.name), "error is an AssertionError");
-        t.ok(error.message.indexOf("schema") > -1, "assertion message contains 'schema' text.");
+    model = {
+      schema: {
+        paths: {}
       }
+    };
 
-      model = {
-        schema: {}
-      };
+    paramCopy = _.extend([], parameters);
+    paramCopy[modelIndex] = model;
+    try {
+      methodToTest.apply(null, paramCopy);
+      t.fail("No error was thrown.");
+    } catch (error) {
+      t.ok(/^AssertionError/.test(error.name), "error is an AssertionError");
+      t.ok(error.message.indexOf("schema.tree") > -1, "assertion message contains 'schema.tree' text.");
+    }
 
-      paramCopy = _.extend([], parameters);
-      paramCopy[modelIndex] = model;
-      try {
-        methodToTest.apply(null, paramCopy);
-        t.fail("No error was thrown.");
-      } catch (error) {
-        t.ok(/^AssertionError/.test(error.name), "error is an AssertionError");
-        t.ok(error.message.indexOf("schema.paths") > -1, "assertion message contains 'schema.paths' text.");
+    model = {
+      schema: {
+        paths: {},
+        tree: {}
       }
+    };
 
-      model = {
-        schema: {
-          paths: {}
-        }
-      };
-
-      paramCopy = _.extend([], parameters);
-      paramCopy[modelIndex] = model;
-      try {
-        methodToTest.apply(null, paramCopy);
-        t.fail("No error was thrown.");
-      } catch (error) {
-        t.ok(/^AssertionError/.test(error.name), "error is an AssertionError");
-        t.ok(error.message.indexOf("schema.tree") > -1, "assertion message contains 'schema.tree' text.");
-      }
-
-      model = {
-        schema: {
-          paths: {},
-          tree: {}
-        }
-      };
-
-      paramCopy = _.extend([], parameters);
-      paramCopy[modelIndex] = model;
-      try {
-        methodToTest.apply(null, paramCopy);
-        t.fail("No error was thrown.");
-      } catch (error) {
-        t.ok(/^AssertionError/.test(error.name), "error is an AssertionError");
-        t.ok(error.message.indexOf("routeOptions") > -1, "assertion message contains 'routeOptions' text.");
-      }
+    paramCopy = _.extend([], parameters);
+    paramCopy[modelIndex] = model;
+    try {
+      methodToTest.apply(null, paramCopy);
+      t.fail("No error was thrown.");
+    } catch (error) {
+      t.ok(/^AssertionError/.test(error.name), "error is an AssertionError");
+      t.ok(error.message.indexOf("routeOptions") > -1, "assertion message contains 'routeOptions' text.");
+    }
 
 
-      model = {
-        schema: {
-          paths: {
-            field1: {},
-            field2: {},
-            field3: {},
-            field4: {}
-          },
-          tree: {}
+    model = {
+      schema: {
+        paths: {
+          field1: {},
+          field2: {},
+          field3: {},
+          field4: {}
         },
-        routeOptions: {}
-      };
+        tree: {}
+      },
+      routeOptions: {}
+    };
 
-      paramCopy = _.extend([], parameters);
-      paramCopy[modelIndex] = model;
-      try {
-        methodToTest.apply(null, paramCopy);
-        t.fail("No error was thrown.");
-      } catch (error) {
-        t.ok(/^AssertionError/.test(error.name), "error is an AssertionError");
-        t.ok(error.message.indexOf("options") > -1, "assertion message contains 'options' text.");
-      }
-    });
-  },
+    paramCopy = _.extend([], parameters);
+    paramCopy[modelIndex] = model;
+    try {
+      methodToTest.apply(null, paramCopy);
+      t.fail("No error was thrown.");
+    } catch (error) {
+      t.ok(/^AssertionError/.test(error.name), "error is an AssertionError");
+      t.ok(error.message.indexOf("options") > -1, "assertion message contains 'options' text.");
+    }
+  });
 };
 
 /**
- * Function to run a single test file using node cli.
- * Ex: "node tests/test-helper.js tests/model-helper.tests.js"
+ * Mock hapi auth strategy for testing.
+ * @param server
+ * @param strategyName
  */
-var runTestFile = function() {
-  var pathToTestFile = process.argv.slice(2)[0];
+internals.mockStrategy = function(server, strategyName) {
+
+  server.auth.scheme('mock', function(server, options) {
+    return {
+      authenticate: function(request, reply) {
+        reply.continue();
+      }
+    };
+  });
+
+  server.auth.strategy(strategyName, 'mock');
+};
+
+/**
+ * Takes normal request properties and creates an options object for a server injection.
+ * @param request: Mock request object.
+ * @returns {{method: *, url: (string|string), payload: *, credentials: (request.credentials|{scope}|{user}|{}), headers: (request.headers|{authorization})}}
+ */
+internals.mockInjection = function(request) {
+  let fullUrl = request.url;
+  for (const key in request.params) {
+    fullUrl = fullUrl.replace('{' + key + '}', request.params[key]);
+  }
+  fullUrl = fullUrl + '?' + QueryString.stringify(request.query);
+
+  const injectOptions = {
+    method: request.method,
+    url: fullUrl,
+    payload: request.payload,
+    credentials: request.credentials,
+    headers: request.headers
+  };
+
+  return injectOptions;
+};
+
+/**
+ * Function to run a single test file.
+ * Can be used with node cli. Ex: "node tests/test-helper.js tests/model-helper.tests.js"
+ * @param path: path to test file.
+ */
+internals.runTestFile = function(path) {
+  var pathToTestFile = path || process.argv.slice(2)[0];
   if (pathToTestFile && pathToTestFile !== "test") {
     var gulp = require('gulp');
     var tape = require('gulp-tape');
     var tapColorize = require('tap-colorize');
 
-    gulp.src([
+    return gulp.src([
       pathToTestFile
     ])
-    .pipe(tape({
-      reporter: tapColorize()
-    }));
+        .pipe(tape({
+          reporter: tapColorize()
+        }));
   }
-}();
+};
+
+module.exports = {
+  testModelParameter: internals.testModelParameter,
+
+  mockStrategy: internals.mockStrategy,
+
+  mockInjection: internals.mockInjection,
+
+  runTestFile: internals.runTestFile
+};
+
+internals.runTestFile();
