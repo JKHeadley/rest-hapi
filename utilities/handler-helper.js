@@ -984,7 +984,7 @@ function _removeOneHandler(ownerModel, ownerId, childModel, childId, association
     return ownerModel.findOne({ '_id': ownerId }).select(associationName)
         .then(function (ownerObject) {
           if (ownerObject) {
-            _removeAssociation(ownerModel, ownerObject, childModel, childId, associationName, Log)
+            return _removeAssociation(ownerModel, ownerObject, childModel, childId, associationName, Log)
                 .then(function() {
                   return true;
                 })
@@ -1552,7 +1552,7 @@ function _setAssociation(ownerModel, ownerObject, childModel, childId, associati
           else if (association.type === "_MANY") {
 
             var duplicate = ownerObject[associationName].filter(function (_childId) {
-              return _childId.toString() === childId;
+              return _childId.toString() === childId.toString();
             });
             duplicate = duplicate[0];
 
