@@ -359,6 +359,7 @@ test('model-helper.extendSchemaAssociations', function (t) {
     var userSchema = {};
 
     userSchema.statics = {
+      collectionName: "user",
       routeOptions: {
         associations: {
           groups: {
@@ -367,10 +368,6 @@ test('model-helper.extendSchemaAssociations', function (t) {
           }
         }
       }
-    };
-
-    userSchema.options = {
-      collection: "user"
     };
 
     userSchema.virtual = this.spy();
@@ -424,10 +421,10 @@ test('model-helper.extendSchemaAssociations', function (t) {
     modelHelper.__set__("config", config);
 
 
-    var userSchema = {};
-
-    userSchema.options = {
-      collection: "user"
+    var userSchema = {
+      statics: {
+        collectionName: "user"
+      }
     };
 
     userSchema.virtual = this.spy();
@@ -458,6 +455,7 @@ test('model-helper.extendSchemaAssociations', function (t) {
     var linkingModel = mongoose.model("test_linking", linkingModelSchema);
 
     userSchema.statics = {
+      collectionName: "user",
       routeOptions: {
         associations: {
           groups: {

@@ -28,7 +28,7 @@ module.exports = function (mongoose) {
       type: Types.ObjectId,
       ref: "userProfile"
     }
-  });
+  }, { collection: modelName });
   
   Schema.statics = {
     collectionName:modelName,
