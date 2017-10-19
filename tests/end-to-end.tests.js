@@ -951,8 +951,8 @@ Test('end to end tests', function (t) {
 
                         const request = {
                           method: 'GET',
-                          url: '/role',
-                          params: {},
+                          url: '/role/{_id}',
+                          params: { _id: roles[0]._id },
                           query: { $embed: ['users'] },
                           payload: {},
                           credentials: {},
@@ -1023,7 +1023,7 @@ Test('end to end tests', function (t) {
                       .then(function (response) {
                         let result1 = [response[3].result.docs[0], response[3].result.docs[1], response[3].result.docs[2]];
                         let result2 = [response[2].result.docs[0], response[2].result.docs[1], response[2].result.docs[2]];
-                        t.deepEquals(response[0].result.docs[0].users, result1, 'ONE_MANY association correct');
+                        t.deepEquals(response[0].result.users, result1, 'ONE_MANY association correct');
                         t.deepEquals(response[1].result.docs, result2, 'MANY_ONE association correct');
                       })
                       //</editor-fold>
@@ -2184,8 +2184,8 @@ Test('end to end tests', function (t) {
 
                         const request = {
                           method: 'GET',
-                          url: '/role',
-                          params: {},
+                          url: '/role/{_id}',
+                          params: { _id: roles[0]._id },
                           query: { $embed: ['users'] },
                           payload: {},
                           credentials: {},
@@ -2256,7 +2256,7 @@ Test('end to end tests', function (t) {
                       .then(function (response) {
                         let result1 = [response[3].result.docs[0], response[3].result.docs[1], response[3].result.docs[2]];
                         let result2 = [response[2].result.docs[0], response[2].result.docs[1], response[2].result.docs[2]];
-                        t.deepEquals(response[0].result.docs[0].users, result1, 'ONE_MANY association correct');
+                        t.deepEquals(response[0].result.users, result1, 'ONE_MANY association correct');
                         t.deepEquals(response[1].result.docs, result2, 'MANY_ONE association correct');
                       })
                       //</editor-fold>
