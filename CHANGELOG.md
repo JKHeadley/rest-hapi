@@ -6,8 +6,20 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+
+## [0.31.0] - 2017-10-19
+### Added
+- Added end to end unit tests.
+
+### Changed
+- Updated list and find to return original "\_id"s instead of strings.
+- Swapped to js Promise rather than Q promise for mongoose.
+
 ### Fixed
 - Fixed bug preventing "$where" association queries.
+- Added a 'select' call to association endpoints to allow owner object to be updated during association middleware.
+- Fixed bug with linking model modelName.
+- Added missing return statement to removeAssociation. Was causing promises to return before mongo entries updated.
 
 ## [0.30.0] - 2017-10-12
 ### Added
@@ -120,7 +132,7 @@ post(hardDelete, deleted, Log) | post(hardDelete, deleted, request, Log)
 
 
 
-[Unreleased]: https://github.com/jkheadley/rest-hapi/compare/v0.30.0...HEAD
+[Unreleased]: https://github.com/jkheadley/rest-hapi/compare/v0.31.0...HEAD
 [0.20.0]: https://github.com/jkheadley/rest-hapi/compare/v0.19.2...v0.20.0
 [0.20.2]: https://github.com/jkheadley/rest-hapi/compare/v0.20.0...v0.20.2
 [0.20.3]: https://github.com/jkheadley/rest-hapi/compare/v0.20.2...v0.20.3
@@ -134,5 +146,6 @@ post(hardDelete, deleted, Log) | post(hardDelete, deleted, request, Log)
 [0.28.0]: https://github.com/jkheadley/rest-hapi/compare/v0.27.0...v0.28.0
 [0.29.0]: https://github.com/jkheadley/rest-hapi/compare/v0.28.0...v0.29.0
 [0.30.0]: https://github.com/jkheadley/rest-hapi/compare/v0.29.0...v0.30.0
+[0.31.0]: https://github.com/jkheadley/rest-hapi/compare/v0.30.0...v0.31.0
 
 [BREAKING]: https://github.com/JKHeadley/rest-hapi/releases
