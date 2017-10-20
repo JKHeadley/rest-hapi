@@ -486,6 +486,21 @@ internals.joiObjectId = function () {
 };
 
 /**
+ * Returns true if arg is a true ObjectId or ObjectId string, false otherwise.
+ * @returns {boolean}
+ */
+internals.isObjectId = function (arg) {
+
+  let result = Joi.validate(arg, internals.joiObjectId());
+
+  if (result.error) {
+    return false;
+  }
+
+  return true;
+};
+
+/**
  * Checks to see if a field is a valid model property
  * @param fieldName: The name of the field
  * @param field: The field being checked
@@ -533,6 +548,8 @@ module.exports = {
 
   generateJoiModelFromFieldType: internals.generateJoiModelFromFieldType,
 
-  joiObjectId: internals.joiObjectId
+  joiObjectId: internals.joiObjectId,
+
+  isObjectId: internals.isObjectId
 
 };
