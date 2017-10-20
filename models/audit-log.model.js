@@ -23,20 +23,25 @@ module.exports = function (mongoose) {
       allowNull: true,
       default: null
     },
-    collection: {
+    collectionName: {
       type: Types.String,
       require: true
     },
-    document: {
-      type: Types.ObjectId,
+    documents: {
+      type: [Types.ObjectId],
       required: true
     },
     payload: {
-      type: Types.Object,
+      type: Types.Mixed,
       allowNull: true,
       default: null
     },
     params: {
+      type: Types.Object,
+      allowNull: true,
+      default: null
+    },
+    result: {
       type: Types.Object,
       allowNull: true,
       default: null
@@ -46,8 +51,9 @@ module.exports = function (mongoose) {
   Schema.statics = {
     collectionName:modelName,
     routeOptions: {
-      associations: {
-      }
+      allowCreate: false,
+      allowUpdate: false,
+      allowDelete: false,
     }
   };
 
