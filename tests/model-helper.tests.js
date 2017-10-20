@@ -283,7 +283,7 @@ test('model-helper.extendSchemaAssociations', function (t) {
     var fs = require('fs');
     var mkdirp = require('mkdirp');
     var rmdir = require('rmdir');
-    var linkingModelPath = __dirname + "/../models/linking-models/";
+    var linkingModelPath = __dirname + "/../models_test/linking-models/";
     var linkingModelfileName = linkingModelPath + "test_linking.model.js";
 
     mkdirp(linkingModelPath, function (err) {
@@ -321,7 +321,7 @@ test('model-helper.extendSchemaAssociations', function (t) {
       deferred.promise.then(function () {
         //<editor-fold desc="Act">
         try {
-          modelHelper.extendSchemaAssociations(userSchema, mongoose, __dirname + "/../models");
+          modelHelper.extendSchemaAssociations(userSchema, mongoose, __dirname + "/../models_test");
         }
         catch (error) {
           Log.error(error);
@@ -335,7 +335,7 @@ test('model-helper.extendSchemaAssociations', function (t) {
         //</editor-fold>
 
         //<editor-fold desc="Restore">
-        // rmdir(__dirname + "/../models");
+        // rmdir(__dirname + "/../models_test");
         // fs.unlinkSync(linkingModelPath);
         delete mongoose.models.test_linking;
         delete mongoose.modelSchemas.test_linking;
@@ -474,7 +474,7 @@ test('model-helper.extendSchemaAssociations', function (t) {
 
     //<editor-fold desc="Act">
     try {
-      modelHelper.extendSchemaAssociations(userSchema, mongoose, __dirname + "/../models");
+      modelHelper.extendSchemaAssociations(userSchema, mongoose, __dirname + "/../models_test");
     }
     catch (error) {
       Log.error(error);
@@ -488,7 +488,7 @@ test('model-helper.extendSchemaAssociations', function (t) {
     //</editor-fold>
 
     //<editor-fold desc="Restore">
-    rmdir(__dirname + "/../models");
+    rmdir(__dirname + "/../models_test");
     delete mongoose.models.test_linking;
     delete mongoose.modelSchemas.test_linking;
     //</editor-fold>

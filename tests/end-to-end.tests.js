@@ -4365,6 +4365,363 @@ Test('end to end tests', function (t) {
                   //</editor-fold>
                 });
               })
+              //remove action logged
+              .then(function () {
+                return t.test('remove action logged', function (t) {
+                  //<editor-fold desc="Arrange">
+                  const RestHapi = require('../rest-hapi');
+                  const server = new Hapi.Server();
+                  server.connection(RestHapi.config.server.connection);
+
+                  const authStrategy = 'testStrategy';
+
+                  TestHelper.mockStrategy(server, authStrategy);
+
+                  const config = {
+                    loglevel: 'ERROR',
+                    authStrategy: authStrategy,
+                    absoluteModelPath: true,
+                    modelPath: __dirname + '/test-scenarios/scenario-3/models'
+                  };
+
+                  let promises = [];
+
+                  RestHapi.config = config;
+
+                  return server.register({
+                    register: RestHapi,
+                    options: {
+                      mongoose: Mongoose
+                    }
+                  })
+                      .then(function () {
+                        server.start();
+
+                        const request = {
+                          method: 'DELETE',
+                          url: '/role/{ownerId}/people/{childId}',
+                          params: { ownerId: roles[0]._id, childId: users[0]._id },
+                          query: {},
+                          payload: {},
+                          credentials: {
+                            user: { _id: users[0]._id }
+                          },
+                          headers: {
+                            authorization: "testAuth"
+                          }
+                        };
+
+                        const injectOptions = TestHelper.mockInjection(request);
+
+                        return server.inject(injectOptions);
+                      })
+                      .then(function (response) {
+
+                        const request = {
+                          method: 'DELETE',
+                          url: '/role/{ownerId}/people',
+                          params: { ownerId: roles[0]._id },
+                          query: {},
+                          payload: [ users[1]._id, users[2]._id ],
+                          credentials: {
+                            user: { _id: users[0]._id }
+                          },
+                          headers: {
+                            authorization: "testAuth"
+                          }
+                        };
+
+                        const injectOptions = TestHelper.mockInjection(request);
+
+                        return server.inject(injectOptions);
+                      })
+                      .then(function (response) {
+
+                        const request = {
+                          method: 'DELETE',
+                          url: '/role/{ownerId}/permission/{childId}',
+                          params: { ownerId: roles[0]._id, childId: permissions[0]._id },
+                          query: {},
+                          payload: {},
+                          credentials: {
+                            user: { _id: users[0]._id }
+                          },
+                          headers: {
+                            authorization: "testAuth"
+                          }
+                        };
+
+                        const injectOptions = TestHelper.mockInjection(request);
+
+                        return server.inject(injectOptions);
+                      })
+                      .then(function (response) {
+
+                        const request = {
+                          method: 'DELETE',
+                          url: '/role/{ownerId}/permission',
+                          params: { ownerId: roles[1]._id },
+                          query: {},
+                          payload: [ permissions[1]._id, permissions[2]._id ],
+                          credentials: {
+                            user: { _id: users[0]._id }
+                          },
+                          headers: {
+                            authorization: "testAuth"
+                          }
+                        };
+
+                        const injectOptions = TestHelper.mockInjection(request);
+
+                        return server.inject(injectOptions);
+                      })
+                      .then(function (response) {
+
+                        const request = {
+                          method: 'DELETE',
+                          url: '/user/{ownerId}/permissions/{childId}',
+                          params: { ownerId: users[0]._id, childId: permissions[0]._id },
+                          query: {},
+                          payload: {},
+                          credentials: {
+                            user: { _id: users[0]._id }
+                          },
+                          headers: {
+                            authorization: "testAuth"
+                          }
+                        };
+
+                        const injectOptions = TestHelper.mockInjection(request);
+
+                        return server.inject(injectOptions);
+                      })
+                      .then(function (response) {
+
+                        const request = {
+                          method: 'DELETE',
+                          url: '/user/{ownerId}/permissions',
+                          params: { ownerId: users[5]._id },
+                          query: {},
+                          payload: [ permissions[1]._id, permissions[2]._id ],
+                          credentials: {
+                            user: { _id: users[0]._id }
+                          },
+                          headers: {
+                            authorization: "testAuth"
+                          }
+                        };
+
+                        const injectOptions = TestHelper.mockInjection(request);
+
+                        return server.inject(injectOptions);
+                      })
+                      .then(function (response) {
+
+                        const request = {
+                          method: 'DELETE',
+                          url: '/user/{ownerId}/hashtag/{childId}',
+                          params: { ownerId: users[0]._id, childId: hashtags[0]._id },
+                          query: {},
+                          payload: {},
+                          credentials: {
+                            user: { _id: users[0]._id }
+                          },
+                          headers: {
+                            authorization: "testAuth"
+                          }
+                        };
+
+                        const injectOptions = TestHelper.mockInjection(request);
+
+                        return server.inject(injectOptions);
+                      })
+                      .then(function (response) {
+
+                        const request = {
+                          method: 'DELETE',
+                          url: '/user/{ownerId}/hashtag',
+                          params: { ownerId: users[0]._id },
+                          query: {},
+                          payload: [ hashtags[1]._id, hashtags[2]._id ],
+                          credentials: {
+                            user: { _id: users[0]._id }
+                          },
+                          headers: {
+                            authorization: "testAuth"
+                          }
+                        };
+
+                        const injectOptions = TestHelper.mockInjection(request);
+
+                        return server.inject(injectOptions);
+                      })
+                      .then(function (response) {
+
+                        const request = {
+                          method: 'GET',
+                          url: '/auditLog',
+                          params: {},
+                          query: { $sort: '_id' },
+                          payload: {},
+                          credentials: {
+                            user: { _id: 'testId' }
+                          },
+                          headers: {
+                            authorization: "testAuth"
+                          }
+                        };
+
+                        const injectOptions = TestHelper.mockInjection(request);
+
+                        promises.push(server.inject(injectOptions));
+                      })
+
+                      //</editor-fold>
+
+                      //<editor-fold desc="Act">
+                      .then(function () {
+                        return Q.all(promises)
+                      })
+                      //</editor-fold>
+
+                      //<editor-fold desc="Assert">
+                      .then(function (response) {
+                        let now = new Date();
+                        now.setUTCMinutes(0, 0, 0);
+                        let log1 = response[0].result.docs[21];
+                        let log2 = response[0].result.docs[22];
+                        let log3 = response[0].result.docs[23];
+                        let log4 = response[0].result.docs[24];
+                        let log5 = response[0].result.docs[25];
+                        let log6 = response[0].result.docs[26];
+                        let log7 = response[0].result.docs[27];
+                        let log8 = response[0].result.docs[28];
+                        log1.date.setUTCMinutes(0, 0, 0);
+                        log2.date.setUTCMinutes(0, 0, 0);
+                        log3.date.setUTCMinutes(0, 0, 0);
+                        log4.date.setUTCMinutes(0, 0, 0);
+                        log5.date.setUTCMinutes(0, 0, 0);
+                        log6.date.setUTCMinutes(0, 0, 0);
+                        log7.date.setUTCMinutes(0, 0, 0);
+                        log8.date.setUTCMinutes(0, 0, 0);
+                        t.deepEqual(log1.method, 'DELETE', 'method correct');
+                        t.deepEqual(log1.action, 'Remove', 'action correct');
+                        t.deepEqual(log1.endpoint, '/role/' + roles[0]._id.toString() + '/people/' + users[0]._id.toString(), 'endpoint correct');
+                        t.deepEqual(log1.collectionName, 'role', 'collectionName correct');
+                        t.deepEqual(log1.childCollectionName, 'user', 'childCollectionName correct');
+                        t.deepEqual(log1.associationType, 'ONE_MANY', 'associationType correct');
+                        t.deepEqual(log1.params, { ownerId: roles[0]._id.toString(), childId: users[0]._id.toString() }, 'params correct');
+                        t.deepEqual(log1.result, null, 'result correct');
+                        t.deepEqual(log1.payload, null, 'payload correct');
+                        t.deepEqual(log1.documents, [ roles[0]._id ], 'documents correct');
+                        t.deepEqual(log1.user, users[0]._id, 'user correct');
+                        t.deepEqual(log1.date, now, 'date correct');
+
+                        t.deepEqual(log2.method, 'DELETE', 'method correct');
+                        t.deepEqual(log2.action, 'Remove', 'action correct');
+                        t.deepEqual(log2.endpoint, '/role/' + roles[0]._id.toString() + '/people', 'endpoint correct');
+                        t.deepEqual(log2.collectionName, 'role', 'collectionName correct');
+                        t.deepEqual(log2.childCollectionName, 'user', 'childCollectionName correct');
+                        t.deepEqual(log2.associationType, 'ONE_MANY', 'associationType correct');
+                        t.deepEqual(log2.params, { ownerId: roles[0]._id.toString() }, 'params correct');
+                        t.deepEqual(log2.result, null, 'result correct');
+                        t.deepEqual(log2.payload, [ users[1]._id.toString(), users[2]._id.toString() ], 'payload correct');
+                        t.deepEqual(log2.documents, [ roles[0]._id ], 'documents correct');
+                        t.deepEqual(log2.user, users[0]._id, 'user correct');
+                        t.deepEqual(log2.date, now, 'date correct');
+
+                        t.deepEqual(log3.method, 'DELETE', 'method correct');
+                        t.deepEqual(log3.action, 'Remove', 'action correct');
+                        t.deepEqual(log3.endpoint, '/role/' + roles[0]._id.toString() + '/permission/' + permissions[0]._id.toString(), 'endpoint correct');
+                        t.deepEqual(log3.collectionName, 'role', 'collectionName correct');
+                        t.deepEqual(log3.childCollectionName, 'permission', 'childCollectionName correct');
+                        t.deepEqual(log3.associationType, 'MANY_MANY', 'associationType correct');
+                        t.deepEqual(log3.params, { ownerId: roles[0]._id.toString(), childId: permissions[0]._id.toString() }, 'params correct');
+                        t.deepEqual(log3.result, null, 'result correct');
+                        t.deepEqual(log3.payload, null, 'payload correct');
+                        t.deepEqual(log3.documents, [ roles[0]._id ], 'documents correct');
+                        t.deepEqual(log3.user, users[0]._id, 'user correct');
+                        t.deepEqual(log3.date, now, 'date correct');
+
+                        t.deepEqual(log4.method, 'DELETE', 'method correct');
+                        t.deepEqual(log4.action, 'Remove', 'action correct');
+                        t.deepEqual(log4.endpoint, '/role/' + roles[1]._id.toString() + '/permission', 'endpoint correct');
+                        t.deepEqual(log4.collectionName, 'role', 'collectionName correct');
+                        t.deepEqual(log4.childCollectionName, 'permission', 'childCollectionName correct');
+                        t.deepEqual(log4.associationType, 'MANY_MANY', 'associationType correct');
+                        t.deepEqual(log4.params, { ownerId: roles[1]._id.toString() }, 'params correct');
+                        t.deepEqual(log4.result, null, 'result correct');
+                        t.deepEqual(log4.payload, [ permissions[1]._id.toString(), permissions[2]._id.toString() ], 'payload correct');
+                        t.deepEqual(log4.documents, [ roles[1]._id ], 'documents correct');
+                        t.deepEqual(log4.user, users[0]._id, 'user correct');
+                        t.deepEqual(log4.date, now, 'date correct');
+
+                        t.deepEqual(log5.method, 'DELETE', 'method correct');
+                        t.deepEqual(log5.action, 'Remove', 'action correct');
+                        t.deepEqual(log5.endpoint, '/user/' + users[0]._id.toString() + '/permissions/' + permissions[0]._id.toString(), 'endpoint correct');
+                        t.deepEqual(log5.collectionName, 'user', 'collectionName correct');
+                        t.deepEqual(log5.childCollectionName, 'permission', 'childCollectionName correct');
+                        t.deepEqual(log5.associationType, 'MANY_MANY', 'associationType correct');
+                        t.deepEqual(log5.params, { ownerId: users[0]._id.toString(), childId: permissions[0]._id.toString() }, 'params correct');
+                        t.deepEqual(log5.result, null, 'result correct');
+                        t.deepEqual(log5.payload, null, 'payload correct');
+                        t.deepEqual(log5.documents, [ users[0]._id ], 'documents correct');
+                        t.deepEqual(log5.user, users[0]._id, 'user correct');
+                        t.deepEqual(log5.date, now, 'date correct');
+
+                        t.deepEqual(log6.method, 'DELETE', 'method correct');
+                        t.deepEqual(log6.action, 'Remove', 'action correct');
+                        t.deepEqual(log6.endpoint, '/user/' + users[5]._id.toString() + '/permissions', 'endpoint correct');
+                        t.deepEqual(log6.collectionName, 'user', 'collectionName correct');
+                        t.deepEqual(log6.childCollectionName, 'permission', 'childCollectionName correct');
+                        t.deepEqual(log6.associationType, 'MANY_MANY', 'associationType correct');
+                        t.deepEqual(log6.params, { ownerId: users[5]._id.toString() }, 'params correct');
+                        t.deepEqual(log6.result, null, 'result correct');
+                        t.deepEqual(log6.payload, [ permissions[1]._id.toString(), permissions[2]._id.toString()], 'payload correct');
+                        t.deepEqual(log6.documents, [ users[5]._id ], 'documents correct');
+                        t.deepEqual(log6.user, users[0]._id, 'user correct');
+                        t.deepEqual(log6.date, now, 'date correct');
+
+                        t.deepEqual(log7.method, 'DELETE', 'method correct');
+                        t.deepEqual(log7.action, 'Remove', 'action correct');
+                        t.deepEqual(log7.endpoint, '/user/' + users[0]._id.toString() + '/hashtag/' + hashtags[0]._id.toString(), 'endpoint correct');
+                        t.deepEqual(log7.collectionName, 'user', 'collectionName correct');
+                        t.deepEqual(log7.childCollectionName, 'hashtag', 'childCollectionName correct');
+                        t.deepEqual(log7.associationType, '_MANY', 'associationType correct');
+                        t.deepEqual(log7.params, { ownerId: users[0]._id.toString(), childId: hashtags[0]._id.toString() }, 'params correct');
+                        t.deepEqual(log7.result, null, 'result correct');
+                        t.deepEqual(log7.payload, null, 'payload correct');
+                        t.deepEqual(log7.documents, [ users[0]._id ], 'documents correct');
+                        t.deepEqual(log7.user, users[0]._id, 'user correct');
+                        t.deepEqual(log7.date, now, 'date correct');
+
+                        t.deepEqual(log8.method, 'DELETE', 'method correct');
+                        t.deepEqual(log8.action, 'Remove', 'action correct');
+                        t.deepEqual(log8.endpoint, '/user/' + users[0]._id.toString() + '/hashtag', 'endpoint correct');
+                        t.deepEqual(log8.collectionName, 'user', 'collectionName correct');
+                        t.deepEqual(log8.childCollectionName, 'hashtag', 'childCollectionName correct');
+                        t.deepEqual(log8.associationType, '_MANY', 'associationType correct');
+                        t.deepEqual(log8.params, { ownerId: users[0]._id.toString() }, 'params correct');
+                        t.deepEqual(log8.result, null, 'result correct');
+                        t.deepEqual(log8.payload, [ hashtags[1]._id.toString(), hashtags[2]._id.toString() ], 'payload correct');
+                        t.deepEqual(log8.documents, [ users[0]._id ], 'documents correct');
+                        t.deepEqual(log8.user, users[0]._id, 'user correct');
+                        t.deepEqual(log8.date, now, 'date correct');
+
+
+                      })
+                      //</editor-fold>
+
+                      //<editor-fold desc="Restore">
+                      .then(function () {
+                        Decache('../rest-hapi');
+                        Decache('../config');
+                        Object.keys(Mongoose.models).forEach(function(key) { delete Mongoose.models[key]; });
+                        Object.keys(Mongoose.modelSchemas).forEach(function(key) { delete Mongoose.modelSchemas[key]; });
+                      });
+                  //</editor-fold>
+                });
+              })
         })
       })
       .then(function() {
