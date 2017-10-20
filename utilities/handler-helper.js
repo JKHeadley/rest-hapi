@@ -1,6 +1,8 @@
 'use strict';
 
 var QueryHelper = require('./query-helper');
+var JoiMongooseHelper = require('./joi-mongoose-helper');
+var Joi = require('joi');
 var Q = require('q');
 var Mongoose = require('mongoose');
 var errorHelper = require('./error-helper');
@@ -417,13 +419,14 @@ function _createHandler(model, request, Log) {
 
   let logError = false;
   try {
+    //EXPL: make a copy of the payload so that request.payload remains unchanged
     var isArray = true;
     if (!_.isArray(request.payload)) {
       payload = [extend({}, request.payload)];
       isArray = false;
     }
     else {
-      payload = extend([], request.payload);
+      payload = request.payload.map(function(item) { return _.isObject(item) ? Object.assign({}, item) : item});
     }
 
     var promises =  [];
@@ -811,11 +814,12 @@ function _deleteMany(model, payload, Log) {
 //TODO: prevent Q.all from catching first error and returning early. Catch individual errors and return a list
 //TODO(cont) of ids that failed
 function _deleteManyHandler(model, request, Log) {
-  let payload = extend([], request.payload);
+  //EXPL: make a copy of the payload so that request.payload remains unchanged
+  let payload = request.payload.map(function(item) { return _.isObject(item) ? Object.assign({}, item) : item});
   try {
     let promises = [];
     payload.forEach(function(arg) {
-      if (_.isString(arg)) {
+      if (JoiMongooseHelper.isObjectId(arg)) {
         promises.push(_deleteOneHandler(model, arg, false, request, Log));
       }
       else {
@@ -1052,7 +1056,8 @@ function _addMany(ownerModel, ownerId, childModel, associationName, payload, Log
  * @private
  */
 function _addManyHandler(ownerModel, ownerId, childModel, associationName, request, Log) {
-  let payload = extend([], request.payload);
+  //EXPL: make a copy of the payload so that request.payload remains unchanged
+  let payload = request.payload.map(function(item) { return _.isObject(item) ? Object.assign({}, item) : item});
   let logError = false;
   try {
     if (_.isEmpty(request.payload)) {
@@ -1189,7 +1194,8 @@ function _removeMany(ownerModel, ownerId, childModel, associationName, payload, 
  * @private
  */
 function _removeManyHandler(ownerModel, ownerId, childModel, associationName, request, Log) {
-  let payload = extend([], request.payload);
+  //EXPL: make a copy of the payload so that request.payload remains unchanged
+  let payload = request.payload.map(function(item) { return _.isObject(item) ? Object.assign({}, item) : item});
   let logError = false;
   try {
     return ownerModel.findOne({ '_id': ownerId }).select(associationName)
