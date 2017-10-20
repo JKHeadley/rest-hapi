@@ -917,7 +917,7 @@ module.exports = function (logger, mongoose, server) {
       }
 
       if (config.enableAuditLog) {
-        policies.push(restHapiPolicies.logAdd(mongoose, ownerModel, Log));
+        policies.push(restHapiPolicies.logAdd(mongoose, ownerModel, childModel, association.type, Log));
       }
 
       server.route({
@@ -1030,7 +1030,7 @@ module.exports = function (logger, mongoose, server) {
       }
 
       if (config.enableAuditLog) {
-        policies.push(restHapiPolicies.logRemove(mongoose, ownerModel, Log));
+        policies.push(restHapiPolicies.logRemove(mongoose, ownerModel, childModel, association.type, Log));
       }
 
       server.route({
@@ -1161,7 +1161,7 @@ module.exports = function (logger, mongoose, server) {
       }
 
       if (config.enableAuditLog) {
-        policies.push(restHapiPolicies.logAdd(mongoose, ownerModel, Log));
+        policies.push(restHapiPolicies.logAdd(mongoose, ownerModel, childModel, association.type, Log));
       }
 
       server.route({
@@ -1274,7 +1274,7 @@ module.exports = function (logger, mongoose, server) {
       }
 
       if (config.enableAuditLog) {
-        policies.push(restHapiPolicies.logRemove(mongoose, ownerModel, Log));
+        policies.push(restHapiPolicies.logRemove(mongoose, ownerModel, childModel, association.type, Log));
       }
 
       server.route({

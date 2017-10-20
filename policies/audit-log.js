@@ -36,10 +36,12 @@ internals.logCreate = function(mongoose, model, Log) {
         endpoint: request.path,
         user: userId || null,
         collectionName: model.collectionName,
+        childCollectionName: null,
+        associationType: null,
         documents: documents,
-        payload: request.payload,
-        params: request.params,
-        result: request.response.source
+        payload: _.isEmpty(request.payload) ? null : request.payload,
+        params: _.isEmpty(request.params) ? null : request.params,
+        result: request.response.source || null
       })
           .then(function (result) {
             next(null, true);
@@ -84,10 +86,12 @@ internals.logUpdate = function(mongoose, model, Log) {
         endpoint: request.path,
         user: userId || null,
         collectionName: model.collectionName,
+        childCollectionName: null,
+        associationType: null,
         documents: documents,
-        payload: request.payload,
-        params: request.params,
-        result: request.response.source
+        payload: _.isEmpty(request.payload) ? null : request.payload,
+        params: _.isEmpty(request.params) ? null : request.params,
+        result: request.response.source || null
       })
           .then(function (result) {
             next(null, true);
@@ -133,7 +137,7 @@ internals.logDelete = function(mongoose, model, Log) {
           return doc._id
         })
       }
-      else {
+      else if (!_.isArray(documents)) {
         documents = [documents]
       }
 
@@ -143,10 +147,12 @@ internals.logDelete = function(mongoose, model, Log) {
         endpoint: request.path,
         user: userId || null,
         collectionName: model.collectionName,
+        childCollectionName: null,
+        associationType: null,
         documents: documents,
-        payload: request.payload,
-        params: request.params,
-        result: request.response.source
+        payload: _.isEmpty(request.payload) ? null : request.payload,
+        params: _.isEmpty(request.params) ? null : request.params,
+        result: request.response.source || null
       })
           .then(function (result) {
             next(null, true);
@@ -178,7 +184,7 @@ module.exports = {
  * @param Log
  * @returns {logAddForModel}
  */
-internals.logAdd = function(mongoose, model, Log) {
+internals.logAdd = function(mongoose, ownerModel, childModel, associationType, Log) {
 
   const logAddForModel = function logAddForModel(request, reply, next) {
     try {
@@ -198,11 +204,13 @@ internals.logAdd = function(mongoose, model, Log) {
         action: "Add",
         endpoint: request.path,
         user: userId || null,
-        collectionName: model.collectionName,
+        collectionName: ownerModel.collectionName,
+        childCollectionName: childModel.collectionName,
+        associationType: associationType,
         documents: documents,
-        payload: request.payload,
-        params: request.params,
-        result: request.response.source
+        payload: _.isEmpty(request.payload) ? null : request.payload,
+        params: _.isEmpty(request.params) ? null : request.params,
+        result: request.response.source || null
       })
           .then(function (result) {
             next(null, true);
@@ -230,7 +238,7 @@ internals.logAdd.applyPoint = 'onPostHandler';
  * @param Log
  * @returns {logRemoveForModel}
  */
-internals.logRemove = function(mongoose, model, Log) {
+internals.logRemove = function(mongoose, ownerModel, childModel, associationType, Log) {
 
   const logRemoveForModel = function logRemoveForModel(request, reply, next) {
     try {
@@ -245,11 +253,13 @@ internals.logRemove = function(mongoose, model, Log) {
         action: "Remove",
         endpoint: request.path,
         user: userId || null,
-        collectionName: model.collectionName,
+        collectionName: ownerModel.collectionName,
+        childCollectionName: childModel.collectionName,
+        associationType: associationType,
         documents: documents,
-        payload: request.payload,
-        params: request.params,
-        result: request.response.source
+        payload: _.isEmpty(request.payload) ? null : request.payload,
+        params: _.isEmpty(request.params) ? null : request.params,
+        result: request.response.source || null
       })
           .then(function (result) {
             next(null, true);

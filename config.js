@@ -106,6 +106,13 @@ config.enableDeletedBy = false;
 config.enableAuditLog = true;
 
 /**
+ * Values added here will be applied to the scope of the auditLog endpoint.
+ * default: []
+ * @type {Array}
+ */
+config.auditLogScope = [];
+
+/**
  * Specifiies the TTL (time to live/lifetime/expiration) of Audit Log entries. Accepts values in seconds unless specified
  * (Ex: 60 = 60 seconds, '1w' = 1 week, or '1d' = 1 day)
  * See: http://nicoll.io/mongottl/
