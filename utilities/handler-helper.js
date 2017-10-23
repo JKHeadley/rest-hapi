@@ -560,7 +560,7 @@ function _updateHandler(model, _id, request, Log) {
   try {
     var promise =  {};
     if (model.routeOptions && model.routeOptions.update && model.routeOptions.update.pre){
-      promise = Q.fcall(model.routeOptions.update.pre, _id, request, Log);
+      promise = Q.fcall(model.routeOptions.update.pre, _id, payload, request, Log);
     }
     else {
       promise = Q.when(payload);
