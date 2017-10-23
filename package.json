@@ -65,14 +65,14 @@
     "tap-colorize": "latest",
     "tape": "latest",
     "gulp-tape": "latest",
-    "blue-tape": "^1.0.0"
+    "blue-tape": "^1.0.0",
+    "decache": "^4.1.0"
   },
   "devDependencies": {
     "rewire": "^2.5.2",
     "proxyquire": "^1.7.10",
     "sinon": "^3.3.0",
     "sinon-test": "^2.1.0",
-    "decache": "^4.1.0",
     "mockgoose": "^7.3.3",
     "query-string": "^5.0.0",
     "rmdir": "^1.2.0"
