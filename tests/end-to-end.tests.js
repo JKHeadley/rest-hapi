@@ -103,6 +103,7 @@ Test('end to end tests', function (t) {
 
                       //<editor-fold desc="Restore">
                       .then(function () {
+                        server.plugins.mrhorse.data = {};
                         Decache('../rest-hapi');
                         delete Mongoose.models.role;
                         delete Mongoose.modelSchemas.role;
