@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased]
 
 
+## [0.32.0] - 2017-10-23 [BREAKING]
+### Changed
+- [BREAKING] Modified update: pre middleware to include payload copy.  This is more consistent and allows the original payload to remain unchanged. 
+  * The table below shows the middleware functions before (v0.31.1) and after (v0.32.0)
+
+Before | After
+--- | --- 
+**update** 
+pre(\_id, request, Log) | pre(\_id, payload, request, Log)
+
 ## [0.31.0] - 2017-10-19
 ### Added
 - Added end to end unit tests.
@@ -132,7 +142,7 @@ post(hardDelete, deleted, Log) | post(hardDelete, deleted, request, Log)
 
 
 
-[Unreleased]: https://github.com/jkheadley/rest-hapi/compare/v0.31.0...HEAD
+[Unreleased]: https://github.com/jkheadley/rest-hapi/compare/v0.32.0...HEAD
 [0.20.0]: https://github.com/jkheadley/rest-hapi/compare/v0.19.2...v0.20.0
 [0.20.2]: https://github.com/jkheadley/rest-hapi/compare/v0.20.0...v0.20.2
 [0.20.3]: https://github.com/jkheadley/rest-hapi/compare/v0.20.2...v0.20.3
@@ -147,5 +157,6 @@ post(hardDelete, deleted, Log) | post(hardDelete, deleted, request, Log)
 [0.29.0]: https://github.com/jkheadley/rest-hapi/compare/v0.28.0...v0.29.0
 [0.30.0]: https://github.com/jkheadley/rest-hapi/compare/v0.29.0...v0.30.0
 [0.31.0]: https://github.com/jkheadley/rest-hapi/compare/v0.30.0...v0.31.0
+[0.32.0]: https://github.com/jkheadley/rest-hapi/compare/v0.31.0...v0.32.0
 
 [BREAKING]: https://github.com/JKHeadley/rest-hapi/releases
