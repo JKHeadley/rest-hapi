@@ -2931,7 +2931,9 @@ test('handler-helper.updateHandler', function(t) {
 
           var userModel = mongoose.model("user", userSchema);
 
-          var request = { query: {} };
+          let payload = { name: "TEST" };
+
+          var request = { query: {}, payload: payload };
           //</editor-fold>
 
           //<editor-fold desc="Act">
@@ -2940,7 +2942,7 @@ test('handler-helper.updateHandler', function(t) {
 
           //<editor-fold desc="Assert">
           return preDeferred.promise.then(function() {
-            t.ok(preSpy.calledWithExactly("_id", request, Log), "update.pre called");
+            t.ok(preSpy.calledWithExactly("_id", payload, request, Log), "update.pre called");
           })
           //</editor-fold>
 
