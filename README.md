@@ -1604,8 +1604,8 @@ Models can support middleware functions for CRUD operations. These exist under t
     - post(document, request, result, Log)
         * returns: `result`
 * update:
-    - pre(\_id, request, Log)
-        * returns: `request.payload`
+    - pre(\_id, payload, request, Log)
+        * returns: `payload`
     - post(request, result, Log)
         * returns: `result`
 * delete:

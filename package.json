@@ -1,6 +1,6 @@
 {
   "name": "rest-hapi",
-  "version": "0.31.1",
+  "version": "0.32.0",
   "description": "A RESTful API generator for hapi",
   "main": "rest-hapi.js",
   "bin": {
@@ -72,8 +72,8 @@
     "proxyquire": "^1.7.10",
     "sinon": "^3.3.0",
     "sinon-test": "^2.1.0",
-    "decache": "^4.1.0",
     "mockgoose": "^7.3.3",
+    "decache": "4.1.0",
     "query-string": "^5.0.0",
     "rmdir": "^1.2.0"
   }

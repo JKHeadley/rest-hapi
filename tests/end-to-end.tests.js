@@ -103,6 +103,7 @@ Test('end to end tests', function (t) {
 
                       //<editor-fold desc="Restore">
                       .then(function () {
+                        server.plugins.mrhorse.data = {};
                         Decache('../rest-hapi');
                         Object.keys(Mongoose.models).forEach(function(key) { delete Mongoose.models[key]; });
                         Object.keys(Mongoose.modelSchemas).forEach(function(key) { delete Mongoose.modelSchemas[key]; });
