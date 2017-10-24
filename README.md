@@ -273,7 +273,7 @@ config.auditLogScope = [];
 
 /**
  * Specifies the TTL (time to live/lifetime/expiration) of auditLog documents. Accepts values in seconds unless specified
- * (Ex: 60 = 60 seconds, '1w' = 1 week, or '1d' = 1 day)
+ * (Ex: 60 = 60 seconds, '1m' = 1 minute, or '1d' = 1 day)
  * See: http://nicoll.io/mongottl/
  * default: null (does not expire)
  * @type {string}
@@ -1964,7 +1964,7 @@ config.userIdKey = "user._id";
 [Back to top](#readme-contents)
 
 ## Audit Logs
-By default, rest-hapi records all document-modifiying activities that occur within the [generated endpoints](#creating-endpoints). Each event is stored as a document within the `auditLog` collection.  The audit log documents can be set to expire by providing a value for `config.auditLogTTL`.  The value can be specified in integer seconds or as a human-readable time period (Ex: 60 = 60 seconds, '1w' = 1 week, or '1d' = 1 day). Audit logs can be disabled by setting `config.enableAuditLog` to `false`. Also, a [scope](#authorization) can be added to the `auditLog` endpoints through `config.auditLogScope`, giving you control over who can access/create logs. Below is a list of the properties included in each auditLog document:
+By default, rest-hapi records all document-modifiying activities that occur within the [generated endpoints](#creating-endpoints). Each event is stored as a document within the `auditLog` collection.  The audit log documents can be set to expire by providing a value for `config.auditLogTTL`.  The value can be specified in integer seconds or as a human-readable time period (Ex: 60 = 60 seconds, '1m' = 1 minute, or '1d' = 1 day). Audit logs can be disabled by setting `config.enableAuditLog` to `false`. Also, a [scope](#authorization) can be added to the `auditLog` endpoints through `config.auditLogScope`, giving you control over who can access/create logs. Below is a list of the properties included in each auditLog document:
 
 - `date`
    * The date the action took place.
