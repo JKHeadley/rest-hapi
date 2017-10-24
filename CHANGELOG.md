@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [0.33.0] - 2017-10-23
 ### Added
-- Endpoint activity history tracking via [Audit Logs]()
+- Endpoint activity history tracking via [Audit Logs](https://github.com/JKHeadley/rest-hapi#audit-logs)
 
 ## [0.32.0] - 2017-10-23 [BREAKING]
 ### Changed
