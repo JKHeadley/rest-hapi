@@ -2024,14 +2024,12 @@ Below is an example of an `auditLog` document:
       "responseMessage": null,
       "result": [
         {
-          "priority": 0,
           "isDeleted": false,
           "createdAt": "2017-10-24T04:06:55.824Z",
           "text": "#coolhashtag",
           "_id": "59eebc5f20cbfb49c6eae42f"
         },
         {
-          "priority": 0,
           "isDeleted": false,
           "createdAt": "2017-10-24T04:06:55.824Z",
           "text": "#notsocool",
