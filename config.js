@@ -114,7 +114,7 @@ config.auditLogScope = [];
 
 /**
  * Specifies the TTL (time to live/lifetime/expiration) of auditLog documents. Accepts values in seconds unless specified
- * (Ex: 60 = 60 seconds, '1w' = 1 week, or '1d' = 1 day)
+ * (Ex: 60 = 60 seconds, '1m' = 1 minute, or '1d' = 1 day)
  * See: http://nicoll.io/mongottl/
  * default: null (does not expire)
  * @type {string}

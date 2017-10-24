@@ -52,7 +52,7 @@ module.exports = function (mongoose) {
       default: null
     },
     payload: {
-      type: Types.Mixed,
+      type: Types.Object,
       allowNull: true,
       default: null
     },
