@@ -10,7 +10,8 @@ module.exports = function (mongoose) {
     date: {
       type: Types.Date,
       default: Date.now(),
-      required: true
+      required: true,
+      expires: Config.auditLogTTL
     },
     method: {
       type: Types.String,
