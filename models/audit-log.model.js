@@ -14,12 +14,11 @@ module.exports = function (mongoose) {
     },
     method: {
       type: Types.String,
-      enum: ["POST", "PUT", "DELETE"],
+      enum: ["POST", "PUT", "DELETE", "GET"],
       required: true
     },
     action: {
       type: Types.String,
-      enum: ["Create", "Update", "Add", "Remove", "Delete"],
       required: true
     },
     endpoint: {
@@ -48,7 +47,8 @@ module.exports = function (mongoose) {
     },
     documents: {
       type: [Types.ObjectId],
-      required: true
+      allowNull: true,
+      default: null
     },
     payload: {
       type: Types.Mixed,
@@ -64,13 +64,26 @@ module.exports = function (mongoose) {
       type: Types.Object,
       allowNull: true,
       default: null
+    },
+    statusCode: {
+      type: Types.Number,
+      required: true
+    },
+    responseMessage: {
+      type: Types.String,
+      allowNull: true,
+      default: null
+    },
+    isError: {
+      type: Types.Boolean,
+      default: false,
+      required: true
     }
   }, { collection: modelName });
     
   Schema.statics = {
     collectionName:modelName,
     routeOptions: {
-      allowCreate: false,
       allowUpdate: false,
       allowDelete: false,
     }

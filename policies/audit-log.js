@@ -21,14 +21,17 @@ internals.logCreate = function(mongoose, model, Log) {
 
       let userId = _.get(request.auth.credentials, config.userIdKey);
       let documents = request.response.source;
-      if (_.isArray(documents)) {
-        documents = documents.map(function (doc) {
-          return doc._id
-        })
+      if (documents) {
+        if (_.isArray(documents)) {
+          documents = documents.map(function (doc) {
+            return doc._id
+          })
+        }
+        else {
+          documents = [documents._id]
+        }
       }
-      else {
-        documents = [documents._id]
-      }
+
 
       return AuditLog.create({
         method: "POST",
@@ -38,10 +41,13 @@ internals.logCreate = function(mongoose, model, Log) {
         collectionName: model.collectionName,
         childCollectionName: null,
         associationType: null,
-        documents: documents,
+        documents: documents || null,
         payload: _.isEmpty(request.payload) ? null : request.payload,
         params: _.isEmpty(request.params) ? null : request.params,
-        result: request.response.source || null
+        result: request.response.source || null,
+        isError: _.isError(request.response),
+        statusCode: request.response.statusCode || request.response.output.statusCode,
+        responseMessage: request.response.output ? request.response.output.payload.message : null
       })
           .then(function (result) {
             next(null, true);
@@ -88,10 +94,13 @@ internals.logUpdate = function(mongoose, model, Log) {
         collectionName: model.collectionName,
         childCollectionName: null,
         associationType: null,
-        documents: documents,
+        documents: documents || null,
         payload: _.isEmpty(request.payload) ? null : request.payload,
         params: _.isEmpty(request.params) ? null : request.params,
-        result: request.response.source || null
+        result: request.response.source || null,
+        isError: _.isError(request.response),
+        statusCode: request.response.statusCode || request.response.output.statusCode,
+        responseMessage: request.response.output ? request.response.output.payload.message : null
       })
           .then(function (result) {
             next(null, true);
@@ -149,10 +158,13 @@ internals.logDelete = function(mongoose, model, Log) {
         collectionName: model.collectionName,
         childCollectionName: null,
         associationType: null,
-        documents: documents,
+        documents: documents || null,
         payload: _.isEmpty(request.payload) ? null : request.payload,
         params: _.isEmpty(request.params) ? null : request.params,
-        result: request.response.source || null
+        result: request.response.source || null,
+        isError: _.isError(request.response),
+        statusCode: request.response.statusCode || request.response.output.statusCode,
+        responseMessage: request.response.output ? request.response.output.payload.message : null
       })
           .then(function (result) {
             next(null, true);
@@ -193,6 +205,21 @@ internals.logAdd = function(mongoose, ownerModel, childModel, associationType, L
 
       let userId = _.get(request.auth.credentials, config.userIdKey);
       let documents = [request.params.ownerId];
+
+      if (request.params.childId) {
+        documents.push(request.params.childId);
+      }
+      else {
+        request.payload.forEach(function(child) {
+          if (child.childId) {
+            documents.push(child.childId)
+          }
+          else {
+            documents.push(child)
+          }
+        })
+      }
+
       let method = 'POST';
 
       if (request.method === 'put') {
@@ -207,10 +234,13 @@ internals.logAdd = function(mongoose, ownerModel, childModel, associationType, L
         collectionName: ownerModel.collectionName,
         childCollectionName: childModel.collectionName,
         associationType: associationType,
-        documents: documents,
+        documents: documents || null,
         payload: _.isEmpty(request.payload) ? null : request.payload,
         params: _.isEmpty(request.params) ? null : request.params,
-        result: request.response.source || null
+        result: request.response.source || null,
+        isError: _.isError(request.response),
+        statusCode: request.response.statusCode || request.response.output.statusCode,
+        responseMessage: request.response.output ? request.response.output.payload.message : null
       })
           .then(function (result) {
             next(null, true);
@@ -248,6 +278,13 @@ internals.logRemove = function(mongoose, ownerModel, childModel, associationType
       let userId = _.get(request.auth.credentials, config.userIdKey);
       let documents = [request.params.ownerId];
 
+      if (request.params.childId) {
+        documents.push(request.params.childId);
+      }
+      else {
+        documents = documents.concat(request.payload)
+      }
+
       return AuditLog.create({
         method: 'DELETE',
         action: "Remove",
@@ -256,10 +293,13 @@ internals.logRemove = function(mongoose, ownerModel, childModel, associationType
         collectionName: ownerModel.collectionName,
         childCollectionName: childModel.collectionName,
         associationType: associationType,
-        documents: documents,
+        documents: documents || null,
         payload: _.isEmpty(request.payload) ? null : request.payload,
         params: _.isEmpty(request.params) ? null : request.params,
-        result: request.response.source || null
+        result: request.response.source || null,
+        isError: _.isError(request.response),
+        statusCode: request.response.statusCode || request.response.output.statusCode,
+        responseMessage: request.response.output ? request.response.output.payload.message : null
       })
           .then(function (result) {
             next(null, true);
