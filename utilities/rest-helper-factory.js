@@ -428,6 +428,10 @@ module.exports = function (logger, mongoose, server) {
         policies.push(restHapiPolicies.addCreatedBy(model, Log));
       }
 
+      if (config.enableAuditLog) {
+        policies.push(restHapiPolicies.logCreate(mongoose, model, Log));
+      }
+
       server.route({
         method: 'POST',
         path: '/' + resourceAliasForRoute,
@@ -537,6 +541,10 @@ module.exports = function (logger, mongoose, server) {
 
       if (config.enableDeletedBy && config.enableSoftDelete) {
         policies.push(restHapiPolicies.addDeletedBy(model, Log));
+      }
+
+      if (config.enableAuditLog) {
+        policies.push(restHapiPolicies.logDelete(mongoose, model, Log));
       }
 
       server.route({
@@ -660,6 +668,10 @@ module.exports = function (logger, mongoose, server) {
         policies.push(restHapiPolicies.addDeletedBy(model, Log));
       }
 
+      if (config.enableAuditLog) {
+        policies.push(restHapiPolicies.logDelete(mongoose, model, Log));
+      }
+
       server.route({
         method: 'DELETE',
         path: '/' + resourceAliasForRoute,
@@ -776,6 +788,10 @@ module.exports = function (logger, mongoose, server) {
 
       if (config.enableUpdatedBy) {
         policies.push(restHapiPolicies.addUpdatedBy(model, Log));
+      }
+
+      if (config.enableAuditLog) {
+        policies.push(restHapiPolicies.logUpdate(mongoose, model, Log));
       }
 
       server.route({
@@ -900,6 +916,10 @@ module.exports = function (logger, mongoose, server) {
         policies.push(restHapiPolicies.enforceDocumentScopePost(ownerModel, Log));
       }
 
+      if (config.enableAuditLog) {
+        policies.push(restHapiPolicies.logAdd(mongoose, ownerModel, childModel, association.type, Log));
+      }
+
       server.route({
         method: 'PUT',
         path: '/' + ownerAlias + '/{ownerId}/' + childAlias + "/{childId}",
@@ -1007,6 +1027,10 @@ module.exports = function (logger, mongoose, server) {
       if (config.enableDocumentScopes && auth) {
         policies.push(restHapiPolicies.enforceDocumentScopePre(ownerModel, Log));
         policies.push(restHapiPolicies.enforceDocumentScopePost(ownerModel, Log));
+      }
+
+      if (config.enableAuditLog) {
+        policies.push(restHapiPolicies.logRemove(mongoose, ownerModel, childModel, association.type, Log));
       }
 
       server.route({
@@ -1136,6 +1160,10 @@ module.exports = function (logger, mongoose, server) {
         policies.push(restHapiPolicies.enforceDocumentScopePost(ownerModel, Log));
       }
 
+      if (config.enableAuditLog) {
+        policies.push(restHapiPolicies.logAdd(mongoose, ownerModel, childModel, association.type, Log));
+      }
+
       server.route({
         method: 'POST',
         path: '/' + ownerAlias + '/{ownerId}/' + childAlias,
@@ -1243,6 +1271,10 @@ module.exports = function (logger, mongoose, server) {
       if (config.enableDocumentScopes && auth) {
         policies.push(restHapiPolicies.enforceDocumentScopePre(ownerModel, Log));
         policies.push(restHapiPolicies.enforceDocumentScopePost(ownerModel, Log));
+      }
+
+      if (config.enableAuditLog) {
+        policies.push(restHapiPolicies.logRemove(mongoose, ownerModel, childModel, association.type, Log));
       }
 
       server.route({

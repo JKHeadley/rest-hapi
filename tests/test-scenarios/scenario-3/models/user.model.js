@@ -52,6 +52,15 @@ module.exports = function (mongoose) {
           type: "_MANY",
           model: "hashtag",
         },
+      },
+      update: {
+        pre: function(_id, payload, request, Log) {
+          if (payload.email === 'error@user.com') {
+            throw 'user error'
+          }
+
+          return payload;
+        }
       }
     }
   };

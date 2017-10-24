@@ -7,19 +7,18 @@ A RESTful API generator for the [hapi](https://github.com/hapijs/hapi) framework
 
 rest-hapi is a hapi plugin intended to abstract the work involved in setting up API routes/validation/handlers/etc. for the purpose of rapid app development.  At the same time it provides a powerful combination of [relational](#associations) structure with [NoSQL](#creating-endpoints) flexibility.  You define your models and the rest is done for you.  Have your own API server up and running in minutes!
 
-# NOTE: If updating from a version previous to v0.27.0, make sure to set `config.embedAssociations` to `true`. Please refer to the [changelog](https://github.com/JKHeadley/rest-hapi/blob/master/CHANGELOG.md) for details.
-
 ## Features
 
 * Automatic generation of [CRUD](#creating-endpoints) endpoints with [middleware](#middleware) support
 * Automatic generation of [association](#associations) endpoints
 * [joi](https://github.com/hapijs/joi) [validation](#validation)
-* Built in route-level and document-level [authorization](#authorization)
+* Route-level and document-level [authorization](#authorization)
 * [Swagger docs](#swagger-documentation) for all generated endpoints via [hapi-swagger](https://github.com/glennjones/hapi-swagger)
 * [Query parameter](#querying) support for searching, sorting, filtering, pagination, and embedding of associated models
+* Endpoint activity history through [Audit Logs](#audit-logs)
 * Support for [policies](#policies) via [mrhorse](https://github.com/mark-bradshaw/mrhorse)
 * Support for ["soft" delete](#soft-delete)
-* Built in [metadata](#metadata)
+* Optional [metadata](#metadata)
 * Mongoose [wrapper methods](#mongoose-wrapper-methods)
 
 ## Live demos
@@ -72,6 +71,7 @@ rest-hapi-demo: http://ec2-52-25-112-131.us-west-2.compute.amazonaws.com:8124
       - [Generating route scopes](#generating-route-scopes)
       - [Disabling route scopes](#disabling-route-scopes)
     * [Document authorization](#document-authorization)
+- [Audit Logs](#audit-logs)
 - [Policies](#policies)
     * [Policies vs middleware](#policies-vs-middleware)
     * [Example: custom authorization via policies](#example-custom-authorization-via-policies)
@@ -160,9 +160,11 @@ Configuration of rest-hapi is handled through the ``restHapi.config`` object.  B
 
 ```javascript
 /**
- * config.js - Configuration settings for rest-hapi
+ * config.js - Configuration settings for the generated API
  */
 var config = {};
+config.server = {};
+config.mongo = {};
 
 /**
  * Your app title goes here.
@@ -254,6 +256,29 @@ config.enableDeletedAt = true;
 config.enableCreatedBy = false;
 config.enableUpdatedBy = false;
 config.enableDeletedBy = false;
+
+/**
+ * When enabled, all create, update, associate, and delete events are recorded in an auditLog collection.
+ * default: true
+ * @type {boolean}
+ */
+config.enableAuditLog = true;
+
+/**
+ * Values added here will be applied to the scope of the auditLog endpoint.
+ * default: []
+ * @type {Array}
+ */
+config.auditLogScope = [];
+
+/**
+ * Specifies the TTL (time to live/lifetime/expiration) of auditLog documents. Accepts values in seconds unless specified
+ * (Ex: 60 = 60 seconds, '1w' = 1 week, or '1d' = 1 day)
+ * See: http://nicoll.io/mongottl/
+ * default: null (does not expire)
+ * @type {string}
+ */
+config.auditLogTTL = null;
 
 /**
  * Enables policies via mrhorse (https://github.com/mark-bradshaw/mrhorse).
@@ -1938,10 +1963,109 @@ config.userIdKey = "user._id";
 
 [Back to top](#readme-contents)
 
+## Audit Logs
+By default, rest-hapi records all document-modifiying activities that occur within the [generated endpoints](#creating-endpoints). Each event is stored as a document within the `auditLog` collection.  The audit log documents can be set to expire by providing a value for `config.auditLogTTL`.  The value can be specified in integer seconds or as a human-readable time period (Ex: 60 = 60 seconds, '1w' = 1 week, or '1d' = 1 day). Audit logs can be disabled by setting `config.enableAuditLog` to `false`. Also, a [scope](#authorization) can be added to the `auditLog` endpoints through `config.auditLogScope`, giving you control over who can access/create logs. Below is a list of the properties included in each auditLog document:
+
+- `date`
+   * The date the action took place.
+   * Used as the index for the expiration.
+- `method`
+   * The http method used.
+   * Must be one of `POST, PUT, DELETE, GET`
+- `action`
+   * The type of action requested.
+   * Typically one of `Create, Update, Delete, Add, Remove`.
+- `endpoint`
+   * The relative path of the endpoint that was accessed.
+- `user`
+   * If the endpoint is authenticated, this will be the \_id of the requesting user.
+   * You can specify the user \_id path/key through `config.userIdKey`.
+   * Can be null.
+- `collectionName`
+   * The name of the primary/owner collection being modified.
+- `childCollectionName`
+   * The name of the secondary/child collection being modified in the case of an association action.
+   * Can be null.
+- `associationType`
+   * The type of relationship between the two modified documents in an association action.
+   * Must be one of `ONE_MANY, MANY_MANY, _MANY`.
+   * Can be null.
+- `documents`
+   * An array of \_ids of the documents being modified.
+   * Can be null.
+- `payload`
+   * The payload included in the request.
+   * Can be null.
+- `params`
+   * The params included in the request.
+   * Can be null.
+- `result`
+   * The response sent by the server.
+   * Can be null.
+- `statusCode`
+   * The status code of the server response.
+- `responseMessage`
+   * The response message from the server. Typically for an error.
+   * Can be null.
+- `isError`
+   * A boolean value specifying whether the server responed with an error.
+
+Below is an example of an `auditLog` document:
+
+```javascript
+{
+      "_id": "59eebc5f20cbfb49c6eae431",
+      "method": "POST",
+      "action": "Create",
+      "endpoint": "/hashtag",
+      "collectionName": "hashtag",
+      "statusCode": 201,
+      "isError": false,
+      "responseMessage": null,
+      "result": [
+        {
+          "priority": 0,
+          "isDeleted": false,
+          "createdAt": "2017-10-24T04:06:55.824Z",
+          "text": "#coolhashtag",
+          "_id": "59eebc5f20cbfb49c6eae42f"
+        },
+        {
+          "priority": 0,
+          "isDeleted": false,
+          "createdAt": "2017-10-24T04:06:55.824Z",
+          "text": "#notsocool",
+          "_id": "59eebc5f20cbfb49c6eae430"
+        }
+      ],
+      "params": null,
+      "payload": [
+        {
+          "text": "#coolhashtag"
+        },
+        {
+          "text": "#notsocool"
+        }
+      ],
+      "documents": [
+        "59eebc5f20cbfb49c6eae42f",
+        "59eebc5f20cbfb49c6eae430"
+      ],
+      "associationType": null,
+      "childCollectionName": null,
+      "user": "597242d4e14a710005d325b1",
+      "date": "2017-10-24T01:17:43.177Z"
+}
+```
+
+Audit logs can be [queried against](#querying) the same as any other generated endpoint. You can also create your own `auditLog` documents.
+
+[Back to top](#readme-contents)
+
 ## Policies
 rest-hapi comes with built-in support for policies via the [mrhorse](https://github.com/mark-bradshaw/mrhorse) plugin. Policies provide a powerful method of applying the same business logic to multiple routes declaratively. They can be inserted at any point in the [hapi request lifecycle](https://hapijs.com/api#request-lifecycle), allowing you to layer your business logic in a clean, organized, and centralized manner. We highly recommend you learn more about the details and benefits of policies in the [mrhorse readme](https://github.com/mark-bradshaw/mrhorse).
 
-Internally, rest-hapi uses policies to implement features such as [document authorization](#document-authorization) and certain [metadata](#user-tags).
+Internally, rest-hapi uses policies to implement features such as [document authorization](#document-authorization), [audit logs](#audit-logs), and certain [metadata](#user-tags).
 
 You can enable your own custom policies in rest-hapi by setting `config.enablePolicies` to `true` and adding your policy files to your `policies` directory. You can then apply policies to your generated routes through the `routeOptions.policies` property, which has the following structure:
 
@@ -2326,7 +2450,6 @@ This project is still in its infancy, and there are many features we would still
 
 - sorting through populate fields (Ex: sort users through role.name)
 - support marking fields as ``duplicate`` i.e. any associated models referencing that model will duplicate those fields along with the reference Id. This could allow for a shallow embed that will return a list of reference ids with their "duplicate" values, and a full embed that will return the fully embedded references
-- support automatic logging/auditing of all operations
 - (LONG TERM) support mysql as well as mongodb
 
 [Back to top](#readme-contents)

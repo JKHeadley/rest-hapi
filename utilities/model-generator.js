@@ -53,6 +53,11 @@ module.exports = function (mongoose, Log, config) {
       }
     });
 
+    if (config.enableAuditLog) {
+      schema = require('../models/audit-log.model')(mongoose);
+      schemas[schema.statics.collectionName] = schema;
+    }
+
     var extendedSchemas = {};
 
     for (var schemaKey in schemas) {
