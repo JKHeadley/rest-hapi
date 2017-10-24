@@ -7,19 +7,18 @@ A RESTful API generator for the [hapi](https://github.com/hapijs/hapi) framework
 
 rest-hapi is a hapi plugin intended to abstract the work involved in setting up API routes/validation/handlers/etc. for the purpose of rapid app development.  At the same time it provides a powerful combination of [relational](#associations) structure with [NoSQL](#creating-endpoints) flexibility.  You define your models and the rest is done for you.  Have your own API server up and running in minutes!
 
-# NOTE: If updating from a version previous to v0.27.0, make sure to set `config.embedAssociations` to `true`. Please refer to the [changelog](https://github.com/JKHeadley/rest-hapi/blob/master/CHANGELOG.md) for details.
-
 ## Features
 
 * Automatic generation of [CRUD](#creating-endpoints) endpoints with [middleware](#middleware) support
 * Automatic generation of [association](#associations) endpoints
 * [joi](https://github.com/hapijs/joi) [validation](#validation)
-* Built in route-level and document-level [authorization](#authorization)
+* Route-level and document-level [authorization](#authorization)
 * [Swagger docs](#swagger-documentation) for all generated endpoints via [hapi-swagger](https://github.com/glennjones/hapi-swagger)
 * [Query parameter](#querying) support for searching, sorting, filtering, pagination, and embedding of associated models
+* Endpoint activity history through [Audit Logs](#audit-logs)
 * Support for [policies](#policies) via [mrhorse](https://github.com/mark-bradshaw/mrhorse)
 * Support for ["soft" delete](#soft-delete)
-* Built in [metadata](#metadata)
+* Optional [metadata](#metadata)
 * Mongoose [wrapper methods](#mongoose-wrapper-methods)
 
 ## Live demos
