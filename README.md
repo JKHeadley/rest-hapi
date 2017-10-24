@@ -1940,7 +1940,7 @@ config.userIdKey = "user._id";
 [Back to top](#readme-contents)
 
 ## Audit Logs
-By default, rest-hapi records all document-modifiying activities that occur within the generated endpoints. Each event is stored as a document within the `auditLog` collection.  The audit log documents can be set to expire by setting a value for `config.auditLogTTL`.  The value can be specified in integer seconds or as a human-readable time period (Ex: 60 = 60 seconds, '1w' = 1 week, or '1d' = 1 day). Audit logs can be disabled by setting `config.enableAuditLog` to `false`. Also, a [scope](#authorization) can be added to the `auditLog` endpoints through `config.auditLogScope`. Below is a list of the properties included in each auditLog document:
+By default, rest-hapi records all document-modifiying activities that occur within the generated endpoints. Each event is stored as a document within the `auditLog` collection.  The audit log documents can be set to expire by providing a value for `config.auditLogTTL`.  The value can be specified in integer seconds or as a human-readable time period (Ex: 60 = 60 seconds, '1w' = 1 week, or '1d' = 1 day). Audit logs can be disabled by setting `config.enableAuditLog` to `false`. Also, a [scope](#authorization) can be added to the `auditLog` endpoints through `config.auditLogScope`, giving you control over who can access/create logs. Below is a list of the properties included in each auditLog document:
 
 - `date`
    * The date the action took place.
@@ -1986,11 +1986,62 @@ By default, rest-hapi records all document-modifiying activities that occur with
 - `isError`
    * A boolean value specifying whether the server responed with an error.
 
+Below is an example of an `auditLog` document:
+
+```javascript
+{
+      "_id": "59eebc5f20cbfb49c6eae431",
+      "method": "POST",
+      "action": "Create",
+      "endpoint": "/hashtag",
+      "collectionName": "hashtag",
+      "statusCode": 201,
+      "isError": false,
+      "responseMessage": null,
+      "result": [
+        {
+          "priority": 0,
+          "isDeleted": false,
+          "createdAt": "2017-10-24T04:06:55.824Z",
+          "text": "#coolhashtag",
+          "_id": "59eebc5f20cbfb49c6eae42f"
+        },
+        {
+          "priority": 0,
+          "isDeleted": false,
+          "createdAt": "2017-10-24T04:06:55.824Z",
+          "text": "#notsocool",
+          "_id": "59eebc5f20cbfb49c6eae430"
+        }
+      ],
+      "params": null,
+      "payload": [
+        {
+          "text": "#coolhashtag"
+        },
+        {
+          "text": "#notsocool"
+        }
+      ],
+      "documents": [
+        "59eebc5f20cbfb49c6eae42f",
+        "59eebc5f20cbfb49c6eae430"
+      ],
+      "associationType": null,
+      "childCollectionName": null,
+      "user": "597242d4e14a710005d325b1",
+      "date": "2017-10-24T01:17:43.177Z"
+}
+```
+
+Audit logs can be [queried against](#querying) the same as any other generated endpoint. You can also create your own `auditLog` documents.
+
+[Back to top](#readme-contents)
 
 ## Policies
 rest-hapi comes with built-in support for policies via the [mrhorse](https://github.com/mark-bradshaw/mrhorse) plugin. Policies provide a powerful method of applying the same business logic to multiple routes declaratively. They can be inserted at any point in the [hapi request lifecycle](https://hapijs.com/api#request-lifecycle), allowing you to layer your business logic in a clean, organized, and centralized manner. We highly recommend you learn more about the details and benefits of policies in the [mrhorse readme](https://github.com/mark-bradshaw/mrhorse).
 
-Internally, rest-hapi uses policies to implement features such as [document authorization](#document-authorization) and certain [metadata](#user-tags).
+Internally, rest-hapi uses policies to implement features such as [document authorization](#document-authorization), [audit logs](#audit-logs), and certain [metadata](#user-tags).
 
 You can enable your own custom policies in rest-hapi by setting `config.enablePolicies` to `true` and adding your policy files to your `policies` directory. You can then apply policies to your generated routes through the `routeOptions.policies` property, which has the following structure:
 
