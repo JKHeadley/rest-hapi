@@ -72,7 +72,7 @@ rest-hapi-demo: http://ec2-52-25-112-131.us-west-2.compute.amazonaws.com:8124
       - [Generating route scopes](#generating-route-scopes)
       - [Disabling route scopes](#disabling-route-scopes)
     * [Document authorization](#document-authorization)
-- [Audit Log](#audit-log)
+- [Audit Logs](#audit-logs)
 - [Policies](#policies)
     * [Policies vs middleware](#policies-vs-middleware)
     * [Example: custom authorization via policies](#example-custom-authorization-via-policies)
@@ -1966,6 +1966,25 @@ By default, rest-hapi records all document-modifiying activities that occur with
    * The type of relationship between the two modified documents in an association action.
    * Must be one of `ONE_MANY, MANY_MANY, _MANY`.
    * Can be null.
+- `documents`
+   * An array of \_ids of the documents being modified.
+   * Can be null.
+- `payload`
+   * The payload included in the request.
+   * Can be null.
+- `params`
+   * The params included in the request.
+   * Can be null.
+- `result`
+   * The response sent by the server.
+   * Can be null.
+- `statusCode`
+   * The status code of the server response.
+- `responseMessage`
+   * The response message from the server. Typically for an error.
+   * Can be null.
+- `isError`
+   * A boolean value specifying whether the server responed with an error.
 
 
 ## Policies
