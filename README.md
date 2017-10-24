@@ -72,6 +72,7 @@ rest-hapi-demo: http://ec2-52-25-112-131.us-west-2.compute.amazonaws.com:8124
       - [Generating route scopes](#generating-route-scopes)
       - [Disabling route scopes](#disabling-route-scopes)
     * [Document authorization](#document-authorization)
+- [Audit Log](#audit-log)
 - [Policies](#policies)
     * [Policies vs middleware](#policies-vs-middleware)
     * [Example: custom authorization via policies](#example-custom-authorization-via-policies)
@@ -1937,6 +1938,35 @@ config.userIdKey = "user._id";
 ```
 
 [Back to top](#readme-contents)
+
+## Audit Logs
+By default, rest-hapi records all document-modifiying activities that occur within the generated endpoints. Each event is stored as a document within the `auditLog` collection.  The audit log documents can be set to expire by setting a value for `config.auditLogTTL`.  The value can be specified in integer seconds or as a human-readable time period (Ex: 60 = 60 seconds, '1w' = 1 week, or '1d' = 1 day). Audit logs can be disabled by setting `config.enableAuditLog` to `false`. Also, a [scope](#authorization) can be added to the `auditLog` endpoints through `config.auditLogScope`. Below is a list of the properties included in each auditLog document:
+
+- `date`
+   * The date the action took place.
+   * Used as the index for the expiration.
+- `method`
+   * The http method used.
+   * Must be one of `POST, PUT, DELETE, GET`
+- `action`
+   * The type of action requested.
+   * Typically one of `Create, Update, Delete, Add, Remove`.
+- `endpoint`
+   * The relative path of the endpoint that was accessed.
+- `user`
+   * If the endpoint is authenticated, this will be the \_id of the requesting user.
+   * You can specify the user \_id path/key through `config.userIdKey`.
+   * Can be null.
+- `collectionName`
+   * The name of the primary/owner collection being modified.
+- `childCollectionName`
+   * The name of the secondary/child collection being modified in the case of an association action.
+   * Can be null.
+- `associationType`
+   * The type of relationship between the two modified documents in an association action.
+   * Must be one of `ONE_MANY, MANY_MANY, _MANY`.
+   * Can be null.
+
 
 ## Policies
 rest-hapi comes with built-in support for policies via the [mrhorse](https://github.com/mark-bradshaw/mrhorse) plugin. Policies provide a powerful method of applying the same business logic to multiple routes declaratively. They can be inserted at any point in the [hapi request lifecycle](https://hapijs.com/api#request-lifecycle), allowing you to layer your business logic in a clean, organized, and centralized manner. We highly recommend you learn more about the details and benefits of policies in the [mrhorse readme](https://github.com/mark-bradshaw/mrhorse).
