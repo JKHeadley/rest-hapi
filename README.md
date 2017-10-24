@@ -2450,7 +2450,6 @@ This project is still in its infancy, and there are many features we would still
 
 - sorting through populate fields (Ex: sort users through role.name)
 - support marking fields as ``duplicate`` i.e. any associated models referencing that model will duplicate those fields along with the reference Id. This could allow for a shallow embed that will return a list of reference ids with their "duplicate" values, and a full embed that will return the fully embedded references
-- support automatic logging/auditing of all operations
 - (LONG TERM) support mysql as well as mongodb
 
 [Back to top](#readme-contents)
