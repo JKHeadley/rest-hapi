@@ -426,7 +426,7 @@ function _createHandler(model, request, Log) {
       isArray = false;
     }
     else {
-      payload = request.payload.map(function(item) { return _.isObject(item) ? Object.assign({}, item) : item});
+      payload = request.payload.map(function(item) { return _.isObject(item) ? _.assignIn({}, item) : item});
     }
 
     var promises =  [];
@@ -815,7 +815,7 @@ function _deleteMany(model, payload, Log) {
 //TODO(cont) of ids that failed
 function _deleteManyHandler(model, request, Log) {
   //EXPL: make a copy of the payload so that request.payload remains unchanged
-  let payload = request.payload.map(function(item) { return _.isObject(item) ? Object.assign({}, item) : item});
+  let payload = request.payload.map(function(item) { return _.isObject(item) ? _.assignIn({}, item) : item});
   try {
     let promises = [];
     payload.forEach(function(arg) {
@@ -1057,7 +1057,7 @@ function _addMany(ownerModel, ownerId, childModel, associationName, payload, Log
  */
 function _addManyHandler(ownerModel, ownerId, childModel, associationName, request, Log) {
   //EXPL: make a copy of the payload so that request.payload remains unchanged
-  let payload = request.payload.map(function(item) { return _.isObject(item) ? Object.assign({}, item) : item});
+  let payload = request.payload.map(function(item) { return _.isObject(item) ? _.assignIn({}, item) : item});
   let logError = false;
   try {
     if (_.isEmpty(request.payload)) {
@@ -1195,7 +1195,7 @@ function _removeMany(ownerModel, ownerId, childModel, associationName, payload, 
  */
 function _removeManyHandler(ownerModel, ownerId, childModel, associationName, request, Log) {
   //EXPL: make a copy of the payload so that request.payload remains unchanged
-  let payload = request.payload.map(function(item) { return _.isObject(item) ? Object.assign({}, item) : item});
+  let payload = request.payload.map(function(item) { return _.isObject(item) ? _.assignIn({}, item) : item});
   let logError = false;
   try {
     return ownerModel.findOne({ '_id': ownerId }).select(associationName)
