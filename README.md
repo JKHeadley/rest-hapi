@@ -1824,9 +1824,9 @@ DELETE /user/{\_id} | [ 'root', '!-root', 'user', '!-user', 'delete', '!-delete'
 GET /user/{\_id} | [ 'root', '!-root', 'user', '!-user', 'read', '!-read', 'readUser', '!-readUser' ]
 PUT /user/{\_id} | [ 'root', '!-root', 'user', '!-user', 'update' '!-update', 'updateUser', '!-updateUser' ]
 GET /user/{ownerId}/group | [ 'root', '!-root', 'user', '!-user', 'read', '!-read', 'readUser', '!-readUser', 'getUserGroups', '!-getUserGroups' ]
-POST /user/{ownerId}/group | [ 'root', '!-root', 'user', '!-user', 'associate', '!-associate', 'associateUser', '!-\associateUser', 'addUserGroups', '!-addUserGroups' ]
-DELETE /user/{ownerId}/group | [ 'root', '!-root', 'user', '!-user', 'associate', '!-associate', 'associateUser', '!-\associateUser', 'removeUserGroups', '!-removeUserGroups' ]
-PUT /user/{ownerId}/group/{childId} | [ 'root', '!-root', 'user', '!-user', 'associate', !-associate', 'associateUser', '!-\associateUser', 'addUserGroups', '!-addUserGroups' ]
+POST /user/{ownerId}/group | [ 'root', '!-root', 'user', '!-user', 'associate', '!-associate', 'associateUser', '!-associateUser', 'addUserGroups', '!-addUserGroups' ]
+DELETE /user/{ownerId}/group | [ 'root', '!-root', 'user', '!-user', 'associate', '!-associate', 'associateUser', '!-associateUser', 'removeUserGroups', '!-removeUserGroups' ]
+PUT /user/{ownerId}/group/{childId} | [ 'root', '!-root', 'user', '!-user', 'associate', '!-associate', 'associateUser', '!-associateUser', 'addUserGroups', '!-addUserGroups' ]
 DELETE /user/{ownerId}/group/{childId} | [ 'root', '!-root', 'user', '!-user', 'associate', '!-associate', 'associateUser', '!-associateUser', 'removeUserGroups', '!-removeUserGroups' ]
 
 ##### With Model Route Scope Defined
@@ -1839,10 +1839,10 @@ GET /user | [ 'Admin', 'User', 'root', '!-root', 'user', '!-user', 'read', '!-re
 DELETE /user/{\_id} | [ 'Admin', 'root', '!-root', 'user', '!-user', 'delete', '!-delete', 'deleteUser', '!-deleteUser' ]
 GET /user/{\_id} | [ 'Admin', 'User', 'root', '!-root', 'user', '!-user', 'read', '!-read', 'readUser', '!-readUser' ]
 PUT /user/{\_id} | [ 'Admin', 'root', '!-root', 'user', '!-user', 'update' '!-update', 'updateUser', '!-updateUser' ]
-GET /user/{ownerId}/group | [ 'Admin', 'User', 'root', '!-root', 'user', '!-user', 'read', '!-read', 'readUser', '!-\readUser', 'getUserGroups', '!-getUserGroups' ]
+GET /user/{ownerId}/group | [ 'Admin', 'User', 'root', '!-root', 'user', '!-user', 'read', '!-read', 'readUser', '!-readUser', 'getUserGroups', '!-getUserGroups' ]
 POST /user/{ownerId}/group | [ 'Admin', 'Project Lead', 'root', '!-root', 'user', '!-user', 'associate', '!-associate', 'associateUser', '!-associateUser', 'addUserGroups', '!-addUserGroups' ]
 DELETE /user/{ownerId}/group | [ 'Admin', 'root', '!-root', 'user', '!-user', 'associate', '!-associate', 'associateUser', '!-associateUser', 'removeUserGroups', '!-removeUserGroups' ]
-PUT /user/{ownerId}/group/{childId} | [ 'Admin', 'Project Lead', 'root', '!-root', 'user', '!-user', 'associate', '!-\associate', 'associateUser', '!-associateUser', 'addUserGroups', '!-addUserGroups' ]
+PUT /user/{ownerId}/group/{childId} | [ 'Admin', 'Project Lead', 'root', '!-root', 'user', '!-user', 'associate', '!-associate', 'associateUser', '!-associateUser', 'addUserGroups', '!-addUserGroups' ]
 DELETE /user/{ownerId}/group/{childId} | [ 'Admin', 'root', '!-root', 'user', '!-user', 'associate', '!-associate', 'associateUser', '!-associateUser', 'removeUserGroups', '!-removeUserGroups' ]
 
 #### Disabling route scopes
