@@ -1811,39 +1811,39 @@ module.exports = function (mongoose) {
 **NOTE:** Use of route scope properties requires that an authentication strategy be defined and implemented. If the ``config.authStrategy`` property is set to ``false``, then no route scopes will be applied, even if they are defined in the model.  For an example of route scopes in action, check out [appy](https://github.com/JKHeadley/appy):
 
 #### Generating route scopes
-If the ``config.generateScopes`` property is set to true, then generated endpoints will come pre-defined with scope values.  These values will exist in addition to any route scope values defined in the ``routeOptions.routeScope`` object. For instance, the tables below show two possibilities for the user model scope: the first is with no model route scope defined, and the second is with a model route scope defined as in the example above.
+If the ``config.generateRouteScopes`` property is set to true, then generated endpoints will come pre-defined with scope values.  These values will exist in addition to any route scope values defined in the ``routeOptions.routeScope`` object. For instance, the tables below show two possibilities for the user model scope: the first is with no model route scope defined, and the second is with a model route scope defined as in the example above.
 
 ##### Without Model Route Scope Defined
 
 Endpoint | Scope
 --- | ---
-DELETE /user | [ 'root', 'delete', 'deleteUser' ]
-POST /user | [ 'root', 'create', 'createUser' ]
-GET /user | [ 'root', 'read', 'readUser' ]
-DELETE /user/{_id} | [ 'root', 'delete', 'deleteUser' ]
-GET /user/{_id} | [ 'root', 'read', 'readUser' ]
-PUT /user/{_id} | [ 'root', 'update', 'updateUser' ]
-GET /user/{ownerId}/group | [ 'root', 'read', 'readUser', 'getUserGroups' ]
-POST /user/{ownerId}/group | [ 'root', 'associate', 'associateUser', 'addUserGroups' ]
-DELETE /user/{ownerId}/group | [ 'root', 'associate', 'associateUser', 'removeUserGroups' ]
-PUT /user/{ownerId}/group/{childId} | [ 'root', 'associate', 'associateUser', 'addUserGroups' ]
-DELETE /user/{ownerId}/group/{childId} | [ 'root', 'associate', 'associateUser', 'removeUserGroups' ]
+DELETE /user | [ 'root', '!-root', 'user', '!-user', 'delete', '!-delete', 'deleteUser', '!-deleteUser' ]
+POST /user | [ 'root', '!-root', 'user', '!-user', 'create', '!-create', 'createUser', '!-createUser' ]
+GET /user | [ 'root', '!-root', 'user', '!-user', 'read', '!-read', 'readUser', !-'readUser' ]
+DELETE /user/{\_id} | [ 'root', '!-root', 'user', '!-user', 'delete', '!-delete', 'deleteUser', '!-deleteUser' ]
+GET /user/{\_id} | [ 'root', '!-root', 'user', '!-user', 'read', '!-read', 'readUser', '!-readUser' ]
+PUT /user/{\_id} | [ 'root', '!-root', 'user', '!-user', 'update' '!-update', 'updateUser', '!-updateUser' ]
+GET /user/{ownerId}/group | [ 'root', '!-root', 'user', '!-user', 'read', '!-read', 'readUser', '!-readUser', 'getUserGroups', '!-getUserGroups' ]
+POST /user/{ownerId}/group | [ 'root', '!-root', 'user', '!-user', 'associate', '!-associate', 'associateUser', '!-associateUser', 'addUserGroups', '!-addUserGroups' ]
+DELETE /user/{ownerId}/group | [ 'root', '!-root', 'user', '!-user', 'associate', '!-associate', 'associateUser', '!-associateUser', 'removeUserGroups', '!-removeUserGroups' ]
+PUT /user/{ownerId}/group/{childId} | [ 'root', '!-root', 'user', '!-user', 'associate', !-associate', 'associateUser', '!-associateUser', 'addUserGroups', '!-addUserGroups' ]
+DELETE /user/{ownerId}/group/{childId} | [ 'root', '!-root', 'user', '!-user', 'associate', !-associate', 'associateUser', '!-associateUser', 'removeUserGroups', '!-removeUserGroups' ]
 
 ##### With Model Route Scope Defined
 
 Endpoint | Scope
 --- | ---
-DELETE /user | [ 'root', 'Admin', 'delete', 'deleteUser' ]
-POST /user | [ 'root', 'Admin', 'create', 'createUser' ]
-GET /user | [ 'root', 'Admin', 'read', 'readUser', 'User' ]
-DELETE /user/{_id} | [ 'root', 'Admin', 'delete', 'deleteUser' ]
-GET /user/{_id} | [ 'root', 'Admin', 'read', 'readUser', 'User' ]
-PUT /user/{_id} | [ 'root', 'Admin', 'update', 'updateUser' ]
-GET /user/{ownerId}/group | [ 'root', 'Admin', 'read', 'readUser', 'User', 'getUserGroups' ]
-POST /user/{ownerId}/group | [ 'root', 'Admin', 'associate', 'associateUser', 'addUserGroups', 'Project Lead' ]
-DELETE /user/{ownerId}/group | [ 'root', 'Admin', 'associate', 'associateUser', 'removeUserGroups' ]
-PUT /user/{ownerId}/group/{childId} | [ 'root', 'Admin', 'associate', 'associateUser', 'addUserGroups', 'Project Lead' ]
-DELETE /user/{ownerId}/group/{childId} | [ 'root', 'Admin', 'associate', 'associateUser', 'removeUserGroups' ]
+DELETE /user | [ 'Admin', 'root', '!-root', 'user', '!-user', 'delete', '!-delete', 'deleteUser', '!-deleteUser' ]
+POST /user | [ 'Admin', 'root', '!-root', 'user', '!-user', 'create', '!-create', 'createUser', '!-createUser' ]
+GET /user | [ 'Admin', 'User', 'root', '!-root', 'user', '!-user', 'read', '!-read', 'readUser', !-'readUser' ]
+DELETE /user/{\_id} | [ 'Admin', 'root', '!-root', 'user', '!-user', 'delete', '!-delete', 'deleteUser', '!-deleteUser' ]
+GET /user/{\_id} | [ 'Admin', 'User', 'root', '!-root', 'user', '!-user', 'read', '!-read', 'readUser', '!-readUser' ]
+PUT /user/{\_id} | [ 'Admin', 'root', '!-root', 'user', '!-user', 'update' '!-update', 'updateUser', '!-updateUser' ]
+GET /user/{ownerId}/group | [ 'Admin', 'User', 'root', '!-root', 'user', '!-user', 'read', '!-read', 'readUser', '!-readUser', 'getUserGroups', '!-getUserGroups' ]
+POST /user/{ownerId}/group | [ 'Admin', 'Project Lead', 'root', '!-root', 'user', '!-user', 'associate', '!-associate', 'associateUser', '!-associateUser', 'addUserGroups', '!-addUserGroups' ]
+DELETE /user/{ownerId}/group | [ 'Admin', 'root', '!-root', 'user', '!-user', 'associate', '!-associate', 'associateUser', '!-associateUser', 'removeUserGroups', '!-removeUserGroups' ]
+PUT /user/{ownerId}/group/{childId} | [ 'Admin', 'Project Lead', 'root', '!-root', 'user', '!-user', 'associate', !-associate', 'associateUser', '!-associateUser', 'addUserGroups', '!-addUserGroups' ]
+DELETE /user/{ownerId}/group/{childId} | [ 'Admin', 'root', '!-root', 'user', '!-user', 'associate', !-associate', 'associateUser', '!-associateUser', 'removeUserGroups', '!-removeUserGroups' ]
 
 #### Disabling route scopes
 Authentication (and as such Authorization) can be disabled for certain routes by adding a property under a model's ``routeOptions`` property with the value set to ``false``.  Below is a list of options and their effects:
