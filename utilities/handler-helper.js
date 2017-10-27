@@ -260,7 +260,7 @@ function _listHandler(model, request, Log) {
  * @private
  */
 function _find(model, _id, query, Log) {
-  let request = { query: query };
+  let request = { params: { _id: _id }, query: query };
   return _findHandler(model, _id, request, Log);
 }
 /**
@@ -545,7 +545,7 @@ function _createHandler(model, request, Log) {
  * @private
  */
 function _update(model, _id, payload, Log) {
-  let request = { payload: payload };
+  let request = { params: { _id: _id }, payload: payload };
   return _updateHandler(model, _id, request, Log);
 }
 /**
@@ -670,7 +670,8 @@ function _updateHandler(model, _id, request, Log) {
  * @private
  */
 function _deleteOne(model, _id, hardDelete, Log) {
-  return _deleteOneHandler(model, _id, hardDelete, {}, Log);
+  let request = { params: { _id: _id } };
+  return _deleteOneHandler(model, _id, hardDelete, request, Log);
 }
 /**
  * Deletes a model document
@@ -862,7 +863,7 @@ function _deleteManyHandler(model, request, Log) {
  * @private
  */
 function _addOne(ownerModel, ownerId, childModel, childId, associationName, payload, Log) {
-  let request = { payload: payload };
+  let request = { params: { ownerId: ownerId, childId: childId }, payload: payload };
   return _addOneHandler(ownerModel, ownerId, childModel, childId, associationName, request, Log);
 }
 /**
@@ -968,7 +969,8 @@ function _addOneHandler(ownerModel, ownerId, childModel, childId, associationNam
  * @private
  */
 function _removeOne(ownerModel, ownerId, childModel, childId, associationName, Log) {
-  return _removeOneHandler(ownerModel, ownerId, childModel, childId, associationName, {}, Log)
+  let request = { params: { ownerId: ownerId, childId: childId } };
+  return _removeOneHandler(ownerModel, ownerId, childModel, childId, associationName, request, Log)
 }
 /**
  * Removes an association to a document
@@ -1041,7 +1043,7 @@ function _removeOneHandler(ownerModel, ownerId, childModel, childId, association
  * @private
  */
 function _addMany(ownerModel, ownerId, childModel, associationName, payload, Log) {
-  let request = { payload: payload };
+  let request = { params: { ownerId: ownerId }, payload: payload };
   return _addManyHandler(ownerModel, ownerId, childModel, associationName, request, Log)
 }
 /**
@@ -1179,7 +1181,7 @@ function _addManyHandler(ownerModel, ownerId, childModel, associationName, reque
  * @private
  */
 function _removeMany(ownerModel, ownerId, childModel, associationName, payload, Log) {
-  let request = { payload: payload };
+  let request = { params: { ownerId: ownerId }, payload: payload };
   return _removeManyHandler(ownerModel, ownerId, childModel, associationName, request, Log);
 }
 /**
@@ -1281,7 +1283,7 @@ function _removeManyHandler(ownerModel, ownerId, childModel, associationName, re
  * @private
  */
 function _getAll(ownerModel, ownerId, childModel, associationName, query, Log) {
-  let request = { query: query };
+  let request = { params: { ownerId: ownerId }, query: query };
   return _getAllHandler(ownerModel, ownerId, childModel, associationName, request, Log)
 }
 /**
