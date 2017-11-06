@@ -6,6 +6,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+
+## [0.34.0] - 2017-11-05
+### Added
+- Added error response for db conflicts.
+
+### Fixed
+- 
+
 ## [0.33.0] - 2017-10-23
 ### Added
 - Endpoint activity history tracking via [Audit Logs](https://github.com/JKHeadley/rest-hapi#audit-logs)
@@ -145,7 +153,7 @@ post(hardDelete, deleted, Log) | post(hardDelete, deleted, request, Log)
 
 
 
-[Unreleased]: https://github.com/jkheadley/rest-hapi/compare/v0.33.0...HEAD
+[Unreleased]: https://github.com/jkheadley/rest-hapi/compare/v0.34.0...HEAD
 [0.20.0]: https://github.com/jkheadley/rest-hapi/compare/v0.19.2...v0.20.0
 [0.20.2]: https://github.com/jkheadley/rest-hapi/compare/v0.20.0...v0.20.2
 [0.20.3]: https://github.com/jkheadley/rest-hapi/compare/v0.20.2...v0.20.3
@@ -162,5 +170,6 @@ post(hardDelete, deleted, Log) | post(hardDelete, deleted, request, Log)
 [0.31.0]: https://github.com/jkheadley/rest-hapi/compare/v0.30.0...v0.31.0
 [0.32.0]: https://github.com/jkheadley/rest-hapi/compare/v0.31.0...v0.32.0
 [0.33.0]: https://github.com/jkheadley/rest-hapi/compare/v0.32.0...v0.33.0
+[0.33.0]: https://github.com/jkheadley/rest-hapi/compare/v0.33.0...v0.34.0
 
 [BREAKING]: https://github.com/JKHeadley/rest-hapi/releases
