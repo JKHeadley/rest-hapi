@@ -318,8 +318,11 @@ internals.generateJoiFieldModel = function (model, field, fieldName, modelType, 
     }
   }
 
+  let fieldCopy = _.extend({}, field);
+  delete fieldCopy.type;
+
   //EXPL: if this field is nested, we treat it as a nested model and recursively call the appropriate model function
-  if (nested[fieldName] || instance === 'Mixed' ) {
+  if (nested[fieldName] || (instance === 'Mixed' && !_.isEmpty(fieldCopy))) {
 
     switch (modelType) {
       case "read":

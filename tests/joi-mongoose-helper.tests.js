@@ -1244,7 +1244,7 @@ test('joi-mongoose-helper.generateJoiFieldModel', function (t) {
     //</editor-fold>
   });
 
-  t.test('joi-mongoose-helper.generateJoiFieldModel calls generateJoiReadModel on a nested field with the "create" modelType parameter', function (t) {
+  t.test('joi-mongoose-helper.generateJoiFieldModel calls generateJoiCreateModel on a nested field with the "create" modelType parameter', function (t) {
     //<editor-fold desc="Arrange">
     t.plan(1);
 
@@ -1578,6 +1578,42 @@ test('joi-mongoose-helper.generateJoiFieldModel', function (t) {
 
     //<editor-fold desc="Act">
     var fieldModel = generateJoiFieldModel(userModel, nameField, "name", "update" , Log);
+    //</editor-fold>
+
+    //<editor-fold desc="Assert">
+    t.ok(generateJoiModelFromFieldType.called, "generateJoiModelFromFieldType called");
+    //</editor-fold>
+
+    //<editor-fold desc="Restore">
+    delete mongoose.models.user;
+    delete mongoose.modelSchemas.user;
+    //</editor-fold>
+  });
+
+  t.test('joi-mongoose-helper.generateJoiFieldModel calls generateJoiModelFromFieldType for "Object" field types', function (t) {
+    //<editor-fold desc="Arrange">
+    t.plan(1);
+
+    var joiMongooseHelper = rewire('../utilities/joi-mongoose-helper');
+    var generateJoiModelFromFieldType = sinon.spy(function () { return Joi.any() });
+    joiMongooseHelper.__set__("internals.generateJoiModelFromFieldType", generateJoiModelFromFieldType);
+    var generateJoiFieldModel = joiMongooseHelper.__get__("internals.generateJoiFieldModel");
+
+
+    var userSchema = new mongoose.Schema({
+      test: {
+        type: Types.Object
+      },
+    });
+
+    userSchema.statics = {routeOptions: {}};
+    var userModel = mongoose.model("user", userSchema);
+
+    var nameField = userModel.schema.tree["test"];
+    //</editor-fold>
+
+    //<editor-fold desc="Act">
+    var fieldModel = generateJoiFieldModel(userModel, nameField, "test", "create" , Log);
     //</editor-fold>
 
     //<editor-fold desc="Assert">
