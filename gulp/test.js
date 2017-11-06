@@ -3,8 +3,14 @@
 var gulp = require('gulp');
 var tape = require('gulp-tape');
 var tapColorize = require('tap-colorize');
-const TestHelper = require('../tests/test-helper.js');
 
+//EXPL: tests aren't included in npm package
+try {
+  const TestHelper = require('../tests/test-helper.js');
+}
+catch (error) {
+  return
+}
 
 gulp.task('test', ['test-unit'], function() {
   return TestHelper.runTestFile('tests/end-to-end.tests.js');
