@@ -3,10 +3,11 @@
 var gulp = require('gulp');
 var tape = require('gulp-tape');
 var tapColorize = require('tap-colorize');
+var TestHelper = {}
 
 //EXPL: tests aren't included in npm package
 try {
-  const TestHelper = require('../tests/test-helper.js');
+  TestHelper = require('../tests/test-helper.js');
 }
 catch (error) {
   return
