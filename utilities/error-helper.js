@@ -11,7 +11,8 @@ module.exports = {
     BAD_REQUEST: "Bad Request",
     BAD_IMPLEMENTATION: "Bad Implementation",
     NOT_FOUND: "Not Found",
-    GATEWAY_TIMEOUT: "Gateway Timeout"
+    GATEWAY_TIMEOUT: "Gateway Timeout",
+    CONFLICT: "Conflict"
   },
 
   /**
@@ -50,6 +51,9 @@ module.exports = {
           break;
         case this.types.BAD_REQUEST:
           response = Boom.badRequest(error.message);
+          break;
+        case this.types.CONFLICT:
+          response = Boom.conflict(error.message);
           break;
         default:
           response = Boom.badRequest(error.message);

@@ -3394,8 +3394,8 @@ Test('end to end tests', function (t) {
                         t.deepEqual(log3.user, users[0]._id, 'user correct');
                         t.deepEqual(log3.date, now, 'date correct');
                         t.deepEqual(log3.isError, true, 'isError correct');
-                        t.deepEqual(log3.statusCode, 500, 'statusCode correct');
-                        t.deepEqual(log3.responseMessage, 'An internal server error occurred', 'responseMessage correct');
+                        t.deepEqual(log3.statusCode, 409, 'statusCode correct');
+                        t.deepEqual(log3.responseMessage, 'There was a duplicate key error.', 'responseMessage correct');
                       })
                       //</editor-fold>
 

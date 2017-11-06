@@ -496,13 +496,22 @@ function _createHandler(model, request, Log) {
                     })
               })
               .catch(function (error) {
-                const message = "There was an error creating the resource.";
+                let message = "";
+                let type = "";
+                if (error.code === 11000) {
+                  message = "There was a duplicate key error.";
+                  type = errorHelper.types.CONFLICT;
+                }
+                else {
+                  message = "There was an error creating the resource.";
+                  type = errorHelper.types.BAD_IMPLEMENTATION;
+                }
                 if (!logError) {
                   Log.error(message);
                   logError = true;
                   delete error.type;
                 }
-                errorHelper.handleError(error, message, errorHelper.types.BAD_IMPLEMENTATION, Log);
+                errorHelper.handleError(error, message, type, Log);
               });
         })
         .catch(function (error) {
@@ -621,13 +630,22 @@ function _updateHandler(model, _id, request, Log) {
                 }
               })
               .catch(function (error) {
-                const message = "There was an error updating the resource.";
+                let message = "";
+                let type = "";
+                if (error.code === 11000) {
+                  message = "There was a duplicate key error.";
+                  type = errorHelper.types.CONFLICT;
+                }
+                else {
+                  message = "There was an error updating the resource.";
+                  type = errorHelper.types.BAD_IMPLEMENTATION;
+                }
                 if (!logError) {
                   Log.error(message);
                   logError = true;
                   delete error.type;
                 }
-                errorHelper.handleError(error, message, errorHelper.types.BAD_IMPLEMENTATION, Log);
+                errorHelper.handleError(error, message, type, Log);
               });
         })
         .catch(function (error) {
