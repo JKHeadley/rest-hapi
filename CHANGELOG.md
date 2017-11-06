@@ -12,7 +12,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Added error response for db conflicts.
 
 ### Fixed
-- 
+- Auditlog validation warning.
+- Fix payload copies to work with ObjectIds.
+- Added missing permissions.
+- Added missing params to mongoose wrappers.
 
 ## [0.33.0] - 2017-10-23
 ### Added
