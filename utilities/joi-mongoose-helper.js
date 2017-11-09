@@ -318,11 +318,17 @@ internals.generateJoiFieldModel = function (model, field, fieldName, modelType, 
     }
   }
 
-  let fieldCopy = _.extend({}, field);
-  delete fieldCopy.type;
+  if (!nested[fieldName]) {
+    //EXPL: check for any valid nested fields
+    for (let key in field) {
+      if (internals.isValidField(key, field[key], model)) {
+        nested[fieldName] = true;
+      }
+    }
+  }
 
   //EXPL: if this field is nested, we treat it as a nested model and recursively call the appropriate model function
-  if (nested[fieldName] || (instance === 'Mixed' && !_.isEmpty(fieldCopy))) {
+  if (nested[fieldName]) {
 
     switch (modelType) {
       case "read":
@@ -511,7 +517,7 @@ internals.isObjectId = function (arg) {
  * @returns {boolean}
  */
 internals.isValidField = function (fieldName, field, model) {
-  const invalidFieldNames = ['__t', '__v', 'id'];
+  const invalidFieldNames = ['__t', '__v', 'id', 'scope', 'enum'];
 
   if (!_.isObject(field)) {
     return false;

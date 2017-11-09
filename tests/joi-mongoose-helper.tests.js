@@ -1602,7 +1602,8 @@ test('joi-mongoose-helper.generateJoiFieldModel', function (t) {
 
     var userSchema = new mongoose.Schema({
       test: {
-        type: Types.Object
+        type: Types.Object,
+        required: true
       },
     });
 
