@@ -318,13 +318,13 @@ internals.generateJoiFieldModel = function (model, field, fieldName, modelType, 
     }
   }
 
-  if (!nested[fieldName]) {
-    //EXPL: check for any valid nested fields
-    for (let key in field) {
-      if (internals.isValidField(key, field[key], model)) {
-        nested[fieldName] = true;
+  if (instance === 'Mixed' && !nested[fieldName]) {
+      //EXPL: check for any valid nested fields
+      for (let key in field) {
+        if (internals.isValidField(key, field[key], model)) {
+          nested[fieldName] = true;
+        }
       }
-    }
   }
 
   //EXPL: if this field is nested, we treat it as a nested model and recursively call the appropriate model function
@@ -517,7 +517,9 @@ internals.isObjectId = function (arg) {
  * @returns {boolean}
  */
 internals.isValidField = function (fieldName, field, model) {
-  const invalidFieldNames = ['__t', '__v', 'id', 'scope', 'enum'];
+  // const invalidFieldNames = ['__t', '__v', 'id', 'scope', 'enum'];
+  const invalidFieldNames = ['__t', '__v', 'id'];
+
 
   if (!_.isObject(field)) {
     return false;
@@ -539,7 +541,6 @@ internals.isValidField = function (fieldName, field, model) {
 
   return true;
 };
-
 
 module.exports = {
 
