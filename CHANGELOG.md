@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased]
 
 
-## [0.34.0] - 2017-11-10
+## [0.35.0] - 2017-11-10
 ### Added
 - Updated joi model for object types.
 
