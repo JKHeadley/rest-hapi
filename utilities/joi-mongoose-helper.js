@@ -405,6 +405,9 @@ internals.generateJoiModelFromFieldType = function (field, Log) {
     case 'ObjectId':
       model = internals.joiObjectId();
       break;
+    case 'Mixed':
+      model = Joi.object();
+      break;
     case 'Boolean':
       model = Joi.bool();
       break;
