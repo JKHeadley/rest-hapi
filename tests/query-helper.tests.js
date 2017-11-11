@@ -10,7 +10,7 @@ var logging = require('loggin');
 var Log = logging.getLogger("tests");
 Log.logLevel = "ERROR";
 Log = Log.bind("query-helper");
-var testHelper = require("./test-helper");
+var testHelper = require("../utilities/test-helper");
 
 //TODO: add tests for text search functions
 //TODO: add tests for $exclude param

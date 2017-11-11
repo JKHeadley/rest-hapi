@@ -15,7 +15,7 @@ var logging = require('loggin');
 var Log = logging.getLogger("tests");
 Log.logLevel = "DEBUG";
 Log = Log.bind("joi-mongoose-helper");
-var testHelper = require("./test-helper");
+var testHelper = require("../utilities/test-helper");
 var Joi = require('joi');
 
 sinon.test = sinonTest;

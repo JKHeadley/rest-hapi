@@ -157,7 +157,7 @@ internals.mockInjection = function(request) {
 
 /**
  * Function to run a single test file.
- * Can be used with node cli. Ex: "node tests/test-helper.js --test tests/model-helper.tests.js"
+ * Can be used with node cli. Ex: "node utilities/test-helper.js --test tests/model-helper.tests.js"
  * @param path: path to test file.
  */
 internals.runTestFile = function(path) {

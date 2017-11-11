@@ -7,7 +7,7 @@ var TestHelper = {}
 
 //EXPL: tests aren't included in npm package
 try {
-  TestHelper = require('../tests/test-helper.js');
+  TestHelper = require('../utilities/test-helper.js');
 }
 catch (error) {
   return

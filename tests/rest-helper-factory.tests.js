@@ -14,7 +14,7 @@ var logging = require('loggin');
 var Log = logging.getLogger("tests");
 Log.logLevel = "ERROR";
 Log = Log.bind("rest-helper-factory");
-var testHelper = require("./test-helper");
+var testHelper = require("../utilities/test-helper");
 var Joi = require('joi');
 var fs = require('fs');
 
