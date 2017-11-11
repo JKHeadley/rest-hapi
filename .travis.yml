@@ -6,4 +6,4 @@ install: true
 before_script:
   - npm install
 script:
-  - gulp test
+  - gulp test-unit
