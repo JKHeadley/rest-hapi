@@ -157,11 +157,16 @@ internals.mockInjection = function(request) {
 
 /**
  * Function to run a single test file.
- * Can be used with node cli. Ex: "node tests/test-helper.js tests/model-helper.tests.js"
+ * Can be used with node cli. Ex: "node tests/test-helper.js --test tests/model-helper.tests.js"
  * @param path: path to test file.
  */
 internals.runTestFile = function(path) {
-  var pathToTestFile = path || process.argv.slice(2)[0];
+  if (!path) {
+    if (process.argv.slice(2)[0] !== '--test') {
+      return;
+    }
+  }
+  var pathToTestFile = path || process.argv.slice(3)[0];
   if (pathToTestFile && pathToTestFile !== "test") {
     var gulp = require('gulp');
     var tape = require('gulp-tape');
