@@ -1358,12 +1358,16 @@ function _getAllHandler(ownerModel, ownerId, childModel, associationName, reques
             });
           }
 
+          //EXPL: since the call to _listHandler is already filtering by _id, we must handle the special case
+          // where the user is also filtering by _id
           if (query._id) {
             if (!_.isArray(query._id)) {
               query._id = [query._id];
             }
             childIds = childIds.filter(function(id) {
-              return query._id.indexOf(id.toString()) > -1
+                return query._id.find(function(_id) {
+                    return _id.toString() === id.toString()
+                })
             });
             delete query._id
           }
