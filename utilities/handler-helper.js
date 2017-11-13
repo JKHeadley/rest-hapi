@@ -1525,7 +1525,7 @@ function _setAssociation(ownerModel, ownerObject, childModel, childId, associati
               payload[childModel.modelName] = childObject._id;
 
               var duplicate = ownerObject[associationName].filter(function (associationObject) {
-                return associationObject[childModel.modelName].toString() === childId;
+                return associationObject[childModel.modelName].toString() === childId.toString();
               });
               duplicate = duplicate[0];
 
