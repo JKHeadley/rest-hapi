@@ -1,6 +1,6 @@
 {
   "name": "rest-hapi",
-  "version": "0.36.3",
+  "version": "0.36.4",
   "description": "A RESTful API generator for hapi",
   "main": "rest-hapi.js",
   "bin": {
