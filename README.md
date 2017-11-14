@@ -73,6 +73,8 @@ rest-hapi-demo: http://ec2-52-25-112-131.us-west-2.compute.amazonaws.com:8124
     * [Document authorization](#document-authorization)
 - [Audit Logs](#audit-logs)
 - [Policies](#policies)
+    * [Generated endpoints](#generated-endpoints)
+    * [Custom endpoints](#custom-endpoints)
     * [Policies vs middleware](#policies-vs-middleware)
     * [Example: custom authorization via policies](#example-custom-authorization-via-policies)
 - [Mongoose wrapper methods](#mongoose-wrapper-methods)
@@ -2065,7 +2067,12 @@ rest-hapi comes with built-in support for policies via the [mrhorse](https://git
 
 Internally, rest-hapi uses policies to implement features such as [document authorization](#document-authorization), [audit logs](#audit-logs), and certain [metadata](#user-tags).
 
-You can enable your own custom policies in rest-hapi by setting `config.enablePolicies` to `true` and adding your policy files to your `policies` directory. You can then apply policies to your generated routes through the `routeOptions.policies` property, which has the following structure:
+You can enable your own custom policies in rest-hapi by setting `config.enablePolicies` to `true` and adding your policy files to your `policies` directory. 
+
+**NOTE:** If your ``policies`` directory is not in your projects root directory, you will need to specify the path (relative to your projects root directory) by assigning the path to the ``config.policyPath`` property and you will need to set the ``config.absolutePolicyPath`` property to ``true``.
+
+### Generated endpoints
+You can apply policies to your generated routes through the `routeOptions.policies` property, which has the following structure:
 
 ```javascript
 routeOptions: {
@@ -2080,9 +2087,41 @@ routeOptions: {
 }
 ```
 
-**NOTE:** If your ``policies`` directory is not in your projects root directory, you will need to specify the path (relative to your projects root directory) by assigning the path to the ``config.policyPath`` property and you will need to set the ``config.absolutePolicyPath`` property to ``true``.
+**NOTE:** You can access the current model within a generated route policy function through `request.route.settings.plugins.model` (see the [example](#example-custom-authorization-via-policies) below).
 
-**NOTE:** You can access the current model within a policy function through `request.route.settings.plugins.model` (see the [example](#example-custom-authorization-via-policies) below).
+### Custom endpoints
+You can apply policies to custom endpoints (whether [standalone](#standalone-endpoints) or [additional](#additional-endpoints) endpoints) by adding a `policies` object to your routes `config.plugins` object.  See the example below or refer to the [mrhorse](https://github.com/mark-bradshaw/mrhorse) docs for more info:
+
+```javascript
+   server.route({
+      method: 'POST',
+      path: '/login',
+      config: {
+        handler: loginHandler,
+        auth: null,
+        description: 'User login.',
+        tags: ['api', 'Login'],
+        validate: {
+          payload: {
+            email: Joi.string().email().lowercase().required(),
+            password: Joi.string().required()
+          }
+        },
+        pre: loginPre,
+        plugins: {
+          'hapi-swagger': {
+            responseMessages: [
+              { code: 200, message: 'Success' },
+              { code: 400, message: 'Bad Request' },
+              { code: 404, message: 'Not Found' },
+              { code: 500, message: 'Internal Server Error' }
+            ]
+          },
+          policies: ['test']           <--- add policies here
+        }
+      },
+    });
+```
 
 ### Policies vs middleware
 Since policies and [middleware functions](#middleware) seem to provide similar funcitonality, it's important to understand their differences in order to determine which is best suited for your use case. Listed below are a few of the major differences:
