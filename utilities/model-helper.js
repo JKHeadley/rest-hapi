@@ -1,6 +1,7 @@
 'use strict';
 
 let config = require("../config");
+const _ = require('lodash');
 
 //TODO: allow "unique" field to be rest-hapi specific if soft deletes are enabled (i.e. implement a unique constraint based on the required field and the "isDeleted" flag)
 //TODO: correctly label "model" and "schema" files and objects throughout project
@@ -137,6 +138,34 @@ internals.createModel = function(Schema, mongoose) {
   }
   return mongoose.model(Schema.statics.collectionName, Schema);
 };
+
+internals.addDuplicateProperties = function (schema, schemas) {
+  let associations = schema.statics.routeOptions.associations;
+  if (associations) {
+    for (let key in associations) {
+      let association = associations[key];
+      if (association.duplicate) {
+        let duplicate = association.duplicate;
+        if (!_.isArray(duplicate)) {
+          duplicate = [duplicate];
+        }
+
+        const childSchema = schemas[association.model];
+        duplicate.forEach(function(prop) {
+          const field = {};
+          field[prop.as] = {
+            type: childSchema.obj[prop.field].type,
+            allowOnCreate: false,
+            allowOnUpdate: false
+          };
+          schema.add(field);
+        })
+      }
+    }
+  }
+
+  return schema;
+}
 
 /**
  * Takes a mongoose schema and extends the fields to include the model associations.
@@ -323,5 +352,7 @@ module.exports = {
 
   extendSchemaAssociations: internals.extendSchemaAssociations,
 
-  associateModels: internals.associateModels
+  associateModels: internals.associateModels,
+
+  addDuplicateProperties: internals.addDuplicateProperties
 };
