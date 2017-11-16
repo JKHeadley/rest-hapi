@@ -18,6 +18,9 @@ internals.trackDuplicatedFields = function(model, mongoose, Log) {
   const trackDuplicatedFieldsForModel = function addDocumentScopeForModel(request, reply, next) {
     Log = Log.bind("trackDuplicatedFields");
     try {
+      if (_.isError(request.response)) {
+        return next(null, true);
+      }
       let promises = [];
       for (const key in request.payload) {
         const field = model.schema.obj[key];

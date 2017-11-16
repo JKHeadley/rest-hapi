@@ -63,6 +63,7 @@ internals.populateDuplicateFields = function(model, mongoose, Log) {
               return next(Boom.badImplementation(err), false);
             })
       }
+      return next(null, true);
     }
     catch (err) {
       Log.error("ERROR:", err);
