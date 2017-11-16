@@ -5,27 +5,7 @@ const _ = require('lodash');
 
 //TODO: allow "unique" field to be rest-hapi specific if soft deletes are enabled (i.e. implement a unique constraint based on the required field and the "isDeleted" flag)
 //TODO: correctly label "model" and "schema" files and objects throughout project
-//TODO: add "updated_at" and "created_at" to all resources
-//TODO: make sure complex fields are supported for models. Ex:
-// var blogSchema = new Schema({
-//   title:  String,
-//   author: String,
-//   body:   String,
-//   comments: [{ body: String, date: Date }],
-//   date: { type: Date, default: Date.now },
-//   hidden: Boolean,
-//   meta: {
-//     votes: Number,
-//     favs:  Number
-//   }
-// });
-//TODO-DONE: possibly remove "Schema.extend" and use "Schema.add"
-//TODO: create a field property that can mark it as "duplicate". i.e. any associated models referencing that model will duplicate those fields along with the reference Id
-//TODO(cont): this will allow for a shallow embed that will return a list of reference ids with their "duplicate" values, and a full embed that will return the fully embedded references
-//TODO(cont): Limiting the populated fields could also be accomplished with the "select" parameter of the "populate" function.
-//TODO: add option for TTL index on eventLogs so they can expire after a certain length of time
-//TODO-DONE: make sure field default values are supported
-//TODO: add support for updatedAt and createdAt fields for each model
+//TODO: Limiting the populated fields could also be accomplished with the "select" parameter of the "populate" function.
 
 const internals = {};
 
