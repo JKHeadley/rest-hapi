@@ -99,6 +99,22 @@ config.enableUpdatedBy = false;
 config.enableDeletedBy = false;
 
 /**
+ * Enables fields from an associated model to be duplicated. Similar to permanently embedding an associated field within
+ * the parent model schema. Useful if a parent model needs to be searchable or sortable by an association's field.
+ * default: false
+ * @type {boolean}
+ */
+config.enableDuplicateFields = true;
+
+/**
+ * When true, duplicated fields will update whenever the original field is updated.
+ * WARNING: This feature can make updates very resource intensive if many documents are duplicating the original field.
+ * default: false
+ * @type {boolean}
+ */
+config.trackDuplicatedFields = true;
+
+/**
  * When enabled, all create, update, associate, and delete events are recorded in an auditLog collection.
  * default: true
  * @type {boolean}

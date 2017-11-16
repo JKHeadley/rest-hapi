@@ -139,26 +139,54 @@ internals.createModel = function(Schema, mongoose) {
   return mongoose.model(Schema.statics.collectionName, Schema);
 };
 
-internals.addDuplicateProperties = function (schema, schemas) {
+
+/**
+ * Add appropriate data to schemas for fields marked as duplicate.
+ * @param schema
+ * @param schemas
+ * @returns {*}
+ */
+internals.addDuplicateFields = function (schema, schemas) {
   let associations = schema.statics.routeOptions.associations;
   if (associations) {
     for (let key in associations) {
       let association = associations[key];
-      if (association.duplicate) {
+      if (association.duplicate && (association.type === 'MANY_ONE' || association.type === 'ONE_ONE')) {
         let duplicate = association.duplicate;
         if (!_.isArray(duplicate)) {
           duplicate = [duplicate];
         }
-
+          
         const childSchema = schemas[association.model];
+        
+        association.duplicate = duplicate = duplicate.map(function(prop) {
+            //EXPL: Allow for 'duplicate' to be an array of strings
+            if (_.isString(prop)) {
+                prop = { field: prop };
+            }
+            //EXPL: Set a default name for the duplicated field if no name is specified in "as"
+            prop.as = prop.as || childSchema.statics.collectionName + prop.field[0].toUpperCase() + prop.field.slice(1);
+            
+            return prop;
+        })
+
         duplicate.forEach(function(prop) {
           const field = {};
-          field[prop.as] = {
+          var fieldName = prop.as;
+          field[fieldName] = {
             type: childSchema.obj[prop.field].type,
             allowOnCreate: false,
             allowOnUpdate: false
           };
           schema.add(field);
+
+          //EXPL: In the schema of the field being duplicated, keep track of which models/associations are duplicating the field
+          childSchema.obj[prop.field].duplicated = childSchema.obj[prop.field].duplicated || [];
+          childSchema.obj[prop.field].duplicated.push({
+              association: key,
+              model: schema.statics.collectionName,
+              as: fieldName
+          });
         })
       }
     }
@@ -354,5 +382,5 @@ module.exports = {
 
   associateModels: internals.associateModels,
 
-  addDuplicateProperties: internals.addDuplicateProperties
+  addDuplicateFields: internals.addDuplicateFields
 };

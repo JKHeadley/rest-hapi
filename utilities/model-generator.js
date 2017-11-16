@@ -67,7 +67,7 @@ module.exports = function (mongoose, Log, config) {
 
     for (var schemaKey in extendedSchemas) {
       var schema = extendedSchemas[schemaKey];
-      extendedSchemas[schemaKey] = modelHelper.addDuplicateProperties(schema, schemas);
+      extendedSchemas[schemaKey] = modelHelper.addDuplicateFields(schema, schemas);
     }
 
     for (var schemaKey in extendedSchemas) {//EXPL: Create models with final schemas
