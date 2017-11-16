@@ -421,6 +421,17 @@ internals.generateJoiModelFromFieldType = function (field, Log) {
       if (fieldCopy.enum) {
         model = Joi.any().only(fieldCopy.enum);
       }
+      else if (fieldCopy.regex) {
+        if (!(fieldCopy.regex instanceof RegExp)) {
+          if (fieldCopy.regex.options) {
+            model = Joi.string().regex(fieldCopy.regex.pattern, fieldCopy.regex.options);
+          } else {
+            model = Joi.string().regex(fieldCopy.regex.pattern)
+          }
+        } else {
+          model = Joi.string().regex(fieldCopy.regex);
+        }
+      }
       else if (fieldCopy.stringType) {
         switch (fieldCopy.stringType) {
           case 'uri':

@@ -1502,6 +1502,7 @@ Fields of type ``String`` can include further validation restrictions based on a
 Field Property | joi Validation
 --- | ---
 enum: [items] | Joi.any().only([items])
+regex: RegExp | Joi.string().regex(RegExp)
 stringType: 'email' | Joi.string().email()
 stringType: 'uri' | Joi.string().uri()
 stringType: 'token' | Joi.string().token()
@@ -1514,6 +1515,17 @@ stringType: 'trim' | Joi.string().trim()
 stringType: 'creditCard' | Joi.string().creditCard()
 
 In addition, if a `description: "Description text."` field property is included, then `.description("Description text.")` will be called on the joi validation object.
+
+Furthermore, the regex field can also accept an object that follows the formatting below. See [Joi regex options](https://github.com/hapijs/joi/blob/v13.0.2/API.md#stringregexpattern-name--options).
+
+```javascript
+{
+ pattern: RegExp,
+ options: {
+  invert: Boolean
+ }
+}
+```
 
 rest-hapi generates joi validation models for create, read, and update events as well as association events with linking models.  By default these validation models include all the fields of the mongoose models and list them as optional.  However additional field properties can be included to customize the validation models.  Below is a list of currently supported field properties and their effect on the validation models.
 

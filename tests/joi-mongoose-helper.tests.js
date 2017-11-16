@@ -885,7 +885,7 @@ test('joi-mongoose-helper.generateJoiCreateModel', function (t) {
     var generateJoiFieldModel = sinon.spy(function(){ return Joi.any() });
     var joiMongooseHelper = rewire('../utilities/joi-mongoose-helper');
     joiMongooseHelper.__set__("internals.generateJoiFieldModel", generateJoiFieldModel);
-    
+
 
     var userSchema = new mongoose.Schema({
       title: {
@@ -994,7 +994,7 @@ test('joi-mongoose-helper.generateJoiCreateModel', function (t) {
 test('joi-mongoose-helper.generateJoiModelFromFieldType', function (t) {
   t.test('joi-mongoose-helper.generateJoiModelFromFieldType returns correct models for types.', function (t) {
     //<editor-fold desc="Arrange">
-    t.plan(12);
+    t.plan(16);
 
     var joiMongooseHelper = rewire('../utilities/joi-mongoose-helper');
     var joiObjectId = sinon.spy(joiMongooseHelper.__get__("internals.joiObjectId"));
@@ -1034,6 +1034,23 @@ test('joi-mongoose-helper.generateJoiModelFromFieldType', function (t) {
         },
         enum: ['test1', 'test2']
       },
+      regexType: {
+        type: {
+          schemaName: "String"
+        },
+        regex: /^[0-9A-F]{6}$/i
+      },
+      invertedRegexType: {
+        type: {
+          schemaName: "String"
+        },
+        regex: {
+          pattern: /^[0-9A-F]{6}$/i,
+          options: {
+            invert: true
+          }
+        }
+      },
       allowNullType: {
         type: {
           schemaName: "String"
@@ -1051,6 +1068,8 @@ test('joi-mongoose-helper.generateJoiModelFromFieldType', function (t) {
     var dateModel = generateJoiModelFromFieldType(testSchema.dateType, Log);
     var stringModel = generateJoiModelFromFieldType(testSchema.stringType, Log);
     var enumModel = generateJoiModelFromFieldType(testSchema.enumType, Log);
+    var regexModel = generateJoiModelFromFieldType(testSchema.regexType, Log);
+    var invertedRegexModel = generateJoiModelFromFieldType(testSchema.invertedRegexType, Log);
     var allowNullModel = generateJoiModelFromFieldType(testSchema.allowNullType, Log);
     //</editor-fold>
 
@@ -1066,6 +1085,10 @@ test('joi-mongoose-helper.generateJoiModelFromFieldType', function (t) {
     t.ok(stringModel.validate(0).error !== null, "stringModel rejects non strings");
     t.ok(enumModel.validate("test2").error === null, "enumModel validates an allowed value");
     t.ok(enumModel.validate("test").error !== null, "enumModel rejects a not allowed value");
+    t.ok(regexModel.validate("abe129").error === null, "regexModel validates an allowed value");
+    t.ok(regexModel.validate("apml129").error !== null, "regexModel rejects a not allowed value");
+    t.ok(invertedRegexModel.validate("nothexidecimal").error === null, "invertedRegexModel validates an allowed value");
+    t.ok(invertedRegexModel.validate("abe129").error !== null, "invertedRegexModel rejects a not allowed value");
     t.ok(allowNullModel.validate(null).error === null, "allowNullModel validates a null value");
     //</editor-fold>
 
