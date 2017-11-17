@@ -5,8 +5,6 @@ const _ = require('lodash');
 const config = require('../config');
 const Q = require('q');
 
-const handlerHelper = require('../utilities/handler-helper');
-
 const internals = {};
 
 /**
@@ -104,7 +102,7 @@ internals.findAndUpdate = function (mongoose, childModel, query, newProp, Log) {
  * @param Log
  */
 internals.updateField = function (mongoose, childModel, _id, newProp, Log) {
-  return handlerHelper.update(childModel, _id, newProp, Log)
+  return childModel.findByIdAndUpdate(_id, newProp, { new: true })
       .then(function (result) {
         return internals.trackFields(childModel, mongoose, newProp, result, Log)
       });
