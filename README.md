@@ -7,6 +7,8 @@ A RESTful API generator for the [hapi](https://github.com/hapijs/hapi) framework
 
 rest-hapi is a hapi plugin intended to abstract the work involved in setting up API routes/validation/handlers/etc. for the purpose of rapid app development.  At the same time it provides a powerful combination of [relational](#associations) structure with [NoSQL](#creating-endpoints) flexibility.  You define your models and the rest is done for you.  Have your own API server up and running in minutes!
 
+# **NOTE:** The [duplicate fields] feature is now available with v0.37.0. Check it out!
+
 ## Features
 
 * Automatic generation of [CRUD](#creating-endpoints) endpoints with [middleware](#middleware) support
@@ -17,7 +19,7 @@ rest-hapi is a hapi plugin intended to abstract the work involved in setting up 
 * [Query parameter](#querying) support for searching, sorting, filtering, pagination, and embedding of associated models
 * Endpoint activity history through [Audit Logs](#audit-logs)
 * Support for [policies](#policies) via [mrhorse](https://github.com/mark-bradshaw/mrhorse)
-* Duplicate fields
+* [Duplicate fields](#duplicate-fields)
 * Support for ["soft" delete](#soft-delete)
 * Optional [metadata](#metadata)
 * Mongoose [wrapper methods](#mongoose-wrapper-methods)
@@ -64,7 +66,7 @@ rest-hapi-demo: http://ec2-52-25-112-131.us-west-2.compute.amazonaws.com:8124
 - [Duplicate fields](duplicate-fields)
     * [Basic example](#basic-example)
     * [Tracking duplicated fields](#tracking-duplicated-fields)
-    * [Duplicate field options](#duplicate-field-options)
+    * [Nested field name](#duplicate-field-options)
     * [Nested duplicate fields](#nested-duplicate-fields)
     * [Advantages](#advantages)
 - [Validation](#validation)
@@ -93,7 +95,8 @@ rest-hapi-demo: http://ec2-52-25-112-131.us-west-2.compute.amazonaws.com:8124
 - [Testing](#testing)
 - [License](#license)
 - [Questions](#questions)
-- [Future work](#future-work)
+- [Support](#support)
+- [Projects](#projects)
 - [Contributing](#contributing)
 
 
@@ -2912,26 +2915,21 @@ $ gulp test
 ## License
 MIT
 
-[Back to top](#readme-contents)
-
 ## Questions?
 If you have any questions/issues/feature requests, please feel free to open an [issue](https://github.com/JKHeadley/rest-hapi/issues/new).  We'd love to hear from you!
 
-[Back to top](#readme-contents)
+## Support
+Like this project? Please star it! 
 
-## Future work
-This project is still in its infancy, and there are many features we would still like to add.  Below is a list of some possible future updates:
+## Projects
+Building a project with rest-hapi? Open a PR and list it here!
 
-- sorting through populate fields (Ex: sort users through role.name)
-- support marking fields as ``duplicate`` i.e. any associated models referencing that model will duplicate those fields along with the reference Id. This could allow for a shallow embed that will return a list of reference ids with their "duplicate" values, and a full embed that will return the fully embedded references
-- (LONG TERM) support mysql as well as mongodb
-
-[Back to top](#readme-contents)
+- [appy](https://github.com/JKHeadley/appy)
 
 ## Contributing
 Please reference the contributing doc: https://github.com/JKHeadley/rest-hapi/blob/master/CONTRIBUTING.md
 
-[Back to top](#readme-contents)
-
-#Join the team 
+## Join the team 
  Do you want to collaborate? Join the project at https://projectgroupie.com/projects/206
+ 
+[Back to top](#readme-contents)
