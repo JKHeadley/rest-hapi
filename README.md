@@ -7,7 +7,7 @@ A RESTful API generator for the [hapi](https://github.com/hapijs/hapi) framework
 
 rest-hapi is a hapi plugin intended to abstract the work involved in setting up API routes/validation/handlers/etc. for the purpose of rapid app development.  At the same time it provides a powerful combination of [relational](#associations) structure with [NoSQL](#creating-endpoints) flexibility.  You define your models and the rest is done for you.  Have your own API server up and running in minutes!
 
-# **NOTE:** The [duplicate fields] feature is now available with v0.37.0. Check it out!
+# **NOTE:** The [duplicate fields](#duplicate-fields) feature is now available with v0.37.0. Check it out!
 
 ## Features
 
@@ -2925,6 +2925,9 @@ Like this project? Please star it!
 Building a project with rest-hapi? Open a PR and list it here!
 
 - [appy](https://github.com/JKHeadley/appy)
+   * A ready-to-go user system built on rest-hapi.
+- [rest-hapi-demo](https://github.com/JKHeadley/rest-hapi-demo) 
+   * A simple demo project implementing rest-hapi in a hapi server.
 
 ## Contributing
 Please reference the contributing doc: https://github.com/JKHeadley/rest-hapi/blob/master/CONTRIBUTING.md
