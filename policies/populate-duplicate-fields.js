@@ -8,7 +8,7 @@ const Q = require('q');
 const internals = {};
 
 /**
- * Policy to populate duplicate fields when a document is created.
+ * Policy to populate duplicate fields when an association is created or updated.
  * @param model
  * @param Log
  * @returns {populateDuplicateFields}
@@ -39,7 +39,8 @@ internals.populateDuplicateFields = function(model, mongoose, Log) {
                             const docsToUpdate = payload.filter(function (docToFind) {
                                 return docToFind[key] === result._id.toString();
                             })
-                            //EXPL: Populate each duplicated field for this association
+                            //EXPL: Populate each duplicated field for this association.
+                            //NOTE: We are updating the original payload
                             duplicate.forEach(function (prop) {
                                 docsToUpdate.forEach(function (docToUpdate) {
                                     docToUpdate[prop.as] = result[prop.field];

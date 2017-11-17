@@ -5231,8 +5231,30 @@ Test('end to end tests', function (t) {
                       mongoose: Mongoose
                     }
                   })
-                      .then(function () {
+                      .then(function (response) {
                         server.start();
+
+                        let payload = {
+                          company: businesses[0]._id
+                        };
+
+                        const request = {
+                          method: 'PUT',
+                          url: '/role/{_id}',
+                          params: { _id: roles[2]._id },
+                          query: {},
+                          payload: payload,
+                          credentials: {},
+                          headers: {}
+                        };
+
+                        const injectOptions = TestHelper.mockInjection(request);
+
+                        let promise = server.inject(injectOptions);
+                        promises.push(promise);
+                        return promise;
+                      })
+                      .then(function () {
 
                         let payload = {
                             profile: userProfiles[0]._id,
@@ -5250,20 +5272,18 @@ Test('end to end tests', function (t) {
 
                         const injectOptions = TestHelper.mockInjection(request);
 
-                        promises.push(server.inject(injectOptions));
+                        let promise = server.inject(injectOptions);
+                        promises.push(promise);
+                        return promise;
                       })
                       .then(function (response) {
 
-                        let payload = {
-                          title: roles[0]._id
-                        };
-
                         const request = {
-                          method: 'PUT',
+                          method: 'GET',
                           url: '/user/{_id}',
                           params: { _id: users[3]._id },
                           query: {},
-                          payload: payload,
+                          payload: {},
                           credentials: {},
                           headers: {}
                         };
@@ -5283,8 +5303,9 @@ Test('end to end tests', function (t) {
 
                       //<editor-fold desc="Assert">
                       .then(function (response) {
-                        t.deepEquals(response[0].result.state, 'Enabled', 'userProfile:status field populated for user 1');
-                        t.deepEquals(response[1].result.businessName, 'testBiz1', 'role:companyName field populated for user 4');
+                        t.deepEquals(response[0].result.companyName, 'testBiz1', 'business:name field populated for role 3');
+                        t.deepEquals(response[1].result.state, 'Enabled', 'userProfile:status field populated for user 1');
+                        t.deepEquals(response[2].result.businessName, 'testBiz1', 'role:companyName field populated for user 4');
                       })
                       //</editor-fold>
 
@@ -5429,7 +5450,7 @@ Test('end to end tests', function (t) {
                         t.deepEquals(result2[1].businessName, 'testBiz2', 'role:companyName field unchanged for user 2');
                         t.deepEquals(result2[2].summary, "TEST", 'role:description field updated for user 3');
                         t.deepEquals(result2[2].businessName, 'testBiz2', 'role:companyName field unchanged for user 3');
-                        t.deepEquals(result2[3].summary, roles[0].description, 'role:description field unchanged for user 4');
+                        t.deepEquals(result2[3].summary, roles[2].description, 'role:description field unchanged for user 4');
                         t.deepEquals(result2[3].businessName, 'testBizChanged', 'role:companyName field updated for user 1');
                       })
                       //</editor-fold>

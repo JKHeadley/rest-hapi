@@ -20,7 +20,7 @@ module.exports = function (mongoose) {
         roles: {
           type: "ONE_MANY",
           alias: "role",
-          foreignField: "business",
+          foreignField: "company",
           model: "role"
         }
       }
