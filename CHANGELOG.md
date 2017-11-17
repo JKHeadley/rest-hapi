@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 
 
+## [0.37.0] - 2017-11-17
+### Added
+- [Duplicate fields](https://github.com/JKHeadley/rest-hapi#duplicate-fields) feature.
+
 ## [0.36.0] - 2017-11-11
 ### Added
 - Exposed testHelper to RestHapi object, mostly for server injection utilities.
@@ -171,7 +175,7 @@ post(hardDelete, deleted, Log) | post(hardDelete, deleted, request, Log)
 
 
 
-[Unreleased]: https://github.com/jkheadley/rest-hapi/compare/v0.36.0...HEAD
+[Unreleased]: https://github.com/jkheadley/rest-hapi/compare/v0.37.0...HEAD
 [0.20.0]: https://github.com/jkheadley/rest-hapi/compare/v0.19.2...v0.20.0
 [0.20.2]: https://github.com/jkheadley/rest-hapi/compare/v0.20.0...v0.20.2
 [0.20.3]: https://github.com/jkheadley/rest-hapi/compare/v0.20.2...v0.20.3
@@ -191,5 +195,6 @@ post(hardDelete, deleted, Log) | post(hardDelete, deleted, request, Log)
 [0.34.0]: https://github.com/jkheadley/rest-hapi/compare/v0.33.0...v0.34.0
 [0.35.0]: https://github.com/jkheadley/rest-hapi/compare/v0.34.0...v0.35.0
 [0.36.0]: https://github.com/jkheadley/rest-hapi/compare/v0.35.0...v0.36.0
+[0.37.0]: https://github.com/jkheadley/rest-hapi/compare/v0.36.0...v0.37.0
 
 [BREAKING]: https://github.com/JKHeadley/rest-hapi/releases
