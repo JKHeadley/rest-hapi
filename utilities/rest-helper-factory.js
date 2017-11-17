@@ -428,6 +428,10 @@ module.exports = function (logger, mongoose, server) {
         policies.push(restHapiPolicies.addCreatedBy(model, Log));
       }
 
+      if (config.enableDuplicateFields) {
+        policies.push(restHapiPolicies.populateDuplicateFields(model, mongoose, Log));
+      }
+
       if (config.enableAuditLog) {
         policies.push(restHapiPolicies.logCreate(mongoose, model, Log));
       }
@@ -788,6 +792,13 @@ module.exports = function (logger, mongoose, server) {
 
       if (config.enableUpdatedBy) {
         policies.push(restHapiPolicies.addUpdatedBy(model, Log));
+      }
+
+      if (config.enableDuplicateFields) {
+        policies.push(restHapiPolicies.populateDuplicateFields(model, mongoose, Log));
+        if (config.trackDuplicatedFields) {
+          policies.push(restHapiPolicies.trackDuplicatedFields(model, mongoose, Log));
+        }
       }
 
       if (config.enableAuditLog) {

@@ -94,6 +94,10 @@ internals.enforceDocumentScopePost = function(model, Log) {
     Log = Log.bind("enforceDocumentScopePost");
 
     try {
+      if (_.isError(request.response)) {
+        return next(null, true);
+      }
+
       const userScope = request.auth.credentials.scope;
       let result = {};
 

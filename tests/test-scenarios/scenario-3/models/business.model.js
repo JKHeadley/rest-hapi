@@ -1,28 +1,27 @@
 'use strict';
 
 module.exports = function (mongoose) {
-  var modelName = "userProfile";
+  var modelName = "business";
   var Types = mongoose.Schema.Types;
   var Schema = new mongoose.Schema({
-    status: {
+    name: {
       type: Types.String,
       required: true
     },
-    user: {
-      type: Types.ObjectId,
-      ref: "user"
-    },
+    description: {
+      type: Types.String
+    }
   }, { collection: modelName });
     
   Schema.statics = {
     collectionName:modelName,
     routeOptions: {
-      alias: 'user-profile',
       associations: {
-        user: {
-          type: "ONE_ONE",
-          model: "user",
-          duplicate: ['email']
+        roles: {
+          type: "ONE_MANY",
+          alias: "role",
+          foreignField: "company",
+          model: "role"
         }
       }
     }

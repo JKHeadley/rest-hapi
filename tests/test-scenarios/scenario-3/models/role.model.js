@@ -11,6 +11,13 @@ module.exports = function (mongoose) {
     },
     description: {
       type: Types.String
+    },
+    company: {
+      type: Types.ObjectId,
+      ref: "business"
+    },
+    companyName: {
+      type: Types.String
     }
   }, { collection: modelName });
     
@@ -18,6 +25,11 @@ module.exports = function (mongoose) {
     collectionName:modelName,
     routeOptions: {
       associations: {
+        company: {
+          type: "MANY_ONE",
+          model: "business",
+          duplicate: 'name'
+        },
         users: {
           type: "ONE_MANY",
           alias: "people",
