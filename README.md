@@ -2922,7 +2922,7 @@ If you have any questions/issues/feature requests, please feel free to open an [
 Like this project? Please star it! 
 
 ## Projects
-Building a project with rest-hapi? Open a PR and list it here!
+Building a project with rest-hapi? [Open a PR](https://github.com/JKHeadley/rest-hapi/blob/master/README.md) and list it here!
 
 - [appy](https://github.com/JKHeadley/appy)
    * A ready-to-go user system built on rest-hapi.
