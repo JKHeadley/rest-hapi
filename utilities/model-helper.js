@@ -145,7 +145,7 @@ internals.addDuplicateFields = function (schema, schemas) {
                 prop = { field: prop };
             }
             //EXPL: Set a default name for the duplicated field if no name is specified in "as"
-            prop.as = prop.as || childSchema.statics.collectionName + prop.field[0].toUpperCase() + prop.field.slice(1);
+            prop.as = prop.as || key + prop.field[0].toUpperCase() + prop.field.slice(1);
             
             return prop;
         })

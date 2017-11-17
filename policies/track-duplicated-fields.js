@@ -5,10 +5,12 @@ const _ = require('lodash');
 const config = require('../config');
 const Q = require('q');
 
+const handlerHelper = require('../utilities/handler-helper');
+
 const internals = {};
 
 /**
- * Policy to update any duplicate fields.
+ * Policy to update any duplicate fields when the original field changes.
  * @param model
  * @param Log
  * @returns {trackDuplicatedFields}
@@ -21,24 +23,7 @@ internals.trackDuplicatedFields = function(model, mongoose, Log) {
       if (_.isError(request.response)) {
         return next(null, true);
       }
-      let promises = [];
-      for (const key in request.payload) {
-        const field = model.schema.obj[key];
-        //EXPL: Check each field that was updated. If the field has been duplicated, update each duplicate
-        // field to match the new value.
-        if (field && field.duplicated) {
-          field.duplicated.forEach(function(duplicate) {
-            const childModel = mongoose.model(duplicate.model);
-            const newProp = {};
-            newProp[duplicate.as] = request.response.source[key];
-            const query = {};
-            query[duplicate.association] = request.response.source._id;
-            promises.push(childModel.update(query, newProp, { multi: true }));
-          })
-        }
-      }
-
-      return Q.all(promises)
+      return internals.trackFields(model, mongoose, request.payload, request.response.source, Log)
           .then(function(result) {
             return next(null, true);
           })
@@ -56,6 +41,74 @@ internals.trackDuplicatedFields = function(model, mongoose, Log) {
 };
 
 internals.trackDuplicatedFields.applyPoint = 'onPostHandler';
+
+/**
+ * Recursively updates all the duplicate fields.
+ * @param model
+ * @param mongoose
+ * @param payload
+ * @param result
+ * @param Log
+ * @returns {*}
+ */
+internals.trackFields = function(model, mongoose, payload, result, Log) {
+    let promises = [];
+    for (const key in payload) {
+      const field = model.schema.obj[key];
+      //EXPL: Check each field that was updated. If the field has been duplicated, update each duplicate
+      // field to match the new value.
+      if (field && field.duplicated) {
+        field.duplicated.forEach(function(duplicate) {
+          const childModel = mongoose.model(duplicate.model);
+          const newProp = {};
+          newProp[duplicate.as] = result[key];
+          const query = {};
+          query[duplicate.association] = result._id;
+
+          promises.push(internals.findAndUpdate(mongoose, childModel, query, newProp, Log));
+        })
+      }
+    }
+
+    return Q.all(promises);
+};
+
+/**
+ * Find the documents with duplicate fields and update.
+ * @param mongoose
+ * @param childModel
+ * @param query
+ * @param newProp
+ * @param Log
+ */
+internals.findAndUpdate = function (mongoose, childModel, query, newProp, Log) {
+  return childModel.find(query)
+      .then(function (result) {
+        let promises = [];
+
+        result.forEach(function (doc) {
+          promises.push(internals.updateField(mongoose, childModel, doc._id, newProp, Log));
+        });
+
+        return Q.all(promises);
+      });
+};
+
+/**
+ * Update a duplicate field for a single doc, then call 'trackDuplicateFields' in case any other docs are duplicating
+ * the duplicate field.
+ * @param mongoose
+ * @param childModel
+ * @param _id
+ * @param newProp
+ * @param Log
+ */
+internals.updateField = function (mongoose, childModel, _id, newProp, Log) {
+  return handlerHelper.update(childModel, _id, newProp, Log)
+      .then(function (result) {
+        return internals.trackFields(childModel, mongoose, newProp, result, Log)
+      });
+};
 
 module.exports = {
   trackDuplicatedFields : internals.trackDuplicatedFields

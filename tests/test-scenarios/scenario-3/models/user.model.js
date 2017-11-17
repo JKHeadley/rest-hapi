@@ -36,11 +36,24 @@ module.exports = function (mongoose) {
       associations: {
         profile: {
           type: "ONE_ONE",
-          model: "userProfile"
+          model: "userProfile",
+          duplicate: {
+            field: 'status',
+            as: 'state'
+          }
         },
         title: {
           type: "MANY_ONE",
-          model: "role"
+          model: "role",
+          duplicate: [{
+            field: 'name'
+          }, {
+            field: 'description',
+            as: 'summary'
+          },{
+            field: 'companyName',
+            as: 'businessName'
+          }]
         },
         permissions: {
           type: "MANY_MANY",
