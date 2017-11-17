@@ -4990,8 +4990,6 @@ Test('end to end tests', function (t) {
           let userProfiles = [];
           let roles = [];
           let businesses = [];
-          let permissions = [];
-          let hashtags = [];
           return Q.when()
           //duplicate fields populate upon creation
               .then(function () {
@@ -5410,17 +5408,29 @@ Test('end to end tests', function (t) {
 
                       //<editor-fold desc="Assert">
                       .then(function (response) {
-                        t.deepEquals(response[1].result.docs[0].companyName, 'testBiz2', 'business:name field unchanged for role 1');
-                        t.deepEquals(response[1].result.docs[1].companyName, 'testBizChanged', 'business:name field updated for role 2');
 
-                        t.deepEquals(response[0].result.docs[0].summary, roles[0].description, 'role:description field unchanged for user 1');
-                        t.deepEquals(response[0].result.docs[0].businessName, 'testBizChanged', 'role:companyName field updated for user 1');
-                        t.deepEquals(response[0].result.docs[1].summary, "TEST", 'role:description field updated for user 2');
-                        t.deepEquals(response[0].result.docs[1].businessName, 'testBiz2', 'role:companyName field unchanged for user 2');
-                        t.deepEquals(response[0].result.docs[2].summary, "TEST", 'role:description field updated for user 3');
-                        t.deepEquals(response[0].result.docs[2].businessName, 'testBiz2', 'role:companyName field unchanged for user 3');
-                        t.deepEquals(response[0].result.docs[3].summary, roles[0].description, 'role:description field unchanged for user 4');
-                        t.deepEquals(response[0].result.docs[3].businessName, 'testBizChanged', 'role:companyName field updated for user 1');
+                        //rearrange results to match original order
+                        let result1 = [];
+                        roles.forEach(function(role) {
+                          result1.push(response[1].result.docs.find(function(doc) { return doc._id.toString() === role._id.toString() }));
+                        });
+
+                        let result2 = [];
+                        users.forEach(function(user) {
+                          result2.push(response[0].result.docs.find(function(doc) { return doc._id.toString() === user._id.toString() }));
+                        });
+
+                        t.deepEquals(result1[0].companyName, 'testBizChanged', 'business:name field updated for role 1');
+                        t.deepEquals(result1[1].companyName, 'testBiz2', 'business:name field unchanged for role 2');
+
+                        t.deepEquals(result2[0].summary, roles[0].description, 'role:description field unchanged for user 1');
+                        t.deepEquals(result2[0].businessName, 'testBizChanged', 'role:companyName field updated for user 1');
+                        t.deepEquals(result2[1].summary, "TEST", 'role:description field updated for user 2');
+                        t.deepEquals(result2[1].businessName, 'testBiz2', 'role:companyName field unchanged for user 2');
+                        t.deepEquals(result2[2].summary, "TEST", 'role:description field updated for user 3');
+                        t.deepEquals(result2[2].businessName, 'testBiz2', 'role:companyName field unchanged for user 3');
+                        t.deepEquals(result2[3].summary, roles[0].description, 'role:description field unchanged for user 4');
+                        t.deepEquals(result2[3].businessName, 'testBizChanged', 'role:companyName field updated for user 1');
                       })
                       //</editor-fold>
 
@@ -5524,13 +5534,25 @@ Test('end to end tests', function (t) {
 
                       //<editor-fold desc="Assert">
                       .then(function (response) {
-                        t.deepEquals(response[1].result.docs[0].companyName, 'testBiz2', 'business:name field unchanged for role 1');
-                        t.deepEquals(response[1].result.docs[1].companyName, 'testBizChanged', 'business:name field unchanged for role 2');
 
-                        t.deepEquals(response[0].result.docs[0].businessName, 'testBizChanged', 'role:companyName field unchanged for user 1');
-                        t.deepEquals(response[0].result.docs[1].businessName, 'testBiz2', 'role:companyName field unchanged for user 2');
-                        t.deepEquals(response[0].result.docs[2].businessName, 'testBiz2', 'role:companyName field unchanged for user 3');
-                        t.deepEquals(response[0].result.docs[3].businessName, 'testBizChanged', 'role:companyName field unchanged for user 1');
+                        //rearrange results to match original order
+                        let result1 = [];
+                        roles.forEach(function(role) {
+                          result1.push(response[1].result.docs.find(function(doc) { return doc._id.toString() === role._id.toString() }));
+                        });
+
+                        let result2 = [];
+                        users.forEach(function(user) {
+                          result2.push(response[0].result.docs.find(function(doc) { return doc._id.toString() === user._id.toString() }));
+                        });
+
+                        t.deepEquals(result1[0].companyName, 'testBizChanged', 'business:name field unchanged for role 1');
+                        t.deepEquals(result1[1].companyName, 'testBiz2', 'business:name field unchanged for role 2');
+
+                        t.deepEquals(result2[0].businessName, 'testBizChanged', 'role:companyName field unchanged for user 1');
+                        t.deepEquals(result2[1].businessName, 'testBiz2', 'role:companyName field unchanged for user 2');
+                        t.deepEquals(result2[2].businessName, 'testBiz2', 'role:companyName field unchanged for user 3');
+                        t.deepEquals(result2[3].businessName, 'testBizChanged', 'role:companyName field unchanged for user 1');
                       })
                       //</editor-fold>
 

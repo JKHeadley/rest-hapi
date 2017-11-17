@@ -104,7 +104,7 @@ config.enableDeletedBy = false;
  * default: false
  * @type {boolean}
  */
-config.enableDuplicateFields = true;
+config.enableDuplicateFields = false;
 
 /**
  * When true, duplicated fields will update whenever the original field is updated.
@@ -112,7 +112,7 @@ config.enableDuplicateFields = true;
  * default: false
  * @type {boolean}
  */
-config.trackDuplicatedFields = true;
+config.trackDuplicatedFields = false;
 
 /**
  * When enabled, all create, update, associate, and delete events are recorded in an auditLog collection.
