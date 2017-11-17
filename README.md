@@ -1607,7 +1607,7 @@ Lets say we decide to promote the user to the `Admin` role by updating the user 
    }
 ```
 
-When we retrieve the user document, we will now recieve the following object:
+Now when we retrieve the user document, we can see that the duplicated field has automatically updated to reflect the new association:
 
 ```javascript
    { 
@@ -1649,7 +1649,7 @@ and we update the associated role document to be:
     }
 ```
 
-if `config.trackDuplicateFields` is set to `true`, the the user documents will now look like:
+if `config.trackDuplicatedFields` is set to `true`, then the user documents will now look like:
 
 ```javascript
     {
@@ -1666,10 +1666,10 @@ if `config.trackDuplicateFields` is set to `true`, the the user documents will n
     }
 ```
 
-This of course can be very useful, as all duplicated fields will stay up-to-date, regardless of which end is updated. However this can also be resource intensive if not planned carefully. For instance, if 1 million user docs are associated with the `Admin` role, then 1 million extra documents will be updated whenever the `name` field of the role document is updated.
+This of course can be very useful, as all duplicated fields will stay up-to-date regardless of which end is updated. However this can also be resource intensive if not planned carefully. For instance, if 1 million user docs are associated with the `Admin` role, then 1 million extra documents will be updated whenever the `name` field of the role document is updated.
 
 ### Custom field name
-As shown in the example above, duplicate field names have a default form of [association name] + [original field name] (Ex: `roleName`).  If we want to customize the duplicate field name, we can assign an array of objects to the `duplicate` property rather than an array of strings.  For example, given the association definition below:
+As shown in the example above, duplicate field names have a default form of [association name] + [original field name] (Ex: `roleName`).  If we want to customize the duplicate field name, we can assign an array of objects to the `duplicate` property rather than an array of strings.  For example, given the user model's association definition below:
 
 ```javascript
       associations: {
@@ -1855,19 +1855,33 @@ Given the relationships between these models, a set of associated documents migh
 
 As you can see, the value for the user document's duplicate field `company` can be traced back to the `name` field for the business document. If `config.trackDuplicatedFields` is set to `true`, then updating the original `name` field will cause both the role's `businessName` field and the user's `company` fields to update as well.
 
-### Pros and cons
-The duplicate fields feature may seem trivial or redundant considering the same information can be included in a GET request using the [$embed](populate-nested-associations) query parameter, however duplicate fields come with some powerful advantages. 
+**NOTE:** If a duplicate field references another duplicate field, then the referenced field must exist in the model schema.  See the `businessName` field of the `role` model above.
 
-Now when we retrieve the user document, we can see that the duplicated field has automatically updated to reflect the new association:
+### Advantages
+The duplicate fields feature may seem trivial or redundant considering the same information can be included in a GET request using the [$embed](populate-nested-associations) query parameter, however duplicate fields come with some powerful advantages. Probably the most clear advantage is the potential for improving the readability of a document. In situations where querying for the association is not ideal or possible (Ex: observing the document within MongoDB), it is much easier to discern information about the document. For example:
 
+`doc1`:
 ```javascript
    { 
-      email: "test@user.com", 
-      role: "59efe15e20905150d340b56f",
-      roleName: "Admin"
+      "_id": "59efe15e20905150d340b56c"
+      "email": "test@user.com", 
+      "role": "59efe15e20905150d340b56b"
    }
 ```
+vs
 
+`doc2`:
+```javascript
+   { 
+      "_id": "59efe15e20905150d340b56c"
+      "email": "test@user.com", 
+      "role": "59efe15e20905150d340b56b",
+      "roleName": "Admin"
+   }
+```
+In the second object it is immediately obvious which role the user is associated with.
+
+While this is useful, arguably the biggest advantage duplicate fields provide is the improved querying. For example, in `doc1` above, the document can be filtered by the role \_id (Ex: GET /user?role=59efe15e20905150d340b56b ), but thats as far as it goes when it comes to querying users based on their role information.  However with `doc2`, the user can be filtered by its role name(Ex: GET /user?roleName=Admin ) sorted by its role name (Ex: GET /user?$sort=roleName ), or even be text searchable by its role name (Ex: GET /user?$term=Admin ).
 
 [Back to top](#readme-contents)
 
