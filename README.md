@@ -62,6 +62,11 @@ rest-hapi-demo: http://ec2-52-25-112-131.us-west-2.compute.amazonaws.com:8124
     * [Pagination](#pagination)
     * [Populate nested associations](#populate-nested-associations)
 - [Duplicate fields](duplicate-fields)
+    * [Basic example](#basic-example)
+    * [Tracking duplicated fields](#tracking-duplicated-fields)
+    * [Duplicate field options](#duplicate-field-options)
+    * [Nested duplicate fields](#nested-duplicate-fields)
+    * [Advantages](#advantages)
 - [Validation](#validation)
     * [Route validation](#route-validation)
     * [Joi helper methods](#joi-helper-methods)
@@ -260,6 +265,22 @@ config.enableDeletedAt = true;
 config.enableCreatedBy = false;
 config.enableUpdatedBy = false;
 config.enableDeletedBy = false;
+
+/**
+ * Enables fields from an associated model to be duplicated. Similar to permanently embedding an associated field within
+ * the parent model schema. Useful if a parent model needs to be searchable or sortable by an association's field.
+ * default: false
+ * @type {boolean}
+ */
+config.enableDuplicateFields = false;
+
+/**
+ * When true, duplicated fields will update whenever the original field is updated.
+ * WARNING: This feature can make updates very resource intensive if many documents are duplicating the original field.
+ * default: false
+ * @type {boolean}
+ */
+config.trackDuplicatedFields = false;
 
 /**
  * When enabled, all create, update, associate, and delete events are recorded in an auditLog collection.
