@@ -7,10 +7,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased]
 
 
-
 ## [0.37.0] - 2017-11-17
 ### Added
 - [Duplicate fields](https://github.com/JKHeadley/rest-hapi#duplicate-fields) feature.
+- Add [regex validator](https://github.com/JKHeadley/rest-hapi#route-validation).
+
+### Fixed
+- Moved testHelper to utilities directory to be included in npm module.
+- Moved query-string to regular dependencies for testHelper.
+- Updated travis since it broke for no apparent reason.
+- Fixed bug preventing associations added from wrapper methods to update correctly.
 
 ## [0.36.0] - 2017-11-11
 ### Added
