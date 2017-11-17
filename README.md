@@ -17,6 +17,7 @@ rest-hapi is a hapi plugin intended to abstract the work involved in setting up 
 * [Query parameter](#querying) support for searching, sorting, filtering, pagination, and embedding of associated models
 * Endpoint activity history through [Audit Logs](#audit-logs)
 * Support for [policies](#policies) via [mrhorse](https://github.com/mark-bradshaw/mrhorse)
+* Duplicate fields
 * Support for ["soft" delete](#soft-delete)
 * Optional [metadata](#metadata)
 * Mongoose [wrapper methods](#mongoose-wrapper-methods)
@@ -60,6 +61,7 @@ rest-hapi-demo: http://ec2-52-25-112-131.us-west-2.compute.amazonaws.com:8124
 - [Querying](#querying)
     * [Pagination](#pagination)
     * [Populate nested associations](#populate-nested-associations)
+- [Duplicate fields](duplicate-fields)
 - [Validation](#validation)
     * [Route validation](#route-validation)
     * [Joi helper methods](#joi-helper-methods)
@@ -1477,6 +1479,89 @@ parameter: ``/group?$embed=users.title`` which could result in the following res
       }
     ]
 }
+```
+
+[Back to top](#readme-contents)
+
+## Duplicate fields
+"Duplicate fields" is a feature that allows fields from an associated document to exist in the parent document while maintaining the original field value. This can be accomplished by adding the `duplicate` property to an association definition. In the code below, the `name` field of the role model will be duplicated in the user model:
+
+`role.model.js`
+```javascript
+'use strict';
+
+module.exports = function (mongoose) {
+  var modelName = "role";
+  var Types = mongoose.Schema.Types;
+  var Schema = new mongoose.Schema({
+    name: {
+      type: Types.String,
+      required: true
+    },
+    description: {
+      type: Types.String
+    }
+  }, { collection: modelName });
+    
+  Schema.statics = {
+    collectionName:modelName,
+    routeOptions: {
+      associations: {
+        users: {
+          type: "ONE_MANY",
+          alias: "user",
+          foreignField: "role",
+          model: "user"
+        }
+      }
+    }
+  };
+
+  return Schema;
+};
+
+```
+
+`user.model.js`
+```javascript
+'use strict';
+
+module.exports = function (mongoose) {
+  var modelName = "user";
+  var Types = mongoose.Schema.Types;
+  var Schema = new mongoose.Schema({
+    email: {
+      type: Types.String,
+      unique: true
+    },
+    password: {
+      type: Types.String,
+      required: true,
+      exclude: true,
+      allowOnUpdate: false
+    },
+    role: {
+      type: Types.ObjectId,
+      ref: "role"
+    }
+  }, { collection: modelName });
+  
+  Schema.statics = {
+    collectionName:modelName,
+    routeOptions: {
+      associations: {
+        role: {
+          type: "MANY_ONE",
+          model: "role",
+          duplicate: ['name']                <--- list duplicate fields
+        }
+      }
+    }
+  };
+  
+  return Schema;
+};
+
 ```
 
 [Back to top](#readme-contents)
