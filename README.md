@@ -547,7 +547,7 @@ module.exports = function (mongoose) {
   });
   
   Schema.statics = {
-    collectionName: modelName
+    collectionName: modelName,
     routeOptions: {}
   };
   
@@ -1631,7 +1631,7 @@ Lets say we decide to promote the user to the `Admin` role by updating the user 
    }
 ```
 
-Now when we retrieve the user document, we can see that the duplicated field has automatically updated to reflect the new association:
+Now when we retrieve the user document, we will see:
 
 ```javascript
    { 
@@ -1642,7 +1642,7 @@ Now when we retrieve the user document, we can see that the duplicated field has
    }
 ```
 
-As we can see, the `roleName` duplicate field was automatically updated to reflect the association change!
+The `roleName` duplicate field was automatically updated to reflect the association change!
 
 ## Tracking duplicated fields
 In the above example, we showed how the `roleName` duplicate field could automatically update when the user's `role` property changed. However what if the associated role document's `name` property was updated? By default, the user's `roleName` property will remain the same even if the original field value changes. However, by setting `config.trackDuplicatedFields` to `true`, rest-hapi will track changes from the original field and update **_ALL_** associated duplicate fields. For example, if we have the following user documents:
