@@ -109,7 +109,14 @@ internals.enforceDocumentScopePost = function(model, Log) {
         }
         //EXPL: the request is for a "list" endpoint
         else {
-          result = internals.verifyScope(request.response.source.docs, "read", userScope, Log);
+          //EXPL: Only verify scope if docs are included in the response, otherwise return as authorized.
+          //Ex: If '$count' query parameter is used
+          if (request.response.source.docs) {
+            result = internals.verifyScope(request.response.source.docs, "read", userScope, Log);
+          }
+          else {
+            result = { authorized: true };
+          }
         }
 
         if (result.authorized) {
