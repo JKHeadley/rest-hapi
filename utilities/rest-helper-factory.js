@@ -1125,8 +1125,11 @@ module.exports = function (logger, mongoose, server) {
         label =  payloadValidation._flags.label + "_many";
         payloadValidation = payloadValidation.keys({
           childId: Joi.objectId().description("the " + childModelName + "'s _id")
-        }).label(label);
-        payloadValidation = Joi.array().items(payloadValidation).required();
+        });
+        payloadValidation = Joi.array().items(payloadValidation);
+
+        payloadValidation = Joi.alternatives().try(payloadValidation,
+            Joi.array().items(Joi.objectId())).label(label || "blank").required();
       } 
       else {
         payloadValidation = Joi.array().items(Joi.objectId()).required();

@@ -6137,6 +6137,9 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function (t) {
     var association2 = {include: {model: {modelName: "TEST2", schema: {methods: {}}}, through: {}}, alias: "TEST2"};
 
     var payloadValidation1 = Joi.array().items(Joi.object({ test: "test" }).unknown().keys({childId: Joi.any().valid("objectId").description("the " + "TEST2" + "'s _id")}).label("undefined_many")).required();
+
+    payloadValidation1 = Joi.alternatives().try(payloadValidation1,
+        Joi.array().items(Joi.any().valid("objectId"))).label("undefined_many").required();
     var payloadValidation2 = Joi.array().items(Joi.any().valid("objectId")).required();
     //</editor-fold>
 
@@ -6150,7 +6153,7 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function (t) {
     var serverObject2 = server.route.args[1][0];
     // Log.debug(JSON.stringify(serverObject));
     t.deepEqual(serverObject1.config.validate.payload, payloadValidation2, "correct payload validation");
-    t.deepEqual(serverObject2.config.validate.payload, payloadValidation1, "correct payload validation");
+    t.deepEqual(serverObject2.config.validate.payload.toString(), payloadValidation1.toString(), "correct payload validation");
     //</editor-fold>
 
     //<editor-fold desc="Restore">
