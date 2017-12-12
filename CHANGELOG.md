@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased]
 
 
+## [0.38.0] - 2017-12-12
+### Added
+- [errorHelper](https://github.com/JKHeadley/rest-hapi#error-handling) feature.
+
+### Changed
+- Added ipAddress and notes to auditLog model
+- Fixed date to set to actual current date in auditLog model
+- Removed required fields in auditLog model
+- updated errorHandler.formatResponse to handle boom errors and normal errors
+
 ## [0.37.0] - 2017-11-17
 ### Added
 - [Duplicate fields](https://github.com/JKHeadley/rest-hapi#duplicate-fields) feature.
@@ -181,7 +191,7 @@ post(hardDelete, deleted, Log) | post(hardDelete, deleted, request, Log)
 
 
 
-[Unreleased]: https://github.com/jkheadley/rest-hapi/compare/v0.37.0...HEAD
+[Unreleased]: https://github.com/jkheadley/rest-hapi/compare/v0.38.0...HEAD
 [0.20.0]: https://github.com/jkheadley/rest-hapi/compare/v0.19.2...v0.20.0
 [0.20.2]: https://github.com/jkheadley/rest-hapi/compare/v0.20.0...v0.20.2
 [0.20.3]: https://github.com/jkheadley/rest-hapi/compare/v0.20.2...v0.20.3
@@ -202,5 +212,6 @@ post(hardDelete, deleted, Log) | post(hardDelete, deleted, request, Log)
 [0.35.0]: https://github.com/jkheadley/rest-hapi/compare/v0.34.0...v0.35.0
 [0.36.0]: https://github.com/jkheadley/rest-hapi/compare/v0.35.0...v0.36.0
 [0.37.0]: https://github.com/jkheadley/rest-hapi/compare/v0.36.0...v0.37.0
+[0.38.0]: https://github.com/jkheadley/rest-hapi/compare/v0.37.0...v0.38.0
 
 [BREAKING]: https://github.com/JKHeadley/rest-hapi/releases
