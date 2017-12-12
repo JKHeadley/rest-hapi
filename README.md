@@ -2414,17 +2414,21 @@ By default, rest-hapi records all document-modifiying activities that occur with
 - `method`
    * The http method used.
    * Must be one of `POST, PUT, DELETE, GET`
+   * Can be null.
 - `action`
    * The type of action requested.
    * Typically one of `Create, Update, Delete, Add, Remove`.
+   * Can be null.
 - `endpoint`
    * The relative path of the endpoint that was accessed.
+   * Can be null.
 - `user`
    * If the endpoint is authenticated, this will be the \_id of the requesting user.
    * You can specify the user \_id path/key through `config.userIdKey`.
    * Can be null.
 - `collectionName`
    * The name of the primary/owner collection being modified.
+   * Can be null.
 - `childCollectionName`
    * The name of the secondary/child collection being modified in the case of an association action.
    * Can be null.
@@ -2446,17 +2450,26 @@ By default, rest-hapi records all document-modifiying activities that occur with
    * Can be null.
 - `statusCode`
    * The status code of the server response.
+   * Can be null.
 - `responseMessage`
    * The response message from the server. Typically for an error.
    * Can be null.
 - `isError`
    * A boolean value specifying whether the server responed with an error.
+- `ipAddress`
+   * The ip address the request.
+   * Can be null.
+- `notes`
+   * Any additional notes.
+   * Can be null.
 
 Below is an example of an `auditLog` document:
 
 ```javascript
 {
       "_id": "59eebc5f20cbfb49c6eae431",
+      "notes": null,
+      "ipAddress": "127.0.0.1",
       "method": "POST",
       "action": "Create",
       "endpoint": "/hashtag",
