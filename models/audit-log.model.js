@@ -9,22 +9,24 @@ module.exports = function (mongoose) {
   var Schema = new mongoose.Schema({
     date: {
       type: Types.Date,
-      default: Date.now(),
-      required: true,
+      default: () => { return Date.now() },
       expires: Config.auditLogTTL
     },
     method: {
       type: Types.String,
-      enum: ["POST", "PUT", "DELETE", "GET"],
-      required: true
+      enum: ["POST", "PUT", "DELETE", "GET", null],
+      allowNull: true,
+      default: null
     },
     action: {
       type: Types.String,
-      required: true
+      allowNull: true,
+      default: null
     },
     endpoint: {
       type: Types.String,
-      required: true
+      allowNull: true,
+      default: null
     },
     user: {
       type: Types.ObjectId,
@@ -33,7 +35,8 @@ module.exports = function (mongoose) {
     },
     collectionName: {
       type: Types.String,
-      required: true
+      allowNull: true,
+      default: null
     },
     childCollectionName: {
       type: Types.String,
@@ -68,7 +71,8 @@ module.exports = function (mongoose) {
     },
     statusCode: {
       type: Types.Number,
-      required: true
+      allowNull: true,
+      default: null
     },
     responseMessage: {
       type: Types.String,
@@ -79,7 +83,17 @@ module.exports = function (mongoose) {
       type: Types.Boolean,
       default: false,
       required: true
-    }
+    },
+    ipAddress: {
+      type: Types.String,
+      allowNull: true,
+      default: null
+    },
+    notes: {
+      type: Types.String,
+      allowNull: true,
+      default: null
+    },
   }, { collection: modelName });
     
   Schema.statics = {

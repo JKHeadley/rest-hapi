@@ -15,6 +15,7 @@ const _ = require('lodash'),
     handlerHelper = require('./utilities/handler-helper'),
     joiHelper = require('./utilities/joi-mongoose-helper'),
     testHelper = require('./utilities/test-helper'),
+    errorHelper = require('./utilities/error-helper'),
     modelGenerator = require('./utilities/model-generator'),
     apiGenerator = require('./utilities/api-generator'),
     defaultConfig = require('./config');
@@ -41,7 +42,8 @@ module.exports = {
     getLogger: getLogger,
     logUtil: logUtil,
     joiHelper: joiHelper,
-    testHelper: testHelper
+    testHelper: testHelper,
+    errorHelper: errorHelper
 };
 
 function register(server, options, next) {

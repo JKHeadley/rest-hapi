@@ -19,6 +19,7 @@ internals.logCreate = function(mongoose, model, Log) {
       Log = Log.bind("logCreate");
       const AuditLog = mongoose.model('auditLog');
 
+      const ipAddress = request.info.remoteAddress;
       let userId = _.get(request.auth.credentials, config.userIdKey);
       let documents = request.response.source;
       if (documents) {
@@ -47,7 +48,8 @@ internals.logCreate = function(mongoose, model, Log) {
         result: request.response.source || null,
         isError: _.isError(request.response),
         statusCode: request.response.statusCode || request.response.output.statusCode,
-        responseMessage: request.response.output ? request.response.output.payload.message : null
+        responseMessage: request.response.output ? request.response.output.payload.message : null,
+        ipAddress
       })
           .then(function (result) {
             next(null, true);
@@ -83,6 +85,7 @@ internals.logUpdate = function(mongoose, model, Log) {
       Log = Log.bind("logUpdate");
       const AuditLog = mongoose.model('auditLog');
 
+      const ipAddress = request.info.remoteAddress;
       let userId = _.get(request.auth.credentials, config.userIdKey);
       let documents = [request.params._id];
 
@@ -100,7 +103,8 @@ internals.logUpdate = function(mongoose, model, Log) {
         result: request.response.source || null,
         isError: _.isError(request.response),
         statusCode: request.response.statusCode || request.response.output.statusCode,
-        responseMessage: request.response.output ? request.response.output.payload.message : null
+        responseMessage: request.response.output ? request.response.output.payload.message : null,
+        ipAddress
       })
           .then(function (result) {
             next(null, true);
@@ -139,6 +143,7 @@ internals.logDelete = function(mongoose, model, Log) {
       Log = Log.bind("logDelete");
       const AuditLog = mongoose.model('auditLog');
 
+      const ipAddress = request.info.remoteAddress;
       let userId = _.get(request.auth.credentials, config.userIdKey);
       let documents = request.params._id || request.payload;
       if (_.isArray(documents) && documents[0]._id) {
@@ -164,7 +169,8 @@ internals.logDelete = function(mongoose, model, Log) {
         result: request.response.source || null,
         isError: _.isError(request.response),
         statusCode: request.response.statusCode || request.response.output.statusCode,
-        responseMessage: request.response.output ? request.response.output.payload.message : null
+        responseMessage: request.response.output ? request.response.output.payload.message : null,
+        ipAddress
       })
           .then(function (result) {
             next(null, true);
@@ -203,6 +209,7 @@ internals.logAdd = function(mongoose, ownerModel, childModel, associationType, L
       Log = Log.bind("logAdd");
       const AuditLog = mongoose.model('auditLog');
 
+      const ipAddress = request.info.remoteAddress;
       let userId = _.get(request.auth.credentials, config.userIdKey);
       let documents = [request.params.ownerId];
 
@@ -240,7 +247,8 @@ internals.logAdd = function(mongoose, ownerModel, childModel, associationType, L
         result: request.response.source || null,
         isError: _.isError(request.response),
         statusCode: request.response.statusCode || request.response.output.statusCode,
-        responseMessage: request.response.output ? request.response.output.payload.message : null
+        responseMessage: request.response.output ? request.response.output.payload.message : null,
+        ipAddress
       })
           .then(function (result) {
             next(null, true);
@@ -275,6 +283,7 @@ internals.logRemove = function(mongoose, ownerModel, childModel, associationType
       Log = Log.bind("logRemove");
       const AuditLog = mongoose.model('auditLog');
 
+      const ipAddress = request.info.remoteAddress;
       let userId = _.get(request.auth.credentials, config.userIdKey);
       let documents = [request.params.ownerId];
 
@@ -299,7 +308,8 @@ internals.logRemove = function(mongoose, ownerModel, childModel, associationType
         result: request.response.source || null,
         isError: _.isError(request.response),
         statusCode: request.response.statusCode || request.response.output.statusCode,
-        responseMessage: request.response.output ? request.response.output.payload.message : null
+        responseMessage: request.response.output ? request.response.output.payload.message : null,
+        ipAddress
       })
           .then(function (result) {
             next(null, true);
