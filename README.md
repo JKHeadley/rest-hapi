@@ -49,6 +49,7 @@ rest-hapi-demo: http://ec2-52-25-112-131.us-west-2.compute.amazonaws.com:8124
     * [Model endpoints](#model-endpoints)
     * [Standalone endpoints](#standalone-endpoints)
     * [Additional endpoints](#additional-endpoints)
+    * [Error handling](#error-handling)
 - [Associations](#associations)
     * [ONE_ONE](#one_one)
     * [ONE_MANY/MANY_ONE](#one_manymany_one)
@@ -708,6 +709,25 @@ module.exports = function (mongoose) {
   return Schema;
 };
 
+```
+
+### Error handling
+rest-hapi exposes an `errorHelper.formatResponse` method that can be helpful when handling errors with additional/standalone endpoints. This function handles [rest-hapi method](#mongoose-wrapper-methods) errors appropriately and always returns a [Boom](https://github.com/hapijs/boom) object. Consider the handler method below for an example:
+
+```javascript
+const deactivateAccountHandler = function (request, reply) {
+
+        const _id = request.params._id;
+
+        return RestHapi.update(User, _id, { isActive: false }, Log)
+          .then(function (user) {
+            return reply(user);
+          })
+          .catch(function (error) {
+            Log.error(error);
+            return reply(RestHapi.errorHelper.formatResponse(error));
+          });
+      };
 ```
 
 [Back to top](#readme-contents)
