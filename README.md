@@ -830,6 +830,8 @@ module.exports = function (mongoose) {
 };
 ```
 
+***NOTE:*** Unlike `ONE_MANY`, `MANY_ONE`, or `MANY_MANY` relationships which require the association to be declared on both associated models, `ONE_ONE` relationships can be one sided an only exist for one model (similar to a `_MANY` relationship).
+
 ### ONE_MANY/MANY_ONE
 
 Below is an example of a one-many/many-one relationship between the ``user``
