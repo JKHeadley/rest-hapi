@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased]
 
 
+## [0.39.0] - 2017-12-22 [BREAKING]
+### Added
+- Added "remove: pre" middleware.
+
+### Changed
+- [BREAKING] Swapped parameters for "add: pre" middleware for consistency.
+
+Before | After
+--- | --- 
+**add**    
+pre(request, payload, Log) |      pre(payload, request, Log)  
+
 ## [0.38.0] - 2017-12-12
 ### Added
 - [errorHelper](https://github.com/JKHeadley/rest-hapi#error-handling) feature.
@@ -191,7 +203,7 @@ post(hardDelete, deleted, Log) | post(hardDelete, deleted, request, Log)
 
 
 
-[Unreleased]: https://github.com/jkheadley/rest-hapi/compare/v0.38.0...HEAD
+[Unreleased]: https://github.com/jkheadley/rest-hapi/compare/v0.39.0...HEAD
 [0.20.0]: https://github.com/jkheadley/rest-hapi/compare/v0.19.2...v0.20.0
 [0.20.2]: https://github.com/jkheadley/rest-hapi/compare/v0.20.0...v0.20.2
 [0.20.3]: https://github.com/jkheadley/rest-hapi/compare/v0.20.2...v0.20.3
@@ -213,5 +225,6 @@ post(hardDelete, deleted, Log) | post(hardDelete, deleted, request, Log)
 [0.36.0]: https://github.com/jkheadley/rest-hapi/compare/v0.35.0...v0.36.0
 [0.37.0]: https://github.com/jkheadley/rest-hapi/compare/v0.36.0...v0.37.0
 [0.38.0]: https://github.com/jkheadley/rest-hapi/compare/v0.37.0...v0.38.0
+[0.39.0]: https://github.com/jkheadley/rest-hapi/compare/v0.38.0...v0.39.0
 
 [BREAKING]: https://github.com/JKHeadley/rest-hapi/releases
