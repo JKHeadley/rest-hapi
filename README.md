@@ -2179,7 +2179,10 @@ Support is being added for association middlware. Currently the following associ
     - post(request, result, Log)
         * returns: result
 * add:
-   - pre(request, payload, Log)
+   - pre(payload, request, Log)
+        * returns: payload
+* remove:
+   - pre(payload, request, Log)
         * returns: payload
     
 Association middleware is defined similar to CRUD middleware, with the only difference being the association name must be specified.  See below for an example:
