@@ -912,7 +912,7 @@ function _addOneHandler(ownerModel, ownerId, childModel, childId, associationNam
             var promise =  {};
             if (ownerModel.routeOptions && ownerModel.routeOptions.add && ownerModel.routeOptions.add[associationName]
                 && ownerModel.routeOptions.add[associationName].pre) {
-              promise = Q.fcall(ownerModel.routeOptions.add[associationName].pre, request, payload, Log);
+              promise = Q.fcall(ownerModel.routeOptions.add[associationName].pre, payload, request, Log);
             }
             else {
               promise = Q.when(payload);
@@ -1008,18 +1008,44 @@ function _removeOneHandler(ownerModel, ownerId, childModel, childId, association
     return ownerModel.findOne({ '_id': ownerId }).select(associationName)
         .then(function (ownerObject) {
           if (ownerObject) {
-            return _removeAssociation(ownerModel, ownerObject, childModel, childId, associationName, Log)
-                .then(function() {
-                  return true;
+
+            var promise =  {};
+            if (ownerModel.routeOptions && ownerModel.routeOptions.remove && ownerModel.routeOptions.remove[associationName]
+                && ownerModel.routeOptions.remove[associationName].pre) {
+              promise = Q.fcall(ownerModel.routeOptions.remove[associationName].pre, {}, request, Log);
+            }
+            else {
+              promise = Q.when();
+            }
+
+            return promise
+                .then(function () {
+
+                  return _removeAssociation(ownerModel, ownerObject, childModel, childId, associationName, Log)
+                      .then(function() {
+                        return true;
+                      })
+                      .catch(function (error) {
+                        const message = "There was a database error while removing the association.";
+                        if (!logError) {
+                          Log.error(message);
+                          logError = true;
+                          delete error.type;
+                        }
+                        errorHelper.handleError(error, message, errorHelper.types.GATEWAY_TIMEOUT, Log);
+                      });
                 })
                 .catch(function (error) {
-                  const message = "There was a database error while removing the association.";
+                  let message = "There was a preprocessing error while removing the association.";
+                  if (_.isString(error)) {
+                    message = error;
+                  }
                   if (!logError) {
                     Log.error(message);
                     logError = true;
                     delete error.type;
                   }
-                  errorHelper.handleError(error, message, errorHelper.types.GATEWAY_TIMEOUT, Log);
+                  errorHelper.handleError(error, message, errorHelper.types.BAD_REQUEST, Log);
                 });
           }
           else {
@@ -1086,21 +1112,11 @@ function _addManyHandler(ownerModel, ownerId, childModel, associationName, reque
     return ownerModel.findOne({ '_id': ownerId }).select(associationName)
         .then(function (ownerObject) {
           if (ownerObject) {
-            var childIds = [];
-            //EXPL: the payload is an array of Ids
-            if (typeof payload[0] === 'string' || payload[0] instanceof String || payload[0]._bsontype === "ObjectID") {
-              childIds = payload;
-            }
-            else {//EXPL: the payload contains extra fields
-              childIds = payload.map(function(object) {
-                return object.childId;
-              });
-            }
 
             var promise =  {};
             if (ownerModel.routeOptions && ownerModel.routeOptions.add && ownerModel.routeOptions.add[associationName]
                 && ownerModel.routeOptions.add[associationName].pre) {
-              promise = Q.fcall(ownerModel.routeOptions.add[associationName].pre, request, payload, Log);
+              promise = Q.fcall(ownerModel.routeOptions.add[associationName].pre, payload, request, Log);
             }
             else {
               promise = Q.when(payload);
@@ -1108,6 +1124,16 @@ function _addManyHandler(ownerModel, ownerId, childModel, associationName, reque
 
             return promise
                 .then(function(payload) {
+                  var childIds = [];
+                  //EXPL: the payload is an array of Ids
+                  if (typeof payload[0] === 'string' || payload[0] instanceof String || payload[0]._bsontype === "ObjectID") {
+                    childIds = payload;
+                  }
+                  else {//EXPL: the payload contains extra fields
+                    childIds = payload.map(function(object) {
+                      return object.childId;
+                    });
+                  }
                   var promise_chain = Q.when();
 
                   childIds.forEach(function(childId) {
@@ -1218,45 +1244,73 @@ function _removeManyHandler(ownerModel, ownerId, childModel, associationName, re
   let payload = request.payload.map(function(item) { return _.isObject(item) ? _.assignIn({}, item) : item});
   let logError = false;
   try {
+    if (_.isEmpty(request.payload)) {
+      throw "Payload is empty."
+    }
     return ownerModel.findOne({ '_id': ownerId }).select(associationName)
         .then(function (ownerObject) {
           if (ownerObject) {
-            var childIds = payload;
 
-            var promise_chain = Q.when();
+            var promise =  {};
+            if (ownerModel.routeOptions && ownerModel.routeOptions.remove && ownerModel.routeOptions.remove[associationName]
+                && ownerModel.routeOptions.remove[associationName].pre) {
+              promise = Q.fcall(ownerModel.routeOptions.remove[associationName].pre, payload, request, Log);
+            }
+            else {
+              promise = Q.when(payload);
+            }
 
-            childIds.forEach(function(childId) {
-              var promise_link = function() {
-                var deferred = Q.defer();
-                _removeAssociation(ownerModel, ownerObject, childModel, childId, associationName, Log)
-                    .then(function(result) {
-                      deferred.resolve(result);
-                    })
-                    .catch(function (error) {
-                      deferred.reject(error);
-                    });
-                return deferred.promise;
-              };
+            return promise
+                .then(function(payload) {
+                  var childIds = payload;
 
-              promise_chain = promise_chain
-                  .then(promise_link)
-                  .catch(function(error) {
-                    throw error;
+                  var promise_chain = Q.when();
+
+                  childIds.forEach(function (childId) {
+                    var promise_link = function () {
+                      var deferred = Q.defer();
+                      _removeAssociation(ownerModel, ownerObject, childModel, childId, associationName, Log)
+                          .then(function (result) {
+                            deferred.resolve(result);
+                          })
+                          .catch(function (error) {
+                            deferred.reject(error);
+                          });
+                      return deferred.promise;
+                    };
+
+                    promise_chain = promise_chain
+                        .then(promise_link)
+                        .catch(function (error) {
+                          throw error;
+                        });
                   });
-            });
 
-            return promise_chain
-                .then(function() {
-                  return true;
+                  return promise_chain
+                      .then(function () {
+                        return true;
+                      })
+                      .catch(function (error) {
+                        const message = "There was an internal error while removing the associations.";
+                        if (!logError) {
+                          Log.error(message);
+                          logError = true;
+                          delete error.type;
+                        }
+                        errorHelper.handleError(error, message, errorHelper.types.GATEWAY_TIMEOUT, Log);
+                      });
                 })
                 .catch(function (error) {
-                  const message = "There was an internal error while removing the associations.";
+                  let message = "There was a preprocessing error while removing the association.";
+                  if (_.isString(error)) {
+                    message = error;
+                  }
                   if (!logError) {
                     Log.error(message);
                     logError = true;
                     delete error.type;
                   }
-                  errorHelper.handleError(error, message, errorHelper.types.GATEWAY_TIMEOUT, Log);
+                  errorHelper.handleError(error, message, errorHelper.types.BAD_REQUEST, Log);
                 });
           }
           else {
