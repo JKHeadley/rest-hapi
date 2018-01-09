@@ -586,7 +586,7 @@ function _updateHandler(model, _id, request, Log) {
           }
 
           //TODO: support eventLogs and log all property updates in one document rather than one document per property update
-          return model.findByIdAndUpdate(_id, payload)
+          return model.findByIdAndUpdate(_id, payload, { runValidators: config.enableMongooseRunValidators })
               .then(function (result) {
                 if (result) {
                   //TODO: log all updated/added associations
@@ -726,7 +726,7 @@ function _deleteOneHandler(model, _id, hardDelete, request, Log) {
                 payload.deletedBy = deletedBy;
               }
             }
-            promise = model.findByIdAndUpdate(_id, payload, {new: true});
+            promise = model.findByIdAndUpdate(_id, payload, { new: true, runValidators: config.enableMongooseRunValidators });
           }
           else {
             promise = model.findByIdAndRemove(_id);
@@ -1573,7 +1573,7 @@ function _setAssociation(ownerModel, ownerObject, childModel, childId, associati
               payload[ownerModel.modelName] = ownerObject._id;
               payload[childModel.modelName] = childObject._id;
 
-              promise = linkingModel.findOneAndUpdate(query, payload, { new: true, upsert: true });
+              promise = linkingModel.findOneAndUpdate(query, payload, { new: true, upsert: true, runValidators: config.enableMongooseRunValidators });
             }
             else {
               payload[childModel.modelName] = childObject._id;
@@ -1632,7 +1632,10 @@ function _setAssociation(ownerModel, ownerObject, childModel, childId, associati
                 childObject[childAssociationName][duplicateIndex] = payload;
               }
 
-              promise = Q.all([ownerModel.findByIdAndUpdate(ownerObject._id, ownerObject), childModel.findByIdAndUpdate(childObject._id, childObject)]);
+              promise = Q.all([
+                ownerModel.findByIdAndUpdate(ownerObject._id, ownerObject, { runValidators: config.enableMongooseRunValidators }),
+                childModel.findByIdAndUpdate(childObject._id, childObject, { runValidators: config.enableMongooseRunValidators })
+              ]);
             }
 
           }
@@ -1649,7 +1652,7 @@ function _setAssociation(ownerModel, ownerObject, childModel, childId, associati
               ownerObject[associationName].push(childId);
             }
 
-            promise = Q.all([ownerModel.findByIdAndUpdate(ownerObject._id, ownerObject)]);
+            promise = Q.all([ownerModel.findByIdAndUpdate(ownerObject._id, ownerObject, { runValidators: config.enableMongooseRunValidators })]);
           }
           else {
             deferred.reject(new Error("Association type incorrectly defined."));
@@ -1757,7 +1760,10 @@ function _removeAssociation(ownerModel, ownerObject, childModel, childId, associ
                 childObject[childAssociationName].splice(index, 1);
               }
 
-              promise = Q.all([ownerModel.findByIdAndUpdate(ownerObject._id, ownerObject), childModel.findByIdAndUpdate(childObject._id, childObject)]);
+              promise = Q.all([
+                ownerModel.findByIdAndUpdate(ownerObject._id, ownerObject, { runValidators: config.enableMongooseRunValidators }),
+                childModel.findByIdAndUpdate(childObject._id, childObject, { runValidators: config.enableMongooseRunValidators })
+              ]);
             }
           }
           else if (associationType === "_MANY") {//EXPL: remove reference from owner model
@@ -1773,7 +1779,7 @@ function _removeAssociation(ownerModel, ownerObject, childModel, childId, associ
               ownerObject[associationName].splice(index, 1);
             }
 
-            promise = Q.all([ownerModel.findByIdAndUpdate(ownerObject._id, ownerObject)]);
+            promise = Q.all([ownerModel.findByIdAndUpdate(ownerObject._id, ownerObject, { runValidators: config.enableMongooseRunValidators })]);
           }
           else {
             deferred.reject(new Error("Association type incorrectly defined."));
