@@ -253,6 +253,15 @@ config.enablePayloadValidation = true;
 config.enableResponseValidation = true;
 
 /**
+ * Mongoose validation options:
+ * - enableMongooseRunValidators: enables the runValidators option in Mongoose update calls
+ * <http://mongoosejs.com/docs/validation.html#update-validators>
+ * default: false
+ * @type {boolean}
+ */
+config.enableMongooseRunValidators = false;
+
+/**
  * Determines the hapi failAction of each response. Options are:
  * - true: responses that fail validation will return a 500 error.
  * - false: responses that fail validation will just log the offense and send the response as-is.
