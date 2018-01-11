@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [0.40.0] - 2018-01-11
 ### Added
-- Config options for disabling `$where` query param and enabling mongoose [runValidators](http://mongoosejs.com/docs/validation.html#update-validators) option.
+- [Config options](https://github.com/JKHeadley/rest-hapi/blob/master/README.md#configuration) for disabling `$where` query param and enabling mongoose [runValidators](http://mongoosejs.com/docs/validation.html#update-validators) option.
 
 ## [0.39.0] - 2017-12-22 [BREAKING]
 ### Added
