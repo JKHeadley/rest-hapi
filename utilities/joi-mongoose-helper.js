@@ -231,8 +231,10 @@ internals.generateJoiListQueryModel = function (model, Log) {
         .description('A list of objectIds to exclude in the result.'), internals.joiObjectId());
     queryModel.$count = Joi.boolean()
         .description('If set to true, only a count of the query results will be returned.');
-    queryModel.$where = Joi.any().optional()
-        .description('An optional field for raw mongoose queries.');
+    if (config.enableWhereQueries) {
+      queryModel.$where = Joi.any().optional()
+          .description('An optional field for raw mongoose queries.');
+    }
 
     _.each(queryableFields, function (fieldName) {
       const joiModel = internals.generateJoiModelFromFieldType(model.schema.paths[fieldName].options, Log);

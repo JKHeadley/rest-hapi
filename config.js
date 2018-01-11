@@ -99,6 +99,13 @@ config.enableUpdatedBy = false;
 config.enableDeletedBy = false;
 
 /**
+ * Enables raw $where mongoose queries
+ * default: true
+ * @type {boolean}
+ */
+config.enableWhereQueries = true;
+
+/**
  * Enables fields from an associated model to be duplicated. Similar to permanently embedding an associated field within
  * the parent model schema. Useful if a parent model needs to be searchable or sortable by an association's field.
  * default: false
