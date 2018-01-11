@@ -271,6 +271,13 @@ config.enableUpdatedBy = false;
 config.enableDeletedBy = false;
 
 /**
+ * Enables raw $where mongoose queries
+ * default: true
+ * @type {boolean}
+ */
+config.enableWhereQueries = true;
+
+/**
  * Enables fields from an associated model to be duplicated. Similar to permanently embedding an associated field within
  * the parent model schema. Useful if a parent model needs to be searchable or sortable by an association's field.
  * default: false
@@ -423,6 +430,15 @@ config.filterDeletedEmbeds = false;
 config.enableQueryValidation = true;
 config.enablePayloadValidation = true;
 config.enableResponseValidation = true;
+
+/**
+ * Mongoose validation options:
+ * - enableMongooseRunValidators: enables the runValidators option in Mongoose update calls
+ * <http://mongoosejs.com/docs/validation.html#update-validators>
+ * default: false
+ * @type {boolean}
+ */
+config.enableMongooseRunValidators = false;
 
 /**
  * Determines the hapi failAction of each response. Options are:
