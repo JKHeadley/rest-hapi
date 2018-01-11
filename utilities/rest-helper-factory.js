@@ -236,6 +236,14 @@ module.exports = function (logger, mongoose, server) {
         resourceAliasForRoute = model.modelName;
       }
 
+      var modelCustomIdType;
+      if (model.routeOptions) {
+        modelCustomIdType = model.routeOptions.customIdType || Joi.objectId();
+      }
+      else {
+        modelCustomIdType = Joi.objectId();
+      }
+
       var handler = HandlerHelper.generateFindHandler(model, options, Log);
 
       var queryModel = joiMongooseHelper.generateJoiFindQueryModel(model, Log);
@@ -292,7 +300,7 @@ module.exports = function (logger, mongoose, server) {
           validate: {
             query: queryModel,
             params: {
-              _id: Joi.objectId().required()
+              _id: modelCustomIdType.required()
             },
             headers: headersValidation
           },
@@ -551,6 +559,14 @@ module.exports = function (logger, mongoose, server) {
         policies.push(restHapiPolicies.logDelete(mongoose, model, Log));
       }
 
+      var modelCustomIdType;
+      if (model.routeOptions) {
+        modelCustomIdType = model.routeOptions.customIdType || Joi.objectId();
+      }
+      else {
+        modelCustomIdType = Joi.objectId();
+      }
+
       server.route({
         method: 'DELETE',
         path: '/' + resourceAliasForRoute + "/{_id}",
@@ -562,7 +578,7 @@ module.exports = function (logger, mongoose, server) {
           tags: ['api', collectionName],
           validate: {
             params: {
-              _id: Joi.objectId().required()
+              _id: modelCustomIdType.required()
             },
             payload: payloadModel,
             headers: headersValidation
@@ -623,12 +639,20 @@ module.exports = function (logger, mongoose, server) {
 
       var handler = HandlerHelper.generateDeleteHandler(model, options, Log);
 
-      var payloadModel = null;
-      if (config.enableSoftDelete) {
-        payloadModel = Joi.alternatives().try(Joi.array().items(Joi.object({ _id: Joi.objectId(), hardDelete: Joi.bool().default(false) })), Joi.array().items(Joi.objectId()));
+      var modelCustomIdType;
+      if (model.routeOptions) {
+        modelCustomIdType = model.routeOptions.customIdType || Joi.objectId();
       }
       else {
-        payloadModel = Joi.array().items(Joi.objectId());
+        modelCustomIdType = Joi.objectId();
+      }
+
+      var payloadModel = null;
+      if (config.enableSoftDelete) {
+        payloadModel = Joi.alternatives().try(Joi.array().items(Joi.object({ _id: modelCustomIdType, hardDelete: Joi.bool().default(false) })), Joi.array().items(modelCustomIdType));
+      }
+      else {
+        payloadModel = Joi.array().items(modelCustomIdType);
       }
 
       if (!config.enablePayloadValidation) {
@@ -742,6 +766,14 @@ module.exports = function (logger, mongoose, server) {
         resourceAliasForRoute = model.modelName;
       }
 
+      var modelCustomIdType;
+      if (model.routeOptions) {
+        modelCustomIdType = model.routeOptions.customIdType || Joi.objectId();
+      }
+      else {
+        modelCustomIdType = Joi.objectId();
+      }
+
       var handler = HandlerHelper.generateUpdateHandler(model, options, Log);
 
       var updateModel = joiMongooseHelper.generateJoiUpdateModel(model, Log);
@@ -816,7 +848,7 @@ module.exports = function (logger, mongoose, server) {
           tags: ['api', collectionName],
           validate: {
             params: {
-              _id: Joi.objectId().required()
+              _id: modelCustomIdType.required()
             },
             payload: updateModel,
             headers: headersValidation
@@ -931,6 +963,17 @@ module.exports = function (logger, mongoose, server) {
         policies.push(restHapiPolicies.logAdd(mongoose, ownerModel, childModel, association.type, Log));
       }
 
+      var modelCustomIdType;
+      var modelCustomChildIdType;
+      if (ownerModel.routeOptions) {
+        modelCustomIdType = ownerModel.routeOptions.customIdType || Joi.objectId();
+        modelCustomChildIdType = ownerModel.routeOptions.customChildIdType || Joi.objectId();
+      }
+      else {
+        modelCustomIdType = Joi.objectId();
+        modelCustomChildIdType = Joi.objectId();
+      }
+
       server.route({
         method: 'PUT',
         path: '/' + ownerAlias + '/{ownerId}/' + childAlias + "/{childId}",
@@ -942,8 +985,8 @@ module.exports = function (logger, mongoose, server) {
           tags: ['api', associationName, ownerModelName],
           validate: {
             params: {
-              ownerId: Joi.objectId().required(),
-              childId: Joi.objectId().required()
+              ownerId: modelCustomIdType.required(),
+              childId: modelCustomChildIdType.required()
             },
             payload: payloadValidation,
             headers: headersValidation
@@ -1044,6 +1087,17 @@ module.exports = function (logger, mongoose, server) {
         policies.push(restHapiPolicies.logRemove(mongoose, ownerModel, childModel, association.type, Log));
       }
 
+      var modelCustomIdType;
+      var modelCustomChildIdType;
+      if (ownerModel.routeOptions) {
+        modelCustomIdType = ownerModel.routeOptions.customIdType || Joi.objectId();
+        modelCustomChildIdType = ownerModel.routeOptions.customChildIdType || Joi.objectId();
+      }
+      else {
+        modelCustomIdType = Joi.objectId();
+        modelCustomChildIdType = Joi.objectId();
+      }
+
       server.route({
         method: 'DELETE',
         path: '/' + ownerAlias + '/{ownerId}/' + childAlias + "/{childId}",
@@ -1055,8 +1109,8 @@ module.exports = function (logger, mongoose, server) {
           tags: ['api', associationName, ownerModelName],
           validate: {
             params: {
-              ownerId: Joi.objectId().required(),
-              childId: Joi.objectId().required()
+              ownerId: modelCustomIdType.required(),
+              childId: modelCustomChildIdType.required()
             },
             headers: headersValidation
           },
@@ -1117,6 +1171,18 @@ module.exports = function (logger, mongoose, server) {
       var payloadValidation;
       var label = "";
 
+      var modelCustomIdType;
+      var modelCustomChildIdType;
+      if (ownerModel.routeOptions) {
+        modelCustomIdType = ownerModel.routeOptions.customIdType || Joi.objectId();
+        modelCustomChildIdType = ownerModel.routeOptions.customChildIdType || Joi.objectId();
+      }
+      else {
+        modelCustomIdType = Joi.objectId();
+        modelCustomChildIdType = Joi.objectId();
+      }
+
+
       if (association.include && association.include.through) {
         payloadValidation = joiMongooseHelper.generateJoiCreateModel(association.include.through, Log);
         payloadValidation._inner.children = payloadValidation._inner.children.filter(function(key) {
@@ -1124,15 +1190,15 @@ module.exports = function (logger, mongoose, server) {
         });
         label =  payloadValidation._flags.label + "_many";
         payloadValidation = payloadValidation.keys({
-          childId: Joi.objectId().description("the " + childModelName + "'s _id")
+          childId: modelCustomChildIdType.description("the " + childModelName + "'s _id")
         });
         payloadValidation = Joi.array().items(payloadValidation);
 
         payloadValidation = Joi.alternatives().try(payloadValidation,
-            Joi.array().items(Joi.objectId())).label(label || "blank").required();
+            Joi.array().items(modelCustomChildIdType)).label(label || "blank").required();
       } 
       else {
-        payloadValidation = Joi.array().items(Joi.objectId()).required();
+        payloadValidation = Joi.array().items(modelCustomChildIdType).required();
       }
 
       if (!config.enablePayloadValidation) {
@@ -1189,7 +1255,7 @@ module.exports = function (logger, mongoose, server) {
           tags: ['api', associationName, ownerModelName],
           validate: {
             params: {
-              ownerId: Joi.objectId().required()
+              ownerId: modelCustomIdType.required()
             },
             payload: payloadValidation,
             headers: headersValidation
@@ -1243,12 +1309,23 @@ module.exports = function (logger, mongoose, server) {
 
       options = options || {};
 
+      var modelCustomIdType;
+      var modelCustomChildIdType;
+      if (ownerModel.routeOptions) {
+        modelCustomIdType = ownerModel.routeOptions.customIdType || Joi.objectId();
+        modelCustomChildIdType = ownerModel.routeOptions.customChildIdType || Joi.objectId();
+      }
+      else {
+        modelCustomIdType = Joi.objectId();
+        modelCustomChildIdType = Joi.objectId();
+      }
+
       var ownerAlias = ownerModel.routeOptions.alias || ownerModel.modelName;
       var childAlias = association.alias || association.include.model.modelName;
 
       var handler = HandlerHelper.generateAssociationRemoveManyHandler(ownerModel, association, options, Log);
 
-      var payloadValidation = Joi.array().items(Joi.objectId()).required();
+      var payloadValidation = Joi.array().items(modelCustomChildIdType).required();
 
       payloadValidation = config.enablePayloadValidation ? payloadValidation : Joi.any();
       payloadValidation = payloadValidation.description("An array of _ids to remove.")
@@ -1302,7 +1379,7 @@ module.exports = function (logger, mongoose, server) {
           tags: ['api', associationName, ownerModelName],
           validate: {
             params: {
-              ownerId: Joi.objectId().required()
+              ownerId: modelCustomIdType.required()
             },
             payload: payloadValidation,
             headers: headersValidation
@@ -1355,6 +1432,14 @@ module.exports = function (logger, mongoose, server) {
 
       var ownerAlias = ownerModel.routeOptions.alias || ownerModel.modelName;
       var childAlias = association.alias || association.include.model.modelName;
+
+      var modelCustomIdType;
+      if (ownerModel.routeOptions) {
+        modelCustomIdType = ownerModel.routeOptions.customIdType || Joi.objectId();
+      }
+      else {
+        modelCustomIdType = Joi.objectId();
+      }
 
       var childModel = association.include.model;
 
@@ -1424,7 +1509,7 @@ module.exports = function (logger, mongoose, server) {
           validate: {
             query: queryModel,
             params: {
-              ownerId: Joi.objectId().required()
+              ownerId: modelCustomIdType.required()
             },
             headers: headersValidation
           },
