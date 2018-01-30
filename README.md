@@ -146,7 +146,7 @@ function api(){
 
     let server = new Hapi.Server();
 
-    server.connection(restHapi.config.server.connection);
+    server.connection({ port: 8124 });
 
     server.register({
             register: restHapi,
