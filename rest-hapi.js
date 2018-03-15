@@ -70,8 +70,8 @@ function register(server, options, next) {
                     version: config.version
                 },
                 expanded: config.docExpansion,
-                swaggerUI: process.env.SWAGGER_DOCS == 'disable',
-                documentationPage: process.env.SWAGGER_DOCS == 'disable'
+                swaggerUI: config.enableSwaggerUI,
+                documentationPage: config.enableSwaggerUI
             };
 
             server.register([
