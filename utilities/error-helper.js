@@ -9,9 +9,10 @@ module.exports = {
    */
   types: {
     BAD_REQUEST: "Bad Request",
-    SERVER_TIMEOUT: "Server Timeout",
+    BAD_IMPLEMENTATION: "Bad Implementation",
     NOT_FOUND: "Not Found",
-    GATEWAY_TIMEOUT: "Gateway Timeout"
+    GATEWAY_TIMEOUT: "Gateway Timeout",
+    CONFLICT: "Conflict"
   },
 
   /**
@@ -38,21 +39,32 @@ module.exports = {
   formatResponse: function(error, Log) {
     try {
       var response = {};
-      switch (error.type) {
-        case this.types.SERVER_TIMEOUT:
-          response = Boom.serverTimeout(error.message);
-          break;
-        case this.types.GATEWAY_TIMEOUT:
-          response = Boom.gatewayTimeout(error.message);
-          break;
-        case this.types.NOT_FOUND:
-          response = Boom.notFound(error.message);
-          break;
-        case this.types.BAD_REQUEST:
-          response = Boom.badRequest(error.message);
-          break;
-        default:
-          response = Boom.badRequest(error.message);
+      if (error.type) {
+        switch (error.type) {
+          case this.types.BAD_IMPLEMENTATION:
+            response = Boom.badImplementation(error.message);
+            break;
+          case this.types.GATEWAY_TIMEOUT:
+            response = Boom.gatewayTimeout(error.message);
+            break;
+          case this.types.NOT_FOUND:
+            response = Boom.notFound(error.message);
+            break;
+          case this.types.BAD_REQUEST:
+            response = Boom.badRequest(error.message);
+            break;
+          case this.types.CONFLICT:
+            response = Boom.conflict(error.message);
+            break;
+          default:
+            response = Boom.badRequest(error.message);
+        }
+      }
+      else if (error.isBoom) {
+        response = error
+      }
+      else {
+        response = Boom.badImplementation('An error occurred.')
       }
       return response;
     }

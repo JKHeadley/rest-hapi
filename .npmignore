@@ -1,0 +1,5 @@
+.travis.yml
+_config.yml
+.idea
+tests
+assets
