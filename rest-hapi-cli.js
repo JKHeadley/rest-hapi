@@ -4,6 +4,10 @@ var userArgs = process.argv.slice(2);
 
 var command = userArgs[0];
 
+var args = userArgs;
+
+args.shift();
+
 var exec = require('child_process').exec;
 
 var isWindows = /^win/.test(process.platform);
@@ -24,6 +28,12 @@ switch (command) {
 		break;
 	case "test":
 		exec('gulp test --gulpfile ' + cmdString, function(err, stdout, stderr) {
+			console.log(stdout);
+			console.log(stderr);
+		});
+		break;
+	case "update-associations":
+		exec('gulp update-associations --gulpfile ' + cmdString + " --options " + args.join(' --options '), function(err, stdout, stderr) {
 			console.log(stdout);
 			console.log(stderr);
 		});

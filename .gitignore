@@ -10,12 +10,3 @@ uploads/*
 
 # OSX files
 *.DS_Store
-terraform/exapmle.tf-example
-terraform/file.txt
-terraform/provider.tf
-terraform/rest-hapi.tf
-terraform/rest_hapi_db.tf.test
-terraform/security-groups.tf
-terraform/terraform.tfstate
-terraform/terraform.tfstate.backup
-terraform/variables.tf

@@ -8,13 +8,13 @@ let globals = require('./globals');
 // var mongoose = require('mongoose');
 
 module.exports = function (mongoose, logger, config) {
-  mongoose.Promise = require('q').Promise;
+  mongoose.Promise = Promise;
   
   logger = logUtil.bindHelper(logger, "mongoose");
 
   logUtil.logActionStart(logger, "Connecting to Database", _.omit(config.mongo, ['pass']));
   
-  mongoose.connect(config.mongo.URI);
+  mongoose.connect(config.mongo.URI, { useMongoClient: true });
 
   globals.mongoose = mongoose;
 

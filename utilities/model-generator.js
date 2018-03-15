@@ -53,11 +53,21 @@ module.exports = function (mongoose, Log, config) {
       }
     });
 
+    if (config.enableAuditLog) {
+      schema = require('../models/audit-log.model')(mongoose);
+      schemas[schema.statics.collectionName] = schema;
+    }
+
     var extendedSchemas = {};
 
     for (var schemaKey in schemas) {
       var schema = schemas[schemaKey];
       extendedSchemas[schemaKey] = modelHelper.extendSchemaAssociations(schema, mongoose, modelPath);
+    }
+
+    for (var schemaKey in extendedSchemas) {
+      var schema = extendedSchemas[schemaKey];
+      extendedSchemas[schemaKey] = modelHelper.addDuplicateFields(schema, schemas);
     }
 
     for (var schemaKey in extendedSchemas) {//EXPL: Create models with final schemas

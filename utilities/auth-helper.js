@@ -1,7 +1,7 @@
 'use strict';
 
 const _ = require('lodash');
-var extend = require('util')._extend;
+let extend = require('util')._extend;
 
 module.exports = {
   /**
@@ -12,34 +12,34 @@ module.exports = {
    * @returns {Array}: A list of authorization scopes for the endpoint.
    */
   generateScopeForEndpoint: function(model, type, Log) {
-    var scope = [];
 
-    if (!model.routeOptions.scope) {
-      model.routeOptions.scope = {};
-    }
-    var generalScope = model.routeOptions.scope.scope;
+    //NOTE: As of v0.29.0 routeOptions.scope is replaced with routeOptions.routeScope and
+    //routeOptions.scope.scope is replaced with routeOptions.routeScope.rootScope
+    let routeScope = model.routeOptions.routeScope || {};
+    let rootScope = routeScope.rootScope;
+    let scope = [];
 
-    var additionalScope = null;
+    let additionalScope = null;
 
     switch (type) {
       case 'create':
-        additionalScope = model.routeOptions.scope.createScope;
+        additionalScope = routeScope.createScope;
         break;
       case 'read':
-        additionalScope = model.routeOptions.scope.readScope;
+        additionalScope = routeScope.readScope;
         break;
       case 'update':
-        additionalScope = model.routeOptions.scope.updateScope;
+        additionalScope = routeScope.updateScope;
         break;
       case 'delete':
-        additionalScope = model.routeOptions.scope.deleteScope;
+        additionalScope = routeScope.deleteScope;
         break;
       case 'associate':
-        additionalScope = model.routeOptions.scope.associateScope;
+        additionalScope = routeScope.associateScope;
         break;
       default:
-        if (model.routeOptions.scope[type]) {
-          scope = model.routeOptions.scope[type];
+        if (routeScope[type]) {
+          scope = routeScope[type];
           if (!_.isArray(scope)) {
             scope = [scope];
           }
@@ -48,11 +48,11 @@ module.exports = {
         break;
     }
 
-    if (generalScope && _.isArray(generalScope)) {
-      scope = scope.concat(generalScope);
+    if (rootScope && _.isArray(rootScope)) {
+      scope = scope.concat(rootScope);
     }
-    else if (generalScope) {
-      scope.push(generalScope);
+    else if (rootScope) {
+      scope.push(rootScope);
     }
 
     if (additionalScope && _.isArray(additionalScope)) {
@@ -68,39 +68,48 @@ module.exports = {
   generateScopeForModel: function(model, Log) {
     const modelName = model.collectionName[0].toUpperCase() + model.collectionName.slice(1);
 
+    //NOTE: As of v0.29.0 routeOptions.scope is replaced with routeOptions.routeScope and
+    //routeOptions.scope.scope is replaced with routeOptions.routeScope.rootScope
+    let routeScope = model.routeOptions.routeScope || model.routeOptions.scope || {};
+    routeScope.rootScope = routeScope.rootScope || routeScope.scope;
+    delete routeScope.scope;
+    if (!routeScope.rootScope) {
+      delete routeScope.rootScope;
+    }
+
     const scope = {};
-    
-    scope.scope = "root";
-    scope.createScope = ["create", "create" + modelName];
-    scope.readScope = ["read", "read" + modelName];
-    scope.updateScope = ["update", "update" + modelName];
-    scope.deleteScope = ["delete", "delete" + modelName];
-    scope.associateScope = ["associate", "associate" + modelName];
+
+    scope.rootScope = ["root", model.collectionName, "!-root", "!-" + model.collectionName];
+    scope.createScope = ["create", "create" + modelName, "!-create", "!-create" + modelName];
+    scope.readScope = ["read", "read" + modelName, "!-read", "!-read" + modelName];
+    scope.updateScope = ["update", "update" + modelName, "!-update", "!-update" + modelName];
+    scope.deleteScope = ["delete", "delete" + modelName, "!-delete", "!-delete" + modelName];
+    scope.associateScope = ["associate", "associate" + modelName, "!-associate", "!-associate" + modelName];
 
     const associations = model.routeOptions.associations;
 
     for (const key in associations) {
       const associationName = key[0].toUpperCase() + key.slice(1);
-      scope["add" + modelName + associationName + "Scope"] = "add" + modelName + associationName;
-      scope["remove" + modelName + associationName + "Scope"] = "remove" + modelName + associationName;
-      scope["get" + modelName + associationName + "Scope"] = "get" + modelName + associationName;
+      scope["add" + modelName + associationName + "Scope"] = ["add" + modelName + associationName, "!-add" + modelName + associationName];
+      scope["remove" + modelName + associationName + "Scope"] = ["remove" + modelName + associationName, "!-remove" + modelName + associationName];
+      scope["get" + modelName + associationName + "Scope"] = ["get" + modelName + associationName, "!-get" + modelName + associationName];
     }
 
     //EXPL: merge any existing scope fields with the generated scope
-    for (const key in model.routeOptions.scope) {
+    for (const key in routeScope) {
       if (scope[key]) {
         if (!_.isArray(scope[key])) {
           scope[key] = [scope[key]];
         }
-        if (model.routeOptions.scope[key] && _.isArray(model.routeOptions.scope[key])) {
-          scope[key] = scope[key].concat(model.routeOptions.scope[key]);
+        if (routeScope[key] && _.isArray(routeScope[key])) {
+          scope[key] = scope[key].concat(routeScope[key]);
         }
         else {
-          scope[key].push(model.routeOptions.scope[key]);
+          scope[key].push(routeScope[key]);
         }
       }
     }
 
-    model.routeOptions.scope = scope;
+    model.routeOptions.routeScope = scope;
   }
 };
