@@ -69,7 +69,9 @@ function register(server, options, next) {
                     title: config.appTitle,
                     version: config.version
                 },
-                expanded: config.docExpansion
+                expanded: config.docExpansion,
+                swaggerUI: process.env.SWAGGER_DOCS == 'disable',
+                documentationPage: process.env.SWAGGER_DOCS == 'disable'
             };
 
             server.register([
