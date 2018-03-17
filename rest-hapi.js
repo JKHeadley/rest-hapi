@@ -92,6 +92,8 @@ function register(server, options, next) {
                     version: config.version
                 },
                 expanded: config.docExpansion,
+                swaggerUI: config.enableSwaggerUI,
+                documentationPage: config.enableSwaggerUI,
                 reuseDefinitions: false
             };
 

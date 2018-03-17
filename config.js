@@ -329,4 +329,11 @@ config.loglevel = "DEBUG";
  */
 config.docExpansion = 'none';
 
+/**
+ * If set to false, SwaggerUI will not be generated.
+ * - options: 'true', 'false' (default: 'true')
+ * @type {boolean}
+ */
+config.enableSwaggerUI = true;
+
 module.exports = config;
