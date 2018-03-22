@@ -94,6 +94,7 @@ function register(server, options, next) {
                 expanded: config.docExpansion,
                 swaggerUI: config.enableSwaggerUI,
                 documentationPage: config.enableSwaggerUI,
+                schemes: config.enableSwaggerHttps ? ['https'] : ['http'],
                 reuseDefinitions: false
             };
 

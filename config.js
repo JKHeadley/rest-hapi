@@ -336,4 +336,11 @@ config.docExpansion = 'none';
  */
 config.enableSwaggerUI = true;
 
+/**
+ * If set to true, swagger will use the https protocol rather than http.
+ * - options: 'true', 'false' (default: 'false')
+ * @type {boolean}
+ */
+config.enableSwaggerHttps = false;
+
 module.exports = config;
