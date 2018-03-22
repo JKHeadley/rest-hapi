@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [0.42.0] - 2018-03-22
+### Added
+- Added option to toggle swagger protocol (http or https) with config.enableSwaggerHttps.
+
 ## [0.41.0] - 2018-03-17
 ### Added
 - config.enableSwaggerUI to config.js to determine wether SwaggerUI will be generated or no.
@@ -210,7 +214,7 @@ post(hardDelete, deleted, Log) | post(hardDelete, deleted, request, Log)
 
 
 
-[Unreleased]: https://github.com/jkheadley/rest-hapi/compare/v0.41.0...HEAD
+[Unreleased]: https://github.com/jkheadley/rest-hapi/compare/v0.42.0...HEAD
 [0.20.0]: https://github.com/jkheadley/rest-hapi/compare/v0.19.2...v0.20.0
 [0.20.2]: https://github.com/jkheadley/rest-hapi/compare/v0.20.0...v0.20.2
 [0.20.3]: https://github.com/jkheadley/rest-hapi/compare/v0.20.2...v0.20.3
@@ -235,5 +239,6 @@ post(hardDelete, deleted, Log) | post(hardDelete, deleted, request, Log)
 [0.39.0]: https://github.com/jkheadley/rest-hapi/compare/v0.38.0...v0.39.0
 [0.40.0]: https://github.com/jkheadley/rest-hapi/compare/v0.39.0...v0.40.0
 [0.41.0]: https://github.com/jkheadley/rest-hapi/compare/v0.41.0...v0.40.0
+[0.42.0]: https://github.com/jkheadley/rest-hapi/compare/v0.42.0...v0.41.0
 
 [BREAKING]: https://github.com/JKHeadley/rest-hapi/releases
