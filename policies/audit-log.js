@@ -19,7 +19,7 @@ internals.logCreate = function(mongoose, model, Log) {
       Log = Log.bind("logCreate");
       const AuditLog = mongoose.model('auditLog');
 
-      const ipAddress = request.info.remoteAddress;
+      const ipAddress = internals.getIP(request);
       let userId = _.get(request.auth.credentials, config.userIdKey);
       let documents = request.response.source;
       if (documents) {
@@ -85,7 +85,7 @@ internals.logUpdate = function(mongoose, model, Log) {
       Log = Log.bind("logUpdate");
       const AuditLog = mongoose.model('auditLog');
 
-      const ipAddress = request.info.remoteAddress;
+      const ipAddress = internals.getIP(request);
       let userId = _.get(request.auth.credentials, config.userIdKey);
       let documents = [request.params._id];
 
@@ -143,7 +143,7 @@ internals.logDelete = function(mongoose, model, Log) {
       Log = Log.bind("logDelete");
       const AuditLog = mongoose.model('auditLog');
 
-      const ipAddress = request.info.remoteAddress;
+      const ipAddress = internals.getIP(request);
       let userId = _.get(request.auth.credentials, config.userIdKey);
       let documents = request.params._id || request.payload;
       if (_.isArray(documents) && documents[0]._id) {
@@ -209,7 +209,7 @@ internals.logAdd = function(mongoose, ownerModel, childModel, associationType, L
       Log = Log.bind("logAdd");
       const AuditLog = mongoose.model('auditLog');
 
-      const ipAddress = request.info.remoteAddress;
+      const ipAddress = internals.getIP(request);
       let userId = _.get(request.auth.credentials, config.userIdKey);
       let documents = [request.params.ownerId];
 
@@ -283,7 +283,7 @@ internals.logRemove = function(mongoose, ownerModel, childModel, associationType
       Log = Log.bind("logRemove");
       const AuditLog = mongoose.model('auditLog');
 
-      const ipAddress = request.info.remoteAddress;
+      const ipAddress = internals.getIP(request);
       let userId = _.get(request.auth.credentials, config.userIdKey);
       let documents = [request.params.ownerId];
 
@@ -331,6 +331,11 @@ internals.logRemove = function(mongoose, ownerModel, childModel, associationType
 };
 internals.logRemove.applyPoint = 'onPostHandler';
 
+internals.getIP = function(request) {
+  // EXPL: We check the headers first in case the server is behind a reverse proxy.
+  // see: https://ypereirareis.github.io/blog/2017/02/15/nginx-real-ip-behind-nginx-reverse-proxy/
+  return request.headers[ 'x-real-ip' ] || request.headers[ 'x-forwarded-for'] || request.info.remoteAddress;
+};
 
 module.exports = {
   logCreate : internals.logCreate,
