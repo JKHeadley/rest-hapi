@@ -1428,7 +1428,15 @@ function _getAllHandler(ownerModel, ownerId, childModel, associationName, reques
           if (typeof query.$where === 'string') {
             query.$where = JSON.parse(query.$where);
           }
-          query.$where = extend({'_id': { $in: childIds }}, query.$where);
+
+          //EXPL: also have to handle the special case for '$where._id' queries
+          if (query.$where && query.$where._id) {
+            query.$where._id = extend({ $in: childIds }, query.$where._id);
+          }
+          else {
+            query.$where = extend({'_id': { $in: childIds }}, query.$where);
+          }
+
 
           request.query = query;
 
