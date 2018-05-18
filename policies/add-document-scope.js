@@ -14,7 +14,7 @@ const internals = {};
  */
 internals.addDocumentScope = function(model, Log) {
 
-  const addDocumentScopeForModel = function addDocumentScopeForModel(request, reply, next) {
+  const addDocumentScopeForModel = function addDocumentScopeForModel(request, h) {
     Log = Log.bind("addDocumentScope");
     try {
       let scope = model.routeOptions.documentScope;
@@ -36,11 +36,11 @@ internals.addDocumentScope = function(model, Log) {
         }
       }
 
-      return next(null, true);
+      return h.continue
     }
     catch (err) {
       Log.error("ERROR:", err);
-      return next(Boom.badImplementation(err), false);
+      throw Boom.badImplementation(err)
     }
   };
 

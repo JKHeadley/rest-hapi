@@ -14,7 +14,7 @@ const internals = {};
  */
 internals.logCreate = function(mongoose, model, Log) {
 
-  const logCreateForModel = function logCreateForModel(request, reply, next) {
+  const logCreateForModel = async function logCreateForModel(request, h) {
     try {
       Log = Log.bind("logCreate");
       const AuditLog = mongoose.model('auditLog');
@@ -52,24 +52,24 @@ internals.logCreate = function(mongoose, model, Log) {
         ipAddress
       })
           .then(function (result) {
-            next(null, true);
+              return h.continue
           })
           .catch(function (err) {
             Log.error('ERROR:', err);
-            next(null, true);
+              return h.continue
           })
     }
     catch (err) {
       Log.error("ERROR:", err);
-      return next(null, true);
+        return h.continue
     }
 
   };
 
-  logCreateForModel.applyPoint = 'onPostHandler';
+  logCreateForModel.applyPoint = 'onPreResponse';
   return logCreateForModel;
 };
-internals.logCreate.applyPoint = 'onPostHandler';
+internals.logCreate.applyPoint = 'onPreResponse';
 
 
 /**
@@ -80,7 +80,7 @@ internals.logCreate.applyPoint = 'onPostHandler';
  */
 internals.logUpdate = function(mongoose, model, Log) {
 
-  const logUpdateForModel = function logUpdateForModel(request, reply, next) {
+  const logUpdateForModel = function logUpdateForModel(request, h) {
     try {
       Log = Log.bind("logUpdate");
       const AuditLog = mongoose.model('auditLog');
@@ -107,24 +107,24 @@ internals.logUpdate = function(mongoose, model, Log) {
         ipAddress
       })
           .then(function (result) {
-            next(null, true);
+            return h.continue
           })
           .catch(function (err) {
             Log.error('ERROR:', err);
-            next(null, true);
+            return h.continue
           })
     }
     catch (err) {
       Log.error("ERROR:", err);
-      return next(null, true);
+      return h.continue
     }
 
   };
 
-  logUpdateForModel.applyPoint = 'onPostHandler';
+  logUpdateForModel.applyPoint = 'onPreResponse';
   return logUpdateForModel;
 };
-internals.logUpdate.applyPoint = 'onPostHandler';
+internals.logUpdate.applyPoint = 'onPreResponse';
 
 module.exports = {
   logUpdate : internals.logUpdate
@@ -138,7 +138,7 @@ module.exports = {
  */
 internals.logDelete = function(mongoose, model, Log) {
 
-  const logDeleteForModel = function logDeleteForModel(request, reply, next) {
+  const logDeleteForModel = function logDeleteForModel(request, h) {
     try {
       Log = Log.bind("logDelete");
       const AuditLog = mongoose.model('auditLog');
@@ -173,24 +173,24 @@ internals.logDelete = function(mongoose, model, Log) {
         ipAddress
       })
           .then(function (result) {
-            next(null, true);
+            return h.continue
           })
           .catch(function (err) {
             Log.error('ERROR:', err);
-            next(null, true);
+            return h.continue
           })
     }
     catch (err) {
       Log.error("ERROR:", err);
-      return next(null, true);
+      return h.continue
     }
 
   };
 
-  logDeleteForModel.applyPoint = 'onPostHandler';
+  logDeleteForModel.applyPoint = 'onPreResponse';
   return logDeleteForModel;
 };
-internals.logDelete.applyPoint = 'onPostHandler';
+internals.logDelete.applyPoint = 'onPreResponse';
 
 module.exports = {
   logDelete : internals.logDelete
@@ -204,7 +204,7 @@ module.exports = {
  */
 internals.logAdd = function(mongoose, ownerModel, childModel, associationType, Log) {
 
-  const logAddForModel = function logAddForModel(request, reply, next) {
+  const logAddForModel = function logAddForModel(request, h) {
     try {
       Log = Log.bind("logAdd");
       const AuditLog = mongoose.model('auditLog');
@@ -251,24 +251,24 @@ internals.logAdd = function(mongoose, ownerModel, childModel, associationType, L
         ipAddress
       })
           .then(function (result) {
-            next(null, true);
+            return h.continue
           })
           .catch(function (err) {
             Log.error('ERROR:', err);
-            next(null, true);
+            return h.continue
           })
     }
     catch (err) {
       Log.error("ERROR:", err);
-      return next(null, true);
+      return h.continue
     }
 
   };
 
-  logAddForModel.applyPoint = 'onPostHandler';
+  logAddForModel.applyPoint = 'onPreResponse';
   return logAddForModel;
 };
-internals.logAdd.applyPoint = 'onPostHandler';
+internals.logAdd.applyPoint = 'onPreResponse';
 
 /**
  * Policy to log remove actions.
@@ -278,7 +278,7 @@ internals.logAdd.applyPoint = 'onPostHandler';
  */
 internals.logRemove = function(mongoose, ownerModel, childModel, associationType, Log) {
 
-  const logRemoveForModel = function logRemoveForModel(request, reply, next) {
+  const logRemoveForModel = function logRemoveForModel(request, h) {
     try {
       Log = Log.bind("logRemove");
       const AuditLog = mongoose.model('auditLog');
@@ -312,24 +312,24 @@ internals.logRemove = function(mongoose, ownerModel, childModel, associationType
         ipAddress
       })
           .then(function (result) {
-            next(null, true);
+            return h.continue
           })
           .catch(function (err) {
             Log.error('ERROR:', err);
-            next(null, true);
+            return h.continue
           })
     }
     catch (err) {
       Log.error("ERROR:", err);
-      return next(null, true);
+      return h.continue
     }
 
   };
 
-  logRemoveForModel.applyPoint = 'onPostHandler';
+  logRemoveForModel.applyPoint = 'onPreResponse';
   return logRemoveForModel;
 };
-internals.logRemove.applyPoint = 'onPostHandler';
+internals.logRemove.applyPoint = 'onPreResponse';
 
 internals.getIP = function(request) {
   // EXPL: We check the headers first in case the server is behind a reverse proxy.

@@ -14,10 +14,10 @@ const internals = {};
  */
 internals.authorizeDocumentCreator = function(model, Log) {
 
-  const authorizeDocumentCreatorForModel = function authorizeDocumentCreatorForModel(request, reply, next) {
+  const authorizeDocumentCreatorForModel = function authorizeDocumentCreatorForModel(request, h) {
     Log = Log.bind("authorizeDocumentCreator");
 
-    return internals.addScope('root', request, reply, next, Log);
+    return internals.addScope('root', request, h, Log);
   };
 
   authorizeDocumentCreatorForModel.applyPoint = 'onPreHandler';
@@ -33,10 +33,10 @@ internals.authorizeDocumentCreator.applyPoint = 'onPreHandler';
  */
 internals.authorizeDocumentCreatorToRead = function(model, Log) {
 
-  const authorizeDocumentCreatorToReadForModel = function authorizeDocumentCreatorToReadForModel(request, reply, next) {
+  const authorizeDocumentCreatorToReadForModel = function authorizeDocumentCreatorToReadForModel(request, h) {
     Log = Log.bind("authorizeDocumentCreatorToRead");
 
-    return internals.addScope('read', request, reply, next, Log);
+    return internals.addScope('read', request, h, Log);
   };
 
   authorizeDocumentCreatorToReadForModel.applyPoint = 'onPreHandler';
@@ -52,10 +52,10 @@ internals.authorizeDocumentCreatorToRead.applyPoint = 'onPreHandler';
  */
 internals.authorizeDocumentCreatorToUpdate = function(model, Log) {
 
-  const authorizeDocumentCreatorToUpdateForModel = function authorizeDocumentCreatorToUpdateForModel(request, reply, next) {
+  const authorizeDocumentCreatorToUpdateForModel = function authorizeDocumentCreatorToUpdateForModel(request, h) {
     Log = Log.bind("authorizeDocumentCreatorToUpdate");
 
-    return internals.addScope('update', request, reply, next, Log);
+    return internals.addScope('update', request, h, Log);
   };
 
   authorizeDocumentCreatorToUpdateForModel.applyPoint = 'onPreHandler';
@@ -71,10 +71,10 @@ internals.authorizeDocumentCreatorToUpdate.applyPoint = 'onPreHandler';
  */
 internals.authorizeDocumentCreatorToDelete = function(model, Log) {
 
-  const authorizeDocumentCreatorToDeleteForModel = function authorizeDocumentCreatorToDeleteForModel(request, reply, next) {
+  const authorizeDocumentCreatorToDeleteForModel = function authorizeDocumentCreatorToDeleteForModel(request, h) {
     Log = Log.bind("authorizeDocumentCreatorToDelete");
 
-    return internals.addScope('delete', request, reply, next, Log);
+    return internals.addScope('delete', request, h, Log);
   };
 
   authorizeDocumentCreatorToDeleteForModel.applyPoint = 'onPreHandler';
@@ -90,10 +90,10 @@ internals.authorizeDocumentCreatorToDelete.applyPoint = 'onPreHandler';
  */
 internals.authorizeDocumentCreatorToAssociate = function(model, Log) {
 
-  const authorizeDocumentCreatorToAssociateForModel = function authorizeDocumentCreatorToAssociateForModel(request, reply, next) {
+  const authorizeDocumentCreatorToAssociateForModel = function authorizeDocumentCreatorToAssociateForModel(request, h) {
     Log = Log.bind("authorizeDocumentCreatorToAssociate");
 
-    return internals.addScope('associate', request, reply, next, Log);
+    return internals.addScope('associate', request, h, Log);
   };
 
   authorizeDocumentCreatorToAssociateForModel.applyPoint = 'onPreHandler';
@@ -105,12 +105,11 @@ internals.authorizeDocumentCreatorToAssociate.applyPoint = 'onPreHandler';
  * Internal function to add the creating user's _id to a document's relevant action scope.
  * @param action
  * @param request
- * @param reply
- * @param next
+ * @param h
  * @param Log
  * @returns {*}
  */
-internals.addScope = function(action, request, reply, next, Log) {
+internals.addScope = function(action, request, h, Log) {
 
   try {
     let scopeType = "";
@@ -139,7 +138,7 @@ internals.addScope = function(action, request, reply, next, Log) {
     if (!userId) {
       let message = 'User _id not found in auth credentials. Please specify the user _id path in "config.userIdKey"';
       Log.error(message);
-      return next(Boom.badRequest(message), false);
+      throw Boom.badRequest(message)
     }
 
     if (_.isArray(request.payload)) {
@@ -161,11 +160,15 @@ internals.addScope = function(action, request, reply, next, Log) {
       request.payload.scope[scopeType].push("user-" + userId)
     }
 
-    return next(null, true);
+    return h.continue
   }
   catch (err) {
     Log.error("ERROR:", err);
-    return next(Boom.badImplementation(err), false);
+    if (err.isBoom) {
+      throw err
+    } else {
+        throw Boom.badImplementation(err)
+    }
   }
   
 };

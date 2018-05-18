@@ -1,6 +1,7 @@
 var Q = require('q');
 var Joi = require('joi');
 var bcrypt = require('bcryptjs');
+var RestHapi = require('rest-hapi');
 
 //TODO: assign a unique text index to email field
 
@@ -78,19 +79,19 @@ module.exports = function (mongoose) {
 
           Log.note("Generating Password Update endpoint for " + collectionName);
 
-          var handler = function (request, reply) {
+          var handler = function (request, h) {
             var hashedPassword = model.generatePasswordHash(request.payload.password);
             return model.findByIdAndUpdate(request.params._id, {password: hashedPassword}).then(function (result) {
               if (result) {
-                return reply("Password updated.").code(200);
+                  return h.response("Password updated.").code(200);
               }
               else {
-                return reply(Boom.notFound("No resource was found with that id."));
+                throw Boom.notFound("No resource was found with that id.");
               }
             })
             .catch(function (error) {
               Log.error("error: ", error);
-              return reply(Boom.badImplementation("An error occurred updating the resource.", error));
+              throw Boom.badImplementation("An error occurred updating the resource.", error);
             });
           }
 
@@ -104,7 +105,7 @@ module.exports = function (mongoose) {
               tags: ['api', 'User', 'Password'],
               validate: {
                 params: {
-                  _id: Joi.objectId().required()
+                    _id: RestHapi.joiHelper.joiObjectId().required()
                 },
                 payload: {
                   password: Joi.string().required()

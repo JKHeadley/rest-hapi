@@ -17,7 +17,7 @@ const Boom = require('boom');
 const Q = require('q');
 
 let Log = logging.getLogger("tests");
-Log.logLevel = "DEBUG";
+Log.logLevel = "NONE";
 Log = Log.bind("enforce-document-scope");
 
 sinon.test = sinonTest;
@@ -648,8 +648,7 @@ test('enforce-document-scope.enforceDocumentScopePostForModel', function (t) {
     enforceDocumentScope.__set__("internals.verifyScope", verifyScope);
     let model = {};
     let enforceDocumentScopePostForModel = enforceDocumentScope.enforceDocumentScopePost(model, Log);
-    let reply = this.spy();
-    let next = this.spy();
+    let h = { continue: 'test' };
 
     let request = {
       auth: {
@@ -662,11 +661,11 @@ test('enforce-document-scope.enforceDocumentScopePostForModel', function (t) {
     //</editor-fold>
 
     //<editor-fold desc="Act">
-    let result = enforceDocumentScopePostForModel(request, reply, next);
+    let result = enforceDocumentScopePostForModel(request, h);
     //</editor-fold>
 
     //<editor-fold desc="Assert">
-    t.ok(next.calledWithExactly(null, true), "next called with correct args");
+    t.equals(result, 'test', "h.continue returned");
     //</editor-fold>
 
     //<editor-fold desc="Restore">
@@ -684,8 +683,7 @@ test('enforce-document-scope.enforceDocumentScopePostForModel', function (t) {
     enforceDocumentScope.__set__("internals.verifyScope", verifyScope);
     let model = {};
     let enforceDocumentScopePostForModel = enforceDocumentScope.enforceDocumentScopePost(model, Log);
-    let reply = this.spy();
-    let next = this.spy();
+    let h = { continue: 'test' }
     let mockLog = Log.bind("enforceDocumentScopePost");
 
     let request = {
@@ -709,7 +707,7 @@ test('enforce-document-scope.enforceDocumentScopePostForModel', function (t) {
     //</editor-fold>
 
     //<editor-fold desc="Act">
-    let result = enforceDocumentScopePostForModel(request, reply, next);
+    let result = enforceDocumentScopePostForModel(request, h);
     //</editor-fold>
 
     //<editor-fold desc="Assert">
@@ -731,8 +729,7 @@ test('enforce-document-scope.enforceDocumentScopePostForModel', function (t) {
     enforceDocumentScope.__set__("internals.verifyScope", verifyScope);
     let model = {};
     let enforceDocumentScopePostForModel = enforceDocumentScope.enforceDocumentScopePost(model, Log);
-    let reply = this.spy();
-    let next = this.spy();
+    let h = { continue: 'test' };
     let mockLog = Log.bind("enforceDocumentScopePost");
 
     let request = {
@@ -757,7 +754,7 @@ test('enforce-document-scope.enforceDocumentScopePostForModel', function (t) {
     //</editor-fold>
 
     //<editor-fold desc="Act">
-    let result = enforceDocumentScopePostForModel(request, reply, next);
+    let result = enforceDocumentScopePostForModel(request, h);
     //</editor-fold>
 
     //<editor-fold desc="Assert">
@@ -779,8 +776,7 @@ test('enforce-document-scope.enforceDocumentScopePostForModel', function (t) {
     enforceDocumentScope.__set__("internals.verifyScope", verifyScope);
     let model = {};
     let enforceDocumentScopePostForModel = enforceDocumentScope.enforceDocumentScopePost(model, Log);
-    let reply = this.spy();
-    let next = this.spy();
+    let h = { continue: 'test' };
     let mockLog = Log.bind("enforceDocumentScopePost");
 
     let request = {
@@ -805,11 +801,11 @@ test('enforce-document-scope.enforceDocumentScopePostForModel', function (t) {
     //</editor-fold>
 
     //<editor-fold desc="Act">
-    let result = enforceDocumentScopePostForModel(request, reply, next);
+    let result = enforceDocumentScopePostForModel(request, h);
     //</editor-fold>
 
     //<editor-fold desc="Assert">
-    t.deepEqual(next.args[0], [null, true], "next called with correct args");
+      t.equals(result, 'test', "h.continue returned");
     //</editor-fold>
 
     //<editor-fold desc="Restore">
@@ -828,8 +824,7 @@ test('enforce-document-scope.enforceDocumentScopePostForModel', function (t) {
     enforceDocumentScope.__set__("config.enableDocumentScopeFail", false);
     let model = {};
     let enforceDocumentScopePostForModel = enforceDocumentScope.enforceDocumentScopePost(model, Log);
-    let reply = this.spy();
-    let next = this.spy();
+    let h = { continue: 'test' }
     let mockLog = Log.bind("enforceDocumentScopePost");
 
     let request = {
@@ -855,11 +850,17 @@ test('enforce-document-scope.enforceDocumentScopePostForModel', function (t) {
     //</editor-fold>
 
     //<editor-fold desc="Act">
-    let result = enforceDocumentScopePostForModel(request, reply, next);
+      let result
+      try {
+        result = enforceDocumentScopePostForModel(request, h);
+      }
+      catch (err) {
+        result = err;
+      }
     //</editor-fold>
 
     //<editor-fold desc="Assert">
-    t.deepEqual(next.args[0], [Boom.forbidden("Insufficient document scope."), false], "next called with correct args");
+    t.deepEqual(result, Boom.forbidden("Insufficient document scope."), "boom error thrown");
     //</editor-fold>
 
     //<editor-fold desc="Restore">
@@ -878,8 +879,7 @@ test('enforce-document-scope.enforceDocumentScopePostForModel', function (t) {
     enforceDocumentScope.__set__("config.enableDocumentScopeFail", true);
     let model = {};
     let enforceDocumentScopePostForModel = enforceDocumentScope.enforceDocumentScopePost(model, Log);
-    let reply = this.spy();
-    let next = this.spy();
+    let h = { continue: 'test' }
     let mockLog = Log.bind("enforceDocumentScopePost");
 
     let request = {
@@ -904,11 +904,16 @@ test('enforce-document-scope.enforceDocumentScopePostForModel', function (t) {
     //</editor-fold>
 
     //<editor-fold desc="Act">
-    let result = enforceDocumentScopePostForModel(request, reply, next);
+      let result
+      try {
+         result = enforceDocumentScopePostForModel(request, h);
+      } catch (err) {
+        result = err
+      }
     //</editor-fold>
 
     //<editor-fold desc="Assert">
-    t.deepEqual(next.args[0], [Boom.forbidden("Insufficient document scope."), false], "next called with correct args");
+    t.deepEqual(result, Boom.forbidden("Insufficient document scope."), "boom error thrown");
     //</editor-fold>
 
     //<editor-fold desc="Restore">
@@ -927,8 +932,7 @@ test('enforce-document-scope.enforceDocumentScopePostForModel', function (t) {
     enforceDocumentScope.__set__("config.enableDocumentScopeFail", false);
     let model = {};
     let enforceDocumentScopePostForModel = enforceDocumentScope.enforceDocumentScopePost(model, Log);
-    let reply = this.spy();
-    let next = this.spy();
+    let h = { continue: 'test' }
     let mockLog = Log.bind("enforceDocumentScopePost");
 
     let request = {
@@ -952,12 +956,17 @@ test('enforce-document-scope.enforceDocumentScopePostForModel', function (t) {
     //</editor-fold>
 
     //<editor-fold desc="Act">
-    let result = enforceDocumentScopePostForModel(request, reply, next);
+      let result
+      try {
+        result = enforceDocumentScopePostForModel(request, h);
+      } catch (err) {
+        result = err
+      }
     //</editor-fold>
 
     //<editor-fold desc="Assert">
     t.deepEqual(request.response.source.docs, [{ "error": "Insufficient document scope." }, { _id: "authorized doc" }], "unauthorized docs replaced");
-    t.deepEqual(next.args[0], [null, true], "next called with correct args");
+    t.deepEqual(result, 'test', "h.continue returned");
     //</editor-fold>
 
     //<editor-fold desc="Restore">
@@ -977,8 +986,7 @@ test('enforce-document-scope.enforceDocumentScopePreForModel', function (t) {
     enforceDocumentScope.__set__("internals.verifyScopeById", verifyScopeById);
     let model = {};
     let enforceDocumentScopePreForModel = enforceDocumentScope.enforceDocumentScopePre(model, Log);
-    let reply = this.spy();
-    let next = this.spy();
+    let h = { continue: 'test' }
 
     let request = {
       auth: {
@@ -992,11 +1000,11 @@ test('enforce-document-scope.enforceDocumentScopePreForModel', function (t) {
     //</editor-fold>
 
     //<editor-fold desc="Act">
-    let result = enforceDocumentScopePreForModel(request, reply, next);
+    let result = enforceDocumentScopePreForModel(request, h);
     //</editor-fold>
 
     //<editor-fold desc="Assert">
-    t.ok(next.calledWithExactly(null, true), "next called with correct args");
+      t.deepEqual(result, 'test', "h.continue returned");
     //</editor-fold>
 
     //<editor-fold desc="Restore">
@@ -1014,8 +1022,7 @@ test('enforce-document-scope.enforceDocumentScopePreForModel', function (t) {
     enforceDocumentScope.__set__("internals.verifyScopeById", verifyScopeById);
     let model = {};
     let enforceDocumentScopePreForModel = enforceDocumentScope.enforceDocumentScopePre(model, Log);
-    let reply = this.spy();
-    let next = this.spy();
+    let h = { continue: 'test' }
     let mockLog = Log.bind("enforceDocumentScopePre");
 
     let request = {
@@ -1036,7 +1043,7 @@ test('enforce-document-scope.enforceDocumentScopePreForModel', function (t) {
     //</editor-fold>
 
     //<editor-fold desc="Act">
-    let result = enforceDocumentScopePreForModel(request, reply, next);
+    let result = enforceDocumentScopePreForModel(request, h);
     //</editor-fold>
 
     //<editor-fold desc="Assert">
@@ -1058,8 +1065,7 @@ test('enforce-document-scope.enforceDocumentScopePreForModel', function (t) {
     enforceDocumentScope.__set__("internals.verifyScopeById", verifyScopeById);
     let model = {};
     let enforceDocumentScopePreForModel = enforceDocumentScope.enforceDocumentScopePre(model, Log);
-    let reply = this.spy();
-    let next = this.spy();
+    let h = { continue: 'test' }
     let mockLog = Log.bind("enforceDocumentScopePre");
 
     let request = {
@@ -1080,7 +1086,7 @@ test('enforce-document-scope.enforceDocumentScopePreForModel', function (t) {
     //</editor-fold>
 
     //<editor-fold desc="Act">
-    let result = enforceDocumentScopePreForModel(request, reply, next);
+    let result = enforceDocumentScopePreForModel(request, h);
     //</editor-fold>
 
     //<editor-fold desc="Assert">
@@ -1102,8 +1108,7 @@ test('enforce-document-scope.enforceDocumentScopePreForModel', function (t) {
     enforceDocumentScope.__set__("internals.verifyScopeById", verifyScopeById);
     let model = {};
     let enforceDocumentScopePreForModel = enforceDocumentScope.enforceDocumentScopePre(model, Log);
-    let reply = this.spy();
-    let next = this.spy();
+    let h = { continue: 'test' }
     let mockLog = Log.bind("enforceDocumentScopePre");
 
     let request = {
@@ -1124,7 +1129,7 @@ test('enforce-document-scope.enforceDocumentScopePreForModel', function (t) {
     //</editor-fold>
 
     //<editor-fold desc="Act">
-    let result = enforceDocumentScopePreForModel(request, reply, next);
+    let result = enforceDocumentScopePreForModel(request, h);
     //</editor-fold>
 
     //<editor-fold desc="Assert">
@@ -1146,8 +1151,7 @@ test('enforce-document-scope.enforceDocumentScopePreForModel', function (t) {
     enforceDocumentScope.__set__("internals.verifyScopeById", verifyScopeById);
     let model = {};
     let enforceDocumentScopePreForModel = enforceDocumentScope.enforceDocumentScopePre(model, Log);
-    let reply = this.spy();
-    let next = this.spy();
+    let h = { continue: 'test' }
     let mockLog = Log.bind("enforceDocumentScopePre");
 
     let request = {
@@ -1168,7 +1172,7 @@ test('enforce-document-scope.enforceDocumentScopePreForModel', function (t) {
     //</editor-fold>
 
     //<editor-fold desc="Act">
-    let result = enforceDocumentScopePreForModel(request, reply, next);
+    let result = enforceDocumentScopePreForModel(request, h);
     //</editor-fold>
 
     //<editor-fold desc="Assert">
@@ -1190,8 +1194,7 @@ test('enforce-document-scope.enforceDocumentScopePreForModel', function (t) {
     enforceDocumentScope.__set__("internals.verifyScopeById", verifyScopeById);
     let model = {};
     let enforceDocumentScopePreForModel = enforceDocumentScope.enforceDocumentScopePre(model, Log);
-    let reply = this.spy();
-    let next = this.spy();
+    let h = { continue: 'test' }
     let mockLog = Log.bind("enforceDocumentScopePre");
 
     let request = {
@@ -1212,7 +1215,7 @@ test('enforce-document-scope.enforceDocumentScopePreForModel', function (t) {
     //</editor-fold>
 
     //<editor-fold desc="Act">
-    let result = enforceDocumentScopePreForModel(request, reply, next);
+    let result = enforceDocumentScopePreForModel(request, h);
     //</editor-fold>
 
     //<editor-fold desc="Assert">
@@ -1235,10 +1238,7 @@ test('enforce-document-scope.enforceDocumentScopePreForModel', function (t) {
     enforceDocumentScope.__set__("internals.verifyScopeById", verifyScopeById);
     let model = {};
     let enforceDocumentScopePreForModel = enforceDocumentScope.enforceDocumentScopePre(model, Log);
-    let reply = this.spy();
-    let next = this.spy(function() {
-      deferred.resolve();
-    });
+    let h = { continue: 'test' }
     let mockLog = Log.bind("enforceDocumentScopePre");
 
     let request = {
@@ -1259,13 +1259,13 @@ test('enforce-document-scope.enforceDocumentScopePreForModel', function (t) {
     //</editor-fold>
 
     //<editor-fold desc="Act">
-    let result = enforceDocumentScopePreForModel(request, reply, next);
+    let result = enforceDocumentScopePreForModel(request, h);
     //</editor-fold>
 
     //<editor-fold desc="Assert">
-    deferred.promise
+    result
         .then(function(result) {
-          t.deepEqual(next.args[0], [null, true], "next called with correct args");
+            t.deepEqual(result, 'test', "h.continue returned");
         });
     //</editor-fold>
 
@@ -1286,10 +1286,7 @@ test('enforce-document-scope.enforceDocumentScopePreForModel', function (t) {
     enforceDocumentScope.__set__("config.enableDocumentScopeFail", true);
     let model = {};
     let enforceDocumentScopePreForModel = enforceDocumentScope.enforceDocumentScopePre(model, Log);
-    let reply = this.spy();
-    let next = this.spy(function() {
-      deferred.resolve();
-    });
+    let h = { continue: 'test' }
     let mockLog = Log.bind("enforceDocumentScopePre");
 
     let request = {
@@ -1310,13 +1307,13 @@ test('enforce-document-scope.enforceDocumentScopePreForModel', function (t) {
     //</editor-fold>
 
     //<editor-fold desc="Act">
-    let result = enforceDocumentScopePreForModel(request, reply, next);
+    let result = enforceDocumentScopePreForModel(request, h);
     //</editor-fold>
 
     //<editor-fold desc="Assert">
-    deferred.promise
-        .then(function(result) {
-          t.deepEqual(next.args[0], [Boom.forbidden("Insufficient document scope."), false], "next called with correct args");
+    result
+        .catch(function (err) {
+            t.deepEqual(err, Boom.forbidden("Insufficient document scope."), "boom error thrown");
         });
     //</editor-fold>
 
@@ -1337,10 +1334,7 @@ test('enforce-document-scope.enforceDocumentScopePreForModel', function (t) {
     enforceDocumentScope.__set__("config.enableDocumentScopeFail", false);
     let model = {};
     let enforceDocumentScopePreForModel = enforceDocumentScope.enforceDocumentScopePre(model, Log);
-    let reply = this.spy();
-    let next = this.spy(function() {
-      deferred.resolve();
-    });
+    let h = { continue: 'test' }
     let mockLog = Log.bind("enforceDocumentScopePre");
 
     let request = {
@@ -1361,14 +1355,14 @@ test('enforce-document-scope.enforceDocumentScopePreForModel', function (t) {
     //</editor-fold>
 
     //<editor-fold desc="Act">
-    let result = enforceDocumentScopePreForModel(request, reply, next);
+    let result = enforceDocumentScopePreForModel(request, h);
     //</editor-fold>
 
     //<editor-fold desc="Assert">
-    deferred.promise
-        .then(function(result) {
-          t.deepEqual(next.args[0], [Boom.forbidden("Insufficient document scope."), false], "next called with correct args");
-        });
+      result
+          .catch(function (err) {
+              t.deepEqual(err, Boom.forbidden("Insufficient document scope."), "boom error thrown");
+          });
     //</editor-fold>
 
     //<editor-fold desc="Restore">
@@ -1388,10 +1382,7 @@ test('enforce-document-scope.enforceDocumentScopePreForModel', function (t) {
     enforceDocumentScope.__set__("config.enableDocumentScopeFail", false);
     let model = {};
     let enforceDocumentScopePreForModel = enforceDocumentScope.enforceDocumentScopePre(model, Log);
-    let reply = this.spy();
-    let next = this.spy(function() {
-      deferred.resolve();
-    });
+    let h = { continue: 'test' }
     let mockLog = Log.bind("enforceDocumentScopePre");
 
     let request = {
@@ -1412,14 +1403,14 @@ test('enforce-document-scope.enforceDocumentScopePreForModel', function (t) {
     //</editor-fold>
 
     //<editor-fold desc="Act">
-    let result = enforceDocumentScopePreForModel(request, reply, next);
+    let result = enforceDocumentScopePreForModel(request, h);
     //</editor-fold>
 
     //<editor-fold desc="Assert">
-    deferred.promise
-        .then(function(result) {
-          t.deepEqual(next.args[0], [Boom.forbidden("Insufficient document scope."), false], "next called with correct args");
-        });
+      result
+          .catch(function (err) {
+              t.deepEqual(err, Boom.forbidden("Insufficient document scope."), "boom error thrown");
+          });
     //</editor-fold>
 
     //<editor-fold desc="Restore">
@@ -1439,10 +1430,7 @@ test('enforce-document-scope.enforceDocumentScopePreForModel', function (t) {
     enforceDocumentScope.__set__("config.enableDocumentScopeFail", false);
     let model = {};
     let enforceDocumentScopePreForModel = enforceDocumentScope.enforceDocumentScopePre(model, Log);
-    let reply = this.spy();
-    let next = this.spy(function() {
-      deferred.resolve();
-    });
+    let h = { continue: 'test' }
     let mockLog = Log.bind("enforceDocumentScopePre");
 
     let request = {
@@ -1463,11 +1451,11 @@ test('enforce-document-scope.enforceDocumentScopePreForModel', function (t) {
     //</editor-fold>
 
     //<editor-fold desc="Act">
-    let result = enforceDocumentScopePreForModel(request, reply, next);
+    let result = enforceDocumentScopePreForModel(request, h);
     //</editor-fold>
 
     //<editor-fold desc="Assert">
-    deferred.promise
+    result
         .then(function(result) {
           t.deepEqual(request.payload, [{ _id: "authorizedId" }], "payload correctly filtered");
         });

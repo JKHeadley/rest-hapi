@@ -15,21 +15,21 @@ const internals = {};
  */
 internals.trackDuplicatedFields = function(model, mongoose, Log) {
 
-  const trackDuplicatedFieldsForModel = function addDocumentScopeForModel(request, reply, next) {
+  const trackDuplicatedFieldsForModel = function addDocumentScopeForModel(request, h) {
     Log = Log.bind("trackDuplicatedFields");
     try {
       if (_.isError(request.response)) {
-        return next(null, true);
+        return h.continue
       }
       return internals.trackFields(model, mongoose, request.payload, request.response.source, Log)
           .then(function(result) {
-            return next(null, true);
+            return h.continue
           })
 
     }
     catch (err) {
       Log.error("ERROR:", err);
-      return next(Boom.badImplementation(err), false);
+      throw Boom.badImplementation(err)
     }
   };
 

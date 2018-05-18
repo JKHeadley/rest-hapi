@@ -123,8 +123,8 @@ internals.mockStrategy = function(server, strategyName) {
 
   server.auth.scheme('mock', function(server, options) {
     return {
-      authenticate: function(request, reply) {
-        reply.continue();
+      authenticate: function(request, h) {
+        return h.continue
       }
     };
   });

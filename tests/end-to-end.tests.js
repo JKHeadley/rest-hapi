@@ -36,13 +36,13 @@ Test('end to end tests', function (t) {
       .then(function() {
         return t.test('basic CRUD tests', function (t) {
           return Q.when()
-              //basic "Create" works
+              // basic "Create" works
               .then(function () {
                 return t.test('basic "Create" works', function (t) {
                   //<editor-fold desc="Arrange">
                   const RestHapi = require('../rest-hapi');
-                  const server = new Hapi.Server();
-                  server.connection(RestHapi.config.server.connection);
+                  const server = Hapi.Server();
+
 
                   const config = {
                     loglevel: 'ERROR',
@@ -53,7 +53,7 @@ Test('end to end tests', function (t) {
                   RestHapi.config = config;
 
                   return server.register({
-                    register: RestHapi,
+                    plugin: RestHapi,
                     options: {
                       mongoose: Mongoose
                     }
@@ -115,8 +115,8 @@ Test('end to end tests', function (t) {
                 return t.test('basic "List" works', function (t) {
                   //<editor-fold desc="Arrange">
                   const RestHapi = require('../rest-hapi');
-                  const server = new Hapi.Server();
-                  server.connection(RestHapi.config.server.connection);
+                  const server = Hapi.Server();
+
 
                   const config = {
                     loglevel: 'ERROR',
@@ -127,7 +127,7 @@ Test('end to end tests', function (t) {
                   RestHapi.config = config;
 
                   return server.register({
-                    register: RestHapi,
+                    plugin: RestHapi,
                     options: {
                       mongoose: Mongoose
                     }
@@ -179,6 +179,9 @@ Test('end to end tests', function (t) {
                         Decache('../rest-hapi');
                         Object.keys(Mongoose.models).forEach(function(key) { delete Mongoose.models[key]; });
                         Object.keys(Mongoose.modelSchemas).forEach(function(key) { delete Mongoose.modelSchemas[key]; });
+                      })
+                      .catch((err) => {
+                          Log.error(err)
                       });
                   //</editor-fold>
                 });
@@ -189,7 +192,7 @@ Test('end to end tests', function (t) {
                   //<editor-fold desc="Arrange">
                   const RestHapi = require('../rest-hapi');
                   const server = new Hapi.Server();
-                  server.connection(RestHapi.config.server.connection);
+
 
                   const config = {
                     loglevel: 'ERROR',
@@ -200,7 +203,7 @@ Test('end to end tests', function (t) {
                   RestHapi.config = config;
 
                   return server.register({
-                    register: RestHapi,
+                    plugin: RestHapi,
                     options: {
                       mongoose: Mongoose
                     }
@@ -264,7 +267,7 @@ Test('end to end tests', function (t) {
                   //<editor-fold desc="Arrange">
                   const RestHapi = require('../rest-hapi');
                   const server = new Hapi.Server();
-                  server.connection(RestHapi.config.server.connection);
+
 
                   const config = {
                     loglevel: "ERROR",
@@ -276,7 +279,7 @@ Test('end to end tests', function (t) {
 
 
                   return server.register({
-                    register: RestHapi,
+                    plugin: RestHapi,
                     options: {
                       mongoose: Mongoose
                     }
@@ -342,7 +345,7 @@ Test('end to end tests', function (t) {
                   //<editor-fold desc="Arrange">
                   const RestHapi = require('../rest-hapi');
                   const server = new Hapi.Server();
-                  server.connection(RestHapi.config.server.connection);
+
 
                   const config = {
                     loglevel: "ERROR",
@@ -354,7 +357,7 @@ Test('end to end tests', function (t) {
 
 
                   return server.register({
-                    register: RestHapi,
+                    plugin: RestHapi,
                     options: {
                       mongoose: Mongoose
                     }
@@ -429,7 +432,7 @@ Test('end to end tests', function (t) {
                   //<editor-fold desc="Arrange">
                   const RestHapi = require('../rest-hapi');
                   const server = new Hapi.Server();
-                  server.connection(RestHapi.config.server.connection);
+
 
                   const authStrategy = 'testStrategy';
 
@@ -445,7 +448,7 @@ Test('end to end tests', function (t) {
                   RestHapi.config = config;
 
                   return server.register({
-                    register: RestHapi,
+                    plugin: RestHapi,
                     options: {
                       mongoose: Mongoose
                     }
@@ -525,7 +528,7 @@ Test('end to end tests', function (t) {
                   //<editor-fold desc="Arrange">
                   const RestHapi = require('../rest-hapi');
                   const server = new Hapi.Server();
-                  server.connection(RestHapi.config.server.connection);
+
 
                   const authStrategy = 'testStrategy';
 
@@ -541,7 +544,7 @@ Test('end to end tests', function (t) {
                   RestHapi.config = config;
 
                   return server.register({
-                    register: RestHapi,
+                    plugin: RestHapi,
                     options: {
                       mongoose: Mongoose
                     }
@@ -599,7 +602,7 @@ Test('end to end tests', function (t) {
                   //<editor-fold desc="Arrange">
                   const RestHapi = require('../rest-hapi');
                   const server = new Hapi.Server();
-                  server.connection(RestHapi.config.server.connection);
+
 
                   const authStrategy = 'testStrategy';
 
@@ -615,7 +618,7 @@ Test('end to end tests', function (t) {
                   RestHapi.config = config;
 
                   return server.register({
-                    register: RestHapi,
+                    plugin: RestHapi,
                     options: {
                       mongoose: Mongoose
                     }
@@ -686,7 +689,7 @@ Test('end to end tests', function (t) {
                   //<editor-fold desc="Arrange">
                   const RestHapi = require('../rest-hapi');
                   const server = new Hapi.Server();
-                  server.connection(RestHapi.config.server.connection);
+
 
                   const config = {
                     loglevel: 'ERROR',
@@ -701,7 +704,7 @@ Test('end to end tests', function (t) {
                   let userProfile = {};
 
                   return server.register({
-                    register: RestHapi,
+                    plugin: RestHapi,
                     options: {
                       mongoose: Mongoose
                     }
@@ -824,7 +827,7 @@ Test('end to end tests', function (t) {
                   //<editor-fold desc="Arrange">
                   const RestHapi = require('../rest-hapi');
                   const server = new Hapi.Server();
-                  server.connection(RestHapi.config.server.connection);
+
 
                   const config = {
                     loglevel: 'ERROR',
@@ -838,7 +841,7 @@ Test('end to end tests', function (t) {
                   RestHapi.config = config;
 
                   return server.register({
-                    register: RestHapi,
+                    plugin: RestHapi,
                     options: {
                       mongoose: Mongoose
                     }
@@ -1057,7 +1060,7 @@ Test('end to end tests', function (t) {
                   //<editor-fold desc="Arrange">
                   const RestHapi = require('../rest-hapi');
                   const server = new Hapi.Server();
-                  server.connection(RestHapi.config.server.connection);
+
 
                   const config = {
                     loglevel: 'ERROR',
@@ -1071,7 +1074,7 @@ Test('end to end tests', function (t) {
                   RestHapi.config = config;
 
                   return server.register({
-                    register: RestHapi,
+                    plugin: RestHapi,
                     options: {
                       mongoose: Mongoose
                     }
@@ -1322,7 +1325,7 @@ Test('end to end tests', function (t) {
                   //<editor-fold desc="Arrange">
                   const RestHapi = require('../rest-hapi');
                   const server = new Hapi.Server();
-                  server.connection(RestHapi.config.server.connection);
+
 
                   const config = {
                     loglevel: 'ERROR',
@@ -1336,7 +1339,7 @@ Test('end to end tests', function (t) {
                   RestHapi.config = config;
 
                   return server.register({
-                    register: RestHapi,
+                    plugin: RestHapi,
                     options: {
                       mongoose: Mongoose
                     }
@@ -1522,7 +1525,7 @@ Test('end to end tests', function (t) {
                   //<editor-fold desc="Arrange">
                   const RestHapi = require('../rest-hapi');
                   const server = new Hapi.Server();
-                  server.connection(RestHapi.config.server.connection);
+
 
                   const config = {
                     loglevel: 'ERROR',
@@ -1536,7 +1539,7 @@ Test('end to end tests', function (t) {
                   RestHapi.config = config;
 
                   return server.register({
-                    register: RestHapi,
+                    plugin: RestHapi,
                     options: {
                       mongoose: Mongoose
                     }
@@ -1654,7 +1657,7 @@ Test('end to end tests', function (t) {
                   //<editor-fold desc="Arrange">
                   const RestHapi = require('../rest-hapi');
                   const server = new Hapi.Server();
-                  server.connection(RestHapi.config.server.connection);
+
 
                   const config = {
                     loglevel: 'ERROR',
@@ -1668,7 +1671,7 @@ Test('end to end tests', function (t) {
                   RestHapi.config = config;
 
                   return server.register({
-                    register: RestHapi,
+                    plugin: RestHapi,
                     options: {
                       mongoose: Mongoose
                     }
@@ -1816,7 +1819,7 @@ Test('end to end tests', function (t) {
                   //<editor-fold desc="Arrange">
                   const RestHapi = require('../rest-hapi');
                   const server = new Hapi.Server();
-                  server.connection(RestHapi.config.server.connection);
+
 
                   const config = {
                     loglevel: 'ERROR',
@@ -1830,7 +1833,7 @@ Test('end to end tests', function (t) {
                   RestHapi.config = config;
 
                   return server.register({
-                    register: RestHapi,
+                    plugin: RestHapi,
                     options: {
                       mongoose: Mongoose
                     }
@@ -1931,7 +1934,7 @@ Test('end to end tests', function (t) {
                   //<editor-fold desc="Arrange">
                   const RestHapi = require('../rest-hapi');
                   const server = new Hapi.Server();
-                  server.connection(RestHapi.config.server.connection);
+
 
                   const config = {
                     loglevel: 'ERROR',
@@ -1946,7 +1949,7 @@ Test('end to end tests', function (t) {
                   let userProfile = {};
 
                   return server.register({
-                    register: RestHapi,
+                    plugin: RestHapi,
                     options: {
                       mongoose: Mongoose
                     }
@@ -2069,7 +2072,7 @@ Test('end to end tests', function (t) {
                   //<editor-fold desc="Arrange">
                   const RestHapi = require('../rest-hapi');
                   const server = new Hapi.Server();
-                  server.connection(RestHapi.config.server.connection);
+
 
                   const config = {
                     loglevel: 'ERROR',
@@ -2083,7 +2086,7 @@ Test('end to end tests', function (t) {
                   RestHapi.config = config;
 
                   return server.register({
-                    register: RestHapi,
+                    plugin: RestHapi,
                     options: {
                       mongoose: Mongoose
                     }
@@ -2302,7 +2305,7 @@ Test('end to end tests', function (t) {
                   //<editor-fold desc="Arrange">
                   const RestHapi = require('../rest-hapi');
                   const server = new Hapi.Server();
-                  server.connection(RestHapi.config.server.connection);
+
 
                   const config = {
                     loglevel: 'ERROR',
@@ -2316,7 +2319,7 @@ Test('end to end tests', function (t) {
                   RestHapi.config = config;
 
                   return server.register({
-                    register: RestHapi,
+                    plugin: RestHapi,
                     options: {
                       mongoose: Mongoose
                     }
@@ -2568,7 +2571,7 @@ Test('end to end tests', function (t) {
                   //<editor-fold desc="Arrange">
                   const RestHapi = require('../rest-hapi');
                   const server = new Hapi.Server();
-                  server.connection(RestHapi.config.server.connection);
+
 
                   const config = {
                     loglevel: 'ERROR',
@@ -2582,7 +2585,7 @@ Test('end to end tests', function (t) {
                   RestHapi.config = config;
 
                   return server.register({
-                    register: RestHapi,
+                    plugin: RestHapi,
                     options: {
                       mongoose: Mongoose
                     }
@@ -2768,7 +2771,7 @@ Test('end to end tests', function (t) {
                   //<editor-fold desc="Arrange">
                   const RestHapi = require('../rest-hapi');
                   const server = new Hapi.Server();
-                  server.connection(RestHapi.config.server.connection);
+
 
                   const config = {
                     loglevel: 'ERROR',
@@ -2782,7 +2785,7 @@ Test('end to end tests', function (t) {
                   RestHapi.config = config;
 
                   return server.register({
-                    register: RestHapi,
+                    plugin: RestHapi,
                     options: {
                       mongoose: Mongoose
                     }
@@ -2899,7 +2902,7 @@ Test('end to end tests', function (t) {
                   //<editor-fold desc="Arrange">
                   const RestHapi = require('../rest-hapi');
                   const server = new Hapi.Server();
-                  server.connection(RestHapi.config.server.connection);
+
 
                   const config = {
                     loglevel: 'ERROR',
@@ -2913,7 +2916,7 @@ Test('end to end tests', function (t) {
                   RestHapi.config = config;
 
                   return server.register({
-                    register: RestHapi,
+                    plugin: RestHapi,
                     options: {
                       mongoose: Mongoose
                     }
@@ -3061,7 +3064,7 @@ Test('end to end tests', function (t) {
                   //<editor-fold desc="Arrange">
                   const RestHapi = require('../rest-hapi');
                   const server = new Hapi.Server();
-                  server.connection(RestHapi.config.server.connection);
+
 
                   const config = {
                     loglevel: 'ERROR',
@@ -3075,7 +3078,7 @@ Test('end to end tests', function (t) {
                   RestHapi.config = config;
 
                   return server.register({
-                    register: RestHapi,
+                    plugin: RestHapi,
                     options: {
                       mongoose: Mongoose
                     }
@@ -3176,7 +3179,7 @@ Test('end to end tests', function (t) {
                   //<editor-fold desc="Arrange">
                   const RestHapi = require('../rest-hapi');
                   const server = new Hapi.Server({ debug: false });
-                  server.connection(RestHapi.config.server.connection);
+                  
 
                   const authStrategy = 'testStrategy';
 
@@ -3194,7 +3197,7 @@ Test('end to end tests', function (t) {
                   RestHapi.config = config;
 
                   return server.register({
-                    register: RestHapi,
+                    plugin: RestHapi,
                     options: {
                       mongoose: Mongoose
                     }
@@ -3415,7 +3418,7 @@ Test('end to end tests', function (t) {
                   //<editor-fold desc="Arrange">
                   const RestHapi = require('../rest-hapi');
                   const server = new Hapi.Server({ debug: false });
-                  server.connection(RestHapi.config.server.connection);
+                  
 
                   const config = {
                     loglevel: 'NONE',
@@ -3429,7 +3432,7 @@ Test('end to end tests', function (t) {
                   RestHapi.config = config;
 
                   return server.register({
-                    register: RestHapi,
+                    plugin: RestHapi,
                     options: {
                       mongoose: Mongoose
                     }
@@ -3555,7 +3558,7 @@ Test('end to end tests', function (t) {
                   //<editor-fold desc="Arrange">
                   const RestHapi = require('../rest-hapi');
                   const server = new Hapi.Server();
-                  server.connection(RestHapi.config.server.connection);
+                  
 
                   const authStrategy = 'testStrategy';
 
@@ -3573,7 +3576,7 @@ Test('end to end tests', function (t) {
                   RestHapi.config = config;
 
                   return server.register({
-                    register: RestHapi,
+                    plugin: RestHapi,
                     options: {
                       mongoose: Mongoose
                     }
@@ -3736,7 +3739,7 @@ Test('end to end tests', function (t) {
                   //<editor-fold desc="Arrange">
                   const RestHapi = require('../rest-hapi');
                   const server = new Hapi.Server();
-                  server.connection(RestHapi.config.server.connection);
+                  
 
                   const authStrategy = 'testStrategy';
 
@@ -3755,7 +3758,7 @@ Test('end to end tests', function (t) {
                   RestHapi.config = config;
 
                   return server.register({
-                    register: RestHapi,
+                    plugin: RestHapi,
                     options: {
                       mongoose: Mongoose
                     }
@@ -3883,7 +3886,7 @@ Test('end to end tests', function (t) {
                   //<editor-fold desc="Arrange">
                   const RestHapi = require('../rest-hapi');
                   const server = new Hapi.Server();
-                  server.connection(RestHapi.config.server.connection);
+                  
 
                   const authStrategy = 'testStrategy';
 
@@ -3902,7 +3905,7 @@ Test('end to end tests', function (t) {
                   RestHapi.config = config;
 
                   return server.register({
-                    register: RestHapi,
+                    plugin: RestHapi,
                     options: {
                       mongoose: Mongoose
                     }
@@ -4030,7 +4033,7 @@ Test('end to end tests', function (t) {
                   //<editor-fold desc="Arrange">
                   const RestHapi = require('../rest-hapi');
                   const server = new Hapi.Server();
-                  server.connection(RestHapi.config.server.connection);
+                  
 
                   const authStrategy = 'testStrategy';
 
@@ -4048,7 +4051,7 @@ Test('end to end tests', function (t) {
                   RestHapi.config = config;
 
                   return server.register({
-                    register: RestHapi,
+                    plugin: RestHapi,
                     options: {
                       mongoose: Mongoose
                     }
@@ -4567,7 +4570,7 @@ Test('end to end tests', function (t) {
                   //<editor-fold desc="Arrange">
                   const RestHapi = require('../rest-hapi');
                   const server = new Hapi.Server();
-                  server.connection(RestHapi.config.server.connection);
+                  
 
                   const authStrategy = 'testStrategy';
 
@@ -4585,7 +4588,7 @@ Test('end to end tests', function (t) {
                   RestHapi.config = config;
 
                   return server.register({
-                    register: RestHapi,
+                    plugin: RestHapi,
                     options: {
                       mongoose: Mongoose
                     }
@@ -4997,7 +5000,7 @@ Test('end to end tests', function (t) {
                   //<editor-fold desc="Arrange">
                   const RestHapi = require('../rest-hapi');
                   const server = new Hapi.Server();
-                  server.connection(RestHapi.config.server.connection);
+                  
 
                   const config = {
                     loglevel: 'ERROR',
@@ -5012,7 +5015,7 @@ Test('end to end tests', function (t) {
                   RestHapi.config = config;
 
                   return server.register({
-                    register: RestHapi,
+                    plugin: RestHapi,
                     options: {
                       mongoose: Mongoose
                     }
@@ -5211,7 +5214,7 @@ Test('end to end tests', function (t) {
                   //<editor-fold desc="Arrange">
                   const RestHapi = require('../rest-hapi');
                   const server = new Hapi.Server();
-                  server.connection(RestHapi.config.server.connection);
+                  
 
                   const config = {
                     loglevel: 'ERROR',
@@ -5226,7 +5229,7 @@ Test('end to end tests', function (t) {
                   RestHapi.config = config;
 
                   return server.register({
-                    register: RestHapi,
+                    plugin: RestHapi,
                     options: {
                       mongoose: Mongoose
                     }
@@ -5325,7 +5328,7 @@ Test('end to end tests', function (t) {
                   //<editor-fold desc="Arrange">
                   const RestHapi = require('../rest-hapi');
                   const server = new Hapi.Server();
-                  server.connection(RestHapi.config.server.connection);
+                  
 
                   const config = {
                     loglevel: 'ERROR',
@@ -5340,7 +5343,7 @@ Test('end to end tests', function (t) {
                   RestHapi.config = config;
 
                   return server.register({
-                    register: RestHapi,
+                    plugin: RestHapi,
                     options: {
                       mongoose: Mongoose
                     }
@@ -5471,7 +5474,7 @@ Test('end to end tests', function (t) {
                   //<editor-fold desc="Arrange">
                   const RestHapi = require('../rest-hapi');
                   const server = new Hapi.Server();
-                  server.connection(RestHapi.config.server.connection);
+                  
 
                   const config = {
                     loglevel: 'ERROR',
@@ -5486,7 +5489,7 @@ Test('end to end tests', function (t) {
                   RestHapi.config = config;
 
                   return server.register({
-                    register: RestHapi,
+                    plugin: RestHapi,
                     options: {
                       mongoose: Mongoose
                     }

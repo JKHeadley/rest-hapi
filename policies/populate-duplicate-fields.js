@@ -15,7 +15,7 @@ const internals = {};
  */
 internals.populateDuplicateFields = function(model, mongoose, Log) {
 
-  const populateDuplicateFieldsForModel = function addDocumentScopeForModel(request, reply, next) {
+  const populateDuplicateFieldsForModel = function addDocumentScopeForModel(request, h) {
     Log = Log.bind("populateDuplicateFields");
     try {
       let payload = request.payload;
@@ -57,18 +57,22 @@ internals.populateDuplicateFields = function(model, mongoose, Log) {
 
         return Q.all(promises)
             .then(function (result) {
-              return next(null, true);
+              return h.continue
             })
             .catch(function (err) {
               Log.error("ERROR:", err);
-              return next(Boom.badImplementation(err), false);
+              throw Boom.badImplementation(err)
             })
       }
-      return next(null, true);
+      return h.continue
     }
     catch (err) {
-      Log.error("ERROR:", err);
-      return next(Boom.badImplementation(err), false);
+        Log.error("ERROR:", err);
+        if (err.isBoom) {
+            throw err
+        } else {
+            throw Boom.badImplementation(err)
+        }
     }
   };
 

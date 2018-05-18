@@ -148,24 +148,24 @@ module.exports = function (_mongoose, _server) {
 function generateListHandler(model, options, Log) {
   options = options || {};
 
-  return function (request, reply) {
+  return function (request, h) {
     try {
       Log.log("params(%s), query(%s), payload(%s)", JSON.stringify(request.params), JSON.stringify(request.query), JSON.stringify(request.payload));
 
-      handlerHelper.listHandler(model, request, Log)
+      return handlerHelper.listHandler(model, request, Log)
           .then(function(result) {
             const pageData = result.pageData;
             delete result.pageData;
-            return reply(result).code(200);
+            return h.response(result).code(200);
           })
           .catch(function(error) {
             var response = errorHelper.formatResponse(error, Log);
-            return reply(response);
+            return response;
           })
     }
     catch(error) {
       Log.error("error: ", error);
-      return reply(Boom.badRequest("There was an error processing the request.", error));
+      throw Boom.badRequest("There was an error processing the request.", error);
     }
   }
 }
@@ -180,22 +180,22 @@ function generateListHandler(model, options, Log) {
 function generateFindHandler(model, options, Log) {
   options = options || {};
 
-  return function (request, reply) {
+  return function (request, h) {
     try {
       Log.log("params(%s), query(%s), payload(%s)", JSON.stringify(request.params), JSON.stringify(request.query), JSON.stringify(request.payload));
 
-      handlerHelper.findHandler(model, request.params._id, request, Log)
+      return handlerHelper.findHandler(model, request.params._id, request, Log)
           .then(function(result) {
-            return reply(result).code(200);
+            return h.response(result).code(200);
           })
           .catch(function(error) {
             var response = errorHelper.formatResponse(error, Log);
-            return reply(response);
+            return response;
           })
     }
     catch(error) {
       Log.error("error: ", error);
-      return reply(Boom.badRequest("There was an error processing the request.", error));
+      throw Boom.badRequest("There was an error processing the request.", error);
     }
   }
 }
@@ -210,22 +210,22 @@ function generateFindHandler(model, options, Log) {
 function generateCreateHandler(model, options, Log) {
   options = options || {};
 
-  return function (request, reply) {
+  return function (request, h) {
     try {
       Log.log("params(%s), query(%s), payload(%s)", JSON.stringify(request.params), JSON.stringify(request.query), JSON.stringify(request.payload));
 
-      handlerHelper.createHandler(model, request, Log)
+      return handlerHelper.createHandler(model, request, Log)
           .then(function(result) {
-            return reply(result).code(201);
+            return h.response(result).code(201);
           })
           .catch(function(error) {
             var response = errorHelper.formatResponse(error, Log);
-            return reply(response);
+            return response;
           })
     }
     catch(error) {
       Log.error(error);
-      return reply(Boom.badRequest("There was an error processing the request.", error));
+      throw Boom.badRequest("There was an error processing the request.", error);
     }
   }
 }
@@ -240,22 +240,22 @@ function generateCreateHandler(model, options, Log) {
 function generateUpdateHandler(model, options, Log) {
   options = options || {};
 
-  return function (request, reply) {
+  return function (request, h) {
     try {
       Log.log("params(%s), query(%s), payload(%s)", JSON.stringify(request.params), JSON.stringify(request.query), JSON.stringify(request.payload));
 
-      handlerHelper.updateHandler(model, request.params._id, request, Log)
+      return handlerHelper.updateHandler(model, request.params._id, request, Log)
           .then(function(result) {
-            return reply(result).code(200);
+            return h.response(result).code(200);
           })
           .catch(function(error) {
             var response = errorHelper.formatResponse(error, Log);
-            return reply(response);
+            return response;
           })
     }
     catch(error) {
       Log.error("error: ", error);
-      return reply(Boom.badRequest("There was an error processing the request.", error));
+      throw Boom.badRequest("There was an error processing the request.", error);
     }
   }
 }
@@ -270,7 +270,7 @@ function generateUpdateHandler(model, options, Log) {
 function generateDeleteHandler(model, options, Log) {
   options = options || {};
 
-  return function (request, reply) {
+  return function (request, h) {
     try {
       Log.log("params(%s), query(%s), payload(%s)", JSON.stringify(request.params), JSON.stringify(request.query), JSON.stringify(request.payload));
 
@@ -283,18 +283,18 @@ function generateDeleteHandler(model, options, Log) {
         promise = handlerHelper.deleteManyHandler(model, request, Log);
       }
 
-      promise
+      return promise
           .then(function(result) {
-            return reply().code(204);
+            return h.response().code(204);
           })
           .catch(function(error) {
             var response = errorHelper.formatResponse(error, Log);
-            return reply(response);
+            return response;
           })
     }
     catch(error) {
       Log.error("error: ", error);
-      return reply(Boom.badRequest("There was an error processing the request.", error));
+      throw Boom.badRequest("There was an error processing the request.", error);
     }
   }
 }
@@ -312,22 +312,22 @@ function generateAssociationAddOneHandler(ownerModel, association, options, Log)
   var childModel = association.include.model;
   var addMethodName = "addOne" + associationName[0].toUpperCase() + associationName.slice(1, -1);
 
-  return function (request, reply) {
+  return function (request, h) {
     try {
       Log.log(addMethodName + " + params(%s), query(%s), payload(%s)", JSON.stringify(request.params), JSON.stringify(request.query), JSON.stringify(request.payload));
 
-      handlerHelper.addOneHandler(ownerModel, request.params.ownerId, childModel, request.params.childId, associationName, request, Log)
+      return handlerHelper.addOneHandler(ownerModel, request.params.ownerId, childModel, request.params.childId, associationName, request, Log)
           .then(function(result) {
-            return reply().code(204);
+            return h.response().code(204);
           })
           .catch(function(error) {
             var response = errorHelper.formatResponse(error, Log);
-            return reply(response);
+            return response;
           })
     }
     catch(error) {
       Log.error("error: ", error);
-      reply(Boom.badRequest("There was an error processing the request.", error));
+      throw Boom.badRequest("There was an error processing the request.", error);
     }
   }
 }
@@ -345,22 +345,22 @@ function generateAssociationRemoveOneHandler(ownerModel, association, options, L
   var childModel = association.include.model;
   var removeMethodName = "removeOne" + associationName[0].toUpperCase() + associationName.slice(1, -1);
 
-  return function (request, reply) {
+  return function (request, h) {
     try {
       Log.log(removeMethodName + " + params(%s), query(%s), payload(%s)", JSON.stringify(request.params), JSON.stringify(request.query), JSON.stringify(request.payload));
 
-      handlerHelper.removeOneHandler(ownerModel, request.params.ownerId, childModel, request.params.childId, associationName, request, Log)
+      return handlerHelper.removeOneHandler(ownerModel, request.params.ownerId, childModel, request.params.childId, associationName, request, Log)
           .then(function(result) {
-            return reply().code(204);
+            return h.response().code(204);
           })
           .catch(function(error) {
             var response = errorHelper.formatResponse(error, Log);
-            return reply(response);
+            return response;
           })
     }
     catch(error) {
       Log.error("error: ", error);
-      reply(Boom.badRequest("There was an error processing the request.", error));
+      throw Boom.badRequest("There was an error processing the request.", error);
     }
   }
 }
@@ -378,22 +378,22 @@ function generateAssociationAddManyHandler(ownerModel, association, options, Log
   var childModel = association.include.model;
   var addMethodName = "addMany" + associationName[0].toUpperCase() + associationName.slice(1);
 
-  return function (request, reply) {
+  return function (request, h) {
     try {
       Log.log(addMethodName + " + params(%s), query(%s), payload(%s)", JSON.stringify(request.params), JSON.stringify(request.query), JSON.stringify(request.payload));
 
-      handlerHelper.addManyHandler(ownerModel, request.params.ownerId, childModel, associationName, request, Log)
+      return handlerHelper.addManyHandler(ownerModel, request.params.ownerId, childModel, associationName, request, Log)
           .then(function(result) {
-            return reply().code(204);
+            return h.response().code(204);
           })
           .catch(function(error) {
             var response = errorHelper.formatResponse(error, Log);
-            return reply(response);
+            return response;
           })
     }
     catch(error) {
       Log.error("error: ", error);
-      reply(Boom.badRequest("There was an error processing the request.", error));
+      throw Boom.badRequest("There was an error processing the request.", error);
     }
   }
 }
@@ -412,23 +412,23 @@ function generateAssociationRemoveManyHandler(ownerModel, association, options, 
   var childModel = association.include.model;
   var removeMethodName = "removeMany" + associationName[0].toUpperCase() + associationName.slice(1);
 
-  return function (request, reply) {
+  return function (request, h) {
     try {
       Log.log(removeMethodName + " + params(%s), query(%s), payload(%s)", JSON.stringify(request.params), JSON.stringify(request.query), JSON.stringify(request.payload));
 
-      handlerHelper.removeManyHandler(ownerModel, request.params.ownerId, childModel, associationName, request, Log)
+      return handlerHelper.removeManyHandler(ownerModel, request.params.ownerId, childModel, associationName, request, Log)
           .then(function(result) {
             Log.debug("result:", result);
-            return reply().code(204);
+            return h.response().code(204);
           })
           .catch(function(error) {
             var response = errorHelper.formatResponse(error, Log);
-            return reply(response);
+            return response;
           })
     }
     catch(error) {
       Log.error("error: ", error);
-      reply(Boom.badRequest("There was an error processing the request.", error));
+      throw Boom.badRequest("There was an error processing the request.", error);
     }
   }
 }
@@ -446,22 +446,22 @@ function generateAssociationGetAllHandler(ownerModel, association, options, Log)
   var childModel = association.include.model;
   var getAllMethodName = association.getAllMethodName || "get" + associationName[0].toUpperCase() + associationName.slice(1);
 
-  return function (request, reply) {
+  return function (request, h) {
     try {
       Log.log(getAllMethodName + " + params(%s), query(%s), payload(%s)", JSON.stringify(request.params), JSON.stringify(request.query), JSON.stringify(request.payload));
 
-      handlerHelper.getAllHandler(ownerModel, request.params.ownerId, childModel, associationName, request, Log)
+      return handlerHelper.getAllHandler(ownerModel, request.params.ownerId, childModel, associationName, request, Log)
           .then(function(result) {
-            return reply(result).code(200);
+            return h.response(result).code(200);
           })
           .catch(function(error) {
             var response = errorHelper.formatResponse(error, Log);
-            return reply(response);
+            return response;
           })
     }
     catch(error) {
       Log.error("error: ", error);
-      reply(Boom.badRequest("There was an error processing the request.", error));
+      throw Boom.badRequest("There was an error processing the request.", error);
     }
   }
 }

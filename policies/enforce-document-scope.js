@@ -12,7 +12,7 @@ const internals = {};
 
 internals.enforceDocumentScopePre = function(model, Log) {
 
-  const enforceDocumentScopePreForModel = function enforceDocumentScopePreForModel(request, reply, next) {
+  const enforceDocumentScopePreForModel = function enforceDocumentScopePreForModel(request, h) {
     Log = Log.bind("enforceDocumentScopePre");
 
     try {
@@ -49,13 +49,13 @@ internals.enforceDocumentScopePre = function(model, Log) {
         }
       }
       else {
-        return next(null, true);
+        return h.continue
       }
 
       return internals.verifyScopeById(model, ids, action, userScope, Log)
           .then(function(result) {
             if (result.authorized) {
-              return next(null, true);
+              return h.continue
             }
             //EXPL: only delete authorized docs
             else if (action === 'delete' && !config.enableDocumentScopeFail && !request.params._id) {
@@ -65,20 +65,28 @@ internals.enforceDocumentScopePre = function(model, Log) {
               request.payload = request.payload.filter(function(item) {
                 return unauthorizedIds.indexOf(item._id) < 0;
               });
-              return next(null, true);
+              return h.continue
             }
             else {
-              return next(Boom.forbidden("Insufficient document scope."), false);
+              throw Boom.forbidden("Insufficient document scope.")
             }
           })
           .catch(function(error) {
             Log.error("ERROR:", error);
-            return next(Boom.badImplementation(error), false);
+            if (error.isBoom) {
+              throw error
+            } else {
+                throw Boom.badImplementation(error)
+            }
           })
     }
     catch (err) {
-      Log.error("ERROR:", err);
-      return next(Boom.badImplementation(err), false);
+        Log.error("ERROR:", err);
+        if (err.isBoom) {
+            throw err
+        } else {
+            throw Boom.badImplementation(err)
+        }
     }
   };
 
@@ -90,12 +98,12 @@ internals.enforceDocumentScopePre.applyPoint = 'onPreHandler';
 
 internals.enforceDocumentScopePost = function(model, Log) {
 
-  const enforceDocumentScopePostForModel = function enforceDocumentScopePostForModel(request, reply, next) {
+  const enforceDocumentScopePostForModel = function enforceDocumentScopePostForModel(request, h) {
     Log = Log.bind("enforceDocumentScopePost");
 
     try {
       if (_.isError(request.response)) {
-        return next(null, true);
+        return h.continue
       }
 
       const userScope = request.auth.credentials.scope;
@@ -120,10 +128,10 @@ internals.enforceDocumentScopePost = function(model, Log) {
         }
 
         if (result.authorized) {
-          return next(null, true);
+          return h.continue
         }
         else if (request.params._id || config.enableDocumentScopeFail) {
-          return next(Boom.forbidden("Insufficient document scope."), false);
+          throw Boom.forbidden("Insufficient document scope.")
         }
         else {
           let unauthorizedIds = result.unauthorizedDocs.map(function(document) {
@@ -139,15 +147,19 @@ internals.enforceDocumentScopePost = function(model, Log) {
             }
           });
 
-          return next(null, true);
+          return h.continue
         }
       }
 
-      return next(null, true);
+      return h.continue
     }
     catch (err) {
-      Log.error("ERROR:", err);
-      return next(Boom.badImplementation(err), false);
+        Log.error("ERROR:", err);
+        if (err.isBoom) {
+            throw err
+        } else {
+            throw Boom.badImplementation(err)
+        }
     }
 
   };

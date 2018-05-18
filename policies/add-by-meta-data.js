@@ -14,10 +14,10 @@ const internals = {};
  */
 internals.addCreatedBy = function(model, Log) {
 
-  const addCreatedByForModel = function addCreatedByForModel(request, reply, next) {
+  const addCreatedByForModel = function addCreatedByForModel(request, h) {
     Log = Log.bind("addCreatedBy");
 
-    return internals.addMeta('create', request, reply, next, Log);
+    return internals.addMeta('create', request, h, Log);
   };
 
   addCreatedByForModel.applyPoint = 'onPreHandler';
@@ -33,10 +33,10 @@ internals.addCreatedBy.applyPoint = 'onPreHandler';
 */
 internals.addUpdatedBy = function(model, Log) {
 
-  const addUpdatedByForModel = function addUpdatedByForModel(request, reply, next) {
+  const addUpdatedByForModel = function addUpdatedByForModel(request, h) {
     Log = Log.bind("addUpdatedBy");
 
-    return internals.addMeta('update', request, reply, next, Log);
+    return internals.addMeta('update', request, h, Log);
   };
 
   addUpdatedByForModel.applyPoint = 'onPreHandler';
@@ -53,7 +53,7 @@ internals.addUpdatedBy.applyPoint = 'onPreHandler';
  */
 internals.addDeletedBy = function(model, Log) {
 
-  const addDeletedByForModel = function addDeletedByForModel(request, reply, next) {
+  const addDeletedByForModel = function addDeletedByForModel(request, h) {
     Log = Log.bind("addDeletedBy");
 
     if (_.isArray(request.payload)) {
@@ -67,7 +67,7 @@ internals.addDeletedBy = function(model, Log) {
       })
     }
 
-    return internals.addMeta('delete', request, reply, next, Log);
+    return internals.addMeta('delete', request, h, Log);
   };
 
   addDeletedByForModel.applyPoint = 'onPreHandler';
@@ -79,12 +79,11 @@ internals.addDeletedBy.applyPoint = 'onPreHandler';
  * Internal function to add the user's _id to a document's relevant meta property.
  * @param action
  * @param request
- * @param reply
- * @param next
+ * @param h
  * @param Log
  * @returns {*}
  */
-internals.addMeta = function(action, request, reply, next, Log) {
+internals.addMeta = function(action, request, h, Log) {
 
   try {
     let metaType = "";
@@ -107,7 +106,7 @@ internals.addMeta = function(action, request, reply, next, Log) {
     if (!userId) {
       let message = 'User _id not found in auth credentials. Please specify the user _id path in "config.userIdKey"';
       Log.error(message);
-      return next(Boom.badRequest(message), false);
+      throw Boom.badRequest(message);
     }
 
     if (_.isArray(request.payload)) {
@@ -120,11 +119,15 @@ internals.addMeta = function(action, request, reply, next, Log) {
       request.payload[metaType] = userId
     }
 
-    return next(null, true);
+    return h.continue;
   }
   catch (err) {
     Log.error("ERROR:", err);
-    return next(Boom.badImplementation(err), false);
+    if (err.isBoom) {
+      throw err
+    } else {
+        throw Boom.badImplementation(err);
+    }
   }
   
 };

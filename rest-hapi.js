@@ -4,8 +4,8 @@ const _ = require('lodash'),
     extend = require('extend'),
     Inert = require('inert'),
     Vision = require('vision'),
-    HS = require('hapi-swagger'),
-    MH = require('mrhorse'),
+    HapiSwagger = require('hapi-swagger'),
+    Mrhorse = require('mrhorse'),
     logging = require('loggin'),
     logUtil = require('./utilities/log-util'),
     chalk = require('chalk'),
@@ -23,9 +23,15 @@ const _ = require('lodash'),
 let modelsGenerated = false;
 let globalModels = {};
 
+const plugin = {
+    name: 'rest-hapi',
+    version: '1.0.0',
+    register
+}
+
 module.exports = {
+    plugin,
     config: defaultConfig,
-    register: register,
     generateModels: generateModels,
     list: handlerHelper.list,
     find: handlerHelper.find,
@@ -46,7 +52,7 @@ module.exports = {
     errorHelper: errorHelper
 };
 
-function register(server, options, next) {
+function register(server, options) {
 
     let config = defaultConfig;
 
@@ -57,11 +63,11 @@ function register(server, options, next) {
     module.exports.logger = logger;
 
     //EXPL: add the logger object to the request object for access later
-    server.ext('onRequest', function (request, reply) {
+    server.ext('onRequest', (request, h) => {
 
         request.logger = logger;
 
-        return reply.continue();
+        return h.continue;
     });
 
     let mongoose = require('./components/mongoose-init')(options.mongoose, logger, config);
@@ -79,8 +85,7 @@ function register(server, options, next) {
 
     let models = {};
 
-    promise
-        .then(function(result) {
+    return promise.then(async function(result) {
             models = result;
 
             //EXPL: setup hapi-swagger plugin
@@ -97,25 +102,21 @@ function register(server, options, next) {
                 schemes: config.enableSwaggerHttps ? ['https'] : ['http'],
                 reuseDefinitions: false
             };
-
-            let HapiSwagger = {
-                register: HS,
-                options: swaggerOptions
-            };
             //endregion
 
-            return server.register([
-                Inert,
-                Vision,
-                HapiSwagger,
-            ])
-        })
-        .then(function () {
+            try {
+                await server.register([
+                    Inert,
+                    Vision,
+                    { plugin: HapiSwagger, options: swaggerOptions }
+                ])
+            } catch (err) {
+                logger.error(err)
+            }
 
             //EXPL: setup mrhorse policy plugin
             //region Mrhorse Plugin
             let policyPath = "";
-            let Mrhorse = null;
 
             if (config.enablePolicies) {
                 if (config.absolutePolicyPath === true) {
@@ -130,29 +131,26 @@ function register(server, options, next) {
                 policyPath = __dirname + '/policies'
             }
 
-            Mrhorse = {
-                register: MH,
-                options: {
-                    policyDirectory: policyPath
-                }
-            };
             //endregion
 
             if (Mrhorse) {
-                return server.register([
-                    Mrhorse
-                ])
-                    .then(function(result) {
-                        if (config.enablePolicies) {
-                            server.plugins.mrhorse.loadPolicies(server, {
-                                policyDirectory: __dirname + '/policies'
-                            }, function(err) {
-                                if (err) {
-                                    logger.error("ERROR:", err);
-                                }
-                            });
-                        }
-                    });
+                try {
+                    await server.register([
+                        { plugin: Mrhorse, options: { policyDirectory: policyPath } }
+                    ])
+
+                    if (config.enablePolicies) {
+                        server.plugins.mrhorse.loadPolicies(server, {
+                            policyDirectory: __dirname + '/policies'
+                        }, function(err) {
+                            if (err) {
+                                logger.error("ERROR:", err);
+                            }
+                        });
+                    }
+                } catch (err) {
+                    logger.error(err);
+                }
             }
             else {
                 return null;
@@ -177,12 +175,8 @@ function register(server, options, next) {
 
             return apiGenerator(server, mongoose, logger, config)
         })
-        .then(function() {
-            next();
-        })
         .catch(function (error) {
             logger.error(error);
-            return next(error);
         })
 }
 
@@ -222,9 +216,3 @@ function getLogger(label) {
 
     return rootLogger;
 }
-
-
-register.attributes = {
-    name: 'rest-hapi',
-    version: '1.0.0'
-};
