@@ -1,13 +1,13 @@
-var Q = require('q');
-var Joi = require('joi');
-var bcrypt = require('bcryptjs');
-var RestHapi = require('rest-hapi');
+var Q = require('q')
+var Joi = require('joi')
+var bcrypt = require('bcryptjs')
+var RestHapi = require('rest-hapi')
 
-//TODO: assign a unique text index to email field
+// TODO: assign a unique text index to email field
 
-module.exports = function (mongoose) {
-  var modelName = "user";
-  var Types = mongoose.Schema.Types;
+module.exports = function(mongoose) {
+  var modelName = 'user'
+  var Types = mongoose.Schema.Types
   var Schema = new mongoose.Schema({
     email: {
       type: Types.String,
@@ -27,7 +27,7 @@ module.exports = function (mongoose) {
     },
     role: {
       type: Types.ObjectId,
-      ref: "role"
+      ref: 'role'
     },
     token: {
       type: Types.String,
@@ -47,52 +47,60 @@ module.exports = function (mongoose) {
       type: Types.Boolean,
       default: false
     }
-  });
-  
+  })
+
   Schema.statics = {
-    collectionName:modelName,
+    collectionName: modelName,
     routeOptions: {
       associations: {
         role: {
-          type: "MANY_ONE",
-          model: "role"
+          type: 'MANY_ONE',
+          model: 'role'
         },
         groups: {
-          type: "MANY_MANY",
-          alias: "group",
-          model: "group"
+          type: 'MANY_MANY',
+          alias: 'group',
+          model: 'group'
         },
         permissions: {
-          type: "MANY_MANY",
-          alias: "permission",
-          model: "permission",
-          linkingModel: "user_permission"
+          type: 'MANY_MANY',
+          alias: 'permission',
+          model: 'permission',
+          linkingModel: 'user_permission'
         }
       },
       extraEndpoints: [
-        //Password Update Endpoint
-        function (server, model, options, Log) {
-          Log = Log.bind("Password Update");
-          var Boom = require('boom');
+        // Password Update Endpoint
+        function(server, model, options, Log) {
+          Log = Log.bind('Password Update')
+          var Boom = require('boom')
 
-          var collectionName = model.collectionDisplayName || model.modelName;
+          var collectionName = model.collectionDisplayName || model.modelName
 
-          Log.note("Generating Password Update endpoint for " + collectionName);
+          Log.note('Generating Password Update endpoint for ' + collectionName)
 
-          var handler = function (request, h) {
-            var hashedPassword = model.generatePasswordHash(request.payload.password);
-            return model.findByIdAndUpdate(request.params._id, {password: hashedPassword}).then(function (result) {
-              if (result) {
-                  return h.response("Password updated.").code(200);
-              }
-              else {
-                throw Boom.notFound("No resource was found with that id.");
-              }
-            })
-            .catch(function (error) {
-              Log.error("error: ", error);
-              throw Boom.badImplementation("An error occurred updating the resource.", error);
-            });
+          var handler = function(request, h) {
+            var hashedPassword = model.generatePasswordHash(
+              request.payload.password
+            )
+            return model
+              .findByIdAndUpdate(request.params._id, {
+                password: hashedPassword
+              })
+              .then(function(result) {
+                if (result) {
+                  return h.response('Password updated.').code(200)
+                } else {
+                  throw Boom.notFound('No resource was found with that id.')
+                }
+              })
+              .catch(function(error) {
+                Log.error('error: ', error)
+                throw Boom.badImplementation(
+                  'An error occurred updating the resource.',
+                  error
+                )
+              })
           }
 
           server.route({
@@ -101,49 +109,52 @@ module.exports = function (mongoose) {
             config: {
               handler: handler,
               auth: null,
-              description: 'Update a user\'s password.',
+              description: "Update a user's password.",
               tags: ['api', 'User', 'Password'],
               validate: {
                 params: {
-                    _id: RestHapi.joiHelper.joiObjectId().required()
+                  _id: RestHapi.joiHelper.joiObjectId().required()
                 },
                 payload: {
-                  password: Joi.string().required()
-                  .description('The user\'s new password')
+                  password: Joi.string()
+                    .required()
+                    .description("The user's new password")
                 }
               },
               plugins: {
                 'hapi-swagger': {
                   responseMessages: [
-                    {code: 200, message: 'Success'},
-                    {code: 400, message: 'Bad Request'},
-                    {code: 404, message: 'Not Found'},
-                    {code: 500, message: 'Internal Server Error'}
+                    { code: 200, message: 'Success' },
+                    { code: 400, message: 'Bad Request' },
+                    { code: 404, message: 'Not Found' },
+                    { code: 500, message: 'Internal Server Error' }
                   ]
                 }
               }
             }
-          });
+          })
         }
       ],
       create: {
-        pre: function (payload, Log) {
-          var deferred = Q.defer();
-          var hashedPassword = mongoose.model('user').generatePasswordHash(payload.password);
+        pre: function(payload, Log) {
+          var deferred = Q.defer()
+          var hashedPassword = mongoose
+            .model('user')
+            .generatePasswordHash(payload.password)
 
-          payload.password = hashedPassword;
-          deferred.resolve(payload);
-          return deferred.promise;
+          payload.password = hashedPassword
+          deferred.resolve(payload)
+          return deferred.promise
         }
       }
     },
 
     generatePasswordHash: function(password) {
-      var salt = bcrypt.genSaltSync(10);
-      var hash = bcrypt.hashSync(password, salt);
-      return hash;
-    },
-  };
-  
-  return Schema;
-};
+      var salt = bcrypt.genSaltSync(10)
+      var hash = bcrypt.hashSync(password, salt)
+      return hash
+    }
+  }
+
+  return Schema
+}

@@ -1,31 +1,34 @@
-'use strict';
+'use strict'
 
-module.exports = function (mongoose) {
-  var modelName = "business";
-  var Types = mongoose.Schema.Types;
-  var Schema = new mongoose.Schema({
-    name: {
-      type: Types.String,
-      required: true
+module.exports = function(mongoose) {
+  var modelName = 'business'
+  var Types = mongoose.Schema.Types
+  var Schema = new mongoose.Schema(
+    {
+      name: {
+        type: Types.String,
+        required: true
+      },
+      description: {
+        type: Types.String
+      }
     },
-    description: {
-      type: Types.String
-    }
-  }, { collection: modelName });
-    
+    { collection: modelName }
+  )
+
   Schema.statics = {
-    collectionName:modelName,
+    collectionName: modelName,
     routeOptions: {
       associations: {
         roles: {
-          type: "ONE_MANY",
-          alias: "role",
-          foreignField: "company",
-          model: "role"
+          type: 'ONE_MANY',
+          alias: 'role',
+          foreignField: 'company',
+          model: 'role'
         }
       }
     }
-  };
+  }
 
-  return Schema;
-};
+  return Schema
+}

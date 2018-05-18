@@ -1,36 +1,39 @@
-module.exports = function (mongoose) {
-  var modelName = "role";
-  var Types = mongoose.Schema.Types;
-  var Schema = new mongoose.Schema({
-    name: {
-      type: Types.String,
-      enum: ["Account", "Admin", "SuperAdmin"],
-      required: true
+module.exports = function(mongoose) {
+  var modelName = 'role'
+  var Types = mongoose.Schema.Types
+  var Schema = new mongoose.Schema(
+    {
+      name: {
+        type: Types.String,
+        enum: ['Account', 'Admin', 'SuperAdmin'],
+        required: true
+      },
+      description: {
+        type: Types.String
+      }
     },
-    description: {
-      type: Types.String
-    }
-  }, { collection: modelName });
-    
+    { collection: modelName }
+  )
+
   Schema.statics = {
-    collectionName:modelName,
+    collectionName: modelName,
     routeOptions: {
       associations: {
         users: {
-          type: "ONE_MANY",
-          alias: "user",
-          foreignField: "role",
-          model: "user"
+          type: 'ONE_MANY',
+          alias: 'user',
+          foreignField: 'role',
+          model: 'user'
         },
         permissions: {
-          type: "MANY_MANY",
-          alias: "permission",
-          model: "permission",
-          linkingModel: "role_permission"
+          type: 'MANY_MANY',
+          alias: 'permission',
+          model: 'permission',
+          linkingModel: 'role_permission'
         }
       }
     }
-  };
+  }
 
-  return Schema;
-};
+  return Schema
+}

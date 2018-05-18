@@ -7,7 +7,7 @@
     "rest-hapi-cli": "./rest-hapi-cli.js"
   },
   "engines": {
-    "node": ">=6.0.0",
+    "node": ">=8.10.0",
     "npm": ">=4.0.0"
   },
   "directories": {
@@ -16,7 +16,15 @@
   "scripts": {
     "test": "gulp test",
     "patch-release-git": "git add . && git commit -a -m 'patch release' && git push && npm version patch && npm publish",
-    "patch-release": "npm version patch && npm publish"
+    "patch-release": "npm version patch && npm publish",
+    "precommit": "lint-staged",
+    "lint": "eslint --fix **/*.js ./"
+  },
+  "lint-staged": {
+    "**/*.js": [
+      "eslint --fix",
+      "git add"
+    ]
   },
   "repository": {
     "type": "git",
@@ -75,6 +83,19 @@
     "sinon-test": "^2.1.0",
     "mockgoose": "^7.3.3",
     "decache": "4.4.0",
-    "rmdir": "^1.2.0"
+    "rmdir": "^1.2.0",
+    "babel-eslint": "^8.2.3",
+    "eslint": "^4.19.1",
+    "eslint-config-prettier": "^2.9.0",
+    "eslint-config-prettier-standard": "^2.0.0",
+    "eslint-config-standard": "^11.0.0",
+    "eslint-plugin-import": "^2.11.0",
+    "eslint-plugin-node": "^6.0.1",
+    "eslint-plugin-prettier": "^2.6.0",
+    "eslint-plugin-promise": "^3.7.0",
+    "eslint-plugin-standard": "^3.1.0",
+    "husky": "^0.14.3",
+    "lint-staged": "^7.1.0",
+    "prettier": "1.12.1"
   }
 }

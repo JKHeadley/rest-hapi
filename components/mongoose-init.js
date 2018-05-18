@@ -1,22 +1,26 @@
-'use strict';
+'use strict'
 
-var chalk = require('chalk');
-var logUtil = require('../utilities/log-util');
-var _ = require('lodash');
-let globals = require('./globals');
+var chalk = require('chalk')
+var logUtil = require('../utilities/log-util')
+var _ = require('lodash')
+let globals = require('./globals')
 
 // var mongoose = require('mongoose');
 
-module.exports = function (mongoose, logger, config) {
-  mongoose.Promise = Promise;
-  
-  logger = logUtil.bindHelper(logger, "mongoose");
+module.exports = function(mongoose, logger, config) {
+  mongoose.Promise = Promise
 
-  logUtil.logActionStart(logger, "Connecting to Database", _.omit(config.mongo, ['pass']));
-  
-  mongoose.connect(config.mongo.URI, { useMongoClient: true });
+  logger = logUtil.bindHelper(logger, 'mongoose')
 
-  globals.mongoose = mongoose;
+  logUtil.logActionStart(
+    logger,
+    'Connecting to Database',
+    _.omit(config.mongo, ['pass'])
+  )
 
-  return mongoose;
-};
+  mongoose.connect(config.mongo.URI, { useMongoClient: true })
+
+  globals.mongoose = mongoose
+
+  return mongoose
+}

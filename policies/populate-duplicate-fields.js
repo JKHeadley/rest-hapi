@@ -1,11 +1,11 @@
-'use strict';
+'use strict'
 
-const Boom = require('boom');
-const _ = require('lodash');
-const config = require('../config');
-const Q = require('q');
+const Boom = require('boom')
+const _ = require('lodash')
+const config = require('../config')
+const Q = require('q')
 
-const internals = {};
+const internals = {}
 
 /**
  * Policy to populate duplicate fields when an association is created or updated.
@@ -14,76 +14,79 @@ const internals = {};
  * @returns {populateDuplicateFields}
  */
 internals.populateDuplicateFields = function(model, mongoose, Log) {
-
-  const populateDuplicateFieldsForModel = function addDocumentScopeForModel(request, h) {
-    Log = Log.bind("populateDuplicateFields");
+  const populateDuplicateFieldsForModel = function addDocumentScopeForModel(
+    request,
+    h
+  ) {
+    Log = Log.bind('populateDuplicateFields')
     try {
-      let payload = request.payload;
+      let payload = request.payload
       if (!_.isArray(request.payload)) {
         payload = [request.payload]
       }
 
-      const associations = model.schema.statics.routeOptions.associations;
+      const associations = model.schema.statics.routeOptions.associations
       if (associations) {
-        let promises = [];
+        let promises = []
         for (const key in associations) {
-            const association = associations[key];
-            const duplicate = association.duplicate;
-            payload.forEach(function (doc) {
-                if (duplicate && (association.type === 'MANY_ONE' || association.type === 'ONE_ONE') && doc[key]) {
-                    const childModel = mongoose.model(association.model);
+          const association = associations[key]
+          const duplicate = association.duplicate
+          payload.forEach(function(doc) {
+            if (
+              duplicate &&
+              (association.type === 'MANY_ONE' ||
+                association.type === 'ONE_ONE') &&
+              doc[key]
+            ) {
+              const childModel = mongoose.model(association.model)
 
-                    const deferred = Q.defer();
-                    childModel.findOne({'_id': doc[key]})
-                        .then(function (result) {
-                            const docsToUpdate = payload.filter(function (docToFind) {
-                                return docToFind[key] === result._id.toString();
-                            })
-                            //EXPL: Populate each duplicated field for this association.
-                            //NOTE: We are updating the original payload
-                            duplicate.forEach(function (prop) {
-                                docsToUpdate.forEach(function (docToUpdate) {
-                                    docToUpdate[prop.as] = result[prop.field];
-                                });
-                            });
+              const deferred = Q.defer()
+              childModel.findOne({ _id: doc[key] }).then(function(result) {
+                const docsToUpdate = payload.filter(function(docToFind) {
+                  return docToFind[key] === result._id.toString()
+                })
+                // EXPL: Populate each duplicated field for this association.
+                // NOTE: We are updating the original payload
+                duplicate.forEach(function(prop) {
+                  docsToUpdate.forEach(function(docToUpdate) {
+                    docToUpdate[prop.as] = result[prop.field]
+                  })
+                })
 
-                            deferred.resolve();
-                        });
-                    promises.push(deferred.promise);
-                }
-            })
+                deferred.resolve()
+              })
+              promises.push(deferred.promise)
+            }
+          })
         }
-
 
         return Q.all(promises)
-            .then(function (result) {
-              return h.continue
-            })
-            .catch(function (err) {
-              Log.error("ERROR:", err);
-              throw Boom.badImplementation(err)
-            })
+          .then(function(result) {
+            return h.continue
+          })
+          .catch(function(err) {
+            Log.error('ERROR:', err)
+            throw Boom.badImplementation(err)
+          })
       }
       return h.continue
+    } catch (err) {
+      Log.error('ERROR:', err)
+      if (err.isBoom) {
+        throw err
+      } else {
+        throw Boom.badImplementation(err)
+      }
     }
-    catch (err) {
-        Log.error("ERROR:", err);
-        if (err.isBoom) {
-            throw err
-        } else {
-            throw Boom.badImplementation(err)
-        }
-    }
-  };
+  }
 
-  populateDuplicateFieldsForModel.applyPoint = 'onPreHandler';
+  populateDuplicateFieldsForModel.applyPoint = 'onPreHandler'
 
-  return populateDuplicateFieldsForModel;
-};
+  return populateDuplicateFieldsForModel
+}
 
-internals.populateDuplicateFields.applyPoint = 'onPreHandler';
+internals.populateDuplicateFields.applyPoint = 'onPreHandler'
 
 module.exports = {
-  populateDuplicateFields : internals.populateDuplicateFields
-};
-
+  populateDuplicateFields: internals.populateDuplicateFields
+}

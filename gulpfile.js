@@ -1,12 +1,11 @@
-'use strict';
+'use strict'
 
-var gulp = require('gulp');
+var gulp = require('gulp')
 
 gulp.paths = {
   src: './'
-};
+}
 
-require('require-dir')('./gulp');
+require('require-dir')('./gulp')
 
-gulp.task('default', [], function () {
-});
+gulp.task('default', [], function() {})

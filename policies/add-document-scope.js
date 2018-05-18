@@ -1,10 +1,10 @@
-'use strict';
+'use strict'
 
-const Boom = require('boom');
-const _ = require('lodash');
-const config = require('../config');
+const Boom = require('boom')
+const _ = require('lodash')
+const config = require('../config')
 
-const internals = {};
+const internals = {}
 
 /**
  * Policy to append any document scopes defined in the routeOptions to any existing scope.
@@ -13,45 +13,49 @@ const internals = {};
  * @returns {addDocumentScopeForModel}
  */
 internals.addDocumentScope = function(model, Log) {
-
-  const addDocumentScopeForModel = function addDocumentScopeForModel(request, h) {
-    Log = Log.bind("addDocumentScope");
+  const addDocumentScopeForModel = function addDocumentScopeForModel(
+    request,
+    h
+  ) {
+    Log = Log.bind('addDocumentScope')
     try {
-      let scope = model.routeOptions.documentScope;
+      let scope = model.routeOptions.documentScope
 
       if (scope) {
         for (let scopeType in scope) {
           if (_.isArray(request.payload)) {
             request.payload.forEach(function(document) {
-              document.scope = document.scope || {};
-              document.scope[scopeType] = document.scope[scopeType] || [];
-              document.scope[scopeType] = document.scope[scopeType].concat(scope[scopeType])
+              document.scope = document.scope || {}
+              document.scope[scopeType] = document.scope[scopeType] || []
+              document.scope[scopeType] = document.scope[scopeType].concat(
+                scope[scopeType]
+              )
             })
-          }
-          else {
-            request.payload.scope = request.payload.scope || {};
-            request.payload.scope[scopeType] = request.payload.scope[scopeType] || [];
-            request.payload.scope[scopeType] = request.payload.scope[scopeType].concat(scope[scopeType])
+          } else {
+            request.payload.scope = request.payload.scope || {}
+            request.payload.scope[scopeType] =
+              request.payload.scope[scopeType] || []
+            request.payload.scope[scopeType] = request.payload.scope[
+              scopeType
+            ].concat(scope[scopeType])
           }
         }
       }
 
       return h.continue
-    }
-    catch (err) {
-      Log.error("ERROR:", err);
+    } catch (err) {
+      Log.error('ERROR:', err)
       throw Boom.badImplementation(err)
     }
-  };
+  }
 
-  addDocumentScopeForModel.applyPoint = 'onPreHandler';
+  addDocumentScopeForModel.applyPoint = 'onPreHandler'
 
-  return addDocumentScopeForModel;
-};
+  return addDocumentScopeForModel
+}
 
-internals.addDocumentScope.applyPoint = 'onPreHandler';
+internals.addDocumentScope.applyPoint = 'onPreHandler'
 
 module.exports = {
-  addDocumentScope : internals.addDocumentScope
-};
-
+  addDocumentScope: internals.addDocumentScope
+}

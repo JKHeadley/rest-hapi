@@ -1,20 +1,20 @@
-'use strict';
+'use strict'
 
-var test = require('blue-tape');
-var _ = require('lodash');
-var sinon = require('sinon');
-var rewire = require('rewire');
-var proxyquire = require('proxyquire');
-var assert = require('assert');
-var mongoose = require('mongoose');
-var Types = mongoose.Schema.Types;
-var logging = require('loggin');
-var logger = logging.getLogger("tests");
-logger.logLevel = "ERROR";
-var testHelper = require("../utilities/test-helper");
-var Joi = require('joi');
-var Q = require('q');
-var extend = require('util')._extend;
+var test = require('blue-tape')
+var _ = require('lodash')
+var sinon = require('sinon')
+var rewire = require('rewire')
+var proxyquire = require('proxyquire')
+var assert = require('assert')
+var mongoose = require('mongoose')
+var Types = mongoose.Schema.Types
+var logging = require('loggin')
+var logger = logging.getLogger('tests')
+logger.logLevel = 'ERROR'
+var testHelper = require('../utilities/test-helper')
+var Joi = require('joi')
+var Q = require('q')
+var extend = require('util')._extend
 
 // test('handler-helper-factory exists and has expected members', function (t) {
 //   //<editor-fold desc="Arrange">

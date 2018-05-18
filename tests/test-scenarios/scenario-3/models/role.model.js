@@ -1,48 +1,51 @@
-'use strict';
+'use strict'
 
-module.exports = function (mongoose) {
-  var modelName = "role";
-  var Types = mongoose.Schema.Types;
-  var Schema = new mongoose.Schema({
-    name: {
-      type: Types.String,
-      enum: ["User", "Admin", "SuperAdmin"],
-      required: true
+module.exports = function(mongoose) {
+  var modelName = 'role'
+  var Types = mongoose.Schema.Types
+  var Schema = new mongoose.Schema(
+    {
+      name: {
+        type: Types.String,
+        enum: ['User', 'Admin', 'SuperAdmin'],
+        required: true
+      },
+      description: {
+        type: Types.String
+      },
+      company: {
+        type: Types.ObjectId,
+        ref: 'business'
+      },
+      companyName: {
+        type: Types.String
+      }
     },
-    description: {
-      type: Types.String
-    },
-    company: {
-      type: Types.ObjectId,
-      ref: "business"
-    },
-    companyName: {
-      type: Types.String
-    }
-  }, { collection: modelName });
-    
+    { collection: modelName }
+  )
+
   Schema.statics = {
-    collectionName:modelName,
+    collectionName: modelName,
     routeOptions: {
       associations: {
         company: {
-          type: "MANY_ONE",
-          model: "business",
+          type: 'MANY_ONE',
+          model: 'business',
           duplicate: 'name'
         },
         users: {
-          type: "ONE_MANY",
-          alias: "people",
-          foreignField: "title",
-          model: "user"
+          type: 'ONE_MANY',
+          alias: 'people',
+          foreignField: 'title',
+          model: 'user'
         },
         permissions: {
-          type: "MANY_MANY",
-          model: "permission"
+          type: 'MANY_MANY',
+          model: 'permission'
         }
       }
     }
-  };
+  }
 
-  return Schema;
-};
+  return Schema
+}
