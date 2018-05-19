@@ -1,4 +1,4 @@
-var testrh = function(request, reply, next) {
+let testrh = function(request, reply, next) {
   request.logger.debug('HERE REST HAPI')
   return next(null, true) // All is well with this request.  Proceed to the next policy or the route handler.
 }

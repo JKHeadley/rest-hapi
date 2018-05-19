@@ -1,22 +1,22 @@
 'use strict'
 
-var test = require('tape')
-var _ = require('lodash')
-var sinon = require('sinon')
-var sinonTestFactory = require('sinon-test')
-var sinonTest = sinonTestFactory(sinon)
-var rewire = require('rewire')
-var proxyquire = require('proxyquire')
-var assert = require('assert')
-var mongoose = require('mongoose')
-var Types = mongoose.Schema.Types
-var logging = require('loggin')
-var Log = logging.getLogger('tests')
+let test = require('tape')
+let _ = require('lodash')
+let sinon = require('sinon')
+let sinonTestFactory = require('sinon-test')
+let sinonTest = sinonTestFactory(sinon)
+let rewire = require('rewire')
+let proxyquire = require('proxyquire')
+let assert = require('assert')
+let mongoose = require('mongoose')
+let Types = mongoose.Schema.Types
+let logging = require('loggin')
+let Log = logging.getLogger('tests')
 Log.logLevel = 'ERROR'
 Log = Log.bind('rest-helper-factory')
-var testHelper = require('../utilities/test-helper')
-var Joi = require('joi')
-var fs = require('fs')
+let testHelper = require('../../utilities/test-helper')
+let Joi = require('joi')
+let fs = require('fs')
 
 sinon.test = sinonTest
 
@@ -28,8 +28,8 @@ sinon.test = sinonTest
 
 test('rest-helper-factory exists and has expected members', function(t) {
   // <editor-fold desc="Arrange">
-  var server = sinon.spy()
-  var restHelperFactory = require('../utilities/rest-helper-factory')(
+  let server = sinon.spy()
+  let restHelperFactory = require('../../utilities/rest-helper-factory')(
     Log,
     mongoose,
     server
@@ -96,20 +96,23 @@ test('rest-helper-factory.defaultHeadersValidation', function(t) {
     'rest-helper-factory.defaultHeadersValidation requires authorization property if auth is enabled',
     function(t) {
       // <editor-fold desc="Arrange">
-      var server = sinon.spy()
-      var config = { authStrategy: 'token' }
-      var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
-        '../config': config
-      })(Log, mongoose, server)
+      let server = sinon.spy()
+      let config = { authStrategy: 'token' }
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          '../config': config
+        }
+      )(Log, mongoose, server)
 
       t.plan(2)
 
-      var header1 = {}
-      var header2 = { authorization: 'test' }
+      let header1 = {}
+      let header2 = { authorization: 'test' }
       // </editor-fold>
 
       // <editor-fold desc="Act">
-      var defaultHeadersValidation = restHelperFactory.defaultHeadersValidation
+      let defaultHeadersValidation = restHelperFactory.defaultHeadersValidation
       // </editor-fold>
 
       // <editor-fold desc="Assert">
@@ -132,20 +135,23 @@ test('rest-helper-factory.defaultHeadersValidation', function(t) {
     "rest-helper-factory.defaultHeadersValidation doesn't require authorization property if auth is disabled",
     function(t) {
       // <editor-fold desc="Arrange">
-      var server = sinon.spy()
-      var config = { authStrategy: null }
-      var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
-        '../config': config
-      })(Log, mongoose, server)
+      let server = sinon.spy()
+      let config = { authStrategy: null }
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          '../config': config
+        }
+      )(Log, mongoose, server)
 
       t.plan(1)
 
-      var header1 = {}
-      var header2 = { authorization: 'test' }
+      let header1 = {}
+      let header2 = { authorization: 'test' }
       // </editor-fold>
 
       // <editor-fold desc="Act">
-      var defaultHeadersValidation = restHelperFactory.defaultHeadersValidation
+      let defaultHeadersValidation = restHelperFactory.defaultHeadersValidation
       // </editor-fold>
 
       // <editor-fold desc="Assert">
@@ -164,8 +170,8 @@ test('rest-helper-factory.defaultHeadersValidation', function(t) {
     'rest-helper-factory.defaultHeadersValidation allows unknown header properties',
     function(t) {
       // <editor-fold desc="Arrange">
-      var server = sinon.spy()
-      var restHelperFactory = require('../utilities/rest-helper-factory')(
+      let server = sinon.spy()
+      let restHelperFactory = require('../../utilities/rest-helper-factory')(
         Log,
         mongoose,
         server
@@ -173,11 +179,11 @@ test('rest-helper-factory.defaultHeadersValidation', function(t) {
 
       t.plan(1)
 
-      var header = { authorization: 'test', unknown: 'test' }
+      let header = { authorization: 'test', unknown: 'test' }
       // </editor-fold>
 
       // <editor-fold desc="Act">
-      var defaultHeadersValidation = restHelperFactory.defaultHeadersValidation
+      let defaultHeadersValidation = restHelperFactory.defaultHeadersValidation
       // </editor-fold>
 
       // <editor-fold desc="Assert">
@@ -196,12 +202,12 @@ test('rest-helper-factory.defaultHeadersValidation', function(t) {
 })
 
 test('rest-helper-factory.generateRoutes', function(t) {
-  var server = sinon.spy()
+  let server = sinon.spy()
   sinon.stub(Log, 'error').callsFake(function() {})
   sinon.stub(Log, 'bind').callsFake(function() {
     return Log
   })
-  var restHelperFactory = require('../utilities/rest-helper-factory')(
+  let restHelperFactory = require('../../utilities/rest-helper-factory')(
     Log,
     mongoose,
     server
@@ -220,8 +226,8 @@ test('rest-helper-factory.generateRoutes', function(t) {
       // <editor-fold desc="Arrange">
       Log.error.restore()
       Log.bind.restore()
-      var server = sinon.spy()
-      var restHelperFactory = require('../utilities/rest-helper-factory')(
+      let server = sinon.spy()
+      let restHelperFactory = require('../../utilities/rest-helper-factory')(
         Log,
         mongoose,
         server
@@ -229,11 +235,11 @@ test('rest-helper-factory.generateRoutes', function(t) {
 
       t.plan(6)
 
-      var userSchema = new mongoose.Schema()
+      let userSchema = new mongoose.Schema()
       userSchema.statics = {
         routeOptions: {}
       }
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
 
       sinon
         .stub(restHelperFactory, 'generateListEndpoint')
@@ -303,8 +309,8 @@ test('rest-helper-factory.generateRoutes', function(t) {
     'rest-helper-factory.generateRoutes does not call CRUD endpoint generators if not allowed',
     function(t) {
       // <editor-fold desc="Arrange">
-      var server = sinon.spy()
-      var restHelperFactory = require('../utilities/rest-helper-factory')(
+      let server = sinon.spy()
+      let restHelperFactory = require('../../utilities/rest-helper-factory')(
         Log,
         mongoose,
         server
@@ -312,7 +318,7 @@ test('rest-helper-factory.generateRoutes', function(t) {
 
       t.plan(6)
 
-      var userSchema = new mongoose.Schema()
+      let userSchema = new mongoose.Schema()
       userSchema.statics = {
         routeOptions: {
           allowRead: false,
@@ -321,7 +327,7 @@ test('rest-helper-factory.generateRoutes', function(t) {
           allowDelete: false
         }
       }
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
 
       sinon
         .stub(restHelperFactory, 'generateListEndpoint')
@@ -391,8 +397,8 @@ test('rest-helper-factory.generateRoutes', function(t) {
     'rest-helper-factory.generateRoutes calls association endpoint generators for MANY_MANY and ONE_MANY associations',
     function(t) {
       // <editor-fold desc="Arrange">
-      var server = sinon.spy()
-      var restHelperFactory = require('../utilities/rest-helper-factory')(
+      let server = sinon.spy()
+      let restHelperFactory = require('../../utilities/rest-helper-factory')(
         Log,
         mongoose,
         server
@@ -400,7 +406,7 @@ test('rest-helper-factory.generateRoutes', function(t) {
 
       t.plan(20)
 
-      var userSchema = new mongoose.Schema()
+      let userSchema = new mongoose.Schema()
       userSchema.statics = {
         routeOptions: {
           associations: {
@@ -419,11 +425,11 @@ test('rest-helper-factory.generateRoutes', function(t) {
           }
         }
       }
-      var userModel = mongoose.model('user', userSchema)
-      var title = userModel.routeOptions.associations.title
-      var profileImage = userModel.routeOptions.associations.profileImage
-      var groups = userModel.routeOptions.associations.groups
-      var permissions = userModel.routeOptions.associations.permissions
+      let userModel = mongoose.model('user', userSchema)
+      let title = userModel.routeOptions.associations.title
+      let profileImage = userModel.routeOptions.associations.profileImage
+      let groups = userModel.routeOptions.associations.groups
+      let permissions = userModel.routeOptions.associations.permissions
 
       sinon
         .stub(restHelperFactory, 'generateListEndpoint')
@@ -671,8 +677,8 @@ test('rest-helper-factory.generateRoutes', function(t) {
     'rest-helper-factory.generateRoutes does not call association endpoint generators if not allowed',
     function(t) {
       // <editor-fold desc="Arrange">
-      var server = sinon.spy()
-      var restHelperFactory = require('../utilities/rest-helper-factory')(
+      let server = sinon.spy()
+      let restHelperFactory = require('../../utilities/rest-helper-factory')(
         Log,
         mongoose,
         server
@@ -680,7 +686,7 @@ test('rest-helper-factory.generateRoutes', function(t) {
 
       t.plan(5)
 
-      var userSchema = new mongoose.Schema()
+      let userSchema = new mongoose.Schema()
       userSchema.statics = {
         routeOptions: {
           associations: {
@@ -693,7 +699,7 @@ test('rest-helper-factory.generateRoutes', function(t) {
           }
         }
       }
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
 
       sinon
         .stub(restHelperFactory, 'generateListEndpoint')
@@ -781,8 +787,8 @@ test('rest-helper-factory.generateRoutes', function(t) {
     'rest-helper-factory.generateRoutes creates extra endpoints if they exist.',
     function(t) {
       // <editor-fold desc="Arrange">
-      var server = sinon.spy()
-      var restHelperFactory = require('../utilities/rest-helper-factory')(
+      let server = sinon.spy()
+      let restHelperFactory = require('../../utilities/rest-helper-factory')(
         Log,
         mongoose,
         server
@@ -790,14 +796,14 @@ test('rest-helper-factory.generateRoutes', function(t) {
 
       t.plan(2)
 
-      var userSchema = new mongoose.Schema()
+      let userSchema = new mongoose.Schema()
       userSchema.statics = {
         routeOptions: {
           extraEndpoints: [sinon.spy(), sinon.spy()]
         }
       }
-      var userModel = mongoose.model('user', userSchema)
-      var extraEndpoints = userModel.routeOptions.extraEndpoints
+      let userModel = mongoose.model('user', userSchema)
+      let extraEndpoints = userModel.routeOptions.extraEndpoints
 
       sinon
         .stub(restHelperFactory, 'generateListEndpoint')
@@ -845,8 +851,8 @@ test('rest-helper-factory.generateRoutes', function(t) {
 })
 
 test('rest-helper-factory.generateListEndpoint', function(t) {
-  var server = sinon.spy()
-  var restHelperFactory = require('../utilities/rest-helper-factory')(
+  let server = sinon.spy()
+  let restHelperFactory = require('../../utilities/rest-helper-factory')(
     Log,
     mongoose,
     server
@@ -863,34 +869,37 @@ test('rest-helper-factory.generateListEndpoint', function(t) {
     'rest-helper-factory.generateListEndpoint calls handlerHelper.generateListHandler',
     sinon.test(function(t) {
       // <editor-fold desc="Arrange">
-      var server = this.stub({
+      let server = this.stub({
         route: function() {}
       })
 
-      var handlerHelperStub = this.stub(
-        require('../utilities/handler-helper-factory')(this.spy(), server)
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
       )
-      var handlerHelperStubWrapper = this.stub()
+      let handlerHelperStubWrapper = this.stub()
       handlerHelperStubWrapper.returns(handlerHelperStub)
-      var queryHelperStub = this.stub(require('../utilities/query-helper'))
-      var joiMongooseHelperStub = this.stub(
-        require('../utilities/joi-mongoose-helper'),
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
         'generateJoiReadModel'
       ).callsFake(function() {
         return Joi.any()
       })
-      var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
-        './handler-helper-factory': handlerHelperStubWrapper,
-        './query-helper': queryHelperStub,
-        './joi-mongoose-helper': joiMongooseHelperStub
-      })(Log, mongoose, server)
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub
+        }
+      )(Log, mongoose, server)
 
       t.plan(1)
 
-      var userSchema = new mongoose.Schema({})
+      let userSchema = new mongoose.Schema({})
       userSchema.statics = { routeOptions: {} }
 
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
       // </editor-fold>
 
       // <editor-fold desc="Act">
@@ -915,18 +924,18 @@ test('rest-helper-factory.generateListEndpoint', function(t) {
     'rest-helper-factory.generateListEndpoint calls joiMongooseHelper.generateJoiReadModel and generateJoiListQueryModel',
     sinon.test(function(t) {
       // <editor-fold desc="Arrange">
-      var server = this.stub({
+      let server = this.stub({
         route: function() {}
       })
 
-      var handlerHelperStub = this.stub(
-        require('../utilities/handler-helper-factory')(this.spy(), server)
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
       )
-      var handlerHelperStubWrapper = this.stub()
+      let handlerHelperStubWrapper = this.stub()
       handlerHelperStubWrapper.returns(handlerHelperStub)
-      var queryHelperStub = this.stub(require('../utilities/query-helper'))
-      var joiMongooseHelperStub = this.stub(
-        require('../utilities/joi-mongoose-helper'),
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
         'generateJoiReadModel'
       ).callsFake(function() {
         return Joi.any()
@@ -934,18 +943,21 @@ test('rest-helper-factory.generateListEndpoint', function(t) {
       joiMongooseHelperStub.generateJoiListQueryModel = this.spy(function() {
         return Joi.any()
       })
-      var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
-        './handler-helper-factory': handlerHelperStubWrapper,
-        './query-helper': queryHelperStub,
-        './joi-mongoose-helper': joiMongooseHelperStub
-      })(Log, mongoose, server)
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub
+        }
+      )(Log, mongoose, server)
 
       t.plan(2)
 
-      var userSchema = new mongoose.Schema({})
+      let userSchema = new mongoose.Schema({})
       userSchema.statics = { routeOptions: {} }
 
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
       // </editor-fold>
 
       // <editor-fold desc="Act">
@@ -974,34 +986,37 @@ test('rest-helper-factory.generateListEndpoint', function(t) {
     'rest-helper-factory.generateListEndpoint calls server.route',
     sinon.test(function(t) {
       // <editor-fold desc="Arrange">
-      var server = this.stub({
+      let server = this.stub({
         route: function() {}
       })
 
-      var handlerHelperStub = this.stub(
-        require('../utilities/handler-helper-factory')(this.spy(), server)
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
       )
-      var handlerHelperStubWrapper = this.stub()
+      let handlerHelperStubWrapper = this.stub()
       handlerHelperStubWrapper.returns(handlerHelperStub)
-      var queryHelperStub = this.stub(require('../utilities/query-helper'))
-      var joiMongooseHelperStub = this.stub(
-        require('../utilities/joi-mongoose-helper'),
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
         'generateJoiReadModel'
       ).callsFake(function() {
         return Joi.any()
       })
-      var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
-        './handler-helper-factory': handlerHelperStubWrapper,
-        './query-helper': queryHelperStub,
-        './joi-mongoose-helper': joiMongooseHelperStub
-      })(Log, mongoose, server)
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub
+        }
+      )(Log, mongoose, server)
 
       t.plan(1)
 
-      var userSchema = new mongoose.Schema({})
+      let userSchema = new mongoose.Schema({})
       userSchema.statics = { routeOptions: {} }
 
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
       // </editor-fold>
 
       // <editor-fold desc="Act">
@@ -1023,34 +1038,37 @@ test('rest-helper-factory.generateListEndpoint', function(t) {
     'rest-helper-factory.generateListEndpoint calls server.route with "GET" method',
     sinon.test(function(t) {
       // <editor-fold desc="Arrange">
-      var server = this.stub({
+      let server = this.stub({
         route: function() {}
       })
 
-      var handlerHelperStub = this.stub(
-        require('../utilities/handler-helper-factory')(this.spy(), server)
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
       )
-      var handlerHelperStubWrapper = this.stub()
+      let handlerHelperStubWrapper = this.stub()
       handlerHelperStubWrapper.returns(handlerHelperStub)
-      var queryHelperStub = this.stub(require('../utilities/query-helper'))
-      var joiMongooseHelperStub = this.stub(
-        require('../utilities/joi-mongoose-helper'),
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
         'generateJoiReadModel'
       ).callsFake(function() {
         return Joi.any()
       })
-      var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
-        './handler-helper-factory': handlerHelperStubWrapper,
-        './query-helper': queryHelperStub,
-        './joi-mongoose-helper': joiMongooseHelperStub
-      })(Log, mongoose, server)
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub
+        }
+      )(Log, mongoose, server)
 
       t.plan(1)
 
-      var userSchema = new mongoose.Schema({})
+      let userSchema = new mongoose.Schema({})
       userSchema.statics = { routeOptions: {} }
 
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
       // </editor-fold>
 
       // <editor-fold desc="Act">
@@ -1058,7 +1076,7 @@ test('rest-helper-factory.generateListEndpoint', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Assert">
-      var serverObject = server.route.args[0][0]
+      let serverObject = server.route.args[0][0]
       // Log.debug(JSON.stringify(serverObject));
       t.equal(serverObject.method, 'GET', 'GET method used')
       // </editor-fold>
@@ -1074,42 +1092,45 @@ test('rest-helper-factory.generateListEndpoint', function(t) {
     'rest-helper-factory.generateListEndpoint calls server.route with correct resourceAliasForRoute',
     sinon.test(function(t) {
       // <editor-fold desc="Arrange">
-      var server = this.stub({
+      let server = this.stub({
         route: function() {}
       })
 
-      var handlerHelperStub = this.stub(
-        require('../utilities/handler-helper-factory')(this.spy(), server)
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
       )
-      var handlerHelperStubWrapper = this.stub()
+      let handlerHelperStubWrapper = this.stub()
       handlerHelperStubWrapper.returns(handlerHelperStub)
-      var queryHelperStub = this.stub(require('../utilities/query-helper'))
-      var joiMongooseHelperStub = this.stub(
-        require('../utilities/joi-mongoose-helper'),
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
         'generateJoiReadModel'
       ).callsFake(function() {
         return Joi.any()
       })
-      var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
-        './handler-helper-factory': handlerHelperStubWrapper,
-        './query-helper': queryHelperStub,
-        './joi-mongoose-helper': joiMongooseHelperStub
-      })(Log, mongoose, server)
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub
+        }
+      )(Log, mongoose, server)
 
       t.plan(2)
 
-      var userSchema1 = new mongoose.Schema({})
+      let userSchema1 = new mongoose.Schema({})
       userSchema1.statics = { routeOptions: {} }
 
-      var userSchema2 = new mongoose.Schema({})
+      let userSchema2 = new mongoose.Schema({})
       userSchema2.statics = {
         routeOptions: {
           alias: 'PEEPS'
         }
       }
 
-      var userModel1 = mongoose.model('user1', userSchema1)
-      var userModel2 = mongoose.model('user2', userSchema2)
+      let userModel1 = mongoose.model('user1', userSchema1)
+      let userModel2 = mongoose.model('user2', userSchema2)
       // </editor-fold>
 
       // <editor-fold desc="Act">
@@ -1118,8 +1139,8 @@ test('rest-helper-factory.generateListEndpoint', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Assert">
-      var serverObject1 = server.route.args[0][0]
-      var serverObject2 = server.route.args[1][0]
+      let serverObject1 = server.route.args[0][0]
+      let serverObject2 = server.route.args[1][0]
       // Log.debug(JSON.stringify(serverObject));
       t.equal(serverObject1.path, '/user1', 'correct route')
       t.equal(serverObject2.path, '/PEEPS', 'correct route alias')
@@ -1138,37 +1159,40 @@ test('rest-helper-factory.generateListEndpoint', function(t) {
     'rest-helper-factory.generateListEndpoint calls server.route with correct handler',
     sinon.test(function(t) {
       // <editor-fold desc="Arrange">
-      var server = this.stub({
+      let server = this.stub({
         route: function() {}
       })
 
-      var handlerHelperStub = this.stub(
-        require('../utilities/handler-helper-factory')(this.spy(), server)
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
       )
       handlerHelperStub.generateListHandler = this.spy(function() {
         return 'HANDLER'
       })
-      var handlerHelperStubWrapper = this.stub()
+      let handlerHelperStubWrapper = this.stub()
       handlerHelperStubWrapper.returns(handlerHelperStub)
-      var queryHelperStub = this.stub(require('../utilities/query-helper'))
-      var joiMongooseHelperStub = this.stub(
-        require('../utilities/joi-mongoose-helper'),
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
         'generateJoiReadModel'
       ).callsFake(function() {
         return Joi.any()
       })
-      var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
-        './handler-helper-factory': handlerHelperStubWrapper,
-        './query-helper': queryHelperStub,
-        './joi-mongoose-helper': joiMongooseHelperStub
-      })(Log, mongoose, server)
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub
+        }
+      )(Log, mongoose, server)
 
       t.plan(1)
 
-      var userSchema = new mongoose.Schema({})
+      let userSchema = new mongoose.Schema({})
       userSchema.statics = { routeOptions: {} }
 
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
       // </editor-fold>
 
       // <editor-fold desc="Act">
@@ -1176,7 +1200,7 @@ test('rest-helper-factory.generateListEndpoint', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Assert">
-      var serverObject = server.route.args[0][0]
+      let serverObject = server.route.args[0][0]
       // Log.debug(JSON.stringify(serverObject));
       t.equal(serverObject.config.handler, 'HANDLER', 'correct handler used')
       // </editor-fold>
@@ -1192,36 +1216,39 @@ test('rest-helper-factory.generateListEndpoint', function(t) {
     'rest-helper-factory.generateListEndpoint calls server.route using authentication defined by config',
     sinon.test(function(t) {
       // <editor-fold desc="Arrange">
-      var server = this.stub({
+      let server = this.stub({
         route: function() {}
       })
 
-      var handlerHelperStub = this.stub(
-        require('../utilities/handler-helper-factory')(this.spy(), server)
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
       )
-      var handlerHelperStubWrapper = this.stub()
+      let handlerHelperStubWrapper = this.stub()
       handlerHelperStubWrapper.returns(handlerHelperStub)
-      var queryHelperStub = this.stub(require('../utilities/query-helper'))
-      var joiMongooseHelperStub = this.stub(
-        require('../utilities/joi-mongoose-helper'),
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
         'generateJoiReadModel'
       ).callsFake(function() {
         return Joi.any()
       })
-      var config = { authStrategy: 'TEST_AUTH' }
-      var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
-        './handler-helper-factory': handlerHelperStubWrapper,
-        './query-helper': queryHelperStub,
-        './joi-mongoose-helper': joiMongooseHelperStub,
-        '../config': config
-      })(Log, mongoose, server)
+      let config = { authStrategy: 'TEST_AUTH' }
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub,
+          '../config': config
+        }
+      )(Log, mongoose, server)
 
       t.plan(1)
 
-      var userSchema = new mongoose.Schema({})
+      let userSchema = new mongoose.Schema({})
       userSchema.statics = { routeOptions: {} }
 
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
       // </editor-fold>
 
       // <editor-fold desc="Act">
@@ -1229,7 +1256,7 @@ test('rest-helper-factory.generateListEndpoint', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Assert">
-      var serverObject = server.route.args[0][0]
+      let serverObject = server.route.args[0][0]
       // Log.debug(JSON.stringify(serverObject));
       t.deepEqual(
         serverObject.config.auth,
@@ -1249,41 +1276,44 @@ test('rest-helper-factory.generateListEndpoint', function(t) {
     'rest-helper-factory.generateListEndpoint calls server.route with correct collectionName',
     sinon.test(function(t) {
       // <editor-fold desc="Arrange">
-      var server = this.stub({
+      let server = this.stub({
         route: function() {}
       })
 
-      var handlerHelperStub = this.stub(
-        require('../utilities/handler-helper-factory')(this.spy(), server)
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
       )
-      var handlerHelperStubWrapper = this.stub()
+      let handlerHelperStubWrapper = this.stub()
       handlerHelperStubWrapper.returns(handlerHelperStub)
-      var queryHelperStub = this.stub(require('../utilities/query-helper'))
-      var joiMongooseHelperStub = this.stub(
-        require('../utilities/joi-mongoose-helper'),
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
         'generateJoiReadModel'
       ).callsFake(function() {
         return Joi.any()
       })
-      var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
-        './handler-helper-factory': handlerHelperStubWrapper,
-        './query-helper': queryHelperStub,
-        './joi-mongoose-helper': joiMongooseHelperStub
-      })(Log, mongoose, server)
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub
+        }
+      )(Log, mongoose, server)
 
       t.plan(4)
 
-      var userSchema1 = new mongoose.Schema({})
+      let userSchema1 = new mongoose.Schema({})
       userSchema1.statics = { routeOptions: {} }
 
-      var userSchema2 = new mongoose.Schema({})
+      let userSchema2 = new mongoose.Schema({})
       userSchema2.statics = {
         routeOptions: {},
         collectionDisplayName: 'User'
       }
 
-      var userModel1 = mongoose.model('user1', userSchema1)
-      var userModel2 = mongoose.model('user2', userSchema2)
+      let userModel1 = mongoose.model('user1', userSchema1)
+      let userModel2 = mongoose.model('user2', userSchema2)
       // </editor-fold>
 
       // <editor-fold desc="Act">
@@ -1292,8 +1322,8 @@ test('rest-helper-factory.generateListEndpoint', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Assert">
-      var serverObject1 = server.route.args[0][0]
-      var serverObject2 = server.route.args[1][0]
+      let serverObject1 = server.route.args[0][0]
+      let serverObject2 = server.route.args[1][0]
       // Log.debug(JSON.stringify(serverObject));
       t.equal(
         serverObject1.config.description,
@@ -1322,34 +1352,37 @@ test('rest-helper-factory.generateListEndpoint', function(t) {
     'rest-helper-factory.generateListEndpoint calls server.route using cors',
     sinon.test(function(t) {
       // <editor-fold desc="Arrange">
-      var server = this.stub({
+      let server = this.stub({
         route: function() {}
       })
 
-      var handlerHelperStub = this.stub(
-        require('../utilities/handler-helper-factory')(this.spy(), server)
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
       )
-      var handlerHelperStubWrapper = this.stub()
+      let handlerHelperStubWrapper = this.stub()
       handlerHelperStubWrapper.returns(handlerHelperStub)
-      var queryHelperStub = this.stub(require('../utilities/query-helper'))
-      var joiMongooseHelperStub = this.stub(
-        require('../utilities/joi-mongoose-helper'),
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
         'generateJoiReadModel'
       ).callsFake(function() {
         return Joi.any()
       })
-      var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
-        './handler-helper-factory': handlerHelperStubWrapper,
-        './query-helper': queryHelperStub,
-        './joi-mongoose-helper': joiMongooseHelperStub
-      })(Log, mongoose, server)
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub
+        }
+      )(Log, mongoose, server)
 
       t.plan(1)
 
-      var userSchema = new mongoose.Schema({})
+      let userSchema = new mongoose.Schema({})
       userSchema.statics = { routeOptions: {} }
 
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
       // </editor-fold>
 
       // <editor-fold desc="Act">
@@ -1357,9 +1390,9 @@ test('rest-helper-factory.generateListEndpoint', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Assert">
-      var serverObject = server.route.args[0][0]
+      let serverObject = server.route.args[0][0]
       // Log.debug(JSON.stringify(serverObject));
-      var cors = {
+      let cors = {
         additionalHeaders: [],
         additionalExposedHeaders: []
       }
@@ -1377,38 +1410,41 @@ test('rest-helper-factory.generateListEndpoint', function(t) {
     'rest-helper-factory.generateListEndpoint calls server.route using correct queryModel',
     sinon.test(function(t) {
       // <editor-fold desc="Arrange">//<editor-fold desc="Arrange">
-      var server = this.stub({
+      let server = this.stub({
         route: function() {}
       })
 
-      var handlerHelperStub = this.stub(
-        require('../utilities/handler-helper-factory')(this.spy(), server)
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
       )
-      var handlerHelperStubWrapper = this.stub()
+      let handlerHelperStubWrapper = this.stub()
       handlerHelperStubWrapper.returns(handlerHelperStub)
-      var queryHelperStub = this.stub(require('../utilities/query-helper'))
-      var joiMongooseHelperStub = this.stub(
-        require('../utilities/joi-mongoose-helper'),
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
         'generateJoiReadModel'
       ).callsFake(function() {
         return Joi.any()
       })
-      var queryModel = Joi.any().valid('TEST')
+      let queryModel = Joi.any().valid('TEST')
       joiMongooseHelperStub.generateJoiListQueryModel = this.spy(function() {
         return queryModel
       })
-      var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
-        './handler-helper-factory': handlerHelperStubWrapper,
-        './query-helper': queryHelperStub,
-        './joi-mongoose-helper': joiMongooseHelperStub
-      })(Log, mongoose, server)
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub
+        }
+      )(Log, mongoose, server)
 
       t.plan(1)
 
-      var userSchema = new mongoose.Schema({})
+      let userSchema = new mongoose.Schema({})
       userSchema.statics = { routeOptions: {} }
 
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
       // </editor-fold>
 
       // <editor-fold desc="Act">
@@ -1416,7 +1452,7 @@ test('rest-helper-factory.generateListEndpoint', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Assert">
-      var serverObject = server.route.args[0][0]
+      let serverObject = server.route.args[0][0]
       t.deepEqual(
         serverObject.config.validate.query,
         queryModel,
@@ -1435,42 +1471,45 @@ test('rest-helper-factory.generateListEndpoint', function(t) {
     'rest-helper-factory.generateListEndpoint calls server.route using correct header validation',
     sinon.test(function(t) {
       // <editor-fold desc="Arrange">
-      var server = this.stub({
+      let server = this.stub({
         route: function() {}
       })
 
-      var handlerHelperStub = this.stub(
-        require('../utilities/handler-helper-factory')(this.spy(), server)
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
       )
-      var handlerHelperStubWrapper = this.stub()
+      let handlerHelperStubWrapper = this.stub()
       handlerHelperStubWrapper.returns(handlerHelperStub)
-      var queryHelperStub = this.stub(require('../utilities/query-helper'))
-      var joiMongooseHelperStub = this.stub(
-        require('../utilities/joi-mongoose-helper'),
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
         'generateJoiReadModel'
       ).callsFake(function() {
         return Joi.any()
       })
-      var config = { authStrategy: 'TEST_AUTH' }
-      var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
-        './handler-helper-factory': handlerHelperStubWrapper,
-        './query-helper': queryHelperStub,
-        './joi-mongoose-helper': joiMongooseHelperStub,
-        '../config': config
-      })(Log, mongoose, server)
+      let config = { authStrategy: 'TEST_AUTH' }
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub,
+          '../config': config
+        }
+      )(Log, mongoose, server)
 
       t.plan(1)
 
-      var userSchema = new mongoose.Schema({
+      let userSchema = new mongoose.Schema({
         test: {
           type: Types.String
         }
       })
       userSchema.statics = { routeOptions: {} }
 
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
 
-      var headerValidation = Joi.object({
+      let headerValidation = Joi.object({
         authorization: Joi.string().required()
       }).options({ allowUnknown: true })
       // </editor-fold>
@@ -1480,7 +1519,7 @@ test('rest-helper-factory.generateListEndpoint', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Assert">
-      var serverObject = server.route.args[0][0]
+      let serverObject = server.route.args[0][0]
       // Log.debug(JSON.stringify(serverObject));
       t.deepEqual(
         serverObject.config.validate.headers,
@@ -1500,38 +1539,41 @@ test('rest-helper-factory.generateListEndpoint', function(t) {
     'rest-helper-factory.generateListEndpoint calls server.route using hapi-swagger plugin',
     sinon.test(function(t) {
       // <editor-fold desc="Arrange">
-      var server = this.stub({
+      let server = this.stub({
         route: function() {}
       })
 
-      var handlerHelperStub = this.stub(
-        require('../utilities/handler-helper-factory')(this.spy(), server)
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
       )
-      var handlerHelperStubWrapper = this.stub()
+      let handlerHelperStubWrapper = this.stub()
       handlerHelperStubWrapper.returns(handlerHelperStub)
-      var queryHelperStub = this.stub(require('../utilities/query-helper'))
-      var joiMongooseHelperStub = this.stub(
-        require('../utilities/joi-mongoose-helper'),
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
         'generateJoiReadModel'
       ).callsFake(function() {
         return Joi.any()
       })
-      var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
-        './handler-helper-factory': handlerHelperStubWrapper,
-        './query-helper': queryHelperStub,
-        './joi-mongoose-helper': joiMongooseHelperStub
-      })(Log, mongoose, server)
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub
+        }
+      )(Log, mongoose, server)
 
       t.plan(1)
 
-      var userSchema = new mongoose.Schema({
+      let userSchema = new mongoose.Schema({
         test: {
           type: Types.String
         }
       })
       userSchema.statics = { routeOptions: {} }
 
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
       // </editor-fold>
 
       // <editor-fold desc="Act">
@@ -1539,7 +1581,7 @@ test('rest-helper-factory.generateListEndpoint', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Assert">
-      var serverObject = server.route.args[0][0]
+      let serverObject = server.route.args[0][0]
       // Log.debug(JSON.stringify(serverObject));
       t.ok(serverObject.config.plugins['hapi-swagger'], 'hapi-swagger used')
       // </editor-fold>
@@ -1555,45 +1597,48 @@ test('rest-helper-factory.generateListEndpoint', function(t) {
     'rest-helper-factory.generateListEndpoint calls server.route with correct response schema validation',
     sinon.test(function(t) {
       // <editor-fold desc="Arrange">
-      var server = this.stub({
+      let server = this.stub({
         route: function() {}
       })
 
-      var handlerHelperStub = this.stub(
-        require('../utilities/handler-helper-factory')(this.spy(), server)
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
       )
-      var handlerHelperStubWrapper = this.stub()
+      let handlerHelperStubWrapper = this.stub()
       handlerHelperStubWrapper.returns(handlerHelperStub)
-      var queryHelperStub = this.stub(require('../utilities/query-helper'))
-      var readModel = Joi.any().valid(['test'])
-      var joiMongooseHelperStub = this.stub(
-        require('../utilities/joi-mongoose-helper'),
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let readModel = Joi.any().valid(['test'])
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
         'generateJoiReadModel'
       ).callsFake(function() {
         return readModel
       })
-      var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
-        './handler-helper-factory': handlerHelperStubWrapper,
-        './query-helper': queryHelperStub,
-        './joi-mongoose-helper': joiMongooseHelperStub
-      })(Log, mongoose, server)
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub
+        }
+      )(Log, mongoose, server)
 
       t.plan(1)
 
-      var userSchema = new mongoose.Schema({
+      let userSchema = new mongoose.Schema({
         test: {
           type: Types.String
         }
       })
       userSchema.statics = { routeOptions: {} }
 
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
 
-      var collectionName = 'userModelName'
+      let collectionName = 'userModelName'
 
       userModel.modelName = collectionName
 
-      var responseSchema = Joi.alternatives()
+      let responseSchema = Joi.alternatives()
         .try(
           Joi.object({
             docs: Joi.array()
@@ -1612,7 +1657,7 @@ test('rest-helper-factory.generateListEndpoint', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Assert">
-      var serverObject = server.route.args[0][0]
+      let serverObject = server.route.args[0][0]
       // Log.debug(JSON.stringify(serverObject));
       t.deepEquals(
         serverObject.config.response.schema,
@@ -1632,8 +1677,8 @@ test('rest-helper-factory.generateListEndpoint', function(t) {
 })
 
 test('rest-helper-factory.generateFindEndpoint', function(t) {
-  var server = sinon.spy()
-  var restHelperFactory = require('../utilities/rest-helper-factory')(
+  let server = sinon.spy()
+  let restHelperFactory = require('../../utilities/rest-helper-factory')(
     Log,
     mongoose,
     server
@@ -1650,34 +1695,37 @@ test('rest-helper-factory.generateFindEndpoint', function(t) {
     'rest-helper-factory.generateFindEndpoint calls handlerHelper.generateFindHandler',
     sinon.test(function(t) {
       // <editor-fold desc="Arrange">
-      var server = this.stub({
+      let server = this.stub({
         route: function() {}
       })
 
-      var handlerHelperStub = this.stub(
-        require('../utilities/handler-helper-factory')(this.spy(), server)
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
       )
-      var handlerHelperStubWrapper = this.stub()
+      let handlerHelperStubWrapper = this.stub()
       handlerHelperStubWrapper.returns(handlerHelperStub)
-      var queryHelperStub = this.stub(require('../utilities/query-helper'))
-      var joiMongooseHelperStub = this.stub(
-        require('../utilities/joi-mongoose-helper'),
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
         'generateJoiReadModel'
       ).callsFake(function() {
         return Joi.any()
       })
-      var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
-        './handler-helper-factory': handlerHelperStubWrapper,
-        './query-helper': queryHelperStub,
-        './joi-mongoose-helper': joiMongooseHelperStub
-      })(Log, mongoose, server)
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub
+        }
+      )(Log, mongoose, server)
 
       t.plan(1)
 
-      var userSchema = new mongoose.Schema({})
+      let userSchema = new mongoose.Schema({})
       userSchema.statics = { routeOptions: {} }
 
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
       // </editor-fold>
 
       // <editor-fold desc="Act">
@@ -1702,34 +1750,37 @@ test('rest-helper-factory.generateFindEndpoint', function(t) {
     'rest-helper-factory.generateFindEndpoint calls queryHelper.getReadableFields',
     sinon.test(function(t) {
       // <editor-fold desc="Arrange">
-      var server = this.stub({
+      let server = this.stub({
         route: function() {}
       })
 
-      var handlerHelperStub = this.stub(
-        require('../utilities/handler-helper-factory')(this.spy(), server)
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
       )
-      var handlerHelperStubWrapper = this.stub()
+      let handlerHelperStubWrapper = this.stub()
       handlerHelperStubWrapper.returns(handlerHelperStub)
-      var queryHelperStub = this.stub(require('../utilities/query-helper'))
-      var joiMongooseHelperStub = this.stub(
-        require('../utilities/joi-mongoose-helper'),
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
         'generateJoiReadModel'
       ).callsFake(function() {
         return Joi.any()
       })
-      var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
-        './handler-helper-factory': handlerHelperStubWrapper,
-        './query-helper': queryHelperStub,
-        './joi-mongoose-helper': joiMongooseHelperStub
-      })(Log, mongoose, server)
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub
+        }
+      )(Log, mongoose, server)
 
       t.plan(1)
 
-      var userSchema = new mongoose.Schema({})
+      let userSchema = new mongoose.Schema({})
       userSchema.statics = { routeOptions: {} }
 
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
       // </editor-fold>
 
       // <editor-fold desc="Act">
@@ -1751,18 +1802,18 @@ test('rest-helper-factory.generateFindEndpoint', function(t) {
     'rest-helper-factory.generateFindEndpoint calls joiMongooseHelper.generateJoiReadModel and generateJoiFindQueryModel',
     sinon.test(function(t) {
       // <editor-fold desc="Arrange">
-      var server = this.stub({
+      let server = this.stub({
         route: function() {}
       })
 
-      var handlerHelperStub = this.stub(
-        require('../utilities/handler-helper-factory')(this.spy(), server)
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
       )
-      var handlerHelperStubWrapper = this.stub()
+      let handlerHelperStubWrapper = this.stub()
       handlerHelperStubWrapper.returns(handlerHelperStub)
-      var queryHelperStub = this.stub(require('../utilities/query-helper'))
-      var joiMongooseHelperStub = this.stub(
-        require('../utilities/joi-mongoose-helper'),
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
         'generateJoiReadModel'
       ).callsFake(function() {
         return Joi.any()
@@ -1770,18 +1821,21 @@ test('rest-helper-factory.generateFindEndpoint', function(t) {
       joiMongooseHelperStub.generateJoiFindQueryModel = this.spy(function() {
         return Joi.any()
       })
-      var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
-        './handler-helper-factory': handlerHelperStubWrapper,
-        './query-helper': queryHelperStub,
-        './joi-mongoose-helper': joiMongooseHelperStub
-      })(Log, mongoose, server)
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub
+        }
+      )(Log, mongoose, server)
 
       t.plan(2)
 
-      var userSchema = new mongoose.Schema({})
+      let userSchema = new mongoose.Schema({})
       userSchema.statics = { routeOptions: {} }
 
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
       // </editor-fold>
 
       // <editor-fold desc="Act">
@@ -1810,34 +1864,37 @@ test('rest-helper-factory.generateFindEndpoint', function(t) {
     'rest-helper-factory.generateFindEndpoint calls server.route',
     sinon.test(function(t) {
       // <editor-fold desc="Arrange">
-      var server = this.stub({
+      let server = this.stub({
         route: function() {}
       })
 
-      var handlerHelperStub = this.stub(
-        require('../utilities/handler-helper-factory')(this.spy(), server)
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
       )
-      var handlerHelperStubWrapper = this.stub()
+      let handlerHelperStubWrapper = this.stub()
       handlerHelperStubWrapper.returns(handlerHelperStub)
-      var queryHelperStub = this.stub(require('../utilities/query-helper'))
-      var joiMongooseHelperStub = this.stub(
-        require('../utilities/joi-mongoose-helper'),
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
         'generateJoiReadModel'
       ).callsFake(function() {
         return Joi.any()
       })
-      var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
-        './handler-helper-factory': handlerHelperStubWrapper,
-        './query-helper': queryHelperStub,
-        './joi-mongoose-helper': joiMongooseHelperStub
-      })(Log, mongoose, server)
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub
+        }
+      )(Log, mongoose, server)
 
       t.plan(1)
 
-      var userSchema = new mongoose.Schema({})
+      let userSchema = new mongoose.Schema({})
       userSchema.statics = { routeOptions: {} }
 
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
       // </editor-fold>
 
       // <editor-fold desc="Act">
@@ -1859,34 +1916,37 @@ test('rest-helper-factory.generateFindEndpoint', function(t) {
     'rest-helper-factory.generateFindEndpoint calls server.route with "GET" method',
     sinon.test(function(t) {
       // <editor-fold desc="Arrange">
-      var server = this.stub({
+      let server = this.stub({
         route: function() {}
       })
 
-      var handlerHelperStub = this.stub(
-        require('../utilities/handler-helper-factory')(this.spy(), server)
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
       )
-      var handlerHelperStubWrapper = this.stub()
+      let handlerHelperStubWrapper = this.stub()
       handlerHelperStubWrapper.returns(handlerHelperStub)
-      var queryHelperStub = this.stub(require('../utilities/query-helper'))
-      var joiMongooseHelperStub = this.stub(
-        require('../utilities/joi-mongoose-helper'),
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
         'generateJoiReadModel'
       ).callsFake(function() {
         return Joi.any()
       })
-      var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
-        './handler-helper-factory': handlerHelperStubWrapper,
-        './query-helper': queryHelperStub,
-        './joi-mongoose-helper': joiMongooseHelperStub
-      })(Log, mongoose, server)
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub
+        }
+      )(Log, mongoose, server)
 
       t.plan(1)
 
-      var userSchema = new mongoose.Schema({})
+      let userSchema = new mongoose.Schema({})
       userSchema.statics = { routeOptions: {} }
 
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
       // </editor-fold>
 
       // <editor-fold desc="Act">
@@ -1894,7 +1954,7 @@ test('rest-helper-factory.generateFindEndpoint', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Assert">
-      var serverObject = server.route.args[0][0]
+      let serverObject = server.route.args[0][0]
       // Log.debug(JSON.stringify(serverObject));
       t.equal(serverObject.method, 'GET', 'GET method used')
       // </editor-fold>
@@ -1910,42 +1970,45 @@ test('rest-helper-factory.generateFindEndpoint', function(t) {
     'rest-helper-factory.generateFindEndpoint calls server.route with correct resourceAliasForRoute',
     sinon.test(function(t) {
       // <editor-fold desc="Arrange">
-      var server = this.stub({
+      let server = this.stub({
         route: function() {}
       })
 
-      var handlerHelperStub = this.stub(
-        require('../utilities/handler-helper-factory')(this.spy(), server)
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
       )
-      var handlerHelperStubWrapper = this.stub()
+      let handlerHelperStubWrapper = this.stub()
       handlerHelperStubWrapper.returns(handlerHelperStub)
-      var queryHelperStub = this.stub(require('../utilities/query-helper'))
-      var joiMongooseHelperStub = this.stub(
-        require('../utilities/joi-mongoose-helper'),
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
         'generateJoiReadModel'
       ).callsFake(function() {
         return Joi.any()
       })
-      var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
-        './handler-helper-factory': handlerHelperStubWrapper,
-        './query-helper': queryHelperStub,
-        './joi-mongoose-helper': joiMongooseHelperStub
-      })(Log, mongoose, server)
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub
+        }
+      )(Log, mongoose, server)
 
       t.plan(2)
 
-      var userSchema1 = new mongoose.Schema({})
+      let userSchema1 = new mongoose.Schema({})
       userSchema1.statics = { routeOptions: {} }
 
-      var userSchema2 = new mongoose.Schema({})
+      let userSchema2 = new mongoose.Schema({})
       userSchema2.statics = {
         routeOptions: {
           alias: 'PEEPS'
         }
       }
 
-      var userModel1 = mongoose.model('user1', userSchema1)
-      var userModel2 = mongoose.model('user2', userSchema2)
+      let userModel1 = mongoose.model('user1', userSchema1)
+      let userModel2 = mongoose.model('user2', userSchema2)
       // </editor-fold>
 
       // <editor-fold desc="Act">
@@ -1954,8 +2017,8 @@ test('rest-helper-factory.generateFindEndpoint', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Assert">
-      var serverObject1 = server.route.args[0][0]
-      var serverObject2 = server.route.args[1][0]
+      let serverObject1 = server.route.args[0][0]
+      let serverObject2 = server.route.args[1][0]
       // Log.debug(JSON.stringify(serverObject));
       t.equal(serverObject1.path, '/user1/{_id}', 'correct route')
       t.equal(serverObject2.path, '/PEEPS/{_id}', 'correct route alias')
@@ -1974,37 +2037,40 @@ test('rest-helper-factory.generateFindEndpoint', function(t) {
     'rest-helper-factory.generateFindEndpoint calls server.route with correct handler',
     sinon.test(function(t) {
       // <editor-fold desc="Arrange">
-      var server = this.stub({
+      let server = this.stub({
         route: function() {}
       })
 
-      var handlerHelperStub = this.stub(
-        require('../utilities/handler-helper-factory')(this.spy(), server)
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
       )
       handlerHelperStub.generateFindHandler = this.spy(function() {
         return 'HANDLER'
       })
-      var handlerHelperStubWrapper = this.stub()
+      let handlerHelperStubWrapper = this.stub()
       handlerHelperStubWrapper.returns(handlerHelperStub)
-      var queryHelperStub = this.stub(require('../utilities/query-helper'))
-      var joiMongooseHelperStub = this.stub(
-        require('../utilities/joi-mongoose-helper'),
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
         'generateJoiReadModel'
       ).callsFake(function() {
         return Joi.any()
       })
-      var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
-        './handler-helper-factory': handlerHelperStubWrapper,
-        './query-helper': queryHelperStub,
-        './joi-mongoose-helper': joiMongooseHelperStub
-      })(Log, mongoose, server)
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub
+        }
+      )(Log, mongoose, server)
 
       t.plan(1)
 
-      var userSchema = new mongoose.Schema({})
+      let userSchema = new mongoose.Schema({})
       userSchema.statics = { routeOptions: {} }
 
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
       // </editor-fold>
 
       // <editor-fold desc="Act">
@@ -2012,7 +2078,7 @@ test('rest-helper-factory.generateFindEndpoint', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Assert">
-      var serverObject = server.route.args[0][0]
+      let serverObject = server.route.args[0][0]
       // Log.debug(JSON.stringify(serverObject));
       t.equal(serverObject.config.handler, 'HANDLER', 'correct handler used')
       // </editor-fold>
@@ -2028,36 +2094,39 @@ test('rest-helper-factory.generateFindEndpoint', function(t) {
     'rest-helper-factory.generateFindEndpoint calls server.route using authentication defined by config',
     sinon.test(function(t) {
       // <editor-fold desc="Arrange">
-      var server = this.stub({
+      let server = this.stub({
         route: function() {}
       })
 
-      var handlerHelperStub = this.stub(
-        require('../utilities/handler-helper-factory')(this.spy(), server)
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
       )
-      var handlerHelperStubWrapper = this.stub()
+      let handlerHelperStubWrapper = this.stub()
       handlerHelperStubWrapper.returns(handlerHelperStub)
-      var queryHelperStub = this.stub(require('../utilities/query-helper'))
-      var joiMongooseHelperStub = this.stub(
-        require('../utilities/joi-mongoose-helper'),
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
         'generateJoiReadModel'
       ).callsFake(function() {
         return Joi.any()
       })
-      var config = { authStrategy: 'TEST_AUTH' }
-      var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
-        './handler-helper-factory': handlerHelperStubWrapper,
-        './query-helper': queryHelperStub,
-        './joi-mongoose-helper': joiMongooseHelperStub,
-        '../config': config
-      })(Log, mongoose, server)
+      let config = { authStrategy: 'TEST_AUTH' }
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub,
+          '../config': config
+        }
+      )(Log, mongoose, server)
 
       t.plan(1)
 
-      var userSchema = new mongoose.Schema({})
+      let userSchema = new mongoose.Schema({})
       userSchema.statics = { routeOptions: {} }
 
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
       // </editor-fold>
 
       // <editor-fold desc="Act">
@@ -2065,7 +2134,7 @@ test('rest-helper-factory.generateFindEndpoint', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Assert">
-      var serverObject = server.route.args[0][0]
+      let serverObject = server.route.args[0][0]
       // Log.debug(JSON.stringify(serverObject));
       t.deepEqual(
         serverObject.config.auth,
@@ -2085,41 +2154,44 @@ test('rest-helper-factory.generateFindEndpoint', function(t) {
     'rest-helper-factory.generateFindEndpoint calls server.route with correct collectionName',
     sinon.test(function(t) {
       // <editor-fold desc="Arrange">
-      var server = this.stub({
+      let server = this.stub({
         route: function() {}
       })
 
-      var handlerHelperStub = this.stub(
-        require('../utilities/handler-helper-factory')(this.spy(), server)
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
       )
-      var handlerHelperStubWrapper = this.stub()
+      let handlerHelperStubWrapper = this.stub()
       handlerHelperStubWrapper.returns(handlerHelperStub)
-      var queryHelperStub = this.stub(require('../utilities/query-helper'))
-      var joiMongooseHelperStub = this.stub(
-        require('../utilities/joi-mongoose-helper'),
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
         'generateJoiReadModel'
       ).callsFake(function() {
         return Joi.any()
       })
-      var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
-        './handler-helper-factory': handlerHelperStubWrapper,
-        './query-helper': queryHelperStub,
-        './joi-mongoose-helper': joiMongooseHelperStub
-      })(Log, mongoose, server)
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub
+        }
+      )(Log, mongoose, server)
 
       t.plan(4)
 
-      var userSchema1 = new mongoose.Schema({})
+      let userSchema1 = new mongoose.Schema({})
       userSchema1.statics = { routeOptions: {} }
 
-      var userSchema2 = new mongoose.Schema({})
+      let userSchema2 = new mongoose.Schema({})
       userSchema2.statics = {
         routeOptions: {},
         collectionDisplayName: 'User'
       }
 
-      var userModel1 = mongoose.model('user1', userSchema1)
-      var userModel2 = mongoose.model('user2', userSchema2)
+      let userModel1 = mongoose.model('user1', userSchema1)
+      let userModel2 = mongoose.model('user2', userSchema2)
       // </editor-fold>
 
       // <editor-fold desc="Act">
@@ -2128,8 +2200,8 @@ test('rest-helper-factory.generateFindEndpoint', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Assert">
-      var serverObject1 = server.route.args[0][0]
-      var serverObject2 = server.route.args[1][0]
+      let serverObject1 = server.route.args[0][0]
+      let serverObject2 = server.route.args[1][0]
       // Log.debug(JSON.stringify(serverObject));
       t.equal(
         serverObject1.config.description,
@@ -2158,34 +2230,37 @@ test('rest-helper-factory.generateFindEndpoint', function(t) {
     'rest-helper-factory.generateFindEndpoint calls server.route using cors',
     sinon.test(function(t) {
       // <editor-fold desc="Arrange">
-      var server = this.stub({
+      let server = this.stub({
         route: function() {}
       })
 
-      var handlerHelperStub = this.stub(
-        require('../utilities/handler-helper-factory')(this.spy(), server)
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
       )
-      var handlerHelperStubWrapper = this.stub()
+      let handlerHelperStubWrapper = this.stub()
       handlerHelperStubWrapper.returns(handlerHelperStub)
-      var queryHelperStub = this.stub(require('../utilities/query-helper'))
-      var joiMongooseHelperStub = this.stub(
-        require('../utilities/joi-mongoose-helper'),
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
         'generateJoiReadModel'
       ).callsFake(function() {
         return Joi.any()
       })
-      var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
-        './handler-helper-factory': handlerHelperStubWrapper,
-        './query-helper': queryHelperStub,
-        './joi-mongoose-helper': joiMongooseHelperStub
-      })(Log, mongoose, server)
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub
+        }
+      )(Log, mongoose, server)
 
       t.plan(1)
 
-      var userSchema = new mongoose.Schema({})
+      let userSchema = new mongoose.Schema({})
       userSchema.statics = { routeOptions: {} }
 
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
       // </editor-fold>
 
       // <editor-fold desc="Act">
@@ -2193,9 +2268,9 @@ test('rest-helper-factory.generateFindEndpoint', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Assert">
-      var serverObject = server.route.args[0][0]
+      let serverObject = server.route.args[0][0]
       // Log.debug(JSON.stringify(serverObject));
-      var cors = {
+      let cors = {
         additionalHeaders: [],
         additionalExposedHeaders: []
       }
@@ -2213,38 +2288,41 @@ test('rest-helper-factory.generateFindEndpoint', function(t) {
     'rest-helper-factory.generateFindEndpoint calls server.route using correct queryModel',
     sinon.test(function(t) {
       // <editor-fold desc="Arrange">//<editor-fold desc="Arrange">
-      var server = this.stub({
+      let server = this.stub({
         route: function() {}
       })
 
-      var handlerHelperStub = this.stub(
-        require('../utilities/handler-helper-factory')(this.spy(), server)
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
       )
-      var handlerHelperStubWrapper = this.stub()
+      let handlerHelperStubWrapper = this.stub()
       handlerHelperStubWrapper.returns(handlerHelperStub)
-      var queryHelperStub = this.stub(require('../utilities/query-helper'))
-      var joiMongooseHelperStub = this.stub(
-        require('../utilities/joi-mongoose-helper'),
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
         'generateJoiReadModel'
       ).callsFake(function() {
         return Joi.any()
       })
-      var queryModel = Joi.any().valid('TEST')
+      let queryModel = Joi.any().valid('TEST')
       joiMongooseHelperStub.generateJoiFindQueryModel = this.spy(function() {
         return queryModel
       })
-      var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
-        './handler-helper-factory': handlerHelperStubWrapper,
-        './query-helper': queryHelperStub,
-        './joi-mongoose-helper': joiMongooseHelperStub
-      })(Log, mongoose, server)
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub
+        }
+      )(Log, mongoose, server)
 
       t.plan(1)
 
-      var userSchema = new mongoose.Schema({})
+      let userSchema = new mongoose.Schema({})
       userSchema.statics = { routeOptions: {} }
 
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
       // </editor-fold>
 
       // <editor-fold desc="Act">
@@ -2252,7 +2330,7 @@ test('rest-helper-factory.generateFindEndpoint', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Assert">
-      var serverObject = server.route.args[0][0]
+      let serverObject = server.route.args[0][0]
       t.deepEqual(
         serverObject.config.validate.query,
         queryModel,
@@ -2271,24 +2349,24 @@ test('rest-helper-factory.generateFindEndpoint', function(t) {
     'rest-helper-factory.generateFindEndpoint calls server.route using correct params validation',
     sinon.test(function(t) {
       // <editor-fold desc="Arrange">
-      var server = this.stub({
+      let server = this.stub({
         route: function() {}
       })
 
-      var handlerHelperStub = this.stub(
-        require('../utilities/handler-helper-factory')(this.spy(), server)
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
       )
-      var handlerHelperStubWrapper = this.stub()
+      let handlerHelperStubWrapper = this.stub()
       handlerHelperStubWrapper.returns(handlerHelperStub)
-      var queryHelperStub = this.stub(require('../utilities/query-helper'))
-      var joiMongooseHelperStub = this.stub(
-        require('../utilities/joi-mongoose-helper'),
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
         'generateJoiReadModel'
       ).callsFake(function() {
         return Joi.any()
       })
-      var joiStub = require('joi')
-      var joiObjectIdStub = function() {
+      let joiStub = require('joi')
+      let joiObjectIdStub = function() {
         return function() {
           return {
             required: function() {
@@ -2297,22 +2375,25 @@ test('rest-helper-factory.generateFindEndpoint', function(t) {
           }
         }
       }
-      var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
-        './handler-helper-factory': handlerHelperStubWrapper,
-        './query-helper': queryHelperStub,
-        './joi-mongoose-helper': joiMongooseHelperStub,
-        joi: joiStub,
-        'joi-objectid': joiObjectIdStub
-      })(Log, mongoose, server)
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub,
+          joi: joiStub,
+          'joi-objectid': joiObjectIdStub
+        }
+      )(Log, mongoose, server)
 
       t.plan(1)
 
-      var userSchema = new mongoose.Schema({})
+      let userSchema = new mongoose.Schema({})
       userSchema.statics = { routeOptions: {} }
 
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
 
-      var params = {
+      let params = {
         _id: 'TEST'
       }
       // </editor-fold>
@@ -2322,7 +2403,7 @@ test('rest-helper-factory.generateFindEndpoint', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Assert">
-      var serverObject = server.route.args[0][0]
+      let serverObject = server.route.args[0][0]
       // Log.debug(JSON.stringify(serverObject));
       t.deepEqual(
         serverObject.config.validate.params,
@@ -2342,38 +2423,41 @@ test('rest-helper-factory.generateFindEndpoint', function(t) {
     'rest-helper-factory.generateFindEndpoint calls server.route using correct header validation',
     sinon.test(function(t) {
       // <editor-fold desc="Arrange">
-      var server = this.stub({
+      let server = this.stub({
         route: function() {}
       })
 
-      var handlerHelperStub = this.stub(
-        require('../utilities/handler-helper-factory')(this.spy(), server)
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
       )
-      var handlerHelperStubWrapper = this.stub()
+      let handlerHelperStubWrapper = this.stub()
       handlerHelperStubWrapper.returns(handlerHelperStub)
-      var queryHelperStub = this.stub(require('../utilities/query-helper'))
-      var joiMongooseHelperStub = this.stub(
-        require('../utilities/joi-mongoose-helper'),
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
         'generateJoiReadModel'
       ).callsFake(function() {
         return Joi.any()
       })
-      var config = { authStrategy: 'TEST_AUTH' }
-      var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
-        './handler-helper-factory': handlerHelperStubWrapper,
-        './query-helper': queryHelperStub,
-        './joi-mongoose-helper': joiMongooseHelperStub,
-        '../config': config
-      })(Log, mongoose, server)
+      let config = { authStrategy: 'TEST_AUTH' }
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub,
+          '../config': config
+        }
+      )(Log, mongoose, server)
 
       t.plan(1)
 
-      var userSchema = new mongoose.Schema({})
+      let userSchema = new mongoose.Schema({})
       userSchema.statics = { routeOptions: {} }
 
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
 
-      var headerValidation = Joi.object({
+      let headerValidation = Joi.object({
         authorization: Joi.string().required()
       }).options({ allowUnknown: true })
       // </editor-fold>
@@ -2383,7 +2467,7 @@ test('rest-helper-factory.generateFindEndpoint', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Assert">
-      var serverObject = server.route.args[0][0]
+      let serverObject = server.route.args[0][0]
       // Log.debug(JSON.stringify(serverObject));
       t.deepEqual(
         serverObject.config.validate.headers,
@@ -2403,34 +2487,37 @@ test('rest-helper-factory.generateFindEndpoint', function(t) {
     'rest-helper-factory.generateFindEndpoint calls server.route using hapi-swagger plugin',
     sinon.test(function(t) {
       // <editor-fold desc="Arrange">
-      var server = this.stub({
+      let server = this.stub({
         route: function() {}
       })
 
-      var handlerHelperStub = this.stub(
-        require('../utilities/handler-helper-factory')(this.spy(), server)
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
       )
-      var handlerHelperStubWrapper = this.stub()
+      let handlerHelperStubWrapper = this.stub()
       handlerHelperStubWrapper.returns(handlerHelperStub)
-      var queryHelperStub = this.stub(require('../utilities/query-helper'))
-      var joiMongooseHelperStub = this.stub(
-        require('../utilities/joi-mongoose-helper'),
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
         'generateJoiReadModel'
       ).callsFake(function() {
         return Joi.any()
       })
-      var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
-        './handler-helper-factory': handlerHelperStubWrapper,
-        './query-helper': queryHelperStub,
-        './joi-mongoose-helper': joiMongooseHelperStub
-      })(Log, mongoose, server)
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub
+        }
+      )(Log, mongoose, server)
 
       t.plan(1)
 
-      var userSchema = new mongoose.Schema({})
+      let userSchema = new mongoose.Schema({})
       userSchema.statics = { routeOptions: {} }
 
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
       // </editor-fold>
 
       // <editor-fold desc="Act">
@@ -2438,7 +2525,7 @@ test('rest-helper-factory.generateFindEndpoint', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Assert">
-      var serverObject = server.route.args[0][0]
+      let serverObject = server.route.args[0][0]
       // Log.debug(JSON.stringify(serverObject));
       t.ok(serverObject.config.plugins['hapi-swagger'], 'hapi-swagger used')
       // </editor-fold>
@@ -2454,37 +2541,40 @@ test('rest-helper-factory.generateFindEndpoint', function(t) {
     'rest-helper-factory.generateFindEndpoint calls server.route with correct response schema validation',
     sinon.test(function(t) {
       // <editor-fold desc="Arrange">
-      var server = this.stub({
+      let server = this.stub({
         route: function() {}
       })
 
-      var handlerHelperStub = this.stub(
-        require('../utilities/handler-helper-factory')(this.spy(), server)
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
       )
-      var handlerHelperStubWrapper = this.stub()
+      let handlerHelperStubWrapper = this.stub()
       handlerHelperStubWrapper.returns(handlerHelperStub)
-      var queryHelperStub = this.stub(require('../utilities/query-helper'))
-      var readModel = Joi.any().valid(['test'])
-      var joiMongooseHelperStub = this.stub(
-        require('../utilities/joi-mongoose-helper'),
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let readModel = Joi.any().valid(['test'])
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
         'generateJoiReadModel'
       ).callsFake(function() {
         return readModel
       })
-      var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
-        './handler-helper-factory': handlerHelperStubWrapper,
-        './query-helper': queryHelperStub,
-        './joi-mongoose-helper': joiMongooseHelperStub
-      })(Log, mongoose, server)
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub
+        }
+      )(Log, mongoose, server)
 
       t.plan(1)
 
-      var userSchema = new mongoose.Schema({})
+      let userSchema = new mongoose.Schema({})
       userSchema.statics = { routeOptions: {} }
 
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
 
-      var responseSchema = readModel
+      let responseSchema = readModel
       // </editor-fold>
 
       // <editor-fold desc="Act">
@@ -2492,7 +2582,7 @@ test('rest-helper-factory.generateFindEndpoint', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Assert">
-      var serverObject = server.route.args[0][0]
+      let serverObject = server.route.args[0][0]
       // Log.debug(JSON.stringify(serverObject));
       t.deepEquals(
         serverObject.config.response.schema,
@@ -2512,8 +2602,8 @@ test('rest-helper-factory.generateFindEndpoint', function(t) {
 })
 
 test('rest-helper-factory.generateCreateEndpoint', function(t) {
-  var server = sinon.spy()
-  var restHelperFactory = require('../utilities/rest-helper-factory')(
+  let server = sinon.spy()
+  let restHelperFactory = require('../../utilities/rest-helper-factory')(
     Log,
     mongoose,
     server
@@ -2530,16 +2620,16 @@ test('rest-helper-factory.generateCreateEndpoint', function(t) {
     'rest-helper-factory.generateCreateEndpoint calls handlerHelper.generateCreateHandler',
     sinon.test(function(t) {
       // <editor-fold desc="Arrange">
-      var server = this.stub({ route: function() {} })
+      let server = this.stub({ route: function() {} })
 
-      var handlerHelperStub = this.stub(
-        require('../utilities/handler-helper-factory')(this.spy(), server)
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
       )
-      var handlerHelperStubWrapper = this.stub()
+      let handlerHelperStubWrapper = this.stub()
       handlerHelperStubWrapper.returns(handlerHelperStub)
-      var queryHelperStub = this.stub(require('../utilities/query-helper'))
-      var joiMongooseHelperStub = this.stub(
-        require('../utilities/joi-mongoose-helper'),
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
         'generateJoiReadModel'
       ).callsFake(function() {
         return Joi.any().label('TEST')
@@ -2547,18 +2637,21 @@ test('rest-helper-factory.generateCreateEndpoint', function(t) {
       joiMongooseHelperStub.generateJoiCreateModel = this.spy(function() {
         return Joi.any().label('TEST')
       })
-      var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
-        './handler-helper-factory': handlerHelperStubWrapper,
-        './query-helper': queryHelperStub,
-        './joi-mongoose-helper': joiMongooseHelperStub
-      })(Log, mongoose, server)
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub
+        }
+      )(Log, mongoose, server)
 
       t.plan(1)
 
-      var userSchema = new mongoose.Schema({})
+      let userSchema = new mongoose.Schema({})
       userSchema.statics = { routeOptions: {} }
 
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
       // </editor-fold>
 
       // <editor-fold desc="Act">
@@ -2583,16 +2676,16 @@ test('rest-helper-factory.generateCreateEndpoint', function(t) {
     'rest-helper-factory.generateCreateEndpoint calls joiMongooseHelper.generateJoiReadModel',
     sinon.test(function(t) {
       // <editor-fold desc="Arrange">
-      var server = this.stub({ route: function() {} })
+      let server = this.stub({ route: function() {} })
 
-      var handlerHelperStub = this.stub(
-        require('../utilities/handler-helper-factory')(this.spy(), server)
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
       )
-      var handlerHelperStubWrapper = this.stub()
+      let handlerHelperStubWrapper = this.stub()
       handlerHelperStubWrapper.returns(handlerHelperStub)
-      var queryHelperStub = this.stub(require('../utilities/query-helper'))
-      var joiMongooseHelperStub = this.stub(
-        require('../utilities/joi-mongoose-helper'),
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
         'generateJoiReadModel'
       ).callsFake(function() {
         return Joi.any().label('TEST')
@@ -2600,18 +2693,21 @@ test('rest-helper-factory.generateCreateEndpoint', function(t) {
       joiMongooseHelperStub.generateJoiCreateModel = this.spy(function() {
         return Joi.any().label('TEST')
       })
-      var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
-        './handler-helper-factory': handlerHelperStubWrapper,
-        './query-helper': queryHelperStub,
-        './joi-mongoose-helper': joiMongooseHelperStub
-      })(Log, mongoose, server)
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub
+        }
+      )(Log, mongoose, server)
 
       t.plan(1)
 
-      var userSchema = new mongoose.Schema({})
+      let userSchema = new mongoose.Schema({})
       userSchema.statics = { routeOptions: {} }
 
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
       // </editor-fold>
 
       // <editor-fold desc="Act">
@@ -2636,16 +2732,16 @@ test('rest-helper-factory.generateCreateEndpoint', function(t) {
     'rest-helper-factory.generateCreateEndpoint calls joiMongooseHelper.generateJoiCreateModel',
     sinon.test(function(t) {
       // <editor-fold desc="Arrange">
-      var server = this.stub({ route: function() {} })
+      let server = this.stub({ route: function() {} })
 
-      var handlerHelperStub = this.stub(
-        require('../utilities/handler-helper-factory')(this.spy(), server)
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
       )
-      var handlerHelperStubWrapper = this.stub()
+      let handlerHelperStubWrapper = this.stub()
       handlerHelperStubWrapper.returns(handlerHelperStub)
-      var queryHelperStub = this.stub(require('../utilities/query-helper'))
-      var joiMongooseHelperStub = this.stub(
-        require('../utilities/joi-mongoose-helper'),
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
         'generateJoiCreateModel'
       ).callsFake(function() {
         return Joi.any().label('TEST')
@@ -2653,18 +2749,21 @@ test('rest-helper-factory.generateCreateEndpoint', function(t) {
       joiMongooseHelperStub.generateJoiReadModel = this.spy(function() {
         return Joi.any().label('TES')
       })
-      var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
-        './handler-helper-factory': handlerHelperStubWrapper,
-        './query-helper': queryHelperStub,
-        './joi-mongoose-helper': joiMongooseHelperStub
-      })(Log, mongoose, server)
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub
+        }
+      )(Log, mongoose, server)
 
       t.plan(1)
 
-      var userSchema = new mongoose.Schema({})
+      let userSchema = new mongoose.Schema({})
       userSchema.statics = { routeOptions: {} }
 
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
       // </editor-fold>
 
       // <editor-fold desc="Act">
@@ -2689,16 +2788,16 @@ test('rest-helper-factory.generateCreateEndpoint', function(t) {
     'rest-helper-factory.generateCreateEndpoint calls server.route',
     sinon.test(function(t) {
       // <editor-fold desc="Arrange">
-      var server = this.stub({ route: function() {} })
+      let server = this.stub({ route: function() {} })
 
-      var handlerHelperStub = this.stub(
-        require('../utilities/handler-helper-factory')(this.spy(), server)
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
       )
-      var handlerHelperStubWrapper = this.stub()
+      let handlerHelperStubWrapper = this.stub()
       handlerHelperStubWrapper.returns(handlerHelperStub)
-      var queryHelperStub = this.stub(require('../utilities/query-helper'))
-      var joiMongooseHelperStub = this.stub(
-        require('../utilities/joi-mongoose-helper'),
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
         'generateJoiReadModel'
       ).callsFake(function() {
         return Joi.any().label('TEST')
@@ -2706,18 +2805,21 @@ test('rest-helper-factory.generateCreateEndpoint', function(t) {
       joiMongooseHelperStub.generateJoiCreateModel = this.spy(function() {
         return Joi.any().label('TEST')
       })
-      var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
-        './handler-helper-factory': handlerHelperStubWrapper,
-        './query-helper': queryHelperStub,
-        './joi-mongoose-helper': joiMongooseHelperStub
-      })(Log, mongoose, server)
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub
+        }
+      )(Log, mongoose, server)
 
       t.plan(1)
 
-      var userSchema = new mongoose.Schema({})
+      let userSchema = new mongoose.Schema({})
       userSchema.statics = { routeOptions: {} }
 
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
       // </editor-fold>
 
       // <editor-fold desc="Act">
@@ -2739,16 +2841,16 @@ test('rest-helper-factory.generateCreateEndpoint', function(t) {
     'rest-helper-factory.generateCreateEndpoint calls server.route with "POST" method',
     sinon.test(function(t) {
       // <editor-fold desc="Arrange">
-      var server = this.stub({ route: function() {} })
+      let server = this.stub({ route: function() {} })
 
-      var handlerHelperStub = this.stub(
-        require('../utilities/handler-helper-factory')(this.spy(), server)
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
       )
-      var handlerHelperStubWrapper = this.stub()
+      let handlerHelperStubWrapper = this.stub()
       handlerHelperStubWrapper.returns(handlerHelperStub)
-      var queryHelperStub = this.stub(require('../utilities/query-helper'))
-      var joiMongooseHelperStub = this.stub(
-        require('../utilities/joi-mongoose-helper'),
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
         'generateJoiReadModel'
       ).callsFake(function() {
         return Joi.any().label('TEST')
@@ -2756,18 +2858,21 @@ test('rest-helper-factory.generateCreateEndpoint', function(t) {
       joiMongooseHelperStub.generateJoiCreateModel = this.spy(function() {
         return Joi.any().label('TEST')
       })
-      var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
-        './handler-helper-factory': handlerHelperStubWrapper,
-        './query-helper': queryHelperStub,
-        './joi-mongoose-helper': joiMongooseHelperStub
-      })(Log, mongoose, server)
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub
+        }
+      )(Log, mongoose, server)
 
       t.plan(1)
 
-      var userSchema = new mongoose.Schema({})
+      let userSchema = new mongoose.Schema({})
       userSchema.statics = { routeOptions: {} }
 
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
       // </editor-fold>
 
       // <editor-fold desc="Act">
@@ -2775,7 +2880,7 @@ test('rest-helper-factory.generateCreateEndpoint', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Assert">
-      var serverObject = server.route.args[0][0]
+      let serverObject = server.route.args[0][0]
       // Log.debug(JSON.stringify(serverObject));
       t.equal(serverObject.method, 'POST', 'POST method used')
       // </editor-fold>
@@ -2791,16 +2896,16 @@ test('rest-helper-factory.generateCreateEndpoint', function(t) {
     'rest-helper-factory.generateCreateEndpoint calls server.route with correct resourceAliasForRoute',
     sinon.test(function(t) {
       // <editor-fold desc="Arrange">
-      var server = this.stub({ route: function() {} })
+      let server = this.stub({ route: function() {} })
 
-      var handlerHelperStub = this.stub(
-        require('../utilities/handler-helper-factory')(this.spy(), server)
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
       )
-      var handlerHelperStubWrapper = this.stub()
+      let handlerHelperStubWrapper = this.stub()
       handlerHelperStubWrapper.returns(handlerHelperStub)
-      var queryHelperStub = this.stub(require('../utilities/query-helper'))
-      var joiMongooseHelperStub = this.stub(
-        require('../utilities/joi-mongoose-helper'),
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
         'generateJoiReadModel'
       ).callsFake(function() {
         return Joi.any().label('TEST')
@@ -2808,26 +2913,29 @@ test('rest-helper-factory.generateCreateEndpoint', function(t) {
       joiMongooseHelperStub.generateJoiCreateModel = function() {
         return Joi.any()
       }
-      var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
-        './handler-helper-factory': handlerHelperStubWrapper,
-        './query-helper': queryHelperStub,
-        './joi-mongoose-helper': joiMongooseHelperStub
-      })(Log, mongoose, server)
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub
+        }
+      )(Log, mongoose, server)
 
       t.plan(2)
 
-      var userSchema1 = new mongoose.Schema({})
+      let userSchema1 = new mongoose.Schema({})
       userSchema1.statics = { routeOptions: {} }
 
-      var userSchema2 = new mongoose.Schema({})
+      let userSchema2 = new mongoose.Schema({})
       userSchema2.statics = {
         routeOptions: {
           alias: 'PEEPS'
         }
       }
 
-      var userModel1 = mongoose.model('user1', userSchema1)
-      var userModel2 = mongoose.model('user2', userSchema2)
+      let userModel1 = mongoose.model('user1', userSchema1)
+      let userModel2 = mongoose.model('user2', userSchema2)
       // </editor-fold>
 
       // <editor-fold desc="Act">
@@ -2836,8 +2944,8 @@ test('rest-helper-factory.generateCreateEndpoint', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Assert">
-      var serverObject1 = server.route.args[0][0]
-      var serverObject2 = server.route.args[1][0]
+      let serverObject1 = server.route.args[0][0]
+      let serverObject2 = server.route.args[1][0]
       // Log.debug(JSON.stringify(serverObject));
       t.equal(serverObject1.path, '/user1', 'correct route')
       t.equal(serverObject2.path, '/PEEPS', 'correct route alias')
@@ -2856,19 +2964,19 @@ test('rest-helper-factory.generateCreateEndpoint', function(t) {
     'rest-helper-factory.generateCreateEndpoint calls server.route with correct handler',
     sinon.test(function(t) {
       // <editor-fold desc="Arrange">
-      var server = this.stub({ route: function() {} })
+      let server = this.stub({ route: function() {} })
 
-      var handlerHelperStub = this.stub(
-        require('../utilities/handler-helper-factory')(this.spy(), server)
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
       )
       handlerHelperStub.generateCreateHandler = this.spy(function() {
         return 'HANDLER'
       })
-      var handlerHelperStubWrapper = this.stub()
+      let handlerHelperStubWrapper = this.stub()
       handlerHelperStubWrapper.returns(handlerHelperStub)
-      var queryHelperStub = this.stub(require('../utilities/query-helper'))
-      var joiMongooseHelperStub = this.stub(
-        require('../utilities/joi-mongoose-helper'),
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
         'generateJoiReadModel'
       ).callsFake(function() {
         return Joi.any().label('TEST')
@@ -2876,18 +2984,21 @@ test('rest-helper-factory.generateCreateEndpoint', function(t) {
       joiMongooseHelperStub.generateJoiCreateModel = this.spy(function() {
         return Joi.any().label('TEST')
       })
-      var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
-        './handler-helper-factory': handlerHelperStubWrapper,
-        './query-helper': queryHelperStub,
-        './joi-mongoose-helper': joiMongooseHelperStub
-      })(Log, mongoose, server)
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub
+        }
+      )(Log, mongoose, server)
 
       t.plan(1)
 
-      var userSchema = new mongoose.Schema({})
+      let userSchema = new mongoose.Schema({})
       userSchema.statics = { routeOptions: {} }
 
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
       // </editor-fold>
 
       // <editor-fold desc="Act">
@@ -2895,7 +3006,7 @@ test('rest-helper-factory.generateCreateEndpoint', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Assert">
-      var serverObject = server.route.args[0][0]
+      let serverObject = server.route.args[0][0]
       // Log.debug(JSON.stringify(serverObject));
       t.equal(serverObject.config.handler, 'HANDLER', 'correct handler used')
       // </editor-fold>
@@ -2911,16 +3022,16 @@ test('rest-helper-factory.generateCreateEndpoint', function(t) {
     'rest-helper-factory.generateCreateEndpoint calls server.route using authentication defined by config',
     sinon.test(function(t) {
       // <editor-fold desc="Arrange">
-      var server = this.stub({ route: function() {} })
+      let server = this.stub({ route: function() {} })
 
-      var handlerHelperStub = this.stub(
-        require('../utilities/handler-helper-factory')(this.spy(), server)
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
       )
-      var handlerHelperStubWrapper = this.stub()
+      let handlerHelperStubWrapper = this.stub()
       handlerHelperStubWrapper.returns(handlerHelperStub)
-      var queryHelperStub = this.stub(require('../utilities/query-helper'))
-      var joiMongooseHelperStub = this.stub(
-        require('../utilities/joi-mongoose-helper'),
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
         'generateJoiReadModel'
       ).callsFake(function() {
         return Joi.any().label('TEST')
@@ -2928,20 +3039,23 @@ test('rest-helper-factory.generateCreateEndpoint', function(t) {
       joiMongooseHelperStub.generateJoiCreateModel = this.spy(function() {
         return Joi.any().label('TEST')
       })
-      var config = { authStrategy: 'TEST_AUTH' }
-      var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
-        './handler-helper-factory': handlerHelperStubWrapper,
-        './query-helper': queryHelperStub,
-        './joi-mongoose-helper': joiMongooseHelperStub,
-        '../config': config
-      })(Log, mongoose, server)
+      let config = { authStrategy: 'TEST_AUTH' }
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub,
+          '../config': config
+        }
+      )(Log, mongoose, server)
 
       t.plan(1)
 
-      var userSchema = new mongoose.Schema({})
+      let userSchema = new mongoose.Schema({})
       userSchema.statics = { routeOptions: {} }
 
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
       // </editor-fold>
 
       // <editor-fold desc="Act">
@@ -2949,7 +3063,7 @@ test('rest-helper-factory.generateCreateEndpoint', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Assert">
-      var serverObject = server.route.args[0][0]
+      let serverObject = server.route.args[0][0]
       // Log.debug(JSON.stringify(serverObject));
       t.deepEqual(
         serverObject.config.auth,
@@ -2969,16 +3083,16 @@ test('rest-helper-factory.generateCreateEndpoint', function(t) {
     'rest-helper-factory.generateCreateEndpoint calls server.route with correct collectionName',
     sinon.test(function(t) {
       // <editor-fold desc="Arrange">
-      var server = this.stub({ route: function() {} })
+      let server = this.stub({ route: function() {} })
 
-      var handlerHelperStub = this.stub(
-        require('../utilities/handler-helper-factory')(this.spy(), server)
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
       )
-      var handlerHelperStubWrapper = this.stub()
+      let handlerHelperStubWrapper = this.stub()
       handlerHelperStubWrapper.returns(handlerHelperStub)
-      var queryHelperStub = this.stub(require('../utilities/query-helper'))
-      var joiMongooseHelperStub = this.stub(
-        require('../utilities/joi-mongoose-helper'),
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
         'generateJoiReadModel'
       ).callsFake(function() {
         return Joi.any().label('TEST')
@@ -2986,25 +3100,28 @@ test('rest-helper-factory.generateCreateEndpoint', function(t) {
       joiMongooseHelperStub.generateJoiCreateModel = this.spy(function() {
         return Joi.any().label('TEST')
       })
-      var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
-        './handler-helper-factory': handlerHelperStubWrapper,
-        './query-helper': queryHelperStub,
-        './joi-mongoose-helper': joiMongooseHelperStub
-      })(Log, mongoose, server)
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub
+        }
+      )(Log, mongoose, server)
 
       t.plan(4)
 
-      var userSchema1 = new mongoose.Schema({})
+      let userSchema1 = new mongoose.Schema({})
       userSchema1.statics = { routeOptions: {} }
 
-      var userSchema2 = new mongoose.Schema({})
+      let userSchema2 = new mongoose.Schema({})
       userSchema2.statics = {
         routeOptions: {},
         collectionDisplayName: 'User'
       }
 
-      var userModel1 = mongoose.model('user1', userSchema1)
-      var userModel2 = mongoose.model('user2', userSchema2)
+      let userModel1 = mongoose.model('user1', userSchema1)
+      let userModel2 = mongoose.model('user2', userSchema2)
       // </editor-fold>
 
       // <editor-fold desc="Act">
@@ -3013,8 +3130,8 @@ test('rest-helper-factory.generateCreateEndpoint', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Assert">
-      var serverObject1 = server.route.args[0][0]
-      var serverObject2 = server.route.args[1][0]
+      let serverObject1 = server.route.args[0][0]
+      let serverObject2 = server.route.args[1][0]
       // Log.debug(JSON.stringify(serverObject));
       t.equal(
         serverObject1.config.description,
@@ -3043,16 +3160,16 @@ test('rest-helper-factory.generateCreateEndpoint', function(t) {
     'rest-helper-factory.generateCreateEndpoint calls server.route using cors',
     sinon.test(function(t) {
       // <editor-fold desc="Arrange">
-      var server = this.stub({ route: function() {} })
+      let server = this.stub({ route: function() {} })
 
-      var handlerHelperStub = this.stub(
-        require('../utilities/handler-helper-factory')(this.spy(), server)
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
       )
-      var handlerHelperStubWrapper = this.stub()
+      let handlerHelperStubWrapper = this.stub()
       handlerHelperStubWrapper.returns(handlerHelperStub)
-      var queryHelperStub = this.stub(require('../utilities/query-helper'))
-      var joiMongooseHelperStub = this.stub(
-        require('../utilities/joi-mongoose-helper'),
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
         'generateJoiReadModel'
       ).callsFake(function() {
         return Joi.any().label('TEST')
@@ -3060,18 +3177,21 @@ test('rest-helper-factory.generateCreateEndpoint', function(t) {
       joiMongooseHelperStub.generateJoiCreateModel = this.spy(function() {
         return Joi.any().label('TEST')
       })
-      var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
-        './handler-helper-factory': handlerHelperStubWrapper,
-        './query-helper': queryHelperStub,
-        './joi-mongoose-helper': joiMongooseHelperStub
-      })(Log, mongoose, server)
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub
+        }
+      )(Log, mongoose, server)
 
       t.plan(1)
 
-      var userSchema = new mongoose.Schema({})
+      let userSchema = new mongoose.Schema({})
       userSchema.statics = { routeOptions: {} }
 
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
       // </editor-fold>
 
       // <editor-fold desc="Act">
@@ -3079,9 +3199,9 @@ test('rest-helper-factory.generateCreateEndpoint', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Assert">
-      var serverObject = server.route.args[0][0]
+      let serverObject = server.route.args[0][0]
       // Log.debug(JSON.stringify(serverObject));
-      var cors = {
+      let cors = {
         additionalHeaders: [],
         additionalExposedHeaders: []
       }
@@ -3099,16 +3219,16 @@ test('rest-helper-factory.generateCreateEndpoint', function(t) {
     'rest-helper-factory.generateCreateEndpoint calls server.route using correct payload validation',
     sinon.test(function(t) {
       // <editor-fold desc="Arrange">
-      var server = this.stub({ route: function() {} })
+      let server = this.stub({ route: function() {} })
 
-      var handlerHelperStub = this.stub(
-        require('../utilities/handler-helper-factory')(this.spy(), server)
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
       )
-      var handlerHelperStubWrapper = this.stub()
+      let handlerHelperStubWrapper = this.stub()
       handlerHelperStubWrapper.returns(handlerHelperStub)
-      var queryHelperStub = this.stub(require('../utilities/query-helper'))
-      var joiMongooseHelperStub = this.stub(
-        require('../utilities/joi-mongoose-helper'),
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
         'generateJoiReadModel'
       ).callsFake(function() {
         return Joi.any().label('TEST')
@@ -3116,18 +3236,21 @@ test('rest-helper-factory.generateCreateEndpoint', function(t) {
       joiMongooseHelperStub.generateJoiCreateModel = function() {
         return Joi.any().valid('TEST')
       }
-      var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
-        './handler-helper-factory': handlerHelperStubWrapper,
-        './query-helper': queryHelperStub,
-        './joi-mongoose-helper': joiMongooseHelperStub
-      })(Log, mongoose, server)
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub
+        }
+      )(Log, mongoose, server)
 
       t.plan(1)
 
-      var userSchema = new mongoose.Schema({})
+      let userSchema = new mongoose.Schema({})
       userSchema.statics = { routeOptions: {} }
 
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
       // </editor-fold>
 
       // <editor-fold desc="Act">
@@ -3135,7 +3258,7 @@ test('rest-helper-factory.generateCreateEndpoint', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Assert">
-      var serverObject = server.route.args[0][0]
+      let serverObject = server.route.args[0][0]
       // Log.debug(JSON.stringify(serverObject));
       t.deepEqual(
         serverObject.config.validate.payload,
@@ -3158,16 +3281,16 @@ test('rest-helper-factory.generateCreateEndpoint', function(t) {
     'rest-helper-factory.generateCreateEndpoint calls server.route using correct header validation',
     sinon.test(function(t) {
       // <editor-fold desc="Arrange">
-      var server = this.stub({ route: function() {} })
+      let server = this.stub({ route: function() {} })
 
-      var handlerHelperStub = this.stub(
-        require('../utilities/handler-helper-factory')(this.spy(), server)
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
       )
-      var handlerHelperStubWrapper = this.stub()
+      let handlerHelperStubWrapper = this.stub()
       handlerHelperStubWrapper.returns(handlerHelperStub)
-      var queryHelperStub = this.stub(require('../utilities/query-helper'))
-      var joiMongooseHelperStub = this.stub(
-        require('../utilities/joi-mongoose-helper'),
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
         'generateJoiReadModel'
       ).callsFake(function() {
         return Joi.any().label('TEST')
@@ -3175,22 +3298,25 @@ test('rest-helper-factory.generateCreateEndpoint', function(t) {
       joiMongooseHelperStub.generateJoiCreateModel = this.spy(function() {
         return Joi.any().label('TEST')
       })
-      var config = { authStrategy: 'TEST_AUTH' }
-      var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
-        './handler-helper-factory': handlerHelperStubWrapper,
-        './query-helper': queryHelperStub,
-        './joi-mongoose-helper': joiMongooseHelperStub,
-        '../config': config
-      })(Log, mongoose, server)
+      let config = { authStrategy: 'TEST_AUTH' }
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub,
+          '../config': config
+        }
+      )(Log, mongoose, server)
 
       t.plan(1)
 
-      var userSchema = new mongoose.Schema({})
+      let userSchema = new mongoose.Schema({})
       userSchema.statics = { routeOptions: {} }
 
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
 
-      var headerValidation = Joi.object({
+      let headerValidation = Joi.object({
         authorization: Joi.string().required()
       }).options({ allowUnknown: true })
       // </editor-fold>
@@ -3200,7 +3326,7 @@ test('rest-helper-factory.generateCreateEndpoint', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Assert">
-      var serverObject = server.route.args[0][0]
+      let serverObject = server.route.args[0][0]
       // Log.debug(JSON.stringify(serverObject));
       t.deepEqual(
         serverObject.config.validate.headers,
@@ -3220,16 +3346,16 @@ test('rest-helper-factory.generateCreateEndpoint', function(t) {
     'rest-helper-factory.generateCreateEndpoint calls server.route using hapi-swagger plugin',
     sinon.test(function(t) {
       // <editor-fold desc="Arrange">
-      var server = this.stub({ route: function() {} })
+      let server = this.stub({ route: function() {} })
 
-      var handlerHelperStub = this.stub(
-        require('../utilities/handler-helper-factory')(this.spy(), server)
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
       )
-      var handlerHelperStubWrapper = this.stub()
+      let handlerHelperStubWrapper = this.stub()
       handlerHelperStubWrapper.returns(handlerHelperStub)
-      var queryHelperStub = this.stub(require('../utilities/query-helper'))
-      var joiMongooseHelperStub = this.stub(
-        require('../utilities/joi-mongoose-helper'),
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
         'generateJoiReadModel'
       ).callsFake(function() {
         return Joi.any().label('TEST')
@@ -3237,18 +3363,21 @@ test('rest-helper-factory.generateCreateEndpoint', function(t) {
       joiMongooseHelperStub.generateJoiCreateModel = this.spy(function() {
         return Joi.any().label('TEST')
       })
-      var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
-        './handler-helper-factory': handlerHelperStubWrapper,
-        './query-helper': queryHelperStub,
-        './joi-mongoose-helper': joiMongooseHelperStub
-      })(Log, mongoose, server)
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub
+        }
+      )(Log, mongoose, server)
 
       t.plan(1)
 
-      var userSchema = new mongoose.Schema({})
+      let userSchema = new mongoose.Schema({})
       userSchema.statics = { routeOptions: {} }
 
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
       // </editor-fold>
 
       // <editor-fold desc="Act">
@@ -3256,7 +3385,7 @@ test('rest-helper-factory.generateCreateEndpoint', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Assert">
-      var serverObject = server.route.args[0][0]
+      let serverObject = server.route.args[0][0]
       // Log.debug(JSON.stringify(serverObject));
       t.ok(serverObject.config.plugins['hapi-swagger'], 'hapi-swagger used')
       // </editor-fold>
@@ -3272,19 +3401,19 @@ test('rest-helper-factory.generateCreateEndpoint', function(t) {
     'rest-helper-factory.generateCreateEndpoint calls server.route with correct response schema validation',
     sinon.test(function(t) {
       // <editor-fold desc="Arrange">
-      var server = this.stub({ route: function() {} })
+      let server = this.stub({ route: function() {} })
 
-      var handlerHelperStub = this.stub(
-        require('../utilities/handler-helper-factory')(this.spy(), server)
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
       )
-      var handlerHelperStubWrapper = this.stub()
+      let handlerHelperStubWrapper = this.stub()
       handlerHelperStubWrapper.returns(handlerHelperStub)
-      var queryHelperStub = this.stub(require('../utilities/query-helper'))
-      var readModel = Joi.any()
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let readModel = Joi.any()
         .valid(['test'])
         .label('TEST')
-      var joiMongooseHelperStub = this.stub(
-        require('../utilities/joi-mongoose-helper'),
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
         'generateJoiReadModel'
       ).callsFake(function() {
         return readModel
@@ -3292,22 +3421,25 @@ test('rest-helper-factory.generateCreateEndpoint', function(t) {
       joiMongooseHelperStub.generateJoiCreateModel = this.spy(function() {
         return Joi.any().label('TEST')
       })
-      var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
-        './handler-helper-factory': handlerHelperStubWrapper,
-        './query-helper': queryHelperStub,
-        './joi-mongoose-helper': joiMongooseHelperStub
-      })(Log, mongoose, server)
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub
+        }
+      )(Log, mongoose, server)
 
       t.plan(1)
 
-      var userSchema = new mongoose.Schema({})
+      let userSchema = new mongoose.Schema({})
       userSchema.statics = { routeOptions: {} }
 
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
 
-      var label = readModel._flags.label
+      let label = readModel._flags.label
 
-      var responseSchema = Joi.alternatives()
+      let responseSchema = Joi.alternatives()
         .try(Joi.array().items(readModel), readModel)
         .label(label)
       // </editor-fold>
@@ -3317,7 +3449,7 @@ test('rest-helper-factory.generateCreateEndpoint', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Assert">
-      var serverObject = server.route.args[0][0]
+      let serverObject = server.route.args[0][0]
       // Log.debug(JSON.stringify(serverObject));
       t.deepEquals(
         serverObject.config.response.schema,
@@ -3337,8 +3469,8 @@ test('rest-helper-factory.generateCreateEndpoint', function(t) {
 })
 
 test('rest-helper-factory.generateDeleteOneEndpoint', function(t) {
-  var server = sinon.spy()
-  var restHelperFactory = require('../utilities/rest-helper-factory')(
+  let server = sinon.spy()
+  let restHelperFactory = require('../../utilities/rest-helper-factory')(
     Log,
     mongoose,
     server
@@ -3355,34 +3487,37 @@ test('rest-helper-factory.generateDeleteOneEndpoint', function(t) {
     'rest-helper-factory.generateDeleteOneEndpoint calls handlerHelper.generateDeleteOneHandler',
     sinon.test(function(t) {
       // <editor-fold desc="Arrange">
-      var server = this.stub({
+      let server = this.stub({
         route: function() {}
       })
 
-      var handlerHelperStub = this.stub(
-        require('../utilities/handler-helper-factory')(this.spy(), server)
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
       )
-      var handlerHelperStubWrapper = this.stub()
+      let handlerHelperStubWrapper = this.stub()
       handlerHelperStubWrapper.returns(handlerHelperStub)
-      var queryHelperStub = this.stub(require('../utilities/query-helper'))
-      var joiMongooseHelperStub = this.stub(
-        require('../utilities/joi-mongoose-helper'),
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
         'generateJoiReadModel'
       ).callsFake(function() {
         return Joi.any()
       })
-      var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
-        './handler-helper-factory': handlerHelperStubWrapper,
-        './query-helper': queryHelperStub,
-        './joi-mongoose-helper': joiMongooseHelperStub
-      })(Log, mongoose, server)
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub
+        }
+      )(Log, mongoose, server)
 
       t.plan(1)
 
-      var userSchema = new mongoose.Schema({})
+      let userSchema = new mongoose.Schema({})
       userSchema.statics = { routeOptions: {} }
 
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
       // </editor-fold>
 
       // <editor-fold desc="Act">
@@ -3407,34 +3542,37 @@ test('rest-helper-factory.generateDeleteOneEndpoint', function(t) {
     'rest-helper-factory.generateDeleteOneEndpoint calls server.route',
     sinon.test(function(t) {
       // <editor-fold desc="Arrange">
-      var server = this.stub({
+      let server = this.stub({
         route: function() {}
       })
 
-      var handlerHelperStub = this.stub(
-        require('../utilities/handler-helper-factory')(this.spy(), server)
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
       )
-      var handlerHelperStubWrapper = this.stub()
+      let handlerHelperStubWrapper = this.stub()
       handlerHelperStubWrapper.returns(handlerHelperStub)
-      var queryHelperStub = this.stub(require('../utilities/query-helper'))
-      var joiMongooseHelperStub = this.stub(
-        require('../utilities/joi-mongoose-helper'),
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
         'generateJoiReadModel'
       ).callsFake(function() {
         return Joi.any()
       })
-      var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
-        './handler-helper-factory': handlerHelperStubWrapper,
-        './query-helper': queryHelperStub,
-        './joi-mongoose-helper': joiMongooseHelperStub
-      })(Log, mongoose, server)
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub
+        }
+      )(Log, mongoose, server)
 
       t.plan(1)
 
-      var userSchema = new mongoose.Schema({})
+      let userSchema = new mongoose.Schema({})
       userSchema.statics = { routeOptions: {} }
 
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
       // </editor-fold>
 
       // <editor-fold desc="Act">
@@ -3456,34 +3594,37 @@ test('rest-helper-factory.generateDeleteOneEndpoint', function(t) {
     'rest-helper-factory.generateDeleteOneEndpoint calls server.route with "DELETE" method',
     sinon.test(function(t) {
       // <editor-fold desc="Arrange">
-      var server = this.stub({
+      let server = this.stub({
         route: function() {}
       })
 
-      var handlerHelperStub = this.stub(
-        require('../utilities/handler-helper-factory')(this.spy(), server)
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
       )
-      var handlerHelperStubWrapper = this.stub()
+      let handlerHelperStubWrapper = this.stub()
       handlerHelperStubWrapper.returns(handlerHelperStub)
-      var queryHelperStub = this.stub(require('../utilities/query-helper'))
-      var joiMongooseHelperStub = this.stub(
-        require('../utilities/joi-mongoose-helper'),
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
         'generateJoiReadModel'
       ).callsFake(function() {
         return Joi.any()
       })
-      var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
-        './handler-helper-factory': handlerHelperStubWrapper,
-        './query-helper': queryHelperStub,
-        './joi-mongoose-helper': joiMongooseHelperStub
-      })(Log, mongoose, server)
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub
+        }
+      )(Log, mongoose, server)
 
       t.plan(1)
 
-      var userSchema = new mongoose.Schema({})
+      let userSchema = new mongoose.Schema({})
       userSchema.statics = { routeOptions: {} }
 
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
       // </editor-fold>
 
       // <editor-fold desc="Act">
@@ -3491,7 +3632,7 @@ test('rest-helper-factory.generateDeleteOneEndpoint', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Assert">
-      var serverObject = server.route.args[0][0]
+      let serverObject = server.route.args[0][0]
       // Log.debug(JSON.stringify(serverObject));
       t.equal(serverObject.method, 'DELETE', 'DELETE method used')
       // </editor-fold>
@@ -3507,42 +3648,45 @@ test('rest-helper-factory.generateDeleteOneEndpoint', function(t) {
     'rest-helper-factory.generateDeleteOneEndpoint calls server.route with correct resourceAliasForRoute',
     sinon.test(function(t) {
       // <editor-fold desc="Arrange">
-      var server = this.stub({
+      let server = this.stub({
         route: function() {}
       })
 
-      var handlerHelperStub = this.stub(
-        require('../utilities/handler-helper-factory')(this.spy(), server)
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
       )
-      var handlerHelperStubWrapper = this.stub()
+      let handlerHelperStubWrapper = this.stub()
       handlerHelperStubWrapper.returns(handlerHelperStub)
-      var queryHelperStub = this.stub(require('../utilities/query-helper'))
-      var joiMongooseHelperStub = this.stub(
-        require('../utilities/joi-mongoose-helper'),
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
         'generateJoiReadModel'
       ).callsFake(function() {
         return Joi.any()
       })
-      var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
-        './handler-helper-factory': handlerHelperStubWrapper,
-        './query-helper': queryHelperStub,
-        './joi-mongoose-helper': joiMongooseHelperStub
-      })(Log, mongoose, server)
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub
+        }
+      )(Log, mongoose, server)
 
       t.plan(2)
 
-      var userSchema1 = new mongoose.Schema({})
+      let userSchema1 = new mongoose.Schema({})
       userSchema1.statics = { routeOptions: {} }
 
-      var userSchema2 = new mongoose.Schema({})
+      let userSchema2 = new mongoose.Schema({})
       userSchema2.statics = {
         routeOptions: {
           alias: 'PEEPS'
         }
       }
 
-      var userModel1 = mongoose.model('user1', userSchema1)
-      var userModel2 = mongoose.model('user2', userSchema2)
+      let userModel1 = mongoose.model('user1', userSchema1)
+      let userModel2 = mongoose.model('user2', userSchema2)
       // </editor-fold>
 
       // <editor-fold desc="Act">
@@ -3551,8 +3695,8 @@ test('rest-helper-factory.generateDeleteOneEndpoint', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Assert">
-      var serverObject1 = server.route.args[0][0]
-      var serverObject2 = server.route.args[1][0]
+      let serverObject1 = server.route.args[0][0]
+      let serverObject2 = server.route.args[1][0]
       // Log.debug(JSON.stringify(serverObject));
       t.equal(serverObject1.path, '/user1/{_id}', 'correct route')
       t.equal(serverObject2.path, '/PEEPS/{_id}', 'correct route alias')
@@ -3571,37 +3715,40 @@ test('rest-helper-factory.generateDeleteOneEndpoint', function(t) {
     'rest-helper-factory.generateDeleteOneEndpoint calls server.route with correct handler',
     sinon.test(function(t) {
       // <editor-fold desc="Arrange">
-      var server = this.stub({
+      let server = this.stub({
         route: function() {}
       })
 
-      var handlerHelperStub = this.stub(
-        require('../utilities/handler-helper-factory')(this.spy(), server)
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
       )
       handlerHelperStub.generateDeleteHandler = this.spy(function() {
         return 'HANDLER'
       })
-      var handlerHelperStubWrapper = this.stub()
+      let handlerHelperStubWrapper = this.stub()
       handlerHelperStubWrapper.returns(handlerHelperStub)
-      var queryHelperStub = this.stub(require('../utilities/query-helper'))
-      var joiMongooseHelperStub = this.stub(
-        require('../utilities/joi-mongoose-helper'),
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
         'generateJoiReadModel'
       ).callsFake(function() {
         return Joi.any()
       })
-      var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
-        './handler-helper-factory': handlerHelperStubWrapper,
-        './query-helper': queryHelperStub,
-        './joi-mongoose-helper': joiMongooseHelperStub
-      })(Log, mongoose, server)
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub
+        }
+      )(Log, mongoose, server)
 
       t.plan(1)
 
-      var userSchema = new mongoose.Schema({})
+      let userSchema = new mongoose.Schema({})
       userSchema.statics = { routeOptions: {} }
 
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
       // </editor-fold>
 
       // <editor-fold desc="Act">
@@ -3609,7 +3756,7 @@ test('rest-helper-factory.generateDeleteOneEndpoint', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Assert">
-      var serverObject = server.route.args[0][0]
+      let serverObject = server.route.args[0][0]
       // Log.debug(JSON.stringify(serverObject));
       t.equal(serverObject.config.handler, 'HANDLER', 'correct handler used')
       // </editor-fold>
@@ -3625,36 +3772,39 @@ test('rest-helper-factory.generateDeleteOneEndpoint', function(t) {
     'rest-helper-factory.generateDeleteOneEndpoint calls server.route using authentication defined by config',
     sinon.test(function(t) {
       // <editor-fold desc="Arrange">
-      var server = this.stub({
+      let server = this.stub({
         route: function() {}
       })
 
-      var handlerHelperStub = this.stub(
-        require('../utilities/handler-helper-factory')(this.spy(), server)
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
       )
-      var handlerHelperStubWrapper = this.stub()
+      let handlerHelperStubWrapper = this.stub()
       handlerHelperStubWrapper.returns(handlerHelperStub)
-      var queryHelperStub = this.stub(require('../utilities/query-helper'))
-      var joiMongooseHelperStub = this.stub(
-        require('../utilities/joi-mongoose-helper'),
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
         'generateJoiReadModel'
       ).callsFake(function() {
         return Joi.any()
       })
-      var config = { authStrategy: 'TEST_AUTH' }
-      var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
-        './handler-helper-factory': handlerHelperStubWrapper,
-        './query-helper': queryHelperStub,
-        './joi-mongoose-helper': joiMongooseHelperStub,
-        '../config': config
-      })(Log, mongoose, server)
+      let config = { authStrategy: 'TEST_AUTH' }
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub,
+          '../config': config
+        }
+      )(Log, mongoose, server)
 
       t.plan(1)
 
-      var userSchema = new mongoose.Schema({})
+      let userSchema = new mongoose.Schema({})
       userSchema.statics = { routeOptions: {} }
 
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
       // </editor-fold>
 
       // <editor-fold desc="Act">
@@ -3662,7 +3812,7 @@ test('rest-helper-factory.generateDeleteOneEndpoint', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Assert">
-      var serverObject = server.route.args[0][0]
+      let serverObject = server.route.args[0][0]
       // Log.debug(JSON.stringify(serverObject));
       t.deepEqual(
         serverObject.config.auth,
@@ -3682,41 +3832,44 @@ test('rest-helper-factory.generateDeleteOneEndpoint', function(t) {
     'rest-helper-factory.generateDeleteOneEndpoint calls server.route with correct collectionName',
     sinon.test(function(t) {
       // <editor-fold desc="Arrange">
-      var server = this.stub({
+      let server = this.stub({
         route: function() {}
       })
 
-      var handlerHelperStub = this.stub(
-        require('../utilities/handler-helper-factory')(this.spy(), server)
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
       )
-      var handlerHelperStubWrapper = this.stub()
+      let handlerHelperStubWrapper = this.stub()
       handlerHelperStubWrapper.returns(handlerHelperStub)
-      var queryHelperStub = this.stub(require('../utilities/query-helper'))
-      var joiMongooseHelperStub = this.stub(
-        require('../utilities/joi-mongoose-helper'),
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
         'generateJoiReadModel'
       ).callsFake(function() {
         return Joi.any()
       })
-      var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
-        './handler-helper-factory': handlerHelperStubWrapper,
-        './query-helper': queryHelperStub,
-        './joi-mongoose-helper': joiMongooseHelperStub
-      })(Log, mongoose, server)
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub
+        }
+      )(Log, mongoose, server)
 
       t.plan(4)
 
-      var userSchema1 = new mongoose.Schema({})
+      let userSchema1 = new mongoose.Schema({})
       userSchema1.statics = { routeOptions: {} }
 
-      var userSchema2 = new mongoose.Schema({})
+      let userSchema2 = new mongoose.Schema({})
       userSchema2.statics = {
         routeOptions: {},
         collectionDisplayName: 'User'
       }
 
-      var userModel1 = mongoose.model('user1', userSchema1)
-      var userModel2 = mongoose.model('user2', userSchema2)
+      let userModel1 = mongoose.model('user1', userSchema1)
+      let userModel2 = mongoose.model('user2', userSchema2)
       // </editor-fold>
 
       // <editor-fold desc="Act">
@@ -3725,8 +3878,8 @@ test('rest-helper-factory.generateDeleteOneEndpoint', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Assert">
-      var serverObject1 = server.route.args[0][0]
-      var serverObject2 = server.route.args[1][0]
+      let serverObject1 = server.route.args[0][0]
+      let serverObject2 = server.route.args[1][0]
       // Log.debug(JSON.stringify(serverObject));
       t.equal(
         serverObject1.config.description,
@@ -3755,34 +3908,37 @@ test('rest-helper-factory.generateDeleteOneEndpoint', function(t) {
     'rest-helper-factory.generateDeleteOneEndpoint calls server.route using cors',
     sinon.test(function(t) {
       // <editor-fold desc="Arrange">
-      var server = this.stub({
+      let server = this.stub({
         route: function() {}
       })
 
-      var handlerHelperStub = this.stub(
-        require('../utilities/handler-helper-factory')(this.spy(), server)
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
       )
-      var handlerHelperStubWrapper = this.stub()
+      let handlerHelperStubWrapper = this.stub()
       handlerHelperStubWrapper.returns(handlerHelperStub)
-      var queryHelperStub = this.stub(require('../utilities/query-helper'))
-      var joiMongooseHelperStub = this.stub(
-        require('../utilities/joi-mongoose-helper'),
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
         'generateJoiReadModel'
       ).callsFake(function() {
         return Joi.any()
       })
-      var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
-        './handler-helper-factory': handlerHelperStubWrapper,
-        './query-helper': queryHelperStub,
-        './joi-mongoose-helper': joiMongooseHelperStub
-      })(Log, mongoose, server)
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub
+        }
+      )(Log, mongoose, server)
 
       t.plan(1)
 
-      var userSchema = new mongoose.Schema({})
+      let userSchema = new mongoose.Schema({})
       userSchema.statics = { routeOptions: {} }
 
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
       // </editor-fold>
 
       // <editor-fold desc="Act">
@@ -3790,9 +3946,9 @@ test('rest-helper-factory.generateDeleteOneEndpoint', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Assert">
-      var serverObject = server.route.args[0][0]
+      let serverObject = server.route.args[0][0]
       // Log.debug(JSON.stringify(serverObject));
-      var cors = {
+      let cors = {
         additionalHeaders: [],
         additionalExposedHeaders: []
       }
@@ -3810,25 +3966,25 @@ test('rest-helper-factory.generateDeleteOneEndpoint', function(t) {
     'rest-helper-factory.generateDeleteOneEndpoint calls server.route using correct params validation',
     sinon.test(function(t) {
       // <editor-fold desc="Arrange">
-      var server = this.stub({
+      let server = this.stub({
         route: function() {}
       })
 
-      var handlerHelperStub = this.stub(
-        require('../utilities/handler-helper-factory')(this.spy(), server)
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
       )
-      var handlerHelperStubWrapper = this.stub()
+      let handlerHelperStubWrapper = this.stub()
       handlerHelperStubWrapper.returns(handlerHelperStub)
-      var queryHelperStub = this.stub(require('../utilities/query-helper'))
-      var joiMongooseHelperStub = this.stub(
-        require('../utilities/joi-mongoose-helper'),
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
         'generateJoiReadModel'
       ).callsFake(function() {
         return Joi.any()
       })
-      var joiStub = require('joi')
+      let joiStub = require('joi')
 
-      var joiObjectIdStub = function() {
+      let joiObjectIdStub = function() {
         return function() {
           return {
             required: function() {
@@ -3837,26 +3993,29 @@ test('rest-helper-factory.generateDeleteOneEndpoint', function(t) {
           }
         }
       }
-      var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
-        './handler-helper-factory': handlerHelperStubWrapper,
-        './query-helper': queryHelperStub,
-        './joi-mongoose-helper': joiMongooseHelperStub,
-        joi: joiStub,
-        'joi-objectid': joiObjectIdStub
-      })(Log, mongoose, server)
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub,
+          joi: joiStub,
+          'joi-objectid': joiObjectIdStub
+        }
+      )(Log, mongoose, server)
 
       t.plan(1)
 
-      var userSchema = new mongoose.Schema({})
+      let userSchema = new mongoose.Schema({})
       userSchema.statics = { routeOptions: {} }
 
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
 
-      var params = {
+      let params = {
         _id: 'TEST'
       }
 
-      // var params =  {
+      // let params =  {
       //   _id: Joi.objectId().required()
       // };
       // </editor-fold>
@@ -3866,7 +4025,7 @@ test('rest-helper-factory.generateDeleteOneEndpoint', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Assert">
-      var serverObject = server.route.args[0][0]
+      let serverObject = server.route.args[0][0]
       // Log.debug(JSON.stringify(serverObject));
       t.deepEqual(
         serverObject.config.validate.params,
@@ -3886,38 +4045,41 @@ test('rest-helper-factory.generateDeleteOneEndpoint', function(t) {
     'rest-helper-factory.generateDeleteOneEndpoint calls server.route using correct header validation',
     sinon.test(function(t) {
       // <editor-fold desc="Arrange">
-      var server = this.stub({
+      let server = this.stub({
         route: function() {}
       })
 
-      var handlerHelperStub = this.stub(
-        require('../utilities/handler-helper-factory')(this.spy(), server)
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
       )
-      var handlerHelperStubWrapper = this.stub()
+      let handlerHelperStubWrapper = this.stub()
       handlerHelperStubWrapper.returns(handlerHelperStub)
-      var queryHelperStub = this.stub(require('../utilities/query-helper'))
-      var joiMongooseHelperStub = this.stub(
-        require('../utilities/joi-mongoose-helper'),
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
         'generateJoiReadModel'
       ).callsFake(function() {
         return Joi.any()
       })
-      var config = { authStrategy: 'TEST_AUTH' }
-      var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
-        './handler-helper-factory': handlerHelperStubWrapper,
-        './query-helper': queryHelperStub,
-        './joi-mongoose-helper': joiMongooseHelperStub,
-        '../config': config
-      })(Log, mongoose, server)
+      let config = { authStrategy: 'TEST_AUTH' }
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub,
+          '../config': config
+        }
+      )(Log, mongoose, server)
 
       t.plan(1)
 
-      var userSchema = new mongoose.Schema({})
+      let userSchema = new mongoose.Schema({})
       userSchema.statics = { routeOptions: {} }
 
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
 
-      var headerValidation = Joi.object({
+      let headerValidation = Joi.object({
         authorization: Joi.string().required()
       }).options({ allowUnknown: true })
       // </editor-fold>
@@ -3927,7 +4089,7 @@ test('rest-helper-factory.generateDeleteOneEndpoint', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Assert">
-      var serverObject = server.route.args[0][0]
+      let serverObject = server.route.args[0][0]
       // Log.debug(JSON.stringify(serverObject));
       t.deepEqual(
         serverObject.config.validate.headers,
@@ -3947,34 +4109,37 @@ test('rest-helper-factory.generateDeleteOneEndpoint', function(t) {
     'rest-helper-factory.generateDeleteOneEndpoint calls server.route using hapi-swagger plugin',
     sinon.test(function(t) {
       // <editor-fold desc="Arrange">
-      var server = this.stub({
+      let server = this.stub({
         route: function() {}
       })
 
-      var handlerHelperStub = this.stub(
-        require('../utilities/handler-helper-factory')(this.spy(), server)
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
       )
-      var handlerHelperStubWrapper = this.stub()
+      let handlerHelperStubWrapper = this.stub()
       handlerHelperStubWrapper.returns(handlerHelperStub)
-      var queryHelperStub = this.stub(require('../utilities/query-helper'))
-      var joiMongooseHelperStub = this.stub(
-        require('../utilities/joi-mongoose-helper'),
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
         'generateJoiReadModel'
       ).callsFake(function() {
         return Joi.any()
       })
-      var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
-        './handler-helper-factory': handlerHelperStubWrapper,
-        './query-helper': queryHelperStub,
-        './joi-mongoose-helper': joiMongooseHelperStub
-      })(Log, mongoose, server)
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub
+        }
+      )(Log, mongoose, server)
 
       t.plan(1)
 
-      var userSchema = new mongoose.Schema({})
+      let userSchema = new mongoose.Schema({})
       userSchema.statics = { routeOptions: {} }
 
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
       // </editor-fold>
 
       // <editor-fold desc="Act">
@@ -3982,7 +4147,7 @@ test('rest-helper-factory.generateDeleteOneEndpoint', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Assert">
-      var serverObject = server.route.args[0][0]
+      let serverObject = server.route.args[0][0]
       // Log.debug(JSON.stringify(serverObject));
       t.ok(serverObject.config.plugins['hapi-swagger'], 'hapi-swagger used')
       // </editor-fold>
@@ -3998,8 +4163,8 @@ test('rest-helper-factory.generateDeleteOneEndpoint', function(t) {
 })
 
 test('rest-helper-factory.generateUpdateEndpoint', function(t) {
-  var server = sinon.spy()
-  var restHelperFactory = require('../utilities/rest-helper-factory')(
+  let server = sinon.spy()
+  let restHelperFactory = require('../../utilities/rest-helper-factory')(
     Log,
     mongoose,
     server
@@ -4016,18 +4181,18 @@ test('rest-helper-factory.generateUpdateEndpoint', function(t) {
     'rest-helper-factory.generateUpdateEndpoint calls handlerHelper.generateUpdateHandler',
     sinon.test(function(t) {
       // <editor-fold desc="Arrange">
-      var server = this.stub({
+      let server = this.stub({
         route: function() {}
       })
 
-      var handlerHelperStub = this.stub(
-        require('../utilities/handler-helper-factory')(this.spy(), server)
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
       )
-      var handlerHelperStubWrapper = this.stub()
+      let handlerHelperStubWrapper = this.stub()
       handlerHelperStubWrapper.returns(handlerHelperStub)
-      var queryHelperStub = this.stub(require('../utilities/query-helper'))
-      var joiMongooseHelperStub = this.stub(
-        require('../utilities/joi-mongoose-helper'),
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
         'generateJoiReadModel'
       ).callsFake(function() {
         return Joi.any()
@@ -4038,18 +4203,21 @@ test('rest-helper-factory.generateUpdateEndpoint', function(t) {
       joiMongooseHelperStub.generateJoiUpdateModel = this.spy(function() {
         return Joi.any()
       })
-      var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
-        './handler-helper-factory': handlerHelperStubWrapper,
-        './query-helper': queryHelperStub,
-        './joi-mongoose-helper': joiMongooseHelperStub
-      })(Log, mongoose, server)
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub
+        }
+      )(Log, mongoose, server)
 
       t.plan(1)
 
-      var userSchema = new mongoose.Schema({})
+      let userSchema = new mongoose.Schema({})
       userSchema.statics = { routeOptions: {} }
 
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
       // </editor-fold>
 
       // <editor-fold desc="Act">
@@ -4074,18 +4242,18 @@ test('rest-helper-factory.generateUpdateEndpoint', function(t) {
     'rest-helper-factory.generateUpdateEndpoint calls joiMongooseHelper.generateJoiReadModel',
     sinon.test(function(t) {
       // <editor-fold desc="Arrange">
-      var server = this.stub({
+      let server = this.stub({
         route: function() {}
       })
 
-      var handlerHelperStub = this.stub(
-        require('../utilities/handler-helper-factory')(this.spy(), server)
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
       )
-      var handlerHelperStubWrapper = this.stub()
+      let handlerHelperStubWrapper = this.stub()
       handlerHelperStubWrapper.returns(handlerHelperStub)
-      var queryHelperStub = this.stub(require('../utilities/query-helper'))
-      var joiMongooseHelperStub = this.stub(
-        require('../utilities/joi-mongoose-helper'),
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
         'generateJoiReadModel'
       ).callsFake(function() {
         return Joi.any()
@@ -4093,18 +4261,21 @@ test('rest-helper-factory.generateUpdateEndpoint', function(t) {
       joiMongooseHelperStub.generateJoiUpdateModel = this.spy(function() {
         return Joi.any()
       })
-      var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
-        './handler-helper-factory': handlerHelperStubWrapper,
-        './query-helper': queryHelperStub,
-        './joi-mongoose-helper': joiMongooseHelperStub
-      })(Log, mongoose, server)
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub
+        }
+      )(Log, mongoose, server)
 
       t.plan(1)
 
-      var userSchema = new mongoose.Schema({})
+      let userSchema = new mongoose.Schema({})
       userSchema.statics = { routeOptions: {} }
 
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
       // </editor-fold>
 
       // <editor-fold desc="Act">
@@ -4129,18 +4300,18 @@ test('rest-helper-factory.generateUpdateEndpoint', function(t) {
     'rest-helper-factory.generateUpdateEndpoint calls joiMongooseHelper.generateJoiUpdateModel',
     sinon.test(function(t) {
       // <editor-fold desc="Arrange">
-      var server = this.stub({
+      let server = this.stub({
         route: function() {}
       })
 
-      var handlerHelperStub = this.stub(
-        require('../utilities/handler-helper-factory')(this.spy(), server)
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
       )
-      var handlerHelperStubWrapper = this.stub()
+      let handlerHelperStubWrapper = this.stub()
       handlerHelperStubWrapper.returns(handlerHelperStub)
-      var queryHelperStub = this.stub(require('../utilities/query-helper'))
-      var joiMongooseHelperStub = this.stub(
-        require('../utilities/joi-mongoose-helper'),
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
         'generateJoiReadModel'
       ).callsFake(function() {
         return Joi.any()
@@ -4148,18 +4319,21 @@ test('rest-helper-factory.generateUpdateEndpoint', function(t) {
       joiMongooseHelperStub.generateJoiUpdateModel = this.spy(function() {
         return Joi.any()
       })
-      var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
-        './handler-helper-factory': handlerHelperStubWrapper,
-        './query-helper': queryHelperStub,
-        './joi-mongoose-helper': joiMongooseHelperStub
-      })(Log, mongoose, server)
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub
+        }
+      )(Log, mongoose, server)
 
       t.plan(1)
 
-      var userSchema = new mongoose.Schema({})
+      let userSchema = new mongoose.Schema({})
       userSchema.statics = { routeOptions: {} }
 
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
       // </editor-fold>
 
       // <editor-fold desc="Act">
@@ -4184,18 +4358,18 @@ test('rest-helper-factory.generateUpdateEndpoint', function(t) {
     'rest-helper-factory.generateUpdateEndpoint calls server.route',
     sinon.test(function(t) {
       // <editor-fold desc="Arrange">
-      var server = this.stub({
+      let server = this.stub({
         route: function() {}
       })
 
-      var handlerHelperStub = this.stub(
-        require('../utilities/handler-helper-factory')(this.spy(), server)
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
       )
-      var handlerHelperStubWrapper = this.stub()
+      let handlerHelperStubWrapper = this.stub()
       handlerHelperStubWrapper.returns(handlerHelperStub)
-      var queryHelperStub = this.stub(require('../utilities/query-helper'))
-      var joiMongooseHelperStub = this.stub(
-        require('../utilities/joi-mongoose-helper'),
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
         'generateJoiReadModel'
       ).callsFake(function() {
         return Joi.any()
@@ -4203,18 +4377,21 @@ test('rest-helper-factory.generateUpdateEndpoint', function(t) {
       joiMongooseHelperStub.generateJoiUpdateModel = this.spy(function() {
         return Joi.any()
       })
-      var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
-        './handler-helper-factory': handlerHelperStubWrapper,
-        './query-helper': queryHelperStub,
-        './joi-mongoose-helper': joiMongooseHelperStub
-      })(Log, mongoose, server)
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub
+        }
+      )(Log, mongoose, server)
 
       t.plan(1)
 
-      var userSchema = new mongoose.Schema({})
+      let userSchema = new mongoose.Schema({})
       userSchema.statics = { routeOptions: {} }
 
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
       // </editor-fold>
 
       // <editor-fold desc="Act">
@@ -4236,18 +4413,18 @@ test('rest-helper-factory.generateUpdateEndpoint', function(t) {
     'rest-helper-factory.generateUpdateEndpoint calls server.route with "PUT" method',
     sinon.test(function(t) {
       // <editor-fold desc="Arrange">
-      var server = this.stub({
+      let server = this.stub({
         route: function() {}
       })
 
-      var handlerHelperStub = this.stub(
-        require('../utilities/handler-helper-factory')(this.spy(), server)
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
       )
-      var handlerHelperStubWrapper = this.stub()
+      let handlerHelperStubWrapper = this.stub()
       handlerHelperStubWrapper.returns(handlerHelperStub)
-      var queryHelperStub = this.stub(require('../utilities/query-helper'))
-      var joiMongooseHelperStub = this.stub(
-        require('../utilities/joi-mongoose-helper'),
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
         'generateJoiReadModel'
       ).callsFake(function() {
         return Joi.any()
@@ -4255,18 +4432,21 @@ test('rest-helper-factory.generateUpdateEndpoint', function(t) {
       joiMongooseHelperStub.generateJoiUpdateModel = this.spy(function() {
         return Joi.any()
       })
-      var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
-        './handler-helper-factory': handlerHelperStubWrapper,
-        './query-helper': queryHelperStub,
-        './joi-mongoose-helper': joiMongooseHelperStub
-      })(Log, mongoose, server)
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub
+        }
+      )(Log, mongoose, server)
 
       t.plan(1)
 
-      var userSchema = new mongoose.Schema({})
+      let userSchema = new mongoose.Schema({})
       userSchema.statics = { routeOptions: {} }
 
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
       // </editor-fold>
 
       // <editor-fold desc="Act">
@@ -4274,7 +4454,7 @@ test('rest-helper-factory.generateUpdateEndpoint', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Assert">
-      var serverObject = server.route.args[0][0]
+      let serverObject = server.route.args[0][0]
       // Log.debug(JSON.stringify(serverObject));
       t.equal(serverObject.method, 'PUT', 'PUT method used')
       // </editor-fold>
@@ -4290,18 +4470,18 @@ test('rest-helper-factory.generateUpdateEndpoint', function(t) {
     'rest-helper-factory.generateUpdateEndpoint calls server.route with correct resourceAliasForRoute',
     sinon.test(function(t) {
       // <editor-fold desc="Arrange">
-      var server = this.stub({
+      let server = this.stub({
         route: function() {}
       })
 
-      var handlerHelperStub = this.stub(
-        require('../utilities/handler-helper-factory')(this.spy(), server)
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
       )
-      var handlerHelperStubWrapper = this.stub()
+      let handlerHelperStubWrapper = this.stub()
       handlerHelperStubWrapper.returns(handlerHelperStub)
-      var queryHelperStub = this.stub(require('../utilities/query-helper'))
-      var joiMongooseHelperStub = this.stub(
-        require('../utilities/joi-mongoose-helper'),
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
         'generateJoiReadModel'
       ).callsFake(function() {
         return Joi.any()
@@ -4312,26 +4492,29 @@ test('rest-helper-factory.generateUpdateEndpoint', function(t) {
       joiMongooseHelperStub.generateJoiUpdateModel = function() {
         return Joi.any()
       }
-      var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
-        './handler-helper-factory': handlerHelperStubWrapper,
-        './query-helper': queryHelperStub,
-        './joi-mongoose-helper': joiMongooseHelperStub
-      })(Log, mongoose, server)
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub
+        }
+      )(Log, mongoose, server)
 
       t.plan(2)
 
-      var userSchema1 = new mongoose.Schema({})
+      let userSchema1 = new mongoose.Schema({})
       userSchema1.statics = { routeOptions: {} }
 
-      var userSchema2 = new mongoose.Schema({})
+      let userSchema2 = new mongoose.Schema({})
       userSchema2.statics = {
         routeOptions: {
           alias: 'PEEPS'
         }
       }
 
-      var userModel1 = mongoose.model('user1', userSchema1)
-      var userModel2 = mongoose.model('user2', userSchema2)
+      let userModel1 = mongoose.model('user1', userSchema1)
+      let userModel2 = mongoose.model('user2', userSchema2)
       // </editor-fold>
 
       // <editor-fold desc="Act">
@@ -4340,8 +4523,8 @@ test('rest-helper-factory.generateUpdateEndpoint', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Assert">
-      var serverObject1 = server.route.args[0][0]
-      var serverObject2 = server.route.args[1][0]
+      let serverObject1 = server.route.args[0][0]
+      let serverObject2 = server.route.args[1][0]
       // Log.debug(JSON.stringify(serverObject));
       t.equal(serverObject1.path, '/user1/{_id}', 'correct route')
       t.equal(serverObject2.path, '/PEEPS/{_id}', 'correct route alias')
@@ -4360,21 +4543,21 @@ test('rest-helper-factory.generateUpdateEndpoint', function(t) {
     'rest-helper-factory.generateUpdateEndpoint calls server.route with correct handler',
     sinon.test(function(t) {
       // <editor-fold desc="Arrange">
-      var server = this.stub({
+      let server = this.stub({
         route: function() {}
       })
 
-      var handlerHelperStub = this.stub(
-        require('../utilities/handler-helper-factory')(this.spy(), server)
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
       )
       handlerHelperStub.generateUpdateHandler = this.spy(function() {
         return 'HANDLER'
       })
-      var handlerHelperStubWrapper = this.stub()
+      let handlerHelperStubWrapper = this.stub()
       handlerHelperStubWrapper.returns(handlerHelperStub)
-      var queryHelperStub = this.stub(require('../utilities/query-helper'))
-      var joiMongooseHelperStub = this.stub(
-        require('../utilities/joi-mongoose-helper'),
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
         'generateJoiReadModel'
       ).callsFake(function() {
         return Joi.any()
@@ -4382,18 +4565,21 @@ test('rest-helper-factory.generateUpdateEndpoint', function(t) {
       joiMongooseHelperStub.generateJoiUpdateModel = this.spy(function() {
         return Joi.any()
       })
-      var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
-        './handler-helper-factory': handlerHelperStubWrapper,
-        './query-helper': queryHelperStub,
-        './joi-mongoose-helper': joiMongooseHelperStub
-      })(Log, mongoose, server)
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub
+        }
+      )(Log, mongoose, server)
 
       t.plan(1)
 
-      var userSchema = new mongoose.Schema({})
+      let userSchema = new mongoose.Schema({})
       userSchema.statics = { routeOptions: {} }
 
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
       // </editor-fold>
 
       // <editor-fold desc="Act">
@@ -4401,7 +4587,7 @@ test('rest-helper-factory.generateUpdateEndpoint', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Assert">
-      var serverObject = server.route.args[0][0]
+      let serverObject = server.route.args[0][0]
       // Log.debug(JSON.stringify(serverObject));
       t.equal(serverObject.config.handler, 'HANDLER', 'correct handler used')
       // </editor-fold>
@@ -4417,18 +4603,18 @@ test('rest-helper-factory.generateUpdateEndpoint', function(t) {
     'rest-helper-factory.generateUpdateEndpoint calls server.route using authentication defined by config',
     sinon.test(function(t) {
       // <editor-fold desc="Arrange">
-      var server = this.stub({
+      let server = this.stub({
         route: function() {}
       })
 
-      var handlerHelperStub = this.stub(
-        require('../utilities/handler-helper-factory')(this.spy(), server)
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
       )
-      var handlerHelperStubWrapper = this.stub()
+      let handlerHelperStubWrapper = this.stub()
       handlerHelperStubWrapper.returns(handlerHelperStub)
-      var queryHelperStub = this.stub(require('../utilities/query-helper'))
-      var joiMongooseHelperStub = this.stub(
-        require('../utilities/joi-mongoose-helper'),
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
         'generateJoiReadModel'
       ).callsFake(function() {
         return Joi.any()
@@ -4436,20 +4622,23 @@ test('rest-helper-factory.generateUpdateEndpoint', function(t) {
       joiMongooseHelperStub.generateJoiUpdateModel = this.spy(function() {
         return Joi.any()
       })
-      var config = { authStrategy: 'TEST_AUTH' }
-      var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
-        './handler-helper-factory': handlerHelperStubWrapper,
-        './query-helper': queryHelperStub,
-        './joi-mongoose-helper': joiMongooseHelperStub,
-        '../config': config
-      })(Log, mongoose, server)
+      let config = { authStrategy: 'TEST_AUTH' }
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub,
+          '../config': config
+        }
+      )(Log, mongoose, server)
 
       t.plan(1)
 
-      var userSchema = new mongoose.Schema({})
+      let userSchema = new mongoose.Schema({})
       userSchema.statics = { routeOptions: {} }
 
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
       // </editor-fold>
 
       // <editor-fold desc="Act">
@@ -4457,7 +4646,7 @@ test('rest-helper-factory.generateUpdateEndpoint', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Assert">
-      var serverObject = server.route.args[0][0]
+      let serverObject = server.route.args[0][0]
       // Log.debug(JSON.stringify(serverObject));
       t.deepEqual(
         serverObject.config.auth,
@@ -4477,18 +4666,18 @@ test('rest-helper-factory.generateUpdateEndpoint', function(t) {
     'rest-helper-factory.generateUpdateEndpoint calls server.route with correct collectionName',
     sinon.test(function(t) {
       // <editor-fold desc="Arrange">
-      var server = this.stub({
+      let server = this.stub({
         route: function() {}
       })
 
-      var handlerHelperStub = this.stub(
-        require('../utilities/handler-helper-factory')(this.spy(), server)
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
       )
-      var handlerHelperStubWrapper = this.stub()
+      let handlerHelperStubWrapper = this.stub()
       handlerHelperStubWrapper.returns(handlerHelperStub)
-      var queryHelperStub = this.stub(require('../utilities/query-helper'))
-      var joiMongooseHelperStub = this.stub(
-        require('../utilities/joi-mongoose-helper'),
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
         'generateJoiReadModel'
       ).callsFake(function() {
         return Joi.any()
@@ -4496,25 +4685,28 @@ test('rest-helper-factory.generateUpdateEndpoint', function(t) {
       joiMongooseHelperStub.generateJoiUpdateModel = this.spy(function() {
         return Joi.any()
       })
-      var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
-        './handler-helper-factory': handlerHelperStubWrapper,
-        './query-helper': queryHelperStub,
-        './joi-mongoose-helper': joiMongooseHelperStub
-      })(Log, mongoose, server)
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub
+        }
+      )(Log, mongoose, server)
 
       t.plan(4)
 
-      var userSchema1 = new mongoose.Schema({})
+      let userSchema1 = new mongoose.Schema({})
       userSchema1.statics = { routeOptions: {} }
 
-      var userSchema2 = new mongoose.Schema({})
+      let userSchema2 = new mongoose.Schema({})
       userSchema2.statics = {
         routeOptions: {},
         collectionDisplayName: 'User'
       }
 
-      var userModel1 = mongoose.model('user1', userSchema1)
-      var userModel2 = mongoose.model('user2', userSchema2)
+      let userModel1 = mongoose.model('user1', userSchema1)
+      let userModel2 = mongoose.model('user2', userSchema2)
       // </editor-fold>
 
       // <editor-fold desc="Act">
@@ -4523,8 +4715,8 @@ test('rest-helper-factory.generateUpdateEndpoint', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Assert">
-      var serverObject1 = server.route.args[0][0]
-      var serverObject2 = server.route.args[1][0]
+      let serverObject1 = server.route.args[0][0]
+      let serverObject2 = server.route.args[1][0]
       // Log.debug(JSON.stringify(serverObject));
       t.equal(
         serverObject1.config.description,
@@ -4553,18 +4745,18 @@ test('rest-helper-factory.generateUpdateEndpoint', function(t) {
     'rest-helper-factory.generateUpdateEndpoint calls server.route using cors',
     sinon.test(function(t) {
       // <editor-fold desc="Arrange">
-      var server = this.stub({
+      let server = this.stub({
         route: function() {}
       })
 
-      var handlerHelperStub = this.stub(
-        require('../utilities/handler-helper-factory')(this.spy(), server)
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
       )
-      var handlerHelperStubWrapper = this.stub()
+      let handlerHelperStubWrapper = this.stub()
       handlerHelperStubWrapper.returns(handlerHelperStub)
-      var queryHelperStub = this.stub(require('../utilities/query-helper'))
-      var joiMongooseHelperStub = this.stub(
-        require('../utilities/joi-mongoose-helper'),
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
         'generateJoiReadModel'
       ).callsFake(function() {
         return Joi.any()
@@ -4572,18 +4764,21 @@ test('rest-helper-factory.generateUpdateEndpoint', function(t) {
       joiMongooseHelperStub.generateJoiUpdateModel = this.spy(function() {
         return Joi.any()
       })
-      var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
-        './handler-helper-factory': handlerHelperStubWrapper,
-        './query-helper': queryHelperStub,
-        './joi-mongoose-helper': joiMongooseHelperStub
-      })(Log, mongoose, server)
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub
+        }
+      )(Log, mongoose, server)
 
       t.plan(1)
 
-      var userSchema = new mongoose.Schema({})
+      let userSchema = new mongoose.Schema({})
       userSchema.statics = { routeOptions: {} }
 
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
       // </editor-fold>
 
       // <editor-fold desc="Act">
@@ -4591,9 +4786,9 @@ test('rest-helper-factory.generateUpdateEndpoint', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Assert">
-      var serverObject = server.route.args[0][0]
+      let serverObject = server.route.args[0][0]
       // Log.debug(JSON.stringify(serverObject));
-      var cors = {
+      let cors = {
         additionalHeaders: [],
         additionalExposedHeaders: []
       }
@@ -4611,18 +4806,18 @@ test('rest-helper-factory.generateUpdateEndpoint', function(t) {
     'rest-helper-factory.generateUpdateEndpoint calls server.route using correct payload validation',
     sinon.test(function(t) {
       // <editor-fold desc="Arrange">
-      var server = this.stub({
+      let server = this.stub({
         route: function() {}
       })
 
-      var handlerHelperStub = this.stub(
-        require('../utilities/handler-helper-factory')(this.spy(), server)
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
       )
-      var handlerHelperStubWrapper = this.stub()
+      let handlerHelperStubWrapper = this.stub()
       handlerHelperStubWrapper.returns(handlerHelperStub)
-      var queryHelperStub = this.stub(require('../utilities/query-helper'))
-      var joiMongooseHelperStub = this.stub(
-        require('../utilities/joi-mongoose-helper'),
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
         'generateJoiReadModel'
       ).callsFake(function() {
         return Joi.any()
@@ -4633,18 +4828,21 @@ test('rest-helper-factory.generateUpdateEndpoint', function(t) {
       joiMongooseHelperStub.generateJoiUpdateModel = function() {
         return Joi.any().valid('TEST')
       }
-      var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
-        './handler-helper-factory': handlerHelperStubWrapper,
-        './query-helper': queryHelperStub,
-        './joi-mongoose-helper': joiMongooseHelperStub
-      })(Log, mongoose, server)
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub
+        }
+      )(Log, mongoose, server)
 
       t.plan(1)
 
-      var userSchema = new mongoose.Schema({})
+      let userSchema = new mongoose.Schema({})
       userSchema.statics = { routeOptions: {} }
 
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
       // </editor-fold>
 
       // <editor-fold desc="Act">
@@ -4652,7 +4850,7 @@ test('rest-helper-factory.generateUpdateEndpoint', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Assert">
-      var serverObject = server.route.args[0][0]
+      let serverObject = server.route.args[0][0]
       // Log.debug(JSON.stringify(serverObject));
       t.deepEqual(
         serverObject.config.validate.payload,
@@ -4672,18 +4870,18 @@ test('rest-helper-factory.generateUpdateEndpoint', function(t) {
     'rest-helper-factory.generateUpdateEndpoint calls server.route using correct params validation',
     sinon.test(function(t) {
       // <editor-fold desc="Arrange">
-      var server = this.stub({
+      let server = this.stub({
         route: function() {}
       })
 
-      var handlerHelperStub = this.stub(
-        require('../utilities/handler-helper-factory')(this.spy(), server)
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
       )
-      var handlerHelperStubWrapper = this.stub()
+      let handlerHelperStubWrapper = this.stub()
       handlerHelperStubWrapper.returns(handlerHelperStub)
-      var queryHelperStub = this.stub(require('../utilities/query-helper'))
-      var joiMongooseHelperStub = this.stub(
-        require('../utilities/joi-mongoose-helper'),
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
         'generateJoiReadModel'
       ).callsFake(function() {
         return Joi.any()
@@ -4691,9 +4889,9 @@ test('rest-helper-factory.generateUpdateEndpoint', function(t) {
       joiMongooseHelperStub.generateJoiUpdateModel = this.spy(function() {
         return Joi.any()
       })
-      var joiStub = require('joi')
+      let joiStub = require('joi')
 
-      var joiObjectIdStub = function() {
+      let joiObjectIdStub = function() {
         return function() {
           return {
             required: function() {
@@ -4702,22 +4900,25 @@ test('rest-helper-factory.generateUpdateEndpoint', function(t) {
           }
         }
       }
-      var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
-        './handler-helper-factory': handlerHelperStubWrapper,
-        './query-helper': queryHelperStub,
-        './joi-mongoose-helper': joiMongooseHelperStub,
-        joi: joiStub,
-        'joi-objectid': joiObjectIdStub
-      })(Log, mongoose, server)
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub,
+          joi: joiStub,
+          'joi-objectid': joiObjectIdStub
+        }
+      )(Log, mongoose, server)
 
       t.plan(1)
 
-      var userSchema = new mongoose.Schema({})
+      let userSchema = new mongoose.Schema({})
       userSchema.statics = { routeOptions: {} }
 
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
 
-      var params = {
+      let params = {
         _id: 'TEST'
       }
       // </editor-fold>
@@ -4727,7 +4928,7 @@ test('rest-helper-factory.generateUpdateEndpoint', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Assert">
-      var serverObject = server.route.args[0][0]
+      let serverObject = server.route.args[0][0]
       // Log.debug(JSON.stringify(serverObject));
       t.deepEqual(
         serverObject.config.validate.params,
@@ -4747,18 +4948,18 @@ test('rest-helper-factory.generateUpdateEndpoint', function(t) {
     'rest-helper-factory.generateUpdateEndpoint calls server.route using correct header validation',
     sinon.test(function(t) {
       // <editor-fold desc="Arrange">
-      var server = this.stub({
+      let server = this.stub({
         route: function() {}
       })
 
-      var handlerHelperStub = this.stub(
-        require('../utilities/handler-helper-factory')(this.spy(), server)
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
       )
-      var handlerHelperStubWrapper = this.stub()
+      let handlerHelperStubWrapper = this.stub()
       handlerHelperStubWrapper.returns(handlerHelperStub)
-      var queryHelperStub = this.stub(require('../utilities/query-helper'))
-      var joiMongooseHelperStub = this.stub(
-        require('../utilities/joi-mongoose-helper'),
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
         'generateJoiReadModel'
       ).callsFake(function() {
         return Joi.any()
@@ -4766,22 +4967,25 @@ test('rest-helper-factory.generateUpdateEndpoint', function(t) {
       joiMongooseHelperStub.generateJoiUpdateModel = this.spy(function() {
         return Joi.any()
       })
-      var config = { authStrategy: 'TEST_AUTH' }
-      var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
-        './handler-helper-factory': handlerHelperStubWrapper,
-        './query-helper': queryHelperStub,
-        './joi-mongoose-helper': joiMongooseHelperStub,
-        '../config': config
-      })(Log, mongoose, server)
+      let config = { authStrategy: 'TEST_AUTH' }
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub,
+          '../config': config
+        }
+      )(Log, mongoose, server)
 
       t.plan(1)
 
-      var userSchema = new mongoose.Schema({})
+      let userSchema = new mongoose.Schema({})
       userSchema.statics = { routeOptions: {} }
 
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
 
-      var headerValidation = Joi.object({
+      let headerValidation = Joi.object({
         authorization: Joi.string().required()
       }).options({ allowUnknown: true })
       // </editor-fold>
@@ -4791,7 +4995,7 @@ test('rest-helper-factory.generateUpdateEndpoint', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Assert">
-      var serverObject = server.route.args[0][0]
+      let serverObject = server.route.args[0][0]
       // Log.debug(JSON.stringify(serverObject));
       t.deepEqual(
         serverObject.config.validate.headers,
@@ -4811,18 +5015,18 @@ test('rest-helper-factory.generateUpdateEndpoint', function(t) {
     'rest-helper-factory.generateUpdateEndpoint calls server.route using hapi-swagger plugin',
     sinon.test(function(t) {
       // <editor-fold desc="Arrange">
-      var server = this.stub({
+      let server = this.stub({
         route: function() {}
       })
 
-      var handlerHelperStub = this.stub(
-        require('../utilities/handler-helper-factory')(this.spy(), server)
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
       )
-      var handlerHelperStubWrapper = this.stub()
+      let handlerHelperStubWrapper = this.stub()
       handlerHelperStubWrapper.returns(handlerHelperStub)
-      var queryHelperStub = this.stub(require('../utilities/query-helper'))
-      var joiMongooseHelperStub = this.stub(
-        require('../utilities/joi-mongoose-helper'),
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
         'generateJoiReadModel'
       ).callsFake(function() {
         return Joi.any()
@@ -4830,18 +5034,21 @@ test('rest-helper-factory.generateUpdateEndpoint', function(t) {
       joiMongooseHelperStub.generateJoiUpdateModel = this.spy(function() {
         return Joi.any()
       })
-      var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
-        './handler-helper-factory': handlerHelperStubWrapper,
-        './query-helper': queryHelperStub,
-        './joi-mongoose-helper': joiMongooseHelperStub
-      })(Log, mongoose, server)
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub
+        }
+      )(Log, mongoose, server)
 
       t.plan(1)
 
-      var userSchema = new mongoose.Schema({})
+      let userSchema = new mongoose.Schema({})
       userSchema.statics = { routeOptions: {} }
 
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
       // </editor-fold>
 
       // <editor-fold desc="Act">
@@ -4849,7 +5056,7 @@ test('rest-helper-factory.generateUpdateEndpoint', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Assert">
-      var serverObject = server.route.args[0][0]
+      let serverObject = server.route.args[0][0]
       // Log.debug(JSON.stringify(serverObject));
       t.ok(serverObject.config.plugins['hapi-swagger'], 'hapi-swagger used')
       // </editor-fold>
@@ -4865,19 +5072,19 @@ test('rest-helper-factory.generateUpdateEndpoint', function(t) {
     'rest-helper-factory.generateUpdateEndpoint calls server.route with correct response schema validation',
     sinon.test(function(t) {
       // <editor-fold desc="Arrange">
-      var server = this.stub({
+      let server = this.stub({
         route: function() {}
       })
 
-      var handlerHelperStub = this.stub(
-        require('../utilities/handler-helper-factory')(this.spy(), server)
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
       )
-      var handlerHelperStubWrapper = this.stub()
+      let handlerHelperStubWrapper = this.stub()
       handlerHelperStubWrapper.returns(handlerHelperStub)
-      var queryHelperStub = this.stub(require('../utilities/query-helper'))
-      var readModel = Joi.any().valid(['test'])
-      var joiMongooseHelperStub = this.stub(
-        require('../utilities/joi-mongoose-helper'),
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let readModel = Joi.any().valid(['test'])
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
         'generateJoiReadModel'
       ).callsFake(function() {
         return readModel
@@ -4885,20 +5092,23 @@ test('rest-helper-factory.generateUpdateEndpoint', function(t) {
       joiMongooseHelperStub.generateJoiUpdateModel = this.spy(function() {
         return Joi.any()
       })
-      var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
-        './handler-helper-factory': handlerHelperStubWrapper,
-        './query-helper': queryHelperStub,
-        './joi-mongoose-helper': joiMongooseHelperStub
-      })(Log, mongoose, server)
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub
+        }
+      )(Log, mongoose, server)
 
       t.plan(1)
 
-      var userSchema = new mongoose.Schema({})
+      let userSchema = new mongoose.Schema({})
       userSchema.statics = { routeOptions: {} }
 
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
 
-      var responseSchema = readModel
+      let responseSchema = readModel
       // </editor-fold>
 
       // <editor-fold desc="Act">
@@ -4906,7 +5116,7 @@ test('rest-helper-factory.generateUpdateEndpoint', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Assert">
-      var serverObject = server.route.args[0][0]
+      let serverObject = server.route.args[0][0]
       // Log.debug(JSON.stringify(serverObject));
       t.deepEquals(
         serverObject.config.response.schema,
@@ -4926,8 +5136,8 @@ test('rest-helper-factory.generateUpdateEndpoint', function(t) {
 })
 
 test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
-  var server = sinon.spy()
-  var restHelperFactory = require('../utilities/rest-helper-factory')(
+  let server = sinon.spy()
+  let restHelperFactory = require('../../utilities/rest-helper-factory')(
     Log,
     mongoose,
     server
@@ -4944,39 +5154,42 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
     'rest-helper-factory.generateAssociationAddOneEndpoint asserts routeOptions.associations exist',
     sinon.test(function(t) {
       // <editor-fold desc="Arrange">
-      var server = this.stub({
+      let server = this.stub({
         route: function() {}
       })
 
-      var handlerHelperStub = this.stub(
-        require('../utilities/handler-helper-factory')(this.spy(), server)
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
       )
-      var handlerHelperStubWrapper = this.stub()
+      let handlerHelperStubWrapper = this.stub()
       handlerHelperStubWrapper.returns(handlerHelperStub)
-      var queryHelperStub = this.stub(require('../utilities/query-helper'))
-      var joiMongooseHelperStub = this.stub(
-        require('../utilities/joi-mongoose-helper'),
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
         'generateJoiCreateModel'
       ).callsFake(function() {
         return Joi.any()
       })
-      var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
-        './handler-helper-factory': handlerHelperStubWrapper,
-        './query-helper': queryHelperStub,
-        './joi-mongoose-helper': joiMongooseHelperStub
-      })(Log, mongoose, server)
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub
+        }
+      )(Log, mongoose, server)
 
       t.plan(2)
 
-      var userSchema = new mongoose.Schema({})
+      let userSchema = new mongoose.Schema({})
       userSchema.statics = { routeOptions: {} }
       userSchema.statics = {
         routeOptions: {}
       }
 
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
 
-      var association = { include: {} }
+      let association = { include: {} }
       // </editor-fold>
 
       try {
@@ -5011,31 +5224,34 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
     'rest-helper-factory.generateAssociationAddOneEndpoint asserts association input exists',
     sinon.test(function(t) {
       // <editor-fold desc="Arrange">
-      var server = this.stub({
+      let server = this.stub({
         route: function() {}
       })
 
-      var handlerHelperStub = this.stub(
-        require('../utilities/handler-helper-factory')(this.spy(), server)
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
       )
-      var handlerHelperStubWrapper = this.stub()
+      let handlerHelperStubWrapper = this.stub()
       handlerHelperStubWrapper.returns(handlerHelperStub)
-      var queryHelperStub = this.stub(require('../utilities/query-helper'))
-      var joiMongooseHelperStub = this.stub(
-        require('../utilities/joi-mongoose-helper'),
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
         'generateJoiCreateModel'
       ).callsFake(function() {
         return Joi.any()
       })
-      var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
-        './handler-helper-factory': handlerHelperStubWrapper,
-        './query-helper': queryHelperStub,
-        './joi-mongoose-helper': joiMongooseHelperStub
-      })(Log, mongoose, server)
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub
+        }
+      )(Log, mongoose, server)
 
       t.plan(2)
 
-      var userSchema = new mongoose.Schema({})
+      let userSchema = new mongoose.Schema({})
       userSchema.statics = { routeOptions: {} }
       userSchema.statics = {
         routeOptions: {
@@ -5043,9 +5259,9 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
         }
       }
 
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
 
-      var association = { include: {} }
+      let association = { include: {} }
       // </editor-fold>
 
       try {
@@ -5080,31 +5296,34 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
     'rest-helper-factory.generateAssociationAddOneEndpoint calls handlerHelper.generateAssociationAddOneHandler',
     sinon.test(function(t) {
       // <editor-fold desc="Arrange">
-      var server = this.stub({
+      let server = this.stub({
         route: function() {}
       })
 
-      var handlerHelperStub = this.stub(
-        require('../utilities/handler-helper-factory')(this.spy(), server)
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
       )
-      var handlerHelperStubWrapper = this.stub()
+      let handlerHelperStubWrapper = this.stub()
       handlerHelperStubWrapper.returns(handlerHelperStub)
-      var queryHelperStub = this.stub(require('../utilities/query-helper'))
-      var joiMongooseHelperStub = this.stub(
-        require('../utilities/joi-mongoose-helper'),
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
         'generateJoiCreateModel'
       ).callsFake(function() {
         return Joi.any()
       })
-      var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
-        './handler-helper-factory': handlerHelperStubWrapper,
-        './query-helper': queryHelperStub,
-        './joi-mongoose-helper': joiMongooseHelperStub
-      })(Log, mongoose, server)
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub
+        }
+      )(Log, mongoose, server)
 
       t.plan(1)
 
-      var userSchema = new mongoose.Schema({})
+      let userSchema = new mongoose.Schema({})
       userSchema.statics = { routeOptions: {} }
       userSchema.statics = {
         routeOptions: {
@@ -5112,9 +5331,9 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
         }
       }
 
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
 
-      var association = {
+      let association = {
         include: {
           model: { schema: { methods: {} }, modelName: 'testAssociation' }
         }
@@ -5149,31 +5368,34 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
     'rest-helper-factory.generateAssociationAddOneEndpoint calls server.route',
     sinon.test(function(t) {
       // <editor-fold desc="Arrange">
-      var server = this.stub({
+      let server = this.stub({
         route: function() {}
       })
 
-      var handlerHelperStub = this.stub(
-        require('../utilities/handler-helper-factory')(this.spy(), server)
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
       )
-      var handlerHelperStubWrapper = this.stub()
+      let handlerHelperStubWrapper = this.stub()
       handlerHelperStubWrapper.returns(handlerHelperStub)
-      var queryHelperStub = this.stub(require('../utilities/query-helper'))
-      var joiMongooseHelperStub = this.stub(
-        require('../utilities/joi-mongoose-helper'),
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
         'generateJoiCreateModel'
       ).callsFake(function() {
         return Joi.any()
       })
-      var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
-        './handler-helper-factory': handlerHelperStubWrapper,
-        './query-helper': queryHelperStub,
-        './joi-mongoose-helper': joiMongooseHelperStub
-      })(Log, mongoose, server)
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub
+        }
+      )(Log, mongoose, server)
 
       t.plan(1)
 
-      var userSchema = new mongoose.Schema({})
+      let userSchema = new mongoose.Schema({})
       userSchema.statics = { routeOptions: {} }
       userSchema.statics = {
         routeOptions: {
@@ -5181,9 +5403,9 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
         }
       }
 
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
 
-      var association = {
+      let association = {
         include: {
           model: { schema: { methods: {} }, modelName: 'testAssociation' }
         }
@@ -5215,31 +5437,34 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
     'rest-helper-factory.generateAssociationAddOneEndpoint calls server.route with "PUT" method',
     sinon.test(function(t) {
       // <editor-fold desc="Arrange">
-      var server = this.stub({
+      let server = this.stub({
         route: function() {}
       })
 
-      var handlerHelperStub = this.stub(
-        require('../utilities/handler-helper-factory')(this.spy(), server)
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
       )
-      var handlerHelperStubWrapper = this.stub()
+      let handlerHelperStubWrapper = this.stub()
       handlerHelperStubWrapper.returns(handlerHelperStub)
-      var queryHelperStub = this.stub(require('../utilities/query-helper'))
-      var joiMongooseHelperStub = this.stub(
-        require('../utilities/joi-mongoose-helper'),
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
         'generateJoiCreateModel'
       ).callsFake(function() {
         return Joi.any()
       })
-      var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
-        './handler-helper-factory': handlerHelperStubWrapper,
-        './query-helper': queryHelperStub,
-        './joi-mongoose-helper': joiMongooseHelperStub
-      })(Log, mongoose, server)
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub
+        }
+      )(Log, mongoose, server)
 
       t.plan(1)
 
-      var userSchema = new mongoose.Schema({})
+      let userSchema = new mongoose.Schema({})
       userSchema.statics = { routeOptions: {} }
       userSchema.statics = {
         routeOptions: {
@@ -5247,9 +5472,9 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
         }
       }
 
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
 
-      var association = {
+      let association = {
         include: {
           model: { schema: { methods: {} }, modelName: 'testAssociation' }
         }
@@ -5267,7 +5492,7 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Assert">
-      var serverObject = server.route.args[0][0]
+      let serverObject = server.route.args[0][0]
       // Log.debug(JSON.stringify(serverObject));
       t.equal(serverObject.method, 'PUT', 'PUT method used')
       // </editor-fold>
@@ -5283,18 +5508,18 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
     'rest-helper-factory.generateAssociationAddOneEndpoint calls server.route with correct ownerAlias and childAlias',
     sinon.test(function(t) {
       // <editor-fold desc="Arrange">
-      var server = this.stub({
+      let server = this.stub({
         route: function() {}
       })
 
-      var handlerHelperStub = this.stub(
-        require('../utilities/handler-helper-factory')(this.spy(), server)
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
       )
-      var handlerHelperStubWrapper = this.stub()
+      let handlerHelperStubWrapper = this.stub()
       handlerHelperStubWrapper.returns(handlerHelperStub)
-      var queryHelperStub = this.stub(require('../utilities/query-helper'))
-      var joiMongooseHelperStub = this.stub(
-        require('../utilities/joi-mongoose-helper'),
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
         'generateJoiCreateModel'
       ).callsFake(function() {
         return Joi.any()
@@ -5302,15 +5527,18 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
       joiMongooseHelperStub.generateJoiUpdateModel = function() {
         return Joi.any()
       }
-      var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
-        './handler-helper-factory': handlerHelperStubWrapper,
-        './query-helper': queryHelperStub,
-        './joi-mongoose-helper': joiMongooseHelperStub
-      })(Log, mongoose, server)
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub
+        }
+      )(Log, mongoose, server)
 
       t.plan(2)
 
-      var userSchema1 = new mongoose.Schema({})
+      let userSchema1 = new mongoose.Schema({})
       userSchema1.statics = { routeOptions: {} }
       userSchema1.statics = {
         routeOptions: {
@@ -5318,7 +5546,7 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
         }
       }
 
-      var userSchema2 = new mongoose.Schema({})
+      let userSchema2 = new mongoose.Schema({})
       userSchema2.statics = {
         routeOptions: {
           associations: {},
@@ -5326,13 +5554,13 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
         }
       }
 
-      var userModel1 = mongoose.model('user1', userSchema1)
-      var userModel2 = mongoose.model('user2', userSchema2)
+      let userModel1 = mongoose.model('user1', userSchema1)
+      let userModel2 = mongoose.model('user2', userSchema2)
 
-      var association1 = {
+      let association1 = {
         include: { model: { modelName: 'TEST1', schema: { methods: {} } } }
       }
-      var association2 = {
+      let association2 = {
         include: { model: { schema: { methods: {} } } },
         alias: 'TEST2'
       }
@@ -5356,8 +5584,8 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Assert">
-      var serverObject1 = server.route.args[0][0]
-      var serverObject2 = server.route.args[1][0]
+      let serverObject1 = server.route.args[0][0]
+      let serverObject2 = server.route.args[1][0]
       // Log.debug(JSON.stringify(serverObject));
       t.equal(
         serverObject1.path,
@@ -5384,34 +5612,37 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
     'rest-helper-factory.generateAssociationAddOneEndpoint calls server.route with correct handler',
     sinon.test(function(t) {
       // <editor-fold desc="Arrange">
-      var server = this.stub({
+      let server = this.stub({
         route: function() {}
       })
 
-      var handlerHelperStub = this.stub(
-        require('../utilities/handler-helper-factory')(this.spy(), server)
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
       )
       handlerHelperStub.generateAssociationAddOneHandler = this.spy(function() {
         return 'HANDLER'
       })
-      var handlerHelperStubWrapper = this.stub()
+      let handlerHelperStubWrapper = this.stub()
       handlerHelperStubWrapper.returns(handlerHelperStub)
-      var queryHelperStub = this.stub(require('../utilities/query-helper'))
-      var joiMongooseHelperStub = this.stub(
-        require('../utilities/joi-mongoose-helper'),
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
         'generateJoiCreateModel'
       ).callsFake(function() {
         return Joi.any()
       })
-      var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
-        './handler-helper-factory': handlerHelperStubWrapper,
-        './query-helper': queryHelperStub,
-        './joi-mongoose-helper': joiMongooseHelperStub
-      })(Log, mongoose, server)
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub
+        }
+      )(Log, mongoose, server)
 
       t.plan(1)
 
-      var userSchema = new mongoose.Schema({})
+      let userSchema = new mongoose.Schema({})
       userSchema.statics = { routeOptions: {} }
       userSchema.statics = {
         routeOptions: {
@@ -5419,9 +5650,9 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
         }
       }
 
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
 
-      var association = {
+      let association = {
         include: {
           model: { schema: { methods: {} }, modelName: 'testAssociation' }
         }
@@ -5439,7 +5670,7 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Assert">
-      var serverObject = server.route.args[0][0]
+      let serverObject = server.route.args[0][0]
       // Log.debug(JSON.stringify(serverObject));
       t.equal(serverObject.config.handler, 'HANDLER', 'correct handler used')
       // </editor-fold>
@@ -5455,33 +5686,36 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
     'rest-helper-factory.generateAssociationAddOneEndpoint calls server.route using authentication defined by config',
     sinon.test(function(t) {
       // <editor-fold desc="Arrange">
-      var server = this.stub({
+      let server = this.stub({
         route: function() {}
       })
 
-      var handlerHelperStub = this.stub(
-        require('../utilities/handler-helper-factory')(this.spy(), server)
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
       )
-      var handlerHelperStubWrapper = this.stub()
+      let handlerHelperStubWrapper = this.stub()
       handlerHelperStubWrapper.returns(handlerHelperStub)
-      var queryHelperStub = this.stub(require('../utilities/query-helper'))
-      var joiMongooseHelperStub = this.stub(
-        require('../utilities/joi-mongoose-helper'),
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
         'generateJoiCreateModel'
       ).callsFake(function() {
         return Joi.any()
       })
-      var config = { authStrategy: 'TEST_AUTH' }
-      var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
-        './handler-helper-factory': handlerHelperStubWrapper,
-        './query-helper': queryHelperStub,
-        './joi-mongoose-helper': joiMongooseHelperStub,
-        '../config': config
-      })(Log, mongoose, server)
+      let config = { authStrategy: 'TEST_AUTH' }
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub,
+          '../config': config
+        }
+      )(Log, mongoose, server)
 
       t.plan(1)
 
-      var userSchema = new mongoose.Schema({})
+      let userSchema = new mongoose.Schema({})
       userSchema.statics = { routeOptions: {} }
       userSchema.statics = {
         routeOptions: {
@@ -5489,9 +5723,9 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
         }
       }
 
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
 
-      var association = {
+      let association = {
         include: {
           model: { schema: { methods: {} }, modelName: 'testAssociation' }
         }
@@ -5509,7 +5743,7 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Assert">
-      var serverObject = server.route.args[0][0]
+      let serverObject = server.route.args[0][0]
       // Log.debug(JSON.stringify(serverObject));
       t.deepEqual(
         serverObject.config.auth,
@@ -5529,31 +5763,34 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
     'rest-helper-factory.generateAssociationAddOneEndpoint calls server.route with correct associationName and ownerModelName',
     sinon.test(function(t) {
       // <editor-fold desc="Arrange">
-      var server = this.stub({
+      let server = this.stub({
         route: function() {}
       })
 
-      var handlerHelperStub = this.stub(
-        require('../utilities/handler-helper-factory')(this.spy(), server)
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
       )
-      var handlerHelperStubWrapper = this.stub()
+      let handlerHelperStubWrapper = this.stub()
       handlerHelperStubWrapper.returns(handlerHelperStub)
-      var queryHelperStub = this.stub(require('../utilities/query-helper'))
-      var joiMongooseHelperStub = this.stub(
-        require('../utilities/joi-mongoose-helper'),
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
         'generateJoiCreateModel'
       ).callsFake(function() {
         return Joi.any()
       })
-      var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
-        './handler-helper-factory': handlerHelperStubWrapper,
-        './query-helper': queryHelperStub,
-        './joi-mongoose-helper': joiMongooseHelperStub
-      })(Log, mongoose, server)
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub
+        }
+      )(Log, mongoose, server)
 
       t.plan(4)
 
-      var userSchema1 = new mongoose.Schema({})
+      let userSchema1 = new mongoose.Schema({})
       userSchema1.statics = { routeOptions: {} }
       userSchema1.statics = {
         routeOptions: {
@@ -5561,7 +5798,7 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
         }
       }
 
-      var userSchema2 = new mongoose.Schema({})
+      let userSchema2 = new mongoose.Schema({})
       userSchema2.statics = {
         routeOptions: {
           associations: {}
@@ -5569,17 +5806,17 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
         collectionDisplayName: 'User'
       }
 
-      var userModel1 = mongoose.model('user1', userSchema1)
-      var userModel2 = mongoose.model('user2', userSchema2)
+      let userModel1 = mongoose.model('user1', userSchema1)
+      let userModel2 = mongoose.model('user2', userSchema2)
 
-      var childSchema1 = new mongoose.Schema({})
+      let childSchema1 = new mongoose.Schema({})
       childSchema1.statics = {
         routeOptions: {
           associations: {}
         }
       }
 
-      var childSchema2 = new mongoose.Schema({})
+      let childSchema2 = new mongoose.Schema({})
       childSchema2.statics = {
         routeOptions: {
           associations: {}
@@ -5587,11 +5824,11 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
         collectionDisplayName: 'Child'
       }
 
-      var childModel1 = mongoose.model('child1', childSchema1)
-      var childModel2 = mongoose.model('child2', childSchema2)
+      let childModel1 = mongoose.model('child1', childSchema1)
+      let childModel2 = mongoose.model('child2', childSchema2)
 
-      var association1 = { include: { model: childModel1 } }
-      var association2 = { include: { model: childModel2, as: 'Children' } }
+      let association1 = { include: { model: childModel1 } }
+      let association2 = { include: { model: childModel2, as: 'Children' } }
       // </editor-fold>
 
       // <editor-fold desc="Act">
@@ -5612,8 +5849,8 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Assert">
-      var serverObject1 = server.route.args[0][0]
-      var serverObject2 = server.route.args[1][0]
+      let serverObject1 = server.route.args[0][0]
+      let serverObject2 = server.route.args[1][0]
       // Log.debug(JSON.stringify(serverObject));
       t.equal(
         serverObject1.config.description,
@@ -5654,31 +5891,34 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
     'rest-helper-factory.generateAssociationAddOneEndpoint calls server.route using cors',
     sinon.test(function(t) {
       // <editor-fold desc="Arrange">
-      var server = this.stub({
+      let server = this.stub({
         route: function() {}
       })
 
-      var handlerHelperStub = this.stub(
-        require('../utilities/handler-helper-factory')(this.spy(), server)
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
       )
-      var handlerHelperStubWrapper = this.stub()
+      let handlerHelperStubWrapper = this.stub()
       handlerHelperStubWrapper.returns(handlerHelperStub)
-      var queryHelperStub = this.stub(require('../utilities/query-helper'))
-      var joiMongooseHelperStub = this.stub(
-        require('../utilities/joi-mongoose-helper'),
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
         'generateJoiCreateModel'
       ).callsFake(function() {
         return Joi.any()
       })
-      var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
-        './handler-helper-factory': handlerHelperStubWrapper,
-        './query-helper': queryHelperStub,
-        './joi-mongoose-helper': joiMongooseHelperStub
-      })(Log, mongoose, server)
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub
+        }
+      )(Log, mongoose, server)
 
       t.plan(1)
 
-      var userSchema = new mongoose.Schema({})
+      let userSchema = new mongoose.Schema({})
       userSchema.statics = { routeOptions: {} }
       userSchema.statics = {
         routeOptions: {
@@ -5686,9 +5926,9 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
         }
       }
 
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
 
-      var association = {
+      let association = {
         include: {
           model: { schema: { methods: {} }, modelName: 'testAssociation' }
         }
@@ -5706,9 +5946,9 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Assert">
-      var serverObject = server.route.args[0][0]
+      let serverObject = server.route.args[0][0]
       // Log.debug(JSON.stringify(serverObject));
-      var cors = {
+      let cors = {
         additionalHeaders: [],
         additionalExposedHeaders: []
       }
@@ -5726,18 +5966,18 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
     'rest-helper-factory.generateAssociationAddOneEndpoint calls server.route using correct payload validation',
     sinon.test(function(t) {
       // <editor-fold desc="Arrange">
-      var server = this.stub({
+      let server = this.stub({
         route: function() {}
       })
 
-      var handlerHelperStub = this.stub(
-        require('../utilities/handler-helper-factory')(this.spy(), server)
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
       )
-      var handlerHelperStubWrapper = this.stub()
+      let handlerHelperStubWrapper = this.stub()
       handlerHelperStubWrapper.returns(handlerHelperStub)
-      var queryHelperStub = this.stub(require('../utilities/query-helper'))
-      var joiMongooseHelperStub = this.stub(
-        require('../utilities/joi-mongoose-helper'),
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
         'generateJoiCreateModel'
       ).callsFake(function() {
         return Joi.any()
@@ -5745,35 +5985,38 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
       joiMongooseHelperStub.generateJoiCreateModel = function() {
         return Joi.object({ test: 'test' })
       }
-      var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
-        './handler-helper-factory': handlerHelperStubWrapper,
-        './query-helper': queryHelperStub,
-        './joi-mongoose-helper': joiMongooseHelperStub
-      })(Log, mongoose, server)
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub
+        }
+      )(Log, mongoose, server)
 
       t.plan(2)
 
-      var userSchema1 = new mongoose.Schema({})
+      let userSchema1 = new mongoose.Schema({})
       userSchema1.statics = {
         routeOptions: {
           associations: {}
         }
       }
 
-      var userSchema2 = new mongoose.Schema({})
+      let userSchema2 = new mongoose.Schema({})
       userSchema2.statics = {
         routeOptions: {
           associations: {}
         }
       }
 
-      var userModel1 = mongoose.model('user1', userSchema1)
-      var userModel2 = mongoose.model('user2', userSchema2)
+      let userModel1 = mongoose.model('user1', userSchema1)
+      let userModel2 = mongoose.model('user2', userSchema2)
 
-      var association1 = {
+      let association1 = {
         include: { model: { modelName: 'TEST1', schema: { methods: {} } } }
       }
-      var association2 = {
+      let association2 = {
         include: { model: { schema: { methods: {} } }, through: {} },
         alias: 'TEST2'
       }
@@ -5797,8 +6040,8 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Assert">
-      var serverObject1 = server.route.args[0][0]
-      var serverObject2 = server.route.args[1][0]
+      let serverObject1 = server.route.args[0][0]
+      let serverObject2 = server.route.args[1][0]
       // Log.debug(JSON.stringify(serverObject));
       t.deepEqual(
         serverObject1.config.validate.payload,
@@ -5825,24 +6068,24 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
     'rest-helper-factory.generateAssociationAddOneEndpoint calls server.route using correct params validation',
     sinon.test(function(t) {
       // <editor-fold desc="Arrange">
-      var server = this.stub({
+      let server = this.stub({
         route: function() {}
       })
 
-      var handlerHelperStub = this.stub(
-        require('../utilities/handler-helper-factory')(this.spy(), server)
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
       )
-      var handlerHelperStubWrapper = this.stub()
+      let handlerHelperStubWrapper = this.stub()
       handlerHelperStubWrapper.returns(handlerHelperStub)
-      var queryHelperStub = this.stub(require('../utilities/query-helper'))
-      var joiMongooseHelperStub = this.stub(
-        require('../utilities/joi-mongoose-helper'),
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
         'generateJoiCreateModel'
       ).callsFake(function() {
         return Joi.any()
       })
-      var joiStub = require('joi')
-      var joiObjectIdStub = function() {
+      let joiStub = require('joi')
+      let joiObjectIdStub = function() {
         return function() {
           return {
             required: function() {
@@ -5851,17 +6094,20 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
           }
         }
       }
-      var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
-        './handler-helper-factory': handlerHelperStubWrapper,
-        './query-helper': queryHelperStub,
-        './joi-mongoose-helper': joiMongooseHelperStub,
-        joi: joiStub,
-        'joi-objectid': joiObjectIdStub
-      })(Log, mongoose, server)
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub,
+          joi: joiStub,
+          'joi-objectid': joiObjectIdStub
+        }
+      )(Log, mongoose, server)
 
       t.plan(1)
 
-      var userSchema = new mongoose.Schema({})
+      let userSchema = new mongoose.Schema({})
       userSchema.statics = { routeOptions: {} }
       userSchema.statics = {
         routeOptions: {
@@ -5869,15 +6115,15 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
         }
       }
 
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
 
-      var association = {
+      let association = {
         include: {
           model: { schema: { methods: {} }, modelName: 'testAssociation' }
         }
       }
 
-      var params = {
+      let params = {
         ownerId: 'TEST',
         childId: 'TEST'
       }
@@ -5894,7 +6140,7 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Assert">
-      var serverObject = server.route.args[0][0]
+      let serverObject = server.route.args[0][0]
       // Log.debug(JSON.stringify(serverObject));
       t.deepEqual(
         serverObject.config.validate.params,
@@ -5914,33 +6160,36 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
     'rest-helper-factory.generateAssociationAddOneEndpoint calls server.route using correct header validation',
     sinon.test(function(t) {
       // <editor-fold desc="Arrange">
-      var server = this.stub({
+      let server = this.stub({
         route: function() {}
       })
 
-      var handlerHelperStub = this.stub(
-        require('../utilities/handler-helper-factory')(this.spy(), server)
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
       )
-      var handlerHelperStubWrapper = this.stub()
+      let handlerHelperStubWrapper = this.stub()
       handlerHelperStubWrapper.returns(handlerHelperStub)
-      var queryHelperStub = this.stub(require('../utilities/query-helper'))
-      var joiMongooseHelperStub = this.stub(
-        require('../utilities/joi-mongoose-helper'),
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
         'generateJoiCreateModel'
       ).callsFake(function() {
         return Joi.any()
       })
-      var config = { authStrategy: 'TEST_AUTH' }
-      var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
-        './handler-helper-factory': handlerHelperStubWrapper,
-        './query-helper': queryHelperStub,
-        './joi-mongoose-helper': joiMongooseHelperStub,
-        '../config': config
-      })(Log, mongoose, server)
+      let config = { authStrategy: 'TEST_AUTH' }
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub,
+          '../config': config
+        }
+      )(Log, mongoose, server)
 
       t.plan(1)
 
-      var userSchema = new mongoose.Schema({})
+      let userSchema = new mongoose.Schema({})
       userSchema.statics = { routeOptions: {} }
       userSchema.statics = {
         routeOptions: {
@@ -5948,15 +6197,15 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
         }
       }
 
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
 
-      var association = {
+      let association = {
         include: {
           model: { schema: { methods: {} }, modelName: 'testAssociation' }
         }
       }
 
-      var headerValidation = Joi.object({
+      let headerValidation = Joi.object({
         authorization: Joi.string().required()
       }).options({ allowUnknown: true })
       // </editor-fold>
@@ -5972,7 +6221,7 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Assert">
-      var serverObject = server.route.args[0][0]
+      let serverObject = server.route.args[0][0]
       // Log.debug(JSON.stringify(serverObject));
       t.deepEqual(
         serverObject.config.validate.headers,
@@ -5992,31 +6241,34 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
     'rest-helper-factory.generateAssociationAddOneEndpoint calls server.route using hapi-swagger plugin',
     sinon.test(function(t) {
       // <editor-fold desc="Arrange">
-      var server = this.stub({
+      let server = this.stub({
         route: function() {}
       })
 
-      var handlerHelperStub = this.stub(
-        require('../utilities/handler-helper-factory')(this.spy(), server)
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
       )
-      var handlerHelperStubWrapper = this.stub()
+      let handlerHelperStubWrapper = this.stub()
       handlerHelperStubWrapper.returns(handlerHelperStub)
-      var queryHelperStub = this.stub(require('../utilities/query-helper'))
-      var joiMongooseHelperStub = this.stub(
-        require('../utilities/joi-mongoose-helper'),
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
         'generateJoiCreateModel'
       ).callsFake(function() {
         return Joi.any()
       })
-      var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
-        './handler-helper-factory': handlerHelperStubWrapper,
-        './query-helper': queryHelperStub,
-        './joi-mongoose-helper': joiMongooseHelperStub
-      })(Log, mongoose, server)
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub
+        }
+      )(Log, mongoose, server)
 
       t.plan(1)
 
-      var userSchema = new mongoose.Schema({})
+      let userSchema = new mongoose.Schema({})
       userSchema.statics = { routeOptions: {} }
       userSchema.statics = {
         routeOptions: {
@@ -6024,9 +6276,9 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
         }
       }
 
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
 
-      var association = {
+      let association = {
         include: {
           model: { schema: { methods: {} }, modelName: 'testAssociation' }
         }
@@ -6044,7 +6296,7 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Assert">
-      var serverObject = server.route.args[0][0]
+      let serverObject = server.route.args[0][0]
       // Log.debug(JSON.stringify(serverObject));
       t.ok(serverObject.config.plugins['hapi-swagger'], 'hapi-swagger used')
       // </editor-fold>
@@ -6060,31 +6312,34 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
     'rest-helper-factory.generateAssociationAddOneEndpoint calls server.route with correct response schema validation',
     sinon.test(function(t) {
       // <editor-fold desc="Arrange">
-      var server = this.stub({
+      let server = this.stub({
         route: function() {}
       })
 
-      var handlerHelperStub = this.stub(
-        require('../utilities/handler-helper-factory')(this.spy(), server)
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
       )
-      var handlerHelperStubWrapper = this.stub()
+      let handlerHelperStubWrapper = this.stub()
       handlerHelperStubWrapper.returns(handlerHelperStub)
-      var queryHelperStub = this.stub(require('../utilities/query-helper'))
-      var joiMongooseHelperStub = this.stub(
-        require('../utilities/joi-mongoose-helper'),
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
         'generateJoiCreateModel'
       ).callsFake(function() {
         return readModel
       })
-      var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
-        './handler-helper-factory': handlerHelperStubWrapper,
-        './query-helper': queryHelperStub,
-        './joi-mongoose-helper': joiMongooseHelperStub
-      })(Log, mongoose, server)
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub
+        }
+      )(Log, mongoose, server)
 
       t.plan(1)
 
-      var userSchema = new mongoose.Schema({})
+      let userSchema = new mongoose.Schema({})
       userSchema.statics = { routeOptions: {} }
       userSchema.statics = {
         routeOptions: {
@@ -6092,15 +6347,15 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
         }
       }
 
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
 
-      var association = {
+      let association = {
         include: {
           model: { schema: { methods: {} }, modelName: 'testAssociation' }
         }
       }
 
-      var responseSchema = {}
+      let responseSchema = {}
       // </editor-fold>
 
       // <editor-fold desc="Act">
@@ -6114,7 +6369,7 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Assert">
-      var serverObject = server.route.args[0][0]
+      let serverObject = server.route.args[0][0]
       // Log.debug(JSON.stringify(serverObject));
       t.deepEquals(
         serverObject.config.response,
@@ -6134,8 +6389,8 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
 })
 
 test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
-  var server = sinon.spy()
-  var restHelperFactory = require('../utilities/rest-helper-factory')(
+  let server = sinon.spy()
+  let restHelperFactory = require('../../utilities/rest-helper-factory')(
     Log,
     mongoose,
     server
@@ -6152,39 +6407,42 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
     'rest-helper-factory.generateAssociationRemoveOneEndpoint asserts routeOptions.associations exist',
     sinon.test(function(t) {
       // <editor-fold desc="Arrange">
-      var server = this.stub({
+      let server = this.stub({
         route: function() {}
       })
 
-      var handlerHelperStub = this.stub(
-        require('../utilities/handler-helper-factory')(this.spy(), server)
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
       )
-      var handlerHelperStubWrapper = this.stub()
+      let handlerHelperStubWrapper = this.stub()
       handlerHelperStubWrapper.returns(handlerHelperStub)
-      var queryHelperStub = this.stub(require('../utilities/query-helper'))
-      var joiMongooseHelperStub = this.stub(
-        require('../utilities/joi-mongoose-helper'),
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
         'generateJoiReadModel'
       ).callsFake(function() {
         return Joi.any()
       })
-      var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
-        './handler-helper-factory': handlerHelperStubWrapper,
-        './query-helper': queryHelperStub,
-        './joi-mongoose-helper': joiMongooseHelperStub
-      })(Log, mongoose, server)
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub
+        }
+      )(Log, mongoose, server)
 
       t.plan(2)
 
-      var userSchema = new mongoose.Schema({})
+      let userSchema = new mongoose.Schema({})
       userSchema.statics = { routeOptions: {} }
       userSchema.statics = {
         routeOptions: {}
       }
 
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
 
-      var association = { include: {} }
+      let association = { include: {} }
       // </editor-fold>
 
       try {
@@ -6219,31 +6477,34 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
     'rest-helper-factory.generateAssociationRemoveOneEndpoint asserts association input exists',
     sinon.test(function(t) {
       // <editor-fold desc="Arrange">
-      var server = this.stub({
+      let server = this.stub({
         route: function() {}
       })
 
-      var handlerHelperStub = this.stub(
-        require('../utilities/handler-helper-factory')(this.spy(), server)
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
       )
-      var handlerHelperStubWrapper = this.stub()
+      let handlerHelperStubWrapper = this.stub()
       handlerHelperStubWrapper.returns(handlerHelperStub)
-      var queryHelperStub = this.stub(require('../utilities/query-helper'))
-      var joiMongooseHelperStub = this.stub(
-        require('../utilities/joi-mongoose-helper'),
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
         'generateJoiReadModel'
       ).callsFake(function() {
         return Joi.any()
       })
-      var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
-        './handler-helper-factory': handlerHelperStubWrapper,
-        './query-helper': queryHelperStub,
-        './joi-mongoose-helper': joiMongooseHelperStub
-      })(Log, mongoose, server)
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub
+        }
+      )(Log, mongoose, server)
 
       t.plan(2)
 
-      var userSchema = new mongoose.Schema({})
+      let userSchema = new mongoose.Schema({})
       userSchema.statics = { routeOptions: {} }
       userSchema.statics = {
         routeOptions: {
@@ -6251,9 +6512,9 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
         }
       }
 
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
 
-      var association = { include: {} }
+      let association = { include: {} }
       // </editor-fold>
 
       try {
@@ -6288,31 +6549,34 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
     'rest-helper-factory.generateAssociationRemoveOneEndpoint calls handlerHelper.generateAssociationRemoveOneHandler',
     sinon.test(function(t) {
       // <editor-fold desc="Arrange">
-      var server = this.stub({
+      let server = this.stub({
         route: function() {}
       })
 
-      var handlerHelperStub = this.stub(
-        require('../utilities/handler-helper-factory')(this.spy(), server)
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
       )
-      var handlerHelperStubWrapper = this.stub()
+      let handlerHelperStubWrapper = this.stub()
       handlerHelperStubWrapper.returns(handlerHelperStub)
-      var queryHelperStub = this.stub(require('../utilities/query-helper'))
-      var joiMongooseHelperStub = this.stub(
-        require('../utilities/joi-mongoose-helper'),
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
         'generateJoiReadModel'
       ).callsFake(function() {
         return Joi.any()
       })
-      var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
-        './handler-helper-factory': handlerHelperStubWrapper,
-        './query-helper': queryHelperStub,
-        './joi-mongoose-helper': joiMongooseHelperStub
-      })(Log, mongoose, server)
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub
+        }
+      )(Log, mongoose, server)
 
       t.plan(1)
 
-      var userSchema = new mongoose.Schema({})
+      let userSchema = new mongoose.Schema({})
       userSchema.statics = { routeOptions: {} }
       userSchema.statics = {
         routeOptions: {
@@ -6320,9 +6584,9 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
         }
       }
 
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
 
-      var association = {
+      let association = {
         include: {
           model: { schema: { methods: {} }, modelName: 'testAssociation' }
         }
@@ -6357,31 +6621,34 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
     'rest-helper-factory.generateAssociationRemoveOneEndpoint calls server.route',
     sinon.test(function(t) {
       // <editor-fold desc="Arrange">
-      var server = this.stub({
+      let server = this.stub({
         route: function() {}
       })
 
-      var handlerHelperStub = this.stub(
-        require('../utilities/handler-helper-factory')(this.spy(), server)
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
       )
-      var handlerHelperStubWrapper = this.stub()
+      let handlerHelperStubWrapper = this.stub()
       handlerHelperStubWrapper.returns(handlerHelperStub)
-      var queryHelperStub = this.stub(require('../utilities/query-helper'))
-      var joiMongooseHelperStub = this.stub(
-        require('../utilities/joi-mongoose-helper'),
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
         'generateJoiReadModel'
       ).callsFake(function() {
         return Joi.any()
       })
-      var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
-        './handler-helper-factory': handlerHelperStubWrapper,
-        './query-helper': queryHelperStub,
-        './joi-mongoose-helper': joiMongooseHelperStub
-      })(Log, mongoose, server)
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub
+        }
+      )(Log, mongoose, server)
 
       t.plan(1)
 
-      var userSchema = new mongoose.Schema({})
+      let userSchema = new mongoose.Schema({})
       userSchema.statics = { routeOptions: {} }
       userSchema.statics = {
         routeOptions: {
@@ -6389,9 +6656,9 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
         }
       }
 
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
 
-      var association = {
+      let association = {
         include: {
           model: { schema: { methods: {} }, modelName: 'testAssociation' }
         }
@@ -6423,31 +6690,34 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
     'rest-helper-factory.generateAssociationRemoveOneEndpoint calls server.route with "DELETE" method',
     sinon.test(function(t) {
       // <editor-fold desc="Arrange">
-      var server = this.stub({
+      let server = this.stub({
         route: function() {}
       })
 
-      var handlerHelperStub = this.stub(
-        require('../utilities/handler-helper-factory')(this.spy(), server)
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
       )
-      var handlerHelperStubWrapper = this.stub()
+      let handlerHelperStubWrapper = this.stub()
       handlerHelperStubWrapper.returns(handlerHelperStub)
-      var queryHelperStub = this.stub(require('../utilities/query-helper'))
-      var joiMongooseHelperStub = this.stub(
-        require('../utilities/joi-mongoose-helper'),
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
         'generateJoiReadModel'
       ).callsFake(function() {
         return Joi.any()
       })
-      var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
-        './handler-helper-factory': handlerHelperStubWrapper,
-        './query-helper': queryHelperStub,
-        './joi-mongoose-helper': joiMongooseHelperStub
-      })(Log, mongoose, server)
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub
+        }
+      )(Log, mongoose, server)
 
       t.plan(1)
 
-      var userSchema = new mongoose.Schema({})
+      let userSchema = new mongoose.Schema({})
       userSchema.statics = { routeOptions: {} }
       userSchema.statics = {
         routeOptions: {
@@ -6455,9 +6725,9 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
         }
       }
 
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
 
-      var association = {
+      let association = {
         include: {
           model: { schema: { methods: {} }, modelName: 'testAssociation' }
         }
@@ -6475,7 +6745,7 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Assert">
-      var serverObject = server.route.args[0][0]
+      let serverObject = server.route.args[0][0]
       // Log.debug(JSON.stringify(serverObject));
       t.equal(serverObject.method, 'DELETE', 'DELETE method used')
       // </editor-fold>
@@ -6491,18 +6761,18 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
     'rest-helper-factory.generateAssociationRemoveOneEndpoint calls server.route with correct ownerAlias and childAlias',
     sinon.test(function(t) {
       // <editor-fold desc="Arrange">
-      var server = this.stub({
+      let server = this.stub({
         route: function() {}
       })
 
-      var handlerHelperStub = this.stub(
-        require('../utilities/handler-helper-factory')(this.spy(), server)
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
       )
-      var handlerHelperStubWrapper = this.stub()
+      let handlerHelperStubWrapper = this.stub()
       handlerHelperStubWrapper.returns(handlerHelperStub)
-      var queryHelperStub = this.stub(require('../utilities/query-helper'))
-      var joiMongooseHelperStub = this.stub(
-        require('../utilities/joi-mongoose-helper'),
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
         'generateJoiReadModel'
       ).callsFake(function() {
         return Joi.any()
@@ -6510,15 +6780,18 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
       joiMongooseHelperStub.generateJoiUpdateModel = function() {
         return Joi.any()
       }
-      var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
-        './handler-helper-factory': handlerHelperStubWrapper,
-        './query-helper': queryHelperStub,
-        './joi-mongoose-helper': joiMongooseHelperStub
-      })(Log, mongoose, server)
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub
+        }
+      )(Log, mongoose, server)
 
       t.plan(2)
 
-      var userSchema1 = new mongoose.Schema({})
+      let userSchema1 = new mongoose.Schema({})
       userSchema1.statics = { routeOptions: {} }
       userSchema1.statics = {
         routeOptions: {
@@ -6526,7 +6799,7 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
         }
       }
 
-      var userSchema2 = new mongoose.Schema({})
+      let userSchema2 = new mongoose.Schema({})
       userSchema2.statics = {
         routeOptions: {
           associations: {},
@@ -6534,13 +6807,13 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
         }
       }
 
-      var userModel1 = mongoose.model('user1', userSchema1)
-      var userModel2 = mongoose.model('user2', userSchema2)
+      let userModel1 = mongoose.model('user1', userSchema1)
+      let userModel2 = mongoose.model('user2', userSchema2)
 
-      var association1 = {
+      let association1 = {
         include: { model: { modelName: 'TEST1', schema: { methods: {} } } }
       }
-      var association2 = {
+      let association2 = {
         include: { model: { schema: { methods: {} } } },
         alias: 'TEST2'
       }
@@ -6564,8 +6837,8 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Assert">
-      var serverObject1 = server.route.args[0][0]
-      var serverObject2 = server.route.args[1][0]
+      let serverObject1 = server.route.args[0][0]
+      let serverObject2 = server.route.args[1][0]
       // Log.debug(JSON.stringify(serverObject));
       t.equal(
         serverObject1.path,
@@ -6592,36 +6865,39 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
     'rest-helper-factory.generateAssociationRemoveOneEndpoint calls server.route with correct handler',
     sinon.test(function(t) {
       // <editor-fold desc="Arrange">
-      var server = this.stub({
+      let server = this.stub({
         route: function() {}
       })
 
-      var handlerHelperStub = this.stub(
-        require('../utilities/handler-helper-factory')(this.spy(), server)
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
       )
       handlerHelperStub.generateAssociationRemoveOneHandler = this.spy(
         function() {
           return 'HANDLER'
         }
       )
-      var handlerHelperStubWrapper = this.stub()
+      let handlerHelperStubWrapper = this.stub()
       handlerHelperStubWrapper.returns(handlerHelperStub)
-      var queryHelperStub = this.stub(require('../utilities/query-helper'))
-      var joiMongooseHelperStub = this.stub(
-        require('../utilities/joi-mongoose-helper'),
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
         'generateJoiReadModel'
       ).callsFake(function() {
         return Joi.any()
       })
-      var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
-        './handler-helper-factory': handlerHelperStubWrapper,
-        './query-helper': queryHelperStub,
-        './joi-mongoose-helper': joiMongooseHelperStub
-      })(Log, mongoose, server)
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub
+        }
+      )(Log, mongoose, server)
 
       t.plan(1)
 
-      var userSchema = new mongoose.Schema({})
+      let userSchema = new mongoose.Schema({})
       userSchema.statics = { routeOptions: {} }
       userSchema.statics = {
         routeOptions: {
@@ -6629,9 +6905,9 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
         }
       }
 
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
 
-      var association = {
+      let association = {
         include: {
           model: { schema: { methods: {} }, modelName: 'testAssociation' }
         }
@@ -6649,7 +6925,7 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Assert">
-      var serverObject = server.route.args[0][0]
+      let serverObject = server.route.args[0][0]
       // Log.debug(JSON.stringify(serverObject));
       t.equal(serverObject.config.handler, 'HANDLER', 'correct handler used')
       // </editor-fold>
@@ -6665,33 +6941,36 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
     'rest-helper-factory.generateAssociationRemoveOneEndpoint calls server.route using authentication defined by config',
     sinon.test(function(t) {
       // <editor-fold desc="Arrange">
-      var server = this.stub({
+      let server = this.stub({
         route: function() {}
       })
 
-      var handlerHelperStub = this.stub(
-        require('../utilities/handler-helper-factory')(this.spy(), server)
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
       )
-      var handlerHelperStubWrapper = this.stub()
+      let handlerHelperStubWrapper = this.stub()
       handlerHelperStubWrapper.returns(handlerHelperStub)
-      var queryHelperStub = this.stub(require('../utilities/query-helper'))
-      var joiMongooseHelperStub = this.stub(
-        require('../utilities/joi-mongoose-helper'),
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
         'generateJoiReadModel'
       ).callsFake(function() {
         return Joi.any()
       })
-      var config = { authStrategy: 'TEST_AUTH' }
-      var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
-        './handler-helper-factory': handlerHelperStubWrapper,
-        './query-helper': queryHelperStub,
-        './joi-mongoose-helper': joiMongooseHelperStub,
-        '../config': config
-      })(Log, mongoose, server)
+      let config = { authStrategy: 'TEST_AUTH' }
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub,
+          '../config': config
+        }
+      )(Log, mongoose, server)
 
       t.plan(1)
 
-      var userSchema = new mongoose.Schema({})
+      let userSchema = new mongoose.Schema({})
       userSchema.statics = { routeOptions: {} }
       userSchema.statics = {
         routeOptions: {
@@ -6699,9 +6978,9 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
         }
       }
 
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
 
-      var association = {
+      let association = {
         include: {
           model: { schema: { methods: {} }, modelName: 'testAssociation' }
         }
@@ -6719,7 +6998,7 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Assert">
-      var serverObject = server.route.args[0][0]
+      let serverObject = server.route.args[0][0]
       // Log.debug(JSON.stringify(serverObject));
       t.deepEqual(
         serverObject.config.auth,
@@ -6739,31 +7018,34 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
     'rest-helper-factory.generateAssociationRemoveOneEndpoint calls server.route with correct associationName and ownerModelName',
     sinon.test(function(t) {
       // <editor-fold desc="Arrange">
-      var server = this.stub({
+      let server = this.stub({
         route: function() {}
       })
 
-      var handlerHelperStub = this.stub(
-        require('../utilities/handler-helper-factory')(this.spy(), server)
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
       )
-      var handlerHelperStubWrapper = this.stub()
+      let handlerHelperStubWrapper = this.stub()
       handlerHelperStubWrapper.returns(handlerHelperStub)
-      var queryHelperStub = this.stub(require('../utilities/query-helper'))
-      var joiMongooseHelperStub = this.stub(
-        require('../utilities/joi-mongoose-helper'),
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
         'generateJoiReadModel'
       ).callsFake(function() {
         return Joi.any()
       })
-      var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
-        './handler-helper-factory': handlerHelperStubWrapper,
-        './query-helper': queryHelperStub,
-        './joi-mongoose-helper': joiMongooseHelperStub
-      })(Log, mongoose, server)
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub
+        }
+      )(Log, mongoose, server)
 
       t.plan(4)
 
-      var userSchema1 = new mongoose.Schema({})
+      let userSchema1 = new mongoose.Schema({})
       userSchema1.statics = { routeOptions: {} }
       userSchema1.statics = {
         routeOptions: {
@@ -6771,7 +7053,7 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
         }
       }
 
-      var userSchema2 = new mongoose.Schema({})
+      let userSchema2 = new mongoose.Schema({})
       userSchema2.statics = {
         routeOptions: {
           associations: {}
@@ -6779,17 +7061,17 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
         collectionDisplayName: 'User'
       }
 
-      var userModel1 = mongoose.model('user1', userSchema1)
-      var userModel2 = mongoose.model('user2', userSchema2)
+      let userModel1 = mongoose.model('user1', userSchema1)
+      let userModel2 = mongoose.model('user2', userSchema2)
 
-      var childSchema1 = new mongoose.Schema({})
+      let childSchema1 = new mongoose.Schema({})
       childSchema1.statics = {
         routeOptions: {
           associations: {}
         }
       }
 
-      var childSchema2 = new mongoose.Schema({})
+      let childSchema2 = new mongoose.Schema({})
       childSchema2.statics = {
         routeOptions: {
           associations: {}
@@ -6797,11 +7079,11 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
         collectionDisplayName: 'Child'
       }
 
-      var childModel1 = mongoose.model('child1', childSchema1)
-      var childModel2 = mongoose.model('child2', childSchema2)
+      let childModel1 = mongoose.model('child1', childSchema1)
+      let childModel2 = mongoose.model('child2', childSchema2)
 
-      var association1 = { include: { model: childModel1 } }
-      var association2 = { include: { model: childModel2, as: 'Children' } }
+      let association1 = { include: { model: childModel1 } }
+      let association2 = { include: { model: childModel2, as: 'Children' } }
       // </editor-fold>
 
       // <editor-fold desc="Act">
@@ -6822,8 +7104,8 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Assert">
-      var serverObject1 = server.route.args[0][0]
-      var serverObject2 = server.route.args[1][0]
+      let serverObject1 = server.route.args[0][0]
+      let serverObject2 = server.route.args[1][0]
       // Log.debug(JSON.stringify(serverObject));
       t.equal(
         serverObject1.config.description,
@@ -6864,31 +7146,34 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
     'rest-helper-factory.generateAssociationRemoveOneEndpoint calls server.route using cors',
     sinon.test(function(t) {
       // <editor-fold desc="Arrange">
-      var server = this.stub({
+      let server = this.stub({
         route: function() {}
       })
 
-      var handlerHelperStub = this.stub(
-        require('../utilities/handler-helper-factory')(this.spy(), server)
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
       )
-      var handlerHelperStubWrapper = this.stub()
+      let handlerHelperStubWrapper = this.stub()
       handlerHelperStubWrapper.returns(handlerHelperStub)
-      var queryHelperStub = this.stub(require('../utilities/query-helper'))
-      var joiMongooseHelperStub = this.stub(
-        require('../utilities/joi-mongoose-helper'),
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
         'generateJoiReadModel'
       ).callsFake(function() {
         return Joi.any()
       })
-      var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
-        './handler-helper-factory': handlerHelperStubWrapper,
-        './query-helper': queryHelperStub,
-        './joi-mongoose-helper': joiMongooseHelperStub
-      })(Log, mongoose, server)
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub
+        }
+      )(Log, mongoose, server)
 
       t.plan(1)
 
-      var userSchema = new mongoose.Schema({})
+      let userSchema = new mongoose.Schema({})
       userSchema.statics = { routeOptions: {} }
       userSchema.statics = {
         routeOptions: {
@@ -6896,9 +7181,9 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
         }
       }
 
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
 
-      var association = {
+      let association = {
         include: {
           model: { schema: { methods: {} }, modelName: 'testAssociation' }
         }
@@ -6916,9 +7201,9 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Assert">
-      var serverObject = server.route.args[0][0]
+      let serverObject = server.route.args[0][0]
       // Log.debug(JSON.stringify(serverObject));
-      var cors = {
+      let cors = {
         additionalHeaders: [],
         additionalExposedHeaders: []
       }
@@ -6936,24 +7221,24 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
     'rest-helper-factory.generateAssociationRemoveOneEndpoint calls server.route using correct params validation',
     sinon.test(function(t) {
       // <editor-fold desc="Arrange">
-      var server = this.stub({
+      let server = this.stub({
         route: function() {}
       })
 
-      var handlerHelperStub = this.stub(
-        require('../utilities/handler-helper-factory')(this.spy(), server)
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
       )
-      var handlerHelperStubWrapper = this.stub()
+      let handlerHelperStubWrapper = this.stub()
       handlerHelperStubWrapper.returns(handlerHelperStub)
-      var queryHelperStub = this.stub(require('../utilities/query-helper'))
-      var joiMongooseHelperStub = this.stub(
-        require('../utilities/joi-mongoose-helper'),
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
         'generateJoiReadModel'
       ).callsFake(function() {
         return Joi.any()
       })
-      var joiStub = require('joi')
-      var joiObjectIdStub = function() {
+      let joiStub = require('joi')
+      let joiObjectIdStub = function() {
         return function() {
           return {
             required: function() {
@@ -6962,17 +7247,20 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
           }
         }
       }
-      var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
-        './handler-helper-factory': handlerHelperStubWrapper,
-        './query-helper': queryHelperStub,
-        './joi-mongoose-helper': joiMongooseHelperStub,
-        joi: joiStub,
-        'joi-objectid': joiObjectIdStub
-      })(Log, mongoose, server)
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub,
+          joi: joiStub,
+          'joi-objectid': joiObjectIdStub
+        }
+      )(Log, mongoose, server)
 
       t.plan(1)
 
-      var userSchema = new mongoose.Schema({})
+      let userSchema = new mongoose.Schema({})
       userSchema.statics = { routeOptions: {} }
       userSchema.statics = {
         routeOptions: {
@@ -6980,15 +7268,15 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
         }
       }
 
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
 
-      var association = {
+      let association = {
         include: {
           model: { schema: { methods: {} }, modelName: 'testAssociation' }
         }
       }
 
-      var params = {
+      let params = {
         ownerId: 'TEST',
         childId: 'TEST'
       }
@@ -7005,7 +7293,7 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Assert">
-      var serverObject = server.route.args[0][0]
+      let serverObject = server.route.args[0][0]
       // Log.debug(JSON.stringify(serverObject));
       t.deepEqual(
         serverObject.config.validate.params,
@@ -7025,33 +7313,36 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
     'rest-helper-factory.generateAssociationRemoveOneEndpoint calls server.route using correct header validation',
     sinon.test(function(t) {
       // <editor-fold desc="Arrange">
-      var server = this.stub({
+      let server = this.stub({
         route: function() {}
       })
 
-      var handlerHelperStub = this.stub(
-        require('../utilities/handler-helper-factory')(this.spy(), server)
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
       )
-      var handlerHelperStubWrapper = this.stub()
+      let handlerHelperStubWrapper = this.stub()
       handlerHelperStubWrapper.returns(handlerHelperStub)
-      var queryHelperStub = this.stub(require('../utilities/query-helper'))
-      var joiMongooseHelperStub = this.stub(
-        require('../utilities/joi-mongoose-helper'),
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
         'generateJoiReadModel'
       ).callsFake(function() {
         return Joi.any()
       })
-      var config = { authStrategy: 'TEST_AUTH' }
-      var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
-        './handler-helper-factory': handlerHelperStubWrapper,
-        './query-helper': queryHelperStub,
-        './joi-mongoose-helper': joiMongooseHelperStub,
-        '../config': config
-      })(Log, mongoose, server)
+      let config = { authStrategy: 'TEST_AUTH' }
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub,
+          '../config': config
+        }
+      )(Log, mongoose, server)
 
       t.plan(1)
 
-      var userSchema = new mongoose.Schema({})
+      let userSchema = new mongoose.Schema({})
       userSchema.statics = { routeOptions: {} }
       userSchema.statics = {
         routeOptions: {
@@ -7059,15 +7350,15 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
         }
       }
 
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
 
-      var association = {
+      let association = {
         include: {
           model: { schema: { methods: {} }, modelName: 'testAssociation' }
         }
       }
 
-      var headerValidation = Joi.object({
+      let headerValidation = Joi.object({
         authorization: Joi.string().required()
       }).options({ allowUnknown: true })
       // </editor-fold>
@@ -7083,7 +7374,7 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Assert">
-      var serverObject = server.route.args[0][0]
+      let serverObject = server.route.args[0][0]
       // Log.debug(JSON.stringify(serverObject));
       t.deepEqual(
         serverObject.config.validate.headers,
@@ -7103,31 +7394,34 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
     'rest-helper-factory.generateAssociationRemoveOneEndpoint calls server.route using hapi-swagger plugin',
     sinon.test(function(t) {
       // <editor-fold desc="Arrange">
-      var server = this.stub({
+      let server = this.stub({
         route: function() {}
       })
 
-      var handlerHelperStub = this.stub(
-        require('../utilities/handler-helper-factory')(this.spy(), server)
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
       )
-      var handlerHelperStubWrapper = this.stub()
+      let handlerHelperStubWrapper = this.stub()
       handlerHelperStubWrapper.returns(handlerHelperStub)
-      var queryHelperStub = this.stub(require('../utilities/query-helper'))
-      var joiMongooseHelperStub = this.stub(
-        require('../utilities/joi-mongoose-helper'),
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
         'generateJoiReadModel'
       ).callsFake(function() {
         return Joi.any()
       })
-      var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
-        './handler-helper-factory': handlerHelperStubWrapper,
-        './query-helper': queryHelperStub,
-        './joi-mongoose-helper': joiMongooseHelperStub
-      })(Log, mongoose, server)
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub
+        }
+      )(Log, mongoose, server)
 
       t.plan(1)
 
-      var userSchema = new mongoose.Schema({})
+      let userSchema = new mongoose.Schema({})
       userSchema.statics = { routeOptions: {} }
       userSchema.statics = {
         routeOptions: {
@@ -7135,9 +7429,9 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
         }
       }
 
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
 
-      var association = {
+      let association = {
         include: {
           model: { schema: { methods: {} }, modelName: 'testAssociation' }
         }
@@ -7155,7 +7449,7 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Assert">
-      var serverObject = server.route.args[0][0]
+      let serverObject = server.route.args[0][0]
       // Log.debug(JSON.stringify(serverObject));
       t.ok(serverObject.config.plugins['hapi-swagger'], 'hapi-swagger used')
       // </editor-fold>
@@ -7171,31 +7465,34 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
     'rest-helper-factory.generateAssociationRemoveOneEndpoint calls server.route with correct response schema validation',
     sinon.test(function(t) {
       // <editor-fold desc="Arrange">
-      var server = this.stub({
+      let server = this.stub({
         route: function() {}
       })
 
-      var handlerHelperStub = this.stub(
-        require('../utilities/handler-helper-factory')(this.spy(), server)
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
       )
-      var handlerHelperStubWrapper = this.stub()
+      let handlerHelperStubWrapper = this.stub()
       handlerHelperStubWrapper.returns(handlerHelperStub)
-      var queryHelperStub = this.stub(require('../utilities/query-helper'))
-      var joiMongooseHelperStub = this.stub(
-        require('../utilities/joi-mongoose-helper'),
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
         'generateJoiReadModel'
       ).callsFake(function() {
         return readModel
       })
-      var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
-        './handler-helper-factory': handlerHelperStubWrapper,
-        './query-helper': queryHelperStub,
-        './joi-mongoose-helper': joiMongooseHelperStub
-      })(Log, mongoose, server)
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub
+        }
+      )(Log, mongoose, server)
 
       t.plan(1)
 
-      var userSchema = new mongoose.Schema({})
+      let userSchema = new mongoose.Schema({})
       userSchema.statics = { routeOptions: {} }
       userSchema.statics = {
         routeOptions: {
@@ -7203,15 +7500,15 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
         }
       }
 
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
 
-      var association = {
+      let association = {
         include: {
           model: { schema: { methods: {} }, modelName: 'testAssociation' }
         }
       }
 
-      var responseSchema = {}
+      let responseSchema = {}
       // </editor-fold>
 
       // <editor-fold desc="Act">
@@ -7225,7 +7522,7 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Assert">
-      var serverObject = server.route.args[0][0]
+      let serverObject = server.route.args[0][0]
       // Log.debug(JSON.stringify(serverObject));
       t.deepEquals(
         serverObject.config.response,
@@ -7245,8 +7542,8 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
 })
 
 test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
-  var server = sinon.spy()
-  var restHelperFactory = require('../utilities/rest-helper-factory')(
+  let server = sinon.spy()
+  let restHelperFactory = require('../../utilities/rest-helper-factory')(
     Log,
     mongoose,
     server
@@ -7263,39 +7560,42 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
     'rest-helper-factory.generateAssociationAddManyEndpoint asserts routeOptions.associations exist',
     sinon.test(function(t) {
       // <editor-fold desc="Arrange">
-      var server = this.stub({
+      let server = this.stub({
         route: function() {}
       })
 
-      var handlerHelperStub = this.stub(
-        require('../utilities/handler-helper-factory')(this.spy(), server)
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
       )
-      var handlerHelperStubWrapper = this.stub()
+      let handlerHelperStubWrapper = this.stub()
       handlerHelperStubWrapper.returns(handlerHelperStub)
-      var queryHelperStub = this.stub(require('../utilities/query-helper'))
-      var joiMongooseHelperStub = this.stub(
-        require('../utilities/joi-mongoose-helper'),
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
         'generateJoiReadModel'
       ).callsFake(function() {
         return Joi.any()
       })
-      var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
-        './handler-helper-factory': handlerHelperStubWrapper,
-        './query-helper': queryHelperStub,
-        './joi-mongoose-helper': joiMongooseHelperStub
-      })(Log, mongoose, server)
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub
+        }
+      )(Log, mongoose, server)
 
       t.plan(2)
 
-      var userSchema = new mongoose.Schema({})
+      let userSchema = new mongoose.Schema({})
       userSchema.statics = { routeOptions: {} }
       userSchema.statics = {
         routeOptions: {}
       }
 
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
 
-      var association = { include: {} }
+      let association = { include: {} }
       // </editor-fold>
 
       try {
@@ -7330,31 +7630,34 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
     'rest-helper-factory.generateAssociationAddManyEndpoint asserts association input exists',
     sinon.test(function(t) {
       // <editor-fold desc="Arrange">
-      var server = this.stub({
+      let server = this.stub({
         route: function() {}
       })
 
-      var handlerHelperStub = this.stub(
-        require('../utilities/handler-helper-factory')(this.spy(), server)
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
       )
-      var handlerHelperStubWrapper = this.stub()
+      let handlerHelperStubWrapper = this.stub()
       handlerHelperStubWrapper.returns(handlerHelperStub)
-      var queryHelperStub = this.stub(require('../utilities/query-helper'))
-      var joiMongooseHelperStub = this.stub(
-        require('../utilities/joi-mongoose-helper'),
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
         'generateJoiReadModel'
       ).callsFake(function() {
         return Joi.any()
       })
-      var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
-        './handler-helper-factory': handlerHelperStubWrapper,
-        './query-helper': queryHelperStub,
-        './joi-mongoose-helper': joiMongooseHelperStub
-      })(Log, mongoose, server)
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub
+        }
+      )(Log, mongoose, server)
 
       t.plan(2)
 
-      var userSchema = new mongoose.Schema({})
+      let userSchema = new mongoose.Schema({})
       userSchema.statics = { routeOptions: {} }
       userSchema.statics = {
         routeOptions: {
@@ -7362,9 +7665,9 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
         }
       }
 
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
 
-      var association = { include: {} }
+      let association = { include: {} }
       // </editor-fold>
 
       try {
@@ -7399,31 +7702,34 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
     'rest-helper-factory.generateAssociationAddManyEndpoint calls handlerHelper.generateAssociationAddManyHandler',
     sinon.test(function(t) {
       // <editor-fold desc="Arrange">
-      var server = this.stub({
+      let server = this.stub({
         route: function() {}
       })
 
-      var handlerHelperStub = this.stub(
-        require('../utilities/handler-helper-factory')(this.spy(), server)
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
       )
-      var handlerHelperStubWrapper = this.stub()
+      let handlerHelperStubWrapper = this.stub()
       handlerHelperStubWrapper.returns(handlerHelperStub)
-      var queryHelperStub = this.stub(require('../utilities/query-helper'))
-      var joiMongooseHelperStub = this.stub(
-        require('../utilities/joi-mongoose-helper'),
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
         'generateJoiReadModel'
       ).callsFake(function() {
         return Joi.any()
       })
-      var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
-        './handler-helper-factory': handlerHelperStubWrapper,
-        './query-helper': queryHelperStub,
-        './joi-mongoose-helper': joiMongooseHelperStub
-      })(Log, mongoose, server)
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub
+        }
+      )(Log, mongoose, server)
 
       t.plan(1)
 
-      var userSchema = new mongoose.Schema({})
+      let userSchema = new mongoose.Schema({})
       userSchema.statics = { routeOptions: {} }
       userSchema.statics = {
         routeOptions: {
@@ -7431,9 +7737,9 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
         }
       }
 
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
 
-      var association = {
+      let association = {
         include: {
           model: { schema: { methods: {} }, modelName: 'testAssociation' }
         }
@@ -7468,31 +7774,34 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
     'rest-helper-factory.generateAssociationAddManyEndpoint calls server.route',
     sinon.test(function(t) {
       // <editor-fold desc="Arrange">
-      var server = this.stub({
+      let server = this.stub({
         route: function() {}
       })
 
-      var handlerHelperStub = this.stub(
-        require('../utilities/handler-helper-factory')(this.spy(), server)
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
       )
-      var handlerHelperStubWrapper = this.stub()
+      let handlerHelperStubWrapper = this.stub()
       handlerHelperStubWrapper.returns(handlerHelperStub)
-      var queryHelperStub = this.stub(require('../utilities/query-helper'))
-      var joiMongooseHelperStub = this.stub(
-        require('../utilities/joi-mongoose-helper'),
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
         'generateJoiReadModel'
       ).callsFake(function() {
         return Joi.any()
       })
-      var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
-        './handler-helper-factory': handlerHelperStubWrapper,
-        './query-helper': queryHelperStub,
-        './joi-mongoose-helper': joiMongooseHelperStub
-      })(Log, mongoose, server)
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub
+        }
+      )(Log, mongoose, server)
 
       t.plan(1)
 
-      var userSchema = new mongoose.Schema({})
+      let userSchema = new mongoose.Schema({})
       userSchema.statics = { routeOptions: {} }
       userSchema.statics = {
         routeOptions: {
@@ -7500,9 +7809,9 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
         }
       }
 
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
 
-      var association = {
+      let association = {
         include: {
           model: { schema: { methods: {} }, modelName: 'testAssociation' }
         }
@@ -7534,31 +7843,34 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
     'rest-helper-factory.generateAssociationAddManyEndpoint calls server.route with "POST" method',
     sinon.test(function(t) {
       // <editor-fold desc="Arrange">
-      var server = this.stub({
+      let server = this.stub({
         route: function() {}
       })
 
-      var handlerHelperStub = this.stub(
-        require('../utilities/handler-helper-factory')(this.spy(), server)
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
       )
-      var handlerHelperStubWrapper = this.stub()
+      let handlerHelperStubWrapper = this.stub()
       handlerHelperStubWrapper.returns(handlerHelperStub)
-      var queryHelperStub = this.stub(require('../utilities/query-helper'))
-      var joiMongooseHelperStub = this.stub(
-        require('../utilities/joi-mongoose-helper'),
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
         'generateJoiReadModel'
       ).callsFake(function() {
         return Joi.any()
       })
-      var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
-        './handler-helper-factory': handlerHelperStubWrapper,
-        './query-helper': queryHelperStub,
-        './joi-mongoose-helper': joiMongooseHelperStub
-      })(Log, mongoose, server)
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub
+        }
+      )(Log, mongoose, server)
 
       t.plan(1)
 
-      var userSchema = new mongoose.Schema({})
+      let userSchema = new mongoose.Schema({})
       userSchema.statics = { routeOptions: {} }
       userSchema.statics = {
         routeOptions: {
@@ -7566,9 +7878,9 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
         }
       }
 
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
 
-      var association = {
+      let association = {
         include: {
           model: { schema: { methods: {} }, modelName: 'testAssociation' }
         }
@@ -7586,7 +7898,7 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Assert">
-      var serverObject = server.route.args[0][0]
+      let serverObject = server.route.args[0][0]
       // Log.debug(JSON.stringify(serverObject));
       t.equal(serverObject.method, 'POST', 'POST method used')
       // </editor-fold>
@@ -7602,18 +7914,18 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
     'rest-helper-factory.generateAssociationAddManyEndpoint calls server.route with correct ownerAlias and childAlias',
     sinon.test(function(t) {
       // <editor-fold desc="Arrange">
-      var server = this.stub({
+      let server = this.stub({
         route: function() {}
       })
 
-      var handlerHelperStub = this.stub(
-        require('../utilities/handler-helper-factory')(this.spy(), server)
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
       )
-      var handlerHelperStubWrapper = this.stub()
+      let handlerHelperStubWrapper = this.stub()
       handlerHelperStubWrapper.returns(handlerHelperStub)
-      var queryHelperStub = this.stub(require('../utilities/query-helper'))
-      var joiMongooseHelperStub = this.stub(
-        require('../utilities/joi-mongoose-helper'),
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
         'generateJoiReadModel'
       ).callsFake(function() {
         return Joi.any()
@@ -7621,15 +7933,18 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
       joiMongooseHelperStub.generateJoiUpdateModel = function() {
         return Joi.any()
       }
-      var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
-        './handler-helper-factory': handlerHelperStubWrapper,
-        './query-helper': queryHelperStub,
-        './joi-mongoose-helper': joiMongooseHelperStub
-      })(Log, mongoose, server)
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub
+        }
+      )(Log, mongoose, server)
 
       t.plan(2)
 
-      var userSchema1 = new mongoose.Schema({})
+      let userSchema1 = new mongoose.Schema({})
       userSchema1.statics = { routeOptions: {} }
       userSchema1.statics = {
         routeOptions: {
@@ -7637,7 +7952,7 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
         }
       }
 
-      var userSchema2 = new mongoose.Schema({})
+      let userSchema2 = new mongoose.Schema({})
       userSchema2.statics = {
         routeOptions: {
           associations: {},
@@ -7645,11 +7960,11 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
         }
       }
 
-      var userModel1 = mongoose.model('user1', userSchema1)
-      var userModel2 = mongoose.model('user2', userSchema2)
+      let userModel1 = mongoose.model('user1', userSchema1)
+      let userModel2 = mongoose.model('user2', userSchema2)
 
-      var association1 = { include: { model: { modelName: 'TEST1' } } }
-      var association2 = { include: { model: {} }, alias: 'TEST2' }
+      let association1 = { include: { model: { modelName: 'TEST1' } } }
+      let association2 = { include: { model: {} }, alias: 'TEST2' }
       // </editor-fold>
 
       // <editor-fold desc="Act">
@@ -7670,8 +7985,8 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Assert">
-      var serverObject1 = server.route.args[0][0]
-      var serverObject2 = server.route.args[1][0]
+      let serverObject1 = server.route.args[0][0]
+      let serverObject2 = server.route.args[1][0]
       // Log.debug(JSON.stringify(serverObject));
       t.equal(serverObject1.path, '/user1/{ownerId}/TEST1', 'correct route')
       t.equal(
@@ -7694,36 +8009,39 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
     'rest-helper-factory.generateAssociationAddManyEndpoint calls server.route with correct handler',
     sinon.test(function(t) {
       // <editor-fold desc="Arrange">
-      var server = this.stub({
+      let server = this.stub({
         route: function() {}
       })
 
-      var handlerHelperStub = this.stub(
-        require('../utilities/handler-helper-factory')(this.spy(), server)
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
       )
       handlerHelperStub.generateAssociationAddManyHandler = this.spy(
         function() {
           return 'HANDLER'
         }
       )
-      var handlerHelperStubWrapper = this.stub()
+      let handlerHelperStubWrapper = this.stub()
       handlerHelperStubWrapper.returns(handlerHelperStub)
-      var queryHelperStub = this.stub(require('../utilities/query-helper'))
-      var joiMongooseHelperStub = this.stub(
-        require('../utilities/joi-mongoose-helper'),
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
         'generateJoiReadModel'
       ).callsFake(function() {
         return Joi.any()
       })
-      var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
-        './handler-helper-factory': handlerHelperStubWrapper,
-        './query-helper': queryHelperStub,
-        './joi-mongoose-helper': joiMongooseHelperStub
-      })(Log, mongoose, server)
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub
+        }
+      )(Log, mongoose, server)
 
       t.plan(1)
 
-      var userSchema = new mongoose.Schema({})
+      let userSchema = new mongoose.Schema({})
       userSchema.statics = { routeOptions: {} }
       userSchema.statics = {
         routeOptions: {
@@ -7731,9 +8049,9 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
         }
       }
 
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
 
-      var association = {
+      let association = {
         include: {
           model: { schema: { methods: {} }, modelName: 'testAssociation' }
         }
@@ -7751,7 +8069,7 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Assert">
-      var serverObject = server.route.args[0][0]
+      let serverObject = server.route.args[0][0]
       // Log.debug(JSON.stringify(serverObject));
       t.equal(serverObject.config.handler, 'HANDLER', 'correct handler used')
       // </editor-fold>
@@ -7767,33 +8085,36 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
     'rest-helper-factory.generateAssociationAddManyEndpoint calls server.route using authentication defined by config',
     sinon.test(function(t) {
       // <editor-fold desc="Arrange">
-      var server = this.stub({
+      let server = this.stub({
         route: function() {}
       })
 
-      var handlerHelperStub = this.stub(
-        require('../utilities/handler-helper-factory')(this.spy(), server)
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
       )
-      var handlerHelperStubWrapper = this.stub()
+      let handlerHelperStubWrapper = this.stub()
       handlerHelperStubWrapper.returns(handlerHelperStub)
-      var queryHelperStub = this.stub(require('../utilities/query-helper'))
-      var joiMongooseHelperStub = this.stub(
-        require('../utilities/joi-mongoose-helper'),
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
         'generateJoiReadModel'
       ).callsFake(function() {
         return Joi.any()
       })
-      var config = { authStrategy: 'TEST_AUTH' }
-      var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
-        './handler-helper-factory': handlerHelperStubWrapper,
-        './query-helper': queryHelperStub,
-        './joi-mongoose-helper': joiMongooseHelperStub,
-        '../config': config
-      })(Log, mongoose, server)
+      let config = { authStrategy: 'TEST_AUTH' }
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub,
+          '../config': config
+        }
+      )(Log, mongoose, server)
 
       t.plan(1)
 
-      var userSchema = new mongoose.Schema({})
+      let userSchema = new mongoose.Schema({})
       userSchema.statics = { routeOptions: {} }
       userSchema.statics = {
         routeOptions: {
@@ -7801,9 +8122,9 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
         }
       }
 
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
 
-      var association = {
+      let association = {
         include: {
           model: { schema: { methods: {} }, modelName: 'testAssociation' }
         }
@@ -7821,7 +8142,7 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Assert">
-      var serverObject = server.route.args[0][0]
+      let serverObject = server.route.args[0][0]
       // Log.debug(JSON.stringify(serverObject));
       t.deepEqual(
         serverObject.config.auth,
@@ -7841,31 +8162,34 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
     'rest-helper-factory.generateAssociationAddManyEndpoint calls server.route with correct associationName and ownerModelName',
     sinon.test(function(t) {
       // <editor-fold desc="Arrange">
-      var server = this.stub({
+      let server = this.stub({
         route: function() {}
       })
 
-      var handlerHelperStub = this.stub(
-        require('../utilities/handler-helper-factory')(this.spy(), server)
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
       )
-      var handlerHelperStubWrapper = this.stub()
+      let handlerHelperStubWrapper = this.stub()
       handlerHelperStubWrapper.returns(handlerHelperStub)
-      var queryHelperStub = this.stub(require('../utilities/query-helper'))
-      var joiMongooseHelperStub = this.stub(
-        require('../utilities/joi-mongoose-helper'),
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
         'generateJoiReadModel'
       ).callsFake(function() {
         return Joi.any()
       })
-      var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
-        './handler-helper-factory': handlerHelperStubWrapper,
-        './query-helper': queryHelperStub,
-        './joi-mongoose-helper': joiMongooseHelperStub
-      })(Log, mongoose, server)
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub
+        }
+      )(Log, mongoose, server)
 
       t.plan(4)
 
-      var userSchema1 = new mongoose.Schema({})
+      let userSchema1 = new mongoose.Schema({})
       userSchema1.statics = { routeOptions: {} }
       userSchema1.statics = {
         routeOptions: {
@@ -7873,7 +8197,7 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
         }
       }
 
-      var userSchema2 = new mongoose.Schema({})
+      let userSchema2 = new mongoose.Schema({})
       userSchema2.statics = {
         routeOptions: {
           associations: {}
@@ -7881,11 +8205,11 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
         collectionDisplayName: 'User'
       }
 
-      var userModel1 = mongoose.model('user1', userSchema1)
-      var userModel2 = mongoose.model('user2', userSchema2)
+      let userModel1 = mongoose.model('user1', userSchema1)
+      let userModel2 = mongoose.model('user2', userSchema2)
 
-      var association1 = { include: { model: { modelName: 'TEST1' } } }
-      var association2 = {
+      let association1 = { include: { model: { modelName: 'TEST1' } } }
+      let association2 = {
         include: { model: { modelName: 'test2' }, as: 'TEST2' }
       }
       // </editor-fold>
@@ -7908,8 +8232,8 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Assert">
-      var serverObject1 = server.route.args[0][0]
-      var serverObject2 = server.route.args[1][0]
+      let serverObject1 = server.route.args[0][0]
+      let serverObject2 = server.route.args[1][0]
       // Log.debug(JSON.stringify(serverObject));
       t.equal(
         serverObject1.config.description,
@@ -7946,31 +8270,34 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
     'rest-helper-factory.generateAssociationAddManyEndpoint calls server.route using cors',
     sinon.test(function(t) {
       // <editor-fold desc="Arrange">
-      var server = this.stub({
+      let server = this.stub({
         route: function() {}
       })
 
-      var handlerHelperStub = this.stub(
-        require('../utilities/handler-helper-factory')(this.spy(), server)
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
       )
-      var handlerHelperStubWrapper = this.stub()
+      let handlerHelperStubWrapper = this.stub()
       handlerHelperStubWrapper.returns(handlerHelperStub)
-      var queryHelperStub = this.stub(require('../utilities/query-helper'))
-      var joiMongooseHelperStub = this.stub(
-        require('../utilities/joi-mongoose-helper'),
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
         'generateJoiReadModel'
       ).callsFake(function() {
         return Joi.any()
       })
-      var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
-        './handler-helper-factory': handlerHelperStubWrapper,
-        './query-helper': queryHelperStub,
-        './joi-mongoose-helper': joiMongooseHelperStub
-      })(Log, mongoose, server)
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub
+        }
+      )(Log, mongoose, server)
 
       t.plan(1)
 
-      var userSchema = new mongoose.Schema({})
+      let userSchema = new mongoose.Schema({})
       userSchema.statics = { routeOptions: {} }
       userSchema.statics = {
         routeOptions: {
@@ -7978,9 +8305,9 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
         }
       }
 
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
 
-      var association = {
+      let association = {
         include: {
           model: { schema: { methods: {} }, modelName: 'testAssociation' }
         }
@@ -7998,9 +8325,9 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Assert">
-      var serverObject = server.route.args[0][0]
+      let serverObject = server.route.args[0][0]
       // Log.debug(JSON.stringify(serverObject));
-      var cors = {
+      let cors = {
         additionalHeaders: [],
         additionalExposedHeaders: []
       }
@@ -8018,18 +8345,18 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
     'rest-helper-factory.generateAssociationAddManyEndpoint calls server.route using correct payload validation',
     sinon.test(function(t) {
       // <editor-fold desc="Arrange">
-      var server = this.stub({
+      let server = this.stub({
         route: function() {}
       })
 
-      var handlerHelperStub = this.stub(
-        require('../utilities/handler-helper-factory')(this.spy(), server)
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
       )
-      var handlerHelperStubWrapper = this.stub()
+      let handlerHelperStubWrapper = this.stub()
       handlerHelperStubWrapper.returns(handlerHelperStub)
-      var queryHelperStub = this.stub(require('../utilities/query-helper'))
-      var joiMongooseHelperStub = this.stub(
-        require('../utilities/joi-mongoose-helper'),
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
         'generateJoiReadModel'
       ).callsFake(function() {
         return Joi.any()
@@ -8037,24 +8364,27 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
       joiMongooseHelperStub.generateJoiCreateModel = function() {
         return Joi.object({ test: 'test' }).unknown()
       }
-      var joiStub = require('joi')
+      let joiStub = require('joi')
 
-      var joiObjectIdStub = function() {
+      let joiObjectIdStub = function() {
         return function() {
           return Joi.any().valid('objectId')
         }
       }
-      var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
-        './handler-helper-factory': handlerHelperStubWrapper,
-        './query-helper': queryHelperStub,
-        './joi-mongoose-helper': joiMongooseHelperStub,
-        joi: joiStub,
-        'joi-objectid': joiObjectIdStub
-      })(Log, mongoose, server)
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub,
+          joi: joiStub,
+          'joi-objectid': joiObjectIdStub
+        }
+      )(Log, mongoose, server)
 
       t.plan(2)
 
-      var userSchema1 = new mongoose.Schema({})
+      let userSchema1 = new mongoose.Schema({})
       userSchema1.statics = { routeOptions: {} }
       userSchema1.statics = {
         routeOptions: {
@@ -8062,20 +8392,20 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
         }
       }
 
-      var userSchema2 = new mongoose.Schema({})
+      let userSchema2 = new mongoose.Schema({})
       userSchema2.statics = {
         routeOptions: {
           associations: {}
         }
       }
 
-      var userModel1 = mongoose.model('user1', userSchema1)
-      var userModel2 = mongoose.model('user2', userSchema2)
+      let userModel1 = mongoose.model('user1', userSchema1)
+      let userModel2 = mongoose.model('user2', userSchema2)
 
-      var association1 = {
+      let association1 = {
         include: { model: { modelName: 'TEST1', schema: { methods: {} } } }
       }
-      var association2 = {
+      let association2 = {
         include: {
           model: { modelName: 'TEST2', schema: { methods: {} } },
           through: {}
@@ -8083,7 +8413,7 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
         alias: 'TEST2'
       }
 
-      var payloadValidation1 = Joi.array()
+      let payloadValidation1 = Joi.array()
         .items(
           Joi.object({ test: 'test' })
             .unknown()
@@ -8100,7 +8430,7 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
         .try(payloadValidation1, Joi.array().items(Joi.any().valid('objectId')))
         .label('undefined_many')
         .required()
-      var payloadValidation2 = Joi.array()
+      let payloadValidation2 = Joi.array()
         .items(Joi.any().valid('objectId'))
         .required()
       // </editor-fold>
@@ -8123,8 +8453,8 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Assert">
-      var serverObject1 = server.route.args[0][0]
-      var serverObject2 = server.route.args[1][0]
+      let serverObject1 = server.route.args[0][0]
+      let serverObject2 = server.route.args[1][0]
       // Log.debug(JSON.stringify(serverObject));
       t.deepEqual(
         serverObject1.config.validate.payload,
@@ -8151,40 +8481,43 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
     'rest-helper-factory.generateAssociationAddManyEndpoint calls server.route using correct params validation',
     sinon.test(function(t) {
       // <editor-fold desc="Arrange">
-      var server = this.stub({
+      let server = this.stub({
         route: function() {}
       })
 
-      var handlerHelperStub = this.stub(
-        require('../utilities/handler-helper-factory')(this.spy(), server)
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
       )
-      var handlerHelperStubWrapper = this.stub()
+      let handlerHelperStubWrapper = this.stub()
       handlerHelperStubWrapper.returns(handlerHelperStub)
-      var queryHelperStub = this.stub(require('../utilities/query-helper'))
-      var joiMongooseHelperStub = this.stub(
-        require('../utilities/joi-mongoose-helper'),
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
         'generateJoiReadModel'
       ).callsFake(function() {
         return Joi.any()
       })
-      var joiStub = require('joi')
+      let joiStub = require('joi')
 
-      var joiObjectIdStub = function() {
+      let joiObjectIdStub = function() {
         return function() {
           return Joi.any().valid('objectId')
         }
       }
-      var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
-        './handler-helper-factory': handlerHelperStubWrapper,
-        './query-helper': queryHelperStub,
-        './joi-mongoose-helper': joiMongooseHelperStub,
-        joi: joiStub,
-        'joi-objectid': joiObjectIdStub
-      })(Log, mongoose, server)
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub,
+          joi: joiStub,
+          'joi-objectid': joiObjectIdStub
+        }
+      )(Log, mongoose, server)
 
       t.plan(3)
 
-      var userSchema = new mongoose.Schema({})
+      let userSchema = new mongoose.Schema({})
       userSchema.statics = { routeOptions: {} }
       userSchema.statics = {
         routeOptions: {
@@ -8192,15 +8525,15 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
         }
       }
 
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
 
-      var association = {
+      let association = {
         include: {
           model: { schema: { methods: {} }, modelName: 'testAssociation' }
         }
       }
 
-      var params = {
+      let params = {
         ownerId: Joi.any()
           .valid('objectId')
           .required()
@@ -8218,8 +8551,8 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Assert">
-      var serverObject = server.route.args[0][0]
-      var validParam = serverObject.config.validate.params.ownerId
+      let serverObject = server.route.args[0][0]
+      let validParam = serverObject.config.validate.params.ownerId
       t.ok(
         Joi.validate('objectId', validParam).error === null,
         'params accept valid input'
@@ -8242,33 +8575,36 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
     'rest-helper-factory.generateAssociationAddManyEndpoint calls server.route using correct header validation',
     sinon.test(function(t) {
       // <editor-fold desc="Arrange">
-      var server = this.stub({
+      let server = this.stub({
         route: function() {}
       })
 
-      var handlerHelperStub = this.stub(
-        require('../utilities/handler-helper-factory')(this.spy(), server)
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
       )
-      var handlerHelperStubWrapper = this.stub()
+      let handlerHelperStubWrapper = this.stub()
       handlerHelperStubWrapper.returns(handlerHelperStub)
-      var queryHelperStub = this.stub(require('../utilities/query-helper'))
-      var joiMongooseHelperStub = this.stub(
-        require('../utilities/joi-mongoose-helper'),
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
         'generateJoiReadModel'
       ).callsFake(function() {
         return Joi.any()
       })
-      var config = { authStrategy: 'TEST_AUTH' }
-      var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
-        './handler-helper-factory': handlerHelperStubWrapper,
-        './query-helper': queryHelperStub,
-        './joi-mongoose-helper': joiMongooseHelperStub,
-        '../config': config
-      })(Log, mongoose, server)
+      let config = { authStrategy: 'TEST_AUTH' }
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub,
+          '../config': config
+        }
+      )(Log, mongoose, server)
 
       t.plan(1)
 
-      var userSchema = new mongoose.Schema({})
+      let userSchema = new mongoose.Schema({})
       userSchema.statics = { routeOptions: {} }
       userSchema.statics = {
         routeOptions: {
@@ -8276,15 +8612,15 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
         }
       }
 
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
 
-      var association = {
+      let association = {
         include: {
           model: { schema: { methods: {} }, modelName: 'testAssociation' }
         }
       }
 
-      var headerValidation = Joi.object({
+      let headerValidation = Joi.object({
         authorization: Joi.string().required()
       }).options({ allowUnknown: true })
       // </editor-fold>
@@ -8300,7 +8636,7 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Assert">
-      var serverObject = server.route.args[0][0]
+      let serverObject = server.route.args[0][0]
       // Log.debug(JSON.stringify(serverObject));
       t.deepEqual(
         serverObject.config.validate.headers,
@@ -8320,31 +8656,34 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
     'rest-helper-factory.generateAssociationAddManyEndpoint calls server.route using hapi-swagger plugin',
     sinon.test(function(t) {
       // <editor-fold desc="Arrange">
-      var server = this.stub({
+      let server = this.stub({
         route: function() {}
       })
 
-      var handlerHelperStub = this.stub(
-        require('../utilities/handler-helper-factory')(this.spy(), server)
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
       )
-      var handlerHelperStubWrapper = this.stub()
+      let handlerHelperStubWrapper = this.stub()
       handlerHelperStubWrapper.returns(handlerHelperStub)
-      var queryHelperStub = this.stub(require('../utilities/query-helper'))
-      var joiMongooseHelperStub = this.stub(
-        require('../utilities/joi-mongoose-helper'),
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
         'generateJoiReadModel'
       ).callsFake(function() {
         return Joi.any()
       })
-      var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
-        './handler-helper-factory': handlerHelperStubWrapper,
-        './query-helper': queryHelperStub,
-        './joi-mongoose-helper': joiMongooseHelperStub
-      })(Log, mongoose, server)
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub
+        }
+      )(Log, mongoose, server)
 
       t.plan(1)
 
-      var userSchema = new mongoose.Schema({})
+      let userSchema = new mongoose.Schema({})
       userSchema.statics = { routeOptions: {} }
       userSchema.statics = {
         routeOptions: {
@@ -8352,9 +8691,9 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
         }
       }
 
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
 
-      var association = {
+      let association = {
         include: {
           model: { schema: { methods: {} }, modelName: 'testAssociation' }
         }
@@ -8372,7 +8711,7 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Assert">
-      var serverObject = server.route.args[0][0]
+      let serverObject = server.route.args[0][0]
       // Log.debug(JSON.stringify(serverObject));
       t.ok(serverObject.config.plugins['hapi-swagger'], 'hapi-swagger used')
       // </editor-fold>
@@ -8388,31 +8727,34 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
     'rest-helper-factory.generateAssociationAddManyEndpoint calls server.route with correct response schema validation',
     sinon.test(function(t) {
       // <editor-fold desc="Arrange">
-      var server = this.stub({
+      let server = this.stub({
         route: function() {}
       })
 
-      var handlerHelperStub = this.stub(
-        require('../utilities/handler-helper-factory')(this.spy(), server)
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
       )
-      var handlerHelperStubWrapper = this.stub()
+      let handlerHelperStubWrapper = this.stub()
       handlerHelperStubWrapper.returns(handlerHelperStub)
-      var queryHelperStub = this.stub(require('../utilities/query-helper'))
-      var joiMongooseHelperStub = this.stub(
-        require('../utilities/joi-mongoose-helper'),
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
         'generateJoiReadModel'
       ).callsFake(function() {
         return readModel
       })
-      var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
-        './handler-helper-factory': handlerHelperStubWrapper,
-        './query-helper': queryHelperStub,
-        './joi-mongoose-helper': joiMongooseHelperStub
-      })(Log, mongoose, server)
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub
+        }
+      )(Log, mongoose, server)
 
       t.plan(1)
 
-      var userSchema = new mongoose.Schema({})
+      let userSchema = new mongoose.Schema({})
       userSchema.statics = { routeOptions: {} }
       userSchema.statics = {
         routeOptions: {
@@ -8420,15 +8762,15 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
         }
       }
 
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
 
-      var association = {
+      let association = {
         include: {
           model: { schema: { methods: {} }, modelName: 'testAssociation' }
         }
       }
 
-      var responseSchema = {}
+      let responseSchema = {}
       // </editor-fold>
 
       // <editor-fold desc="Act">
@@ -8442,7 +8784,7 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Assert">
-      var serverObject = server.route.args[0][0]
+      let serverObject = server.route.args[0][0]
       // Log.debug(JSON.stringify(serverObject));
       t.deepEquals(
         serverObject.config.response,
@@ -8462,8 +8804,8 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
 })
 
 test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
-  var server = sinon.spy()
-  var restHelperFactory = require('../utilities/rest-helper-factory')(
+  let server = sinon.spy()
+  let restHelperFactory = require('../../utilities/rest-helper-factory')(
     Log,
     mongoose,
     server
@@ -8480,39 +8822,42 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
     'rest-helper-factory.generateAssociationGetAllEndpoint asserts routeOptions.associations exist',
     sinon.test(function(t) {
       // <editor-fold desc="Arrange">
-      var server = this.stub({
+      let server = this.stub({
         route: function() {}
       })
 
-      var handlerHelperStub = this.stub(
-        require('../utilities/handler-helper-factory')(this.spy(), server)
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
       )
-      var handlerHelperStubWrapper = this.stub()
+      let handlerHelperStubWrapper = this.stub()
       handlerHelperStubWrapper.returns(handlerHelperStub)
-      var queryHelperStub = this.stub(require('../utilities/query-helper'))
-      var joiMongooseHelperStub = this.stub(
-        require('../utilities/joi-mongoose-helper'),
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
         'generateJoiReadModel'
       ).callsFake(function() {
         return Joi.any()
       })
-      var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
-        './handler-helper-factory': handlerHelperStubWrapper,
-        './query-helper': queryHelperStub,
-        './joi-mongoose-helper': joiMongooseHelperStub
-      })(Log, mongoose, server)
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub
+        }
+      )(Log, mongoose, server)
 
       t.plan(2)
 
-      var userSchema = new mongoose.Schema({})
+      let userSchema = new mongoose.Schema({})
       userSchema.statics = { routeOptions: {} }
       userSchema.statics = {
         routeOptions: {}
       }
 
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
 
-      var association = { include: {} }
+      let association = { include: {} }
       // </editor-fold>
 
       try {
@@ -8547,31 +8892,34 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
     'rest-helper-factory.generateAssociationGetAllEndpoint asserts association input exists',
     sinon.test(function(t) {
       // <editor-fold desc="Arrange">
-      var server = this.stub({
+      let server = this.stub({
         route: function() {}
       })
 
-      var handlerHelperStub = this.stub(
-        require('../utilities/handler-helper-factory')(this.spy(), server)
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
       )
-      var handlerHelperStubWrapper = this.stub()
+      let handlerHelperStubWrapper = this.stub()
       handlerHelperStubWrapper.returns(handlerHelperStub)
-      var queryHelperStub = this.stub(require('../utilities/query-helper'))
-      var joiMongooseHelperStub = this.stub(
-        require('../utilities/joi-mongoose-helper'),
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
         'generateJoiReadModel'
       ).callsFake(function() {
         return Joi.any()
       })
-      var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
-        './handler-helper-factory': handlerHelperStubWrapper,
-        './query-helper': queryHelperStub,
-        './joi-mongoose-helper': joiMongooseHelperStub
-      })(Log, mongoose, server)
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub
+        }
+      )(Log, mongoose, server)
 
       t.plan(2)
 
-      var userSchema = new mongoose.Schema({})
+      let userSchema = new mongoose.Schema({})
       userSchema.statics = { routeOptions: {} }
       userSchema.statics = {
         routeOptions: {
@@ -8579,9 +8927,9 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
         }
       }
 
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
 
-      var association = { include: {} }
+      let association = { include: {} }
       // </editor-fold>
 
       try {
@@ -8616,31 +8964,34 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
     'rest-helper-factory.generateAssociationGetAllEndpoint calls handlerHelper.generateAssociationGetAllHandler',
     sinon.test(function(t) {
       // <editor-fold desc="Arrange">
-      var server = this.stub({
+      let server = this.stub({
         route: function() {}
       })
 
-      var handlerHelperStub = this.stub(
-        require('../utilities/handler-helper-factory')(this.spy(), server)
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
       )
-      var handlerHelperStubWrapper = this.stub()
+      let handlerHelperStubWrapper = this.stub()
       handlerHelperStubWrapper.returns(handlerHelperStub)
-      var queryHelperStub = this.stub(require('../utilities/query-helper'))
-      var joiMongooseHelperStub = this.stub(
-        require('../utilities/joi-mongoose-helper'),
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
         'generateJoiReadModel'
       ).callsFake(function() {
         return Joi.any()
       })
-      var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
-        './handler-helper-factory': handlerHelperStubWrapper,
-        './query-helper': queryHelperStub,
-        './joi-mongoose-helper': joiMongooseHelperStub
-      })(Log, mongoose, server)
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub
+        }
+      )(Log, mongoose, server)
 
       t.plan(1)
 
-      var userSchema = new mongoose.Schema({})
+      let userSchema = new mongoose.Schema({})
       userSchema.statics = { routeOptions: {} }
       userSchema.statics = {
         routeOptions: {
@@ -8648,10 +8999,10 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
         }
       }
 
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
 
-      var childModel = mongoose.model('child', userSchema)
-      var association = { include: { model: childModel } }
+      let childModel = mongoose.model('child', userSchema)
+      let association = { include: { model: childModel } }
       // </editor-fold>
 
       // <editor-fold desc="Act">
@@ -8684,31 +9035,34 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
     'rest-helper-factory.generateAssociationGetAllEndpoint calls queryHelper.getQueryableFields, getReadableFields, and getSortableFields',
     sinon.test(function(t) {
       // <editor-fold desc="Arrange">
-      var server = this.stub({
+      let server = this.stub({
         route: function() {}
       })
 
-      var handlerHelperStub = this.stub(
-        require('../utilities/handler-helper-factory')(this.spy(), server)
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
       )
-      var handlerHelperStubWrapper = this.stub()
+      let handlerHelperStubWrapper = this.stub()
       handlerHelperStubWrapper.returns(handlerHelperStub)
-      var queryHelperStub = this.stub(require('../utilities/query-helper'))
-      var joiMongooseHelperStub = this.stub(
-        require('../utilities/joi-mongoose-helper'),
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
         'generateJoiReadModel'
       ).callsFake(function() {
         return Joi.any()
       })
-      var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
-        './handler-helper-factory': handlerHelperStubWrapper,
-        './query-helper': queryHelperStub,
-        './joi-mongoose-helper': joiMongooseHelperStub
-      })(Log, mongoose, server)
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub
+        }
+      )(Log, mongoose, server)
 
       t.plan(3)
 
-      var userSchema = new mongoose.Schema({})
+      let userSchema = new mongoose.Schema({})
       userSchema.statics = { routeOptions: {} }
       userSchema.statics = {
         routeOptions: {
@@ -8716,10 +9070,10 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
         }
       }
 
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
 
-      var childModel = mongoose.model('child', userSchema)
-      var association = { include: { model: childModel } }
+      let childModel = mongoose.model('child', userSchema)
+      let association = { include: { model: childModel } }
       // </editor-fold>
 
       // <editor-fold desc="Act">
@@ -8754,31 +9108,34 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
     'rest-helper-factory.generateAssociationGetAllEndpoint calls joiMongooseHelper.generateJoiReadModel',
     sinon.test(function(t) {
       // <editor-fold desc="Arrange">
-      var server = this.stub({
+      let server = this.stub({
         route: function() {}
       })
 
-      var handlerHelperStub = this.stub(
-        require('../utilities/handler-helper-factory')(this.spy(), server)
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
       )
-      var handlerHelperStubWrapper = this.stub()
+      let handlerHelperStubWrapper = this.stub()
       handlerHelperStubWrapper.returns(handlerHelperStub)
-      var queryHelperStub = this.stub(require('../utilities/query-helper'))
-      var joiMongooseHelperStub = this.stub(
-        require('../utilities/joi-mongoose-helper'),
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
         'generateJoiReadModel'
       ).callsFake(function() {
         return Joi.any()
       })
-      var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
-        './handler-helper-factory': handlerHelperStubWrapper,
-        './query-helper': queryHelperStub,
-        './joi-mongoose-helper': joiMongooseHelperStub
-      })(Log, mongoose, server)
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub
+        }
+      )(Log, mongoose, server)
 
       t.plan(1)
 
-      var userSchema = new mongoose.Schema({})
+      let userSchema = new mongoose.Schema({})
       userSchema.statics = { routeOptions: {} }
       userSchema.statics = {
         routeOptions: {
@@ -8786,10 +9143,10 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
         }
       }
 
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
 
-      var childModel = mongoose.model('child', userSchema)
-      var association = { include: { model: childModel } }
+      let childModel = mongoose.model('child', userSchema)
+      let association = { include: { model: childModel } }
       // </editor-fold>
 
       // <editor-fold desc="Act">
@@ -8822,31 +9179,34 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
     'rest-helper-factory.generateAssociationGetAllEndpoint calls server.route',
     sinon.test(function(t) {
       // <editor-fold desc="Arrange">
-      var server = this.stub({
+      let server = this.stub({
         route: function() {}
       })
 
-      var handlerHelperStub = this.stub(
-        require('../utilities/handler-helper-factory')(this.spy(), server)
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
       )
-      var handlerHelperStubWrapper = this.stub()
+      let handlerHelperStubWrapper = this.stub()
       handlerHelperStubWrapper.returns(handlerHelperStub)
-      var queryHelperStub = this.stub(require('../utilities/query-helper'))
-      var joiMongooseHelperStub = this.stub(
-        require('../utilities/joi-mongoose-helper'),
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
         'generateJoiReadModel'
       ).callsFake(function() {
         return Joi.any()
       })
-      var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
-        './handler-helper-factory': handlerHelperStubWrapper,
-        './query-helper': queryHelperStub,
-        './joi-mongoose-helper': joiMongooseHelperStub
-      })(Log, mongoose, server)
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub
+        }
+      )(Log, mongoose, server)
 
       t.plan(1)
 
-      var userSchema = new mongoose.Schema({})
+      let userSchema = new mongoose.Schema({})
       userSchema.statics = { routeOptions: {} }
       userSchema.statics = {
         routeOptions: {
@@ -8854,10 +9214,10 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
         }
       }
 
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
 
-      var childModel = mongoose.model('child', userSchema)
-      var association = { include: { model: childModel } }
+      let childModel = mongoose.model('child', userSchema)
+      let association = { include: { model: childModel } }
       // </editor-fold>
 
       // <editor-fold desc="Act">
@@ -8887,31 +9247,34 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
     'rest-helper-factory.generateAssociationGetAllEndpoint calls server.route with "GET" method',
     sinon.test(function(t) {
       // <editor-fold desc="Arrange">
-      var server = this.stub({
+      let server = this.stub({
         route: function() {}
       })
 
-      var handlerHelperStub = this.stub(
-        require('../utilities/handler-helper-factory')(this.spy(), server)
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
       )
-      var handlerHelperStubWrapper = this.stub()
+      let handlerHelperStubWrapper = this.stub()
       handlerHelperStubWrapper.returns(handlerHelperStub)
-      var queryHelperStub = this.stub(require('../utilities/query-helper'))
-      var joiMongooseHelperStub = this.stub(
-        require('../utilities/joi-mongoose-helper'),
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
         'generateJoiReadModel'
       ).callsFake(function() {
         return Joi.any()
       })
-      var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
-        './handler-helper-factory': handlerHelperStubWrapper,
-        './query-helper': queryHelperStub,
-        './joi-mongoose-helper': joiMongooseHelperStub
-      })(Log, mongoose, server)
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub
+        }
+      )(Log, mongoose, server)
 
       t.plan(1)
 
-      var userSchema = new mongoose.Schema({})
+      let userSchema = new mongoose.Schema({})
       userSchema.statics = { routeOptions: {} }
       userSchema.statics = {
         routeOptions: {
@@ -8919,10 +9282,10 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
         }
       }
 
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
 
-      var childModel = mongoose.model('child', userSchema)
-      var association = { include: { model: childModel } }
+      let childModel = mongoose.model('child', userSchema)
+      let association = { include: { model: childModel } }
       // </editor-fold>
 
       // <editor-fold desc="Act">
@@ -8936,7 +9299,7 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Assert">
-      var serverObject = server.route.args[0][0]
+      let serverObject = server.route.args[0][0]
       // Log.debug(JSON.stringify(serverObject));
       t.equal(serverObject.method, 'GET', 'GET method used')
       // </editor-fold>
@@ -8954,18 +9317,18 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
     'rest-helper-factory.generateAssociationGetAllEndpoint calls server.route with correct ownerAlias and childAlias',
     sinon.test(function(t) {
       // <editor-fold desc="Arrange">
-      var server = this.stub({
+      let server = this.stub({
         route: function() {}
       })
 
-      var handlerHelperStub = this.stub(
-        require('../utilities/handler-helper-factory')(this.spy(), server)
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
       )
-      var handlerHelperStubWrapper = this.stub()
+      let handlerHelperStubWrapper = this.stub()
       handlerHelperStubWrapper.returns(handlerHelperStub)
-      var queryHelperStub = this.stub(require('../utilities/query-helper'))
-      var joiMongooseHelperStub = this.stub(
-        require('../utilities/joi-mongoose-helper'),
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
         'generateJoiReadModel'
       ).callsFake(function() {
         return Joi.any()
@@ -8973,15 +9336,18 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
       joiMongooseHelperStub.generateJoiUpdateModel = function() {
         return Joi.any()
       }
-      var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
-        './handler-helper-factory': handlerHelperStubWrapper,
-        './query-helper': queryHelperStub,
-        './joi-mongoose-helper': joiMongooseHelperStub
-      })(Log, mongoose, server)
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub
+        }
+      )(Log, mongoose, server)
 
       t.plan(2)
 
-      var userSchema1 = new mongoose.Schema({})
+      let userSchema1 = new mongoose.Schema({})
       userSchema1.statics = { routeOptions: {} }
       userSchema1.statics = {
         routeOptions: {
@@ -8989,7 +9355,7 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
         }
       }
 
-      var userSchema2 = new mongoose.Schema({})
+      let userSchema2 = new mongoose.Schema({})
       userSchema2.statics = {
         routeOptions: {
           associations: {},
@@ -8997,14 +9363,14 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
         }
       }
 
-      var userModel1 = mongoose.model('user1', userSchema1)
-      var userModel2 = mongoose.model('user2', userSchema2)
+      let userModel1 = mongoose.model('user1', userSchema1)
+      let userModel2 = mongoose.model('user2', userSchema2)
 
-      var childModel1 = mongoose.model('child1', userSchema1)
-      var childModel2 = mongoose.model('child2', userSchema2)
+      let childModel1 = mongoose.model('child1', userSchema1)
+      let childModel2 = mongoose.model('child2', userSchema2)
 
-      var association1 = { include: { model: childModel1 } }
-      var association2 = { include: { model: childModel2 }, alias: 'TEST2' }
+      let association1 = { include: { model: childModel1 } }
+      let association2 = { include: { model: childModel2 }, alias: 'TEST2' }
       // </editor-fold>
 
       // <editor-fold desc="Act">
@@ -9025,8 +9391,8 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Assert">
-      var serverObject1 = server.route.args[0][0]
-      var serverObject2 = server.route.args[1][0]
+      let serverObject1 = server.route.args[0][0]
+      let serverObject2 = server.route.args[1][0]
       // Log.debug(JSON.stringify(serverObject));
       t.equal(serverObject1.path, '/user1/{ownerId}/child1', 'correct route')
       t.equal(
@@ -9051,36 +9417,39 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
     'rest-helper-factory.generateAssociationGetAllEndpoint calls server.route with correct handler',
     sinon.test(function(t) {
       // <editor-fold desc="Arrange">
-      var server = this.stub({
+      let server = this.stub({
         route: function() {}
       })
 
-      var handlerHelperStub = this.stub(
-        require('../utilities/handler-helper-factory')(this.spy(), server)
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
       )
       handlerHelperStub.generateAssociationGetAllHandler = this.spy(function() {
         return 'HANDLER'
       })
-      var handlerHelperStubWrapper = this.stub()
+      let handlerHelperStubWrapper = this.stub()
       handlerHelperStubWrapper.returns(handlerHelperStub)
-      var queryHelperStub = this.stub(require('../utilities/query-helper'))
-      var joiMongooseHelperStub = this.stub(
-        require('../utilities/joi-mongoose-helper'),
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
         'generateJoiReadModel'
       ).callsFake(function() {
         return Joi.any()
       })
-      var config = { authStrategy: 'TEST_AUTH' }
-      var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
-        './handler-helper-factory': handlerHelperStubWrapper,
-        './query-helper': queryHelperStub,
-        './joi-mongoose-helper': joiMongooseHelperStub,
-        '../config': config
-      })(Log, mongoose, server)
+      let config = { authStrategy: 'TEST_AUTH' }
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub,
+          '../config': config
+        }
+      )(Log, mongoose, server)
 
       t.plan(1)
 
-      var userSchema = new mongoose.Schema({})
+      let userSchema = new mongoose.Schema({})
       userSchema.statics = { routeOptions: {} }
       userSchema.statics = {
         routeOptions: {
@@ -9088,10 +9457,10 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
         }
       }
 
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
 
-      var childModel = mongoose.model('child', userSchema)
-      var association = { include: { model: childModel } }
+      let childModel = mongoose.model('child', userSchema)
+      let association = { include: { model: childModel } }
       // </editor-fold>
 
       // <editor-fold desc="Act">
@@ -9105,7 +9474,7 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Assert">
-      var serverObject = server.route.args[0][0]
+      let serverObject = server.route.args[0][0]
       // Log.debug(JSON.stringify(serverObject));
       t.equal(serverObject.config.handler, 'HANDLER', 'correct handler used')
       // </editor-fold>
@@ -9123,33 +9492,36 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
     'rest-helper-factory.generateAssociationGetAllEndpoint calls server.route using authentication defined by config',
     sinon.test(function(t) {
       // <editor-fold desc="Arrange">
-      var server = this.stub({
+      let server = this.stub({
         route: function() {}
       })
 
-      var handlerHelperStub = this.stub(
-        require('../utilities/handler-helper-factory')(this.spy(), server)
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
       )
-      var handlerHelperStubWrapper = this.stub()
+      let handlerHelperStubWrapper = this.stub()
       handlerHelperStubWrapper.returns(handlerHelperStub)
-      var queryHelperStub = this.stub(require('../utilities/query-helper'))
-      var joiMongooseHelperStub = this.stub(
-        require('../utilities/joi-mongoose-helper'),
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
         'generateJoiReadModel'
       ).callsFake(function() {
         return Joi.any()
       })
-      var config = { authStrategy: 'TEST_AUTH' }
-      var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
-        './handler-helper-factory': handlerHelperStubWrapper,
-        './query-helper': queryHelperStub,
-        './joi-mongoose-helper': joiMongooseHelperStub,
-        '../config': config
-      })(Log, mongoose, server)
+      let config = { authStrategy: 'TEST_AUTH' }
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub,
+          '../config': config
+        }
+      )(Log, mongoose, server)
 
       t.plan(1)
 
-      var userSchema = new mongoose.Schema({})
+      let userSchema = new mongoose.Schema({})
       userSchema.statics = { routeOptions: {} }
       userSchema.statics = {
         routeOptions: {
@@ -9157,10 +9529,10 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
         }
       }
 
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
 
-      var childModel = mongoose.model('child', userSchema)
-      var association = { include: { model: childModel } }
+      let childModel = mongoose.model('child', userSchema)
+      let association = { include: { model: childModel } }
       // </editor-fold>
 
       // <editor-fold desc="Act">
@@ -9174,7 +9546,7 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Assert">
-      var serverObject = server.route.args[0][0]
+      let serverObject = server.route.args[0][0]
       // Log.debug(JSON.stringify(serverObject));
       t.deepEqual(
         serverObject.config.auth,
@@ -9196,31 +9568,34 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
     'rest-helper-factory.generateAssociationGetAllEndpoint calls server.route with correct associationName and ownerModelName',
     sinon.test(function(t) {
       // <editor-fold desc="Arrange">
-      var server = this.stub({
+      let server = this.stub({
         route: function() {}
       })
 
-      var handlerHelperStub = this.stub(
-        require('../utilities/handler-helper-factory')(this.spy(), server)
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
       )
-      var handlerHelperStubWrapper = this.stub()
+      let handlerHelperStubWrapper = this.stub()
       handlerHelperStubWrapper.returns(handlerHelperStub)
-      var queryHelperStub = this.stub(require('../utilities/query-helper'))
-      var joiMongooseHelperStub = this.stub(
-        require('../utilities/joi-mongoose-helper'),
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
         'generateJoiReadModel'
       ).callsFake(function() {
         return Joi.any()
       })
-      var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
-        './handler-helper-factory': handlerHelperStubWrapper,
-        './query-helper': queryHelperStub,
-        './joi-mongoose-helper': joiMongooseHelperStub
-      })(Log, mongoose, server)
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub
+        }
+      )(Log, mongoose, server)
 
       t.plan(4)
 
-      var userSchema1 = new mongoose.Schema({})
+      let userSchema1 = new mongoose.Schema({})
       userSchema1.statics = { routeOptions: {} }
       userSchema1.statics = {
         routeOptions: {
@@ -9228,7 +9603,7 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
         }
       }
 
-      var userSchema2 = new mongoose.Schema({})
+      let userSchema2 = new mongoose.Schema({})
       userSchema2.statics = {
         routeOptions: {
           associations: {}
@@ -9236,14 +9611,14 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
         collectionDisplayName: 'User'
       }
 
-      var userModel1 = mongoose.model('user1', userSchema1)
-      var userModel2 = mongoose.model('user2', userSchema2)
+      let userModel1 = mongoose.model('user1', userSchema1)
+      let userModel2 = mongoose.model('user2', userSchema2)
 
-      var childModel1 = mongoose.model('child1', userSchema1)
-      var childModel2 = mongoose.model('child2', userSchema2)
+      let childModel1 = mongoose.model('child1', userSchema1)
+      let childModel2 = mongoose.model('child2', userSchema2)
 
-      var association1 = { include: { model: childModel1 } }
-      var association2 = { include: { model: childModel2, as: 'TEST2' } }
+      let association1 = { include: { model: childModel1 } }
+      let association2 = { include: { model: childModel2, as: 'TEST2' } }
       // </editor-fold>
 
       // <editor-fold desc="Act">
@@ -9264,8 +9639,8 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Assert">
-      var serverObject1 = server.route.args[0][0]
-      var serverObject2 = server.route.args[1][0]
+      let serverObject1 = server.route.args[0][0]
+      let serverObject2 = server.route.args[1][0]
       // Log.debug(JSON.stringify(serverObject));
       t.equal(
         serverObject1.config.description,
@@ -9304,31 +9679,34 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
     'rest-helper-factory.generateAssociationGetAllEndpoint calls server.route using cors',
     sinon.test(function(t) {
       // <editor-fold desc="Arrange">
-      var server = this.stub({
+      let server = this.stub({
         route: function() {}
       })
 
-      var handlerHelperStub = this.stub(
-        require('../utilities/handler-helper-factory')(this.spy(), server)
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
       )
-      var handlerHelperStubWrapper = this.stub()
+      let handlerHelperStubWrapper = this.stub()
       handlerHelperStubWrapper.returns(handlerHelperStub)
-      var queryHelperStub = this.stub(require('../utilities/query-helper'))
-      var joiMongooseHelperStub = this.stub(
-        require('../utilities/joi-mongoose-helper'),
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
         'generateJoiReadModel'
       ).callsFake(function() {
         return Joi.any()
       })
-      var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
-        './handler-helper-factory': handlerHelperStubWrapper,
-        './query-helper': queryHelperStub,
-        './joi-mongoose-helper': joiMongooseHelperStub
-      })(Log, mongoose, server)
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub
+        }
+      )(Log, mongoose, server)
 
       t.plan(1)
 
-      var userSchema = new mongoose.Schema({})
+      let userSchema = new mongoose.Schema({})
       userSchema.statics = { routeOptions: {} }
       userSchema.statics = {
         routeOptions: {
@@ -9336,10 +9714,10 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
         }
       }
 
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
 
-      var childModel = mongoose.model('child', userSchema)
-      var association = { include: { model: childModel } }
+      let childModel = mongoose.model('child', userSchema)
+      let association = { include: { model: childModel } }
       // </editor-fold>
 
       // <editor-fold desc="Act">
@@ -9353,9 +9731,9 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Assert">
-      var serverObject = server.route.args[0][0]
+      let serverObject = server.route.args[0][0]
       // Log.debug(JSON.stringify(serverObject));
-      var cors = {
+      let cors = {
         additionalHeaders: [],
         additionalExposedHeaders: []
       }
@@ -9375,58 +9753,61 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
     'rest-helper-factory.generateAssociationGetAllEndpoint calls server.route using correct queryValidation',
     sinon.test(function(t) {
       // <editor-fold desc="Arrange">
-      var server = this.stub({
+      let server = this.stub({
         route: function() {}
       })
 
-      var handlerHelperStub = this.stub(
-        require('../utilities/handler-helper-factory')(this.spy(), server)
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
       )
-      var handlerHelperStubWrapper = this.stub()
+      let handlerHelperStubWrapper = this.stub()
       handlerHelperStubWrapper.returns(handlerHelperStub)
-      var queryHelperStub = this.stub(require('../utilities/query-helper'))
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
       queryHelperStub.getQueryableFields = this.spy(function() {
         return ['test']
       })
-      var readableFields = ['readable']
-      var sortableFields = ['sortable']
+      let readableFields = ['readable']
+      let sortableFields = ['sortable']
       queryHelperStub.getReadableFields = this.spy(function() {
         return readableFields
       })
       queryHelperStub.getSortableFields = this.spy(function() {
         return sortableFields
       })
-      var joiMongooseHelperStub = this.stub(
-        require('../utilities/joi-mongoose-helper'),
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
         'generateJoiReadModel'
       ).callsFake(function() {
         return Joi.any()
       })
-      var queryModel = Joi.any().valid('TEST')
+      let queryModel = Joi.any().valid('TEST')
       joiMongooseHelperStub.generateJoiListQueryModel = this.spy(function() {
         return queryModel
       })
-      var joiStub = require('joi')
-      var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
-        './handler-helper-factory': handlerHelperStubWrapper,
-        './query-helper': queryHelperStub,
-        './joi-mongoose-helper': joiMongooseHelperStub,
-        joi: joiStub
-      })(Log, mongoose, server)
+      let joiStub = require('joi')
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub,
+          joi: joiStub
+        }
+      )(Log, mongoose, server)
 
       t.plan(1)
 
-      var userSchema = new mongoose.Schema({
+      let userSchema = new mongoose.Schema({
         test: {
           type: Types.String
         }
       })
       userSchema.statics = { routeOptions: { associations: {} } }
 
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
 
-      var childModel = mongoose.model('child', userSchema)
-      var association = { include: { model: childModel } }
+      let childModel = mongoose.model('child', userSchema)
+      let association = { include: { model: childModel } }
 
       // </editor-fold>
 
@@ -9441,7 +9822,7 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Assert">
-      var serverObject = server.route.args[0][0]
+      let serverObject = server.route.args[0][0]
       t.deepEqual(
         serverObject.config.validate.query,
         queryModel,
@@ -9462,33 +9843,36 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
     'rest-helper-factory.generateAssociationGetAllEndpoint calls server.route using correct header validation',
     sinon.test(function(t) {
       // <editor-fold desc="Arrange">
-      var server = this.stub({
+      let server = this.stub({
         route: function() {}
       })
 
-      var handlerHelperStub = this.stub(
-        require('../utilities/handler-helper-factory')(this.spy(), server)
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
       )
-      var handlerHelperStubWrapper = this.stub()
+      let handlerHelperStubWrapper = this.stub()
       handlerHelperStubWrapper.returns(handlerHelperStub)
-      var queryHelperStub = this.stub(require('../utilities/query-helper'))
-      var joiMongooseHelperStub = this.stub(
-        require('../utilities/joi-mongoose-helper'),
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
         'generateJoiReadModel'
       ).callsFake(function() {
         return Joi.any()
       })
-      var config = { authStrategy: 'TEST_AUTH' }
-      var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
-        './handler-helper-factory': handlerHelperStubWrapper,
-        './query-helper': queryHelperStub,
-        './joi-mongoose-helper': joiMongooseHelperStub,
-        '../config': config
-      })(Log, mongoose, server)
+      let config = { authStrategy: 'TEST_AUTH' }
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub,
+          '../config': config
+        }
+      )(Log, mongoose, server)
 
       t.plan(1)
 
-      var userSchema = new mongoose.Schema({})
+      let userSchema = new mongoose.Schema({})
       userSchema.statics = { routeOptions: {} }
       userSchema.statics = {
         routeOptions: {
@@ -9496,12 +9880,12 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
         }
       }
 
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
 
-      var childModel = mongoose.model('child', userSchema)
-      var association = { include: { model: childModel } }
+      let childModel = mongoose.model('child', userSchema)
+      let association = { include: { model: childModel } }
 
-      var headerValidation = Joi.object({
+      let headerValidation = Joi.object({
         authorization: Joi.string().required()
       }).options({ allowUnknown: true })
       // </editor-fold>
@@ -9517,7 +9901,7 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Assert">
-      var serverObject = server.route.args[0][0]
+      let serverObject = server.route.args[0][0]
       // Log.debug(JSON.stringify(serverObject));
       t.deepEqual(
         serverObject.config.validate.headers,
@@ -9539,31 +9923,34 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
     'rest-helper-factory.generateAssociationGetAllEndpoint calls server.route using hapi-swagger plugin',
     sinon.test(function(t) {
       // <editor-fold desc="Arrange">
-      var server = this.stub({
+      let server = this.stub({
         route: function() {}
       })
 
-      var handlerHelperStub = this.stub(
-        require('../utilities/handler-helper-factory')(this.spy(), server)
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
       )
-      var handlerHelperStubWrapper = this.stub()
+      let handlerHelperStubWrapper = this.stub()
       handlerHelperStubWrapper.returns(handlerHelperStub)
-      var queryHelperStub = this.stub(require('../utilities/query-helper'))
-      var joiMongooseHelperStub = this.stub(
-        require('../utilities/joi-mongoose-helper'),
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
         'generateJoiReadModel'
       ).callsFake(function() {
         return Joi.any()
       })
-      var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
-        './handler-helper-factory': handlerHelperStubWrapper,
-        './query-helper': queryHelperStub,
-        './joi-mongoose-helper': joiMongooseHelperStub
-      })(Log, mongoose, server)
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub
+        }
+      )(Log, mongoose, server)
 
       t.plan(1)
 
-      var userSchema = new mongoose.Schema({})
+      let userSchema = new mongoose.Schema({})
       userSchema.statics = { routeOptions: {} }
       userSchema.statics = {
         routeOptions: {
@@ -9571,10 +9958,10 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
         }
       }
 
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
 
-      var childModel = mongoose.model('child', userSchema)
-      var association = { include: { model: childModel } }
+      let childModel = mongoose.model('child', userSchema)
+      let association = { include: { model: childModel } }
       // </editor-fold>
 
       // <editor-fold desc="Act">
@@ -9588,7 +9975,7 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Assert">
-      var serverObject = server.route.args[0][0]
+      let serverObject = server.route.args[0][0]
       // Log.debug(JSON.stringify(serverObject));
       t.ok(serverObject.config.plugins['hapi-swagger'], 'hapi-swagger used')
       // </editor-fold>
@@ -9606,32 +9993,35 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
     'rest-helper-factory.generateAssociationGetAllEndpoint calls server.route with correct response schema validation',
     sinon.test(function(t) {
       // <editor-fold desc="Arrange">
-      var server = this.stub({
+      let server = this.stub({
         route: function() {}
       })
 
-      var handlerHelperStub = this.stub(
-        require('../utilities/handler-helper-factory')(this.spy(), server)
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
       )
-      var handlerHelperStubWrapper = this.stub()
+      let handlerHelperStubWrapper = this.stub()
       handlerHelperStubWrapper.returns(handlerHelperStub)
-      var queryHelperStub = this.stub(require('../utilities/query-helper'))
-      var readModel = Joi.any().valid(['test'])
-      var joiMongooseHelperStub = this.stub(
-        require('../utilities/joi-mongoose-helper'),
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let readModel = Joi.any().valid(['test'])
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
         'generateJoiReadModel'
       ).callsFake(function() {
         return readModel
       })
-      var restHelperFactory = proxyquire('../utilities/rest-helper-factory', {
-        './handler-helper-factory': handlerHelperStubWrapper,
-        './query-helper': queryHelperStub,
-        './joi-mongoose-helper': joiMongooseHelperStub
-      })(Log, mongoose, server)
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub
+        }
+      )(Log, mongoose, server)
 
       t.plan(1)
 
-      var userSchema = new mongoose.Schema({})
+      let userSchema = new mongoose.Schema({})
       userSchema.statics = { routeOptions: {} }
       userSchema.statics = {
         routeOptions: {
@@ -9639,17 +10029,17 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
         }
       }
 
-      var userModel = mongoose.model('user', userSchema)
-      var ownerModelName = 'userModelName'
+      let userModel = mongoose.model('user', userSchema)
+      let ownerModelName = 'userModelName'
       userModel.modelName = ownerModelName
 
-      var childModel = mongoose.model('child', userSchema)
-      var associationName = 'childModelName'
+      let childModel = mongoose.model('child', userSchema)
+      let associationName = 'childModelName'
       childModel.modelName = associationName
 
-      var association = { include: { model: childModel } }
+      let association = { include: { model: childModel } }
 
-      var responseSchema = Joi.alternatives()
+      let responseSchema = Joi.alternatives()
         .try(
           Joi.object({
             docs: Joi.array()
@@ -9678,7 +10068,7 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Assert">
-      var serverObject = server.route.args[0][0]
+      let serverObject = server.route.args[0][0]
       t.deepEquals(
         serverObject.config.response.schema,
         responseSchema,

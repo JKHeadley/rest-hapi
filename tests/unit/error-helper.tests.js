@@ -1,15 +1,15 @@
 'use strict'
 
-var test = require('blue-tape')
-var sinon = require('sinon')
-var proxyquire = require('proxyquire')
-var logging = require('loggin')
-var logger = logging.getLogger('tests')
+let test = require('blue-tape')
+let sinon = require('sinon')
+let proxyquire = require('proxyquire')
+let logging = require('loggin')
+let logger = logging.getLogger('tests')
 
 test('error-helper exists and has expected members', function(t) {
   // <editor-fold desc="Arrange">
-  var Log = logger.bind('error-helper')
-  var errorHelper = require('../utilities/error-helper')
+  let Log = logger.bind('error-helper')
+  let errorHelper = require('../../utilities/error-helper')
 
   t.plan(8)
   // </editor-fold>
@@ -39,19 +39,19 @@ test('error-helper.handleError', function(t) {
     // <editor-fold desc="Arrange">
     t.plan(2)
 
-    var sandbox = sinon.sandbox.create()
-    var Log = logger.bind('error-helper')
-    var errorHelper = require('../utilities/error-helper')
-    var logErrorSpy = sandbox.spy()
+    let sandbox = sinon.sandbox.create()
+    let Log = logger.bind('error-helper')
+    let errorHelper = require('../../utilities/error-helper')
+    let logErrorSpy = sandbox.spy()
     sandbox.stub(Log, 'error').callsFake(logErrorSpy)
 
-    var message = 'An error occurred'
-    var errorType = errorHelper.types.BAD_REQUEST
-    var error = new Error()
+    let message = 'An error occurred'
+    let errorType = errorHelper.types.BAD_REQUEST
+    let error = new Error()
     // </editor-fold>
 
     // <editor-fold desc="Act">
-    var thrown
+    let thrown
 
     try {
       errorHelper.handleError(error, message, errorType, Log)
@@ -74,18 +74,18 @@ test('error-helper.handleError', function(t) {
     // <editor-fold desc="Arrange">
     t.plan(2)
 
-    var sandbox = sinon.sandbox.create()
-    var Log = logger.bind('error-helper')
-    var errorHelper = require('../utilities/error-helper')
-    var logErrorSpy = sandbox.spy()
+    let sandbox = sinon.sandbox.create()
+    let Log = logger.bind('error-helper')
+    let errorHelper = require('../../utilities/error-helper')
+    let logErrorSpy = sandbox.spy()
     sandbox.stub(Log, 'error').callsFake(logErrorSpy)
 
-    var message = 'An error occurred'
-    var errorType = errorHelper.types.BAD_REQUEST
+    let message = 'An error occurred'
+    let errorType = errorHelper.types.BAD_REQUEST
     // </editor-fold>
 
     // <editor-fold desc="Act">
-    var thrown
+    let thrown
 
     try {
       errorHelper.handleError(
@@ -121,15 +121,15 @@ test('handle-error.formatResponse', function(t) {
       // <editor-fold desc="Arrange">
       t.plan(2)
 
-      var Log = logger.bind('error-helper')
-      var errorHelper = require('../utilities/error-helper')
+      let Log = logger.bind('error-helper')
+      let errorHelper = require('../../utilities/error-helper')
 
-      var message = 'An error occurred'
-      var errorType = errorHelper.types.BAD_IMPLEMENTATION
+      let message = 'An error occurred'
+      let errorType = errorHelper.types.BAD_IMPLEMENTATION
       // </editor-fold>
 
       // <editor-fold desc="Act">
-      var response = errorHelper.formatResponse(
+      let response = errorHelper.formatResponse(
         { message: message, type: errorType },
         Log
       )
@@ -157,15 +157,15 @@ test('handle-error.formatResponse', function(t) {
       // <editor-fold desc="Arrange">
       t.plan(2)
 
-      var Log = logger.bind('error-helper')
-      var errorHelper = require('../utilities/error-helper')
+      let Log = logger.bind('error-helper')
+      let errorHelper = require('../../utilities/error-helper')
 
-      var message = 'An error occurred'
-      var errorType = errorHelper.types.GATEWAY_TIMEOUT
+      let message = 'An error occurred'
+      let errorType = errorHelper.types.GATEWAY_TIMEOUT
       // </editor-fold>
 
       // <editor-fold desc="Act">
-      var response = errorHelper.formatResponse(
+      let response = errorHelper.formatResponse(
         { message: message, type: errorType },
         Log
       )
@@ -186,15 +186,15 @@ test('handle-error.formatResponse', function(t) {
     // <editor-fold desc="Arrange">
     t.plan(2)
 
-    var Log = logger.bind('error-helper')
-    var errorHelper = require('../utilities/error-helper')
+    let Log = logger.bind('error-helper')
+    let errorHelper = require('../../utilities/error-helper')
 
-    var message = 'An error occurred'
-    var errorType = errorHelper.types.NOT_FOUND
+    let message = 'An error occurred'
+    let errorType = errorHelper.types.NOT_FOUND
     // </editor-fold>
 
     // <editor-fold desc="Act">
-    var response = errorHelper.formatResponse(
+    let response = errorHelper.formatResponse(
       { message: message, type: errorType },
       Log
     )
@@ -216,15 +216,15 @@ test('handle-error.formatResponse', function(t) {
     // <editor-fold desc="Arrange">
     t.plan(2)
 
-    var Log = logger.bind('error-helper')
-    var errorHelper = require('../utilities/error-helper')
+    let Log = logger.bind('error-helper')
+    let errorHelper = require('../../utilities/error-helper')
 
-    var message = 'An error occurred'
-    var errorType = errorHelper.types.BAD_REQUEST
+    let message = 'An error occurred'
+    let errorType = errorHelper.types.BAD_REQUEST
     // </editor-fold>
 
     // <editor-fold desc="Act">
-    var response = errorHelper.formatResponse(
+    let response = errorHelper.formatResponse(
       { message: message, type: errorType },
       Log
     )
@@ -246,15 +246,15 @@ test('handle-error.formatResponse', function(t) {
       // <editor-fold desc="Arrange">
       t.plan(2)
 
-      var Log = logger.bind('error-helper')
-      var errorHelper = require('../utilities/error-helper')
+      let Log = logger.bind('error-helper')
+      let errorHelper = require('../../utilities/error-helper')
 
-      var message = 'An error occurred'
-      var errorType = 'UNKNOWN'
+      let message = 'An error occurred'
+      let errorType = 'UNKNOWN'
       // </editor-fold>
 
       // <editor-fold desc="Act">
-      var response = errorHelper.formatResponse(
+      let response = errorHelper.formatResponse(
         { message: message, type: errorType },
         Log
       )

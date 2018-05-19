@@ -1,14 +1,14 @@
-var Q = require('q')
-var Joi = require('joi')
-var bcrypt = require('bcryptjs')
-var RestHapi = require('rest-hapi')
+let Q = require('q')
+let Joi = require('joi')
+let bcrypt = require('bcryptjs')
+let RestHapi = require('rest-hapi')
 
 // TODO: assign a unique text index to email field
 
 module.exports = function(mongoose) {
-  var modelName = 'user'
-  var Types = mongoose.Schema.Types
-  var Schema = new mongoose.Schema({
+  let modelName = 'user'
+  let Types = mongoose.Schema.Types
+  let Schema = new mongoose.Schema({
     email: {
       type: Types.String,
       unique: true
@@ -73,14 +73,14 @@ module.exports = function(mongoose) {
         // Password Update Endpoint
         function(server, model, options, Log) {
           Log = Log.bind('Password Update')
-          var Boom = require('boom')
+          let Boom = require('boom')
 
-          var collectionName = model.collectionDisplayName || model.modelName
+          let collectionName = model.collectionDisplayName || model.modelName
 
           Log.note('Generating Password Update endpoint for ' + collectionName)
 
-          var handler = function(request, h) {
-            var hashedPassword = model.generatePasswordHash(
+          let handler = function(request, h) {
+            let hashedPassword = model.generatePasswordHash(
               request.payload.password
             )
             return model
@@ -137,8 +137,8 @@ module.exports = function(mongoose) {
       ],
       create: {
         pre: function(payload, Log) {
-          var deferred = Q.defer()
-          var hashedPassword = mongoose
+          let deferred = Q.defer()
+          let hashedPassword = mongoose
             .model('user')
             .generatePasswordHash(payload.password)
 
@@ -150,8 +150,8 @@ module.exports = function(mongoose) {
     },
 
     generatePasswordHash: function(password) {
-      var salt = bcrypt.genSaltSync(10)
-      var hash = bcrypt.hashSync(password, salt)
+      let salt = bcrypt.genSaltSync(10)
+      let hash = bcrypt.hashSync(password, salt)
       return hash
     }
   }

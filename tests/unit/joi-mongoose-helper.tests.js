@@ -1,28 +1,27 @@
 'use strict'
 
-var test = require('tape')
-var _ = require('lodash')
-var sinon = require('sinon')
-var sinonTestFactory = require('sinon-test')
-var sinonTest = sinonTestFactory(sinon)
-var rewire = require('rewire')
-var proxyquire = require('proxyquire')
-var assert = require('assert')
-var rewire = require('rewire')
-var mongoose = require('mongoose')
-var Types = mongoose.Schema.Types
-var logging = require('loggin')
-var Log = logging.getLogger('tests')
+let test = require('tape')
+let _ = require('lodash')
+let sinon = require('sinon')
+let sinonTestFactory = require('sinon-test')
+let sinonTest = sinonTestFactory(sinon)
+let rewire = require('rewire')
+let proxyquire = require('proxyquire')
+let assert = require('assert')
+let mongoose = require('mongoose')
+let Types = mongoose.Schema.Types
+let logging = require('loggin')
+let Log = logging.getLogger('tests')
 Log.logLevel = 'DEBUG'
 Log = Log.bind('joi-mongoose-helper')
-var testHelper = require('../utilities/test-helper')
-var Joi = require('joi')
+let testHelper = require('../../utilities/test-helper')
+let Joi = require('joi')
 
 sinon.test = sinonTest
 
 test('joi-mongoose-helper exists and has expected members', function(t) {
   // <editor-fold desc="Arrange">
-  var joiMongooseHelper = require('../utilities/joi-mongoose-helper')
+  let joiMongooseHelper = require('../../utilities/joi-mongoose-helper')
 
   t.plan(8)
   // </editor-fold>
@@ -61,7 +60,7 @@ test('joi-mongoose-helper exists and has expected members', function(t) {
 })
 
 test('joi-mongoose-helper.generateJoiReadModel', function(t) {
-  var joiMongooseHelper = require('../utilities/joi-mongoose-helper')
+  let joiMongooseHelper = require('../../utilities/joi-mongoose-helper')
   testHelper.testModelParameter(
     t,
     joiMongooseHelper.generateJoiReadModel,
@@ -76,29 +75,29 @@ test('joi-mongoose-helper.generateJoiReadModel', function(t) {
       // <editor-fold desc="Arrange">
       t.plan(2)
 
-      var generateJoiFieldModel = sinon.spy(function() {
+      let generateJoiFieldModel = sinon.spy(function() {
         return Joi.any()
       })
-      var joiMongooseHelper = rewire('../utilities/joi-mongoose-helper')
+      let joiMongooseHelper = rewire('../../utilities/joi-mongoose-helper')
       joiMongooseHelper.__set__(
         'internals.generateJoiFieldModel',
         generateJoiFieldModel
       )
 
-      var userSchema = new mongoose.Schema({
+      let userSchema = new mongoose.Schema({
         email: {
           type: Types.String
         }
       })
 
       userSchema.statics = { routeOptions: {} }
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
 
-      var emailField = userModel.schema.tree['email']
+      let emailField = userModel.schema.tree['email']
       // </editor-fold>
 
       // <editor-fold desc="Act">
-      var readModel = joiMongooseHelper.generateJoiReadModel(userModel, Log)
+      let readModel = joiMongooseHelper.generateJoiReadModel(userModel, Log)
       // </editor-fold>
 
       // <editor-fold desc="Assert">
@@ -132,16 +131,16 @@ test('joi-mongoose-helper.generateJoiReadModel', function(t) {
       // <editor-fold desc="Arrange">
       t.plan(3)
 
-      var generateJoiFieldModel = sinon.spy(function() {
+      let generateJoiFieldModel = sinon.spy(function() {
         return Joi.any()
       })
-      var joiMongooseHelper = rewire('../utilities/joi-mongoose-helper')
+      let joiMongooseHelper = rewire('../../utilities/joi-mongoose-helper')
       joiMongooseHelper.__set__(
         'internals.generateJoiFieldModel',
         generateJoiFieldModel
       )
 
-      var userSchema = new mongoose.Schema({
+      let userSchema = new mongoose.Schema({
         email: {
           type: Types.String,
           readModel: Joi.any().only('test')
@@ -149,13 +148,13 @@ test('joi-mongoose-helper.generateJoiReadModel', function(t) {
       })
 
       userSchema.statics = { routeOptions: {} }
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
 
-      var emailField = userModel.schema.tree['email']
+      let emailField = userModel.schema.tree['email']
       // </editor-fold>
 
       // <editor-fold desc="Act">
-      var readModel = joiMongooseHelper.generateJoiReadModel(userModel, Log)
+      let readModel = joiMongooseHelper.generateJoiReadModel(userModel, Log)
       // </editor-fold>
 
       // <editor-fold desc="Assert">
@@ -192,16 +191,16 @@ test('joi-mongoose-helper.generateJoiReadModel', function(t) {
       // <editor-fold desc="Arrange">
       t.plan(2)
 
-      var generateJoiFieldModel = sinon.spy(function() {
+      let generateJoiFieldModel = sinon.spy(function() {
         return Joi.any()
       })
-      var joiMongooseHelper = rewire('../utilities/joi-mongoose-helper')
+      let joiMongooseHelper = rewire('../../utilities/joi-mongoose-helper')
       joiMongooseHelper.__set__(
         'internals.generateJoiFieldModel',
         generateJoiFieldModel
       )
 
-      var userSchema = new mongoose.Schema({
+      let userSchema = new mongoose.Schema({
         firstName: {
           type: Types.String,
           allowOnRead: false
@@ -213,14 +212,14 @@ test('joi-mongoose-helper.generateJoiReadModel', function(t) {
       })
 
       userSchema.statics = { routeOptions: {} }
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
 
-      var firstNameField = userModel.schema.tree['firstName']
-      var lastNameField = userModel.schema.tree['lastName']
+      let firstNameField = userModel.schema.tree['firstName']
+      let lastNameField = userModel.schema.tree['lastName']
       // </editor-fold>
 
       // <editor-fold desc="Act">
-      var readModel = joiMongooseHelper.generateJoiReadModel(userModel, Log)
+      let readModel = joiMongooseHelper.generateJoiReadModel(userModel, Log)
       // </editor-fold>
 
       // <editor-fold desc="Assert">
@@ -259,10 +258,10 @@ test('joi-mongoose-helper.generateJoiReadModel', function(t) {
       // <editor-fold desc="Arrange">
       t.plan(1)
 
-      var generateJoiFieldModel = sinon.spy(function() {
+      let generateJoiFieldModel = sinon.spy(function() {
         return Joi.any()
       })
-      var joiMongooseHelper = rewire('../utilities/joi-mongoose-helper')
+      let joiMongooseHelper = rewire('../../utilities/joi-mongoose-helper')
       joiMongooseHelper.__set__(
         'internals.generateJoiFieldModel',
         generateJoiFieldModel
@@ -274,20 +273,20 @@ test('joi-mongoose-helper.generateJoiReadModel', function(t) {
         })
       )
 
-      var userSchema = new mongoose.Schema({
+      let userSchema = new mongoose.Schema({
         firstName: {
           type: Types.String
         }
       })
 
       userSchema.statics = { routeOptions: {} }
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
 
-      var firstNameField = userModel.schema.tree['firstName']
+      let firstNameField = userModel.schema.tree['firstName']
       // </editor-fold>
 
       // <editor-fold desc="Act">
-      var readModel = joiMongooseHelper.generateJoiReadModel(userModel, Log)
+      let readModel = joiMongooseHelper.generateJoiReadModel(userModel, Log)
       // </editor-fold>
 
       // <editor-fold desc="Assert">
@@ -316,16 +315,16 @@ test('joi-mongoose-helper.generateJoiReadModel', function(t) {
       // <editor-fold desc="Arrange">
       t.plan(4)
 
-      var generateJoiFieldModel = sinon.spy(function() {
+      let generateJoiFieldModel = sinon.spy(function() {
         return Joi.any()
       })
-      var joiMongooseHelper = rewire('../utilities/joi-mongoose-helper')
+      let joiMongooseHelper = rewire('../../utilities/joi-mongoose-helper')
       joiMongooseHelper.__set__(
         'internals.generateJoiFieldModel',
         generateJoiFieldModel
       )
 
-      var userSchema = new mongoose.Schema({
+      let userSchema = new mongoose.Schema({
         email: {
           type: Types.String
         },
@@ -340,12 +339,12 @@ test('joi-mongoose-helper.generateJoiReadModel', function(t) {
       })
 
       userSchema.statics = { routeOptions: {} }
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
 
       // </editor-fold>
 
       // <editor-fold desc="Act">
-      var readModel = joiMongooseHelper.generateJoiReadModel(userModel, Log)
+      let readModel = joiMongooseHelper.generateJoiReadModel(userModel, Log)
       // </editor-fold>
 
       // <editor-fold desc="Assert">
@@ -380,16 +379,16 @@ test('joi-mongoose-helper.generateJoiReadModel', function(t) {
       // <editor-fold desc="Arrange">
       t.plan(2)
 
-      var generateJoiFieldModel = sinon.spy(function() {
+      let generateJoiFieldModel = sinon.spy(function() {
         return Joi.any()
       })
-      var joiMongooseHelper = rewire('../utilities/joi-mongoose-helper')
+      let joiMongooseHelper = rewire('../../utilities/joi-mongoose-helper')
       joiMongooseHelper.__set__(
         'internals.generateJoiFieldModel',
         generateJoiFieldModel
       )
 
-      var userSchema = new mongoose.Schema({
+      let userSchema = new mongoose.Schema({
         email: {
           type: Types.String,
           requireOnRead: true
@@ -397,12 +396,12 @@ test('joi-mongoose-helper.generateJoiReadModel', function(t) {
       })
 
       userSchema.statics = { routeOptions: {} }
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
 
       // </editor-fold>
 
       // <editor-fold desc="Act">
-      var readModel = joiMongooseHelper.generateJoiReadModel(userModel, Log)
+      let readModel = joiMongooseHelper.generateJoiReadModel(userModel, Log)
       // </editor-fold>
 
       // <editor-fold desc="Assert">
@@ -426,13 +425,13 @@ test('joi-mongoose-helper.generateJoiReadModel', function(t) {
       // <editor-fold desc="Arrange">
       t.plan(19)
 
-      var generateJoiFieldModel = sinon.spy(function() {
+      let generateJoiFieldModel = sinon.spy(function() {
         return Joi.any()
       })
-      var generateJoiReadModel = sinon.spy(function() {
+      let generateJoiReadModel = sinon.spy(function() {
         return Joi.object()
       })
-      var joiMongooseHelper = rewire('../utilities/joi-mongoose-helper')
+      let joiMongooseHelper = rewire('../../utilities/joi-mongoose-helper')
       joiMongooseHelper.__set__(
         'internals.generateJoiFieldModel',
         generateJoiFieldModel
@@ -442,7 +441,7 @@ test('joi-mongoose-helper.generateJoiReadModel', function(t) {
         generateJoiReadModel
       )
 
-      var userSchema = new mongoose.Schema({})
+      let userSchema = new mongoose.Schema({})
 
       userSchema.statics = {
         routeOptions: {
@@ -478,12 +477,12 @@ test('joi-mongoose-helper.generateJoiReadModel', function(t) {
         }
       }
 
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
 
       // </editor-fold>
 
       // <editor-fold desc="Act">
-      var readModel = joiMongooseHelper.generateJoiReadModel(userModel, Log)
+      let readModel = joiMongooseHelper.generateJoiReadModel(userModel, Log)
       // </editor-fold>
 
       // <editor-fold desc="Assert">
@@ -578,24 +577,24 @@ test('joi-mongoose-helper.generateJoiReadModel', function(t) {
       // <editor-fold desc="Arrange">
       t.plan(1)
 
-      var generateJoiFieldModel = sinon.spy(function() {
+      let generateJoiFieldModel = sinon.spy(function() {
         return Joi.any()
       })
-      var joiMongooseHelper = rewire('../utilities/joi-mongoose-helper')
+      let joiMongooseHelper = rewire('../../utilities/joi-mongoose-helper')
       joiMongooseHelper.__set__(
         'internals.generateJoiFieldModel',
         generateJoiFieldModel
       )
 
-      var userSchema = new mongoose.Schema({})
+      let userSchema = new mongoose.Schema({})
 
       userSchema.statics = { routeOptions: {} }
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
 
       // </editor-fold>
 
       // <editor-fold desc="Act">
-      var readModel = joiMongooseHelper.generateJoiReadModel(userModel, Log)
+      let readModel = joiMongooseHelper.generateJoiReadModel(userModel, Log)
       // </editor-fold>
 
       // <editor-fold desc="Assert">
@@ -613,7 +612,7 @@ test('joi-mongoose-helper.generateJoiReadModel', function(t) {
 })
 
 test('joi-mongoose-helper.generateJoiUpdateModel', function(t) {
-  var joiMongooseHelper = require('../utilities/joi-mongoose-helper')
+  let joiMongooseHelper = require('../../utilities/joi-mongoose-helper')
   testHelper.testModelParameter(
     t,
     joiMongooseHelper.generateJoiUpdateModel,
@@ -628,29 +627,29 @@ test('joi-mongoose-helper.generateJoiUpdateModel', function(t) {
       // <editor-fold desc="Arrange">
       t.plan(2)
 
-      var generateJoiFieldModel = sinon.spy(function() {
+      let generateJoiFieldModel = sinon.spy(function() {
         return Joi.any()
       })
-      var joiMongooseHelper = rewire('../utilities/joi-mongoose-helper')
+      let joiMongooseHelper = rewire('../../utilities/joi-mongoose-helper')
       joiMongooseHelper.__set__(
         'internals.generateJoiFieldModel',
         generateJoiFieldModel
       )
 
-      var userSchema = new mongoose.Schema({
+      let userSchema = new mongoose.Schema({
         email: {
           type: Types.String
         }
       })
 
       userSchema.statics = { routeOptions: {} }
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
 
-      var emailField = userModel.schema.tree['email']
+      let emailField = userModel.schema.tree['email']
       // </editor-fold>
 
       // <editor-fold desc="Act">
-      var updateModel = joiMongooseHelper.generateJoiUpdateModel(userModel, Log)
+      let updateModel = joiMongooseHelper.generateJoiUpdateModel(userModel, Log)
       // </editor-fold>
 
       // <editor-fold desc="Assert">
@@ -683,16 +682,16 @@ test('joi-mongoose-helper.generateJoiUpdateModel', function(t) {
       // <editor-fold desc="Arrange">
       t.plan(3)
 
-      var generateJoiFieldModel = sinon.spy(function() {
+      let generateJoiFieldModel = sinon.spy(function() {
         return Joi.any()
       })
-      var joiMongooseHelper = rewire('../utilities/joi-mongoose-helper')
+      let joiMongooseHelper = rewire('../../utilities/joi-mongoose-helper')
       joiMongooseHelper.__set__(
         'internals.generateJoiFieldModel',
         generateJoiFieldModel
       )
 
-      var userSchema = new mongoose.Schema({
+      let userSchema = new mongoose.Schema({
         email: {
           type: Types.String,
           updateModel: Joi.any().only('test')
@@ -700,13 +699,13 @@ test('joi-mongoose-helper.generateJoiUpdateModel', function(t) {
       })
 
       userSchema.statics = { routeOptions: {} }
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
 
-      var emailField = userModel.schema.tree['email']
+      let emailField = userModel.schema.tree['email']
       // </editor-fold>
 
       // <editor-fold desc="Act">
-      var updateModel = joiMongooseHelper.generateJoiUpdateModel(userModel, Log)
+      let updateModel = joiMongooseHelper.generateJoiUpdateModel(userModel, Log)
       // </editor-fold>
 
       // <editor-fold desc="Assert">
@@ -743,16 +742,16 @@ test('joi-mongoose-helper.generateJoiUpdateModel', function(t) {
       // <editor-fold desc="Arrange">
       t.plan(1)
 
-      var generateJoiFieldModel = sinon.spy(function() {
+      let generateJoiFieldModel = sinon.spy(function() {
         return Joi.any()
       })
-      var joiMongooseHelper = rewire('../utilities/joi-mongoose-helper')
+      let joiMongooseHelper = rewire('../../utilities/joi-mongoose-helper')
       joiMongooseHelper.__set__(
         'internals.generateJoiFieldModel',
         generateJoiFieldModel
       )
 
-      var userSchema = new mongoose.Schema({
+      let userSchema = new mongoose.Schema({
         firstName: {
           type: Types.String,
           allowOnUpdate: false
@@ -760,13 +759,13 @@ test('joi-mongoose-helper.generateJoiUpdateModel', function(t) {
       })
 
       userSchema.statics = { routeOptions: {} }
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
 
-      var firstNameField = userModel.schema.tree['firstName']
+      let firstNameField = userModel.schema.tree['firstName']
       // </editor-fold>
 
       // <editor-fold desc="Act">
-      var updateModel = joiMongooseHelper.generateJoiUpdateModel(userModel, Log)
+      let updateModel = joiMongooseHelper.generateJoiUpdateModel(userModel, Log)
       // </editor-fold>
 
       // <editor-fold desc="Assert">
@@ -795,16 +794,16 @@ test('joi-mongoose-helper.generateJoiUpdateModel', function(t) {
       // <editor-fold desc="Arrange">
       t.plan(3)
 
-      var generateJoiFieldModel = sinon.spy(function() {
+      let generateJoiFieldModel = sinon.spy(function() {
         return Joi.any()
       })
-      var joiMongooseHelper = rewire('../utilities/joi-mongoose-helper')
+      let joiMongooseHelper = rewire('../../utilities/joi-mongoose-helper')
       joiMongooseHelper.__set__(
         'internals.generateJoiFieldModel',
         generateJoiFieldModel
       )
 
-      var userSchema = new mongoose.Schema({
+      let userSchema = new mongoose.Schema({
         email: {
           type: Types.String
         },
@@ -815,12 +814,12 @@ test('joi-mongoose-helper.generateJoiUpdateModel', function(t) {
       })
 
       userSchema.statics = { routeOptions: {} }
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
 
       // </editor-fold>
 
       // <editor-fold desc="Act">
-      var updateModel = joiMongooseHelper.generateJoiUpdateModel(userModel, Log)
+      let updateModel = joiMongooseHelper.generateJoiUpdateModel(userModel, Log)
       // </editor-fold>
 
       // <editor-fold desc="Assert">
@@ -851,16 +850,16 @@ test('joi-mongoose-helper.generateJoiUpdateModel', function(t) {
       // <editor-fold desc="Arrange">
       t.plan(2)
 
-      var generateJoiFieldModel = sinon.spy(function() {
+      let generateJoiFieldModel = sinon.spy(function() {
         return Joi.any()
       })
-      var joiMongooseHelper = rewire('../utilities/joi-mongoose-helper')
+      let joiMongooseHelper = rewire('../../utilities/joi-mongoose-helper')
       joiMongooseHelper.__set__(
         'internals.generateJoiFieldModel',
         generateJoiFieldModel
       )
 
-      var userSchema = new mongoose.Schema({
+      let userSchema = new mongoose.Schema({
         email: {
           type: Types.String,
           requireOnUpdate: true
@@ -868,12 +867,12 @@ test('joi-mongoose-helper.generateJoiUpdateModel', function(t) {
       })
 
       userSchema.statics = { routeOptions: {} }
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
 
       // </editor-fold>
 
       // <editor-fold desc="Act">
-      var updateModel = joiMongooseHelper.generateJoiUpdateModel(userModel, Log)
+      let updateModel = joiMongooseHelper.generateJoiUpdateModel(userModel, Log)
       // </editor-fold>
 
       // <editor-fold desc="Assert">
@@ -897,16 +896,16 @@ test('joi-mongoose-helper.generateJoiUpdateModel', function(t) {
       // <editor-fold desc="Arrange">
       t.plan(5)
 
-      var generateJoiFieldModel = sinon.spy(function() {
+      let generateJoiFieldModel = sinon.spy(function() {
         return Joi.any()
       })
-      var joiMongooseHelper = rewire('../utilities/joi-mongoose-helper')
+      let joiMongooseHelper = rewire('../../utilities/joi-mongoose-helper')
       joiMongooseHelper.__set__(
         'internals.generateJoiFieldModel',
         generateJoiFieldModel
       )
 
-      var userSchema = new mongoose.Schema({
+      let userSchema = new mongoose.Schema({
         title: {
           type: Types.ObjectId
         },
@@ -946,18 +945,18 @@ test('joi-mongoose-helper.generateJoiUpdateModel', function(t) {
         }
       }
 
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
 
-      var titleField = userModel.schema.tree['title']
-      var profileImageField = userModel.schema.tree['profileImage']
-      var groupsField = userModel.schema.tree['groups']
-      var permissionsField = userModel.schema.tree['permissions']
-      var hashTagsField = userModel.schema.tree['hashTags']
+      let titleField = userModel.schema.tree['title']
+      let profileImageField = userModel.schema.tree['profileImage']
+      let groupsField = userModel.schema.tree['groups']
+      let permissionsField = userModel.schema.tree['permissions']
+      let hashTagsField = userModel.schema.tree['hashTags']
 
       // </editor-fold>
 
       // <editor-fold desc="Act">
-      var updateModel = joiMongooseHelper.generateJoiUpdateModel(userModel, Log)
+      let updateModel = joiMongooseHelper.generateJoiUpdateModel(userModel, Log)
       // </editor-fold>
 
       // <editor-fold desc="Assert">
@@ -1026,24 +1025,24 @@ test('joi-mongoose-helper.generateJoiUpdateModel', function(t) {
       // <editor-fold desc="Arrange">
       t.plan(1)
 
-      var generateJoiFieldModel = sinon.spy(function() {
+      let generateJoiFieldModel = sinon.spy(function() {
         return Joi.any()
       })
-      var joiMongooseHelper = rewire('../utilities/joi-mongoose-helper')
+      let joiMongooseHelper = rewire('../../utilities/joi-mongoose-helper')
       joiMongooseHelper.__set__(
         'internals.generateJoiFieldModel',
         generateJoiFieldModel
       )
 
-      var userSchema = new mongoose.Schema({})
+      let userSchema = new mongoose.Schema({})
 
       userSchema.statics = { routeOptions: {} }
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
 
       // </editor-fold>
 
       // <editor-fold desc="Act">
-      var updateModel = joiMongooseHelper.generateJoiUpdateModel(userModel, Log)
+      let updateModel = joiMongooseHelper.generateJoiUpdateModel(userModel, Log)
       // </editor-fold>
 
       // <editor-fold desc="Assert">
@@ -1061,7 +1060,7 @@ test('joi-mongoose-helper.generateJoiUpdateModel', function(t) {
 })
 
 test('joi-mongoose-helper.generateJoiCreateModel', function(t) {
-  var joiMongooseHelper = require('../utilities/joi-mongoose-helper')
+  let joiMongooseHelper = require('../../utilities/joi-mongoose-helper')
   testHelper.testModelParameter(
     t,
     joiMongooseHelper.generateJoiCreateModel,
@@ -1076,29 +1075,29 @@ test('joi-mongoose-helper.generateJoiCreateModel', function(t) {
       // <editor-fold desc="Arrange">
       t.plan(2)
 
-      var generateJoiFieldModel = sinon.spy(function() {
+      let generateJoiFieldModel = sinon.spy(function() {
         return Joi.any()
       })
-      var joiMongooseHelper = rewire('../utilities/joi-mongoose-helper')
+      let joiMongooseHelper = rewire('../../utilities/joi-mongoose-helper')
       joiMongooseHelper.__set__(
         'internals.generateJoiFieldModel',
         generateJoiFieldModel
       )
 
-      var userSchema = new mongoose.Schema({
+      let userSchema = new mongoose.Schema({
         email: {
           type: Types.String
         }
       })
 
       userSchema.statics = { routeOptions: {} }
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
 
-      var emailField = userModel.schema.tree['email']
+      let emailField = userModel.schema.tree['email']
       // </editor-fold>
 
       // <editor-fold desc="Act">
-      var createModel = joiMongooseHelper.generateJoiCreateModel(userModel, Log)
+      let createModel = joiMongooseHelper.generateJoiCreateModel(userModel, Log)
       // </editor-fold>
 
       // <editor-fold desc="Assert">
@@ -1131,16 +1130,16 @@ test('joi-mongoose-helper.generateJoiCreateModel', function(t) {
       // <editor-fold desc="Arrange">
       t.plan(3)
 
-      var generateJoiFieldModel = sinon.spy(function() {
+      let generateJoiFieldModel = sinon.spy(function() {
         return Joi.any()
       })
-      var joiMongooseHelper = rewire('../utilities/joi-mongoose-helper')
+      let joiMongooseHelper = rewire('../../utilities/joi-mongoose-helper')
       joiMongooseHelper.__set__(
         'internals.generateJoiFieldModel',
         generateJoiFieldModel
       )
 
-      var userSchema = new mongoose.Schema({
+      let userSchema = new mongoose.Schema({
         email: {
           type: Types.String,
           createModel: Joi.any().only('test')
@@ -1148,13 +1147,13 @@ test('joi-mongoose-helper.generateJoiCreateModel', function(t) {
       })
 
       userSchema.statics = { routeOptions: {} }
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
 
-      var emailField = userModel.schema.tree['email']
+      let emailField = userModel.schema.tree['email']
       // </editor-fold>
 
       // <editor-fold desc="Act">
-      var createModel = joiMongooseHelper.generateJoiCreateModel(userModel, Log)
+      let createModel = joiMongooseHelper.generateJoiCreateModel(userModel, Log)
       // </editor-fold>
 
       // <editor-fold desc="Assert">
@@ -1191,16 +1190,16 @@ test('joi-mongoose-helper.generateJoiCreateModel', function(t) {
       // <editor-fold desc="Arrange">
       t.plan(1)
 
-      var generateJoiFieldModel = sinon.spy(function() {
+      let generateJoiFieldModel = sinon.spy(function() {
         return Joi.any()
       })
-      var joiMongooseHelper = rewire('../utilities/joi-mongoose-helper')
+      let joiMongooseHelper = rewire('../../utilities/joi-mongoose-helper')
       joiMongooseHelper.__set__(
         'internals.generateJoiFieldModel',
         generateJoiFieldModel
       )
 
-      var userSchema = new mongoose.Schema({
+      let userSchema = new mongoose.Schema({
         firstName: {
           type: Types.String,
           allowOnCreate: false
@@ -1208,13 +1207,13 @@ test('joi-mongoose-helper.generateJoiCreateModel', function(t) {
       })
 
       userSchema.statics = { routeOptions: {} }
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
 
-      var firstNameField = userModel.schema.tree['firstName']
+      let firstNameField = userModel.schema.tree['firstName']
       // </editor-fold>
 
       // <editor-fold desc="Act">
-      var createModel = joiMongooseHelper.generateJoiCreateModel(userModel, Log)
+      let createModel = joiMongooseHelper.generateJoiCreateModel(userModel, Log)
       // </editor-fold>
 
       // <editor-fold desc="Assert">
@@ -1243,16 +1242,16 @@ test('joi-mongoose-helper.generateJoiCreateModel', function(t) {
       // <editor-fold desc="Arrange">
       t.plan(3)
 
-      var generateJoiFieldModel = sinon.spy(function() {
+      let generateJoiFieldModel = sinon.spy(function() {
         return Joi.any()
       })
-      var joiMongooseHelper = rewire('../utilities/joi-mongoose-helper')
+      let joiMongooseHelper = rewire('../../utilities/joi-mongoose-helper')
       joiMongooseHelper.__set__(
         'internals.generateJoiFieldModel',
         generateJoiFieldModel
       )
 
-      var userSchema = new mongoose.Schema({
+      let userSchema = new mongoose.Schema({
         email: {
           type: Types.String
         },
@@ -1263,12 +1262,12 @@ test('joi-mongoose-helper.generateJoiCreateModel', function(t) {
       })
 
       userSchema.statics = { routeOptions: {} }
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
 
       // </editor-fold>
 
       // <editor-fold desc="Act">
-      var createModel = joiMongooseHelper.generateJoiCreateModel(userModel, Log)
+      let createModel = joiMongooseHelper.generateJoiCreateModel(userModel, Log)
       // </editor-fold>
 
       // <editor-fold desc="Assert">
@@ -1299,16 +1298,16 @@ test('joi-mongoose-helper.generateJoiCreateModel', function(t) {
       // <editor-fold desc="Arrange">
       t.plan(2)
 
-      var generateJoiFieldModel = sinon.spy(function() {
+      let generateJoiFieldModel = sinon.spy(function() {
         return Joi.any()
       })
-      var joiMongooseHelper = rewire('../utilities/joi-mongoose-helper')
+      let joiMongooseHelper = rewire('../../utilities/joi-mongoose-helper')
       joiMongooseHelper.__set__(
         'internals.generateJoiFieldModel',
         generateJoiFieldModel
       )
 
-      var userSchema = new mongoose.Schema({
+      let userSchema = new mongoose.Schema({
         email: {
           type: Types.String,
           required: true
@@ -1316,12 +1315,12 @@ test('joi-mongoose-helper.generateJoiCreateModel', function(t) {
       })
 
       userSchema.statics = { routeOptions: {} }
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
 
       // </editor-fold>
 
       // <editor-fold desc="Act">
-      var createModel = joiMongooseHelper.generateJoiCreateModel(userModel, Log)
+      let createModel = joiMongooseHelper.generateJoiCreateModel(userModel, Log)
       // </editor-fold>
 
       // <editor-fold desc="Assert">
@@ -1345,16 +1344,16 @@ test('joi-mongoose-helper.generateJoiCreateModel', function(t) {
       // <editor-fold desc="Arrange">
       t.plan(5)
 
-      var generateJoiFieldModel = sinon.spy(function() {
+      let generateJoiFieldModel = sinon.spy(function() {
         return Joi.any()
       })
-      var joiMongooseHelper = rewire('../utilities/joi-mongoose-helper')
+      let joiMongooseHelper = rewire('../../utilities/joi-mongoose-helper')
       joiMongooseHelper.__set__(
         'internals.generateJoiFieldModel',
         generateJoiFieldModel
       )
 
-      var userSchema = new mongoose.Schema({
+      let userSchema = new mongoose.Schema({
         title: {
           type: Types.ObjectId
         },
@@ -1394,18 +1393,18 @@ test('joi-mongoose-helper.generateJoiCreateModel', function(t) {
         }
       }
 
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
 
-      var titleField = userModel.schema.tree['title']
-      var profileImageField = userModel.schema.tree['profileImage']
-      var groupsField = userModel.schema.tree['groups']
-      var permissionsField = userModel.schema.tree['permissions']
-      var hashTagsField = userModel.schema.tree['hashTags']
+      let titleField = userModel.schema.tree['title']
+      let profileImageField = userModel.schema.tree['profileImage']
+      let groupsField = userModel.schema.tree['groups']
+      let permissionsField = userModel.schema.tree['permissions']
+      let hashTagsField = userModel.schema.tree['hashTags']
 
       // </editor-fold>
 
       // <editor-fold desc="Act">
-      var createModel = joiMongooseHelper.generateJoiCreateModel(userModel, Log)
+      let createModel = joiMongooseHelper.generateJoiCreateModel(userModel, Log)
       // </editor-fold>
 
       // <editor-fold desc="Assert">
@@ -1478,19 +1477,19 @@ test('joi-mongoose-helper.generateJoiCreateModel', function(t) {
     'joi-mongoose-helper.generateJoiCreateModel returns Joi object with appropriate className.',
     function(t) {
       // <editor-fold desc="Arrange">
-      var joiMongooseHelper = require('../utilities/joi-mongoose-helper')
+      let joiMongooseHelper = require('../../utilities/joi-mongoose-helper')
 
       t.plan(1)
 
-      var userSchema = new mongoose.Schema({})
+      let userSchema = new mongoose.Schema({})
 
       userSchema.statics = { routeOptions: {} }
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
 
       // </editor-fold>
 
       // <editor-fold desc="Act">
-      var createModel = joiMongooseHelper.generateJoiCreateModel(userModel, Log)
+      let createModel = joiMongooseHelper.generateJoiCreateModel(userModel, Log)
       // </editor-fold>
 
       // <editor-fold desc="Assert">
@@ -1514,16 +1513,16 @@ test('joi-mongoose-helper.generateJoiModelFromFieldType', function(t) {
       // <editor-fold desc="Arrange">
       t.plan(16)
 
-      var joiMongooseHelper = rewire('../utilities/joi-mongoose-helper')
-      var joiObjectId = sinon.spy(
+      let joiMongooseHelper = rewire('../../utilities/joi-mongoose-helper')
+      let joiObjectId = sinon.spy(
         joiMongooseHelper.__get__('internals.joiObjectId')
       )
       joiMongooseHelper.__set__('internals.joiObjectId', joiObjectId)
-      var generateJoiModelFromFieldType = joiMongooseHelper.__get__(
+      let generateJoiModelFromFieldType = joiMongooseHelper.__get__(
         'internals.generateJoiModelFromFieldType'
       )
 
-      var testSchema = {
+      let testSchema = {
         idType: {
           type: {
             schemaName: 'ObjectId'
@@ -1583,27 +1582,27 @@ test('joi-mongoose-helper.generateJoiModelFromFieldType', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Act">
-      var idModel = generateJoiModelFromFieldType(testSchema.idType, Log)
-      var booleanModel = generateJoiModelFromFieldType(
+      let idModel = generateJoiModelFromFieldType(testSchema.idType, Log)
+      let booleanModel = generateJoiModelFromFieldType(
         testSchema.booleanType,
         Log
       )
-      var numberModel = generateJoiModelFromFieldType(
+      let numberModel = generateJoiModelFromFieldType(
         testSchema.numberType,
         Log
       )
-      var dateModel = generateJoiModelFromFieldType(testSchema.dateType, Log)
-      var stringModel = generateJoiModelFromFieldType(
+      let dateModel = generateJoiModelFromFieldType(testSchema.dateType, Log)
+      let stringModel = generateJoiModelFromFieldType(
         testSchema.stringType,
         Log
       )
-      var enumModel = generateJoiModelFromFieldType(testSchema.enumType, Log)
-      var regexModel = generateJoiModelFromFieldType(testSchema.regexType, Log)
-      var invertedRegexModel = generateJoiModelFromFieldType(
+      let enumModel = generateJoiModelFromFieldType(testSchema.enumType, Log)
+      let regexModel = generateJoiModelFromFieldType(testSchema.regexType, Log)
+      let invertedRegexModel = generateJoiModelFromFieldType(
         testSchema.invertedRegexType,
         Log
       )
-      var allowNullModel = generateJoiModelFromFieldType(
+      let allowNullModel = generateJoiModelFromFieldType(
         testSchema.allowNullType,
         Log
       )
@@ -1683,11 +1682,11 @@ test('joi-mongoose-helper.joiObjectId', function(t) {
     'joi-mongoose-helper.joiObjectId returns correct models for objectIds.',
     function(t) {
       // <editor-fold desc="Arrange">
-      var joiMongooseHelper = require('../utilities/joi-mongoose-helper')
+      let joiMongooseHelper = require('../../utilities/joi-mongoose-helper')
 
       t.plan(4)
 
-      var testSchema = {
+      let testSchema = {
         idType: {
           type: {
             schemaName: 'ObjectId'
@@ -1698,7 +1697,7 @@ test('joi-mongoose-helper.joiObjectId', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Act">
-      var idModel = joiMongooseHelper.generateJoiModelFromFieldType(
+      let idModel = joiMongooseHelper.generateJoiModelFromFieldType(
         testSchema.idType,
         Log
       )
@@ -1738,8 +1737,8 @@ test('joi-mongoose-helper.isValidField', function(t) {
       // <editor-fold desc="Arrange">
       t.plan(3)
 
-      var joiMongooseHelper = rewire('../utilities/joi-mongoose-helper')
-      var isValidField = sinon.spy(
+      let joiMongooseHelper = rewire('../../utilities/joi-mongoose-helper')
+      let isValidField = sinon.spy(
         joiMongooseHelper.__get__('internals.isValidField')
       )
 
@@ -1774,8 +1773,8 @@ test('joi-mongoose-helper.isValidField', function(t) {
       // <editor-fold desc="Arrange">
       t.plan(2)
 
-      var joiMongooseHelper = rewire('../utilities/joi-mongoose-helper')
-      var isValidField = sinon.spy(
+      let joiMongooseHelper = rewire('../../utilities/joi-mongoose-helper')
+      let isValidField = sinon.spy(
         joiMongooseHelper.__get__('internals.isValidField')
       )
 
@@ -1806,8 +1805,8 @@ test('joi-mongoose-helper.isValidField', function(t) {
       // <editor-fold desc="Arrange">
       t.plan(3)
 
-      var joiMongooseHelper = rewire('../utilities/joi-mongoose-helper')
-      var isValidField = sinon.spy(
+      let joiMongooseHelper = rewire('../../utilities/joi-mongoose-helper')
+      let isValidField = sinon.spy(
         joiMongooseHelper.__get__('internals.isValidField')
       )
 
@@ -1842,8 +1841,8 @@ test('joi-mongoose-helper.isValidField', function(t) {
       // <editor-fold desc="Arrange">
       t.plan(3)
 
-      var joiMongooseHelper = rewire('../utilities/joi-mongoose-helper')
-      var isValidField = sinon.spy(
+      let joiMongooseHelper = rewire('../../utilities/joi-mongoose-helper')
+      let isValidField = sinon.spy(
         joiMongooseHelper.__get__('internals.isValidField')
       )
 
@@ -1882,19 +1881,19 @@ test('joi-mongoose-helper.generateJoiFieldModel', function(t) {
       // <editor-fold desc="Arrange">
       t.plan(1)
 
-      var joiMongooseHelper = rewire('../utilities/joi-mongoose-helper')
-      var generateJoiReadModel = sinon.spy(function() {
+      let joiMongooseHelper = rewire('../../utilities/joi-mongoose-helper')
+      let generateJoiReadModel = sinon.spy(function() {
         return Joi.any()
       })
       joiMongooseHelper.__set__(
         'internals.generateJoiReadModel',
         generateJoiReadModel
       )
-      var generateJoiFieldModel = joiMongooseHelper.__get__(
+      let generateJoiFieldModel = joiMongooseHelper.__get__(
         'internals.generateJoiFieldModel'
       )
 
-      var userSchema = new mongoose.Schema({
+      let userSchema = new mongoose.Schema({
         name: {
           first: { type: Types.String },
           last: { type: Types.String }
@@ -1902,13 +1901,13 @@ test('joi-mongoose-helper.generateJoiFieldModel', function(t) {
       })
 
       userSchema.statics = { routeOptions: {} }
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
 
-      var nameField = userModel.schema.tree['name']
+      let nameField = userModel.schema.tree['name']
       // </editor-fold>
 
       // <editor-fold desc="Act">
-      var fieldModel = generateJoiFieldModel(
+      let fieldModel = generateJoiFieldModel(
         userModel,
         nameField,
         'name',
@@ -1934,19 +1933,19 @@ test('joi-mongoose-helper.generateJoiFieldModel', function(t) {
       // <editor-fold desc="Arrange">
       t.plan(1)
 
-      var joiMongooseHelper = rewire('../utilities/joi-mongoose-helper')
-      var generateJoiCreateModel = sinon.spy(function() {
+      let joiMongooseHelper = rewire('../../utilities/joi-mongoose-helper')
+      let generateJoiCreateModel = sinon.spy(function() {
         return Joi.any()
       })
       joiMongooseHelper.__set__(
         'internals.generateJoiCreateModel',
         generateJoiCreateModel
       )
-      var generateJoiFieldModel = joiMongooseHelper.__get__(
+      let generateJoiFieldModel = joiMongooseHelper.__get__(
         'internals.generateJoiFieldModel'
       )
 
-      var userSchema = new mongoose.Schema({
+      let userSchema = new mongoose.Schema({
         name: {
           first: { type: Types.String },
           last: { type: Types.String }
@@ -1954,13 +1953,13 @@ test('joi-mongoose-helper.generateJoiFieldModel', function(t) {
       })
 
       userSchema.statics = { routeOptions: {} }
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
 
-      var nameField = userModel.schema.tree['name']
+      let nameField = userModel.schema.tree['name']
       // </editor-fold>
 
       // <editor-fold desc="Act">
-      var fieldModel = generateJoiFieldModel(
+      let fieldModel = generateJoiFieldModel(
         userModel,
         nameField,
         'name',
@@ -1986,19 +1985,19 @@ test('joi-mongoose-helper.generateJoiFieldModel', function(t) {
       // <editor-fold desc="Arrange">
       t.plan(1)
 
-      var joiMongooseHelper = rewire('../utilities/joi-mongoose-helper')
-      var generateJoiUpdateModel = sinon.spy(function() {
+      let joiMongooseHelper = rewire('../../utilities/joi-mongoose-helper')
+      let generateJoiUpdateModel = sinon.spy(function() {
         return Joi.any()
       })
       joiMongooseHelper.__set__(
         'internals.generateJoiUpdateModel',
         generateJoiUpdateModel
       )
-      var generateJoiFieldModel = joiMongooseHelper.__get__(
+      let generateJoiFieldModel = joiMongooseHelper.__get__(
         'internals.generateJoiFieldModel'
       )
 
-      var userSchema = new mongoose.Schema({
+      let userSchema = new mongoose.Schema({
         name: {
           first: { type: Types.String },
           last: { type: Types.String }
@@ -2006,13 +2005,13 @@ test('joi-mongoose-helper.generateJoiFieldModel', function(t) {
       })
 
       userSchema.statics = { routeOptions: {} }
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
 
-      var nameField = userModel.schema.tree['name']
+      let nameField = userModel.schema.tree['name']
       // </editor-fold>
 
       // <editor-fold desc="Act">
-      var fieldModel = generateJoiFieldModel(
+      let fieldModel = generateJoiFieldModel(
         userModel,
         nameField,
         'name',
@@ -2038,19 +2037,19 @@ test('joi-mongoose-helper.generateJoiFieldModel', function(t) {
       // <editor-fold desc="Arrange">
       t.plan(1)
 
-      var joiMongooseHelper = rewire('../utilities/joi-mongoose-helper')
-      var generateJoiUpdateModel = sinon.spy(function() {
+      let joiMongooseHelper = rewire('../../utilities/joi-mongoose-helper')
+      let generateJoiUpdateModel = sinon.spy(function() {
         return Joi.any()
       })
       joiMongooseHelper.__set__(
         'internals.generateJoiUpdateModel',
         generateJoiUpdateModel
       )
-      var generateJoiFieldModel = joiMongooseHelper.__get__(
+      let generateJoiFieldModel = joiMongooseHelper.__get__(
         'internals.generateJoiFieldModel'
       )
 
-      var userSchema = new mongoose.Schema({
+      let userSchema = new mongoose.Schema({
         name: {
           first: { type: Types.String },
           last: { type: Types.String }
@@ -2058,16 +2057,16 @@ test('joi-mongoose-helper.generateJoiFieldModel', function(t) {
       })
 
       userSchema.statics = { routeOptions: {} }
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
 
-      var nameField = userModel.schema.tree['name']
+      let nameField = userModel.schema.tree['name']
 
-      var error = ''
+      let error = ''
       // </editor-fold>
 
       // <editor-fold desc="Act">
       try {
-        var fieldModel = generateJoiFieldModel(
+        let fieldModel = generateJoiFieldModel(
           userModel,
           nameField,
           'name',
@@ -2100,19 +2099,19 @@ test('joi-mongoose-helper.generateJoiFieldModel', function(t) {
       // <editor-fold desc="Arrange">
       t.plan(3)
 
-      var joiMongooseHelper = rewire('../utilities/joi-mongoose-helper')
-      var generateJoiUpdateModel = sinon.spy(function() {
+      let joiMongooseHelper = rewire('../../utilities/joi-mongoose-helper')
+      let generateJoiUpdateModel = sinon.spy(function() {
         return Joi.any()
       })
       joiMongooseHelper.__set__(
         'internals.generateJoiUpdateModel',
         generateJoiUpdateModel
       )
-      var generateJoiFieldModel = joiMongooseHelper.__get__(
+      let generateJoiFieldModel = joiMongooseHelper.__get__(
         'internals.generateJoiFieldModel'
       )
 
-      var userSchema = new mongoose.Schema({
+      let userSchema = new mongoose.Schema({
         name: {
           first: { type: Types.String },
           last: { type: Types.String },
@@ -2122,20 +2121,20 @@ test('joi-mongoose-helper.generateJoiFieldModel', function(t) {
       })
 
       userSchema.statics = { routeOptions: {} }
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
 
-      var nameField = userModel.schema.tree['name']
+      let nameField = userModel.schema.tree['name']
       // </editor-fold>
 
       // <editor-fold desc="Act">
-      var fieldModel = generateJoiFieldModel(
+      let fieldModel = generateJoiFieldModel(
         userModel,
         nameField,
         'name',
         'update',
         Log
       )
-      var nestedModel = generateJoiUpdateModel.args[0][0]
+      let nestedModel = generateJoiUpdateModel.args[0][0]
 
       // </editor-fold>
 
@@ -2158,19 +2157,19 @@ test('joi-mongoose-helper.generateJoiFieldModel', function(t) {
       // <editor-fold desc="Arrange">
       t.plan(1)
 
-      var joiMongooseHelper = rewire('../utilities/joi-mongoose-helper')
-      var generateJoiUpdateModel = sinon.spy(function() {
+      let joiMongooseHelper = rewire('../../utilities/joi-mongoose-helper')
+      let generateJoiUpdateModel = sinon.spy(function() {
         return Joi.any()
       })
       joiMongooseHelper.__set__(
         'internals.generateJoiUpdateModel',
         generateJoiUpdateModel
       )
-      var generateJoiFieldModel = joiMongooseHelper.__get__(
+      let generateJoiFieldModel = joiMongooseHelper.__get__(
         'internals.generateJoiFieldModel'
       )
 
-      var userSchema = new mongoose.Schema({
+      let userSchema = new mongoose.Schema({
         name: {
           first: { type: Types.String },
           last: { type: Types.String },
@@ -2180,13 +2179,13 @@ test('joi-mongoose-helper.generateJoiFieldModel', function(t) {
       })
 
       userSchema.statics = { routeOptions: {} }
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
 
-      var nameField = userModel.schema.tree['name']
+      let nameField = userModel.schema.tree['name']
       // </editor-fold>
 
       // <editor-fold desc="Act">
-      var fieldModel = generateJoiFieldModel(
+      let fieldModel = generateJoiFieldModel(
         userModel,
         nameField,
         'name',
@@ -2216,19 +2215,19 @@ test('joi-mongoose-helper.generateJoiFieldModel', function(t) {
       // <editor-fold desc="Arrange">
       t.plan(9)
 
-      var joiMongooseHelper = rewire('../utilities/joi-mongoose-helper')
-      var generateJoiUpdateModel = sinon.spy(function() {
+      let joiMongooseHelper = rewire('../../utilities/joi-mongoose-helper')
+      let generateJoiUpdateModel = sinon.spy(function() {
         return Joi.any()
       })
       joiMongooseHelper.__set__(
         'internals.generateJoiUpdateModel',
         generateJoiUpdateModel
       )
-      var generateJoiFieldModel = joiMongooseHelper.__get__(
+      let generateJoiFieldModel = joiMongooseHelper.__get__(
         'internals.generateJoiFieldModel'
       )
 
-      var userSchema = new mongoose.Schema({
+      let userSchema = new mongoose.Schema({
         name: {
           first: { type: Types.String },
           last: { type: Types.String },
@@ -2242,20 +2241,20 @@ test('joi-mongoose-helper.generateJoiFieldModel', function(t) {
       })
 
       userSchema.statics = { routeOptions: {} }
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
 
-      var nameField = userModel.schema.tree['name']
-      var photosField = userModel.schema.tree['photos']
-      var friendsField = userModel.schema.tree['friends']
+      let nameField = userModel.schema.tree['name']
+      let photosField = userModel.schema.tree['photos']
+      let friendsField = userModel.schema.tree['friends']
       // </editor-fold>
 
       // <editor-fold desc="Act">
       generateJoiFieldModel(userModel, nameField, 'name', 'update', Log)
       generateJoiFieldModel(userModel, photosField, 'photos', 'update', Log)
       generateJoiFieldModel(userModel, friendsField, 'friends', 'update', Log)
-      var nestedModel1 = generateJoiUpdateModel.args[0][0]
-      var nestedModel2 = generateJoiUpdateModel.args[1][0]
-      var nestedModel3 = generateJoiUpdateModel.args[2][0]
+      let nestedModel1 = generateJoiUpdateModel.args[0][0]
+      let nestedModel2 = generateJoiUpdateModel.args[1][0]
+      let nestedModel3 = generateJoiUpdateModel.args[2][0]
       // </editor-fold>
 
       // <editor-fold desc="Assert">
@@ -2283,19 +2282,19 @@ test('joi-mongoose-helper.generateJoiFieldModel', function(t) {
       // <editor-fold desc="Arrange">
       t.plan(6)
 
-      var joiMongooseHelper = rewire('../utilities/joi-mongoose-helper')
-      var generateJoiUpdateModel = sinon.spy(function() {
+      let joiMongooseHelper = rewire('../../utilities/joi-mongoose-helper')
+      let generateJoiUpdateModel = sinon.spy(function() {
         return Joi.any().valid('test')
       })
       joiMongooseHelper.__set__(
         'internals.generateJoiUpdateModel',
         generateJoiUpdateModel
       )
-      var generateJoiFieldModel = joiMongooseHelper.__get__(
+      let generateJoiFieldModel = joiMongooseHelper.__get__(
         'internals.generateJoiFieldModel'
       )
 
-      var userSchema = new mongoose.Schema({
+      let userSchema = new mongoose.Schema({
         name: {
           first: { type: Types.String },
           last: { type: Types.String },
@@ -2309,21 +2308,21 @@ test('joi-mongoose-helper.generateJoiFieldModel', function(t) {
       })
 
       userSchema.statics = { routeOptions: {} }
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
 
-      var nameField = userModel.schema.tree['name']
-      var photosField = userModel.schema.tree['photos']
+      let nameField = userModel.schema.tree['name']
+      let photosField = userModel.schema.tree['photos']
       // </editor-fold>
 
       // <editor-fold desc="Act">
-      var fieldModel1 = generateJoiFieldModel(
+      let fieldModel1 = generateJoiFieldModel(
         userModel,
         nameField,
         'name',
         'update',
         Log
       )
-      var fieldModel2 = generateJoiFieldModel(
+      let fieldModel2 = generateJoiFieldModel(
         userModel,
         photosField,
         'photos',
@@ -2373,32 +2372,32 @@ test('joi-mongoose-helper.generateJoiFieldModel', function(t) {
       // <editor-fold desc="Arrange">
       t.plan(1)
 
-      var joiMongooseHelper = rewire('../utilities/joi-mongoose-helper')
-      var generateJoiModelFromFieldType = sinon.spy(function() {
+      let joiMongooseHelper = rewire('../../utilities/joi-mongoose-helper')
+      let generateJoiModelFromFieldType = sinon.spy(function() {
         return Joi.any()
       })
       joiMongooseHelper.__set__(
         'internals.generateJoiModelFromFieldType',
         generateJoiModelFromFieldType
       )
-      var generateJoiFieldModel = joiMongooseHelper.__get__(
+      let generateJoiFieldModel = joiMongooseHelper.__get__(
         'internals.generateJoiFieldModel'
       )
 
-      var userSchema = new mongoose.Schema({
+      let userSchema = new mongoose.Schema({
         name: {
           type: Types.String
         }
       })
 
       userSchema.statics = { routeOptions: {} }
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
 
-      var nameField = userModel.schema.tree['name']
+      let nameField = userModel.schema.tree['name']
       // </editor-fold>
 
       // <editor-fold desc="Act">
-      var fieldModel = generateJoiFieldModel(
+      let fieldModel = generateJoiFieldModel(
         userModel,
         nameField,
         'name',
@@ -2427,19 +2426,19 @@ test('joi-mongoose-helper.generateJoiFieldModel', function(t) {
       // <editor-fold desc="Arrange">
       t.plan(1)
 
-      var joiMongooseHelper = rewire('../utilities/joi-mongoose-helper')
-      var generateJoiModelFromFieldType = sinon.spy(function() {
+      let joiMongooseHelper = rewire('../../utilities/joi-mongoose-helper')
+      let generateJoiModelFromFieldType = sinon.spy(function() {
         return Joi.any()
       })
       joiMongooseHelper.__set__(
         'internals.generateJoiModelFromFieldType',
         generateJoiModelFromFieldType
       )
-      var generateJoiFieldModel = joiMongooseHelper.__get__(
+      let generateJoiFieldModel = joiMongooseHelper.__get__(
         'internals.generateJoiFieldModel'
       )
 
-      var userSchema = new mongoose.Schema({
+      let userSchema = new mongoose.Schema({
         test: {
           type: Types.Object,
           required: true
@@ -2447,13 +2446,13 @@ test('joi-mongoose-helper.generateJoiFieldModel', function(t) {
       })
 
       userSchema.statics = { routeOptions: {} }
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
 
-      var nameField = userModel.schema.tree['test']
+      let nameField = userModel.schema.tree['test']
       // </editor-fold>
 
       // <editor-fold desc="Act">
-      var fieldModel = generateJoiFieldModel(
+      let fieldModel = generateJoiFieldModel(
         userModel,
         nameField,
         'test',
@@ -2486,15 +2485,18 @@ test('joi-mongoose-helper.generateJoiListQueryModel', function(t) {
       // <editor-fold desc="Arrange">
       t.plan(3)
 
-      var queryHelperStub = this.stub(require('../utilities/query-helper'))
-      var joiMongooseHelper = proxyquire('../utilities/joi-mongoose-helper', {
-        './query-helper': queryHelperStub
-      })
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let joiMongooseHelper = proxyquire(
+        '../../utilities/joi-mongoose-helper',
+        {
+          './query-helper': queryHelperStub
+        }
+      )
 
-      var userSchema = new mongoose.Schema({})
+      let userSchema = new mongoose.Schema({})
       userSchema.statics = { routeOptions: {} }
 
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
       // </editor-fold>
 
       // <editor-fold desc="Act">
@@ -2523,7 +2525,7 @@ test('joi-mongoose-helper.generateJoiListQueryModel', function(t) {
       // <editor-fold desc="Arrange">
       t.plan(30)
 
-      var queryHelperStub = this.stub(require('../utilities/query-helper'))
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
       queryHelperStub.getQueryableFields = this.spy(function() {
         return ['queryable']
       })
@@ -2534,13 +2536,13 @@ test('joi-mongoose-helper.generateJoiListQueryModel', function(t) {
         return ['sortable']
       })
 
-      var generateJoiModelFromFieldType = sinon.spy(function(test) {
+      let generateJoiModelFromFieldType = sinon.spy(function(test) {
         return Joi.any()
       })
-      var joiObjectId = sinon.spy(function() {
+      let joiObjectId = sinon.spy(function() {
         return Joi.any().valid('objectId')
       })
-      var joiMongooseHelper = rewire('../utilities/joi-mongoose-helper')
+      let joiMongooseHelper = rewire('../../utilities/joi-mongoose-helper')
       joiMongooseHelper.__set__(
         'internals.generateJoiModelFromFieldType',
         generateJoiModelFromFieldType
@@ -2549,7 +2551,7 @@ test('joi-mongoose-helper.generateJoiListQueryModel', function(t) {
       joiMongooseHelper.__set__('queryHelper', queryHelperStub)
       joiMongooseHelper.__set__('config', { enableQueryValidation: true })
 
-      var userSchema = new mongoose.Schema({
+      let userSchema = new mongoose.Schema({
         queryable: {
           type: Types.String
         },
@@ -2563,12 +2565,12 @@ test('joi-mongoose-helper.generateJoiListQueryModel', function(t) {
 
       userSchema.statics = { routeOptions: {} }
 
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
 
       // </editor-fold>
 
       // <editor-fold desc="Act">
-      var queryModel = joiMongooseHelper.generateJoiListQueryModel(
+      let queryModel = joiMongooseHelper.generateJoiListQueryModel(
         userModel,
         Log
       )
@@ -2724,7 +2726,7 @@ test('joi-mongoose-helper.generateJoiListQueryModel', function(t) {
       // <editor-fold desc="Arrange">
       t.plan(1)
 
-      var queryHelperStub = this.stub(require('../utilities/query-helper'))
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
       queryHelperStub.getQueryableFields = this.spy(function() {
         return ['queryable']
       })
@@ -2735,13 +2737,13 @@ test('joi-mongoose-helper.generateJoiListQueryModel', function(t) {
         return ['sortable']
       })
 
-      var generateJoiModelFromFieldType = sinon.spy(function(test) {
+      let generateJoiModelFromFieldType = sinon.spy(function(test) {
         return Joi.any()
       })
-      var joiObjectId = sinon.spy(function() {
+      let joiObjectId = sinon.spy(function() {
         return Joi.any().valid('objectId')
       })
-      var joiMongooseHelper = rewire('../utilities/joi-mongoose-helper')
+      let joiMongooseHelper = rewire('../../utilities/joi-mongoose-helper')
       joiMongooseHelper.__set__(
         'internals.generateJoiModelFromFieldType',
         generateJoiModelFromFieldType
@@ -2753,7 +2755,7 @@ test('joi-mongoose-helper.generateJoiListQueryModel', function(t) {
         enableWhereQueries: true
       })
 
-      var userSchema = new mongoose.Schema({
+      let userSchema = new mongoose.Schema({
         queryable: {
           type: Types.String
         },
@@ -2767,12 +2769,12 @@ test('joi-mongoose-helper.generateJoiListQueryModel', function(t) {
 
       userSchema.statics = { routeOptions: {} }
 
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
 
       // </editor-fold>
 
       // <editor-fold desc="Act">
-      var queryModel = joiMongooseHelper.generateJoiListQueryModel(
+      let queryModel = joiMongooseHelper.generateJoiListQueryModel(
         userModel,
         Log
       )
@@ -2798,7 +2800,7 @@ test('joi-mongoose-helper.generateJoiListQueryModel', function(t) {
       // <editor-fold desc="Arrange">
       t.plan(28)
 
-      var queryHelperStub = this.stub(require('../utilities/query-helper'))
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
       queryHelperStub.getQueryableFields = this.spy(function() {
         return ['queryable']
       })
@@ -2809,13 +2811,13 @@ test('joi-mongoose-helper.generateJoiListQueryModel', function(t) {
         return ['sortable']
       })
 
-      var generateJoiModelFromFieldType = sinon.spy(function(test) {
+      let generateJoiModelFromFieldType = sinon.spy(function(test) {
         return Joi.any()
       })
-      var joiObjectId = sinon.spy(function() {
+      let joiObjectId = sinon.spy(function() {
         return Joi.any().valid('objectId')
       })
-      var joiMongooseHelper = rewire('../utilities/joi-mongoose-helper')
+      let joiMongooseHelper = rewire('../../utilities/joi-mongoose-helper')
       joiMongooseHelper.__set__(
         'internals.generateJoiModelFromFieldType',
         generateJoiModelFromFieldType
@@ -2824,7 +2826,7 @@ test('joi-mongoose-helper.generateJoiListQueryModel', function(t) {
       joiMongooseHelper.__set__('queryHelper', queryHelperStub)
       joiMongooseHelper.__set__('config', { enableQueryValidation: false })
 
-      var userSchema = new mongoose.Schema({
+      let userSchema = new mongoose.Schema({
         queryable: {
           type: Types.String
         },
@@ -2838,12 +2840,12 @@ test('joi-mongoose-helper.generateJoiListQueryModel', function(t) {
 
       userSchema.statics = { routeOptions: {} }
 
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
 
       // </editor-fold>
 
       // <editor-fold desc="Act">
-      var queryModel = joiMongooseHelper.generateJoiListQueryModel(
+      let queryModel = joiMongooseHelper.generateJoiListQueryModel(
         userModel,
         Log
       )
@@ -2989,7 +2991,7 @@ test('joi-mongoose-helper.generateJoiListQueryModel', function(t) {
       // <editor-fold desc="Arrange">
       t.plan(5)
 
-      var queryHelperStub = this.stub(require('../utilities/query-helper'))
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
       queryHelperStub.getQueryableFields = this.spy(function() {
         return ['queryable']
       })
@@ -3000,13 +3002,13 @@ test('joi-mongoose-helper.generateJoiListQueryModel', function(t) {
         return ['sortable']
       })
 
-      var generateJoiModelFromFieldType = sinon.spy(function(test) {
+      let generateJoiModelFromFieldType = sinon.spy(function(test) {
         return Joi.any()
       })
-      var joiObjectId = sinon.spy(function() {
+      let joiObjectId = sinon.spy(function() {
         return Joi.any().valid('objectId')
       })
-      var joiMongooseHelper = rewire('../utilities/joi-mongoose-helper')
+      let joiMongooseHelper = rewire('../../utilities/joi-mongoose-helper')
       joiMongooseHelper.__set__(
         'internals.generateJoiModelFromFieldType',
         generateJoiModelFromFieldType
@@ -3015,7 +3017,7 @@ test('joi-mongoose-helper.generateJoiListQueryModel', function(t) {
       joiMongooseHelper.__set__('queryHelper', queryHelperStub)
       joiMongooseHelper.__set__('config', { enableQueryValidation: true })
 
-      var userSchema = new mongoose.Schema({
+      let userSchema = new mongoose.Schema({
         queryable: {
           type: Types.String
         },
@@ -3029,12 +3031,12 @@ test('joi-mongoose-helper.generateJoiListQueryModel', function(t) {
 
       userSchema.statics = { routeOptions: { associations: {} } }
 
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
 
       // </editor-fold>
 
       // <editor-fold desc="Act">
-      var queryModel = joiMongooseHelper.generateJoiListQueryModel(
+      let queryModel = joiMongooseHelper.generateJoiListQueryModel(
         userModel,
         Log
       )
@@ -3081,15 +3083,18 @@ test('joi-mongoose-helper.generateJoiFindQueryModel', function(t) {
       // <editor-fold desc="Arrange">
       t.plan(1)
 
-      var queryHelperStub = this.stub(require('../utilities/query-helper'))
-      var joiMongooseHelper = proxyquire('../utilities/joi-mongoose-helper', {
-        './query-helper': queryHelperStub
-      })
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let joiMongooseHelper = proxyquire(
+        '../../utilities/joi-mongoose-helper',
+        {
+          './query-helper': queryHelperStub
+        }
+      )
 
-      var userSchema = new mongoose.Schema({})
+      let userSchema = new mongoose.Schema({})
       userSchema.statics = { routeOptions: {} }
 
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
       // </editor-fold>
 
       // <editor-fold desc="Act">
@@ -3113,7 +3118,7 @@ test('joi-mongoose-helper.generateJoiFindQueryModel', function(t) {
       // <editor-fold desc="Arrange">
       t.plan(6)
 
-      var queryHelperStub = this.stub(require('../utilities/query-helper'))
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
       queryHelperStub.getQueryableFields = this.spy(function() {
         return ['queryable']
       })
@@ -3124,13 +3129,13 @@ test('joi-mongoose-helper.generateJoiFindQueryModel', function(t) {
         return ['sortable']
       })
 
-      var generateJoiModelFromFieldType = sinon.spy(function(test) {
+      let generateJoiModelFromFieldType = sinon.spy(function(test) {
         return Joi.any()
       })
-      var joiObjectId = sinon.spy(function() {
+      let joiObjectId = sinon.spy(function() {
         return Joi.any().valid('objectId')
       })
-      var joiMongooseHelper = rewire('../utilities/joi-mongoose-helper')
+      let joiMongooseHelper = rewire('../../utilities/joi-mongoose-helper')
       joiMongooseHelper.__set__(
         'internals.generateJoiModelFromFieldType',
         generateJoiModelFromFieldType
@@ -3139,7 +3144,7 @@ test('joi-mongoose-helper.generateJoiFindQueryModel', function(t) {
       joiMongooseHelper.__set__('queryHelper', queryHelperStub)
       joiMongooseHelper.__set__('config', { enableQueryValidation: true })
 
-      var userSchema = new mongoose.Schema({
+      let userSchema = new mongoose.Schema({
         queryable: {
           type: Types.String
         },
@@ -3153,12 +3158,12 @@ test('joi-mongoose-helper.generateJoiFindQueryModel', function(t) {
 
       userSchema.statics = { routeOptions: {} }
 
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
 
       // </editor-fold>
 
       // <editor-fold desc="Act">
-      var queryModel = joiMongooseHelper.generateJoiFindQueryModel(
+      let queryModel = joiMongooseHelper.generateJoiFindQueryModel(
         userModel,
         Log
       )
@@ -3207,7 +3212,7 @@ test('joi-mongoose-helper.generateJoiFindQueryModel', function(t) {
       // <editor-fold desc="Arrange">
       t.plan(4)
 
-      var queryHelperStub = this.stub(require('../utilities/query-helper'))
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
       queryHelperStub.getQueryableFields = this.spy(function() {
         return ['queryable']
       })
@@ -3218,13 +3223,13 @@ test('joi-mongoose-helper.generateJoiFindQueryModel', function(t) {
         return ['sortable']
       })
 
-      var generateJoiModelFromFieldType = sinon.spy(function(test) {
+      let generateJoiModelFromFieldType = sinon.spy(function(test) {
         return Joi.any()
       })
-      var joiObjectId = sinon.spy(function() {
+      let joiObjectId = sinon.spy(function() {
         return Joi.any().valid('objectId')
       })
-      var joiMongooseHelper = rewire('../utilities/joi-mongoose-helper')
+      let joiMongooseHelper = rewire('../../utilities/joi-mongoose-helper')
       joiMongooseHelper.__set__(
         'internals.generateJoiModelFromFieldType',
         generateJoiModelFromFieldType
@@ -3233,7 +3238,7 @@ test('joi-mongoose-helper.generateJoiFindQueryModel', function(t) {
       joiMongooseHelper.__set__('queryHelper', queryHelperStub)
       joiMongooseHelper.__set__('config', { enableQueryValidation: false })
 
-      var userSchema = new mongoose.Schema({
+      let userSchema = new mongoose.Schema({
         queryable: {
           type: Types.String
         },
@@ -3247,12 +3252,12 @@ test('joi-mongoose-helper.generateJoiFindQueryModel', function(t) {
 
       userSchema.statics = { routeOptions: {} }
 
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
 
       // </editor-fold>
 
       // <editor-fold desc="Act">
-      var queryModel = joiMongooseHelper.generateJoiFindQueryModel(
+      let queryModel = joiMongooseHelper.generateJoiFindQueryModel(
         userModel,
         Log
       )
@@ -3291,7 +3296,7 @@ test('joi-mongoose-helper.generateJoiFindQueryModel', function(t) {
       // <editor-fold desc="Arrange">
       t.plan(5)
 
-      var queryHelperStub = this.stub(require('../utilities/query-helper'))
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
       queryHelperStub.getQueryableFields = this.spy(function() {
         return ['queryable']
       })
@@ -3302,13 +3307,13 @@ test('joi-mongoose-helper.generateJoiFindQueryModel', function(t) {
         return ['sortable']
       })
 
-      var generateJoiModelFromFieldType = sinon.spy(function(test) {
+      let generateJoiModelFromFieldType = sinon.spy(function(test) {
         return Joi.any()
       })
-      var joiObjectId = sinon.spy(function() {
+      let joiObjectId = sinon.spy(function() {
         return Joi.any().valid('objectId')
       })
-      var joiMongooseHelper = rewire('../utilities/joi-mongoose-helper')
+      let joiMongooseHelper = rewire('../../utilities/joi-mongoose-helper')
       joiMongooseHelper.__set__(
         'internals.generateJoiModelFromFieldType',
         generateJoiModelFromFieldType
@@ -3317,7 +3322,7 @@ test('joi-mongoose-helper.generateJoiFindQueryModel', function(t) {
       joiMongooseHelper.__set__('queryHelper', queryHelperStub)
       joiMongooseHelper.__set__('config', { enableQueryValidation: true })
 
-      var userSchema = new mongoose.Schema({
+      let userSchema = new mongoose.Schema({
         queryable: {
           type: Types.String
         },
@@ -3331,12 +3336,12 @@ test('joi-mongoose-helper.generateJoiFindQueryModel', function(t) {
 
       userSchema.statics = { routeOptions: { associations: {} } }
 
-      var userModel = mongoose.model('user', userSchema)
+      let userModel = mongoose.model('user', userSchema)
 
       // </editor-fold>
 
       // <editor-fold desc="Act">
-      var queryModel = joiMongooseHelper.generateJoiFindQueryModel(
+      let queryModel = joiMongooseHelper.generateJoiFindQueryModel(
         userModel,
         Log
       )

@@ -1,7 +1,7 @@
 'use strict'
 
-var test = require('tape')
-var _ = require('lodash')
+let test = require('tape')
+let _ = require('lodash')
 const QueryString = require('query-string')
 
 const internals = {}
@@ -26,9 +26,9 @@ internals.testModelParameter = function(
     test = t.test
   }
 
-  var modelIndex = parameters.indexOf('model')
-  var logIndex = parameters.indexOf('Log')
-  var paramCopy = {}
+  let modelIndex = parameters.indexOf('model')
+  let logIndex = parameters.indexOf('Log')
+  let paramCopy = {}
 
   parameters[logIndex] = Log
 
@@ -37,7 +37,7 @@ internals.testModelParameter = function(
     function(t) {
       t.plan(10)
 
-      var model = {}
+      let model = {}
 
       paramCopy = _.extend([], parameters)
       paramCopy[modelIndex] = model
@@ -145,8 +145,8 @@ internals.testModelParameter = function(
 internals.mockStrategy = function(server, strategyName) {
   server.auth.scheme('mock', function(server, options) {
     return {
-      authenticate: function(request, h) {
-        return h.continue
+      authenticate: async function(request, h) {
+        return h.authenticated()
       }
     }
   })
@@ -188,11 +188,11 @@ internals.runTestFile = function(path) {
       return
     }
   }
-  var pathToTestFile = path || process.argv.slice(3)[0]
+  let pathToTestFile = path || process.argv.slice(3)[0]
   if (pathToTestFile && pathToTestFile !== 'test') {
-    var gulp = require('gulp')
-    var tape = require('gulp-tape')
-    var tapColorize = require('tap-colorize')
+    let gulp = require('gulp')
+    let tape = require('gulp-tape')
+    let tapColorize = require('tap-colorize')
 
     return gulp.src([pathToTestFile]).pipe(
       tape({

@@ -1,12 +1,12 @@
 'use strict'
 
-var gulp = require('gulp')
-var exit = require('gulp-exit')
-var Q = require('q')
-var mongoose = require('mongoose')
-var _ = require('lodash')
-var config = require('../config')
-var restHapi = require('../rest-hapi')
+let gulp = require('gulp')
+let exit = require('gulp-exit')
+let Q = require('q')
+let mongoose = require('mongoose')
+let _ = require('lodash')
+let config = require('../config')
+let restHapi = require('../rest-hapi')
 
 gulp.task('update-associations', [], function() {
   const uri = process.argv[6]
@@ -45,11 +45,11 @@ gulp.task('update-associations', [], function() {
     Log.debug('embedAssociations:', embedAssociations)
     Log.debug('modelPath:', restHapi.config.modelPath)
 
-    var promise_chain = Q.when()
+    let promise_chain = Q.when()
 
-    var modelsArray = []
+    let modelsArray = []
 
-    for (var modelName in models) {
+    for (let modelName in models) {
       modelsArray.push(models[modelName])
     }
 
@@ -130,8 +130,8 @@ function applyActionToModels(action, models, embedAssociations, Log) {
   let promise_chain = Q.when()
 
   models.forEach(function(model) {
-    var promise_link = function() {
-      var deferred = Q.defer()
+    let promise_link = function() {
+      let deferred = Q.defer()
 
       action(model, embedAssociations, Log)
         .then(function(result) {
@@ -159,7 +159,7 @@ function addEmbedded(model, embedAssociations, Log) {
       let association = model.routeOptions.associations[associationName]
 
       if (association.type === 'MANY_MANY') {
-        var embedAssociation =
+        let embedAssociation =
           association.embedAssociation === undefined
             ? embedAssociations
             : association.embedAssociation
@@ -167,7 +167,7 @@ function addEmbedded(model, embedAssociations, Log) {
         let linkingModel = getLinkingModel(model, association)
 
         if (linkingModel) {
-          var embedded =
+          let embedded =
             data[0] && data[0][associationName] && data[0][associationName][0]
 
           if (embedAssociation && !embedded) {
@@ -238,7 +238,7 @@ function removeLinking(model, embedAssociations, Log) {
     let association = model.routeOptions.associations[associationName]
 
     if (association.type === 'MANY_MANY') {
-      var embedAssociation =
+      let embedAssociation =
         association.embedAssociation === undefined
           ? embedAssociations
           : association.embedAssociation
@@ -266,7 +266,7 @@ function addLinking(model, embedAssociations, Log) {
       let association = model.routeOptions.associations[associationName]
 
       if (association.type === 'MANY_MANY') {
-        var embedAssociation =
+        let embedAssociation =
           association.embedAssociation === undefined
             ? embedAssociations
             : association.embedAssociation
@@ -336,7 +336,7 @@ function removeEmbedded(model, embedAssociations, Log) {
       let association = model.routeOptions.associations[associationName]
 
       if (association.type === 'MANY_MANY') {
-        var embedAssociation =
+        let embedAssociation =
           association.embedAssociation === undefined
             ? embedAssociations
             : association.embedAssociation

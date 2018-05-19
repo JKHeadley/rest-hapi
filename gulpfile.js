@@ -1,6 +1,6 @@
 'use strict'
 
-var gulp = require('gulp')
+let gulp = require('gulp')
 
 gulp.paths = {
   src: './'

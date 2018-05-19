@@ -1,14 +1,14 @@
 'use strict'
 
-var QueryHelper = require('./query-helper')
-var JoiMongooseHelper = require('./joi-mongoose-helper')
-var Joi = require('joi')
-var Q = require('q')
-var Mongoose = require('mongoose')
-var errorHelper = require('./error-helper')
-var extend = require('util')._extend
-var config = require('../config')
-var _ = require('lodash')
+let QueryHelper = require('./query-helper')
+let JoiMongooseHelper = require('./joi-mongoose-helper')
+let Joi = require('joi')
+let Q = require('q')
+let Mongoose = require('mongoose')
+let errorHelper = require('./error-helper')
+let extend = require('util')._extend
+let config = require('../config')
+let _ = require('lodash')
 
 // TODO: add a "clean" method that clears out all soft-deleted docs
 // TODO: add an optional TTL config setting that determines how long soft-deleted docs remain in the system
@@ -85,7 +85,7 @@ function _listHandler(model, request, Log) {
   let query = extend({}, request.query)
   let logError = false
   try {
-    var promise = {}
+    let promise = {}
     if (
       model.routeOptions &&
       model.routeOptions.list &&
@@ -98,9 +98,9 @@ function _listHandler(model, request, Log) {
 
     return promise
       .then(function(query) {
-        var mongooseQuery = {}
-        var count = ''
-        var flatten = false
+        let mongooseQuery = {}
+        let count = ''
+        let flatten = false
         if (query.$flatten) {
           flatten = true
         }
@@ -134,7 +134,7 @@ function _listHandler(model, request, Log) {
             return mongooseQuery.exec('find')
           })
           .then(function(result) {
-            var promise = {}
+            let promise = {}
             if (
               model.routeOptions &&
               model.routeOptions.list &&
@@ -153,11 +153,11 @@ function _listHandler(model, request, Log) {
             return promise
               .then(function(result) {
                 result = result.map(function(data) {
-                  var result = data
+                  let result = data
                   if (model.routeOptions) {
-                    var associations = model.routeOptions.associations
-                    for (var associationKey in associations) {
-                      var association = associations[associationKey]
+                    let associations = model.routeOptions.associations
+                    for (let associationKey in associations) {
+                      let association = associations[associationKey]
                       if (
                         association.type === 'ONE_MANY' &&
                         data[associationKey]
@@ -321,7 +321,7 @@ function _findHandler(model, _id, request, Log) {
   let query = extend({}, request.query)
   let logError = false
   try {
-    var promise = {}
+    let promise = {}
     if (
       model.routeOptions &&
       model.routeOptions.find &&
@@ -334,12 +334,12 @@ function _findHandler(model, _id, request, Log) {
 
     return promise
       .then(function(query) {
-        var flatten = false
+        let flatten = false
         if (query.$flatten) {
           flatten = true
         }
         delete query.$flatten
-        var mongooseQuery = model.findOne({ _id: _id })
+        let mongooseQuery = model.findOne({ _id: _id })
         mongooseQuery = QueryHelper.createMongooseQuery(
           model,
           query,
@@ -350,7 +350,7 @@ function _findHandler(model, _id, request, Log) {
           .exec()
           .then(function(result) {
             if (result) {
-              var promise = {}
+              let promise = {}
               if (
                 model.routeOptions &&
                 model.routeOptions.find &&
@@ -369,9 +369,9 @@ function _findHandler(model, _id, request, Log) {
               return promise
                 .then(function(data) {
                   if (model.routeOptions) {
-                    var associations = model.routeOptions.associations
-                    for (var associationKey in associations) {
-                      var association = associations[associationKey]
+                    let associations = model.routeOptions.associations
+                    for (let associationKey in associations) {
+                      let association = associations[associationKey]
                       if (
                         association.type === 'ONE_MANY' &&
                         data[associationKey]
@@ -515,7 +515,7 @@ function _createHandler(model, request, Log) {
   let logError = false
   try {
     // EXPL: make a copy of the payload so that request.payload remains unchanged
-    var isArray = true
+    let isArray = true
     if (!_.isArray(request.payload)) {
       payload = [extend({}, request.payload)]
       isArray = false
@@ -525,7 +525,7 @@ function _createHandler(model, request, Log) {
       })
     }
 
-    var promises = []
+    let promises = []
     if (
       model.routeOptions &&
       model.routeOptions.create &&
@@ -552,7 +552,7 @@ function _createHandler(model, request, Log) {
           .create(payload)
           .then(function(data) {
             // EXPL: rather than returning the raw "create" data, we filter the data through a separate query
-            var attributes = QueryHelper.createAttributesFilter({}, model, Log)
+            let attributes = QueryHelper.createAttributesFilter({}, model, Log)
 
             data = data.map(function(item) {
               return item._id
@@ -567,7 +567,7 @@ function _createHandler(model, request, Log) {
               .then(function(result) {
                 // TODO: include eventLogs
 
-                var promises = []
+                let promises = []
                 if (
                   model.routeOptions &&
                   model.routeOptions.create &&
@@ -697,7 +697,7 @@ function _updateHandler(model, _id, request, Log) {
   let payload = extend({}, request.payload)
   let logError = false
   try {
-    var promise = {}
+    let promise = {}
     if (
       model.routeOptions &&
       model.routeOptions.update &&
@@ -728,7 +728,7 @@ function _updateHandler(model, _id, request, Log) {
           .then(function(result) {
             if (result) {
               // TODO: log all updated/added associations
-              var attributes = QueryHelper.createAttributesFilter(
+              let attributes = QueryHelper.createAttributesFilter(
                 {},
                 model,
                 Log
@@ -872,7 +872,7 @@ function _deleteOne(model, _id, hardDelete, Log) {
 function _deleteOneHandler(model, _id, hardDelete, request, Log) {
   let logError = false
   try {
-    var promise = {}
+    let promise = {}
     if (
       model.routeOptions &&
       model.routeOptions.delete &&
@@ -916,7 +916,7 @@ function _deleteOneHandler(model, _id, hardDelete, request, Log) {
             if (deleted) {
               // TODO: add eventLogs
 
-              var promise = {}
+              let promise = {}
               if (
                 model.routeOptions &&
                 model.routeOptions.delete &&
@@ -1153,7 +1153,7 @@ function _addOneHandler(
           payload.childId = childId
           payload = [payload]
 
-          var promise = {}
+          let promise = {}
           if (
             ownerModel.routeOptions &&
             ownerModel.routeOptions.add &&
@@ -1310,7 +1310,7 @@ function _removeOneHandler(
       .select(associationName)
       .then(function(ownerObject) {
         if (ownerObject) {
-          var promise = {}
+          let promise = {}
           if (
             ownerModel.routeOptions &&
             ownerModel.routeOptions.remove &&
@@ -1470,7 +1470,7 @@ function _addManyHandler(
       .select(associationName)
       .then(function(ownerObject) {
         if (ownerObject) {
-          var promise = {}
+          let promise = {}
           if (
             ownerModel.routeOptions &&
             ownerModel.routeOptions.add &&
@@ -1489,7 +1489,7 @@ function _addManyHandler(
 
           return promise
             .then(function(payload) {
-              var childIds = []
+              let childIds = []
               // EXPL: the payload is an array of Ids
               if (
                 typeof payload[0] === 'string' ||
@@ -1503,11 +1503,11 @@ function _addManyHandler(
                   return object.childId
                 })
               }
-              var promise_chain = Q.when()
+              let promise_chain = Q.when()
 
               childIds.forEach(function(childId) {
-                var promise_link = function() {
-                  var deferred = Q.defer()
+                let promise_link = function() {
+                  let deferred = Q.defer()
                   _setAssociation(
                     ownerModel,
                     ownerObject,
@@ -1670,7 +1670,7 @@ function _removeManyHandler(
       .select(associationName)
       .then(function(ownerObject) {
         if (ownerObject) {
-          var promise = {}
+          let promise = {}
           if (
             ownerModel.routeOptions &&
             ownerModel.routeOptions.remove &&
@@ -1689,13 +1689,13 @@ function _removeManyHandler(
 
           return promise
             .then(function(payload) {
-              var childIds = payload
+              let childIds = payload
 
-              var promise_chain = Q.when()
+              let promise_chain = Q.when()
 
               childIds.forEach(function(childId) {
-                var promise_link = function() {
-                  var deferred = Q.defer()
+                let promise_link = function() {
+                  let deferred = Q.defer()
                   _removeAssociation(
                     ownerModel,
                     ownerObject,
@@ -1840,10 +1840,10 @@ function _getAllHandler(
   try {
     let query = request.query
 
-    var association = ownerModel.routeOptions.associations[associationName]
-    var foreignField = association.foreignField
+    let association = ownerModel.routeOptions.associations[associationName]
+    let foreignField = association.foreignField
 
-    var ownerRequest = { query: {} }
+    let ownerRequest = { query: {} }
     ownerRequest.query.$embed = associationName
     ownerRequest.query.populateSelect = '_id'
     if (foreignField) {
@@ -1854,7 +1854,7 @@ function _getAllHandler(
     // EXPL: In order to allow for fully querying against the association data, we first embed the
     // associations to get a list of _ids and extra fields. We then leverage _list
     // to perform the full query.  Finally the extra fields (if they exist) are added to the final result
-    var mongooseQuery = ownerModel.findOne({ _id: ownerId })
+    let mongooseQuery = ownerModel.findOne({ _id: ownerId })
     mongooseQuery = QueryHelper.createMongooseQuery(
       ownerModel,
       ownerRequest.query,
@@ -1868,8 +1868,8 @@ function _getAllHandler(
           throw new Error('owner object not found')
         }
         result = result[associationName]
-        var childIds = []
-        var many_many = false
+        let childIds = []
+        let many_many = false
         if (association.type === 'MANY_MANY') {
           childIds = result.map(function(object) {
             if (!object[association.model]) {
@@ -1912,15 +1912,15 @@ function _getAllHandler(
 
         request.query = query
 
-        var promise = _listHandler(childModel, request, Log)
+        let promise = _listHandler(childModel, request, Log)
 
         if (many_many && association.linkingModel) {
           // EXPL: we have to manually insert the extra fields into the result
-          var extraFieldData = result
+          let extraFieldData = result
           return promise.then(function(result) {
             if (_.isArray(result.docs)) {
               result.docs.forEach(function(object) {
-                var data = extraFieldData.find(function(data) {
+                let data = extraFieldData.find(function(data) {
                   return (
                     data[association.model]._id.toString() ===
                     object._id.toString()
@@ -1929,14 +1929,14 @@ function _getAllHandler(
                 if (!data) {
                   throw new Error('child object not found')
                 }
-                var fields = data.toJSON()
+                let fields = data.toJSON()
                 delete fields._id
                 delete fields[association.model]
                 object[association.linkingModel] = fields
               })
             }
 
-            var promise = {}
+            let promise = {}
             if (
               ownerModel.routeOptions &&
               ownerModel.routeOptions.getAll &&
@@ -2038,15 +2038,15 @@ function _setAssociation(
   payload,
   Log
 ) {
-  var deferred = Q.defer()
+  let deferred = Q.defer()
 
   childModel
     .findOne({ _id: childId })
     .then(function(childObject) {
       if (childObject) {
-        var promise = {}
-        var association = ownerModel.routeOptions.associations[associationName]
-        var extraFields = false
+        let promise = {}
+        let association = ownerModel.routeOptions.associations[associationName]
+        let extraFields = false
         if (association.type === 'ONE_MANY') {
           // EXPL: one-many associations are virtual, so only update the child reference
           childObject[association.foreignField] = ownerObject._id
@@ -2077,7 +2077,7 @@ function _setAssociation(
           }
 
           // EXPL: if linking models aren't embeded, just upsert the linking model collection
-          var embedAssociation =
+          let embedAssociation =
             association.embedAssociation === undefined
               ? config.embedAssociations
               : association.embedAssociation
@@ -2098,7 +2098,7 @@ function _setAssociation(
           } else {
             payload[childModel.modelName] = childObject._id
 
-            var duplicate = ownerObject[associationName].filter(function(
+            let duplicate = ownerObject[associationName].filter(function(
               associationObject
             ) {
               return (
@@ -2108,7 +2108,7 @@ function _setAssociation(
             })
             duplicate = duplicate[0]
 
-            var duplicateIndex = ownerObject[associationName].indexOf(duplicate)
+            let duplicateIndex = ownerObject[associationName].indexOf(duplicate)
 
             if (duplicateIndex < 0) {
               // EXPL: if the association doesn't already exist, create it, otherwise update the extra fields
@@ -2124,10 +2124,10 @@ function _setAssociation(
 
             delete payload[childModel.modelName]
             payload[ownerModel.modelName] = ownerObject._id
-            var childAssociation = {}
-            var childAssociations = childModel.routeOptions.associations
-            for (var childAssociationKey in childAssociations) {
-              var association = childAssociations[childAssociationKey]
+            let childAssociation = {}
+            let childAssociations = childModel.routeOptions.associations
+            for (let childAssociationKey in childAssociations) {
+              let association = childAssociations[childAssociationKey]
               if (
                 association.model === ownerModel.modelName &&
                 association.type === 'MANY_MANY'
@@ -2147,7 +2147,7 @@ function _setAssociation(
               )
             }
 
-            var childAssociationName = childAssociation.include.as
+            let childAssociationName = childAssociation.include.as
 
             if (!childObject[childAssociationName]) {
               throw new Error(
@@ -2188,14 +2188,14 @@ function _setAssociation(
             ])
           }
         } else if (association.type === '_MANY') {
-          var duplicate = ownerObject[associationName].filter(function(
+          let duplicate = ownerObject[associationName].filter(function(
             _childId
           ) {
             return _childId.toString() === childId.toString()
           })
           duplicate = duplicate[0]
 
-          var duplicateIndex = ownerObject[associationName].indexOf(duplicate)
+          let duplicateIndex = ownerObject[associationName].indexOf(duplicate)
 
           if (duplicateIndex < 0) {
             // EXPL: if the association doesn't already exist, create it
@@ -2256,15 +2256,15 @@ function _removeAssociation(
   associationName,
   Log
 ) {
-  var deferred = Q.defer()
+  let deferred = Q.defer()
 
   childModel
     .findOne({ _id: childId })
     .then(function(childObject) {
       if (childObject) {
-        var promise = {}
-        var association = ownerModel.routeOptions.associations[associationName]
-        var associationType = association.type
+        let promise = {}
+        let association = ownerModel.routeOptions.associations[associationName]
+        let associationType = association.type
         if (associationType === 'ONE_MANY') {
           // EXPL: one-many associations are virtual, so only update the child reference
           // childObject[association.foreignField] = null; //TODO: set reference to null instead of deleting it?
@@ -2281,7 +2281,7 @@ function _removeAssociation(
           // EXPL: remove references from both models
 
           // EXPL: if linking models aren't embeded, just upsert the linking model collection
-          var embedAssociation =
+          let embedAssociation =
             association.embedAssociation === undefined
               ? config.embedAssociations
               : association.embedAssociation
@@ -2294,7 +2294,7 @@ function _removeAssociation(
             promise = linkingModel.findOneAndRemove(query)
           } else {
             // EXPL: remove the associated child from the owner
-            var deleteChild = ownerObject[associationName].filter(function(
+            let deleteChild = ownerObject[associationName].filter(function(
               child
             ) {
               return (
@@ -2304,24 +2304,24 @@ function _removeAssociation(
             })
             deleteChild = deleteChild[0]
 
-            var index = ownerObject[associationName].indexOf(deleteChild)
+            let index = ownerObject[associationName].indexOf(deleteChild)
             if (index > -1) {
               ownerObject[associationName].splice(index, 1)
             }
 
             // EXPL: get the child association name
-            var childAssociation = {}
-            var childAssociations = childModel.routeOptions.associations
-            for (var childAssociationKey in childAssociations) {
-              var association = childAssociations[childAssociationKey]
+            let childAssociation = {}
+            let childAssociations = childModel.routeOptions.associations
+            for (let childAssociationKey in childAssociations) {
+              let association = childAssociations[childAssociationKey]
               if (association.model === ownerModel.modelName) {
                 childAssociation = association
               }
             }
-            var childAssociationName = childAssociation.include.as
+            let childAssociationName = childAssociation.include.as
 
             // EXPL: remove the associated owner from the child
-            var deleteOwner = childObject[childAssociationName].filter(function(
+            let deleteOwner = childObject[childAssociationName].filter(function(
               owner
             ) {
               return (
@@ -2349,14 +2349,14 @@ function _removeAssociation(
           // EXPL: remove reference from owner model
 
           // EXPL: remove the associated child from the owner
-          var deleteChild = ownerObject[associationName].filter(function(
+          let deleteChild = ownerObject[associationName].filter(function(
             childId
           ) {
             return childId.toString() === childObject._id.toString()
           })
           deleteChild = deleteChild[0]
 
-          var index = ownerObject[associationName].indexOf(deleteChild)
+          let index = ownerObject[associationName].indexOf(deleteChild)
           if (index > -1) {
             ownerObject[associationName].splice(index, 1)
           }
@@ -2406,7 +2406,7 @@ function _removeAssociation(
 function filterDeletedEmbeds(result, parent, parentkey, depth, Log) {
   if (_.isArray(result)) {
     result = result.filter(function(obj) {
-      var keep = filterDeletedEmbeds(obj, result, parentkey, depth + 1, Log)
+      let keep = filterDeletedEmbeds(obj, result, parentkey, depth + 1, Log)
       // Log.log("KEEP:", keep);
       return keep
     })
@@ -2414,7 +2414,7 @@ function filterDeletedEmbeds(result, parent, parentkey, depth, Log) {
     // Log.note("AFTER:", result);
     parent[parentkey] = result
   } else {
-    for (var key in result) {
+    for (let key in result) {
       // Log.debug("KEY:", key);
       // Log.debug("VALUE:", result[key]);
       if (_.isArray(result[key])) {
@@ -2422,7 +2422,7 @@ function filterDeletedEmbeds(result, parent, parentkey, depth, Log) {
         filterDeletedEmbeds(result[key], result, key, depth + 1, Log)
       } else if (_.isObject(result[key]) && result[key]._id) {
         // Log.log("JUMPING IN OBJECT");
-        var keep = filterDeletedEmbeds(result[key], result, key, depth + 1, Log)
+        let keep = filterDeletedEmbeds(result[key], result, key, depth + 1, Log)
         if (!keep) {
           return false
         }

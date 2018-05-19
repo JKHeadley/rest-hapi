@@ -1,5 +1,5 @@
-var _ = require('lodash')
-var chalk = require('chalk')
+let _ = require('lodash')
+let chalk = require('chalk')
 
 module.exports = {
   bindHelper: function(logger, name) {

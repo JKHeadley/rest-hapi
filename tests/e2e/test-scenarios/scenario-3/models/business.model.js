@@ -1,9 +1,9 @@
 'use strict'
 
 module.exports = function(mongoose) {
-  var modelName = 'business'
-  var Types = mongoose.Schema.Types
-  var Schema = new mongoose.Schema(
+  let modelName = 'business'
+  let Types = mongoose.Schema.Types
+  let Schema = new mongoose.Schema(
     {
       name: {
         type: Types.String,

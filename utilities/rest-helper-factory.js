@@ -1,24 +1,24 @@
 'use strict'
 
-var Joi = require('joi')
+let Joi = require('joi')
 Joi.objectId = require('joi-objectid')(Joi)
-var _ = require('lodash')
-var assert = require('assert')
-var joiMongooseHelper = require('./joi-mongoose-helper')
-var queryHelper = require('./query-helper')
-var validationHelper = require('./validation-helper')
-var authHelper = require('./auth-helper')
-var chalk = require('chalk')
-var config = require('../config')
-var restHapiPolicies = require('./policy-generator')
+let _ = require('lodash')
+let assert = require('assert')
+let joiMongooseHelper = require('./joi-mongoose-helper')
+let queryHelper = require('./query-helper')
+let validationHelper = require('./validation-helper')
+let authHelper = require('./auth-helper')
+let chalk = require('chalk')
+let config = require('../config')
+let restHapiPolicies = require('./policy-generator')
 
 // TODO: remove "options"?
 // TODO: change model "alias" to "routeAlias" (or remove the option)
 
 module.exports = function(logger, mongoose, server) {
-  var HandlerHelper = require('./handler-helper-factory')(mongoose, server)
+  let HandlerHelper = require('./handler-helper-factory')(mongoose, server)
 
-  var headersValidation
+  let headersValidation
 
   if (config.authStrategy) {
     headersValidation = Joi.object({
@@ -43,8 +43,8 @@ module.exports = function(logger, mongoose, server) {
       try {
         validationHelper.validateModel(model, logger)
 
-        var collectionName = model.collectionDisplayName || model.modelName
-        var Log = logger.bind(chalk.blue(collectionName))
+        let collectionName = model.collectionDisplayName || model.modelName
+        let Log = logger.bind(chalk.blue(collectionName))
 
         options = options || {}
 
@@ -67,8 +67,8 @@ module.exports = function(logger, mongoose, server) {
         }
 
         if (model.routeOptions.associations) {
-          for (var associationName in model.routeOptions.associations) {
-            var association = model.routeOptions.associations[associationName]
+          for (let associationName in model.routeOptions.associations) {
+            let association = model.routeOptions.associations[associationName]
 
             if (
               association.type == 'MANY_MANY' ||
@@ -122,8 +122,8 @@ module.exports = function(logger, mongoose, server) {
         }
 
         if (model.routeOptions && model.routeOptions.extraEndpoints) {
-          for (var extraEndpointIndex in model.routeOptions.extraEndpoints) {
-            var extraEndpointFunction =
+          for (let extraEndpointIndex in model.routeOptions.extraEndpoints) {
+            let extraEndpointFunction =
               model.routeOptions.extraEndpoints[extraEndpointIndex]
 
             extraEndpointFunction(server, model, options, Log)
@@ -145,7 +145,7 @@ module.exports = function(logger, mongoose, server) {
     generateListEndpoint: function(server, model, options, Log) {
       validationHelper.validateModel(model, Log)
 
-      var collectionName = model.collectionDisplayName || model.modelName
+      let collectionName = model.collectionDisplayName || model.modelName
       Log = Log.bind(chalk.yellow('List'))
       options = options || {}
 
@@ -153,7 +153,7 @@ module.exports = function(logger, mongoose, server) {
         Log.note('Generating List endpoint for ' + collectionName)
       }
 
-      var resourceAliasForRoute
+      let resourceAliasForRoute
 
       if (model.routeOptions) {
         resourceAliasForRoute = model.routeOptions.alias || model.modelName
@@ -161,27 +161,27 @@ module.exports = function(logger, mongoose, server) {
         resourceAliasForRoute = model.modelName
       }
 
-      var handler = HandlerHelper.generateListHandler(model, options, Log)
+      let handler = HandlerHelper.generateListHandler(model, options, Log)
 
-      var queryModel = joiMongooseHelper.generateJoiListQueryModel(model, Log)
+      let queryModel = joiMongooseHelper.generateJoiListQueryModel(model, Log)
 
-      var readModel = joiMongooseHelper.generateJoiReadModel(model, Log)
+      let readModel = joiMongooseHelper.generateJoiReadModel(model, Log)
 
       if (!config.enableResponseValidation) {
-        var label = readModel._flags.label
+        let label = readModel._flags.label
         readModel = Joi.alternatives()
           .try(readModel, Joi.any())
           .label(label)
       }
 
-      var auth = false
+      let auth = false
 
       if (config.authStrategy && model.routeOptions.readAuth !== false) {
         auth = {
           strategy: config.authStrategy
         }
 
-        var scope = authHelper.generateScopeForEndpoint(model, 'read', Log)
+        let scope = authHelper.generateScopeForEndpoint(model, 'read', Log)
 
         if (!_.isEmpty(scope)) {
           auth.scope = scope
@@ -193,7 +193,7 @@ module.exports = function(logger, mongoose, server) {
         headersValidation = null
       }
 
-      var policies = []
+      let policies = []
 
       if (model.routeOptions.policies && config.enablePolicies) {
         policies = model.routeOptions.policies
@@ -269,13 +269,13 @@ module.exports = function(logger, mongoose, server) {
     generateFindEndpoint: function(server, model, options, Log) {
       validationHelper.validateModel(model, Log)
 
-      var collectionName = model.collectionDisplayName || model.modelName
+      let collectionName = model.collectionDisplayName || model.modelName
       Log = Log.bind(chalk.yellow('Find'))
       if (config.logRoutes) {
         Log.note('Generating Find endpoint for ' + collectionName)
       }
 
-      var resourceAliasForRoute
+      let resourceAliasForRoute
 
       if (model.routeOptions) {
         resourceAliasForRoute = model.routeOptions.alias || model.modelName
@@ -283,28 +283,28 @@ module.exports = function(logger, mongoose, server) {
         resourceAliasForRoute = model.modelName
       }
 
-      var handler = HandlerHelper.generateFindHandler(model, options, Log)
+      let handler = HandlerHelper.generateFindHandler(model, options, Log)
 
-      var queryModel = joiMongooseHelper.generateJoiFindQueryModel(model, Log)
+      let queryModel = joiMongooseHelper.generateJoiFindQueryModel(model, Log)
 
-      var readModel =
+      let readModel =
         model.readModel || joiMongooseHelper.generateJoiReadModel(model, Log)
 
       if (!config.enableResponseValidation) {
-        var label = readModel._flags.label
+        let label = readModel._flags.label
         readModel = Joi.alternatives()
           .try(readModel, Joi.any())
           .label(label)
       }
 
-      var auth = false
+      let auth = false
 
       if (config.authStrategy && model.routeOptions.readAuth !== false) {
         auth = {
           strategy: config.authStrategy
         }
 
-        var scope = authHelper.generateScopeForEndpoint(model, 'read', Log)
+        let scope = authHelper.generateScopeForEndpoint(model, 'read', Log)
 
         if (!_.isEmpty(scope)) {
           auth.scope = scope
@@ -319,7 +319,7 @@ module.exports = function(logger, mongoose, server) {
         headersValidation = null
       }
 
-      var policies = []
+      let policies = []
 
       if (model.routeOptions.policies && config.enablePolicies) {
         policies = model.routeOptions.policies
@@ -391,7 +391,7 @@ module.exports = function(logger, mongoose, server) {
     generateCreateEndpoint: function(server, model, options, Log) {
       validationHelper.validateModel(model, Log)
 
-      var collectionName = model.collectionDisplayName || model.modelName
+      let collectionName = model.collectionDisplayName || model.modelName
       Log = Log.bind(chalk.yellow('Create'))
       if (config.logRoutes) {
         Log.note('Generating Create endpoint for ' + collectionName)
@@ -399,7 +399,7 @@ module.exports = function(logger, mongoose, server) {
 
       options = options || {}
 
-      var resourceAliasForRoute
+      let resourceAliasForRoute
 
       if (model.routeOptions) {
         resourceAliasForRoute = model.routeOptions.alias || model.modelName
@@ -407,12 +407,12 @@ module.exports = function(logger, mongoose, server) {
         resourceAliasForRoute = model.modelName
       }
 
-      var handler = HandlerHelper.generateCreateHandler(model, options, Log)
+      let handler = HandlerHelper.generateCreateHandler(model, options, Log)
 
-      var createModel = joiMongooseHelper.generateJoiCreateModel(model, Log)
+      let createModel = joiMongooseHelper.generateJoiCreateModel(model, Log)
 
       if (!config.enablePayloadValidation) {
-        var label = createModel._flags.label
+        let label = createModel._flags.label
         createModel = Joi.alternatives()
           .try(createModel, Joi.any())
           .label(label)
@@ -424,8 +424,8 @@ module.exports = function(logger, mongoose, server) {
         createModel
       )
 
-      var readModel = joiMongooseHelper.generateJoiReadModel(model, Log)
-      var label = readModel._flags.label
+      let readModel = joiMongooseHelper.generateJoiReadModel(model, Log)
+      let label = readModel._flags.label
 
       readModel = Joi.alternatives()
         .try(Joi.array().items(readModel), readModel)
@@ -437,14 +437,14 @@ module.exports = function(logger, mongoose, server) {
           .label(label)
       }
 
-      var auth = false
+      let auth = false
 
       if (config.authStrategy && model.routeOptions.createAuth !== false) {
         auth = {
           strategy: config.authStrategy
         }
 
-        var scope = authHelper.generateScopeForEndpoint(model, 'create', Log)
+        let scope = authHelper.generateScopeForEndpoint(model, 'create', Log)
 
         if (!_.isEmpty(scope)) {
           auth.scope = scope
@@ -456,7 +456,7 @@ module.exports = function(logger, mongoose, server) {
         headersValidation = null
       }
 
-      var policies = []
+      let policies = []
 
       if (model.routeOptions.policies && config.enablePolicies) {
         policies = model.routeOptions.policies
@@ -466,23 +466,23 @@ module.exports = function(logger, mongoose, server) {
       }
 
       if (config.enableDocumentScopes && auth) {
-        var authorizeDocumentCreator =
+        let authorizeDocumentCreator =
           model.routeOptions.authorizeDocumentCreator === undefined
             ? config.authorizeDocumentCreator
             : model.routeOptions.authorizeDocumentCreator
-        var authorizeDocumentCreatorToRead =
+        let authorizeDocumentCreatorToRead =
           model.routeOptions.authorizeDocumentCreatorToRead === undefined
             ? config.authorizeDocumentCreatorToRead
             : model.routeOptions.authorizeDocumentCreatorToRead
-        var authorizeDocumentCreatorToUpdate =
+        let authorizeDocumentCreatorToUpdate =
           model.routeOptions.authorizeDocumentCreatorToUpdate === undefined
             ? config.authorizeDocumentCreatorToUpdate
             : model.routeOptions.authorizeDocumentCreatorToUpdate
-        var authorizeDocumentCreatorToDelete =
+        let authorizeDocumentCreatorToDelete =
           model.routeOptions.authorizeDocumentCreatorToDelete === undefined
             ? config.authorizeDocumentCreatorToDelete
             : model.routeOptions.authorizeDocumentCreatorToDelete
-        var authorizeDocumentCreatorToAssociate =
+        let authorizeDocumentCreatorToAssociate =
           model.routeOptions.authorizeDocumentCreatorToAssociate === undefined
             ? config.authorizeDocumentCreatorToAssociate
             : model.routeOptions.authorizeDocumentCreatorToAssociate
@@ -581,7 +581,7 @@ module.exports = function(logger, mongoose, server) {
     generateDeleteOneEndpoint: function(server, model, options, Log) {
       validationHelper.validateModel(model, Log)
 
-      var collectionName = model.collectionDisplayName || model.modelName
+      let collectionName = model.collectionDisplayName || model.modelName
       Log = Log.bind(chalk.yellow('DeleteOne'))
       if (config.logRoutes) {
         Log.note('Generating Delete One endpoint for ' + collectionName)
@@ -589,7 +589,7 @@ module.exports = function(logger, mongoose, server) {
 
       options = options || {}
 
-      var resourceAliasForRoute
+      let resourceAliasForRoute
 
       if (model.routeOptions) {
         resourceAliasForRoute = model.routeOptions.alias || model.modelName
@@ -597,9 +597,9 @@ module.exports = function(logger, mongoose, server) {
         resourceAliasForRoute = model.modelName
       }
 
-      var handler = HandlerHelper.generateDeleteHandler(model, options, Log)
+      let handler = HandlerHelper.generateDeleteHandler(model, options, Log)
 
-      var payloadModel = null
+      let payloadModel = null
       if (config.enableSoftDelete) {
         payloadModel = Joi.object({ hardDelete: Joi.bool() }).allow(null)
 
@@ -608,14 +608,14 @@ module.exports = function(logger, mongoose, server) {
         }
       }
 
-      var auth = false
+      let auth = false
 
       if (config.authStrategy && model.routeOptions.deleteAuth !== false) {
         auth = {
           strategy: config.authStrategy
         }
 
-        var scope = authHelper.generateScopeForEndpoint(model, 'delete', Log)
+        let scope = authHelper.generateScopeForEndpoint(model, 'delete', Log)
 
         if (!_.isEmpty(scope)) {
           auth.scope = scope
@@ -630,7 +630,7 @@ module.exports = function(logger, mongoose, server) {
         headersValidation = null
       }
 
-      var policies = []
+      let policies = []
 
       if (model.routeOptions.policies && config.enablePolicies) {
         policies = model.routeOptions.policies
@@ -712,7 +712,7 @@ module.exports = function(logger, mongoose, server) {
     generateDeleteManyEndpoint: function(server, model, options, Log) {
       validationHelper.validateModel(model, Log)
 
-      var collectionName = model.collectionDisplayName || model.modelName
+      let collectionName = model.collectionDisplayName || model.modelName
       Log = Log.bind(chalk.yellow('DeleteMany'))
       if (config.logRoutes) {
         Log.note('Generating Delete Many endpoint for ' + collectionName)
@@ -720,7 +720,7 @@ module.exports = function(logger, mongoose, server) {
 
       options = options || {}
 
-      var resourceAliasForRoute
+      let resourceAliasForRoute
 
       if (model.routeOptions) {
         resourceAliasForRoute = model.routeOptions.alias || model.modelName
@@ -728,9 +728,9 @@ module.exports = function(logger, mongoose, server) {
         resourceAliasForRoute = model.modelName
       }
 
-      var handler = HandlerHelper.generateDeleteHandler(model, options, Log)
+      let handler = HandlerHelper.generateDeleteHandler(model, options, Log)
 
-      var payloadModel = null
+      let payloadModel = null
       if (config.enableSoftDelete) {
         payloadModel = Joi.alternatives().try(
           Joi.array().items(
@@ -749,14 +749,14 @@ module.exports = function(logger, mongoose, server) {
         payloadModel = Joi.alternatives().try(payloadModel, Joi.any())
       }
 
-      var auth = false
+      let auth = false
 
       if (config.authStrategy && model.routeOptions.deleteAuth !== false) {
         auth = {
           strategy: config.authStrategy
         }
 
-        var scope = authHelper.generateScopeForEndpoint(model, 'delete', Log)
+        let scope = authHelper.generateScopeForEndpoint(model, 'delete', Log)
 
         if (!_.isEmpty(scope)) {
           auth.scope = scope
@@ -768,7 +768,7 @@ module.exports = function(logger, mongoose, server) {
         headersValidation = null
       }
 
-      var policies = []
+      let policies = []
 
       if (model.routeOptions.policies && config.enablePolicies) {
         policies = model.routeOptions.policies
@@ -846,7 +846,7 @@ module.exports = function(logger, mongoose, server) {
     generateUpdateEndpoint: function(server, model, options, Log) {
       validationHelper.validateModel(model, Log)
 
-      var collectionName = model.collectionDisplayName || model.modelName
+      let collectionName = model.collectionDisplayName || model.modelName
       Log = Log.bind(chalk.yellow('Update'))
       if (config.logRoutes) {
         Log.note('Generating Update endpoint for ' + collectionName)
@@ -854,7 +854,7 @@ module.exports = function(logger, mongoose, server) {
 
       options = options || {}
 
-      var resourceAliasForRoute
+      let resourceAliasForRoute
 
       if (model.routeOptions) {
         resourceAliasForRoute = model.routeOptions.alias || model.modelName
@@ -862,34 +862,34 @@ module.exports = function(logger, mongoose, server) {
         resourceAliasForRoute = model.modelName
       }
 
-      var handler = HandlerHelper.generateUpdateHandler(model, options, Log)
+      let handler = HandlerHelper.generateUpdateHandler(model, options, Log)
 
-      var updateModel = joiMongooseHelper.generateJoiUpdateModel(model, Log)
+      let updateModel = joiMongooseHelper.generateJoiUpdateModel(model, Log)
 
       if (!config.enablePayloadValidation) {
-        var label = updateModel._flags.label
+        let label = updateModel._flags.label
         updateModel = Joi.alternatives()
           .try(updateModel, Joi.any())
           .label(label)
       }
 
-      var readModel = joiMongooseHelper.generateJoiReadModel(model, Log)
+      let readModel = joiMongooseHelper.generateJoiReadModel(model, Log)
 
       if (!config.enableResponseValidation) {
-        var label = readModel._flags.label
+        let label = readModel._flags.label
         readModel = Joi.alternatives()
           .try(readModel, Joi.any())
           .label(label)
       }
 
-      var auth = false
+      let auth = false
 
       if (config.authStrategy && model.routeOptions.updateAuth !== false) {
         auth = {
           strategy: config.authStrategy
         }
 
-        var scope = authHelper.generateScopeForEndpoint(model, 'update', Log)
+        let scope = authHelper.generateScopeForEndpoint(model, 'update', Log)
 
         if (!_.isEmpty(scope)) {
           auth.scope = scope
@@ -904,7 +904,7 @@ module.exports = function(logger, mongoose, server) {
         headersValidation = null
       }
 
-      var policies = []
+      let policies = []
 
       if (model.routeOptions.policies && config.enablePolicies) {
         policies = model.routeOptions.policies
@@ -1008,13 +1008,13 @@ module.exports = function(logger, mongoose, server) {
       )
       assert(association, 'association input must exist')
 
-      var associationName =
+      let associationName =
         association.include.as || association.include.model.modelName
-      var ownerModelName =
+      let ownerModelName =
         ownerModel.collectionDisplayName || ownerModel.modelName
-      var childModel = association.include.model
+      let childModel = association.include.model
 
-      var childModelName =
+      let childModelName =
         childModel.collectionDisplayName || childModel.modelName
 
       Log = Log.bind(chalk.yellow('AddOne'))
@@ -1029,17 +1029,17 @@ module.exports = function(logger, mongoose, server) {
 
       options = options || {}
 
-      var ownerAlias = ownerModel.routeOptions.alias || ownerModel.modelName
-      var childAlias = association.alias || association.include.model.modelName
+      let ownerAlias = ownerModel.routeOptions.alias || ownerModel.modelName
+      let childAlias = association.alias || association.include.model.modelName
 
-      var handler = HandlerHelper.generateAssociationAddOneHandler(
+      let handler = HandlerHelper.generateAssociationAddOneHandler(
         ownerModel,
         association,
         options,
         Log
       )
 
-      var payloadValidation = null
+      let payloadValidation = null
 
       // EXPL: A payload is only relevant if a through model is defined
       if (association.include.through) {
@@ -1054,14 +1054,14 @@ module.exports = function(logger, mongoose, server) {
         )
 
         if (!config.enablePayloadValidation) {
-          var label = payloadValidation._flags.label
+          let label = payloadValidation._flags.label
           payloadValidation = Joi.alternatives()
             .try(payloadValidation, Joi.any())
             .label(label)
         }
       }
 
-      var auth = false
+      let auth = false
 
       if (
         config.authStrategy &&
@@ -1071,12 +1071,12 @@ module.exports = function(logger, mongoose, server) {
           strategy: config.authStrategy
         }
 
-        var scope = authHelper.generateScopeForEndpoint(
+        let scope = authHelper.generateScopeForEndpoint(
           ownerModel,
           'associate',
           Log
         )
-        var addScope =
+        let addScope =
           'add' +
           ownerModelName[0].toUpperCase() +
           ownerModelName.slice(1) +
@@ -1105,7 +1105,7 @@ module.exports = function(logger, mongoose, server) {
         headersValidation = null
       }
 
-      var policies = []
+      let policies = []
 
       if (ownerModel.routeOptions.policies) {
         policies = ownerModel.routeOptions.policies
@@ -1211,13 +1211,13 @@ module.exports = function(logger, mongoose, server) {
       )
       assert(association, 'association input must exist')
 
-      var associationName =
+      let associationName =
         association.include.as || association.include.model.modelName
-      var ownerModelName =
+      let ownerModelName =
         ownerModel.collectionDisplayName || ownerModel.modelName
-      var childModel = association.include.model
+      let childModel = association.include.model
 
-      var childModelName =
+      let childModelName =
         childModel.collectionDisplayName || childModel.modelName
 
       Log = Log.bind(chalk.yellow('RemoveOne'))
@@ -1232,17 +1232,17 @@ module.exports = function(logger, mongoose, server) {
 
       options = options || {}
 
-      var ownerAlias = ownerModel.routeOptions.alias || ownerModel.modelName
-      var childAlias = association.alias || association.include.model.modelName
+      let ownerAlias = ownerModel.routeOptions.alias || ownerModel.modelName
+      let childAlias = association.alias || association.include.model.modelName
 
-      var handler = HandlerHelper.generateAssociationRemoveOneHandler(
+      let handler = HandlerHelper.generateAssociationRemoveOneHandler(
         ownerModel,
         association,
         options,
         Log
       )
 
-      var auth = false
+      let auth = false
 
       if (
         config.authStrategy &&
@@ -1252,12 +1252,12 @@ module.exports = function(logger, mongoose, server) {
           strategy: config.authStrategy
         }
 
-        var scope = authHelper.generateScopeForEndpoint(
+        let scope = authHelper.generateScopeForEndpoint(
           ownerModel,
           'associate',
           Log
         )
-        var removeScope =
+        let removeScope =
           'remove' +
           ownerModelName[0].toUpperCase() +
           ownerModelName.slice(1) +
@@ -1286,7 +1286,7 @@ module.exports = function(logger, mongoose, server) {
         headersValidation = null
       }
 
-      var policies = []
+      let policies = []
 
       if (ownerModel.routeOptions.policies) {
         policies = ownerModel.routeOptions.policies
@@ -1391,13 +1391,13 @@ module.exports = function(logger, mongoose, server) {
       )
       assert(association, 'association input must exist')
 
-      var associationName =
+      let associationName =
         association.include.as || association.include.model.modelName
-      var ownerModelName =
+      let ownerModelName =
         ownerModel.collectionDisplayName || ownerModel.modelName
-      var childModel = association.include.model
+      let childModel = association.include.model
 
-      var childModelName =
+      let childModelName =
         childModel.collectionDisplayName || childModel.modelName
 
       Log = Log.bind(chalk.yellow('AddMany'))
@@ -1412,18 +1412,18 @@ module.exports = function(logger, mongoose, server) {
 
       options = options || {}
 
-      var ownerAlias = ownerModel.routeOptions.alias || ownerModel.modelName
-      var childAlias = association.alias || association.include.model.modelName
+      let ownerAlias = ownerModel.routeOptions.alias || ownerModel.modelName
+      let childAlias = association.alias || association.include.model.modelName
 
-      var handler = HandlerHelper.generateAssociationAddManyHandler(
+      let handler = HandlerHelper.generateAssociationAddManyHandler(
         ownerModel,
         association,
         options,
         Log
       )
 
-      var payloadValidation
-      var label = ''
+      let payloadValidation
+      let label = ''
 
       if (association.include && association.include.through) {
         payloadValidation = joiMongooseHelper.generateJoiCreateModel(
@@ -1460,7 +1460,7 @@ module.exports = function(logger, mongoose, server) {
           .label(label || 'blank')
       }
 
-      var auth = false
+      let auth = false
 
       if (
         config.authStrategy &&
@@ -1470,12 +1470,12 @@ module.exports = function(logger, mongoose, server) {
           strategy: config.authStrategy
         }
 
-        var scope = authHelper.generateScopeForEndpoint(
+        let scope = authHelper.generateScopeForEndpoint(
           ownerModel,
           'associate',
           Log
         )
-        var addScope =
+        let addScope =
           'add' +
           ownerModelName[0].toUpperCase() +
           ownerModelName.slice(1) +
@@ -1499,7 +1499,7 @@ module.exports = function(logger, mongoose, server) {
         headersValidation = null
       }
 
-      var policies = []
+      let policies = []
 
       if (ownerModel.routeOptions.policies) {
         policies = ownerModel.routeOptions.policies
@@ -1601,13 +1601,13 @@ module.exports = function(logger, mongoose, server) {
       )
       assert(association, 'association input must exist')
 
-      var associationName =
+      let associationName =
         association.include.as || association.include.model.modelName
-      var ownerModelName =
+      let ownerModelName =
         ownerModel.collectionDisplayName || ownerModel.modelName
-      var childModel = association.include.model
+      let childModel = association.include.model
 
-      var childModelName =
+      let childModelName =
         childModel.collectionDisplayName || childModel.modelName
 
       Log = Log.bind(chalk.yellow('RemoveMany'))
@@ -1622,17 +1622,17 @@ module.exports = function(logger, mongoose, server) {
 
       options = options || {}
 
-      var ownerAlias = ownerModel.routeOptions.alias || ownerModel.modelName
-      var childAlias = association.alias || association.include.model.modelName
+      let ownerAlias = ownerModel.routeOptions.alias || ownerModel.modelName
+      let childAlias = association.alias || association.include.model.modelName
 
-      var handler = HandlerHelper.generateAssociationRemoveManyHandler(
+      let handler = HandlerHelper.generateAssociationRemoveManyHandler(
         ownerModel,
         association,
         options,
         Log
       )
 
-      var payloadValidation = Joi.array()
+      let payloadValidation = Joi.array()
         .items(Joi.objectId())
         .required()
 
@@ -1643,7 +1643,7 @@ module.exports = function(logger, mongoose, server) {
         'An array of _ids to remove.'
       )
 
-      var auth = false
+      let auth = false
 
       if (
         config.authStrategy &&
@@ -1653,12 +1653,12 @@ module.exports = function(logger, mongoose, server) {
           strategy: config.authStrategy
         }
 
-        var scope = authHelper.generateScopeForEndpoint(
+        let scope = authHelper.generateScopeForEndpoint(
           ownerModel,
           'associate',
           Log
         )
-        var removeScope =
+        let removeScope =
           'remove' +
           ownerModelName[0].toUpperCase() +
           ownerModelName.slice(1) +
@@ -1686,7 +1686,7 @@ module.exports = function(logger, mongoose, server) {
         headersValidation = null
       }
 
-      var policies = []
+      let policies = []
 
       if (ownerModel.routeOptions.policies) {
         policies = ownerModel.routeOptions.policies
@@ -1788,9 +1788,9 @@ module.exports = function(logger, mongoose, server) {
       )
       assert(association, 'association input must exist')
 
-      var associationName =
+      let associationName =
         association.include.as || association.include.model.modelName
-      var ownerModelName =
+      let ownerModelName =
         ownerModel.collectionDisplayName || ownerModel.modelName
 
       Log = Log.bind(chalk.yellow('GetAll'))
@@ -1805,27 +1805,27 @@ module.exports = function(logger, mongoose, server) {
 
       options = options || {}
 
-      var ownerAlias = ownerModel.routeOptions.alias || ownerModel.modelName
-      var childAlias = association.alias || association.include.model.modelName
+      let ownerAlias = ownerModel.routeOptions.alias || ownerModel.modelName
+      let childAlias = association.alias || association.include.model.modelName
 
-      var childModel = association.include.model
+      let childModel = association.include.model
 
-      var handler = HandlerHelper.generateAssociationGetAllHandler(
+      let handler = HandlerHelper.generateAssociationGetAllHandler(
         ownerModel,
         association,
         options,
         Log
       )
 
-      var queryModel = joiMongooseHelper.generateJoiListQueryModel(
+      let queryModel = joiMongooseHelper.generateJoiListQueryModel(
         childModel,
         Log
       )
 
-      var readModel = joiMongooseHelper.generateJoiReadModel(childModel, Log)
+      let readModel = joiMongooseHelper.generateJoiReadModel(childModel, Log)
 
       if (association.linkingModel) {
-        var associationModel = {}
+        let associationModel = {}
         associationModel[
           association.linkingModel
         ] = joiMongooseHelper.generateJoiReadModel(
@@ -1840,21 +1840,21 @@ module.exports = function(logger, mongoose, server) {
       )
 
       if (!config.enableResponseValidation) {
-        var label = readModel._flags.label
+        let label = readModel._flags.label
         readModel = Joi.alternatives()
           .try(readModel, Joi.any())
           .label(label)
       }
 
-      var auth = false
+      let auth = false
 
       if (config.authStrategy && ownerModel.routeOptions.readAuth !== false) {
         auth = {
           strategy: config.authStrategy
         }
 
-        var scope = authHelper.generateScopeForEndpoint(ownerModel, 'read', Log)
-        var getScope =
+        let scope = authHelper.generateScopeForEndpoint(ownerModel, 'read', Log)
+        let getScope =
           'get' +
           ownerModelName[0].toUpperCase() +
           ownerModelName.slice(1) +
@@ -1878,7 +1878,7 @@ module.exports = function(logger, mongoose, server) {
         headersValidation = null
       }
 
-      var policies = []
+      let policies = []
 
       if (ownerModel.routeOptions.policies) {
         policies = ownerModel.routeOptions.policies

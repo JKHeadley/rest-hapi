@@ -77,18 +77,18 @@ internals.enforceDocumentScopePre = function(model, Log) {
           }
         })
         .catch(function(error) {
-          Log.error('ERROR:', error)
           if (error.isBoom) {
             throw error
           } else {
+            Log.error('ERROR:', error)
             throw Boom.badImplementation(error)
           }
         })
     } catch (err) {
-      Log.error('ERROR:', err)
       if (err.isBoom) {
         throw err
       } else {
+        Log.error('ERROR:', err)
         throw Boom.badImplementation(err)
       }
     }
@@ -166,10 +166,10 @@ internals.enforceDocumentScopePost = function(model, Log) {
 
       return h.continue
     } catch (err) {
-      Log.error('ERROR:', err)
       if (err.isBoom) {
         throw err
       } else {
+        Log.error('ERROR:', err)
         throw Boom.badImplementation(err)
       }
     }

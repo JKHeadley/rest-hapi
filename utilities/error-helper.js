@@ -1,6 +1,6 @@
 'use strict'
 
-var Boom = require('boom')
+let Boom = require('boom')
 
 module.exports = {
   /**
@@ -36,7 +36,7 @@ module.exports = {
    */
   formatResponse: function(error, Log) {
     try {
-      var response = {}
+      let response = {}
       if (error.type) {
         switch (error.type) {
           case this.types.BAD_IMPLEMENTATION:

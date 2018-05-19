@@ -4,9 +4,9 @@ const Config = require('../config')
 const _ = require('lodash')
 
 module.exports = function(mongoose) {
-  var modelName = 'auditLog'
-  var Types = mongoose.Schema.Types
-  var Schema = new mongoose.Schema(
+  let modelName = 'auditLog'
+  let Types = mongoose.Schema.Types
+  let Schema = new mongoose.Schema(
     {
       date: {
         type: Types.Date,

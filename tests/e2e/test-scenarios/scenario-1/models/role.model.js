@@ -6,9 +6,9 @@
 // const USER_ROLES = Config.get('/constants/USER_ROLES');
 
 module.exports = function(mongoose) {
-  var modelName = 'role'
-  var Types = mongoose.Schema.Types
-  var Schema = new mongoose.Schema(
+  let modelName = 'role'
+  let Types = mongoose.Schema.Types
+  let Schema = new mongoose.Schema(
     {
       name: {
         type: Types.String,

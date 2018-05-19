@@ -1,11 +1,12 @@
 'use strict'
 
-var gulp = require('gulp')
-var exit = require('gulp-exit')
-var Q = require('q')
-var mongoose = require('mongoose')
-var config = require('../config')
-var restHapi = require('../rest-hapi')
+let gulp = require('gulp')
+let exit = require('gulp-exit')
+let Q = require('q')
+let mongoose = require('mongoose')
+let config = require('../config')
+let restHapi = require('../rest-hapi')
+let path = require('path')
 
 gulp.task('seed', ['models'], function() {
   mongoose.Promise = Q.Promise
@@ -16,15 +17,15 @@ gulp.task('seed', ['models'], function() {
     restHapi.config.loglevel = 'DEBUG'
     let Log = restHapi.getLogger('seed')
 
-    let roles = [],
-      users = []
+    let roles = []
+    let users = []
 
-    var password = 'root'
+    let password = 'root'
 
     return dropCollections(models)
       .then(function() {
         Log.log('seeding roles')
-        var roles = [
+        let roles = [
           {
             name: 'Account',
             description: 'A standard user account.'
@@ -43,7 +44,7 @@ gulp.task('seed', ['models'], function() {
       .then(function(result) {
         roles = result
         Log.log('seeding users')
-        var users = [
+        let users = [
           {
             email: 'test@account.com',
             password: password,
@@ -75,7 +76,7 @@ gulp.task('seed', ['models'], function() {
 function dropCollections(models) {
   restHapi.config.loglevel = 'LOG'
   let Log = restHapi.getLogger('unseed')
-  var deferred = Q.defer()
+  let deferred = Q.defer()
   models.user
     .remove({})
     .then(function() {
@@ -95,5 +96,5 @@ function dropCollections(models) {
 gulp.task('models', function() {
   return gulp
     .src('./seed/**/*.*')
-    .pipe(gulp.dest(__dirname + '/../../../' + config.modelPath))
+    .pipe(gulp.dest(path.join(__dirname, '/../../../', config.modelPath)))
 })

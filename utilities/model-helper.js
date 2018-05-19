@@ -154,7 +154,7 @@ internals.addDuplicateFields = function(schema, schemas) {
 
         duplicate.forEach(function(prop) {
           const field = {}
-          var fieldName = prop.as
+          let fieldName = prop.as
           field[fieldName] = {
             type: childSchema.obj[prop.field].type,
             allowOnCreate: false,
@@ -185,30 +185,31 @@ internals.addDuplicateFields = function(schema, schemas) {
  */
 internals.extendSchemaAssociations = function(Schema, mongoose, modelPath) {
   if (Schema.statics.routeOptions) {
-    for (var associationKey in Schema.statics.routeOptions.associations) {
-      var association = Schema.statics.routeOptions.associations[associationKey]
+    for (let associationKey in Schema.statics.routeOptions.associations) {
+      let association = Schema.statics.routeOptions.associations[associationKey]
       if (association.type === 'MANY_MANY') {
-        var extendObject = {}
-        var dataObject = {}
+        let extendObject = {}
+        let dataObject = {}
         dataObject[association.model] = {
           type: mongoose.Schema.Types.ObjectId,
           ref: association.model
         }
-        var embedAssociation =
+        let embedAssociation =
           association.embedAssociation === undefined
             ? config.embedAssociations
             : association.embedAssociation
         // EXPL: if a linking model is defined, add it to the association definition
         if (association.linkingModel) {
-          var linkingModelFiles = require('require-all')(
+          let linkingModel
+          let linkingModelFiles = require('require-all')(
             modelPath + '/linking-models'
           )
-          for (var fileName in linkingModelFiles) {
+          for (let fileName in linkingModelFiles) {
             if (
               linkingModelFiles[fileName]().modelName ===
               association.linkingModel
             ) {
-              var linkingModel = linkingModelFiles[fileName]()
+              linkingModel = linkingModelFiles[fileName]()
               break
             }
           }
@@ -239,7 +240,7 @@ internals.extendSchemaAssociations = function(Schema, mongoose, modelPath) {
                 ref: association.model
               }
 
-              var linkingModelSchema = new mongoose.Schema(
+              let linkingModelSchema = new mongoose.Schema(
                 linkingModel.Schema,
                 { collection: linkingModel.modelName }
               )
@@ -259,7 +260,7 @@ internals.extendSchemaAssociations = function(Schema, mongoose, modelPath) {
           // EXPL: if the association is embedded, extend original schema with linking model schema
           else {
             if (!modelExists) {
-              var linkingModelSchema = new mongoose.Schema(
+              let linkingModelSchema = new mongoose.Schema(
                 linkingModel.Schema,
                 { collection: linkingModel.modelName }
               )
@@ -269,8 +270,8 @@ internals.extendSchemaAssociations = function(Schema, mongoose, modelPath) {
               )
             }
 
-            for (var objectKey in linkingModel.Schema) {
-              var object = linkingModel.Schema[objectKey]
+            for (let objectKey in linkingModel.Schema) {
+              let object = linkingModel.Schema[objectKey]
               dataObject[objectKey] = object
             }
 
@@ -307,7 +308,7 @@ internals.extendSchemaAssociations = function(Schema, mongoose, modelPath) {
             if (!modelExists[0] && !modelExists[1]) {
               const Types = mongoose.Schema.Types
 
-              linkingModel = { Schema: {} }
+              let linkingModel = { Schema: {} }
 
               linkingModel.Schema[modelName] = {
                 type: Types.ObjectId,
@@ -317,7 +318,7 @@ internals.extendSchemaAssociations = function(Schema, mongoose, modelPath) {
                 type: Types.ObjectId,
                 ref: association.model
               }
-              var linkingModelSchema = new mongoose.Schema(
+              let linkingModelSchema = new mongoose.Schema(
                 linkingModel.Schema,
                 { collection: linkingModelName }
               )
@@ -352,7 +353,7 @@ internals.extendSchemaAssociations = function(Schema, mongoose, modelPath) {
         }
       } else if (association.type === '_MANY') {
         // EXPL: for one sided _many relationships, the association exists as a simple array of objectIds
-        var extendObject = {}
+        let extendObject = {}
         extendObject[associationKey] = {
           type: [mongoose.Schema.Types.ObjectId],
           ref: association.model
@@ -374,8 +375,8 @@ internals.extendSchemaAssociations = function(Schema, mongoose, modelPath) {
 // TODO: can probably simplify this to a model string/name reference since mongoose models can be accessed globally
 internals.associateModels = function(Schema, models) {
   if (Schema.statics.routeOptions) {
-    for (var associationKey in Schema.statics.routeOptions.associations) {
-      var association = Schema.statics.routeOptions.associations[associationKey]
+    for (let associationKey in Schema.statics.routeOptions.associations) {
+      let association = Schema.statics.routeOptions.associations[associationKey]
       if (!association.include) {
         association.include = {}
       }

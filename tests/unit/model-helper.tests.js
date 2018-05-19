@@ -1,18 +1,18 @@
 'use strict'
 
-var test = require('tape')
-var _ = require('lodash')
-var sinon = require('sinon')
-var sinonTestFactory = require('sinon-test')
-var sinonTest = sinonTestFactory(sinon)
-var rewire = require('rewire')
-var proxyquire = require('proxyquire')
-var assert = require('assert')
-var mongoose = require('mongoose')
-var Types = mongoose.Schema.Types
-var logging = require('loggin')
-var Q = require('q')
-var Log = logging.getLogger('tests')
+let test = require('tape')
+let _ = require('lodash')
+let sinon = require('sinon')
+let sinonTestFactory = require('sinon-test')
+let sinonTest = sinonTestFactory(sinon)
+let rewire = require('rewire')
+let proxyquire = require('proxyquire')
+let assert = require('assert')
+let mongoose = require('mongoose')
+let Types = mongoose.Schema.Types
+let logging = require('loggin')
+let Q = require('q')
+let Log = logging.getLogger('tests')
 Log.logLevel = 'DEBUG'
 Log = Log.bind('model-helper')
 
@@ -22,7 +22,7 @@ sinon.test = sinonTest
 
 test('model-helper exists and has expected members', function(t) {
   // <editor-fold desc="Arrange">
-  var modelHelper = require('../utilities/model-helper')
+  let modelHelper = require('../../utilities/model-helper')
 
   t.plan(4)
   // </editor-fold>
@@ -45,18 +45,18 @@ test('model-helper.createModel', function(t) {
       // <editor-fold desc="Arrange">
       t.plan(2)
 
-      var mongooseStub = this.stub(mongoose)
-      var modelHelper = proxyquire('../utilities/model-helper', {})
+      let mongooseStub = this.stub(mongoose)
+      let modelHelper = proxyquire('../../utilities/model-helper', {})
 
-      var collectionName = 'user'
-      var Schema = {
+      let collectionName = 'user'
+      let Schema = {
         add: function() {},
         statics: { collectionName: collectionName }
       }
       // </editor-fold>
 
       // <editor-fold desc="Act">
-      var result = modelHelper.createModel(Schema, mongooseStub)
+      let result = modelHelper.createModel(Schema, mongooseStub)
       // </editor-fold>
 
       // <editor-fold desc="Assert">
@@ -75,8 +75,8 @@ test('model-helper.createModel', function(t) {
       // <editor-fold desc="Arrange">
       t.plan(7)
 
-      var modelHelper = rewire('../utilities/model-helper')
-      var config = {
+      let modelHelper = rewire('../../utilities/model-helper')
+      let config = {
         enableCreatedAt: true,
         enableUpdatedAt: true,
         enableDeletedAt: true,
@@ -87,7 +87,7 @@ test('model-helper.createModel', function(t) {
       }
       modelHelper.__set__('config', config)
 
-      var mongooseStub = this.stub(mongoose)
+      let mongooseStub = this.stub(mongoose)
 
       let createdAt = {
         createdAt: {
@@ -141,15 +141,15 @@ test('model-helper.createModel', function(t) {
         }
       }
 
-      var collectionName = 'user'
-      var Schema = {
+      let collectionName = 'user'
+      let Schema = {
         add: this.spy(),
         statics: { collectionName: collectionName }
       }
       // </editor-fold>
 
       // <editor-fold desc="Act">
-      var result = modelHelper.createModel(Schema, mongooseStub)
+      let result = modelHelper.createModel(Schema, mongooseStub)
       // </editor-fold>
 
       // <editor-fold desc="Assert">
@@ -191,25 +191,25 @@ test('model-helper.createModel', function(t) {
       // <editor-fold desc="Arrange">
       t.plan(1)
 
-      var modelHelper = rewire('../utilities/model-helper')
-      var config = {
+      let modelHelper = rewire('../../utilities/model-helper')
+      let config = {
         enableCreatedAt: false,
         enableUpdatedAt: false,
         enableSoftDelete: false
       }
       modelHelper.__set__('config', config)
 
-      var mongooseStub = this.stub(mongoose)
+      let mongooseStub = this.stub(mongoose)
 
-      var collectionName = 'user'
-      var Schema = {
+      let collectionName = 'user'
+      let Schema = {
         add: this.spy(),
         statics: { collectionName: collectionName }
       }
       // </editor-fold>
 
       // <editor-fold desc="Act">
-      var result = modelHelper.createModel(Schema, mongooseStub)
+      let result = modelHelper.createModel(Schema, mongooseStub)
       // </editor-fold>
 
       // <editor-fold desc="Assert">
@@ -228,14 +228,14 @@ test('model-helper.extendSchemaAssociations', function(t) {
       // <editor-fold desc="Arrange">
       t.plan(2)
 
-      var modelHelper = rewire('../utilities/model-helper')
-      var config = {
+      let modelHelper = rewire('../../utilities/model-helper')
+      let config = {
         embedAssociations: true
       }
       modelHelper.__set__('config', config)
-      var mongooseStub = this.stub(mongoose)
+      let mongooseStub = this.stub(mongoose)
 
-      var userSchema = {}
+      let userSchema = {}
 
       userSchema.statics = {
         routeOptions: {
@@ -250,7 +250,7 @@ test('model-helper.extendSchemaAssociations', function(t) {
 
       userSchema.add = sinon.spy()
 
-      var extendObject = {
+      let extendObject = {
         groups: [
           {
             group: {
@@ -282,14 +282,14 @@ test('model-helper.extendSchemaAssociations', function(t) {
       // <editor-fold desc="Arrange">
       t.plan(2)
 
-      var modelHelper = rewire('../utilities/model-helper')
-      var config = {
+      let modelHelper = rewire('../../utilities/model-helper')
+      let config = {
         embedAssociations: true
       }
       modelHelper.__set__('config', config)
-      var mongooseStub = this.stub(mongoose)
+      let mongooseStub = this.stub(mongoose)
 
-      var userSchema = {}
+      let userSchema = {}
 
       userSchema.statics = {
         routeOptions: {
@@ -305,11 +305,11 @@ test('model-helper.extendSchemaAssociations', function(t) {
 
       userSchema.add = sinon.spy()
 
-      var linkingModelFile =
-        "var mongoose = require('mongoose');\n\n" +
+      let linkingModelFile =
+        "let mongoose = require('mongoose');\n\n" +
         'module.exports = function () {\n\n' +
-        '  var Types = mongoose.Schema.Types;\n\n' +
-        '  var Model = {\n' +
+        '  let Types = mongoose.Schema.Types;\n\n' +
+        '  let Model = {\n' +
         '      Schema: {\n' +
         '        linkingModel: {\n' +
         '          type: Types.String\n' +
@@ -320,7 +320,7 @@ test('model-helper.extendSchemaAssociations', function(t) {
         '  return Model;\n' +
         '};\n'
 
-      var extendObject = {
+      let extendObject = {
         groups: [
           {
             group: {
@@ -334,14 +334,14 @@ test('model-helper.extendSchemaAssociations', function(t) {
         ]
       }
 
-      var fs = require('fs')
-      var mkdirp = require('mkdirp')
-      var rmdir = require('rmdir')
-      var linkingModelPath = __dirname + '/../models_test/linking-models/'
-      var linkingModelfileName = linkingModelPath + 'test_linking.model.js'
+      let fs = require('fs')
+      let mkdirp = require('mkdirp')
+      let rmdir = require('rmdir')
+      let linkingModelPath = __dirname + '/../models_test/linking-models/'
+      let linkingModelfileName = linkingModelPath + 'test_linking.model.js'
 
       mkdirp(linkingModelPath, function(err) {
-        var deferred = Q.defer()
+        let deferred = Q.defer()
 
         if (err) {
           Log.error(err)
@@ -358,7 +358,7 @@ test('model-helper.extendSchemaAssociations', function(t) {
           deferred.resolve()
         })
 
-        var linkingModel = {
+        let linkingModel = {
           Schema: {
             linkingModel: {
               type: Types.ObjectId
@@ -367,11 +367,11 @@ test('model-helper.extendSchemaAssociations', function(t) {
           modelName: 'test_linking'
         }
 
-        var linkingModelSchema = new mongoose.Schema(linkingModel.Schema, {
+        let linkingModelSchema = new mongoose.Schema(linkingModel.Schema, {
           collection: linkingModel.modelName
         })
 
-        var linkingModel = mongoose.model(
+        linkingModel = mongoose.model(
           linkingModel.modelName,
           linkingModelSchema
         )
@@ -421,13 +421,13 @@ test('model-helper.extendSchemaAssociations', function(t) {
       // <editor-fold desc="Arrange">
       t.plan(2)
 
-      var modelHelper = rewire('../utilities/model-helper')
-      var config = {
+      let modelHelper = rewire('../../utilities/model-helper')
+      let config = {
         embedAssociations: false
       }
       modelHelper.__set__('config', config)
 
-      var userSchema = {}
+      let userSchema = {}
 
       userSchema.statics = {
         collectionName: 'user',
@@ -443,13 +443,13 @@ test('model-helper.extendSchemaAssociations', function(t) {
 
       userSchema.virtual = this.spy()
 
-      var virtualArg = {
+      let virtualArg = {
         ref: 'user_group',
         localField: '_id',
         foreignField: 'user'
       }
 
-      var linkingModel = { Schema: {} }
+      let linkingModel = { Schema: {} }
 
       linkingModel.Schema['user'] = {
         type: Types.ObjectId,
@@ -459,11 +459,11 @@ test('model-helper.extendSchemaAssociations', function(t) {
         type: Types.ObjectId,
         ref: 'group'
       }
-      var linkingModelSchema = new mongoose.Schema(linkingModel.Schema, {
+      let linkingModelSchema = new mongoose.Schema(linkingModel.Schema, {
         collection: 'user_group'
       })
 
-      var linkingModel = mongoose.model('user_group', linkingModelSchema)
+      linkingModel = mongoose.model('user_group', linkingModelSchema)
 
       // </editor-fold>
 
@@ -497,13 +497,13 @@ test('model-helper.extendSchemaAssociations', function(t) {
       // <editor-fold desc="Arrange">
       t.plan(2)
 
-      var modelHelper = rewire('../utilities/model-helper')
-      var config = {
+      let modelHelper = rewire('../../utilities/model-helper')
+      let config = {
         embedAssociations: false
       }
       modelHelper.__set__('config', config)
 
-      var userSchema = {
+      let userSchema = {
         statics: {
           collectionName: 'user'
         }
@@ -511,13 +511,13 @@ test('model-helper.extendSchemaAssociations', function(t) {
 
       userSchema.virtual = this.spy()
 
-      var virtualArg = {
+      let virtualArg = {
         ref: 'test_linking',
         localField: '_id',
         foreignField: 'user'
       }
 
-      var linkingModel = { Schema: {} }
+      let linkingModel = { Schema: {} }
 
       linkingModel.Schema['user'] = {
         type: Types.ObjectId,
@@ -531,11 +531,11 @@ test('model-helper.extendSchemaAssociations', function(t) {
         type: Types.ObjectId
       }
 
-      var linkingModelSchema = new mongoose.Schema(linkingModel.Schema, {
+      let linkingModelSchema = new mongoose.Schema(linkingModel.Schema, {
         collection: 'test_linking'
       })
 
-      var linkingModel = mongoose.model('test_linking', linkingModelSchema)
+      linkingModel = mongoose.model('test_linking', linkingModelSchema)
 
       userSchema.statics = {
         collectionName: 'user',
@@ -552,7 +552,7 @@ test('model-helper.extendSchemaAssociations', function(t) {
 
       userSchema.add = sinon.spy()
 
-      var rmdir = require('rmdir')
+      let rmdir = require('rmdir')
       // </editor-fold>
 
       // <editor-fold desc="Act">
@@ -593,11 +593,11 @@ test('model-helper.extendSchemaAssociations', function(t) {
     'model-helper.extendSchemaAssociations calls Schema.virtual with correct args if association is ONE_MANY and has a foreignField.',
     function(t) {
       // <editor-fold desc="Arrange">
-      var modelHelper = require('../utilities/model-helper')
+      let modelHelper = require('../../utilities/model-helper')
 
       t.plan(3)
 
-      var userSchema_foreignField = {}
+      let userSchema_foreignField = {}
 
       userSchema_foreignField.statics = {
         routeOptions: {
@@ -611,7 +611,7 @@ test('model-helper.extendSchemaAssociations', function(t) {
         }
       }
 
-      var userSchema_no_foreignField = {}
+      let userSchema_no_foreignField = {}
 
       userSchema_no_foreignField.statics = {
         routeOptions: {
@@ -627,7 +627,7 @@ test('model-helper.extendSchemaAssociations', function(t) {
       userSchema_foreignField.virtual = sinon.spy()
       userSchema_no_foreignField.virtual = sinon.spy()
 
-      var virtualObject = {
+      let virtualObject = {
         ref: 'user',
         localField: '_id',
         foreignField: 'boss'
@@ -662,14 +662,14 @@ test('model-helper.extendSchemaAssociations', function(t) {
       // <editor-fold desc="Arrange">
       t.plan(2)
 
-      var modelHelper = rewire('../utilities/model-helper')
-      var config = {
+      let modelHelper = rewire('../../utilities/model-helper')
+      let config = {
         embedAssociations: true
       }
       modelHelper.__set__('config', config)
-      var mongooseStub = this.stub(mongoose)
+      let mongooseStub = this.stub(mongoose)
 
-      var userSchema = {}
+      let userSchema = {}
 
       userSchema.statics = {
         routeOptions: {
@@ -684,7 +684,7 @@ test('model-helper.extendSchemaAssociations', function(t) {
 
       userSchema.add = sinon.spy()
 
-      var extendObject = {
+      let extendObject = {
         hashTags: {
           type: [mongoose.Schema.Types.ObjectId],
           ref: 'hashTag'
@@ -714,18 +714,18 @@ test('model-helper.associateModels', function(t) {
     'model-helper.associateModels builds association.include property.',
     function(t) {
       // <editor-fold desc="Arrange">
-      var modelHelper = require('../utilities/model-helper')
+      let modelHelper = require('../../utilities/model-helper')
 
       t.plan(6)
 
-      var userSchema = {}
+      let userSchema = {}
 
-      var groups = {
+      let groups = {
         type: 'MANY_MANY',
         model: 'group'
       }
 
-      var title = {
+      let title = {
         type: 'MANY_ONE',
         model: 'role'
       }
@@ -739,7 +739,7 @@ test('model-helper.associateModels', function(t) {
         }
       }
 
-      var models = {
+      let models = {
         group: 'testGroup',
         role: 'testRole'
       }

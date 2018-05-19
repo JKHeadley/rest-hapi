@@ -11,7 +11,7 @@ const assert = require('assert')
 const mongoose = require('mongoose')
 const Types = mongoose.Schema.Types
 const logging = require('loggin')
-const testHelper = require('../utilities/test-helper')
+const testHelper = require('../../utilities/test-helper')
 const Joi = require('joi')
 const Boom = require('boom')
 const Q = require('q')
@@ -24,7 +24,7 @@ sinon.test = sinonTest
 
 test('enforce-document-scope exists and has expected members', function(t) {
   // <editor-fold desc="Arrange">
-  let enforceDocumentScope = require('../policies/enforce-document-scope')
+  let enforceDocumentScope = require('../../policies/enforce-document-scope')
 
   t.plan(3)
   // </editor-fold>
@@ -49,7 +49,7 @@ test('enforce-document-scope.compareScopes', function(t) {
       // <editor-fold desc="Arrange">
       t.plan(1)
 
-      let enforceDocumentScope = rewire('../policies/enforce-document-scope')
+      let enforceDocumentScope = rewire('../../policies/enforce-document-scope')
       let compareScopes = enforceDocumentScope.__get__(
         'internals.compareScopes'
       )
@@ -78,7 +78,7 @@ test('enforce-document-scope.compareScopes', function(t) {
       // <editor-fold desc="Arrange">
       t.plan(1)
 
-      let enforceDocumentScope = rewire('../policies/enforce-document-scope')
+      let enforceDocumentScope = rewire('../../policies/enforce-document-scope')
       let compareScopes = enforceDocumentScope.__get__(
         'internals.compareScopes'
       )
@@ -107,7 +107,7 @@ test('enforce-document-scope.compareScopes', function(t) {
       // <editor-fold desc="Arrange">
       t.plan(1)
 
-      let enforceDocumentScope = rewire('../policies/enforce-document-scope')
+      let enforceDocumentScope = rewire('../../policies/enforce-document-scope')
       let compareScopes = enforceDocumentScope.__get__(
         'internals.compareScopes'
       )
@@ -136,7 +136,7 @@ test('enforce-document-scope.compareScopes', function(t) {
       // <editor-fold desc="Arrange">
       t.plan(1)
 
-      let enforceDocumentScope = rewire('../policies/enforce-document-scope')
+      let enforceDocumentScope = rewire('../../policies/enforce-document-scope')
       let compareScopes = enforceDocumentScope.__get__(
         'internals.compareScopes'
       )
@@ -165,7 +165,7 @@ test('enforce-document-scope.compareScopes', function(t) {
       // <editor-fold desc="Arrange">
       t.plan(1)
 
-      let enforceDocumentScope = rewire('../policies/enforce-document-scope')
+      let enforceDocumentScope = rewire('../../policies/enforce-document-scope')
       let compareScopes = enforceDocumentScope.__get__(
         'internals.compareScopes'
       )
@@ -194,7 +194,7 @@ test('enforce-document-scope.compareScopes', function(t) {
       // <editor-fold desc="Arrange">
       t.plan(1)
 
-      let enforceDocumentScope = rewire('../policies/enforce-document-scope')
+      let enforceDocumentScope = rewire('../../policies/enforce-document-scope')
       let compareScopes = enforceDocumentScope.__get__(
         'internals.compareScopes'
       )
@@ -223,7 +223,7 @@ test('enforce-document-scope.compareScopes', function(t) {
       // <editor-fold desc="Arrange">
       t.plan(1)
 
-      let enforceDocumentScope = rewire('../policies/enforce-document-scope')
+      let enforceDocumentScope = rewire('../../policies/enforce-document-scope')
       let compareScopes = enforceDocumentScope.__get__(
         'internals.compareScopes'
       )
@@ -252,7 +252,7 @@ test('enforce-document-scope.compareScopes', function(t) {
       // <editor-fold desc="Arrange">
       t.plan(1)
 
-      let enforceDocumentScope = rewire('../policies/enforce-document-scope')
+      let enforceDocumentScope = rewire('../../policies/enforce-document-scope')
       let compareScopes = enforceDocumentScope.__get__(
         'internals.compareScopes'
       )
@@ -281,7 +281,7 @@ test('enforce-document-scope.compareScopes', function(t) {
       // <editor-fold desc="Arrange">
       t.plan(1)
 
-      let enforceDocumentScope = rewire('../policies/enforce-document-scope')
+      let enforceDocumentScope = rewire('../../policies/enforce-document-scope')
       let compareScopes = enforceDocumentScope.__get__(
         'internals.compareScopes'
       )
@@ -314,7 +314,7 @@ test('enforce-document-scope.verifyScope', function(t) {
       // <editor-fold desc="Arrange">
       t.plan(1)
 
-      let enforceDocumentScope = rewire('../policies/enforce-document-scope')
+      let enforceDocumentScope = rewire('../../policies/enforce-document-scope')
       let compareScopes = this.spy(function() {
         return true
       })
@@ -362,7 +362,7 @@ test('enforce-document-scope.verifyScope', function(t) {
       // <editor-fold desc="Arrange">
       t.plan(1)
 
-      let enforceDocumentScope = rewire('../policies/enforce-document-scope')
+      let enforceDocumentScope = rewire('../../policies/enforce-document-scope')
       let compareScopes = this.spy(function() {
         return true
       })
@@ -410,7 +410,7 @@ test('enforce-document-scope.verifyScope', function(t) {
       // <editor-fold desc="Arrange">
       t.plan(1)
 
-      let enforceDocumentScope = rewire('../policies/enforce-document-scope')
+      let enforceDocumentScope = rewire('../../policies/enforce-document-scope')
       let compareScopes = this.spy(function() {
         return true
       })
@@ -458,7 +458,7 @@ test('enforce-document-scope.verifyScope', function(t) {
       // <editor-fold desc="Arrange">
       t.plan(1)
 
-      let enforceDocumentScope = rewire('../policies/enforce-document-scope')
+      let enforceDocumentScope = rewire('../../policies/enforce-document-scope')
       let compareScopes = this.spy(function() {
         return true
       })
@@ -506,7 +506,7 @@ test('enforce-document-scope.verifyScope', function(t) {
       // <editor-fold desc="Arrange">
       t.plan(1)
 
-      let enforceDocumentScope = rewire('../policies/enforce-document-scope')
+      let enforceDocumentScope = rewire('../../policies/enforce-document-scope')
       let compareScopes = this.spy(function() {
         return true
       })
@@ -549,7 +549,7 @@ test('enforce-document-scope.verifyScope', function(t) {
       // <editor-fold desc="Arrange">
       t.plan(1)
 
-      let enforceDocumentScope = rewire('../policies/enforce-document-scope')
+      let enforceDocumentScope = rewire('../../policies/enforce-document-scope')
       let compareScopes = this.spy(function() {
         return true
       })
@@ -589,7 +589,7 @@ test('enforce-document-scope.verifyScope', function(t) {
       // <editor-fold desc="Arrange">
       t.plan(1)
 
-      let enforceDocumentScope = rewire('../policies/enforce-document-scope')
+      let enforceDocumentScope = rewire('../../policies/enforce-document-scope')
       let compareScopes = this.spy(function() {
         return true
       })
@@ -624,7 +624,7 @@ test('enforce-document-scope.verifyScope', function(t) {
       // <editor-fold desc="Arrange">
       t.plan(1)
 
-      let enforceDocumentScope = rewire('../policies/enforce-document-scope')
+      let enforceDocumentScope = rewire('../../policies/enforce-document-scope')
       let compareScopes = this.spy(function() {
         return false
       })
@@ -670,7 +670,7 @@ test('enforce-document-scope.verifyScope', function(t) {
       // <editor-fold desc="Arrange">
       t.plan(1)
 
-      let enforceDocumentScope = rewire('../policies/enforce-document-scope')
+      let enforceDocumentScope = rewire('../../policies/enforce-document-scope')
       let compareScopes = this.spy(function() {
         return false
       })
@@ -720,7 +720,7 @@ test('enforce-document-scope.verifyScopeById', function(t) {
       // <editor-fold desc="Arrange">
       t.plan(1)
 
-      let enforceDocumentScope = rewire('../policies/enforce-document-scope')
+      let enforceDocumentScope = rewire('../../policies/enforce-document-scope')
       let verifyScope = this.spy(function() {
         return true
       })
@@ -770,7 +770,7 @@ test('enforce-document-scope.verifyScopeById', function(t) {
       t.plan(1)
 
       let deferred = Q.defer()
-      let enforceDocumentScope = rewire('../policies/enforce-document-scope')
+      let enforceDocumentScope = rewire('../../policies/enforce-document-scope')
       let verifyScope = this.spy(function() {
         deferred.resolve()
         return true
@@ -820,7 +820,7 @@ test('enforce-document-scope.enforceDocumentScopePostForModel', function(t) {
       // <editor-fold desc="Arrange">
       t.plan(1)
 
-      let enforceDocumentScope = rewire('../policies/enforce-document-scope')
+      let enforceDocumentScope = rewire('../../policies/enforce-document-scope')
       let verifyScope = this.spy(function() {
         throw 'ERROR'
       })
@@ -861,7 +861,7 @@ test('enforce-document-scope.enforceDocumentScopePostForModel', function(t) {
       // <editor-fold desc="Arrange">
       t.plan(1)
 
-      let enforceDocumentScope = rewire('../policies/enforce-document-scope')
+      let enforceDocumentScope = rewire('../../policies/enforce-document-scope')
       let verifyScope = this.spy(function() {
         return { authorized: true }
       })
@@ -917,7 +917,7 @@ test('enforce-document-scope.enforceDocumentScopePostForModel', function(t) {
       // <editor-fold desc="Arrange">
       t.plan(1)
 
-      let enforceDocumentScope = rewire('../policies/enforce-document-scope')
+      let enforceDocumentScope = rewire('../../policies/enforce-document-scope')
       let verifyScope = this.spy(function() {
         return { authorized: true }
       })
@@ -973,7 +973,7 @@ test('enforce-document-scope.enforceDocumentScopePostForModel', function(t) {
       // <editor-fold desc="Arrange">
       t.plan(1)
 
-      let enforceDocumentScope = rewire('../policies/enforce-document-scope')
+      let enforceDocumentScope = rewire('../../policies/enforce-document-scope')
       let verifyScope = this.spy(function() {
         return { authorized: true }
       })
@@ -1025,7 +1025,7 @@ test('enforce-document-scope.enforceDocumentScopePostForModel', function(t) {
       // <editor-fold desc="Arrange">
       t.plan(1)
 
-      let enforceDocumentScope = rewire('../policies/enforce-document-scope')
+      let enforceDocumentScope = rewire('../../policies/enforce-document-scope')
       let verifyScope = this.spy(function() {
         return { authorized: false }
       })
@@ -1089,7 +1089,7 @@ test('enforce-document-scope.enforceDocumentScopePostForModel', function(t) {
       // <editor-fold desc="Arrange">
       t.plan(1)
 
-      let enforceDocumentScope = rewire('../policies/enforce-document-scope')
+      let enforceDocumentScope = rewire('../../policies/enforce-document-scope')
       let verifyScope = this.spy(function() {
         return { authorized: false }
       })
@@ -1151,7 +1151,7 @@ test('enforce-document-scope.enforceDocumentScopePostForModel', function(t) {
       // <editor-fold desc="Arrange">
       t.plan(2)
 
-      let enforceDocumentScope = rewire('../policies/enforce-document-scope')
+      let enforceDocumentScope = rewire('../../policies/enforce-document-scope')
       let verifyScope = this.spy(function() {
         return { authorized: false, unauthorizedDocs: [{ _id: 'failed doc' }] }
       })
@@ -1217,7 +1217,7 @@ test('enforce-document-scope.enforceDocumentScopePreForModel', function(t) {
       // <editor-fold desc="Arrange">
       t.plan(1)
 
-      let enforceDocumentScope = rewire('../policies/enforce-document-scope')
+      let enforceDocumentScope = rewire('../../policies/enforce-document-scope')
       let verifyScopeById = this.spy(function() {
         throw 'ERROR'
       })
@@ -1259,7 +1259,7 @@ test('enforce-document-scope.enforceDocumentScopePreForModel', function(t) {
       // <editor-fold desc="Arrange">
       t.plan(1)
 
-      let enforceDocumentScope = rewire('../policies/enforce-document-scope')
+      let enforceDocumentScope = rewire('../../policies/enforce-document-scope')
       let verifyScopeById = this.spy(function() {
         return Q.when({ authorized: true })
       })
@@ -1312,7 +1312,7 @@ test('enforce-document-scope.enforceDocumentScopePreForModel', function(t) {
       // <editor-fold desc="Arrange">
       t.plan(1)
 
-      let enforceDocumentScope = rewire('../policies/enforce-document-scope')
+      let enforceDocumentScope = rewire('../../policies/enforce-document-scope')
       let verifyScopeById = this.spy(function() {
         return Q.when({ authorized: true })
       })
@@ -1365,7 +1365,7 @@ test('enforce-document-scope.enforceDocumentScopePreForModel', function(t) {
       // <editor-fold desc="Arrange">
       t.plan(1)
 
-      let enforceDocumentScope = rewire('../policies/enforce-document-scope')
+      let enforceDocumentScope = rewire('../../policies/enforce-document-scope')
       let verifyScopeById = this.spy(function() {
         return Q.when({ authorized: true })
       })
@@ -1418,7 +1418,7 @@ test('enforce-document-scope.enforceDocumentScopePreForModel', function(t) {
       // <editor-fold desc="Arrange">
       t.plan(1)
 
-      let enforceDocumentScope = rewire('../policies/enforce-document-scope')
+      let enforceDocumentScope = rewire('../../policies/enforce-document-scope')
       let verifyScopeById = this.spy(function() {
         return Q.when({ authorized: true })
       })
@@ -1471,7 +1471,7 @@ test('enforce-document-scope.enforceDocumentScopePreForModel', function(t) {
       // <editor-fold desc="Arrange">
       t.plan(1)
 
-      let enforceDocumentScope = rewire('../policies/enforce-document-scope')
+      let enforceDocumentScope = rewire('../../policies/enforce-document-scope')
       let verifyScopeById = this.spy(function() {
         return Q.when({ authorized: true })
       })
@@ -1524,7 +1524,7 @@ test('enforce-document-scope.enforceDocumentScopePreForModel', function(t) {
       t.plan(1)
 
       let deferred = Q.defer()
-      let enforceDocumentScope = rewire('../policies/enforce-document-scope')
+      let enforceDocumentScope = rewire('../../policies/enforce-document-scope')
       let verifyScopeById = this.spy(function() {
         return Q.when({ authorized: true })
       })
@@ -1575,7 +1575,7 @@ test('enforce-document-scope.enforceDocumentScopePreForModel', function(t) {
       t.plan(1)
 
       let deferred = Q.defer()
-      let enforceDocumentScope = rewire('../policies/enforce-document-scope')
+      let enforceDocumentScope = rewire('../../policies/enforce-document-scope')
       let verifyScopeById = this.spy(function() {
         return Q.when({ authorized: false })
       })
@@ -1631,7 +1631,7 @@ test('enforce-document-scope.enforceDocumentScopePreForModel', function(t) {
       t.plan(1)
 
       let deferred = Q.defer()
-      let enforceDocumentScope = rewire('../policies/enforce-document-scope')
+      let enforceDocumentScope = rewire('../../policies/enforce-document-scope')
       let verifyScopeById = this.spy(function() {
         return Q.when({ authorized: false })
       })
@@ -1688,7 +1688,7 @@ test('enforce-document-scope.enforceDocumentScopePreForModel', function(t) {
       t.plan(1)
 
       let deferred = Q.defer()
-      let enforceDocumentScope = rewire('../policies/enforce-document-scope')
+      let enforceDocumentScope = rewire('../../policies/enforce-document-scope')
       let verifyScopeById = this.spy(function() {
         return Q.when({ authorized: false })
       })
@@ -1745,7 +1745,7 @@ test('enforce-document-scope.enforceDocumentScopePreForModel', function(t) {
       t.plan(1)
 
       let deferred = Q.defer()
-      let enforceDocumentScope = rewire('../policies/enforce-document-scope')
+      let enforceDocumentScope = rewire('../../policies/enforce-document-scope')
       let verifyScopeById = this.spy(function() {
         return Q.when({
           authorized: false,

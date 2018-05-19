@@ -1,10 +1,10 @@
 'use strict'
 
-var modelHelper = require('./model-helper')
-var authHelper = require('./auth-helper')
-var fs = require('fs')
-var path = require('path')
-var Q = require('q')
+let modelHelper = require('./model-helper')
+let authHelper = require('./auth-helper')
+let fs = require('fs')
+let path = require('path')
+let Q = require('q')
 
 /**
  * This module reads in all the model files and generates the corresponding mongoose models.
@@ -14,9 +14,9 @@ var Q = require('q')
  * @returns {*|promise}
  */
 module.exports = function(mongoose, Log, config) {
-  var models = {}
-  var schemas = {}
-  var deferred = Q.defer()
+  let models = {}
+  let schemas = {}
+  let deferred = Q.defer()
   let modelPath = ''
 
   if (config.absoluteModelPath === true) {
@@ -41,10 +41,10 @@ module.exports = function(mongoose, Log, config) {
 
     files.forEach(function(file) {
       // EXPL: Import all the model schemas
-      var ext = path.extname(file)
+      let ext = path.extname(file)
       if (ext === '.js') {
-        var modelName = path.basename(file, '.js')
-        var schema = require(modelPath + '/' + modelName)(mongoose)
+        let modelName = path.basename(file, '.js')
+        let schema = require(modelPath + '/' + modelName)(mongoose)
 
         // EXPL: Add text index if enabled
         if (config.enableTextSearch) {
@@ -55,14 +55,14 @@ module.exports = function(mongoose, Log, config) {
     })
 
     if (config.enableAuditLog) {
-      schema = require('../models/audit-log.model')(mongoose)
+      let schema = require('../models/audit-log.model')(mongoose)
       schemas[schema.statics.collectionName] = schema
     }
 
-    var extendedSchemas = {}
+    let extendedSchemas = {}
 
-    for (var schemaKey in schemas) {
-      var schema = schemas[schemaKey]
+    for (let schemaKey in schemas) {
+      let schema = schemas[schemaKey]
       extendedSchemas[schemaKey] = modelHelper.extendSchemaAssociations(
         schema,
         mongoose,
@@ -70,30 +70,30 @@ module.exports = function(mongoose, Log, config) {
       )
     }
 
-    for (var schemaKey in extendedSchemas) {
-      var schema = extendedSchemas[schemaKey]
+    for (let schemaKey in extendedSchemas) {
+      let schema = extendedSchemas[schemaKey]
       extendedSchemas[schemaKey] = modelHelper.addDuplicateFields(
         schema,
         schemas
       )
     }
 
-    for (var schemaKey in extendedSchemas) {
+    for (let schemaKey in extendedSchemas) {
       // EXPL: Create models with final schemas
-      var schema = extendedSchemas[schemaKey]
+      let schema = extendedSchemas[schemaKey]
       models[schemaKey] = modelHelper.createModel(schema, mongoose)
     }
 
-    for (var modelKey in models) {
+    for (let modelKey in models) {
       // EXPL: Populate internal model associations
-      var model = models[modelKey]
+      let model = models[modelKey]
       modelHelper.associateModels(model.schema, models)
     }
 
-    for (var modelKey in models) {
+    for (let modelKey in models) {
       // EXPL: Generate scopes if enabled
       if (config.generateScopes) {
-        var model = models[modelKey]
+        let model = models[modelKey]
         authHelper.generateScopeForModel(model, Log)
       }
     }

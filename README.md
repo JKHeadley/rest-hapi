@@ -175,7 +175,7 @@ Configuration of rest-hapi is handled through the ``restHapi.config`` object.  B
 /**
  * config.js - Configuration settings for the generated API
  */
-var config = {};
+let config = {};
 config.server = {};
 config.mongo = {};
 
@@ -526,7 +526,7 @@ with the file structure of ``{model name}.model.js``.  These models must adhere 
 'use strict';
 
 module.exports = function (mongoose) {
-    var Schema = new mongoose.Schema({
+    let Schema = new mongoose.Schema({
         /*fill in schema fields*/
     });
 
@@ -547,9 +547,9 @@ As a concrete example, here is a ``user`` model:
 'use strict';
 
 module.exports = function (mongoose) {
-  var modelName = "user";
-  var Types = mongoose.Schema.Types;
-  var Schema = new mongoose.Schema({
+  let modelName = "user";
+  let Types = mongoose.Schema.Types;
+  let Schema = new mongoose.Schema({
     email: {
       type: Types.String,
       required: true,
@@ -632,14 +632,14 @@ If endpoints beyond the generated CRUD endpoints are needed for a model, they ca
 ```javascript
 'use strict';
 
-var Joi = require('joi');
-var bcrypt = require('bcrypt');
-var restHapi = require('rest-hapi');
+let Joi = require('joi');
+let bcrypt = require('bcrypt');
+let restHapi = require('rest-hapi');
 
 module.exports = function (mongoose) {
-  var modelName = "user";
-  var Types = mongoose.Schema.Types;
-  var Schema = new mongoose.Schema({
+  let modelName = "user";
+  let Types = mongoose.Schema.Types;
+  let Schema = new mongoose.Schema({
     email: {
       type: Types.String,
       required: true,
@@ -660,14 +660,14 @@ module.exports = function (mongoose) {
         //Password Update Endpoint
         function (server, model, options, Log) {
           Log = Log.bind("Password Update");
-          var Boom = require('boom');
+          let Boom = require('boom');
 
-          var collectionName = model.collectionDisplayName || model.modelName;
+          let collectionName = model.collectionDisplayName || model.modelName;
 
           Log.note("Generating Password Update endpoint for " + collectionName);
 
-          var handler = function (request, reply) {
-            var hashedPassword = model.generatePasswordHash(request.payload.password);
+          let handler = function (request, reply) {
+            let hashedPassword = model.generatePasswordHash(request.payload.password);
             return restHapi.update(model, request.params._id, {password: hashedPassword}, Log).then(function (result) {
               if (result) {
                 return reply("Password updated.").code(200);
@@ -716,8 +716,8 @@ module.exports = function (mongoose) {
     },
     
     generatePasswordHash: function(password) {
-      var salt = bcrypt.genSaltSync(10);
-      var hash = bcrypt.hashSync(password, salt);
+      let salt = bcrypt.genSaltSync(10);
+      let hash = bcrypt.hashSync(password, salt);
       return hash;
     }
   };
@@ -772,9 +772,9 @@ required for all associations.
 'use strict';
 
 module.exports = function (mongoose) {
-  var modelName = "user";
-  var Types = mongoose.Schema.Types;
-  var Schema = new mongoose.Schema({
+  let modelName = "user";
+  let Types = mongoose.Schema.Types;
+  let Schema = new mongoose.Schema({
     email: {
       type: Types.String,
       required: true,
@@ -814,9 +814,9 @@ module.exports = function (mongoose) {
 'use strict';
 
 module.exports = function (mongoose) {
-  var modelName = "dog";
-  var Types = mongoose.Schema.Types;
-  var Schema = new mongoose.Schema({
+  let modelName = "dog";
+  let Types = mongoose.Schema.Types;
+  let Schema = new mongoose.Schema({
     name: {
       type: Types.String,
       required: true
@@ -862,9 +862,9 @@ include a ``ref`` property with the associated model name.
 'use strict';
 
 module.exports = function (mongoose) {
-  var modelName = "user";
-  var Types = mongoose.Schema.Types;
-  var Schema = new mongoose.Schema({
+  let modelName = "user";
+  let Types = mongoose.Schema.Types;
+  let Schema = new mongoose.Schema({
     email: {
       type: Types.String,
       required: true,
@@ -905,9 +905,9 @@ module.exports = function (mongoose) {
 'use strict';
 
 module.exports = function (mongoose) {
-  var modelName = "role";
-  var Types = mongoose.Schema.Types;
-  var Schema = new mongoose.Schema({
+  let modelName = "role";
+  let Types = mongoose.Schema.Types;
+  let Schema = new mongoose.Schema({
     name: {
       type: Types.String,
       required: true,
@@ -963,9 +963,9 @@ to multiple ``group`` instances and vice versa.
 'use strict';
 
 module.exports = function (mongoose) {
-  var modelName = "user";
-  var Types = mongoose.Schema.Types;
-  var Schema = new mongoose.Schema({
+  let modelName = "user";
+  let Types = mongoose.Schema.Types;
+  let Schema = new mongoose.Schema({
     email: {
       type: Types.String,
       required: true,
@@ -1002,9 +1002,9 @@ module.exports = function (mongoose) {
 'use strict';
 
 module.exports = function (mongoose) {
-  var modelName = "group";
-  var Types = mongoose.Schema.Types;
-  var Schema = new mongoose.Schema({
+  let modelName = "group";
+  let Types = mongoose.Schema.Types;
+  let Schema = new mongoose.Schema({
     name: {
       type: Types.String,
       required: true,
@@ -1074,9 +1074,9 @@ association property **must** match the linking model ``modleName`` property.
 'use strict';
 
 module.exports = function (mongoose) {
-  var modelName = "user";
-  var Types = mongoose.Schema.Types;
-  var Schema = new mongoose.Schema({
+  let modelName = "user";
+  let Types = mongoose.Schema.Types;
+  let Schema = new mongoose.Schema({
     email: {
       type: Types.String,
       required: true,
@@ -1114,13 +1114,13 @@ module.exports = function (mongoose) {
 ```javascript
 'use strict';
 
-var mongoose = require("mongoose");
+let mongoose = require("mongoose");
 
 module.exports = function () {
 
-  var Types = mongoose.Schema.Types;
+  let Types = mongoose.Schema.Types;
 
-  var Model = {
+  let Model = {
     Schema: {
       friendsSince: {
         type: Types.Date
@@ -1162,9 +1162,9 @@ The `config.embedAssociations` can be overwritten for individual associations th
 'use strict';
 
 module.exports = function (mongoose) {
-    var modelName = "group";
-    var Types = mongoose.Schema.Types;
-    var Schema = new mongoose.Schema({
+    let modelName = "group";
+    let Types = mongoose.Schema.Types;
+    let Schema = new mongoose.Schema({
         name: {
             type: Types.String,
             required: true,
@@ -1196,9 +1196,9 @@ module.exports = function (mongoose) {
 'use strict';
 
 module.exports = function (mongoose) {
-    var modelName = "user";
-    var Types = mongoose.Schema.Types;
-    var Schema = new mongoose.Schema({
+    let modelName = "user";
+    let Types = mongoose.Schema.Types;
+    let Schema = new mongoose.Schema({
         name: {
             type: Types.String,
             required: true
@@ -1253,9 +1253,9 @@ A one-sided -many relationship can exists between two models. This allows the pa
 'use strict';
 
 module.exports = function (mongoose) {
-  var modelName = "post";
-  var Types = mongoose.Schema.Types;
-  var Schema = new mongoose.Schema({
+  let modelName = "post";
+  let Types = mongoose.Schema.Types;
+  let Schema = new mongoose.Schema({
     caption: {
       type: Types.String
     }
@@ -1325,9 +1325,9 @@ to alter the association path name.  For example:
 'use strict';
 
 module.exports = function (mongoose) {
-  var modelName = "user";
-  var Types = mongoose.Schema.Types;
-  var Schema = new mongoose.Schema({
+  let modelName = "user";
+  let Types = mongoose.Schema.Types;
+  let Schema = new mongoose.Schema({
     email: {
       type: Types.String,
       required: true,
@@ -1556,9 +1556,9 @@ In the code below, the `name` field of the role model will be duplicated in the 
 'use strict';
 
 module.exports = function (mongoose) {
-  var modelName = "role";
-  var Types = mongoose.Schema.Types;
-  var Schema = new mongoose.Schema({
+  let modelName = "role";
+  let Types = mongoose.Schema.Types;
+  let Schema = new mongoose.Schema({
     name: {
       type: Types.String,
       required: true
@@ -1592,9 +1592,9 @@ module.exports = function (mongoose) {
 'use strict';
 
 module.exports = function (mongoose) {
-  var modelName = "user";
-  var Types = mongoose.Schema.Types;
-  var Schema = new mongoose.Schema({
+  let modelName = "user";
+  let Types = mongoose.Schema.Types;
+  let Schema = new mongoose.Schema({
     email: {
       type: Types.String,
       unique: true
@@ -1765,9 +1765,9 @@ One interesting property of duplicate fields is that they themselves can be dupl
 'use strict';
 
 module.exports = function (mongoose) {
-  var modelName = "business";
-  var Types = mongoose.Schema.Types;
-  var Schema = new mongoose.Schema({
+  let modelName = "business";
+  let Types = mongoose.Schema.Types;
+  let Schema = new mongoose.Schema({
     name: {
       type: Types.String,
       required: true
@@ -1800,9 +1800,9 @@ module.exports = function (mongoose) {
 ```javascript'use strict';
 
 module.exports = function (mongoose) {
-  var modelName = "role";
-  var Types = mongoose.Schema.Types;
-  var Schema = new mongoose.Schema({
+  let modelName = "role";
+  let Types = mongoose.Schema.Types;
+  let Schema = new mongoose.Schema({
     name: {
       type: Types.String,
       required: true
@@ -1847,9 +1847,9 @@ module.exports = function (mongoose) {
 ```javascript'use strict';
 
 module.exports = function (mongoose) {
-  var modelName = "user";
-  var Types = mongoose.Schema.Types;
-  var Schema = new mongoose.Schema({
+  let modelName = "user";
+  let Types = mongoose.Schema.Types;
+  let Schema = new mongoose.Schema({
     email: {
       type: Types.String,
       unique: true
@@ -2125,12 +2125,12 @@ using a static method ``generatePasswordHash``.
 ```javascript
 'use strict';
 
-var bcrypt = require('bcrypt');
+let bcrypt = require('bcrypt');
 
 module.exports = function (mongoose) {
-  var modelName = "user";
-  var Types = mongoose.Schema.Types;
-  var Schema = new mongoose.Schema({
+  let modelName = "user";
+  let Types = mongoose.Schema.Types;
+  let Schema = new mongoose.Schema({
     email: {
       type: Types.String,
       unique: true
@@ -2148,7 +2148,7 @@ module.exports = function (mongoose) {
     routeOptions: {
       create: {
         pre: function (payload, request, Log) {
-          var hashedPassword = mongoose.model('user').generatePasswordHash(payload.password);
+          let hashedPassword = mongoose.model('user').generatePasswordHash(payload.password);
 
           payload.password = hashedPassword;
           
@@ -2158,8 +2158,8 @@ module.exports = function (mongoose) {
     },
 
     generatePasswordHash: function(password) {
-      var salt = bcrypt.genSaltSync(10);
-      var hash = bcrypt.hashSync(password, salt);
+      let salt = bcrypt.genSaltSync(10);
+      let hash = bcrypt.hashSync(password, salt);
       return hash;
     }
   };
@@ -2253,9 +2253,9 @@ In the example below, users with the ``Admin`` scope in their authentication cre
 'use strict';
 
 module.exports = function (mongoose) {
-  var modelName = "user";
-  var Types = mongoose.Schema.Types;
-  var Schema = new mongoose.Schema({
+  let modelName = "user";
+  let Types = mongoose.Schema.Types;
+  let Schema = new mongoose.Schema({
     email: {
       type: Types.String,
       required: true,
@@ -2674,9 +2674,9 @@ They can then apply this policy to their model routes like so:
 'use strict';
 
 module.exports = function (mongoose) {
-  var modelName = "blog";
-  var Types = mongoose.Schema.Types;
-  var Schema = new mongoose.Schema({
+  let modelName = "blog";
+  let Types = mongoose.Schema.Types;
+  let Schema = new mongoose.Schema({
     title: {
       type: Types.String,
       required: true

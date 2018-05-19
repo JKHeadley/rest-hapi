@@ -14,7 +14,9 @@
     "test": "tests"
   },
   "scripts": {
-    "test": "gulp test",
+    "test": "npm run test-unit && npm run test-e2e",
+    "test-unit": "tape ./tests/unit/*.tests.js",
+    "test-e2e": "tape ./tests/e2e/*.tests.js",
     "patch-release-git": "git add . && git commit -a -m 'patch release' && git push && npm version patch && npm publish",
     "patch-release": "npm version patch && npm publish",
     "precommit": "lint-staged",
@@ -77,14 +79,9 @@
     "query-string": "^5.0.0"
   },
   "devDependencies": {
-    "rewire": "^2.5.2",
-    "proxyquire": "^1.7.10",
-    "sinon": "^3.3.0",
-    "sinon-test": "^2.1.0",
-    "mockgoose": "^7.3.3",
-    "decache": "4.4.0",
-    "rmdir": "^1.2.0",
     "babel-eslint": "^8.2.3",
+    "clear-require": "^2.0.0",
+    "decache": "4.4.0",
     "eslint": "^4.19.1",
     "eslint-config-prettier": "^2.9.0",
     "eslint-config-prettier-standard": "^2.0.0",
@@ -96,6 +93,12 @@
     "eslint-plugin-standard": "^3.1.0",
     "husky": "^0.14.3",
     "lint-staged": "^7.1.0",
-    "prettier": "1.12.1"
+    "mockgoose": "^7.3.3",
+    "prettier": "1.12.1",
+    "proxyquire": "^1.7.10",
+    "rewire": "^2.5.2",
+    "rmdir": "^1.2.0",
+    "sinon": "^3.3.0",
+    "sinon-test": "^2.1.0"
   }
 }

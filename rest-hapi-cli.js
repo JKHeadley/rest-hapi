@@ -1,18 +1,18 @@
 #! /usr/bin/env node
 
-var userArgs = process.argv.slice(2)
+let userArgs = process.argv.slice(2)
 
-var command = userArgs[0]
+let command = userArgs[0]
 
-var args = userArgs
+let args = userArgs
 
 args.shift()
 
-var exec = require('child_process').exec
+let exec = require('child_process').exec
 
-var isWindows = /^win/.test(process.platform)
+let isWindows = /^win/.test(process.platform)
 
-var cmdString = '$PWD/node_modules/rest-hapi/gulpfile.js'
+let cmdString = '$PWD/node_modules/rest-hapi/gulpfile.js'
 
 if (isWindows) {
   // This will fix the error "No gulpfile found" on windows OS

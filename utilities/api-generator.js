@@ -1,8 +1,8 @@
 'use strict'
 
-var fs = require('fs')
-var path = require('path')
-var Q = require('q')
+let fs = require('fs')
+let path = require('path')
+let Q = require('q')
 
 /**
  * This module reads in all the files that define additional endpoints and generates those endpoints.
@@ -13,7 +13,7 @@ var Q = require('q')
  * @returns {*|promise}
  */
 module.exports = function(server, mongoose, Log, config) {
-  var deferred = Q.defer()
+  let deferred = Q.defer()
   let apiPath = ''
 
   if (config.absoluteApiPath === true) {
@@ -41,9 +41,9 @@ module.exports = function(server, mongoose, Log, config) {
     }
 
     files.forEach(function(file) {
-      var ext = path.extname(file)
+      let ext = path.extname(file)
       if (ext === '.js') {
-        var fileName = path.basename(file, '.js')
+        let fileName = path.basename(file, '.js')
 
         // EXPL: register all the additional endpoints
         require(apiPath + '/' + fileName)(server, mongoose, Log)

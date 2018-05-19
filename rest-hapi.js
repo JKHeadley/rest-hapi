@@ -57,7 +57,7 @@ function register(server, options) {
 
   extend(true, config, module.exports.config)
 
-  var logger = getLogger('api')
+  let logger = getLogger('api')
 
   module.exports.logger = logger
 
@@ -137,8 +137,16 @@ function register(server, options) {
 
       if (Mrhorse) {
         try {
+          // HACK: Temporary fix to a bug in testing:
+          // https://github.com/mark-bradshaw/mrhorse/issues/39
           await server.register([
-            { plugin: Mrhorse, options: { policyDirectory: policyPath } }
+            {
+              plugin: Mrhorse,
+              options: {
+                policyDirectory: policyPath
+                // ignoreDuplicates: config.ignoreDuplicatePolicies
+              }
+            }
           ])
 
           if (config.enablePolicies) {
@@ -200,7 +208,7 @@ function generateModels(mongoose) {
 
   extend(true, config, module.exports.config)
 
-  var logger = getLogger('models')
+  let logger = getLogger('models')
 
   module.exports.logger = logger
 

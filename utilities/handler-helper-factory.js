@@ -1,10 +1,10 @@
 'use strict'
 
-var Boom = require('boom')
-var Q = require('q')
-var extend = require('util')._extend
-var handlerHelper = require('./handler-helper')
-var errorHelper = require('./error-helper')
+let Boom = require('boom')
+let Q = require('q')
+let extend = require('util')._extend
+let handlerHelper = require('./handler-helper')
+let errorHelper = require('./error-helper')
 let config = require('../config')
 
 // TODO: add bulk delete/delete many
@@ -32,7 +32,7 @@ let config = require('../config')
 // TODO: abstract mongoose logic into CRUD utility methods that can be called directly with rest-hapi plugin
 // TODO:(cont) This will allow users to CRUD data in extra endpoints using rest-hapi functions.
 
-var mongoose, server
+let mongoose, server
 module.exports = function(_mongoose, _server) {
   mongoose = _mongoose
   server = _server
@@ -162,7 +162,7 @@ function generateListHandler(model, options, Log) {
           return h.response(result).code(200)
         })
         .catch(function(error) {
-          var response = errorHelper.formatResponse(error, Log)
+          let response = errorHelper.formatResponse(error, Log)
           return response
         })
     } catch (error) {
@@ -197,7 +197,7 @@ function generateFindHandler(model, options, Log) {
           return h.response(result).code(200)
         })
         .catch(function(error) {
-          var response = errorHelper.formatResponse(error, Log)
+          let response = errorHelper.formatResponse(error, Log)
           return response
         })
     } catch (error) {
@@ -232,7 +232,7 @@ function generateCreateHandler(model, options, Log) {
           return h.response(result).code(201)
         })
         .catch(function(error) {
-          var response = errorHelper.formatResponse(error, Log)
+          let response = errorHelper.formatResponse(error, Log)
           return response
         })
     } catch (error) {
@@ -267,7 +267,7 @@ function generateUpdateHandler(model, options, Log) {
           return h.response(result).code(200)
         })
         .catch(function(error) {
-          var response = errorHelper.formatResponse(error, Log)
+          let response = errorHelper.formatResponse(error, Log)
           return response
         })
     } catch (error) {
@@ -298,7 +298,7 @@ function generateDeleteHandler(model, options, Log) {
 
       let promise = {}
       if (request.params._id) {
-        var hardDelete = request.payload ? request.payload.hardDelete : false
+        let hardDelete = request.payload ? request.payload.hardDelete : false
         promise = handlerHelper.deleteOneHandler(
           model,
           request.params._id,
@@ -315,7 +315,7 @@ function generateDeleteHandler(model, options, Log) {
           return h.response().code(204)
         })
         .catch(function(error) {
-          var response = errorHelper.formatResponse(error, Log)
+          let response = errorHelper.formatResponse(error, Log)
           return response
         })
     } catch (error) {
@@ -339,9 +339,9 @@ function generateAssociationAddOneHandler(
   options,
   Log
 ) {
-  var associationName = association.include.as
-  var childModel = association.include.model
-  var addMethodName =
+  let associationName = association.include.as
+  let childModel = association.include.model
+  let addMethodName =
     'addOne' + associationName[0].toUpperCase() + associationName.slice(1, -1)
 
   return function(request, h) {
@@ -367,7 +367,7 @@ function generateAssociationAddOneHandler(
           return h.response().code(204)
         })
         .catch(function(error) {
-          var response = errorHelper.formatResponse(error, Log)
+          let response = errorHelper.formatResponse(error, Log)
           return response
         })
     } catch (error) {
@@ -391,9 +391,9 @@ function generateAssociationRemoveOneHandler(
   options,
   Log
 ) {
-  var associationName = association.include.as
-  var childModel = association.include.model
-  var removeMethodName =
+  let associationName = association.include.as
+  let childModel = association.include.model
+  let removeMethodName =
     'removeOne' +
     associationName[0].toUpperCase() +
     associationName.slice(1, -1)
@@ -421,7 +421,7 @@ function generateAssociationRemoveOneHandler(
           return h.response().code(204)
         })
         .catch(function(error) {
-          var response = errorHelper.formatResponse(error, Log)
+          let response = errorHelper.formatResponse(error, Log)
           return response
         })
     } catch (error) {
@@ -445,9 +445,9 @@ function generateAssociationAddManyHandler(
   options,
   Log
 ) {
-  var associationName = association.include.as
-  var childModel = association.include.model
-  var addMethodName =
+  let associationName = association.include.as
+  let childModel = association.include.model
+  let addMethodName =
     'addMany' + associationName[0].toUpperCase() + associationName.slice(1)
 
   return function(request, h) {
@@ -472,7 +472,7 @@ function generateAssociationAddManyHandler(
           return h.response().code(204)
         })
         .catch(function(error) {
-          var response = errorHelper.formatResponse(error, Log)
+          let response = errorHelper.formatResponse(error, Log)
           return response
         })
     } catch (error) {
@@ -497,9 +497,9 @@ function generateAssociationRemoveManyHandler(
   options,
   Log
 ) {
-  var associationName = association.include.as
-  var childModel = association.include.model
-  var removeMethodName =
+  let associationName = association.include.as
+  let childModel = association.include.model
+  let removeMethodName =
     'removeMany' + associationName[0].toUpperCase() + associationName.slice(1)
 
   return function(request, h) {
@@ -525,7 +525,7 @@ function generateAssociationRemoveManyHandler(
           return h.response().code(204)
         })
         .catch(function(error) {
-          var response = errorHelper.formatResponse(error, Log)
+          let response = errorHelper.formatResponse(error, Log)
           return response
         })
     } catch (error) {
@@ -549,9 +549,9 @@ function generateAssociationGetAllHandler(
   options,
   Log
 ) {
-  var associationName = association.include.as
-  var childModel = association.include.model
-  var getAllMethodName =
+  let associationName = association.include.as
+  let childModel = association.include.model
+  let getAllMethodName =
     association.getAllMethodName ||
     'get' + associationName[0].toUpperCase() + associationName.slice(1)
 
@@ -577,7 +577,7 @@ function generateAssociationGetAllHandler(
           return h.response(result).code(200)
         })
         .catch(function(error) {
-          var response = errorHelper.formatResponse(error, Log)
+          let response = errorHelper.formatResponse(error, Log)
           return response
         })
     } catch (error) {

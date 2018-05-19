@@ -1,9 +1,9 @@
 'use strict'
 
-var gulp = require('gulp')
-var tape = require('gulp-tape')
-var tapColorize = require('tap-colorize')
-var TestHelper = {}
+let gulp = require('gulp')
+let tape = require('gulp-tape')
+let tapColorize = require('tap-colorize')
+let TestHelper = {}
 
 // EXPL: tests aren't included in npm package
 try {

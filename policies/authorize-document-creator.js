@@ -171,10 +171,10 @@ internals.addScope = function(action, request, h, Log) {
 
     return h.continue
   } catch (err) {
-    Log.error('ERROR:', err)
     if (err.isBoom) {
       throw err
     } else {
+      Log.error('ERROR:', err)
       throw Boom.badImplementation(err)
     }
   }

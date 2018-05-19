@@ -3,8 +3,9 @@
 const Test = require('blue-tape')
 const _ = require('lodash')
 const Logging = require('loggin')
-const TestHelper = require('../utilities/test-helper')
+const TestHelper = require('../../utilities/test-helper')
 const Decache = require('decache')
+const clearRequire = require('clear-require')
 const Joi = require('joi')
 const Q = require('q')
 const QueryString = require('query-string')
@@ -40,12 +41,13 @@ Test('end to end tests', function(t) {
             .then(function() {
               return t.test('basic "Create" works', function(t) {
                 // <editor-fold desc="Arrange">
-                const RestHapi = require('../rest-hapi')
+                const RestHapi = require('../../rest-hapi')
                 const server = Hapi.Server()
 
                 const config = {
                   loglevel: 'ERROR',
                   absoluteModelPath: true,
+
                   modelPath: __dirname + '/test-scenarios/scenario-1/models'
                 }
 
@@ -107,7 +109,8 @@ Test('end to end tests', function(t) {
 
                     // <editor-fold desc="Restore">
                     .then(function() {
-                      Decache('../rest-hapi')
+                      Decache('../../rest-hapi')
+
                       Object.keys(Mongoose.models).forEach(function(key) {
                         delete Mongoose.models[key]
                       })
@@ -123,12 +126,13 @@ Test('end to end tests', function(t) {
             .then(function() {
               return t.test('basic "List" works', function(t) {
                 // <editor-fold desc="Arrange">
-                const RestHapi = require('../rest-hapi')
-                const server = Hapi.Server()
+                const RestHapi = require('../../rest-hapi')
+                const server = new Hapi.Server()
 
                 const config = {
                   loglevel: 'ERROR',
                   absoluteModelPath: true,
+
                   modelPath: __dirname + '/test-scenarios/scenario-1/models'
                 }
 
@@ -189,7 +193,8 @@ Test('end to end tests', function(t) {
 
                     // <editor-fold desc="Restore">
                     .then(function() {
-                      Decache('../rest-hapi')
+                      Decache('../../rest-hapi')
+
                       Object.keys(Mongoose.models).forEach(function(key) {
                         delete Mongoose.models[key]
                       })
@@ -208,12 +213,13 @@ Test('end to end tests', function(t) {
             .then(function() {
               return t.test('basic "Find" works', function(t) {
                 // <editor-fold desc="Arrange">
-                const RestHapi = require('../rest-hapi')
+                const RestHapi = require('../../rest-hapi')
                 const server = new Hapi.Server()
 
                 const config = {
                   loglevel: 'ERROR',
                   absoluteModelPath: true,
+
                   modelPath: __dirname + '/test-scenarios/scenario-1/models'
                 }
 
@@ -276,7 +282,8 @@ Test('end to end tests', function(t) {
 
                     // <editor-fold desc="Restore">
                     .then(function() {
-                      Decache('../rest-hapi')
+                      Decache('../../rest-hapi')
+
                       Object.keys(Mongoose.models).forEach(function(key) {
                         delete Mongoose.models[key]
                       })
@@ -292,12 +299,13 @@ Test('end to end tests', function(t) {
             .then(function() {
               return t.test('basic "Update" works', function(t) {
                 // <editor-fold desc="Arrange">
-                const RestHapi = require('../rest-hapi')
+                const RestHapi = require('../../rest-hapi')
                 const server = new Hapi.Server()
 
                 const config = {
                   loglevel: 'ERROR',
                   absoluteModelPath: true,
+
                   modelPath: __dirname + '/test-scenarios/scenario-1/models'
                 }
 
@@ -362,7 +370,8 @@ Test('end to end tests', function(t) {
 
                     // <editor-fold desc="Restore">
                     .then(function(response) {
-                      Decache('../rest-hapi')
+                      Decache('../../rest-hapi')
+
                       Object.keys(Mongoose.models).forEach(function(key) {
                         delete Mongoose.models[key]
                       })
@@ -378,12 +387,13 @@ Test('end to end tests', function(t) {
             .then(function() {
               return t.test('basic "Delete" works', function(t) {
                 // <editor-fold desc="Arrange">
-                const RestHapi = require('../rest-hapi')
+                const RestHapi = require('../../rest-hapi')
                 const server = new Hapi.Server()
 
                 const config = {
                   loglevel: 'ERROR',
                   absoluteModelPath: true,
+
                   modelPath: __dirname + '/test-scenarios/scenario-1/models'
                 }
 
@@ -445,7 +455,8 @@ Test('end to end tests', function(t) {
 
                     // <editor-fold desc="Restore">
                     .then(function(response) {
-                      Decache('../rest-hapi')
+                      Decache('../../rest-hapi')
+
                       Object.keys(Mongoose.models).forEach(function(key) {
                         delete Mongoose.models[key]
                       })
@@ -471,7 +482,7 @@ Test('end to end tests', function(t) {
             .then(function() {
               return t.test('average user unauthorized', function(t) {
                 // <editor-fold desc="Arrange">
-                const RestHapi = require('../rest-hapi')
+                const RestHapi = require('../../rest-hapi')
                 const server = new Hapi.Server()
 
                 const authStrategy = 'testStrategy'
@@ -482,6 +493,7 @@ Test('end to end tests', function(t) {
                   loglevel: 'ERROR',
                   authStrategy: authStrategy,
                   absoluteModelPath: true,
+
                   modelPath: __dirname + '/test-scenarios/scenario-2/models'
                 }
 
@@ -556,7 +568,8 @@ Test('end to end tests', function(t) {
 
                     // <editor-fold desc="Restore">
                     .then(function() {
-                      Decache('../rest-hapi')
+                      Decache('../../rest-hapi')
+
                       Object.keys(Mongoose.models).forEach(function(key) {
                         delete Mongoose.models[key]
                       })
@@ -572,7 +585,7 @@ Test('end to end tests', function(t) {
             .then(function() {
               return t.test('root user authorized', function(t) {
                 // <editor-fold desc="Arrange">
-                const RestHapi = require('../rest-hapi')
+                const RestHapi = require('../../rest-hapi')
                 const server = new Hapi.Server()
 
                 const authStrategy = 'testStrategy'
@@ -583,6 +596,7 @@ Test('end to end tests', function(t) {
                   loglevel: 'ERROR',
                   authStrategy: authStrategy,
                   absoluteModelPath: true,
+
                   modelPath: __dirname + '/test-scenarios/scenario-2/models'
                 }
 
@@ -636,7 +650,8 @@ Test('end to end tests', function(t) {
 
                     // <editor-fold desc="Restore">
                     .then(function() {
-                      Decache('../rest-hapi')
+                      Decache('../../rest-hapi')
+
                       Object.keys(Mongoose.models).forEach(function(key) {
                         delete Mongoose.models[key]
                       })
@@ -652,7 +667,7 @@ Test('end to end tests', function(t) {
             .then(function() {
               return t.test('owner user authorized', function(t) {
                 // <editor-fold desc="Arrange">
-                const RestHapi = require('../rest-hapi')
+                const RestHapi = require('../../rest-hapi')
                 const server = new Hapi.Server()
 
                 const authStrategy = 'testStrategy'
@@ -663,6 +678,7 @@ Test('end to end tests', function(t) {
                   loglevel: 'ERROR',
                   authStrategy: authStrategy,
                   absoluteModelPath: true,
+
                   modelPath: __dirname + '/test-scenarios/scenario-2/models'
                 }
 
@@ -716,8 +732,10 @@ Test('end to end tests', function(t) {
 
                     // <editor-fold desc="Restore">
                     .then(function() {
-                      Decache('../rest-hapi')
-                      Decache('../config')
+                      Decache('../../rest-hapi')
+
+                      Decache('../../config')
+                      Decache('hapi')
                       Object.keys(Mongoose.models).forEach(function(key) {
                         delete Mongoose.models[key]
                       })
@@ -747,12 +765,13 @@ Test('end to end tests', function(t) {
             .then(function() {
               return t.test('ONE_ONE associations work', function(t) {
                 // <editor-fold desc="Arrange">
-                const RestHapi = require('../rest-hapi')
-                const server = new Hapi.Server()
+                const RestHapi = require('../../rest-hapi')
+                const server = Hapi.Server()
 
                 const config = {
                   loglevel: 'ERROR',
                   absoluteModelPath: true,
+
                   modelPath: __dirname + '/test-scenarios/scenario-3/models',
                   embedAssociations: true
                 }
@@ -875,7 +894,8 @@ Test('end to end tests', function(t) {
 
                     // <editor-fold desc="Restore">
                     .then(function() {
-                      Decache('../rest-hapi')
+                      Decache('../../rest-hapi')
+
                       Decache('../config')
                       Object.keys(Mongoose.models).forEach(function(key) {
                         delete Mongoose.models[key]
@@ -894,12 +914,13 @@ Test('end to end tests', function(t) {
                 'adding and retrieving ONE_MANY/MANY_ONE associations works',
                 function(t) {
                   // <editor-fold desc="Arrange">
-                  const RestHapi = require('../rest-hapi')
+                  const RestHapi = require('../../rest-hapi')
                   const server = new Hapi.Server()
 
                   const config = {
                     loglevel: 'ERROR',
                     absoluteModelPath: true,
+
                     modelPath: __dirname + '/test-scenarios/scenario-3/models',
                     embedAssociations: true
                   }
@@ -1153,7 +1174,8 @@ Test('end to end tests', function(t) {
 
                       // <editor-fold desc="Restore">
                       .then(function() {
-                        Decache('../rest-hapi')
+                        Decache('../../rest-hapi')
+
                         Decache('../config')
                         Object.keys(Mongoose.models).forEach(function(key) {
                           delete Mongoose.models[key]
@@ -1175,12 +1197,13 @@ Test('end to end tests', function(t) {
                 'adding and retrieving MANY_MANY associations works',
                 function(t) {
                   // <editor-fold desc="Arrange">
-                  const RestHapi = require('../rest-hapi')
+                  const RestHapi = require('../../rest-hapi')
                   const server = new Hapi.Server()
 
                   const config = {
                     loglevel: 'ERROR',
                     absoluteModelPath: true,
+
                     modelPath: __dirname + '/test-scenarios/scenario-3/models',
                     embedAssociations: true
                   }
@@ -1472,7 +1495,8 @@ Test('end to end tests', function(t) {
 
                       // <editor-fold desc="Restore">
                       .then(function() {
-                        Decache('../rest-hapi')
+                        Decache('../../rest-hapi')
+
                         Object.keys(Mongoose.models).forEach(function(key) {
                           delete Mongoose.models[key]
                         })
@@ -1493,12 +1517,13 @@ Test('end to end tests', function(t) {
                 'adding and retrieving _MANY associations works',
                 function(t) {
                   // <editor-fold desc="Arrange">
-                  const RestHapi = require('../rest-hapi')
+                  const RestHapi = require('../../rest-hapi')
                   const server = new Hapi.Server()
 
                   const config = {
                     loglevel: 'ERROR',
                     absoluteModelPath: true,
+
                     modelPath: __dirname + '/test-scenarios/scenario-3/models',
                     embedAssociations: true
                   }
@@ -1694,7 +1719,8 @@ Test('end to end tests', function(t) {
 
                       // <editor-fold desc="Restore">
                       .then(function() {
-                        Decache('../rest-hapi')
+                        Decache('../../rest-hapi')
+
                         Decache('../config')
                         Object.keys(Mongoose.models).forEach(function(key) {
                           delete Mongoose.models[key]
@@ -1716,12 +1742,13 @@ Test('end to end tests', function(t) {
                 'removing ONE_MANY/MANY_ONE associations works',
                 function(t) {
                   // <editor-fold desc="Arrange">
-                  const RestHapi = require('../rest-hapi')
+                  const RestHapi = require('../../rest-hapi')
                   const server = new Hapi.Server()
 
                   const config = {
                     loglevel: 'ERROR',
                     absoluteModelPath: true,
+
                     modelPath: __dirname + '/test-scenarios/scenario-3/models',
                     embedAssociations: true
                   }
@@ -1845,7 +1872,8 @@ Test('end to end tests', function(t) {
 
                       // <editor-fold desc="Restore">
                       .then(function() {
-                        Decache('../rest-hapi')
+                        Decache('../../rest-hapi')
+
                         Decache('../config')
                         delete Mongoose.models.role
                         Object.keys(Mongoose.models).forEach(function(key) {
@@ -1868,12 +1896,13 @@ Test('end to end tests', function(t) {
                 t
               ) {
                 // <editor-fold desc="Arrange">
-                const RestHapi = require('../rest-hapi')
+                const RestHapi = require('../../rest-hapi')
                 const server = new Hapi.Server()
 
                 const config = {
                   loglevel: 'ERROR',
                   absoluteModelPath: true,
+
                   modelPath: __dirname + '/test-scenarios/scenario-3/models',
                   embedAssociations: true
                 }
@@ -2037,7 +2066,8 @@ Test('end to end tests', function(t) {
 
                     // <editor-fold desc="Restore">
                     .then(function() {
-                      Decache('../rest-hapi')
+                      Decache('../../rest-hapi')
+
                       Decache('../config')
                       Object.keys(Mongoose.models).forEach(function(key) {
                         delete Mongoose.models[key]
@@ -2056,12 +2086,13 @@ Test('end to end tests', function(t) {
                 'removing ONE_MANY/MANY_ONE associations works',
                 function(t) {
                   // <editor-fold desc="Arrange">
-                  const RestHapi = require('../rest-hapi')
+                  const RestHapi = require('../../rest-hapi')
                   const server = new Hapi.Server()
 
                   const config = {
                     loglevel: 'ERROR',
                     absoluteModelPath: true,
+
                     modelPath: __dirname + '/test-scenarios/scenario-3/models',
                     embedAssociations: true
                   }
@@ -2152,7 +2183,8 @@ Test('end to end tests', function(t) {
 
                       // <editor-fold desc="Restore">
                       .then(function() {
-                        Decache('../rest-hapi')
+                        Decache('../../rest-hapi')
+
                         Decache('../config')
                         Object.keys(Mongoose.models).forEach(function(key) {
                           delete Mongoose.models[key]
@@ -2186,12 +2218,13 @@ Test('end to end tests', function(t) {
             .then(function() {
               return t.test('ONE_ONE associations work', function(t) {
                 // <editor-fold desc="Arrange">
-                const RestHapi = require('../rest-hapi')
+                const RestHapi = require('../../rest-hapi')
                 const server = new Hapi.Server()
 
                 const config = {
                   loglevel: 'ERROR',
                   absoluteModelPath: true,
+
                   modelPath: __dirname + '/test-scenarios/scenario-3/models',
                   embedAssociations: false
                 }
@@ -2314,7 +2347,8 @@ Test('end to end tests', function(t) {
 
                     // <editor-fold desc="Restore">
                     .then(function() {
-                      Decache('../rest-hapi')
+                      Decache('../../rest-hapi')
+
                       Decache('../config')
                       Object.keys(Mongoose.models).forEach(function(key) {
                         delete Mongoose.models[key]
@@ -2333,12 +2367,13 @@ Test('end to end tests', function(t) {
                 'adding and retrieving ONE_MANY/MANY_ONE associations works',
                 function(t) {
                   // <editor-fold desc="Arrange">
-                  const RestHapi = require('../rest-hapi')
+                  const RestHapi = require('../../rest-hapi')
                   const server = new Hapi.Server()
 
                   const config = {
                     loglevel: 'ERROR',
                     absoluteModelPath: true,
+
                     modelPath: __dirname + '/test-scenarios/scenario-3/models',
                     embedAssociations: false
                   }
@@ -2592,7 +2627,8 @@ Test('end to end tests', function(t) {
 
                       // <editor-fold desc="Restore">
                       .then(function() {
-                        Decache('../rest-hapi')
+                        Decache('../../rest-hapi')
+
                         Decache('../config')
                         Object.keys(Mongoose.models).forEach(function(key) {
                           delete Mongoose.models[key]
@@ -2614,12 +2650,13 @@ Test('end to end tests', function(t) {
                 'adding and retrieving MANY_MANY associations works',
                 function(t) {
                   // <editor-fold desc="Arrange">
-                  const RestHapi = require('../rest-hapi')
+                  const RestHapi = require('../../rest-hapi')
                   const server = new Hapi.Server()
 
                   const config = {
                     loglevel: 'ERROR',
                     absoluteModelPath: true,
+
                     modelPath: __dirname + '/test-scenarios/scenario-3/models',
                     embedAssociations: false
                   }
@@ -2915,7 +2952,8 @@ Test('end to end tests', function(t) {
 
                       // <editor-fold desc="Restore">
                       .then(function() {
-                        Decache('../rest-hapi')
+                        Decache('../../rest-hapi')
+
                         delete Mongoose.models.role
                         Object.keys(Mongoose.models).forEach(function(key) {
                           delete Mongoose.models[key]
@@ -2937,12 +2975,13 @@ Test('end to end tests', function(t) {
                 'adding and retrieving _MANY associations works',
                 function(t) {
                   // <editor-fold desc="Arrange">
-                  const RestHapi = require('../rest-hapi')
+                  const RestHapi = require('../../rest-hapi')
                   const server = new Hapi.Server()
 
                   const config = {
                     loglevel: 'ERROR',
                     absoluteModelPath: true,
+
                     modelPath: __dirname + '/test-scenarios/scenario-3/models',
                     embedAssociations: false
                   }
@@ -3138,7 +3177,8 @@ Test('end to end tests', function(t) {
 
                       // <editor-fold desc="Restore">
                       .then(function() {
-                        Decache('../rest-hapi')
+                        Decache('../../rest-hapi')
+
                         Decache('../config')
                         Object.keys(Mongoose.models).forEach(function(key) {
                           delete Mongoose.models[key]
@@ -3160,12 +3200,13 @@ Test('end to end tests', function(t) {
                 'removing ONE_MANY/MANY_ONE associations works',
                 function(t) {
                   // <editor-fold desc="Arrange">
-                  const RestHapi = require('../rest-hapi')
+                  const RestHapi = require('../../rest-hapi')
                   const server = new Hapi.Server()
 
                   const config = {
                     loglevel: 'ERROR',
                     absoluteModelPath: true,
+
                     modelPath: __dirname + '/test-scenarios/scenario-3/models',
                     embedAssociations: false
                   }
@@ -3289,7 +3330,8 @@ Test('end to end tests', function(t) {
 
                       // <editor-fold desc="Restore">
                       .then(function() {
-                        Decache('../rest-hapi')
+                        Decache('../../rest-hapi')
+
                         Decache('../config')
                         Object.keys(Mongoose.models).forEach(function(key) {
                           delete Mongoose.models[key]
@@ -3311,12 +3353,13 @@ Test('end to end tests', function(t) {
                 t
               ) {
                 // <editor-fold desc="Arrange">
-                const RestHapi = require('../rest-hapi')
+                const RestHapi = require('../../rest-hapi')
                 const server = new Hapi.Server()
 
                 const config = {
                   loglevel: 'ERROR',
                   absoluteModelPath: true,
+
                   modelPath: __dirname + '/test-scenarios/scenario-3/models',
                   embedAssociations: false
                 }
@@ -3480,7 +3523,8 @@ Test('end to end tests', function(t) {
 
                     // <editor-fold desc="Restore">
                     .then(function() {
-                      Decache('../rest-hapi')
+                      Decache('../../rest-hapi')
+
                       Decache('../config')
                       Object.keys(Mongoose.models).forEach(function(key) {
                         delete Mongoose.models[key]
@@ -3499,12 +3543,13 @@ Test('end to end tests', function(t) {
                 'removing ONE_MANY/MANY_ONE associations works',
                 function(t) {
                   // <editor-fold desc="Arrange">
-                  const RestHapi = require('../rest-hapi')
+                  const RestHapi = require('../../rest-hapi')
                   const server = new Hapi.Server()
 
                   const config = {
                     loglevel: 'ERROR',
                     absoluteModelPath: true,
+
                     modelPath: __dirname + '/test-scenarios/scenario-3/models',
                     embedAssociations: false
                   }
@@ -3595,7 +3640,8 @@ Test('end to end tests', function(t) {
 
                       // <editor-fold desc="Restore">
                       .then(function() {
-                        Decache('../rest-hapi')
+                        Decache('../../rest-hapi')
+
                         Decache('../config')
                         Object.keys(Mongoose.models).forEach(function(key) {
                           delete Mongoose.models[key]
@@ -3629,7 +3675,7 @@ Test('end to end tests', function(t) {
             .then(function() {
               return t.test('create action logged', function(t) {
                 // <editor-fold desc="Arrange">
-                const RestHapi = require('../rest-hapi')
+                const RestHapi = require('../../rest-hapi')
                 const server = new Hapi.Server({ debug: false })
 
                 const authStrategy = 'testStrategy'
@@ -3640,6 +3686,7 @@ Test('end to end tests', function(t) {
                   loglevel: 'NONE',
                   authStrategy: authStrategy,
                   absoluteModelPath: true,
+
                   modelPath: __dirname + '/test-scenarios/scenario-3/models'
                 }
 
@@ -3914,7 +3961,8 @@ Test('end to end tests', function(t) {
 
                     // <editor-fold desc="Restore">
                     .then(function() {
-                      Decache('../rest-hapi')
+                      Decache('../../rest-hapi')
+
                       Decache('../config')
                       Object.keys(Mongoose.models).forEach(function(key) {
                         delete Mongoose.models[key]
@@ -3931,13 +3979,14 @@ Test('end to end tests', function(t) {
             .then(function() {
               return t.test('update action logged', function(t) {
                 // <editor-fold desc="Arrange">
-                const RestHapi = require('../rest-hapi')
+                const RestHapi = require('../../rest-hapi')
                 const server = new Hapi.Server({ debug: false })
 
                 const config = {
                   loglevel: 'NONE',
                   authStrategy: null,
                   absoluteModelPath: true,
+
                   modelPath: __dirname + '/test-scenarios/scenario-3/models'
                 }
 
@@ -4107,7 +4156,8 @@ Test('end to end tests', function(t) {
 
                     // <editor-fold desc="Restore">
                     .then(function() {
-                      Decache('../rest-hapi')
+                      Decache('../../rest-hapi')
+
                       Decache('../config')
                       Object.keys(Mongoose.models).forEach(function(key) {
                         delete Mongoose.models[key]
@@ -4124,7 +4174,7 @@ Test('end to end tests', function(t) {
             .then(function() {
               return t.test('regular delete action logged', function(t) {
                 // <editor-fold desc="Arrange">
-                const RestHapi = require('../rest-hapi')
+                const RestHapi = require('../../rest-hapi')
                 const server = new Hapi.Server()
 
                 const authStrategy = 'testStrategy'
@@ -4135,6 +4185,7 @@ Test('end to end tests', function(t) {
                   loglevel: 'NONE',
                   authStrategy: authStrategy,
                   absoluteModelPath: true,
+
                   modelPath: __dirname + '/test-scenarios/scenario-3/models'
                 }
 
@@ -4348,7 +4399,8 @@ Test('end to end tests', function(t) {
 
                     // <editor-fold desc="Restore">
                     .then(function() {
-                      Decache('../rest-hapi')
+                      Decache('../../rest-hapi')
+
                       Decache('../config')
                       Object.keys(Mongoose.models).forEach(function(key) {
                         delete Mongoose.models[key]
@@ -4365,7 +4417,7 @@ Test('end to end tests', function(t) {
             .then(function() {
               return t.test('soft delete action logged', function(t) {
                 // <editor-fold desc="Arrange">
-                const RestHapi = require('../rest-hapi')
+                const RestHapi = require('../../rest-hapi')
                 const server = new Hapi.Server()
 
                 const authStrategy = 'testStrategy'
@@ -4377,6 +4429,7 @@ Test('end to end tests', function(t) {
                   authStrategy: authStrategy,
                   enableSoftDelete: true,
                   absoluteModelPath: true,
+
                   modelPath: __dirname + '/test-scenarios/scenario-3/models'
                 }
 
@@ -4536,7 +4589,8 @@ Test('end to end tests', function(t) {
 
                     // <editor-fold desc="Restore">
                     .then(function() {
-                      Decache('../rest-hapi')
+                      Decache('../../rest-hapi')
+
                       Decache('../config')
                       Object.keys(Mongoose.models).forEach(function(key) {
                         delete Mongoose.models[key]
@@ -4553,7 +4607,7 @@ Test('end to end tests', function(t) {
             .then(function() {
               return t.test('hard delete action logged', function(t) {
                 // <editor-fold desc="Arrange">
-                const RestHapi = require('../rest-hapi')
+                const RestHapi = require('../../rest-hapi')
                 const server = new Hapi.Server()
 
                 const authStrategy = 'testStrategy'
@@ -4565,6 +4619,7 @@ Test('end to end tests', function(t) {
                   authStrategy: authStrategy,
                   enableSoftDelete: true,
                   absoluteModelPath: true,
+
                   modelPath: __dirname + '/test-scenarios/scenario-3/models'
                 }
 
@@ -4734,7 +4789,8 @@ Test('end to end tests', function(t) {
 
                     // <editor-fold desc="Restore">
                     .then(function() {
-                      Decache('../rest-hapi')
+                      Decache('../../rest-hapi')
+
                       Decache('../config')
                       Object.keys(Mongoose.models).forEach(function(key) {
                         delete Mongoose.models[key]
@@ -4751,7 +4807,7 @@ Test('end to end tests', function(t) {
             .then(function() {
               return t.test('add action logged', function(t) {
                 // <editor-fold desc="Arrange">
-                const RestHapi = require('../rest-hapi')
+                const RestHapi = require('../../rest-hapi')
                 const server = new Hapi.Server()
 
                 const authStrategy = 'testStrategy'
@@ -4762,6 +4818,7 @@ Test('end to end tests', function(t) {
                   loglevel: 'NONE',
                   authStrategy: authStrategy,
                   absoluteModelPath: true,
+
                   modelPath: __dirname + '/test-scenarios/scenario-3/models'
                 }
 
@@ -5613,7 +5670,8 @@ Test('end to end tests', function(t) {
 
                     // <editor-fold desc="Restore">
                     .then(function() {
-                      Decache('../rest-hapi')
+                      Decache('../../rest-hapi')
+
                       Decache('../config')
                       Object.keys(Mongoose.models).forEach(function(key) {
                         delete Mongoose.models[key]
@@ -5630,7 +5688,7 @@ Test('end to end tests', function(t) {
             .then(function() {
               return t.test('remove action logged', function(t) {
                 // <editor-fold desc="Arrange">
-                const RestHapi = require('../rest-hapi')
+                const RestHapi = require('../../rest-hapi')
                 const server = new Hapi.Server()
 
                 const authStrategy = 'testStrategy'
@@ -5641,6 +5699,7 @@ Test('end to end tests', function(t) {
                   loglevel: 'NONE',
                   authStrategy: authStrategy,
                   absoluteModelPath: true,
+
                   modelPath: __dirname + '/test-scenarios/scenario-3/models'
                 }
 
@@ -6347,7 +6406,8 @@ Test('end to end tests', function(t) {
 
                     // <editor-fold desc="Restore">
                     .then(function() {
-                      Decache('../rest-hapi')
+                      Decache('../../rest-hapi')
+
                       Decache('../config')
                       Object.keys(Mongoose.models).forEach(function(key) {
                         delete Mongoose.models[key]
@@ -6379,12 +6439,13 @@ Test('end to end tests', function(t) {
                 t
               ) {
                 // <editor-fold desc="Arrange">
-                const RestHapi = require('../rest-hapi')
+                const RestHapi = require('../../rest-hapi')
                 const server = new Hapi.Server()
 
                 const config = {
                   loglevel: 'ERROR',
                   absoluteModelPath: true,
+
                   enableDuplicateFields: true,
                   trackDuplicatedFields: true,
                   modelPath: __dirname + '/test-scenarios/scenario-3/models'
@@ -6533,7 +6594,7 @@ Test('end to end tests', function(t) {
                         method: 'GET',
                         url: '/user',
                         params: {},
-                        query: {},
+                        query: { $sort: '_id' },
                         payload: {},
                         credentials: {},
                         headers: {}
@@ -6548,7 +6609,7 @@ Test('end to end tests', function(t) {
                         method: 'GET',
                         url: '/user-profile',
                         params: {},
-                        query: {},
+                        query: { $sort: '_id' },
                         payload: {},
                         credentials: {},
                         headers: {}
@@ -6639,7 +6700,8 @@ Test('end to end tests', function(t) {
 
                     // <editor-fold desc="Restore">
                     .then(function() {
-                      Decache('../rest-hapi')
+                      Decache('../../rest-hapi')
+
                       Decache('../config')
                       Object.keys(Mongoose.models).forEach(function(key) {
                         delete Mongoose.models[key]
@@ -6658,12 +6720,13 @@ Test('end to end tests', function(t) {
                 t
               ) {
                 // <editor-fold desc="Arrange">
-                const RestHapi = require('../rest-hapi')
+                const RestHapi = require('../../rest-hapi')
                 const server = new Hapi.Server()
 
                 const config = {
                   loglevel: 'ERROR',
                   absoluteModelPath: true,
+
                   enableDuplicateFields: true,
                   trackDuplicatedFields: true,
                   modelPath: __dirname + '/test-scenarios/scenario-3/models'
@@ -6771,7 +6834,8 @@ Test('end to end tests', function(t) {
 
                     // <editor-fold desc="Restore">
                     .then(function() {
-                      Decache('../rest-hapi')
+                      Decache('../../rest-hapi')
+
                       Decache('../config')
                       Object.keys(Mongoose.models).forEach(function(key) {
                         delete Mongoose.models[key]
@@ -6790,12 +6854,13 @@ Test('end to end tests', function(t) {
                 'duplicated fields track original field upon update',
                 function(t) {
                   // <editor-fold desc="Arrange">
-                  const RestHapi = require('../rest-hapi')
+                  const RestHapi = require('../../rest-hapi')
                   const server = new Hapi.Server()
 
                   const config = {
                     loglevel: 'ERROR',
                     absoluteModelPath: true,
+
                     enableDuplicateFields: true,
                     trackDuplicatedFields: true,
                     modelPath: __dirname + '/test-scenarios/scenario-3/models'
@@ -6969,7 +7034,8 @@ Test('end to end tests', function(t) {
 
                       // <editor-fold desc="Restore">
                       .then(function() {
-                        Decache('../rest-hapi')
+                        Decache('../../rest-hapi')
+
                         Decache('../config')
                         Object.keys(Mongoose.models).forEach(function(key) {
                           delete Mongoose.models[key]
@@ -6991,12 +7057,13 @@ Test('end to end tests', function(t) {
                 "duplicated fields don't track original field when tracking is disabled",
                 function(t) {
                   // <editor-fold desc="Arrange">
-                  const RestHapi = require('../rest-hapi')
+                  const RestHapi = require('../../rest-hapi')
                   const server = new Hapi.Server()
 
                   const config = {
                     loglevel: 'ERROR',
                     absoluteModelPath: true,
+
                     enableDuplicateFields: true,
                     trackDuplicatedFields: false,
                     modelPath: __dirname + '/test-scenarios/scenario-3/models'
@@ -7131,7 +7198,8 @@ Test('end to end tests', function(t) {
 
                       // <editor-fold desc="Restore">
                       .then(function() {
-                        Decache('../rest-hapi')
+                        Decache('../../rest-hapi')
+
                         Decache('../config')
                         Object.keys(Mongoose.models).forEach(function(key) {
                           delete Mongoose.models[key]
