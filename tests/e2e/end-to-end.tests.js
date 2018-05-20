@@ -1,12 +1,10 @@
 'use strict'
 
+const path = require('path')
 const Test = require('blue-tape')
-const _ = require('lodash')
 const Logging = require('loggin')
 const TestHelper = require('../../utilities/test-helper')
 const Decache = require('decache')
-const clearRequire = require('clear-require')
-const Joi = require('joi')
 const Q = require('q')
 const QueryString = require('query-string')
 const Hapi = require('hapi')
@@ -48,7 +46,10 @@ Test('end to end tests', function(t) {
                   loglevel: 'ERROR',
                   absoluteModelPath: true,
 
-                  modelPath: __dirname + '/test-scenarios/scenario-1/models'
+                  modelPath: path.join(
+                    __dirname,
+                    '/test-scenarios/scenario-1/models'
+                  )
                 }
 
                 RestHapi.config = config
@@ -133,7 +134,10 @@ Test('end to end tests', function(t) {
                   loglevel: 'ERROR',
                   absoluteModelPath: true,
 
-                  modelPath: __dirname + '/test-scenarios/scenario-1/models'
+                  modelPath: path.join(
+                    __dirname,
+                    '/test-scenarios/scenario-1/models'
+                  )
                 }
 
                 RestHapi.config = config
@@ -220,7 +224,10 @@ Test('end to end tests', function(t) {
                   loglevel: 'ERROR',
                   absoluteModelPath: true,
 
-                  modelPath: __dirname + '/test-scenarios/scenario-1/models'
+                  modelPath: path.join(
+                    __dirname,
+                    '/test-scenarios/scenario-1/models'
+                  )
                 }
 
                 RestHapi.config = config
@@ -306,7 +313,10 @@ Test('end to end tests', function(t) {
                   loglevel: 'ERROR',
                   absoluteModelPath: true,
 
-                  modelPath: __dirname + '/test-scenarios/scenario-1/models'
+                  modelPath: path.join(
+                    __dirname,
+                    '/test-scenarios/scenario-1/models'
+                  )
                 }
 
                 RestHapi.config = config
@@ -394,7 +404,10 @@ Test('end to end tests', function(t) {
                   loglevel: 'ERROR',
                   absoluteModelPath: true,
 
-                  modelPath: __dirname + '/test-scenarios/scenario-1/models'
+                  modelPath: path.join(
+                    __dirname,
+                    '/test-scenarios/scenario-1/models'
+                  )
                 }
 
                 RestHapi.config = config
@@ -494,7 +507,10 @@ Test('end to end tests', function(t) {
                   authStrategy: authStrategy,
                   absoluteModelPath: true,
 
-                  modelPath: __dirname + '/test-scenarios/scenario-2/models'
+                  modelPath: path.join(
+                    __dirname,
+                    '/test-scenarios/scenario-2/models'
+                  )
                 }
 
                 RestHapi.config = config
@@ -597,7 +613,10 @@ Test('end to end tests', function(t) {
                   authStrategy: authStrategy,
                   absoluteModelPath: true,
 
-                  modelPath: __dirname + '/test-scenarios/scenario-2/models'
+                  modelPath: path.join(
+                    __dirname,
+                    '/test-scenarios/scenario-2/models'
+                  )
                 }
 
                 RestHapi.config = config
@@ -679,7 +698,10 @@ Test('end to end tests', function(t) {
                   authStrategy: authStrategy,
                   absoluteModelPath: true,
 
-                  modelPath: __dirname + '/test-scenarios/scenario-2/models'
+                  modelPath: path.join(
+                    __dirname,
+                    '/test-scenarios/scenario-2/models'
+                  )
                 }
 
                 RestHapi.config = config
@@ -772,7 +794,10 @@ Test('end to end tests', function(t) {
                   loglevel: 'ERROR',
                   absoluteModelPath: true,
 
-                  modelPath: __dirname + '/test-scenarios/scenario-3/models',
+                  modelPath: path.join(
+                    __dirname,
+                    '/test-scenarios/scenario-3/models'
+                  ),
                   embedAssociations: true
                 }
 
@@ -921,7 +946,10 @@ Test('end to end tests', function(t) {
                     loglevel: 'ERROR',
                     absoluteModelPath: true,
 
-                    modelPath: __dirname + '/test-scenarios/scenario-3/models',
+                    modelPath: path.join(
+                      __dirname,
+                      '/test-scenarios/scenario-3/models'
+                    ),
                     embedAssociations: true
                   }
 
@@ -1204,7 +1232,10 @@ Test('end to end tests', function(t) {
                     loglevel: 'ERROR',
                     absoluteModelPath: true,
 
-                    modelPath: __dirname + '/test-scenarios/scenario-3/models',
+                    modelPath: path.join(
+                      __dirname,
+                      '/test-scenarios/scenario-3/models'
+                    ),
                     embedAssociations: true
                   }
 
@@ -1445,12 +1476,12 @@ Test('end to end tests', function(t) {
 
                       // <editor-fold desc="Assert">
                       .then(function(response) {
-                        let result1_orig = response[0].result.permissions.map(
+                        let result1Orig = response[0].result.permissions.map(
                           function(obj) {
                             return obj.permission
                           }
                         )
-                        let result2_orig = response[2].result.permissions.map(
+                        let result2Orig = response[2].result.permissions.map(
                           function(obj) {
                             obj.permission.user_permission = {
                               enabled: obj.enabled
@@ -1462,7 +1493,7 @@ Test('end to end tests', function(t) {
                         let result1 = []
                         response[1].result.docs.forEach(function(permission) {
                           result1.push(
-                            result1_orig.find(function(perm) {
+                            result1Orig.find(function(perm) {
                               return perm.name === permission.name
                             })
                           )
@@ -1470,7 +1501,7 @@ Test('end to end tests', function(t) {
                         let result2 = []
                         response[3].result.docs.forEach(function(permission) {
                           result2.push(
-                            result2_orig.find(function(perm) {
+                            result2Orig.find(function(perm) {
                               return perm.name === permission.name
                             })
                           )
@@ -1524,7 +1555,10 @@ Test('end to end tests', function(t) {
                     loglevel: 'ERROR',
                     absoluteModelPath: true,
 
-                    modelPath: __dirname + '/test-scenarios/scenario-3/models',
+                    modelPath: path.join(
+                      __dirname,
+                      '/test-scenarios/scenario-3/models'
+                    ),
                     embedAssociations: true
                   }
 
@@ -1749,7 +1783,10 @@ Test('end to end tests', function(t) {
                     loglevel: 'ERROR',
                     absoluteModelPath: true,
 
-                    modelPath: __dirname + '/test-scenarios/scenario-3/models',
+                    modelPath: path.join(
+                      __dirname,
+                      '/test-scenarios/scenario-3/models'
+                    ),
                     embedAssociations: true
                   }
 
@@ -1903,7 +1940,10 @@ Test('end to end tests', function(t) {
                   loglevel: 'ERROR',
                   absoluteModelPath: true,
 
-                  modelPath: __dirname + '/test-scenarios/scenario-3/models',
+                  modelPath: path.join(
+                    __dirname,
+                    '/test-scenarios/scenario-3/models'
+                  ),
                   embedAssociations: true
                 }
 
@@ -2093,7 +2133,10 @@ Test('end to end tests', function(t) {
                     loglevel: 'ERROR',
                     absoluteModelPath: true,
 
-                    modelPath: __dirname + '/test-scenarios/scenario-3/models',
+                    modelPath: path.join(
+                      __dirname,
+                      '/test-scenarios/scenario-3/models'
+                    ),
                     embedAssociations: true
                   }
 
@@ -2225,7 +2268,10 @@ Test('end to end tests', function(t) {
                   loglevel: 'ERROR',
                   absoluteModelPath: true,
 
-                  modelPath: __dirname + '/test-scenarios/scenario-3/models',
+                  modelPath: path.join(
+                    __dirname,
+                    '/test-scenarios/scenario-3/models'
+                  ),
                   embedAssociations: false
                 }
 
@@ -2374,7 +2420,10 @@ Test('end to end tests', function(t) {
                     loglevel: 'ERROR',
                     absoluteModelPath: true,
 
-                    modelPath: __dirname + '/test-scenarios/scenario-3/models',
+                    modelPath: path.join(
+                      __dirname,
+                      '/test-scenarios/scenario-3/models'
+                    ),
                     embedAssociations: false
                   }
 
@@ -2657,7 +2706,10 @@ Test('end to end tests', function(t) {
                     loglevel: 'ERROR',
                     absoluteModelPath: true,
 
-                    modelPath: __dirname + '/test-scenarios/scenario-3/models',
+                    modelPath: path.join(
+                      __dirname,
+                      '/test-scenarios/scenario-3/models'
+                    ),
                     embedAssociations: false
                   }
 
@@ -2901,12 +2953,12 @@ Test('end to end tests', function(t) {
 
                       // <editor-fold desc="Assert">
                       .then(function(response) {
-                        let result1_orig = response[0].result.permissions.map(
+                        let result1Orig = response[0].result.permissions.map(
                           function(obj) {
                             return obj.permission
                           }
                         )
-                        let result2_orig = response[2].result.permissions.map(
+                        let result2Orig = response[2].result.permissions.map(
                           function(obj) {
                             obj.permission.user_permission = {
                               user: response[2].result._id,
@@ -2919,7 +2971,7 @@ Test('end to end tests', function(t) {
                         let result1 = []
                         response[1].result.docs.forEach(function(permission) {
                           result1.push(
-                            result1_orig.find(function(perm) {
+                            result1Orig.find(function(perm) {
                               return perm.name === permission.name
                             })
                           )
@@ -2927,7 +2979,7 @@ Test('end to end tests', function(t) {
                         let result2 = []
                         response[3].result.docs.forEach(function(permission) {
                           result2.push(
-                            result2_orig.find(function(perm) {
+                            result2Orig.find(function(perm) {
                               return perm.name === permission.name
                             })
                           )
@@ -2982,7 +3034,10 @@ Test('end to end tests', function(t) {
                     loglevel: 'ERROR',
                     absoluteModelPath: true,
 
-                    modelPath: __dirname + '/test-scenarios/scenario-3/models',
+                    modelPath: path.join(
+                      __dirname,
+                      '/test-scenarios/scenario-3/models'
+                    ),
                     embedAssociations: false
                   }
 
@@ -3207,7 +3262,10 @@ Test('end to end tests', function(t) {
                     loglevel: 'ERROR',
                     absoluteModelPath: true,
 
-                    modelPath: __dirname + '/test-scenarios/scenario-3/models',
+                    modelPath: path.join(
+                      __dirname,
+                      '/test-scenarios/scenario-3/models'
+                    ),
                     embedAssociations: false
                   }
 
@@ -3360,7 +3418,10 @@ Test('end to end tests', function(t) {
                   loglevel: 'ERROR',
                   absoluteModelPath: true,
 
-                  modelPath: __dirname + '/test-scenarios/scenario-3/models',
+                  modelPath: path.join(
+                    __dirname,
+                    '/test-scenarios/scenario-3/models'
+                  ),
                   embedAssociations: false
                 }
 
@@ -3550,7 +3611,10 @@ Test('end to end tests', function(t) {
                     loglevel: 'ERROR',
                     absoluteModelPath: true,
 
-                    modelPath: __dirname + '/test-scenarios/scenario-3/models',
+                    modelPath: path.join(
+                      __dirname,
+                      '/test-scenarios/scenario-3/models'
+                    ),
                     embedAssociations: false
                   }
 
@@ -3665,7 +3729,6 @@ Test('end to end tests', function(t) {
     .then(function() {
       return t.test('audit log tests', function(t) {
         let users = []
-        let userProfiles = []
         let roles = []
         let permissions = []
         let hashtags = []
@@ -3687,7 +3750,10 @@ Test('end to end tests', function(t) {
                   authStrategy: authStrategy,
                   absoluteModelPath: true,
 
-                  modelPath: __dirname + '/test-scenarios/scenario-3/models'
+                  modelPath: path.join(
+                    __dirname,
+                    '/test-scenarios/scenario-3/models'
+                  )
                 }
 
                 let promises = []
@@ -3987,7 +4053,10 @@ Test('end to end tests', function(t) {
                   authStrategy: null,
                   absoluteModelPath: true,
 
-                  modelPath: __dirname + '/test-scenarios/scenario-3/models'
+                  modelPath: path.join(
+                    __dirname,
+                    '/test-scenarios/scenario-3/models'
+                  )
                 }
 
                 let promises = []
@@ -4186,7 +4255,10 @@ Test('end to end tests', function(t) {
                   authStrategy: authStrategy,
                   absoluteModelPath: true,
 
-                  modelPath: __dirname + '/test-scenarios/scenario-3/models'
+                  modelPath: path.join(
+                    __dirname,
+                    '/test-scenarios/scenario-3/models'
+                  )
                 }
 
                 let promises = []
@@ -4430,7 +4502,10 @@ Test('end to end tests', function(t) {
                   enableSoftDelete: true,
                   absoluteModelPath: true,
 
-                  modelPath: __dirname + '/test-scenarios/scenario-3/models'
+                  modelPath: path.join(
+                    __dirname,
+                    '/test-scenarios/scenario-3/models'
+                  )
                 }
 
                 let promises = []
@@ -4620,7 +4695,10 @@ Test('end to end tests', function(t) {
                   enableSoftDelete: true,
                   absoluteModelPath: true,
 
-                  modelPath: __dirname + '/test-scenarios/scenario-3/models'
+                  modelPath: path.join(
+                    __dirname,
+                    '/test-scenarios/scenario-3/models'
+                  )
                 }
 
                 let promises = []
@@ -4819,7 +4897,10 @@ Test('end to end tests', function(t) {
                   authStrategy: authStrategy,
                   absoluteModelPath: true,
 
-                  modelPath: __dirname + '/test-scenarios/scenario-3/models'
+                  modelPath: path.join(
+                    __dirname,
+                    '/test-scenarios/scenario-3/models'
+                  )
                 }
 
                 let promises = []
@@ -5700,7 +5781,10 @@ Test('end to end tests', function(t) {
                   authStrategy: authStrategy,
                   absoluteModelPath: true,
 
-                  modelPath: __dirname + '/test-scenarios/scenario-3/models'
+                  modelPath: path.join(
+                    __dirname,
+                    '/test-scenarios/scenario-3/models'
+                  )
                 }
 
                 let promises = []
@@ -6448,7 +6532,10 @@ Test('end to end tests', function(t) {
 
                   enableDuplicateFields: true,
                   trackDuplicatedFields: true,
-                  modelPath: __dirname + '/test-scenarios/scenario-3/models'
+                  modelPath: path.join(
+                    __dirname,
+                    '/test-scenarios/scenario-3/models'
+                  )
                 }
 
                 let promises = []
@@ -6729,7 +6816,10 @@ Test('end to end tests', function(t) {
 
                   enableDuplicateFields: true,
                   trackDuplicatedFields: true,
-                  modelPath: __dirname + '/test-scenarios/scenario-3/models'
+                  modelPath: path.join(
+                    __dirname,
+                    '/test-scenarios/scenario-3/models'
+                  )
                 }
 
                 let promises = []
@@ -6863,7 +6953,10 @@ Test('end to end tests', function(t) {
 
                     enableDuplicateFields: true,
                     trackDuplicatedFields: true,
-                    modelPath: __dirname + '/test-scenarios/scenario-3/models'
+                    modelPath: path.join(
+                      __dirname,
+                      '/test-scenarios/scenario-3/models'
+                    )
                   }
 
                   let promises = []
@@ -7066,7 +7159,10 @@ Test('end to end tests', function(t) {
 
                     enableDuplicateFields: true,
                     trackDuplicatedFields: false,
-                    modelPath: __dirname + '/test-scenarios/scenario-3/models'
+                    modelPath: path.join(
+                      __dirname,
+                      '/test-scenarios/scenario-3/models'
+                    )
                   }
 
                   let promises = []

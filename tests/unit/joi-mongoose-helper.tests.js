@@ -1,5 +1,8 @@
 'use strict'
 
+// Temporarily disabling this rule for tests
+/* eslint no-unused-vars: 0 */
+
 let test = require('tape')
 let _ = require('lodash')
 let sinon = require('sinon')

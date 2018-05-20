@@ -5,7 +5,6 @@ Joi.objectId = require('joi-objectid')(Joi)
 let _ = require('lodash')
 let assert = require('assert')
 let joiMongooseHelper = require('./joi-mongoose-helper')
-let queryHelper = require('./query-helper')
 let validationHelper = require('./validation-helper')
 let authHelper = require('./auth-helper')
 let chalk = require('chalk')
@@ -16,7 +15,7 @@ let restHapiPolicies = require('./policy-generator')
 // TODO: change model "alias" to "routeAlias" (or remove the option)
 
 module.exports = function(logger, mongoose, server) {
-  let HandlerHelper = require('./handler-helper-factory')(mongoose, server)
+  let HandlerHelper = require('./handler-helper-factory')()
 
   let headersValidation
 
@@ -71,9 +70,9 @@ module.exports = function(logger, mongoose, server) {
             let association = model.routeOptions.associations[associationName]
 
             if (
-              association.type == 'MANY_MANY' ||
-              association.type == 'ONE_MANY' ||
-              association.type == '_MANY'
+              association.type === 'MANY_MANY' ||
+              association.type === 'ONE_MANY' ||
+              association.type === '_MANY'
             ) {
               if (association.allowAdd !== false) {
                 this.generateAssociationAddOneEndpoint(

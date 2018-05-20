@@ -76,7 +76,7 @@ module.exports = function(mongoose) {
       update: {
         pre: function(_id, payload, request, Log) {
           if (payload.email === 'error@user.com') {
-            throw 'user error'
+            throw new Error('user error')
           }
 
           return payload

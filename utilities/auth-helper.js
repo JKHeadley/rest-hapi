@@ -1,7 +1,6 @@
 'use strict'
 
 const _ = require('lodash')
-let extend = require('util')._extend
 
 module.exports = {
   /**
@@ -44,7 +43,6 @@ module.exports = {
           }
         }
         return scope
-        break
     }
 
     if (rootScope && _.isArray(rootScope)) {

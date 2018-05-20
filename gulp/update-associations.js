@@ -5,7 +5,6 @@ let exit = require('gulp-exit')
 let Q = require('q')
 let mongoose = require('mongoose')
 let _ = require('lodash')
-let config = require('../config')
 let restHapi = require('../rest-hapi')
 
 gulp.task('update-associations', [], function() {
@@ -44,8 +43,6 @@ gulp.task('update-associations', [], function() {
     Log.debug('URI:', uri)
     Log.debug('embedAssociations:', embedAssociations)
     Log.debug('modelPath:', restHapi.config.modelPath)
-
-    let promise_chain = Q.when()
 
     let modelsArray = []
 
@@ -127,10 +124,10 @@ function getLinkingModel(model, association, Log) {
 }
 
 function applyActionToModels(action, models, embedAssociations, Log) {
-  let promise_chain = Q.when()
+  let promiseChain = Q.when()
 
   models.forEach(function(model) {
-    let promise_link = function() {
+    let promiseLink = function() {
       let deferred = Q.defer()
 
       action(model, embedAssociations, Log)
@@ -143,12 +140,12 @@ function applyActionToModels(action, models, embedAssociations, Log) {
       return deferred.promise
     }
 
-    promise_chain = promise_chain.then(promise_link).catch(function(error) {
+    promiseChain = promiseChain.then(promiseLink).catch(function(error) {
       throw error
     })
   })
 
-  return promise_chain
+  return promiseChain
 }
 
 function addEmbedded(model, embedAssociations, Log) {

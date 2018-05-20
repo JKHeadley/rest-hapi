@@ -1,11 +1,8 @@
 'use strict'
 
 let Boom = require('boom')
-let Q = require('q')
-let extend = require('util')._extend
 let handlerHelper = require('./handler-helper')
 let errorHelper = require('./error-helper')
-let config = require('../config')
 
 // TODO: add bulk delete/delete many
 
@@ -25,18 +22,12 @@ let config = require('../config')
 
 // TODO: possibly execute .toJSON() on all return data to reduce data size
 
-// TODO-DONE: update hapi version
-
 // TODO: look into using glue
 
 // TODO: abstract mongoose logic into CRUD utility methods that can be called directly with rest-hapi plugin
 // TODO:(cont) This will allow users to CRUD data in extra endpoints using rest-hapi functions.
 
-let mongoose, server
-module.exports = function(_mongoose, _server) {
-  mongoose = _mongoose
-  server = _server
-
+module.exports = function() {
   return {
     /**
      * Handles incoming GET requests to /RESOURCE
@@ -157,7 +148,6 @@ function generateListHandler(model, options, Log) {
       return handlerHelper
         .listHandler(model, request, Log)
         .then(function(result) {
-          const pageData = result.pageData
           delete result.pageData
           return h.response(result).code(200)
         })

@@ -16,16 +16,19 @@ module.exports = {
 
   /**
    * Creates a rest-hapi error with a message and a type or throws if error is already a rest-hapi error.
-   * @param error: The system error/rest-hapi error.
+   * @param err: The system error/rest-hapi error.
+   * @param message: The rest-hapi error message.
    * @param type: The response type.
    */
-  handleError: function(error, message, type, Log) {
-    if (error.type) {
-      throw error
+  handleError: function(err, message, type, Log) {
+    if (err.type) {
+      throw err
     } else {
-      Log.error(error)
-      message = message || error
-      throw { message: message, type: type }
+      Log.error(err)
+      message = message || err
+      let restHapiError = new Error(message)
+      restHapiError.type = type
+      throw restHapiError
     }
   },
 

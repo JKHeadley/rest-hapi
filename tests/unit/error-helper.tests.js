@@ -1,5 +1,8 @@
 'use strict'
 
+// Temporarily disabling this rule for tests
+/* eslint no-unused-vars: 0 */
+
 let test = require('blue-tape')
 let sinon = require('sinon')
 let proxyquire = require('proxyquire')
@@ -48,6 +51,8 @@ test('error-helper.handleError', function(t) {
     let message = 'An error occurred'
     let errorType = errorHelper.types.BAD_REQUEST
     let error = new Error()
+    let restHapiError = new Error(message)
+    restHapiError.type = errorType
     // </editor-fold>
 
     // <editor-fold desc="Act">
@@ -61,7 +66,7 @@ test('error-helper.handleError', function(t) {
     // </editor-fold>
 
     // <editor-fold desc="Assert">
-    t.deepEqual(thrown, { message: message, type: errorType }, 'threw an error')
+    t.deepEqual(thrown, restHapiError, 'threw a rest-hapi error')
     t.ok(logErrorSpy.calledWith(error), 'called Log.error')
     // </editor-fold>
 

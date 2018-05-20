@@ -44,7 +44,7 @@ gulp.task('seed', ['models'], function() {
       .then(function(result) {
         roles = result
         Log.log('seeding users')
-        let users = [
+        users = [
           {
             email: 'test@account.com',
             password: password,

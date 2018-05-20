@@ -1,18 +1,15 @@
 'use strict'
 
+// Temporarily disabling this rule for tests
+/* eslint no-unused-vars: 0 */
+
 const test = require('tape')
 const _ = require('lodash')
 const sinon = require('sinon')
 const sinonTestFactory = require('sinon-test')
 const sinonTest = sinonTestFactory(sinon)
 const rewire = require('rewire')
-const proxyquire = require('proxyquire')
-const assert = require('assert')
-const mongoose = require('mongoose')
-const Types = mongoose.Schema.Types
 const logging = require('loggin')
-const testHelper = require('../../utilities/test-helper')
-const Joi = require('joi')
 const Boom = require('boom')
 const Q = require('q')
 
@@ -822,7 +819,7 @@ test('enforce-document-scope.enforceDocumentScopePostForModel', function(t) {
 
       let enforceDocumentScope = rewire('../../policies/enforce-document-scope')
       let verifyScope = this.spy(function() {
-        throw 'ERROR'
+        throw new Error('ERROR')
       })
       enforceDocumentScope.__set__('internals.verifyScope', verifyScope)
       let model = {}
@@ -1219,7 +1216,7 @@ test('enforce-document-scope.enforceDocumentScopePreForModel', function(t) {
 
       let enforceDocumentScope = rewire('../../policies/enforce-document-scope')
       let verifyScopeById = this.spy(function() {
-        throw 'ERROR'
+        throw new Error('ERROR')
       })
       enforceDocumentScope.__set__('internals.verifyScopeById', verifyScopeById)
       let model = {}

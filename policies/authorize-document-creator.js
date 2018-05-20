@@ -139,7 +139,7 @@ internals.addScope = function(action, request, h, Log) {
         scopeType = 'associateScope'
         break
       default:
-        throw 'Invalid action.'
+        throw new Error('Invalid action.')
     }
 
     let userId = _.get(request.auth.credentials, config.userIdKey)

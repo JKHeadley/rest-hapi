@@ -19,7 +19,7 @@ module.exports = function(server, mongoose, Log, config) {
   if (config.absoluteApiPath === true) {
     apiPath = config.apiPath
   } else {
-    apiPath = __dirname + '/../../../' + config.apiPath
+    apiPath = path.join(__dirname, '/../../../', config.apiPath)
   }
 
   fs.readdir(apiPath, function(err, files) {

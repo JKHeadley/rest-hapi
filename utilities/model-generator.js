@@ -22,7 +22,7 @@ module.exports = function(mongoose, Log, config) {
   if (config.absoluteModelPath === true) {
     modelPath = config.modelPath
   } else {
-    modelPath = __dirname + '/../../../' + config.modelPath
+    modelPath = path.join(__dirname, '/../../../', config.modelPath)
   }
 
   fs.readdir(modelPath, function(err, files) {

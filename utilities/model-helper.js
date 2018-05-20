@@ -214,7 +214,9 @@ internals.extendSchemaAssociations = function(Schema, mongoose, modelPath) {
             }
           }
           if (!linkingModel) {
-            throw 'unknown linking model: ' + association.linkingModel
+            throw new Error(
+              'unknown linking model: ' + association.linkingModel
+            )
           }
 
           association.include = {}
@@ -283,24 +285,24 @@ internals.extendSchemaAssociations = function(Schema, mongoose, modelPath) {
         } else {
           // EXPL: if the association isn't embedded and a linking model isn't defined, then we need to create a basic linking collection
           if (!embedAssociation) {
-            const linkingModelName_1 =
+            const linkingModelName1 =
               Schema.statics.collectionName + '_' + association.model
-            const linkingModelName_2 =
+            const linkingModelName2 =
               association.model + '_' + Schema.statics.collectionName
-            let linkingModelName = linkingModelName_1
+            let linkingModelName = linkingModelName1
 
             association.include = {}
 
             let modelExists = [true, true]
             try {
-              association.include.through = mongoose.model(linkingModelName_1)
-              linkingModelName = linkingModelName_1
+              association.include.through = mongoose.model(linkingModelName1)
+              linkingModelName = linkingModelName1
             } catch (error) {
               modelExists[0] = false
             }
             try {
-              association.include.through = mongoose.model(linkingModelName_2)
-              linkingModelName = linkingModelName_2
+              association.include.through = mongoose.model(linkingModelName2)
+              linkingModelName = linkingModelName2
             } catch (error) {
               modelExists[1] = false
             }

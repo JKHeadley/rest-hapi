@@ -1,5 +1,9 @@
 'use strict'
 
+// Temporarily disabling this rule for tests
+/* eslint no-unused-vars: 0 */
+
+let path = require('path')
 let test = require('tape')
 let _ = require('lodash')
 let sinon = require('sinon')
@@ -337,7 +341,10 @@ test('model-helper.extendSchemaAssociations', function(t) {
       let fs = require('fs')
       let mkdirp = require('mkdirp')
       let rmdir = require('rmdir')
-      let linkingModelPath = __dirname + '/../models_test/linking-models/'
+      let linkingModelPath = path.join(
+        __dirname,
+        '/../models_test/linking-models/'
+      )
       let linkingModelfileName = linkingModelPath + 'test_linking.model.js'
 
       mkdirp(linkingModelPath, function(err) {
@@ -383,7 +390,7 @@ test('model-helper.extendSchemaAssociations', function(t) {
             modelHelper.extendSchemaAssociations(
               userSchema,
               mongoose,
-              __dirname + '/../models_test'
+              path.join(__dirname, '/../models_test')
             )
           } catch (error) {
             Log.error(error)
@@ -405,7 +412,7 @@ test('model-helper.extendSchemaAssociations', function(t) {
           // </editor-fold>
 
           // <editor-fold desc="Restore">
-          // rmdir(__dirname + "/../models_test");
+          // rmdir(path.join(__dirname, "/../models_test");
           // fs.unlinkSync(linkingModelPath);
           delete mongoose.models.test_linking
           delete mongoose.modelSchemas.test_linking
@@ -560,7 +567,7 @@ test('model-helper.extendSchemaAssociations', function(t) {
         modelHelper.extendSchemaAssociations(
           userSchema,
           mongoose,
-          __dirname + '/../models_test'
+          path.join(__dirname, '/../models_test')
         )
       } catch (error) {
         Log.error(error)
@@ -582,7 +589,7 @@ test('model-helper.extendSchemaAssociations', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Restore">
-      rmdir(__dirname + '/../models_test')
+      rmdir(path.join(__dirname, '/../models_test'))
       delete mongoose.models.test_linking
       delete mongoose.modelSchemas.test_linking
       // </editor-fold>
@@ -597,9 +604,9 @@ test('model-helper.extendSchemaAssociations', function(t) {
 
       t.plan(3)
 
-      let userSchema_foreignField = {}
+      let userSchemaForeignField = {}
 
-      userSchema_foreignField.statics = {
+      userSchemaForeignField.statics = {
         routeOptions: {
           associations: {
             employees: {
@@ -611,9 +618,9 @@ test('model-helper.extendSchemaAssociations', function(t) {
         }
       }
 
-      let userSchema_no_foreignField = {}
+      let userSchemaNoForeignField = {}
 
-      userSchema_no_foreignField.statics = {
+      userSchemaNoForeignField.statics = {
         routeOptions: {
           associations: {
             employees: {
@@ -624,8 +631,8 @@ test('model-helper.extendSchemaAssociations', function(t) {
         }
       }
 
-      userSchema_foreignField.virtual = sinon.spy()
-      userSchema_no_foreignField.virtual = sinon.spy()
+      userSchemaForeignField.virtual = sinon.spy()
+      userSchemaNoForeignField.virtual = sinon.spy()
 
       let virtualObject = {
         ref: 'user',
@@ -635,21 +642,21 @@ test('model-helper.extendSchemaAssociations', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Act">
-      modelHelper.extendSchemaAssociations(userSchema_foreignField)
-      modelHelper.extendSchemaAssociations(userSchema_no_foreignField)
+      modelHelper.extendSchemaAssociations(userSchemaForeignField)
+      modelHelper.extendSchemaAssociations(userSchemaNoForeignField)
       // </editor-fold>
 
       // <editor-fold desc="Assert">
-      t.ok(userSchema_foreignField.virtual.called, 'Schema.virtual was called')
+      t.ok(userSchemaForeignField.virtual.called, 'Schema.virtual was called')
       t.ok(
-        userSchema_foreignField.virtual.calledWithExactly(
+        userSchemaForeignField.virtual.calledWithExactly(
           'employees',
           virtualObject
         ),
         'Schema.virtual was called with virtualObject'
       )
       t.notOk(
-        userSchema_no_foreignField.virtual.called,
+        userSchemaNoForeignField.virtual.called,
         'Schema.virtual was not called'
       )
       // </editor-fold>

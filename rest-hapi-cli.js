@@ -24,12 +24,18 @@ switch (command) {
     exec('gulp seed --gulpfile ' + cmdString, function(err, stdout, stderr) {
       console.log(stdout)
       console.log(stderr)
+      if (err) {
+        throw err
+      }
     })
     break
   case 'test':
     exec('gulp test --gulpfile ' + cmdString, function(err, stdout, stderr) {
       console.log(stdout)
       console.log(stderr)
+      if (err) {
+        throw err
+      }
     })
     break
   case 'update-associations':
@@ -41,6 +47,9 @@ switch (command) {
       function(err, stdout, stderr) {
         console.log(stdout)
         console.log(stderr)
+        if (err) {
+          throw err
+        }
       }
     )
     break

@@ -1,24 +1,23 @@
 'use strict'
 
-const _ = require('lodash'),
-  extend = require('extend'),
-  Inert = require('inert'),
-  Vision = require('vision'),
-  HapiSwagger = require('hapi-swagger'),
-  Mrhorse = require('mrhorse'),
-  logging = require('loggin'),
-  logUtil = require('./utilities/log-util'),
-  chalk = require('chalk'),
-  Q = require('q'),
-  fs = require('fs'),
-  restHelperFactory = require('./utilities/rest-helper-factory'),
-  handlerHelper = require('./utilities/handler-helper'),
-  joiHelper = require('./utilities/joi-mongoose-helper'),
-  testHelper = require('./utilities/test-helper'),
-  errorHelper = require('./utilities/error-helper'),
-  modelGenerator = require('./utilities/model-generator'),
-  apiGenerator = require('./utilities/api-generator'),
-  defaultConfig = require('./config')
+const extend = require('extend')
+const path = require('path')
+const Inert = require('inert')
+const Vision = require('vision')
+const HapiSwagger = require('hapi-swagger')
+const Mrhorse = require('mrhorse')
+const logging = require('loggin')
+const logUtil = require('./utilities/log-util')
+const chalk = require('chalk')
+const Q = require('q')
+const restHelperFactory = require('./utilities/rest-helper-factory')
+const handlerHelper = require('./utilities/handler-helper')
+const joiHelper = require('./utilities/joi-mongoose-helper')
+const testHelper = require('./utilities/test-helper')
+const errorHelper = require('./utilities/error-helper')
+const modelGenerator = require('./utilities/model-generator')
+const apiGenerator = require('./utilities/api-generator')
+const defaultConfig = require('./config')
 
 let modelsGenerated = false
 let globalModels = {}
@@ -130,7 +129,7 @@ function register(server, options) {
           )
         }
       } else {
-        policyPath = __dirname + '/policies'
+        policyPath = path.join(__dirname, '/policies')
       }
 
       // endregion
@@ -153,7 +152,7 @@ function register(server, options) {
             server.plugins.mrhorse.loadPolicies(
               server,
               {
-                policyDirectory: __dirname + '/policies'
+                policyDirectory: path.join(__dirname, '/policies')
               },
               function(err) {
                 if (err) {

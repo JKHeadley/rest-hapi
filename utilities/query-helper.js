@@ -1,10 +1,7 @@
 'use strict'
 
 let _ = require('lodash')
-let assert = require('assert')
 let validationHelper = require('./validation-helper')
-let qs = require('qs')
-let extend = require('util')._extend
 let globals = require('../components/globals')
 let config = require('../config')
 
@@ -509,7 +506,7 @@ function nestPopulate(
   if (!association) {
     association = getReference(model, embed, Log)
     if (!association) {
-      throw 'Association not found.'
+      throw new Error('Association not found.')
     }
   }
 
@@ -570,7 +567,7 @@ function nestPopulate(
     // EXPL: if the next embed was inserted, repeat the same association
     if (!embedAssociation && association.type === 'MANY_MANY' && !inserted) {
       nextModel = model
-      associations = extend({}, associations)
+      associations = Object.assign({}, associations)
       associations[association.model] = associations[embed]
     } else {
       associations = association.include.model.routeOptions.associations
@@ -584,7 +581,7 @@ function nestPopulate(
       nextModel,
       Log
     )
-    populate.populate = extend({}, populate) // EXPL: prevent circular reference
+    populate.populate = Object.assign({}, populate) // EXPL: prevent circular reference
     populate.path = populatePath
 
     if (

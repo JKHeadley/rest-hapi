@@ -221,7 +221,7 @@ internals.verifyScope = function(documents, action, userScope, Log) {
             actionScope = document.scope.associateScope
             break
           default:
-            throw 'Invalid action.'
+            throw new Error('Invalid action.')
         }
 
         // EXPL: combine the document root scope with the action specific scope
@@ -247,7 +247,7 @@ internals.verifyScope = function(documents, action, userScope, Log) {
         } else {
           authorized = false
           if (config.enableDocumentScopeFail) {
-            throw false
+            return false
           } else {
             return true
           }

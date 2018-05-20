@@ -2,11 +2,8 @@
 
 let QueryHelper = require('./query-helper')
 let JoiMongooseHelper = require('./joi-mongoose-helper')
-let Joi = require('joi')
 let Q = require('q')
-let Mongoose = require('mongoose')
 let errorHelper = require('./error-helper')
-let extend = require('util')._extend
 let config = require('../config')
 let _ = require('lodash')
 
@@ -82,7 +79,7 @@ function _list(model, query, Log) {
  * @private
  */
 function _listHandler(model, request, Log) {
-  let query = extend({}, request.query)
+  let query = Object.assign({}, request.query)
   let logError = false
   try {
     let promise = {}
@@ -318,7 +315,7 @@ function _find(model, _id, query, Log) {
  * @private
  */
 function _findHandler(model, _id, request, Log) {
-  let query = extend({}, request.query)
+  let query = Object.assign({}, request.query)
   let logError = false
   try {
     let promise = {}
@@ -517,7 +514,7 @@ function _createHandler(model, request, Log) {
     // EXPL: make a copy of the payload so that request.payload remains unchanged
     let isArray = true
     if (!_.isArray(request.payload)) {
-      payload = [extend({}, request.payload)]
+      payload = [Object.assign({}, request.payload)]
       isArray = false
     } else {
       payload = request.payload.map(function(item) {
@@ -694,7 +691,7 @@ function _update(model, _id, payload, Log) {
  * @private
  */
 function _updateHandler(model, _id, request, Log) {
-  let payload = extend({}, request.payload)
+  let payload = Object.assign({}, request.payload)
   let logError = false
   try {
     let promise = {}
@@ -1139,7 +1136,7 @@ function _addOneHandler(
   request,
   Log
 ) {
-  let payload = extend({}, request.payload)
+  let payload = Object.assign({}, request.payload)
   let logError = false
   try {
     return ownerModel
@@ -1463,7 +1460,7 @@ function _addManyHandler(
   let logError = false
   try {
     if (_.isEmpty(request.payload)) {
-      throw 'Payload is empty.'
+      throw new Error('Payload is empty.')
     }
     return ownerModel
       .findOne({ _id: ownerId })
@@ -1503,10 +1500,10 @@ function _addManyHandler(
                   return object.childId
                 })
               }
-              let promise_chain = Q.when()
+              let promisChain = Q.when()
 
               childIds.forEach(function(childId) {
-                let promise_link = function() {
+                let promiseLink = function() {
                   let deferred = Q.defer()
                   _setAssociation(
                     ownerModel,
@@ -1526,14 +1523,14 @@ function _addManyHandler(
                   return deferred.promise
                 }
 
-                promise_chain = promise_chain
-                  .then(promise_link)
+                promisChain = promisChain
+                  .then(promiseLink)
                   .catch(function(error) {
                     throw error
                   })
               })
 
-              return promise_chain
+              return promisChain
                 .then(function() {
                   return true
                 })
@@ -1663,7 +1660,7 @@ function _removeManyHandler(
   let logError = false
   try {
     if (_.isEmpty(request.payload)) {
-      throw 'Payload is empty.'
+      throw new Error('Payload is empty.')
     }
     return ownerModel
       .findOne({ _id: ownerId })
@@ -1691,10 +1688,10 @@ function _removeManyHandler(
             .then(function(payload) {
               let childIds = payload
 
-              let promise_chain = Q.when()
+              let promisChain = Q.when()
 
               childIds.forEach(function(childId) {
-                let promise_link = function() {
+                let promiseLink = function() {
                   let deferred = Q.defer()
                   _removeAssociation(
                     ownerModel,
@@ -1713,14 +1710,14 @@ function _removeManyHandler(
                   return deferred.promise
                 }
 
-                promise_chain = promise_chain
-                  .then(promise_link)
+                promisChain = promisChain
+                  .then(promiseLink)
                   .catch(function(error) {
                     throw error
                   })
               })
 
-              return promise_chain
+              return promisChain
                 .then(function() {
                   return true
                 })
@@ -1869,7 +1866,7 @@ function _getAllHandler(
         }
         result = result[associationName]
         let childIds = []
-        let many_many = false
+        let manyMany = false
         if (association.type === 'MANY_MANY') {
           childIds = result.map(function(object) {
             if (!object[association.model]) {
@@ -1879,7 +1876,7 @@ function _getAllHandler(
             }
             return object[association.model]._id
           })
-          many_many = true
+          manyMany = true
         } else {
           childIds = result.map(function(object) {
             return object._id
@@ -1905,16 +1902,16 @@ function _getAllHandler(
 
         // EXPL: also have to handle the special case for '$where._id' queries
         if (query.$where && query.$where._id) {
-          query.$where._id = extend({ $in: childIds }, query.$where._id)
+          query.$where._id = Object.assign({ $in: childIds }, query.$where._id)
         } else {
-          query.$where = extend({ _id: { $in: childIds } }, query.$where)
+          query.$where = Object.assign({ _id: { $in: childIds } }, query.$where)
         }
 
         request.query = query
 
         let promise = _listHandler(childModel, request, Log)
 
-        if (many_many && association.linkingModel) {
+        if (manyMany && association.linkingModel) {
           // EXPL: we have to manually insert the extra fields into the result
           let extraFieldData = result
           return promise.then(function(result) {
@@ -2069,7 +2066,7 @@ function _setAssociation(
 
             payload = payload[0]
 
-            payload = extend({}, payload) // EXPL: break the reference to the original payload
+            payload = Object.assign({}, payload) // EXPL: break the reference to the original payload
 
             delete payload.childId
 
@@ -2119,7 +2116,7 @@ function _setAssociation(
               ownerObject[associationName][duplicateIndex] = payload
             }
 
-            payload = extend({}, payload) // EXPL: break the reference to the original payload
+            payload = Object.assign({}, payload) // EXPL: break the reference to the original payload
             delete payload._id
 
             delete payload[childModel.modelName]

@@ -1,5 +1,8 @@
 'use strict'
 
+// Temporarily disabling this rule for tests
+/* eslint no-unused-vars: 0 */
+
 let test = require('tape')
 let _ = require('lodash')
 let sinon = require('sinon')
@@ -6326,7 +6329,7 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
         require('../../utilities/joi-mongoose-helper'),
         'generateJoiCreateModel'
       ).callsFake(function() {
-        return readModel
+        return {}
       })
       let restHelperFactory = proxyquire(
         '../../utilities/rest-helper-factory',
@@ -7479,7 +7482,7 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
         require('../../utilities/joi-mongoose-helper'),
         'generateJoiReadModel'
       ).callsFake(function() {
-        return readModel
+        return {}
       })
       let restHelperFactory = proxyquire(
         '../../utilities/rest-helper-factory',
@@ -8741,7 +8744,7 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
         require('../../utilities/joi-mongoose-helper'),
         'generateJoiReadModel'
       ).callsFake(function() {
-        return readModel
+        return {}
       })
       let restHelperFactory = proxyquire(
         '../../utilities/rest-helper-factory',

@@ -92,7 +92,7 @@ internals.addMeta = function(action, request, h, Log) {
         metaType = 'deletedBy'
         break
       default:
-        throw 'Invalid action.'
+        throw new Error('Invalid action.')
     }
 
     let userId = _.get(request.auth.credentials, config.userIdKey)

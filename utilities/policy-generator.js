@@ -1,8 +1,12 @@
 'use strict'
 
+const path = require('path')
+
 const internals = {}
 
-internals.policyObjects = require('require-all')(__dirname + '/../policies')
+internals.policyObjects = require('require-all')(
+  path.join(__dirname, '/../policies')
+)
 
 internals.policies = {}
 

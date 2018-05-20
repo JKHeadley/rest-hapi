@@ -1,5 +1,8 @@
 'use strict'
 
+// Temporarily disabling this rule for tests
+/* eslint no-unused-vars: 0 */
+
 let test = require('tape')
 let _ = require('lodash')
 let sinon = require('sinon')
@@ -877,7 +880,7 @@ test('query-helper.populateEmbeddedDocs', function(t) {
 
       let embeds = ['title']
 
-      let associations_many = {
+      let associationsMany = {
         title: {
           type: 'MANY_MANY',
           model: 'role',
@@ -888,7 +891,7 @@ test('query-helper.populateEmbeddedDocs', function(t) {
         }
       }
 
-      let associations_one = {
+      let associationsOne = {
         title: {
           type: 'MANY_ONE',
           model: 'role',
@@ -902,29 +905,29 @@ test('query-helper.populateEmbeddedDocs', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Act">
-      let result_many = nestPopulate(
+      let resultMany = nestPopulate(
         query,
         {},
         0,
         embeds,
-        associations_many,
+        associationsMany,
         {},
         Log
       )
-      let result_one = nestPopulate(
+      let resultOne = nestPopulate(
         query,
         {},
         0,
         embeds,
-        associations_one,
+        associationsOne,
         {},
         Log
       )
       // </editor-fold>
 
       // <editor-fold desc="Assert">
-      t.equals(result_many.path, 'title.role', 'association.model used in path')
-      t.equals(result_one.path, 'title', 'association.model not used in path')
+      t.equals(resultMany.path, 'title.role', 'association.model used in path')
+      t.equals(resultOne.path, 'title', 'association.model not used in path')
       // </editor-fold>
 
       // <editor-fold desc="Restore">
@@ -952,7 +955,7 @@ test('query-helper.populateEmbeddedDocs', function(t) {
 
     let embeds = ['title', 'users', 'one', 'groups', 'teams']
 
-    let associations_five = {
+    let associationsFive = {
       teams: {
         type: 'MANY_MANY',
         model: 'team',
@@ -964,43 +967,43 @@ test('query-helper.populateEmbeddedDocs', function(t) {
       }
     }
 
-    let associations_four = {
+    let associationsFour = {
       groups: {
         type: 'MANY_MANY',
         model: 'group',
         include: {
-          model: { routeOptions: { associations: associations_five } }
+          model: { routeOptions: { associations: associationsFive } }
         },
         embedAssociation: true
       }
     }
 
-    let associations_three = {
+    let associationsThree = {
       one: {
         type: 'ONE_ONE',
         model: 'one',
         include: {
-          model: { routeOptions: { associations: associations_four } }
+          model: { routeOptions: { associations: associationsFour } }
         }
       }
     }
 
-    let associations_two = {
+    let associationsTwo = {
       users: {
         type: 'ONE_MANY',
         model: 'user',
         include: {
-          model: { routeOptions: { associations: associations_three } }
+          model: { routeOptions: { associations: associationsThree } }
         }
       }
     }
 
-    let associations_one = {
+    let associationsOne = {
       title: {
         type: 'MANY_ONE',
         model: 'role',
         include: {
-          model: { routeOptions: { associations: associations_two } }
+          model: { routeOptions: { associations: associationsTwo } }
         }
       }
     }
@@ -1008,7 +1011,7 @@ test('query-helper.populateEmbeddedDocs', function(t) {
     // </editor-fold>
 
     // <editor-fold desc="Act">
-    let populate = nestPopulate(query, {}, 0, embeds, associations_one, {}, Log)
+    let populate = nestPopulate(query, {}, 0, embeds, associationsOne, {}, Log)
     // </editor-fold>
 
     // <editor-fold desc="Assert">
@@ -1542,7 +1545,7 @@ test('query-helper.createMongooseQuery', function(t) {
 
       // <editor-fold desc="Assert">
       t.ok(
-        mongooseQuery.where.callCount == 2,
+        mongooseQuery.where.callCount === 2,
         'mongooseQuery.where called twice'
       )
       t.notOk(query.$where, 'query.$where deleted')

@@ -1,6 +1,5 @@
 'use strict'
 
-const Boom = require('boom')
 const _ = require('lodash')
 const config = require('../config')
 

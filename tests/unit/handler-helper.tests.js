@@ -1,5 +1,8 @@
 'use strict'
 
+// Temporarily disabling this rule for tests
+/* eslint no-unused-vars: 0 */
+
 let test = require('blue-tape')
 let _ = require('lodash')
 let sinon = require('sinon')
@@ -14,7 +17,6 @@ logger.logLevel = 'ERROR'
 let testHelper = require('../../utilities/test-helper')
 let Joi = require('joi')
 let Q = require('q')
-let extend = require('util')._extend
 
 test('handler-helper exists and has expected members', function(t) {
   // <editor-fold desc="Arrange">
@@ -1162,7 +1164,7 @@ test('handler-helper.listHandler', function(t) {
             )
 
             let execSpy = sandbox.spy(function() {
-              return Q.reject(error)
+              return Q.reject()
             })
             let paginateSpy = sandbox.spy(function() {
               return { exec: execSpy }
@@ -1170,7 +1172,7 @@ test('handler-helper.listHandler', function(t) {
             queryHelperStub.paginate = paginateSpy
 
             let qStub = sandbox.stub(Q, 'when').callsFake(function() {
-              throw 'ERROR'
+              throw new Error('ERROR')
             })
 
             let handlerHelper = proxyquire('../../utilities/handler-helper', {
@@ -2055,7 +2057,7 @@ test('handler-helper.findHandler', function(t) {
             )
 
             let qStub = sandbox.stub(Q, 'when').callsFake(function() {
-              throw 'ERROR'
+              throw new Error('ERROR')
             })
 
             let handlerHelper = proxyquire('../../utilities/handler-helper', {
@@ -3007,7 +3009,7 @@ test('handler-helper.createHandler', function(t) {
               return 'attributes'
             }
             let qStub = sandbox.stub(Q, 'when').callsFake(function() {
-              throw 'ERROR'
+              throw new Error('ERROR')
             })
 
             let handlerHelper = proxyquire('../../utilities/handler-helper', {
@@ -3685,7 +3687,7 @@ test('handler-helper.deleteOneHandler', function(t) {
             let Log = logger.bind('handler-helper')
             let server = sandbox.spy()
             let qStub = sandbox.stub(Q, 'when').callsFake(function() {
-              throw 'ERROR'
+              throw new Error('ERROR')
             })
 
             let handlerHelper = proxyquire('../../utilities/handler-helper', {
@@ -4671,7 +4673,7 @@ test('handler-helper.updateHandler', function(t) {
             }
 
             let qStub = sandbox.stub(Q, 'when').callsFake(function() {
-              throw 'ERROR'
+              throw new Error('ERROR')
             })
 
             let handlerHelper = proxyquire('../../utilities/handler-helper', {
@@ -5806,8 +5808,8 @@ test('handler-helper.updateHandler', function(t) {
 //       let association = { include: { as: "children", model: childModel }, model: "child"};
 //
 //       let request = { query: {}, params: { ownerId: "_id" } };
-//       let extendedRequest = extend({}, request);
-//       extendedRequest.query.$where = extend({'_id': { $in: ["childId1","childId2"] }}, request.query.$where);
+//       let Object.assignedRequest = Object.assign({}, request);
+//       Object.assignedRequest.query.$where = Object.assign({'_id': { $in: ["childId1","childId2"] }}, request.query.$where);
 //       let reply = function(){};
 //       //</editor-fold>
 //
@@ -5818,7 +5820,7 @@ test('handler-helper.updateHandler', function(t) {
 //       //<editor-fold desc="Assert">
 //       return deferred.promise.then(function() {
 //         t.ok(handlerSpy2.calledWithExactly(childModel, {}, Log), "list called 1");
-//         t.ok(handlerSpy1.calledWithExactly(extendedRequest, reply), "list called 2");
+//         t.ok(handlerSpy1.calledWithExactly(Object.assignedRequest, reply), "list called 2");
 //       })
 //       //</editor-fold>
 //
@@ -5881,8 +5883,8 @@ test('handler-helper.updateHandler', function(t) {
 //       let association = { include: { as: "children", model: childModel }, model: "child", type: "MANY_MANY", linkingModel: "link"};
 //
 //       let request = { query: {}, params: { ownerId: "_id" }, noReply: true };
-//       let extendedRequest = extend({}, request);
-//       extendedRequest.query.$where = extend({'_id': { $in: ["childId1","childId2"] }}, request.query.$where);
+//       let Object.assignedRequest = Object.assign({}, request);
+//       Object.assignedRequest.query.$where = Object.assign({'_id': { $in: ["childId1","childId2"] }}, request.query.$where);
 //       let reply = sandbox.spy(function(){ return deferred.resolve() });
 //       //</editor-fold>
 //
@@ -5893,7 +5895,7 @@ test('handler-helper.updateHandler', function(t) {
 //       //<editor-fold desc="Assert">
 //       return deferred.promise.then(function() {
 //         t.ok(handlerSpy2.calledWithExactly(childModel, {}, Log), "list called 1");
-//         t.ok(handlerSpy1.calledWithExactly(extendedRequest, reply), "list called 2");
+//         t.ok(handlerSpy1.calledWithExactly(Object.assignedRequest, reply), "list called 2");
 //         t.ok(reply.calledWithExactly([{_id: "childId1", link: {value: "value1"}},{_id: "childId2", link: {value: "value2"}}]), "reply called with correct result");
 //       })
 //       //</editor-fold>
@@ -5957,8 +5959,8 @@ test('handler-helper.updateHandler', function(t) {
 //       let association = { include: { as: "children", model: childModel }, model: "child", type: "MANY_MANY"};
 //
 //       let request = { query: {}, params: { ownerId: "_id" }, noReply: true };
-//       let extendedRequest = extend({}, request);
-//       extendedRequest.query.$where = extend({'_id': { $in: ["childId1","childId2"] }}, request.query.$where);
+//       let Object.assignedRequest = Object.assign({}, request);
+//       Object.assignedRequest.query.$where = Object.assign({'_id': { $in: ["childId1","childId2"] }}, request.query.$where);
 //       let reply = sandbox.spy(function(){ return deferred.resolve() });
 //       //</editor-fold>
 //
@@ -5969,7 +5971,7 @@ test('handler-helper.updateHandler', function(t) {
 //       //<editor-fold desc="Assert">
 //       return deferred.promise.then(function() {
 //         t.ok(handlerSpy2.calledWithExactly(childModel, {}, Log), "list called 1");
-//         t.ok(handlerSpy1.calledWithExactly(extendedRequest, reply), "list called 2");
+//         t.ok(handlerSpy1.calledWithExactly(Object.assignedRequest, reply), "list called 2");
 //         t.ok(reply.calledWithExactly([{_id: "childId1"},{_id: "childId2"}]), "reply called with correct result");
 //       })
 //       //</editor-fold>

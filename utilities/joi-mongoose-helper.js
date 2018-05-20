@@ -3,7 +3,6 @@
 let Joi = require('joi')
 Joi.objectId = require('joi-objectid')(Joi)
 let _ = require('lodash')
-let assert = require('assert')
 let validationHelper = require('./validation-helper')
 let queryHelper = require('./query-helper')
 let config = require('../config')
