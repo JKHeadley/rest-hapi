@@ -1,5 +1,6 @@
 'use strict'
 
+let Boom = require('boom')
 let QueryHelper = require('./query-helper')
 let JoiMongooseHelper = require('./joi-mongoose-helper')
 let Q = require('q')
@@ -78,216 +79,148 @@ function _list(model, query, Log) {
  * @returns {object} A promise for the resulting model documents or the count of the query results.
  * @private
  */
-function _listHandler(model, request, Log) {
-  let query = Object.assign({}, request.query)
-  let logError = false
+async function _listHandler(model, request, Log) {
   try {
-    let promise = {}
-    if (
-      model.routeOptions &&
-      model.routeOptions.list &&
-      model.routeOptions.list.pre
-    ) {
-      promise = Q.fcall(model.routeOptions.list.pre, query, request, Log)
-    } else {
-      promise = Q.when(query)
+    let query = Object.assign({}, request.query)
+    try {
+      if (
+        model.routeOptions &&
+        model.routeOptions.list &&
+        model.routeOptions.list.pre
+      ) {
+        query = await Q.fcall(model.routeOptions.list.pre, query, request, Log)
+      }
+    } catch (err) {
+      if (!err.isBoom) {
+        Log.error(err)
+        throw Boom.badRequest('There was a preprocessing error.')
+      } else {
+        throw err
+      }
     }
 
-    return promise
-      .then(function(query) {
-        let mongooseQuery = {}
-        let count = ''
-        let flatten = false
-        if (query.$flatten) {
-          flatten = true
-        }
-        delete query.$flatten
-        if (query.$count) {
-          mongooseQuery = model.count()
-          mongooseQuery = QueryHelper.createMongooseQuery(
-            model,
-            query,
-            mongooseQuery,
-            Log
-          ).lean()
-          return mongooseQuery.exec().then(function(result) {
-            Log.log('Result: %s', JSON.stringify(result))
-            return result
-          })
-        }
+    let mongooseQuery = {}
+    let flatten = false
+    if (query.$flatten) {
+      flatten = true
+    }
+    delete query.$flatten
+    if (query.$count) {
+      mongooseQuery = model.count()
+      mongooseQuery = QueryHelper.createMongooseQuery(
+        model,
+        query,
+        mongooseQuery,
+        Log
+      ).lean()
+      let result = await mongooseQuery.exec()
+      Log.log('Result: %s', JSON.stringify(result))
+      return result
+    }
 
-        mongooseQuery = model.find()
-        mongooseQuery = QueryHelper.createMongooseQuery(
-          model,
-          query,
-          mongooseQuery,
-          Log
-        ).lean()
-        return mongooseQuery
-          .count()
-          .then(function(result) {
-            count = result
-            mongooseQuery = QueryHelper.paginate(query, mongooseQuery, Log)
-            return mongooseQuery.exec('find')
-          })
-          .then(function(result) {
-            let promise = {}
-            if (
-              model.routeOptions &&
-              model.routeOptions.list &&
-              model.routeOptions.list.post
-            ) {
-              promise = Q.fcall(
-                model.routeOptions.list.post,
-                request,
-                result,
-                Log
-              )
-            } else {
-              promise = Q.when(result)
-            }
+    mongooseQuery = model.find()
+    mongooseQuery = QueryHelper.createMongooseQuery(
+      model,
+      query,
+      mongooseQuery,
+      Log
+    ).lean()
+    let count = await mongooseQuery.count()
+    mongooseQuery = QueryHelper.paginate(query, mongooseQuery, Log)
+    let result = await mongooseQuery.exec('find')
 
-            return promise
-              .then(function(result) {
-                result = result.map(function(data) {
-                  let result = data
-                  if (model.routeOptions) {
-                    let associations = model.routeOptions.associations
-                    for (let associationKey in associations) {
-                      let association = associations[associationKey]
-                      if (
-                        association.type === 'ONE_MANY' &&
-                        data[associationKey]
-                      ) {
-                        // EXPL: we have to manually populate the return value for virtual (e.g. ONE_MANY) associations
-                        if (data[associationKey].toJSON) {
-                          // TODO: look into .toJSON and see why it appears sometimes and not other times
-                          result[associationKey] = data[associationKey].toJSON()
-                        } else {
-                          result[associationKey] = data[associationKey]
-                        }
-                      }
-                      if (
-                        association.type === 'MANY_MANY' &&
-                        flatten === true
-                      ) {
-                        // EXPL: remove additional fields and return a flattened array
-                        if (result[associationKey]) {
-                          result[associationKey] = result[associationKey].map(
-                            function(object) {
-                              object = object[association.model]
-                              return object
-                            }
-                          )
-                        }
-                      }
-                    }
-                  }
-
-                  if (config.enableSoftDelete && config.filterDeletedEmbeds) {
-                    // EXPL: remove soft deleted documents from populated properties
-                    filterDeletedEmbeds(result, {}, '', 0, Log)
-                  }
-
-                  Log.log('Result: %s', JSON.stringify(result))
-                  return result
-                })
-
-                const pages = {
-                  current: query.$page || 1,
-                  prev: 0,
-                  hasPrev: false,
-                  next: 0,
-                  hasNext: false,
-                  total: 0
-                }
-                const items = {
-                  limit: query.$limit,
-                  begin: (query.$page || 1) * query.$limit - query.$limit + 1,
-                  end: (query.$page || 1) * query.$limit,
-                  total: count
-                }
-
-                pages.total = Math.ceil(count / query.$limit)
-                pages.next = pages.current + 1
-                pages.hasNext = pages.next <= pages.total
-                pages.prev = pages.current - 1
-                pages.hasPrev = pages.prev !== 0
-                if (items.begin > items.total) {
-                  items.begin = items.total
-                }
-                if (items.end > items.total) {
-                  items.end = items.total
-                }
-
-                return { docs: result, pages: pages, items: items }
-              })
-              .catch(function(error) {
-                let message = 'There was a postprocessing error.'
-                if (_.isString(error)) {
-                  message = error
-                }
-                if (!logError) {
-                  Log.error(message)
-                  logError = true
-                  delete error.type
-                }
-                errorHelper.handleError(
-                  error,
-                  message,
-                  errorHelper.types.BAD_REQUEST,
-                  Log
-                )
-              })
-          })
-          .catch(function(error) {
-            const message = 'There was an error accessing the database.'
-            if (!logError) {
-              Log.error(message)
-              logError = true
-              delete error.type
-            }
-            errorHelper.handleError(
-              error,
-              message,
-              errorHelper.types.BAD_IMPLEMENTATION,
-              Log
-            )
-          })
-      })
-      .catch(function(error) {
-        let message = 'There was a preprocessing error.'
-        if (_.isString(error)) {
-          message = error
-        }
-        if (!logError) {
-          Log.error(message)
-          logError = true
-          delete error.type
-        }
-        errorHelper.handleError(
-          error,
-          message,
-          errorHelper.types.BAD_REQUEST,
+    try {
+      if (
+        model.routeOptions &&
+        model.routeOptions.list &&
+        model.routeOptions.list.post
+      ) {
+        result = await Q.fcall(
+          model.routeOptions.list.post,
+          request,
+          result,
           Log
         )
-      })
-  } catch (error) {
-    const message = 'There was an error processing the request.'
-    if (!logError) {
-      Log.error(message)
-      logError = true
-      delete error.type
+      }
+    } catch (err) {
+      if (!err.isBoom) {
+        Log.error(err)
+        throw Boom.badRequest('There was a postprocessing error.')
+      } else {
+        throw err
+      }
     }
-    try {
-      errorHelper.handleError(
-        error,
-        message,
-        errorHelper.types.BAD_REQUEST,
-        Log
-      )
-    } catch (error) {
-      return Q.reject(error)
+
+    result = result.map(data => {
+      let result = data
+      if (model.routeOptions) {
+        let associations = model.routeOptions.associations
+        for (let associationKey in associations) {
+          let association = associations[associationKey]
+          if (association.type === 'ONE_MANY' && data[associationKey]) {
+            // EXPL: we have to manually populate the return value for virtual (e.g. ONE_MANY) associations
+            if (data[associationKey].toJSON) {
+              // TODO: look into .toJSON and see why it appears sometimes and not other times
+              result[associationKey] = data[associationKey].toJSON()
+            } else {
+              result[associationKey] = data[associationKey]
+            }
+          }
+          if (association.type === 'MANY_MANY' && flatten === true) {
+            // EXPL: remove additional fields and return a flattened array
+            if (result[associationKey]) {
+              result[associationKey] = result[associationKey].map(object => {
+                object = object[association.model]
+                return object
+              })
+            }
+          }
+        }
+      }
+
+      if (config.enableSoftDelete && config.filterDeletedEmbeds) {
+        // EXPL: remove soft deleted documents from populated properties
+        filterDeletedEmbeds(result, {}, '', 0, Log)
+      }
+
+      Log.log('Result: %s', JSON.stringify(result))
+      return result
+    })
+
+    const pages = {
+      current: query.$page || 1,
+      prev: 0,
+      hasPrev: false,
+      next: 0,
+      hasNext: false,
+      total: 0
+    }
+    const items = {
+      limit: query.$limit,
+      begin: (query.$page || 1) * query.$limit - query.$limit + 1,
+      end: (query.$page || 1) * query.$limit,
+      total: count
+    }
+
+    pages.total = Math.ceil(count / query.$limit)
+    pages.next = pages.current + 1
+    pages.hasNext = pages.next <= pages.total
+    pages.prev = pages.current - 1
+    pages.hasPrev = pages.prev !== 0
+    if (items.begin > items.total) {
+      items.begin = items.total
+    }
+    if (items.end > items.total) {
+      items.end = items.total
+    }
+
+    return { docs: result, pages: pages, items: items }
+  } catch (err) {
+    Log.error(err)
+    if (!err.isBoom) {
+      throw Boom.badImplementation('There was an error processing the request.')
+    } else {
+      throw err
     }
   }
 }
@@ -314,173 +247,105 @@ function _find(model, _id, query, Log) {
  * @returns {object} A promise for the resulting model document.
  * @private
  */
-function _findHandler(model, _id, request, Log) {
-  let query = Object.assign({}, request.query)
-  let logError = false
+async function _findHandler(model, _id, request, Log) {
   try {
-    let promise = {}
-    if (
-      model.routeOptions &&
-      model.routeOptions.find &&
-      model.routeOptions.find.pre
-    ) {
-      promise = Q.fcall(model.routeOptions.find.pre, _id, query, request, Log)
-    } else {
-      promise = Q.when(query)
-    }
-
-    return promise
-      .then(function(query) {
-        let flatten = false
-        if (query.$flatten) {
-          flatten = true
-        }
-        delete query.$flatten
-        let mongooseQuery = model.findOne({ _id: _id })
-        mongooseQuery = QueryHelper.createMongooseQuery(
-          model,
+    let query = Object.assign({}, request.query)
+    try {
+      if (
+        model.routeOptions &&
+        model.routeOptions.find &&
+        model.routeOptions.find.pre
+      ) {
+        query = await Q.fcall(
+          model.routeOptions.find.pre,
+          _id,
           query,
-          mongooseQuery,
-          Log
-        ).lean()
-        return mongooseQuery
-          .exec()
-          .then(function(result) {
-            if (result) {
-              let promise = {}
-              if (
-                model.routeOptions &&
-                model.routeOptions.find &&
-                model.routeOptions.find.post
-              ) {
-                promise = Q.fcall(
-                  model.routeOptions.find.post,
-                  request,
-                  result,
-                  Log
-                )
-              } else {
-                promise = Q.when(result)
-              }
-
-              return promise
-                .then(function(data) {
-                  if (model.routeOptions) {
-                    let associations = model.routeOptions.associations
-                    for (let associationKey in associations) {
-                      let association = associations[associationKey]
-                      if (
-                        association.type === 'ONE_MANY' &&
-                        data[associationKey]
-                      ) {
-                        // EXPL: we have to manually populate the return value for virtual (e.g. ONE_MANY) associations
-                        result[associationKey] = data[associationKey]
-                      }
-                      if (
-                        association.type === 'MANY_MANY' &&
-                        flatten === true
-                      ) {
-                        // EXPL: remove additional fields and return a flattened array
-                        if (result[associationKey]) {
-                          result[associationKey] = result[associationKey].map(
-                            function(object) {
-                              object = object[association.model]
-                              return object
-                            }
-                          )
-                        }
-                      }
-                    }
-                  }
-
-                  if (config.enableSoftDelete && config.filterDeletedEmbeds) {
-                    // EXPL: remove soft deleted documents from populated properties
-                    filterDeletedEmbeds(result, {}, '', 0, Log)
-                  }
-
-                  Log.log('Result: %s', JSON.stringify(result))
-
-                  return result
-                })
-                .catch(function(error) {
-                  let message = 'There was a postprocessing error.'
-                  if (_.isString(error)) {
-                    message = error
-                  }
-                  if (!logError) {
-                    Log.error(message)
-                    logError = true
-                    delete error.type
-                  }
-                  errorHelper.handleError(
-                    error,
-                    message,
-                    errorHelper.types.BAD_REQUEST,
-                    Log
-                  )
-                })
-            } else {
-              const message = 'No resource was found with that id.'
-              if (!logError) {
-                Log.error(message)
-                logError = true
-              }
-              errorHelper.handleError(
-                message,
-                message,
-                errorHelper.types.NOT_FOUND,
-                Log
-              )
-            }
-          })
-          .catch(function(error) {
-            const message = 'There was an error accessing the database.'
-            if (!logError) {
-              Log.error(message)
-              logError = true
-              delete error.type
-            }
-            errorHelper.handleError(
-              error,
-              message,
-              errorHelper.types.BAD_IMPLEMENTATION,
-              Log
-            )
-          })
-      })
-      .catch(function(error) {
-        let message = 'There was a preprocessing error.'
-        if (_.isString(error)) {
-          message = error
-        }
-        if (!logError) {
-          Log.error(message)
-          logError = true
-          delete error.type
-        }
-        errorHelper.handleError(
-          error,
-          message,
-          errorHelper.types.BAD_REQUEST,
+          request,
           Log
         )
-      })
-  } catch (error) {
-    const message = 'There was an error processing the request.'
-    if (!logError) {
-      Log.error(message)
-      logError = true
-      delete error.type
+      }
+    } catch (err) {
+      if (!err.isBoom) {
+        Log.error(err)
+        throw Boom.badRequest('There was a preprocessing error.')
+      } else {
+        throw err
+      }
     }
-    try {
-      errorHelper.handleError(
-        error,
-        message,
-        errorHelper.types.BAD_REQUEST,
-        Log
-      )
-    } catch (error) {
-      return Q.reject(error)
+
+    let flatten = false
+    if (query.$flatten) {
+      flatten = true
+    }
+    delete query.$flatten
+    let mongooseQuery = model.findOne({ _id: _id })
+    mongooseQuery = QueryHelper.createMongooseQuery(
+      model,
+      query,
+      mongooseQuery,
+      Log
+    ).lean()
+    let result = await mongooseQuery.exec()
+    if (result) {
+      let data = result
+      try {
+        if (
+          model.routeOptions &&
+          model.routeOptions.find &&
+          model.routeOptions.find.post
+        ) {
+          data = await Q.fcall(
+            model.routeOptions.find.post,
+            request,
+            result,
+            Log
+          )
+        }
+      } catch (err) {
+        Log.error(err)
+        if (!err.isBoom) {
+          throw Boom.badRequest('There was a postprocessing error.')
+        } else {
+          throw err
+        }
+      }
+      if (model.routeOptions) {
+        let associations = model.routeOptions.associations
+        for (let associationKey in associations) {
+          let association = associations[associationKey]
+          if (association.type === 'ONE_MANY' && data[associationKey]) {
+            // EXPL: we have to manually populate the return value for virtual (e.g. ONE_MANY) associations
+            result[associationKey] = data[associationKey]
+          }
+          if (association.type === 'MANY_MANY' && flatten === true) {
+            // EXPL: remove additional fields and return a flattened array
+            if (result[associationKey]) {
+              result[associationKey] = result[associationKey].map(object => {
+                object = object[association.model]
+                return object
+              })
+            }
+          }
+        }
+      }
+
+      if (config.enableSoftDelete && config.filterDeletedEmbeds) {
+        // EXPL: remove soft deleted documents from populated properties
+        filterDeletedEmbeds(result, {}, '', 0, Log)
+      }
+
+      Log.log('Result: %s', JSON.stringify(result))
+
+      return result
+    } else {
+      throw Boom.notFound('No resource was found with that id.')
+    }
+  } catch (err) {
+    Log.error(err)
+    if (!err.isBoom) {
+      throw Boom.badImplementation('There was an error processing the request.')
+    } else {
+      throw err
     }
   }
 }

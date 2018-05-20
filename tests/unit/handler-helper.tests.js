@@ -3,6 +3,7 @@
 // Temporarily disabling this rule for tests
 /* eslint no-unused-vars: 0 */
 
+let Boom = require('boom')
 let test = require('blue-tape')
 let _ = require('lodash')
 let sinon = require('sinon')
@@ -100,7 +101,7 @@ test('handler-helper.listHandler', function(t) {
           // <editor-fold desc="Assert">
           return (
             promise
-              .then(function() {
+              .catch(function() {
                 t.ok(userModel.find.called, 'find called')
               })
               // </editor-fold>
@@ -156,7 +157,7 @@ test('handler-helper.listHandler', function(t) {
             // <editor-fold desc="Assert">
             return (
               promise
-                .then(function() {
+                .catch(function() {
                   t.ok(
                     queryHelperStub.createMongooseQuery.calledWithExactly(
                       userModel,
@@ -229,7 +230,7 @@ test('handler-helper.listHandler', function(t) {
             // <editor-fold desc="Assert">
             return (
               promise
-                .then(function() {
+                .catch(function() {
                   t.ok(countSpy.called, 'count called')
                 })
                 // </editor-fold>
@@ -553,7 +554,7 @@ test('handler-helper.listHandler', function(t) {
             // <editor-fold desc="Assert">
             return (
               promise
-                .then(function() {
+                .catch(function() {
                   t.ok(
                     postSpy.calledWithExactly(request, 'TEST', Log),
                     'list.post called'
@@ -635,7 +636,7 @@ test('handler-helper.listHandler', function(t) {
             // <editor-fold desc="Assert">
             return (
               promise
-                .then(function(result) {
+                .catch(function(result) {
                   t.deepEqual(
                     result.docs,
                     ['TEST1', 'TEST2'],
@@ -731,7 +732,7 @@ test('handler-helper.listHandler', function(t) {
             // <editor-fold desc="Assert">
             return (
               promise
-                .then(function(result) {
+                .catch(function(result) {
                   t.deepEqual(
                     result.items,
                     { begin: 4, end: 6, limit: 3, total: 12 },
@@ -806,14 +807,11 @@ test('handler-helper.listHandler', function(t) {
             sandbox.stub(Log, 'error').callsFake(function() {})
 
             let userSchema = new mongoose.Schema({})
-            let postDeferred = Q.defer()
-            let error = new Error()
-            postDeferred.reject(error)
             userSchema.statics = {
               routeOptions: {
                 list: {
                   post: function() {
-                    return postDeferred.promise
+                    throw new Error('error message')
                   }
                 }
               }
@@ -904,7 +902,7 @@ test('handler-helper.listHandler', function(t) {
               routeOptions: {
                 list: {
                   post: function() {
-                    return postDeferred.promise
+                    throw Boom.badRequest(error)
                   }
                 }
               }
@@ -930,84 +928,6 @@ test('handler-helper.listHandler', function(t) {
                     error.message,
                     'error message',
                     'threw a custom postprocessing error'
-                  )
-                })
-                // </editor-fold>
-
-                // <editor-fold desc="Restore">
-                .then(function() {
-                  sandbox.restore()
-                  delete mongoose.models.user
-                  delete mongoose.modelSchemas.user
-                })
-            )
-            // </editor-fold>
-          }
-        )
-      })
-
-      // handler-helper.listHandler throws a database error
-      .then(function() {
-        return t.test(
-          'handler-helper.listHandler throws a database error',
-          function(t) {
-            // <editor-fold desc="Arrange">
-            let sandbox = sinon.sandbox.create()
-            let Log = logger.bind('handler-helper')
-            let server = sandbox.spy()
-            let error = 'error message'
-
-            let countSpy = sandbox.spy(function() {
-              return Q.when()
-            })
-            let mongooseQuery1 = { count: countSpy }
-            let mongooseQuery2 = {
-              lean: function() {
-                return mongooseQuery1
-              }
-            }
-            let queryHelperStub = sandbox.stub(
-              require('../../utilities/query-helper')
-            )
-            queryHelperStub.createMongooseQuery = function() {
-              return mongooseQuery2
-            }
-            let execSpy = sandbox.spy(function() {
-              return Q.reject(error)
-            })
-            let paginateSpy = sandbox.spy(function() {
-              return { exec: execSpy }
-            })
-            queryHelperStub.paginate = paginateSpy
-
-            let handlerHelper = proxyquire('../../utilities/handler-helper', {
-              './query-helper': queryHelperStub
-            })
-            sandbox.stub(Log, 'error').callsFake(function() {})
-
-            let userSchema = new mongoose.Schema({})
-
-            let userModel = mongoose.model('user', userSchema)
-
-            userModel.find = sandbox.spy()
-            // </editor-fold>
-
-            // <editor-fold desc="Act">
-            let promise = handlerHelper.listHandler(
-              userModel,
-              { query: {} },
-              Log
-            )
-            // </editor-fold>
-
-            // <editor-fold desc="Assert">
-            return (
-              promise
-                .catch(function(error) {
-                  t.equals(
-                    error.message,
-                    'There was an error accessing the database.',
-                    'threw a database error'
                   )
                 })
                 // </editor-fold>
@@ -1109,7 +1029,7 @@ test('handler-helper.listHandler', function(t) {
               routeOptions: {
                 list: {
                   pre: function() {
-                    return Q.reject('error message')
+                    throw Boom.badRequest('error message')
                   }
                 }
               }
@@ -1266,7 +1186,7 @@ test('handler-helper.findHandler', function(t) {
             // <editor-fold desc="Assert">
             return (
               promise
-                .then(function() {
+                .catch(function() {
                   t.ok(
                     userModel.findOne.calledWithExactly({ _id: 'TEST' }),
                     'findOne called'
@@ -1330,7 +1250,7 @@ test('handler-helper.findHandler', function(t) {
             // <editor-fold desc="Assert">
             return (
               promise
-                .then(function() {
+                .catch(function() {
                   t.ok(
                     queryHelperStub.createMongooseQuery.calledWithExactly(
                       userModel,
@@ -1404,7 +1324,7 @@ test('handler-helper.findHandler', function(t) {
             // <editor-fold desc="Assert">
             return (
               preDeferred.promise
-                .then(function() {
+                .catch(function() {
                   t.ok(
                     preSpy.calledWithExactly(
                       'TEST',
@@ -1492,7 +1412,7 @@ test('handler-helper.findHandler', function(t) {
             // <editor-fold desc="Assert">
             return (
               deferred.promise
-                .then(function() {
+                .catch(function() {
                   t.ok(
                     postSpy.calledWithExactly(request, 'TEST', Log),
                     'find.post called'
@@ -1570,7 +1490,7 @@ test('handler-helper.findHandler', function(t) {
             // <editor-fold desc="Assert">
             return (
               promise
-                .then(function(result) {
+                .catch(function(result) {
                   // Log.error(reply.args[0]);
                   t.deepEqual(result, 'TEST1', 'returns single result')
                 })
@@ -1716,7 +1636,7 @@ test('handler-helper.findHandler', function(t) {
               routeOptions: {
                 find: {
                   post: function() {
-                    return postDeferred.promise
+                    throw Boom.badRequest(error)
                   }
                 }
               }
@@ -1836,81 +1756,6 @@ test('handler-helper.findHandler', function(t) {
         )
       })
 
-      // handler-helper.findHandler replies with a database error
-      .then(function() {
-        return t.test(
-          'handler-helper.findHandler replies with a database error',
-          function(t) {
-            // <editor-fold desc="Arrange">
-            let sandbox = sinon.sandbox.create()
-            let Log = logger.bind('handler-helper')
-            let server = sandbox.spy()
-
-            let mongooseQuery1 = {
-              exec: function() {
-                return Q.reject('error')
-              }
-            }
-            let mongooseQuery2 = {
-              lean: function() {
-                return mongooseQuery1
-              }
-            }
-
-            let queryHelperStub = sandbox.stub(
-              require('../../utilities/query-helper')
-            )
-            queryHelperStub.createMongooseQuery = function() {
-              return mongooseQuery2
-            }
-
-            let handlerHelper = proxyquire('../../utilities/handler-helper', {
-              './query-helper': queryHelperStub
-            })
-            sandbox.stub(Log, 'error').callsFake(function() {})
-
-            let userSchema = new mongoose.Schema({})
-
-            let userModel = mongoose.model('user', userSchema)
-
-            userModel.findOne = sandbox.spy()
-
-            let request = { query: {}, params: { _id: 'TEST' } }
-            // </editor-fold>
-
-            // <editor-fold desc="Act">
-            let promise = handlerHelper.findHandler(
-              userModel,
-              'TEST',
-              request,
-              Log
-            )
-            // </editor-fold>
-
-            // <editor-fold desc="Assert">
-            return (
-              promise
-                .catch(function(error) {
-                  t.equals(
-                    error.message,
-                    'There was an error accessing the database.',
-                    'threw a database error'
-                  )
-                })
-                // </editor-fold>
-
-                // <editor-fold desc="Restore">
-                .then(function() {
-                  sandbox.restore()
-                  delete mongoose.models.user
-                  delete mongoose.modelSchemas.user
-                })
-            )
-            // </editor-fold>
-          }
-        )
-      })
-
       // handler-helper.findHandler throws a generic preprocessing error
       .then(function() {
         return t.test(
@@ -1999,7 +1844,7 @@ test('handler-helper.findHandler', function(t) {
               routeOptions: {
                 find: {
                   pre: function() {
-                    return Q.reject('error message')
+                    throw Boom.badRequest('error message')
                   }
                 }
               }
