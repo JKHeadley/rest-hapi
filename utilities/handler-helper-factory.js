@@ -2,7 +2,6 @@
 
 let Boom = require('boom')
 let handlerHelper = require('./handler-helper')
-let errorHelper = require('./error-helper')
 
 // TODO: add bulk delete/delete many
 
@@ -136,7 +135,7 @@ module.exports = function() {
 function generateListHandler(model, options, Log) {
   options = options || {}
 
-  return function(request, h) {
+  return async function(request, h) {
     try {
       Log.log(
         'params(%s), query(%s), payload(%s)',
@@ -145,19 +144,11 @@ function generateListHandler(model, options, Log) {
         JSON.stringify(request.payload)
       )
 
-      return handlerHelper
-        .listHandler(model, request, Log)
-        .then(function(result) {
-          delete result.pageData
-          return h.response(result).code(200)
-        })
-        .catch(function(error) {
-          let response = errorHelper.formatResponse(error, Log)
-          return response
-        })
-    } catch (error) {
-      Log.error('error: ', error)
-      throw Boom.badRequest('There was an error processing the request.', error)
+      let result = await handlerHelper.listHandler(model, request, Log)
+      delete result.pageData
+      return h.response(result).code(200)
+    } catch (err) {
+      handleError(err, Log)
     }
   }
 }
@@ -172,7 +163,7 @@ function generateListHandler(model, options, Log) {
 function generateFindHandler(model, options, Log) {
   options = options || {}
 
-  return function(request, h) {
+  return async function(request, h) {
     try {
       Log.log(
         'params(%s), query(%s), payload(%s)',
@@ -181,18 +172,15 @@ function generateFindHandler(model, options, Log) {
         JSON.stringify(request.payload)
       )
 
-      return handlerHelper
-        .findHandler(model, request.params._id, request, Log)
-        .then(function(result) {
-          return h.response(result).code(200)
-        })
-        .catch(function(error) {
-          let response = errorHelper.formatResponse(error, Log)
-          return response
-        })
-    } catch (error) {
-      Log.error('error: ', error)
-      throw Boom.badRequest('There was an error processing the request.', error)
+      let result = await handlerHelper.findHandler(
+        model,
+        request.params._id,
+        request,
+        Log
+      )
+      return h.response(result).code(200)
+    } catch (err) {
+      handleError(err, Log)
     }
   }
 }
@@ -207,7 +195,7 @@ function generateFindHandler(model, options, Log) {
 function generateCreateHandler(model, options, Log) {
   options = options || {}
 
-  return function(request, h) {
+  return async function(request, h) {
     try {
       Log.log(
         'params(%s), query(%s), payload(%s)',
@@ -216,18 +204,10 @@ function generateCreateHandler(model, options, Log) {
         JSON.stringify(request.payload)
       )
 
-      return handlerHelper
-        .createHandler(model, request, Log)
-        .then(function(result) {
-          return h.response(result).code(201)
-        })
-        .catch(function(error) {
-          let response = errorHelper.formatResponse(error, Log)
-          return response
-        })
-    } catch (error) {
-      Log.error(error)
-      throw Boom.badRequest('There was an error processing the request.', error)
+      let result = await handlerHelper.createHandler(model, request, Log)
+      return h.response(result).code(201)
+    } catch (err) {
+      handleError(err, Log)
     }
   }
 }
@@ -242,7 +222,7 @@ function generateCreateHandler(model, options, Log) {
 function generateUpdateHandler(model, options, Log) {
   options = options || {}
 
-  return function(request, h) {
+  return async function(request, h) {
     try {
       Log.log(
         'params(%s), query(%s), payload(%s)',
@@ -251,18 +231,15 @@ function generateUpdateHandler(model, options, Log) {
         JSON.stringify(request.payload)
       )
 
-      return handlerHelper
-        .updateHandler(model, request.params._id, request, Log)
-        .then(function(result) {
-          return h.response(result).code(200)
-        })
-        .catch(function(error) {
-          let response = errorHelper.formatResponse(error, Log)
-          return response
-        })
-    } catch (error) {
-      Log.error('error: ', error)
-      throw Boom.badRequest('There was an error processing the request.', error)
+      let result = await handlerHelper.updateHandler(
+        model,
+        request.params._id,
+        request,
+        Log
+      )
+      return h.response(result).code(200)
+    } catch (err) {
+      handleError(err, Log)
     }
   }
 }
@@ -277,7 +254,7 @@ function generateUpdateHandler(model, options, Log) {
 function generateDeleteHandler(model, options, Log) {
   options = options || {}
 
-  return function(request, h) {
+  return async function(request, h) {
     try {
       Log.log(
         'params(%s), query(%s), payload(%s)',
@@ -286,10 +263,9 @@ function generateDeleteHandler(model, options, Log) {
         JSON.stringify(request.payload)
       )
 
-      let promise = {}
       if (request.params._id) {
         let hardDelete = request.payload ? request.payload.hardDelete : false
-        promise = handlerHelper.deleteOneHandler(
+        await handlerHelper.deleteOneHandler(
           model,
           request.params._id,
           hardDelete,
@@ -297,20 +273,12 @@ function generateDeleteHandler(model, options, Log) {
           Log
         )
       } else {
-        promise = handlerHelper.deleteManyHandler(model, request, Log)
+        await handlerHelper.deleteManyHandler(model, request, Log)
       }
 
-      return promise
-        .then(function(result) {
-          return h.response().code(204)
-        })
-        .catch(function(error) {
-          let response = errorHelper.formatResponse(error, Log)
-          return response
-        })
-    } catch (error) {
-      Log.error('error: ', error)
-      throw Boom.badRequest('There was an error processing the request.', error)
+      return h.response().code(204)
+    } catch (err) {
+      handleError(err, Log)
     }
   }
 }
@@ -334,7 +302,7 @@ function generateAssociationAddOneHandler(
   let addMethodName =
     'addOne' + associationName[0].toUpperCase() + associationName.slice(1, -1)
 
-  return function(request, h) {
+  return async function(request, h) {
     try {
       Log.log(
         addMethodName + ' + params(%s), query(%s), payload(%s)',
@@ -343,26 +311,18 @@ function generateAssociationAddOneHandler(
         JSON.stringify(request.payload)
       )
 
-      return handlerHelper
-        .addOneHandler(
-          ownerModel,
-          request.params.ownerId,
-          childModel,
-          request.params.childId,
-          associationName,
-          request,
-          Log
-        )
-        .then(function(result) {
-          return h.response().code(204)
-        })
-        .catch(function(error) {
-          let response = errorHelper.formatResponse(error, Log)
-          return response
-        })
-    } catch (error) {
-      Log.error('error: ', error)
-      throw Boom.badRequest('There was an error processing the request.', error)
+      await handlerHelper.addOneHandler(
+        ownerModel,
+        request.params.ownerId,
+        childModel,
+        request.params.childId,
+        associationName,
+        request,
+        Log
+      )
+      return h.response().code(204)
+    } catch (err) {
+      handleError(err, Log)
     }
   }
 }
@@ -388,7 +348,7 @@ function generateAssociationRemoveOneHandler(
     associationName[0].toUpperCase() +
     associationName.slice(1, -1)
 
-  return function(request, h) {
+  return async function(request, h) {
     try {
       Log.log(
         removeMethodName + ' + params(%s), query(%s), payload(%s)',
@@ -397,26 +357,18 @@ function generateAssociationRemoveOneHandler(
         JSON.stringify(request.payload)
       )
 
-      return handlerHelper
-        .removeOneHandler(
-          ownerModel,
-          request.params.ownerId,
-          childModel,
-          request.params.childId,
-          associationName,
-          request,
-          Log
-        )
-        .then(function(result) {
-          return h.response().code(204)
-        })
-        .catch(function(error) {
-          let response = errorHelper.formatResponse(error, Log)
-          return response
-        })
-    } catch (error) {
-      Log.error('error: ', error)
-      throw Boom.badRequest('There was an error processing the request.', error)
+      await handlerHelper.removeOneHandler(
+        ownerModel,
+        request.params.ownerId,
+        childModel,
+        request.params.childId,
+        associationName,
+        request,
+        Log
+      )
+      return h.response().code(204)
+    } catch (err) {
+      handleError(err, Log)
     }
   }
 }
@@ -440,7 +392,7 @@ function generateAssociationAddManyHandler(
   let addMethodName =
     'addMany' + associationName[0].toUpperCase() + associationName.slice(1)
 
-  return function(request, h) {
+  return async function(request, h) {
     try {
       Log.log(
         addMethodName + ' + params(%s), query(%s), payload(%s)',
@@ -449,25 +401,17 @@ function generateAssociationAddManyHandler(
         JSON.stringify(request.payload)
       )
 
-      return handlerHelper
-        .addManyHandler(
-          ownerModel,
-          request.params.ownerId,
-          childModel,
-          associationName,
-          request,
-          Log
-        )
-        .then(function(result) {
-          return h.response().code(204)
-        })
-        .catch(function(error) {
-          let response = errorHelper.formatResponse(error, Log)
-          return response
-        })
-    } catch (error) {
-      Log.error('error: ', error)
-      throw Boom.badRequest('There was an error processing the request.', error)
+      await handlerHelper.addManyHandler(
+        ownerModel,
+        request.params.ownerId,
+        childModel,
+        associationName,
+        request,
+        Log
+      )
+      return h.response().code(204)
+    } catch (err) {
+      handleError(err, Log)
     }
   }
 }
@@ -492,7 +436,7 @@ function generateAssociationRemoveManyHandler(
   let removeMethodName =
     'removeMany' + associationName[0].toUpperCase() + associationName.slice(1)
 
-  return function(request, h) {
+  return async function(request, h) {
     try {
       Log.log(
         removeMethodName + ' + params(%s), query(%s), payload(%s)',
@@ -501,26 +445,17 @@ function generateAssociationRemoveManyHandler(
         JSON.stringify(request.payload)
       )
 
-      return handlerHelper
-        .removeManyHandler(
-          ownerModel,
-          request.params.ownerId,
-          childModel,
-          associationName,
-          request,
-          Log
-        )
-        .then(function(result) {
-          Log.debug('result:', result)
-          return h.response().code(204)
-        })
-        .catch(function(error) {
-          let response = errorHelper.formatResponse(error, Log)
-          return response
-        })
-    } catch (error) {
-      Log.error('error: ', error)
-      throw Boom.badRequest('There was an error processing the request.', error)
+      await handlerHelper.removeManyHandler(
+        ownerModel,
+        request.params.ownerId,
+        childModel,
+        associationName,
+        request,
+        Log
+      )
+      return h.response().code(204)
+    } catch (err) {
+      handleError(err, Log)
     }
   }
 }
@@ -545,7 +480,7 @@ function generateAssociationGetAllHandler(
     association.getAllMethodName ||
     'get' + associationName[0].toUpperCase() + associationName.slice(1)
 
-  return function(request, h) {
+  return async function(request, h) {
     try {
       Log.log(
         getAllMethodName + ' + params(%s), query(%s), payload(%s)',
@@ -554,25 +489,26 @@ function generateAssociationGetAllHandler(
         JSON.stringify(request.payload)
       )
 
-      return handlerHelper
-        .getAllHandler(
-          ownerModel,
-          request.params.ownerId,
-          childModel,
-          associationName,
-          request,
-          Log
-        )
-        .then(function(result) {
-          return h.response(result).code(200)
-        })
-        .catch(function(error) {
-          let response = errorHelper.formatResponse(error, Log)
-          return response
-        })
-    } catch (error) {
-      Log.error('error: ', error)
-      throw Boom.badRequest('There was an error processing the request.', error)
+      let result = await handlerHelper.getAllHandler(
+        ownerModel,
+        request.params.ownerId,
+        childModel,
+        associationName,
+        request,
+        Log
+      )
+      return h.response(result).code(200)
+    } catch (err) {
+      handleError(err, Log)
     }
+  }
+}
+
+function handleError(err, Log) {
+  if (!err.isBoom) {
+    Log.error(err)
+    throw Boom.badImplementation('There was an error processing the request.')
+  } else {
+    throw err
   }
 }

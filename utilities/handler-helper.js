@@ -302,8 +302,8 @@ async function _findHandler(model, _id, request, Log) {
           )
         }
       } catch (err) {
-        Log.error(err)
         if (!err.isBoom) {
+          Log.error(err)
           throw Boom.badRequest('There was a postprocessing error.')
         } else {
           throw err
@@ -371,10 +371,9 @@ function _create(model, payload, Log) {
  * @returns {object} A promise for the resulting model document/s.
  * @private
  */
-function _createHandler(model, request, Log) {
+async function _createHandler(model, request, Log) {
   let payload = null
 
-  let logError = false
   try {
     // EXPL: make a copy of the payload so that request.payload remains unchanged
     let isArray = true
@@ -387,148 +386,99 @@ function _createHandler(model, request, Log) {
       })
     }
 
-    let promises = []
-    if (
-      model.routeOptions &&
-      model.routeOptions.create &&
-      model.routeOptions.create.pre
-    ) {
-      payload.forEach(function(document) {
-        promises.push(
-          Q.fcall(model.routeOptions.create.pre, document, request, Log)
-        )
-      })
-    } else {
-      promises = Q.when(payload)
-    }
-
-    return Q.all(promises)
-      .then(function(payload) {
-        if (config.enableCreatedAt) {
-          payload.forEach(function(item) {
-            item.createdAt = new Date()
-          })
-        }
-
-        return model
-          .create(payload)
-          .then(function(data) {
-            // EXPL: rather than returning the raw "create" data, we filter the data through a separate query
-            let attributes = QueryHelper.createAttributesFilter({}, model, Log)
-
-            data = data.map(function(item) {
-              return item._id
-            })
-
-            return model
-              .find()
-              .where({ _id: { $in: data } })
-              .select(attributes)
-              .lean()
-              .exec()
-              .then(function(result) {
-                // TODO: include eventLogs
-
-                let promises = []
-                if (
-                  model.routeOptions &&
-                  model.routeOptions.create &&
-                  model.routeOptions.create.post
-                ) {
-                  result.forEach(function(document) {
-                    promises.push(
-                      Q.fcall(
-                        model.routeOptions.create.post,
-                        document,
-                        request,
-                        result,
-                        Log
-                      )
-                    )
-                  })
-                } else {
-                  promises = Q.when(result)
-                }
-
-                return Q.all(promises)
-                  .then(function(result) {
-                    if (isArray) {
-                      return result
-                    } else {
-                      return result[0]
-                    }
-                  })
-                  .catch(function(error) {
-                    let message =
-                      'There was a postprocessing error creating the resource.'
-                    if (_.isString(error)) {
-                      message = error
-                    }
-                    if (!logError) {
-                      Log.error(message)
-                      logError = true
-                      delete error.type
-                    }
-                    errorHelper.handleError(
-                      error,
-                      message,
-                      errorHelper.types.BAD_REQUEST,
-                      Log
-                    )
-                  })
-              })
-          })
-          .catch(function(error) {
-            let message = ''
-            let type = ''
-            if (error.code === 11000) {
-              message = 'There was a duplicate key error.'
-              type = errorHelper.types.CONFLICT
-            } else {
-              message = 'There was an error creating the resource.'
-              type = errorHelper.types.BAD_IMPLEMENTATION
-            }
-            if (!logError) {
-              Log.error(message)
-              logError = true
-              delete error.type
-            }
-            errorHelper.handleError(error, message, type, Log)
-          })
-      })
-      .catch(function(error) {
-        let message = 'There was a preprocessing error creating the resource.'
-        if (_.isString(error)) {
-          message = error
-        }
-        if (!logError) {
-          Log.error(message)
-          logError = true
-          delete error.type
-        }
-        errorHelper.handleError(
-          error,
-          message,
-          errorHelper.types.BAD_REQUEST,
-          Log
-        )
-      })
-  } catch (error) {
-    const message = 'There was an error processing the request.'
-    if (!logError) {
-      Log.error(message)
-      logError = true
-      delete error.type
-    }
     try {
-      errorHelper.handleError(
-        error,
-        message,
-        errorHelper.types.BAD_REQUEST,
-        Log
-      )
-    } catch (error) {
-      return Q.reject(error)
+      if (
+        model.routeOptions &&
+        model.routeOptions.create &&
+        model.routeOptions.create.pre
+      ) {
+        for (let document of payload) {
+          await Q.fcall(model.routeOptions.create.pre, document, request, Log)
+        }
+      }
+    } catch (err) {
+      if (!err.isBoom) {
+        Log.error(err)
+        throw Boom.badRequest(
+          'There was a preprocessing error creating the resource.'
+        )
+      } else {
+        throw err
+      }
+    }
+
+    if (config.enableCreatedAt) {
+      for (let document of payload) {
+        document.createdAt = new Date()
+      }
+    }
+
+    let data
+    try {
+      data = await model.create(payload)
+    } catch (err) {
+      Log.error(err)
+      if (err.code === 11000) {
+        throw Boom.conflict('There was a duplicate key error.')
+      } else {
+        throw Boom.badImplementation(
+          'There was an error creating the resource.'
+        )
+      }
+    }
+
+    // EXPL: rather than returning the raw "create" data, we filter the data through a separate query
+    let attributes = QueryHelper.createAttributesFilter({}, model, Log)
+
+    data = data.map(item => {
+      return item._id
+    })
+
+    let result = await model
+      .find()
+      .where({ _id: { $in: data } })
+      .select(attributes)
+      .lean()
+      .exec()
+
+    try {
+      if (
+        model.routeOptions &&
+        model.routeOptions.create &&
+        model.routeOptions.create.post
+      ) {
+        for (let document of result) {
+          await Q.fcall(
+            model.routeOptions.create.post,
+            document,
+            request,
+            result,
+            Log
+          )
+        }
+      }
+    } catch (err) {
+      if (!err.isBoom) {
+        Log.error(err)
+        throw Boom.badRequest(
+          'There was a postprocessing error creating the resource.'
+        )
+      } else {
+        throw err
+      }
+    }
+
+    if (isArray) {
+      return result
+    } else {
+      return result[0]
+    }
+  } catch (err) {
+    Log.error(err)
+    if (!err.isBoom) {
+      throw Boom.badImplementation('There was an error processing the request.')
+    } else {
+      throw err
     }
   }
 }
@@ -555,154 +505,90 @@ function _update(model, _id, payload, Log) {
  * @returns {object} A promise for the resulting model document.
  * @private
  */
-function _updateHandler(model, _id, request, Log) {
+async function _updateHandler(model, _id, request, Log) {
   let payload = Object.assign({}, request.payload)
-  let logError = false
   try {
-    let promise = {}
-    if (
-      model.routeOptions &&
-      model.routeOptions.update &&
-      model.routeOptions.update.pre
-    ) {
-      promise = Q.fcall(
-        model.routeOptions.update.pre,
-        _id,
-        payload,
-        request,
-        Log
-      )
-    } else {
-      promise = Q.when(payload)
-    }
-
-    return promise
-      .then(function(payload) {
-        if (config.enableUpdatedAt) {
-          payload.updatedAt = new Date()
-        }
-
-        // TODO: support eventLogs and log all property updates in one document rather than one document per property update
-        return model
-          .findByIdAndUpdate(_id, payload, {
-            runValidators: config.enableMongooseRunValidators
-          })
-          .then(function(result) {
-            if (result) {
-              // TODO: log all updated/added associations
-              let attributes = QueryHelper.createAttributesFilter(
-                {},
-                model,
-                Log
-              )
-
-              return model
-                .findOne({ _id: result._id }, attributes)
-                .lean()
-                .then(function(result) {
-                  if (
-                    model.routeOptions &&
-                    model.routeOptions.update &&
-                    model.routeOptions.update.post
-                  ) {
-                    promise = Q.fcall(
-                      model.routeOptions.update.post,
-                      request,
-                      result,
-                      Log
-                    )
-                  } else {
-                    promise = Q.when(result)
-                  }
-
-                  return promise
-                    .then(function(result) {
-                      return result
-                    })
-                    .catch(function(error) {
-                      let message =
-                        'There was a postprocessing error updating the resource.'
-                      if (_.isString(error)) {
-                        message = error
-                      }
-                      if (!logError) {
-                        Log.error(message)
-                        logError = true
-                        delete error.type
-                      }
-                      errorHelper.handleError(
-                        error,
-                        message,
-                        errorHelper.types.BAD_REQUEST,
-                        Log
-                      )
-                    })
-                })
-            } else {
-              const message = 'No resource was found with that id.'
-              if (!logError) {
-                Log.error(message)
-                logError = true
-              }
-              errorHelper.handleError(
-                message,
-                message,
-                errorHelper.types.NOT_FOUND,
-                Log
-              )
-            }
-          })
-          .catch(function(error) {
-            let message = ''
-            let type = ''
-            if (error.code === 11000) {
-              message = 'There was a duplicate key error.'
-              type = errorHelper.types.CONFLICT
-            } else {
-              message = 'There was an error updating the resource.'
-              type = errorHelper.types.BAD_IMPLEMENTATION
-            }
-            if (!logError) {
-              Log.error(message)
-              logError = true
-              delete error.type
-            }
-            errorHelper.handleError(error, message, type, Log)
-          })
-      })
-      .catch(function(error) {
-        let message = 'There was a preprocessing error updating the resource.'
-        if (_.isString(error)) {
-          message = error
-        }
-        if (!logError) {
-          Log.error(message)
-          logError = true
-          delete error.type
-        }
-        errorHelper.handleError(
-          error,
-          message,
-          errorHelper.types.BAD_REQUEST,
+    try {
+      if (
+        model.routeOptions &&
+        model.routeOptions.update &&
+        model.routeOptions.update.pre
+      ) {
+        payload = await Q.fcall(
+          model.routeOptions.update.pre,
+          _id,
+          payload,
+          request,
           Log
         )
-      })
-  } catch (error) {
-    const message = 'There was an error processing the request.'
-    if (!logError) {
-      Log.error(message)
-      logError = true
-      delete error.type
+      }
+    } catch (err) {
+      if (!err.isBoom) {
+        Log.error(err)
+        throw Boom.badRequest(
+          'There was a preprocessing error updating the resource.'
+        )
+      } else {
+        throw err
+      }
     }
+
+    if (config.enableUpdatedAt) {
+      payload.updatedAt = new Date()
+    }
+    let result
     try {
-      errorHelper.handleError(
-        error,
-        message,
-        errorHelper.types.BAD_REQUEST,
-        Log
-      )
-    } catch (error) {
-      return Q.reject(error)
+      result = await model.findByIdAndUpdate(_id, payload, {
+        runValidators: config.enableMongooseRunValidators
+      })
+    } catch (err) {
+      Log.error(err)
+      if (err.code === 11000) {
+        throw Boom.conflict('There was a duplicate key error.')
+      } else {
+        throw Boom.badImplementation(
+          'There was an error updating the resource.'
+        )
+      }
+    }
+    if (result) {
+      let attributes = QueryHelper.createAttributesFilter({}, model, Log)
+
+      result = await model.findOne({ _id: result._id }, attributes).lean()
+
+      try {
+        if (
+          model.routeOptions &&
+          model.routeOptions.update &&
+          model.routeOptions.update.post
+        ) {
+          result = await Q.fcall(
+            model.routeOptions.update.post,
+            request,
+            result,
+            Log
+          )
+        }
+      } catch (err) {
+        if (!err.isBoom) {
+          Log.error(err)
+          throw Boom.badRequest(
+            'There was a postprocessing error updating the resource.'
+          )
+        } else {
+          throw err
+        }
+      }
+      return result
+    } else {
+      throw Boom.notFound('No resource was found with that id.')
+    }
+  } catch (err) {
+    Log.error(err)
+    if (!err.isBoom) {
+      throw Boom.badImplementation('There was an error processing the request.')
+    } else {
+      throw err
     }
   }
 }
@@ -731,154 +617,96 @@ function _deleteOne(model, _id, hardDelete, Log) {
  * @private
  */
 // TODO: only update "deleteAt" the first time a document is deleted
-function _deleteOneHandler(model, _id, hardDelete, request, Log) {
-  let logError = false
+async function _deleteOneHandler(model, _id, hardDelete, request, Log) {
   try {
-    let promise = {}
-    if (
-      model.routeOptions &&
-      model.routeOptions.delete &&
-      model.routeOptions.delete.pre
-    ) {
-      promise = Q.fcall(
-        model.routeOptions.delete.pre,
-        _id,
-        hardDelete,
-        request,
-        Log
-      )
-    } else {
-      promise = Q.when()
-    }
-
-    return promise
-      .then(function() {
-        if (config.enableSoftDelete && !hardDelete) {
-          let payload = { isDeleted: true }
-          if (config.enableDeletedAt) {
-            payload.deletedAt = new Date()
-          }
-          if (config.enableDeletedBy && config.enableSoftDelete) {
-            let deletedBy =
-              request.payload.deletedBy || request.payload[0].deletedBy
-            if (deletedBy) {
-              payload.deletedBy = deletedBy
-            }
-          }
-          promise = model.findByIdAndUpdate(_id, payload, {
-            new: true,
-            runValidators: config.enableMongooseRunValidators
-          })
-        } else {
-          promise = model.findByIdAndRemove(_id)
-        }
-        return promise
-          .then(function(deleted) {
-            // TODO: clean up associations/set rules for ON DELETE CASCADE/etc.
-            if (deleted) {
-              // TODO: add eventLogs
-
-              let promise = {}
-              if (
-                model.routeOptions &&
-                model.routeOptions.delete &&
-                model.routeOptions.delete.post
-              ) {
-                promise = Q.fcall(
-                  model.routeOptions.delete.post,
-                  hardDelete,
-                  deleted,
-                  request,
-                  Log
-                )
-              } else {
-                promise = Q.when()
-              }
-
-              return promise
-                .then(function() {
-                  return true
-                })
-                .catch(function(error) {
-                  let message =
-                    'There was a postprocessing error deleting the resource.'
-                  if (_.isString(error)) {
-                    message = error
-                  }
-                  if (!logError) {
-                    Log.error(message)
-                    logError = true
-                    delete error.type
-                  }
-                  errorHelper.handleError(
-                    error,
-                    message,
-                    errorHelper.types.BAD_REQUEST,
-                    Log
-                  )
-                })
-            } else {
-              const message = 'No resource was found with that id.'
-              if (!logError) {
-                Log.error(message)
-                logError = true
-              }
-              errorHelper.handleError(
-                message,
-                message,
-                errorHelper.types.NOT_FOUND,
-                Log
-              )
-            }
-          })
-          .catch(function(error) {
-            const message = 'There was an error deleting the resource.'
-            if (!logError) {
-              Log.error(message)
-              logError = true
-              delete error.type
-            }
-            errorHelper.handleError(
-              error,
-              message,
-              errorHelper.types.BAD_IMPLEMENTATION,
-              Log
-            )
-          })
-      })
-      .catch(function(error) {
-        let message = 'There was a preprocessing error deleting the resource.'
-        if (_.isString(error)) {
-          message = error
-        }
-        if (!logError) {
-          Log.error(message)
-          logError = true
-          delete error.type
-        }
-        errorHelper.handleError(
-          error,
-          message,
-          errorHelper.types.BAD_REQUEST,
+    try {
+      if (
+        model.routeOptions &&
+        model.routeOptions.delete &&
+        model.routeOptions.delete.pre
+      ) {
+        await Q.fcall(
+          model.routeOptions.delete.pre,
+          _id,
+          hardDelete,
+          request,
           Log
         )
-      })
-  } catch (error) {
-    const message = 'There was an error processing the request.'
-    if (!logError) {
-      Log.error(message)
-      logError = true
-      delete error.type
+      }
+    } catch (err) {
+      if (!err.isBoom) {
+        Log.error(err)
+        throw Boom.badRequest(
+          'There was a preprocessing error deleting the resource.'
+        )
+      } else {
+        throw err
+      }
     }
+    let deleted
+
     try {
-      errorHelper.handleError(
-        error,
-        message,
-        errorHelper.types.BAD_REQUEST,
-        Log
-      )
-    } catch (error) {
-      return Q.reject(error)
+      if (config.enableSoftDelete && !hardDelete) {
+        let payload = { isDeleted: true }
+        if (config.enableDeletedAt) {
+          payload.deletedAt = new Date()
+        }
+        if (config.enableDeletedBy && config.enableSoftDelete) {
+          let deletedBy =
+            request.payload.deletedBy || request.payload[0].deletedBy
+          if (deletedBy) {
+            payload.deletedBy = deletedBy
+          }
+        }
+        deleted = await model.findByIdAndUpdate(_id, payload, {
+          new: true,
+          runValidators: config.enableMongooseRunValidators
+        })
+      } else {
+        deleted = await model.findByIdAndRemove(_id)
+      }
+    } catch (err) {
+      Log.error(err)
+      throw Boom.badImplementation('There was an error deleting the resource.')
+    }
+    // TODO: clean up associations/set rules for ON DELETE CASCADE/etc.
+    if (deleted) {
+      // TODO: add eventLogs
+
+      try {
+        if (
+          model.routeOptions &&
+          model.routeOptions.delete &&
+          model.routeOptions.delete.post
+        ) {
+          await Q.fcall(
+            model.routeOptions.delete.post,
+            hardDelete,
+            deleted,
+            request,
+            Log
+          )
+        }
+      } catch (err) {
+        if (!err.isBoom) {
+          Log.error(err)
+          throw Boom.badRequest(
+            'There was a postprocessing error deleting the resource.'
+          )
+        } else {
+          throw err
+        }
+      }
+      return true
+    } else {
+      throw Boom.notFound('No resource was found with that id.')
+    }
+  } catch (err) {
+    Log.error(err)
+    if (!err.isBoom) {
+      throw Boom.badImplementation('There was an error processing the request.')
+    } else {
+      throw err
     }
   }
 }

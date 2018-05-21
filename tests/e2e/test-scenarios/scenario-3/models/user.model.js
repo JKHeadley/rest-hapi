@@ -1,5 +1,7 @@
 'use strict'
 
+const Boom = require('boom')
+
 module.exports = function(mongoose) {
   let modelName = 'user'
   let Types = mongoose.Schema.Types
@@ -76,7 +78,7 @@ module.exports = function(mongoose) {
       update: {
         pre: function(_id, payload, request, Log) {
           if (payload.email === 'error@user.com') {
-            throw new Error('user error')
+            throw Boom.badRequest('user error')
           }
 
           return payload
