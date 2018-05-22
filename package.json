@@ -69,12 +69,12 @@
     "query-string": "^5.0.0"
   },
   "devDependencies": {
-    "rewire": "^2.5.2",
-    "proxyquire": "^1.7.10",
-    "sinon": "^3.3.0",
-    "sinon-test": "^2.1.0",
+    "decache": "^4.4.0",
     "mockgoose": "^7.3.3",
-    "decache": "4.1.0",
-    "rmdir": "^1.2.0"
+    "proxyquire": "^1.7.10",
+    "rewire": "^2.5.2",
+    "rmdir": "^1.2.0",
+    "sinon": "^3.3.0",
+    "sinon-test": "^2.1.0"
   }
 }
