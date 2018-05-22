@@ -41,13 +41,16 @@
   "homepage": "https://github.com/JKHeadley/rest-hapi#readme",
   "dependencies": {
     "bcryptjs": "latest",
+    "blue-tape": "^1.0.0",
     "boom": "^5.1.0",
     "chalk": "*",
     "extend": "^3.0.0",
     "gulp": "^3.9.1",
     "gulp-exit": "0.0.2",
+    "gulp-tape": "latest",
     "hapi": "^16.4.3",
     "hapi-swagger": "7.8.1",
+    "hoek": "^4.2.1",
     "inert": "^4.2.0",
     "joi": "^10.6.0",
     "joi-objectid": "^2.0.0",
@@ -59,14 +62,12 @@
     "mrhorse": "^2.3.1",
     "q": "^1.4.1",
     "qs": "^6.2.1",
+    "query-string": "^5.0.0",
     "require-all": "^2.1.0",
     "require-dir": "~0.3.2",
-    "vision": "^4.1.1",
     "tap-colorize": "latest",
     "tape": "latest",
-    "gulp-tape": "latest",
-    "blue-tape": "^1.0.0",
-    "query-string": "^5.0.0"
+    "vision": "^4.1.1"
   },
   "devDependencies": {
     "decache": "^4.4.0",
