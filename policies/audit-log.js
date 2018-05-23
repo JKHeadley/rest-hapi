@@ -30,7 +30,7 @@ internals.logCreate = function(mongoose, model, Log) {
         }
       }
 
-      return AuditLog.create({
+      await AuditLog.create({
         method: 'POST',
         action: 'Create',
         endpoint: request.path,
@@ -50,15 +50,9 @@ internals.logCreate = function(mongoose, model, Log) {
           : null,
         ipAddress
       })
-        .then(function(result) {
-          return h.continue
-        })
-        .catch(function(err) {
-          Log.error('ERROR:', err)
-          return h.continue
-        })
+      return h.continue
     } catch (err) {
-      Log.error('ERROR:', err)
+      Log.error(err)
       return h.continue
     }
   }
@@ -75,7 +69,7 @@ internals.logCreate.applyPoint = 'onPreResponse'
  * @returns {logUpdateForModel}
  */
 internals.logUpdate = function(mongoose, model, Log) {
-  const logUpdateForModel = function logUpdateForModel(request, h) {
+  const logUpdateForModel = async function logUpdateForModel(request, h) {
     try {
       Log = Log.bind('logUpdate')
       const AuditLog = mongoose.model('auditLog')
@@ -84,7 +78,7 @@ internals.logUpdate = function(mongoose, model, Log) {
       let userId = _.get(request.auth.credentials, config.userIdKey)
       let documents = [request.params._id]
 
-      return AuditLog.create({
+      await AuditLog.create({
         method: 'PUT',
         action: 'Update',
         endpoint: request.path,
@@ -104,15 +98,9 @@ internals.logUpdate = function(mongoose, model, Log) {
           : null,
         ipAddress
       })
-        .then(function(result) {
-          return h.continue
-        })
-        .catch(function(err) {
-          Log.error('ERROR:', err)
-          return h.continue
-        })
+      return h.continue
     } catch (err) {
-      Log.error('ERROR:', err)
+      Log.error(err)
       return h.continue
     }
   }
@@ -133,7 +121,7 @@ module.exports = {
  * @returns {logDeleteForModel}
  */
 internals.logDelete = function(mongoose, model, Log) {
-  const logDeleteForModel = function logDeleteForModel(request, h) {
+  const logDeleteForModel = async function logDeleteForModel(request, h) {
     try {
       Log = Log.bind('logDelete')
       const AuditLog = mongoose.model('auditLog')
@@ -149,7 +137,7 @@ internals.logDelete = function(mongoose, model, Log) {
         documents = [documents]
       }
 
-      return AuditLog.create({
+      await AuditLog.create({
         method: 'DELETE',
         action: 'Delete',
         endpoint: request.path,
@@ -169,15 +157,9 @@ internals.logDelete = function(mongoose, model, Log) {
           : null,
         ipAddress
       })
-        .then(function(result) {
-          return h.continue
-        })
-        .catch(function(err) {
-          Log.error('ERROR:', err)
-          return h.continue
-        })
+      return h.continue
     } catch (err) {
-      Log.error('ERROR:', err)
+      Log.error(err)
       return h.continue
     }
   }
@@ -204,7 +186,7 @@ internals.logAdd = function(
   associationType,
   Log
 ) {
-  const logAddForModel = function logAddForModel(request, h) {
+  const logAddForModel = async function logAddForModel(request, h) {
     try {
       Log = Log.bind('logAdd')
       const AuditLog = mongoose.model('auditLog')
@@ -231,7 +213,7 @@ internals.logAdd = function(
         method = 'PUT'
       }
 
-      return AuditLog.create({
+      await AuditLog.create({
         method: method,
         action: 'Add',
         endpoint: request.path,
@@ -251,15 +233,9 @@ internals.logAdd = function(
           : null,
         ipAddress
       })
-        .then(function(result) {
-          return h.continue
-        })
-        .catch(function(err) {
-          Log.error('ERROR:', err)
-          return h.continue
-        })
+      return h.continue
     } catch (err) {
-      Log.error('ERROR:', err)
+      Log.error(err)
       return h.continue
     }
   }
@@ -282,7 +258,7 @@ internals.logRemove = function(
   associationType,
   Log
 ) {
-  const logRemoveForModel = function logRemoveForModel(request, h) {
+  const logRemoveForModel = async function logRemoveForModel(request, h) {
     try {
       Log = Log.bind('logRemove')
       const AuditLog = mongoose.model('auditLog')
@@ -297,7 +273,7 @@ internals.logRemove = function(
         documents = documents.concat(request.payload)
       }
 
-      return AuditLog.create({
+      await AuditLog.create({
         method: 'DELETE',
         action: 'Remove',
         endpoint: request.path,
@@ -317,15 +293,9 @@ internals.logRemove = function(
           : null,
         ipAddress
       })
-        .then(function(result) {
-          return h.continue
-        })
-        .catch(function(err) {
-          Log.error('ERROR:', err)
-          return h.continue
-        })
+      return h.continue
     } catch (err) {
-      Log.error('ERROR:', err)
+      Log.error(err)
       return h.continue
     }
   }

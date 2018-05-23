@@ -13,7 +13,7 @@ const internals = {}
  * @returns {trackDuplicatedFields}
  */
 internals.trackDuplicatedFields = function(model, mongoose, Log) {
-  const trackDuplicatedFieldsForModel = function addDocumentScopeForModel(
+  const trackDuplicatedFieldsForModel = async function addDocumentScopeForModel(
     request,
     h
   ) {
@@ -22,19 +22,16 @@ internals.trackDuplicatedFields = function(model, mongoose, Log) {
       if (_.isError(request.response)) {
         return h.continue
       }
-      return internals
-        .trackFields(
-          model,
-          mongoose,
-          request.payload,
-          request.response.source,
-          Log
-        )
-        .then(function(result) {
-          return h.continue
-        })
+      await internals.trackFields(
+        model,
+        mongoose,
+        request.payload,
+        request.response.source,
+        Log
+      )
+      return h.continue
     } catch (err) {
-      Log.error('ERROR:', err)
+      Log.error(err)
       throw Boom.badImplementation(err)
     }
   }
@@ -87,18 +84,23 @@ internals.trackFields = function(model, mongoose, payload, result, Log) {
  * @param newProp
  * @param Log
  */
-internals.findAndUpdate = function(mongoose, childModel, query, newProp, Log) {
-  return childModel.find(query).then(function(result) {
-    let promises = []
+internals.findAndUpdate = async function(
+  mongoose,
+  childModel,
+  query,
+  newProp,
+  Log
+) {
+  let result = await childModel.find(query)
+  let promises = []
 
-    result.forEach(function(doc) {
-      promises.push(
-        internals.updateField(mongoose, childModel, doc._id, newProp, Log)
-      )
-    })
-
-    return Q.all(promises)
+  result.forEach(function(doc) {
+    promises.push(
+      internals.updateField(mongoose, childModel, doc._id, newProp, Log)
+    )
   })
+
+  return Q.all(promises)
 }
 
 /**
@@ -110,12 +112,15 @@ internals.findAndUpdate = function(mongoose, childModel, query, newProp, Log) {
  * @param newProp
  * @param Log
  */
-internals.updateField = function(mongoose, childModel, _id, newProp, Log) {
-  return childModel
-    .findByIdAndUpdate(_id, newProp, { new: true })
-    .then(function(result) {
-      return internals.trackFields(childModel, mongoose, newProp, result, Log)
-    })
+internals.updateField = async function(
+  mongoose,
+  childModel,
+  _id,
+  newProp,
+  Log
+) {
+  let result = await childModel.findByIdAndUpdate(_id, newProp, { new: true })
+  return internals.trackFields(childModel, mongoose, newProp, result, Log)
 }
 
 module.exports = {

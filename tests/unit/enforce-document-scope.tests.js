@@ -1210,7 +1210,7 @@ test('enforce-document-scope.enforceDocumentScopePostForModel', function(t) {
 test('enforce-document-scope.enforceDocumentScopePreForModel', function(t) {
   t.test(
     'enforce-document-scope.enforceDocumentScopePreForModel returns authorized if request is not an update, association call, or a delete.',
-    sinon.test(function(t) {
+    sinon.test(async function(t) {
       // <editor-fold desc="Arrange">
       t.plan(1)
 
@@ -1238,7 +1238,7 @@ test('enforce-document-scope.enforceDocumentScopePreForModel', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Act">
-      let result = enforceDocumentScopePreForModel(request, h)
+      let result = await enforceDocumentScopePreForModel(request, h)
       // </editor-fold>
 
       // <editor-fold desc="Assert">

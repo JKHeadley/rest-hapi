@@ -11,7 +11,7 @@ const internals = {}
 // TODO (cont): in post. This should make authorization "transparent" and work with pagination
 
 internals.enforceDocumentScopePre = function(model, Log) {
-  const enforceDocumentScopePreForModel = function enforceDocumentScopePreForModel(
+  const enforceDocumentScopePreForModel = async function enforceDocumentScopePreForModel(
     request,
     h
   ) {
@@ -48,48 +48,41 @@ internals.enforceDocumentScopePre = function(model, Log) {
           })
         }
       } else {
-        return h.continue
+        return await h.continue
       }
 
-      return internals
-        .verifyScopeById(model, ids, action, userScope, Log)
-        .then(function(result) {
-          if (result.authorized) {
-            return h.continue
-          }
-          // EXPL: only delete authorized docs
-          else if (
-            action === 'delete' &&
-            !config.enableDocumentScopeFail &&
-            !request.params._id
-          ) {
-            let unauthorizedIds = result.unauthorizedDocs.map(function(
-              document
-            ) {
-              return document._id.toString()
-            })
-            request.payload = request.payload.filter(function(item) {
-              return unauthorizedIds.indexOf(item._id) < 0
-            })
-            return h.continue
-          } else {
-            throw Boom.forbidden('Insufficient document scope.')
-          }
+      let result = await internals.verifyScopeById(
+        model,
+        ids,
+        action,
+        userScope,
+        Log
+      )
+      if (result.authorized) {
+        return h.continue
+      }
+      // EXPL: only delete authorized docs
+      else if (
+        action === 'delete' &&
+        !config.enableDocumentScopeFail &&
+        !request.params._id
+      ) {
+        let unauthorizedIds = result.unauthorizedDocs.map(function(document) {
+          return document._id.toString()
         })
-        .catch(function(error) {
-          if (error.isBoom) {
-            throw error
-          } else {
-            Log.error('ERROR:', error)
-            throw Boom.badImplementation(error)
-          }
+        request.payload = request.payload.filter(function(item) {
+          return unauthorizedIds.indexOf(item._id) < 0
         })
-    } catch (err) {
-      if (err.isBoom) {
-        throw err
+        return h.continue
       } else {
-        Log.error('ERROR:', err)
+        throw Boom.forbidden('Insufficient document scope.')
+      }
+    } catch (err) {
+      if (!err.isBoom) {
+        Log.error(err)
         throw Boom.badImplementation(err)
+      } else {
+        throw err
       }
     }
   }
@@ -169,7 +162,7 @@ internals.enforceDocumentScopePost = function(model, Log) {
       if (err.isBoom) {
         throw err
       } else {
-        Log.error('ERROR:', err)
+        Log.error(err)
         throw Boom.badImplementation(err)
       }
     }
@@ -180,7 +173,7 @@ internals.enforceDocumentScopePost = function(model, Log) {
 }
 internals.enforceDocumentScopePost.applyPoint = 'onPostHandler'
 
-internals.verifyScopeById = function(
+internals.verifyScopeById = async function(
   model,
   documentIds,
   action,
@@ -192,9 +185,8 @@ internals.verifyScopeById = function(
       $in: documentIds
     }
   }
-  return model.find(query, 'scope').then(function(documents) {
-    return internals.verifyScope(documents, action, userScope, Log)
-  })
+  let documents = await model.find(query, 'scope')
+  return internals.verifyScope(documents, action, userScope, Log)
 }
 
 internals.verifyScope = function(documents, action, userScope, Log) {
@@ -260,7 +252,7 @@ internals.verifyScope = function(documents, action, userScope, Log) {
     if (err === false) {
       return { authorized: authorized, unauthorizedDocs: [] }
     } else {
-      Log.error('ERROR:', err)
+      Log.error(err)
       throw err
     }
   }

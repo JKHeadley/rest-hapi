@@ -9,7 +9,6 @@ const Mrhorse = require('mrhorse')
 const logging = require('loggin')
 const logUtil = require('./utilities/log-util')
 const chalk = require('chalk')
-const Q = require('q')
 const restHelperFactory = require('./utilities/rest-helper-factory')
 const handlerHelper = require('./utilities/handler-helper')
 const joiHelper = require('./utilities/joi-mongoose-helper')
@@ -49,7 +48,7 @@ module.exports = {
   testHelper: testHelper
 }
 
-function register(server, options) {
+async function register(server, options) {
   let config = defaultConfig
 
   extend(true, config, module.exports.config)
@@ -73,123 +72,102 @@ function register(server, options) {
 
   logUtil.logActionStart(logger, 'Initializing Server')
 
-  let promise = {}
+  let models
 
   if (modelsGenerated) {
-    promise = Q.when(globalModels)
+    models = globalModels
   } else {
-    promise = modelGenerator(mongoose, logger, config)
-  }
-
-  let models = {}
-
-  return promise
-    .then(async function(result) {
-      models = result
-
-      // EXPL: setup hapi-swagger plugin
-      // region Hapi-Swagger Plugin
-      let swaggerOptions = {
-        documentationPath: '/',
-        info: {
-          title: config.appTitle,
-          version: config.version
-        },
-        expanded: config.docExpansion,
-        swaggerUI: config.enableSwaggerUI,
-        documentationPage: config.enableSwaggerUI,
-        schemes: config.enableSwaggerHttps ? ['https'] : ['http'],
-        reuseDefinitions: false
-      }
-      // endregion
-
-      try {
-        await server.register([
-          Inert,
-          Vision,
-          { plugin: HapiSwagger, options: swaggerOptions }
-        ])
-      } catch (err) {
-        logger.error(err)
-      }
-
-      // EXPL: setup mrhorse policy plugin
-      // region Mrhorse Plugin
-      let policyPath = ''
-
-      if (config.enablePolicies) {
-        if (config.absolutePolicyPath === true) {
-          policyPath = config.policyPath
-        } else {
-          policyPath = __dirname.replace(
-            'node_modules/rest-hapi',
-            config.policyPath
-          )
-        }
-      } else {
-        policyPath = path.join(__dirname, '/policies')
-      }
-
-      // endregion
-
-      if (Mrhorse) {
-        try {
-          // HACK: Temporary fix to a bug in testing:
-          // https://github.com/mark-bradshaw/mrhorse/issues/39
-          await server.register([
-            {
-              plugin: Mrhorse,
-              options: {
-                policyDirectory: policyPath
-                // ignoreDuplicates: config.ignoreDuplicatePolicies
-              }
-            }
-          ])
-
-          if (config.enablePolicies) {
-            server.plugins.mrhorse.loadPolicies(
-              server,
-              {
-                policyDirectory: path.join(__dirname, '/policies')
-              },
-              function(err) {
-                if (err) {
-                  logger.error('ERROR:', err)
-                }
-              }
-            )
-          }
-        } catch (err) {
-          logger.error(err)
-        }
-      } else {
-        return null
-      }
-    })
-    .catch(function(error) {
-      if (error.message.includes('no such file')) {
+    try {
+      models = await modelGenerator(mongoose, logger, config)
+    } catch (err) {
+      if (err.message.includes('no such file')) {
         logger.error(
           'The policies directory provided does not exist. ' +
             "Try setting the 'policyPath' property of the config file."
         )
       } else {
-        throw error
+        throw err
       }
-    })
-    .then(function() {
-      const restHelper = restHelperFactory(logger, mongoose, server)
+    }
+  }
 
-      for (let modelKey in models) {
-        // EXPL: generate endpoints for all of the models
-        let model = models[modelKey]
-        restHelper.generateRoutes(server, model, { models: models })
+  // EXPL: setup hapi-swagger plugin
+  // region Hapi-Swagger Plugin
+  let swaggerOptions = {
+    documentationPath: '/',
+    info: {
+      title: config.appTitle,
+      version: config.version
+    },
+    expanded: config.docExpansion,
+    swaggerUI: config.enableSwaggerUI,
+    documentationPage: config.enableSwaggerUI,
+    schemes: config.enableSwaggerHttps ? ['https'] : ['http'],
+    reuseDefinitions: false
+  }
+  // endregion
+
+  await server.register([
+    Inert,
+    Vision,
+    { plugin: HapiSwagger, options: swaggerOptions }
+  ])
+
+  // EXPL: setup mrhorse policy plugin
+  // region Mrhorse Plugin
+  let policyPath = ''
+
+  if (config.enablePolicies) {
+    if (config.absolutePolicyPath === true) {
+      policyPath = config.policyPath
+    } else {
+      policyPath = __dirname.replace(
+        'node_modules/rest-hapi',
+        config.policyPath
+      )
+    }
+  } else {
+    policyPath = path.join(__dirname, '/policies')
+  }
+
+  // endregion
+
+  if (Mrhorse) {
+    await server.register([
+      {
+        plugin: Mrhorse,
+        options: {
+          policyDirectory: policyPath
+        }
       }
+    ])
 
-      return apiGenerator(server, mongoose, logger, config)
-    })
-    .catch(function(error) {
-      logger.error(error)
-    })
+    if (config.enablePolicies) {
+      server.plugins.mrhorse.loadPolicies(
+        server,
+        {
+          policyDirectory: path.join(__dirname, '/policies')
+        },
+        function(err) {
+          if (err) {
+            logger.error(err)
+          }
+        }
+      )
+    }
+  } else {
+    return null
+  }
+
+  const restHelper = restHelperFactory(logger, mongoose, server)
+
+  for (let modelKey in models) {
+    // EXPL: generate endpoints for all of the models
+    let model = models[modelKey]
+    restHelper.generateRoutes(server, model, { models: models })
+  }
+
+  return apiGenerator(server, mongoose, logger, config)
 }
 
 /**

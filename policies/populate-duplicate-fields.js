@@ -13,7 +13,7 @@ const internals = {}
  * @returns {populateDuplicateFields}
  */
 internals.populateDuplicateFields = function(model, mongoose, Log) {
-  const populateDuplicateFieldsForModel = function addDocumentScopeForModel(
+  const populateDuplicateFieldsForModel = async function addDocumentScopeForModel(
     request,
     h
   ) {
@@ -30,7 +30,7 @@ internals.populateDuplicateFields = function(model, mongoose, Log) {
         for (const key in associations) {
           const association = associations[key]
           const duplicate = association.duplicate
-          payload.forEach(function(doc) {
+          for (let doc of payload) {
             if (
               duplicate &&
               (association.type === 'MANY_ONE' ||
@@ -56,24 +56,18 @@ internals.populateDuplicateFields = function(model, mongoose, Log) {
               })
               promises.push(deferred.promise)
             }
-          })
+          }
         }
 
-        return Q.all(promises)
-          .then(function(result) {
-            return h.continue
-          })
-          .catch(function(err) {
-            Log.error('ERROR:', err)
-            throw Boom.badImplementation(err)
-          })
+        await Q.all(promises)
+        return h.continue
       }
       return h.continue
     } catch (err) {
       if (err.isBoom) {
         throw err
       } else {
-        Log.error('ERROR:', err)
+        Log.error(err)
         throw Boom.badImplementation(err)
       }
     }
