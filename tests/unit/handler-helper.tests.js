@@ -78,12 +78,9 @@ test('handler-helper.listHandler', function(t) {
           let queryHelperStub = sandbox.stub(
             require('../../utilities/query-helper')
           )
-          let errorHelperStub = sandbox.stub(
-            require('../../utilities/error-helper')
-          )
+
           let handlerHelper = proxyquire('../../utilities/handler-helper', {
-            './query-helper': queryHelperStub,
-            './error-helper': errorHelperStub
+            './query-helper': queryHelperStub
           })
           sandbox.stub(Log, 'error').callsFake(function() {})
 
@@ -129,12 +126,9 @@ test('handler-helper.listHandler', function(t) {
             let queryHelperStub = sandbox.stub(
               require('../../utilities/query-helper')
             )
-            let errorHelperStub = sandbox.stub(
-              require('../../utilities/error-helper')
-            )
+
             let handlerHelper = proxyquire('../../utilities/handler-helper', {
-              './query-helper': queryHelperStub,
-              './error-helper': errorHelperStub
+              './query-helper': queryHelperStub
             })
             sandbox.stub(Log, 'error').callsFake(function() {})
 
@@ -202,12 +196,9 @@ test('handler-helper.listHandler', function(t) {
                 }
               }
             }
-            let errorHelperStub = sandbox.stub(
-              require('../../utilities/error-helper')
-            )
+
             let handlerHelper = proxyquire('../../utilities/handler-helper', {
-              './query-helper': queryHelperStub,
-              './error-helper': errorHelperStub
+              './query-helper': queryHelperStub
             })
             sandbox.stub(Log, 'error').callsFake(function() {})
 
@@ -281,12 +272,9 @@ test('handler-helper.listHandler', function(t) {
               }
             })
             queryHelperStub.paginate = paginateSpy
-            let errorHelperStub = sandbox.stub(
-              require('../../utilities/error-helper')
-            )
+
             let handlerHelper = proxyquire('../../utilities/handler-helper', {
-              './query-helper': queryHelperStub,
-              './error-helper': errorHelperStub
+              './query-helper': queryHelperStub
             })
             sandbox.stub(Log, 'error').callsFake(function() {})
 
@@ -367,12 +355,9 @@ test('handler-helper.listHandler', function(t) {
               return { exec: execSpy }
             })
             queryHelperStub.paginate = paginateSpy
-            let errorHelperStub = sandbox.stub(
-              require('../../utilities/error-helper')
-            )
+
             let handlerHelper = proxyquire('../../utilities/handler-helper', {
-              './query-helper': queryHelperStub,
-              './error-helper': errorHelperStub
+              './query-helper': queryHelperStub
             })
             sandbox.stub(Log, 'error').callsFake(function() {})
 
@@ -426,12 +411,9 @@ test('handler-helper.listHandler', function(t) {
             let queryHelperStub = sandbox.stub(
               require('../../utilities/query-helper')
             )
-            let errorHelperStub = sandbox.stub(
-              require('../../utilities/error-helper')
-            )
+
             let handlerHelper = proxyquire('../../utilities/handler-helper', {
-              './query-helper': queryHelperStub,
-              './error-helper': errorHelperStub
+              './query-helper': queryHelperStub
             })
             sandbox.stub(Log, 'error').callsFake(function() {})
 
@@ -487,7 +469,7 @@ test('handler-helper.listHandler', function(t) {
       .then(function() {
         return t.test(
           'handler-helper.listHandler calls post processing if it exists',
-          function(t) {
+          async function(t) {
             // <editor-fold desc="Arrange">
             let sandbox = sinon.sandbox.create()
             let Log = logger.bind('handler-helper')
@@ -518,12 +500,8 @@ test('handler-helper.listHandler', function(t) {
             })
             queryHelperStub.paginate = paginateSpy
 
-            let errorHelperStub = sandbox.stub(
-              require('../../utilities/error-helper')
-            )
             let handlerHelper = proxyquire('../../utilities/handler-helper', {
-              './query-helper': queryHelperStub,
-              './error-helper': errorHelperStub
+              './query-helper': queryHelperStub
             })
 
             sandbox.stub(Log, 'error').callsFake(function() {})
@@ -552,23 +530,20 @@ test('handler-helper.listHandler', function(t) {
             // </editor-fold>
 
             // <editor-fold desc="Assert">
-            return (
-              promise
-                .catch(function() {
-                  t.ok(
-                    postSpy.calledWithExactly(request, 'TEST', Log),
-                    'list.post called'
-                  )
-                })
-                // </editor-fold>
+            try {
+              await promise
+            } catch (err) {
+              t.ok(
+                postSpy.calledWithExactly(request, 'TEST', Log),
+                'list.post called'
+              )
+            }
+            // </editor-fold>
 
-                // <editor-fold desc="Restore">
-                .then(function() {
-                  sandbox.restore()
-                  delete mongoose.models.user
-                  delete mongoose.modelSchemas.user
-                })
-            )
+            // <editor-fold desc="Restore">
+            sandbox.restore()
+            delete mongoose.models.user
+            delete mongoose.modelSchemas.user
             // </editor-fold>
           }
         )
@@ -578,7 +553,7 @@ test('handler-helper.listHandler', function(t) {
       .then(function() {
         return t.test(
           'handler-helper.listHandler returns a list of results',
-          function(t) {
+          async function(t) {
             // <editor-fold desc="Arrange">
             let sandbox = sinon.sandbox.create()
             let Log = logger.bind('handler-helper')
@@ -586,7 +561,8 @@ test('handler-helper.listHandler', function(t) {
 
             let deferred = Q.defer()
             let countSpy = sandbox.spy(function() {
-              return Q.when()
+              let promise = Q.when('test')
+              return promise
             })
             let mongooseQuery1 = { count: countSpy }
             let mongooseQuery2 = {
@@ -610,12 +586,8 @@ test('handler-helper.listHandler', function(t) {
             })
             queryHelperStub.paginate = paginateSpy
 
-            let errorHelperStub = sandbox.stub(
-              require('../../utilities/error-helper')
-            )
             let handlerHelper = proxyquire('../../utilities/handler-helper', {
-              './query-helper': queryHelperStub,
-              './error-helper': errorHelperStub
+              './query-helper': queryHelperStub
             })
             sandbox.stub(Log, 'error').callsFake(function() {})
 
@@ -634,24 +606,18 @@ test('handler-helper.listHandler', function(t) {
             // </editor-fold>
 
             // <editor-fold desc="Assert">
-            return (
-              promise
-                .catch(function(result) {
-                  t.deepEqual(
-                    result.docs,
-                    ['TEST1', 'TEST2'],
-                    'returns list of mapped result'
-                  )
-                })
-                // </editor-fold>
-
-                // <editor-fold desc="Restore">
-                .then(function() {
-                  sandbox.restore()
-                  delete mongoose.models.user
-                  delete mongoose.modelSchemas.user
-                })
+            result = await promise
+            t.deepEqual(
+              result.docs,
+              ['TEST1', 'TEST2'],
+              'returns list of mapped result'
             )
+            // </editor-fold>
+
+            // <editor-fold desc="Restore">
+            sandbox.restore()
+            delete mongoose.models.user
+            delete mongoose.modelSchemas.user
             // </editor-fold>
           }
         )
@@ -706,12 +672,8 @@ test('handler-helper.listHandler', function(t) {
             })
             queryHelperStub.paginate = paginateSpy
 
-            let errorHelperStub = sandbox.stub(
-              require('../../utilities/error-helper')
-            )
             let handlerHelper = proxyquire('../../utilities/handler-helper', {
-              './query-helper': queryHelperStub,
-              './error-helper': errorHelperStub
+              './query-helper': queryHelperStub
             })
             sandbox.stub(Log, 'error').callsFake(function() {})
 
@@ -732,7 +694,7 @@ test('handler-helper.listHandler', function(t) {
             // <editor-fold desc="Assert">
             return (
               promise
-                .catch(function(result) {
+                .then(function(result) {
                   t.deepEqual(
                     result.items,
                     { begin: 4, end: 6, limit: 3, total: 12 },
@@ -1156,12 +1118,9 @@ test('handler-helper.findHandler', function(t) {
             let queryHelperStub = sandbox.stub(
               require('../../utilities/query-helper')
             )
-            let errorHelperStub = sandbox.stub(
-              require('../../utilities/error-helper')
-            )
+
             let handlerHelper = proxyquire('../../utilities/handler-helper', {
-              './query-helper': queryHelperStub,
-              './error-helper': errorHelperStub
+              './query-helper': queryHelperStub
             })
             sandbox.stub(Log, 'error').callsFake(function() {})
 
@@ -1218,12 +1177,9 @@ test('handler-helper.findHandler', function(t) {
             let queryHelperStub = sandbox.stub(
               require('../../utilities/query-helper')
             )
-            let errorHelperStub = sandbox.stub(
-              require('../../utilities/error-helper')
-            )
+
             let handlerHelper = proxyquire('../../utilities/handler-helper', {
-              './query-helper': queryHelperStub,
-              './error-helper': errorHelperStub
+              './query-helper': queryHelperStub
             })
             sandbox.stub(Log, 'error').callsFake(function() {})
 
@@ -1288,12 +1244,9 @@ test('handler-helper.findHandler', function(t) {
             let queryHelperStub = sandbox.stub(
               require('../../utilities/query-helper')
             )
-            let errorHelperStub = sandbox.stub(
-              require('../../utilities/error-helper')
-            )
+
             let handlerHelper = proxyquire('../../utilities/handler-helper', {
-              './query-helper': queryHelperStub,
-              './error-helper': errorHelperStub
+              './query-helper': queryHelperStub
             })
             sandbox.stub(Log, 'error').callsFake(function() {})
 
@@ -1376,12 +1329,9 @@ test('handler-helper.findHandler', function(t) {
             queryHelperStub.createMongooseQuery = function() {
               return mongooseQuery2
             }
-            let errorHelperStub = sandbox.stub(
-              require('../../utilities/error-helper')
-            )
+
             let handlerHelper = proxyquire('../../utilities/handler-helper', {
-              './query-helper': queryHelperStub,
-              './error-helper': errorHelperStub
+              './query-helper': queryHelperStub
             })
             sandbox.stub(Log, 'error').callsFake(function() {})
 
@@ -1460,12 +1410,8 @@ test('handler-helper.findHandler', function(t) {
               return mongooseQuery2
             }
 
-            let errorHelperStub = sandbox.stub(
-              require('../../utilities/error-helper')
-            )
             let handlerHelper = proxyquire('../../utilities/handler-helper', {
-              './query-helper': queryHelperStub,
-              './error-helper': errorHelperStub
+              './query-helper': queryHelperStub
             })
             sandbox.stub(Log, 'error').callsFake(function() {})
 
@@ -1969,12 +1915,9 @@ test('handler-helper.createHandler', function(t) {
             let queryHelperStub = sandbox.stub(
               require('../../utilities/query-helper')
             )
-            let errorHelperStub = sandbox.stub(
-              require('../../utilities/error-helper')
-            )
+
             let handlerHelper = proxyquire('../../utilities/handler-helper', {
-              './query-helper': queryHelperStub,
-              './error-helper': errorHelperStub
+              './query-helper': queryHelperStub
             })
             sandbox.stub(Log, 'error').callsFake(function() {})
 
@@ -2037,12 +1980,9 @@ test('handler-helper.createHandler', function(t) {
             let queryHelperStub = sandbox.stub(
               require('../../utilities/query-helper')
             )
-            let errorHelperStub = sandbox.stub(
-              require('../../utilities/error-helper')
-            )
+
             let handlerHelper = proxyquire('../../utilities/handler-helper', {
-              './query-helper': queryHelperStub,
-              './error-helper': errorHelperStub
+              './query-helper': queryHelperStub
             })
             sandbox.stub(Log, 'error').callsFake(function() {})
 
@@ -2102,12 +2042,9 @@ test('handler-helper.createHandler', function(t) {
             queryHelperStub.createAttributesFilter = sandbox.spy(function() {
               return deferred.resolve()
             })
-            let errorHelperStub = sandbox.stub(
-              require('../../utilities/error-helper')
-            )
+
             let handlerHelper = proxyquire('../../utilities/handler-helper', {
-              './query-helper': queryHelperStub,
-              './error-helper': errorHelperStub
+              './query-helper': queryHelperStub
             })
             sandbox.stub(Log, 'error').callsFake(function() {})
 
@@ -2167,12 +2104,9 @@ test('handler-helper.createHandler', function(t) {
           queryHelperStub.createAttributesFilter = function() {
             return 'attributes'
           }
-          let errorHelperStub = sandbox.stub(
-            require('../../utilities/error-helper')
-          )
+
           let handlerHelper = proxyquire('../../utilities/handler-helper', {
-            './query-helper': queryHelperStub,
-            './error-helper': errorHelperStub
+            './query-helper': queryHelperStub
           })
           sandbox.stub(Log, 'error').callsFake(function() {})
 
@@ -2231,12 +2165,9 @@ test('handler-helper.createHandler', function(t) {
             queryHelperStub.createAttributesFilter = function() {
               return 'attributes'
             }
-            let errorHelperStub = sandbox.stub(
-              require('../../utilities/error-helper')
-            )
+
             let handlerHelper = proxyquire('../../utilities/handler-helper', {
-              './query-helper': queryHelperStub,
-              './error-helper': errorHelperStub
+              './query-helper': queryHelperStub
             })
             // sandbox.stub(Log, 'error').callsFake(function(){});
 
@@ -2916,12 +2847,9 @@ test('handler-helper.updateHandler', function(t) {
             let queryHelperStub = sandbox.stub(
               require('../../utilities/query-helper')
             )
-            let errorHelperStub = sandbox.stub(
-              require('../../utilities/error-helper')
-            )
+
             let handlerHelper = proxyquire('../../utilities/handler-helper', {
-              './query-helper': queryHelperStub,
-              './error-helper': errorHelperStub
+              './query-helper': queryHelperStub
             })
             sandbox.stub(Log, 'error').callsFake(function() {})
 
@@ -2984,12 +2912,9 @@ test('handler-helper.updateHandler', function(t) {
             let queryHelperStub = sandbox.stub(
               require('../../utilities/query-helper')
             )
-            let errorHelperStub = sandbox.stub(
-              require('../../utilities/error-helper')
-            )
+
             let handlerHelper = proxyquire('../../utilities/handler-helper', {
-              './query-helper': queryHelperStub,
-              './error-helper': errorHelperStub
+              './query-helper': queryHelperStub
             })
             sandbox.stub(Log, 'error').callsFake(function() {})
 
@@ -3054,12 +2979,9 @@ test('handler-helper.updateHandler', function(t) {
             let queryHelperStub = sandbox.stub(
               require('../../utilities/query-helper')
             )
-            let errorHelperStub = sandbox.stub(
-              require('../../utilities/error-helper')
-            )
+
             let handlerHelper = proxyquire('../../utilities/handler-helper', {
               './query-helper': queryHelperStub,
-              './error-helper': errorHelperStub,
               '../config': config
             })
             sandbox.stub(Log, 'error').callsFake(function() {})
@@ -3128,12 +3050,9 @@ test('handler-helper.updateHandler', function(t) {
             queryHelperStub.createAttributesFilter = sandbox.spy(function() {
               return deferred.resolve()
             })
-            let errorHelperStub = sandbox.stub(
-              require('../../utilities/error-helper')
-            )
+
             let handlerHelper = proxyquire('../../utilities/handler-helper', {
-              './query-helper': queryHelperStub,
-              './error-helper': errorHelperStub
+              './query-helper': queryHelperStub
             })
             sandbox.stub(Log, 'error').callsFake(function() {})
 
@@ -3196,12 +3115,9 @@ test('handler-helper.updateHandler', function(t) {
             queryHelperStub.createAttributesFilter = function() {
               return 'attributes'
             }
-            let errorHelperStub = sandbox.stub(
-              require('../../utilities/error-helper')
-            )
+
             let handlerHelper = proxyquire('../../utilities/handler-helper', {
-              './query-helper': queryHelperStub,
-              './error-helper': errorHelperStub
+              './query-helper': queryHelperStub
             })
             sandbox.stub(Log, 'error').callsFake(function() {})
 
@@ -3261,12 +3177,9 @@ test('handler-helper.updateHandler', function(t) {
             let queryHelperStub = sandbox.stub(
               require('../../utilities/query-helper')
             )
-            let errorHelperStub = sandbox.stub(
-              require('../../utilities/error-helper')
-            )
+
             let handlerHelper = proxyquire('../../utilities/handler-helper', {
-              './query-helper': queryHelperStub,
-              './error-helper': errorHelperStub
+              './query-helper': queryHelperStub
             })
             sandbox.stub(Log, 'error').callsFake(function() {})
 
@@ -3337,12 +3250,9 @@ test('handler-helper.updateHandler', function(t) {
           let queryHelperStub = sandbox.stub(
             require('../../utilities/query-helper')
           )
-          let errorHelperStub = sandbox.stub(
-            require('../../utilities/error-helper')
-          )
+
           let handlerHelper = proxyquire('../../utilities/handler-helper', {
-            './query-helper': queryHelperStub,
-            './error-helper': errorHelperStub
+            './query-helper': queryHelperStub
           })
           sandbox.stub(Log, 'error').callsFake(function() {})
 

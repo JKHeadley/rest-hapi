@@ -4,7 +4,6 @@ let Boom = require('boom')
 let QueryHelper = require('./query-helper')
 let JoiMongooseHelper = require('./joi-mongoose-helper')
 let Q = require('q')
-let errorHelper = require('./error-helper')
 let config = require('../config')
 let _ = require('lodash')
 
@@ -91,12 +90,7 @@ async function _listHandler(model, request, Log) {
         query = await Q.fcall(model.routeOptions.list.pre, query, request, Log)
       }
     } catch (err) {
-      if (!err.isBoom) {
-        Log.error(err)
-        throw Boom.badRequest('There was a preprocessing error.')
-      } else {
-        throw err
-      }
+      handleError(err, 'There was a preprocessing error.', Boom.badRequest, Log)
     }
 
     let mongooseQuery = {}
@@ -143,12 +137,12 @@ async function _listHandler(model, request, Log) {
         )
       }
     } catch (err) {
-      if (!err.isBoom) {
-        Log.error(err)
-        throw Boom.badRequest('There was a postprocessing error.')
-      } else {
-        throw err
-      }
+      handleError(
+        err,
+        'There was a postprocessing error.',
+        Boom.badRequest,
+        Log
+      )
     }
 
     result = result.map(data => {
@@ -216,12 +210,7 @@ async function _listHandler(model, request, Log) {
 
     return { docs: result, pages: pages, items: items }
   } catch (err) {
-    Log.error(err)
-    if (!err.isBoom) {
-      throw Boom.badImplementation('There was an error processing the request.')
-    } else {
-      throw err
-    }
+    handleError(err, null, null, Log)
   }
 }
 
@@ -265,12 +254,7 @@ async function _findHandler(model, _id, request, Log) {
         )
       }
     } catch (err) {
-      if (!err.isBoom) {
-        Log.error(err)
-        throw Boom.badRequest('There was a preprocessing error.')
-      } else {
-        throw err
-      }
+      handleError(err, 'There was a preprocessing error.', Boom.badRequest, Log)
     }
 
     let flatten = false
@@ -302,12 +286,12 @@ async function _findHandler(model, _id, request, Log) {
           )
         }
       } catch (err) {
-        if (!err.isBoom) {
-          Log.error(err)
-          throw Boom.badRequest('There was a postprocessing error.')
-        } else {
-          throw err
-        }
+        handleError(
+          err,
+          'There was a postprocessing error.',
+          Boom.badRequest,
+          Log
+        )
       }
       if (model.routeOptions) {
         let associations = model.routeOptions.associations
@@ -341,12 +325,7 @@ async function _findHandler(model, _id, request, Log) {
       throw Boom.notFound('No resource was found with that id.')
     }
   } catch (err) {
-    Log.error(err)
-    if (!err.isBoom) {
-      throw Boom.badImplementation('There was an error processing the request.')
-    } else {
-      throw err
-    }
+    handleError(err, null, null, Log)
   }
 }
 
@@ -381,7 +360,7 @@ async function _createHandler(model, request, Log) {
       payload = [Object.assign({}, request.payload)]
       isArray = false
     } else {
-      payload = request.payload.map(function(item) {
+      payload = request.payload.map(item => {
         return _.isObject(item) ? _.assignIn({}, item) : item
       })
     }
@@ -397,14 +376,12 @@ async function _createHandler(model, request, Log) {
         }
       }
     } catch (err) {
-      if (!err.isBoom) {
-        Log.error(err)
-        throw Boom.badRequest(
-          'There was a preprocessing error creating the resource.'
-        )
-      } else {
-        throw err
-      }
+      handleError(
+        err,
+        'There was a preprocessing error creating the resource.',
+        Boom.badRequest,
+        Log
+      )
     }
 
     if (config.enableCreatedAt) {
@@ -458,14 +435,12 @@ async function _createHandler(model, request, Log) {
         }
       }
     } catch (err) {
-      if (!err.isBoom) {
-        Log.error(err)
-        throw Boom.badRequest(
-          'There was a postprocessing error creating the resource.'
-        )
-      } else {
-        throw err
-      }
+      handleError(
+        err,
+        'There was a postprocessing error creating the resource.',
+        Boom.badRequest,
+        Log
+      )
     }
 
     if (isArray) {
@@ -474,12 +449,7 @@ async function _createHandler(model, request, Log) {
       return result[0]
     }
   } catch (err) {
-    Log.error(err)
-    if (!err.isBoom) {
-      throw Boom.badImplementation('There was an error processing the request.')
-    } else {
-      throw err
-    }
+    handleError(err, null, null, Log)
   }
 }
 
@@ -523,14 +493,12 @@ async function _updateHandler(model, _id, request, Log) {
         )
       }
     } catch (err) {
-      if (!err.isBoom) {
-        Log.error(err)
-        throw Boom.badRequest(
-          'There was a preprocessing error updating the resource.'
-        )
-      } else {
-        throw err
-      }
+      handleError(
+        err,
+        'There was a preprocessing error updating the resource.',
+        Boom.badRequest,
+        Log
+      )
     }
 
     if (config.enableUpdatedAt) {
@@ -570,26 +538,19 @@ async function _updateHandler(model, _id, request, Log) {
           )
         }
       } catch (err) {
-        if (!err.isBoom) {
-          Log.error(err)
-          throw Boom.badRequest(
-            'There was a postprocessing error updating the resource.'
-          )
-        } else {
-          throw err
-        }
+        handleError(
+          err,
+          'There was a postprocessing error updating the resource.',
+          Boom.badRequest,
+          Log
+        )
       }
       return result
     } else {
       throw Boom.notFound('No resource was found with that id.')
     }
   } catch (err) {
-    Log.error(err)
-    if (!err.isBoom) {
-      throw Boom.badImplementation('There was an error processing the request.')
-    } else {
-      throw err
-    }
+    handleError(err, null, null, Log)
   }
 }
 
@@ -634,14 +595,12 @@ async function _deleteOneHandler(model, _id, hardDelete, request, Log) {
         )
       }
     } catch (err) {
-      if (!err.isBoom) {
-        Log.error(err)
-        throw Boom.badRequest(
-          'There was a preprocessing error deleting the resource.'
-        )
-      } else {
-        throw err
-      }
+      handleError(
+        err,
+        'There was a preprocessing error deleting the resource.',
+        Boom.badRequest,
+        Log
+      )
     }
     let deleted
 
@@ -666,8 +625,12 @@ async function _deleteOneHandler(model, _id, hardDelete, request, Log) {
         deleted = await model.findByIdAndRemove(_id)
       }
     } catch (err) {
-      Log.error(err)
-      throw Boom.badImplementation('There was an error deleting the resource.')
+      handleError(
+        err,
+        'There was an error deleting the resource.',
+        Boom.badImplementation,
+        Log
+      )
     }
     // TODO: clean up associations/set rules for ON DELETE CASCADE/etc.
     if (deleted) {
@@ -688,26 +651,19 @@ async function _deleteOneHandler(model, _id, hardDelete, request, Log) {
           )
         }
       } catch (err) {
-        if (!err.isBoom) {
-          Log.error(err)
-          throw Boom.badRequest(
-            'There was a postprocessing error deleting the resource.'
-          )
-        } else {
-          throw err
-        }
+        handleError(
+          err,
+          'There was a postprocessing error deleting the resource.',
+          Boom.badRequest,
+          Log
+        )
       }
       return true
     } else {
       throw Boom.notFound('No resource was found with that id.')
     }
   } catch (err) {
-    Log.error(err)
-    if (!err.isBoom) {
-      throw Boom.badImplementation('There was an error processing the request.')
-    } else {
-      throw err
-    }
+    handleError(err, null, null, Log)
   }
 }
 
@@ -733,14 +689,14 @@ function _deleteMany(model, payload, Log) {
  */
 // TODO: prevent Q.all from catching first error and returning early. Catch individual errors and return a list
 // TODO(cont) of ids that failed
-function _deleteManyHandler(model, request, Log) {
-  // EXPL: make a copy of the payload so that request.payload remains unchanged
-  let payload = request.payload.map(function(item) {
-    return _.isObject(item) ? _.assignIn({}, item) : item
-  })
+async function _deleteManyHandler(model, request, Log) {
   try {
+    // EXPL: make a copy of the payload so that request.payload remains unchanged
+    let payload = request.payload.map(item => {
+      return _.isObject(item) ? _.assignIn({}, item) : item
+    })
     let promises = []
-    payload.forEach(function(arg) {
+    for (let arg of payload) {
       if (JoiMongooseHelper.isObjectId(arg)) {
         promises.push(_deleteOneHandler(model, arg, false, request, Log))
       } else {
@@ -748,28 +704,12 @@ function _deleteManyHandler(model, request, Log) {
           _deleteOneHandler(model, arg._id, arg.hardDelete, request, Log)
         )
       }
-    })
-
-    return Q.all(promises)
-      .then(function(result) {
-        return true
-      })
-      .catch(function(error) {
-        throw error
-      })
-  } catch (error) {
-    const message = 'There was an error processing the request.'
-    Log.error(message)
-    try {
-      errorHelper.handleError(
-        error,
-        message,
-        errorHelper.types.BAD_REQUEST,
-        Log
-      )
-    } catch (error) {
-      return Q.reject(error)
     }
+
+    await Q.all(promises)
+    return true
+  } catch (err) {
+    handleError(err, null, null, Log)
   }
 }
 
@@ -820,7 +760,7 @@ function _addOne(
  * @returns {object} A promise returning true if the add succeeds.
  * @private
  */
-function _addOneHandler(
+async function _addOneHandler(
   ownerModel,
   ownerId,
   childModel,
@@ -829,116 +769,65 @@ function _addOneHandler(
   request,
   Log
 ) {
-  let payload = Object.assign({}, request.payload)
-  let logError = false
   try {
-    return ownerModel
+    let ownerObject = await ownerModel
       .findOne({ _id: ownerId })
       .select(associationName)
-      .then(function(ownerObject) {
-        if (ownerObject) {
-          if (!payload) {
-            payload = {}
-          }
-          payload.childId = childId
-          payload = [payload]
+    let payload = Object.assign({}, request.payload)
+    if (ownerObject) {
+      if (!payload) {
+        payload = {}
+      }
+      payload.childId = childId
+      payload = [payload]
 
-          let promise = {}
-          if (
-            ownerModel.routeOptions &&
-            ownerModel.routeOptions.add &&
-            ownerModel.routeOptions.add[associationName] &&
-            ownerModel.routeOptions.add[associationName].pre
-          ) {
-            promise = Q.fcall(
-              ownerModel.routeOptions.add[associationName].pre,
-              payload,
-              request,
-              Log
-            )
-          } else {
-            promise = Q.when(payload)
-          }
-
-          return promise
-            .then(function(payload) {
-              return _setAssociation(
-                ownerModel,
-                ownerObject,
-                childModel,
-                childId,
-                associationName,
-                payload,
-                Log
-              )
-                .then(function() {
-                  return true
-                })
-                .catch(function(error) {
-                  const message =
-                    'There was a database error while setting the association.'
-                  if (!logError) {
-                    Log.error(message)
-                    logError = true
-                    delete error.type
-                  }
-                  errorHelper.handleError(
-                    error,
-                    message,
-                    errorHelper.types.GATEWAY_TIMEOUT,
-                    Log
-                  )
-                })
-            })
-            .catch(function(error) {
-              let message =
-                'There was a preprocessing error while setting the association.'
-              if (_.isString(error)) {
-                message = error
-              }
-              if (!logError) {
-                Log.error(message)
-                logError = true
-                delete error.type
-              }
-              errorHelper.handleError(
-                error,
-                message,
-                errorHelper.types.BAD_REQUEST,
-                Log
-              )
-            })
-        } else {
-          const message = 'No owner resource was found with that id.'
-          if (!logError) {
-            Log.error(message)
-            logError = true
-          }
-          errorHelper.handleError(
-            message,
-            message,
-            errorHelper.types.NOT_FOUND,
+      try {
+        if (
+          ownerModel.routeOptions &&
+          ownerModel.routeOptions.add &&
+          ownerModel.routeOptions.add[associationName] &&
+          ownerModel.routeOptions.add[associationName].pre
+        ) {
+          payload = await Q.fcall(
+            ownerModel.routeOptions.add[associationName].pre,
+            payload,
+            request,
             Log
           )
         }
-      })
-  } catch (error) {
-    const message = 'There was an error processing the request.'
-    if (!logError) {
-      Log.error(message)
-      logError = true
-      delete error.type
+      } catch (err) {
+        handleError(
+          err,
+          'There was a preprocessing error while setting the association.',
+          Boom.badRequest,
+          Log
+        )
+      }
+
+      try {
+        await _setAssociation(
+          ownerModel,
+          ownerObject,
+          childModel,
+          childId,
+          associationName,
+          payload,
+          Log
+        )
+      } catch (err) {
+        handleError(
+          err,
+          'There was a database error while setting the association.',
+          Boom.badImplementation,
+          Log
+        )
+      }
+      return true
+    } else {
+      throw Boom.notFound('No resource was found with that id.')
     }
-    try {
-      errorHelper.handleError(
-        error,
-        message,
-        errorHelper.types.BAD_REQUEST,
-        Log
-      )
-    } catch (error) {
-      return Q.reject(error)
-    }
+  } catch (err) {
+    handleError(err, null, null, Log)
   }
 }
 
@@ -984,7 +873,7 @@ function _removeOne(
  * @returns {object} A promise returning true if the remove succeeds.
  * @private
  */
-function _removeOneHandler(
+async function _removeOneHandler(
   ownerModel,
   ownerId,
   childModel,
@@ -993,108 +882,57 @@ function _removeOneHandler(
   request,
   Log
 ) {
-  let logError = false
   try {
-    return ownerModel
+    let ownerObject = await ownerModel
       .findOne({ _id: ownerId })
       .select(associationName)
-      .then(function(ownerObject) {
-        if (ownerObject) {
-          let promise = {}
-          if (
-            ownerModel.routeOptions &&
-            ownerModel.routeOptions.remove &&
-            ownerModel.routeOptions.remove[associationName] &&
-            ownerModel.routeOptions.remove[associationName].pre
-          ) {
-            promise = Q.fcall(
-              ownerModel.routeOptions.remove[associationName].pre,
-              {},
-              request,
-              Log
-            )
-          } else {
-            promise = Q.when()
-          }
-
-          return promise
-            .then(function() {
-              return _removeAssociation(
-                ownerModel,
-                ownerObject,
-                childModel,
-                childId,
-                associationName,
-                Log
-              )
-                .then(function() {
-                  return true
-                })
-                .catch(function(error) {
-                  const message =
-                    'There was a database error while removing the association.'
-                  if (!logError) {
-                    Log.error(message)
-                    logError = true
-                    delete error.type
-                  }
-                  errorHelper.handleError(
-                    error,
-                    message,
-                    errorHelper.types.GATEWAY_TIMEOUT,
-                    Log
-                  )
-                })
-            })
-            .catch(function(error) {
-              let message =
-                'There was a preprocessing error while removing the association.'
-              if (_.isString(error)) {
-                message = error
-              }
-              if (!logError) {
-                Log.error(message)
-                logError = true
-                delete error.type
-              }
-              errorHelper.handleError(
-                error,
-                message,
-                errorHelper.types.BAD_REQUEST,
-                Log
-              )
-            })
-        } else {
-          const message = 'No owner resource was found with that id.'
-          if (!logError) {
-            Log.error(message)
-            logError = true
-          }
-          errorHelper.handleError(
-            message,
-            message,
-            errorHelper.types.NOT_FOUND,
+    if (ownerObject) {
+      try {
+        if (
+          ownerModel.routeOptions &&
+          ownerModel.routeOptions.remove &&
+          ownerModel.routeOptions.remove[associationName] &&
+          ownerModel.routeOptions.remove[associationName].pre
+        ) {
+          await Q.fcall(
+            ownerModel.routeOptions.remove[associationName].pre,
+            {},
+            request,
             Log
           )
         }
-      })
-  } catch (error) {
-    const message = 'There was an error processing the request.'
-    if (!logError) {
-      Log.error(message)
-      logError = true
-      delete error.type
+      } catch (err) {
+        handleError(
+          err,
+          'There was a preprocessing error while removing the association.',
+          Boom.badRequest,
+          Log
+        )
+      }
+
+      try {
+        await _removeAssociation(
+          ownerModel,
+          ownerObject,
+          childModel,
+          childId,
+          associationName,
+          Log
+        )
+      } catch (err) {
+        handleError(
+          err,
+          'There was a database error while removing the association.',
+          Boom.badImplementation,
+          Log
+        )
+      }
+      return true
+    } else {
+      throw Boom.notFound('No resource was found with that id.')
     }
-    try {
-      errorHelper.handleError(
-        error,
-        message,
-        errorHelper.types.BAD_REQUEST,
-        Log
-      )
-    } catch (error) {
-      return Q.reject(error)
-    }
+  } catch (err) {
+    handleError(err, null, null, Log)
   }
 }
 
@@ -1138,7 +976,7 @@ function _addMany(
  * @returns {object} A promise returning true if the add succeeds.
  * @private
  */
-function _addManyHandler(
+async function _addManyHandler(
   ownerModel,
   ownerId,
   childModel,
@@ -1146,155 +984,83 @@ function _addManyHandler(
   request,
   Log
 ) {
-  // EXPL: make a copy of the payload so that request.payload remains unchanged
-  let payload = request.payload.map(function(item) {
-    return _.isObject(item) ? _.assignIn({}, item) : item
-  })
-  let logError = false
   try {
+    // EXPL: make a copy of the payload so that request.payload remains unchanged
+    let payload = request.payload.map(item => {
+      return _.isObject(item) ? _.assignIn({}, item) : item
+    })
     if (_.isEmpty(request.payload)) {
-      throw new Error('Payload is empty.')
+      throw Boom.badRequest('Payload is empty.')
     }
-    return ownerModel
+
+    let ownerObject = await ownerModel
       .findOne({ _id: ownerId })
       .select(associationName)
-      .then(function(ownerObject) {
-        if (ownerObject) {
-          let promise = {}
-          if (
-            ownerModel.routeOptions &&
-            ownerModel.routeOptions.add &&
-            ownerModel.routeOptions.add[associationName] &&
-            ownerModel.routeOptions.add[associationName].pre
-          ) {
-            promise = Q.fcall(
-              ownerModel.routeOptions.add[associationName].pre,
-              payload,
-              request,
-              Log
-            )
-          } else {
-            promise = Q.when(payload)
-          }
-
-          return promise
-            .then(function(payload) {
-              let childIds = []
-              // EXPL: the payload is an array of Ids
-              if (
-                typeof payload[0] === 'string' ||
-                payload[0] instanceof String ||
-                payload[0]._bsontype === 'ObjectID'
-              ) {
-                childIds = payload
-              } else {
-                // EXPL: the payload contains extra fields
-                childIds = payload.map(function(object) {
-                  return object.childId
-                })
-              }
-              let promisChain = Q.when()
-
-              childIds.forEach(function(childId) {
-                let promiseLink = function() {
-                  let deferred = Q.defer()
-                  _setAssociation(
-                    ownerModel,
-                    ownerObject,
-                    childModel,
-                    childId,
-                    associationName,
-                    payload,
-                    Log
-                  )
-                    .then(function(result) {
-                      deferred.resolve(result)
-                    })
-                    .catch(function(error) {
-                      deferred.reject(error)
-                    })
-                  return deferred.promise
-                }
-
-                promisChain = promisChain
-                  .then(promiseLink)
-                  .catch(function(error) {
-                    throw error
-                  })
-              })
-
-              return promisChain
-                .then(function() {
-                  return true
-                })
-                .catch(function(error) {
-                  const message =
-                    'There was an internal error while setting the associations.'
-                  if (!logError) {
-                    Log.error(message)
-                    logError = true
-                    delete error.type
-                  }
-                  errorHelper.handleError(
-                    error,
-                    message,
-                    errorHelper.types.GATEWAY_TIMEOUT,
-                    Log
-                  )
-                })
-            })
-            .catch(function(error) {
-              let message =
-                'There was a preprocessing error while setting the association.'
-              if (_.isString(error)) {
-                message = error
-              }
-              if (!logError) {
-                Log.error(message)
-                logError = true
-                delete error.type
-              }
-              errorHelper.handleError(
-                error,
-                message,
-                errorHelper.types.BAD_REQUEST,
-                Log
-              )
-            })
-        } else {
-          const message = 'No owner resource was found with that id.'
-          if (!logError) {
-            Log.error(message)
-            logError = true
-          }
-          errorHelper.handleError(
-            message,
-            message,
-            errorHelper.types.NOT_FOUND,
+    if (ownerObject) {
+      try {
+        if (
+          ownerModel.routeOptions &&
+          ownerModel.routeOptions.add &&
+          ownerModel.routeOptions.add[associationName] &&
+          ownerModel.routeOptions.add[associationName].pre
+        ) {
+          payload = await Q.fcall(
+            ownerModel.routeOptions.add[associationName].pre,
+            payload,
+            request,
             Log
           )
         }
-      })
-  } catch (error) {
-    let message = 'There was an error processing the request.'
-    if (_.isString(error)) {
-      message = error
+      } catch (err) {
+        handleError(
+          err,
+          'There was a preprocessing error while setting the association.',
+          Boom.badRequest,
+          Log
+        )
+      }
+
+      let childIds = []
+      // EXPL: the payload is an array of Ids
+      if (
+        typeof payload[0] === 'string' ||
+        payload[0] instanceof String ||
+        payload[0]._bsontype === 'ObjectID'
+      ) {
+        childIds = payload
+      } else {
+        // EXPL: the payload contains extra fields
+        childIds = payload.map(object => {
+          return object.childId
+        })
+      }
+
+      for (let childId of childIds) {
+        try {
+          await _setAssociation(
+            ownerModel,
+            ownerObject,
+            childModel,
+            childId,
+            associationName,
+            payload,
+            Log
+          )
+        } catch (err) {
+          handleError(
+            err,
+            'There was an internal error while setting the associations.',
+            Boom.badImplementation,
+            Log
+          )
+        }
+      }
+      return true
+    } else {
+      throw Boom.notFound('No owner resource was found with that id.')
     }
-    if (!logError) {
-      Log.error(message)
-      logError = true
-      delete error.type
-    }
-    try {
-      errorHelper.handleError(
-        error,
-        message,
-        errorHelper.types.BAD_REQUEST,
-        Log
-      )
-    } catch (error) {
-      return Q.reject(error)
-    }
+  } catch (err) {
+    handleError(err, null, null, Log)
   }
 }
 
@@ -1338,7 +1104,7 @@ function _removeMany(
  * @returns {object} A promise returning true if the remove succeeds.
  * @private
  */
-function _removeManyHandler(
+async function _removeManyHandler(
   ownerModel,
   ownerId,
   childModel,
@@ -1346,142 +1112,66 @@ function _removeManyHandler(
   request,
   Log
 ) {
-  // EXPL: make a copy of the payload so that request.payload remains unchanged
-  let payload = request.payload.map(function(item) {
-    return _.isObject(item) ? _.assignIn({}, item) : item
-  })
-  let logError = false
   try {
+    // EXPL: make a copy of the payload so that request.payload remains unchanged
+    let payload = request.payload.map(item => {
+      return _.isObject(item) ? _.assignIn({}, item) : item
+    })
     if (_.isEmpty(request.payload)) {
-      throw new Error('Payload is empty.')
+      throw Boom.badRequest('Payload is empty.')
     }
-    return ownerModel
+    let ownerObject = await ownerModel
       .findOne({ _id: ownerId })
       .select(associationName)
-      .then(function(ownerObject) {
-        if (ownerObject) {
-          let promise = {}
-          if (
-            ownerModel.routeOptions &&
-            ownerModel.routeOptions.remove &&
-            ownerModel.routeOptions.remove[associationName] &&
-            ownerModel.routeOptions.remove[associationName].pre
-          ) {
-            promise = Q.fcall(
-              ownerModel.routeOptions.remove[associationName].pre,
-              payload,
-              request,
-              Log
-            )
-          } else {
-            promise = Q.when(payload)
-          }
-
-          return promise
-            .then(function(payload) {
-              let childIds = payload
-
-              let promisChain = Q.when()
-
-              childIds.forEach(function(childId) {
-                let promiseLink = function() {
-                  let deferred = Q.defer()
-                  _removeAssociation(
-                    ownerModel,
-                    ownerObject,
-                    childModel,
-                    childId,
-                    associationName,
-                    Log
-                  )
-                    .then(function(result) {
-                      deferred.resolve(result)
-                    })
-                    .catch(function(error) {
-                      deferred.reject(error)
-                    })
-                  return deferred.promise
-                }
-
-                promisChain = promisChain
-                  .then(promiseLink)
-                  .catch(function(error) {
-                    throw error
-                  })
-              })
-
-              return promisChain
-                .then(function() {
-                  return true
-                })
-                .catch(function(error) {
-                  const message =
-                    'There was an internal error while removing the associations.'
-                  if (!logError) {
-                    Log.error(message)
-                    logError = true
-                    delete error.type
-                  }
-                  errorHelper.handleError(
-                    error,
-                    message,
-                    errorHelper.types.GATEWAY_TIMEOUT,
-                    Log
-                  )
-                })
-            })
-            .catch(function(error) {
-              let message =
-                'There was a preprocessing error while removing the association.'
-              if (_.isString(error)) {
-                message = error
-              }
-              if (!logError) {
-                Log.error(message)
-                logError = true
-                delete error.type
-              }
-              errorHelper.handleError(
-                error,
-                message,
-                errorHelper.types.BAD_REQUEST,
-                Log
-              )
-            })
-        } else {
-          const message = 'No owner resource was found with that id.'
-          if (!logError) {
-            Log.error(message)
-            logError = true
-          }
-          errorHelper.handleError(
-            message,
-            message,
-            errorHelper.types.NOT_FOUND,
+    if (ownerObject) {
+      try {
+        if (
+          ownerModel.routeOptions &&
+          ownerModel.routeOptions.remove &&
+          ownerModel.routeOptions.remove[associationName] &&
+          ownerModel.routeOptions.remove[associationName].pre
+        ) {
+          payload = await Q.fcall(
+            ownerModel.routeOptions.remove[associationName].pre,
+            payload,
+            request,
             Log
           )
         }
-      })
-  } catch (error) {
-    let message = 'There was an error processing the request.'
-    if (_.isString(error)) {
-      message = error
+      } catch (err) {
+        handleError(
+          err,
+          'There was a preprocessing error while removing the association.',
+          Boom.badRequest,
+          Log
+        )
+      }
+
+      for (let childId of payload) {
+        try {
+          await _removeAssociation(
+            ownerModel,
+            ownerObject,
+            childModel,
+            childId,
+            associationName,
+            Log
+          )
+        } catch (err) {
+          handleError(
+            err,
+            'There was an internal error while removing the associations.',
+            Boom.badImplementation,
+            Log
+          )
+        }
+      }
+      return true
+    } else {
+      throw Boom.notFound('No owner resource was found with that id.')
     }
-    if (!logError) {
-      Log.error(message)
-      logError = true
-      delete error.type
-    }
-    try {
-      errorHelper.handleError(
-        error,
-        message,
-        errorHelper.types.BAD_REQUEST,
-        Log
-      )
-    } catch (error) {
-      return Q.reject(error)
-    }
+  } catch (err) {
+    handleError(err, null, null, Log)
   }
 }
 
@@ -1518,7 +1208,7 @@ function _getAll(ownerModel, ownerId, childModel, associationName, query, Log) {
  * @returns {object} A promise for the resulting model documents or the count of the query results.
  * @private
  */
-function _getAllHandler(
+async function _getAllHandler(
   ownerModel,
   ownerId,
   childModel,
@@ -1526,7 +1216,6 @@ function _getAllHandler(
   request,
   Log
 ) {
-  let logError = false
   try {
     let query = request.query
 
@@ -1551,159 +1240,116 @@ function _getAllHandler(
       mongooseQuery,
       Log
     )
-    return mongooseQuery
-      .exec()
-      .then(function(result) {
-        if (!result) {
-          throw new Error('owner object not found')
-        }
-        result = result[associationName]
-        let childIds = []
-        let manyMany = false
-        if (association.type === 'MANY_MANY') {
-          childIds = result.map(function(object) {
-            if (!object[association.model]) {
-              throw new Error(
-                'association object "' + association.model + '" does not exist'
-              )
-            }
-            return object[association.model]._id
-          })
-          manyMany = true
-        } else {
-          childIds = result.map(function(object) {
-            return object._id
-          })
-        }
-
-        // EXPL: since the call to _listHandler is already filtering by _id, we must handle the special case
-        // where the user is also filtering by _id
-        if (query._id) {
-          if (!_.isArray(query._id)) {
-            query._id = [query._id]
-          }
-          childIds = childIds.filter(function(id) {
-            return query._id.find(function(_id) {
-              return _id.toString() === id.toString()
-            })
-          })
-          delete query._id
-        }
-        if (typeof query.$where === 'string') {
-          query.$where = JSON.parse(query.$where)
-        }
-
-        // EXPL: also have to handle the special case for '$where._id' queries
-        if (query.$where && query.$where._id) {
-          query.$where._id = Object.assign({ $in: childIds }, query.$where._id)
-        } else {
-          query.$where = Object.assign({ _id: { $in: childIds } }, query.$where)
-        }
-
-        request.query = query
-
-        let promise = _listHandler(childModel, request, Log)
-
-        if (manyMany && association.linkingModel) {
-          // EXPL: we have to manually insert the extra fields into the result
-          let extraFieldData = result
-          return promise.then(function(result) {
-            if (_.isArray(result.docs)) {
-              result.docs.forEach(function(object) {
-                let data = extraFieldData.find(function(data) {
-                  return (
-                    data[association.model]._id.toString() ===
-                    object._id.toString()
-                  )
-                })
-                if (!data) {
-                  throw new Error('child object not found')
-                }
-                let fields = data.toJSON()
-                delete fields._id
-                delete fields[association.model]
-                object[association.linkingModel] = fields
-              })
-            }
-
-            let promise = {}
-            if (
-              ownerModel.routeOptions &&
-              ownerModel.routeOptions.getAll &&
-              ownerModel.routeOptions.getAll[associationName] &&
-              ownerModel.routeOptions.getAll[associationName].post
-            ) {
-              promise = Q.fcall(
-                ownerModel.routeOptions.getAll[associationName].post,
-                request,
-                result.docs,
-                Log
-              )
-            } else {
-              promise = Q.when(result.docs)
-            }
-
-            return promise
-              .then(function(docs) {
-                result.docs = docs
-
-                return result
-              })
-              .catch(function(error) {
-                let message = 'There was a postprocessing error.'
-                if (_.isString(error)) {
-                  message = error
-                }
-                if (!logError) {
-                  Log.error(message)
-                  logError = true
-                  delete error.type
-                }
-                errorHelper.handleError(
-                  error,
-                  message,
-                  errorHelper.types.BAD_REQUEST,
-                  Log
-                )
-              })
-          })
-        } else {
-          return promise.then(function(result) {
-            return result
-          })
-        }
-      })
-      .catch(function(error) {
-        const message = 'There was an error processing the request.'
-        if (!logError) {
-          Log.error(message)
-          logError = true
-          delete error.type
-        }
-        errorHelper.handleError(
-          error,
-          message,
-          errorHelper.types.BAD_REQUEST,
-          Log
-        )
-      })
-  } catch (error) {
-    const message = 'There was an error processing the request.'
-    if (!logError) {
-      Log.error(message)
-      logError = true
-      delete error.type
-    }
+    let result
     try {
-      errorHelper.handleError(
-        error,
-        message,
-        errorHelper.types.BAD_REQUEST,
+      result = await mongooseQuery.exec()
+    } catch (err) {
+      handleError(
+        err,
+        'There was an error processing the request.',
+        Boom.badRequest,
         Log
       )
-    } catch (error) {
-      return Q.reject(error)
     }
+    if (!result) {
+      throw Boom.notFound('owner object not found')
+    }
+    result = result[associationName]
+    let childIds = []
+    let manyMany = false
+    if (association.type === 'MANY_MANY') {
+      childIds = result.map(object => {
+        if (!object[association.model]) {
+          throw Boom.badRequest(
+            'association object "' + association.model + '" does not exist'
+          )
+        }
+        return object[association.model]._id
+      })
+      manyMany = true
+    } else {
+      childIds = result.map(object => {
+        return object._id
+      })
+    }
+
+    // EXPL: since the call to _listHandler is already filtering by _id, we must handle the special case
+    // where the user is also filtering by _id
+    if (query._id) {
+      if (!_.isArray(query._id)) {
+        query._id = [query._id]
+      }
+      childIds = childIds.filter(id => {
+        return query._id.find(_id => {
+          return _id.toString() === id.toString()
+        })
+      })
+      delete query._id
+    }
+    if (typeof query.$where === 'string') {
+      query.$where = JSON.parse(query.$where)
+    }
+
+    // EXPL: also have to handle the special case for '$where._id' queries
+    if (query.$where && query.$where._id) {
+      query.$where._id = Object.assign({ $in: childIds }, query.$where._id)
+    } else {
+      query.$where = Object.assign({ _id: { $in: childIds } }, query.$where)
+    }
+
+    request.query = query
+
+    let listResult = await _listHandler(childModel, request, Log)
+
+    if (manyMany && association.linkingModel) {
+      // EXPL: we have to manually insert the extra fields into the result
+      let extraFieldData = result
+      if (_.isArray(listResult.docs)) {
+        for (let object of listResult.docs) {
+          let data = extraFieldData.find(data => {
+            return (
+              data[association.model]._id.toString() === object._id.toString()
+            )
+          })
+          if (!data) {
+            throw Boom.notFound('child object not found')
+          }
+          let fields = data.toJSON()
+          delete fields._id
+          delete fields[association.model]
+          object[association.linkingModel] = fields
+        }
+      }
+
+      try {
+        if (
+          ownerModel.routeOptions &&
+          ownerModel.routeOptions.getAll &&
+          ownerModel.routeOptions.getAll[associationName] &&
+          ownerModel.routeOptions.getAll[associationName].post
+        ) {
+          listResult.docs = await Q.fcall(
+            ownerModel.routeOptions.getAll[associationName].post,
+            request,
+            result.docs,
+            Log
+          )
+        }
+      } catch (err) {
+        handleError(
+          err,
+          'There was a postprocessing error.',
+          Boom.badRequest,
+          Log
+        )
+      }
+
+      return listResult
+    } else {
+      return listResult
+    }
+  } catch (err) {
+    handleError(err, null, null, Log)
   }
 }
 
@@ -1719,7 +1365,7 @@ function _getAllHandler(
  * @returns {*|promise}
  * @private
  */
-function _setAssociation(
+async function _setAssociation(
   ownerModel,
   ownerObject,
   childModel,
@@ -1728,217 +1374,187 @@ function _setAssociation(
   payload,
   Log
 ) {
-  let deferred = Q.defer()
+  let childObject
 
-  childModel
-    .findOne({ _id: childId })
-    .then(function(childObject) {
-      if (childObject) {
-        let promise = {}
-        let association = ownerModel.routeOptions.associations[associationName]
-        let extraFields = false
-        if (association.type === 'ONE_MANY') {
-          // EXPL: one-many associations are virtual, so only update the child reference
-          childObject[association.foreignField] = ownerObject._id
-          promise = childObject.save()
-        } else if (association.type === 'MANY_MANY') {
-          // EXPL: the payload is an array of Ids. No extra fields
-          if (
-            typeof payload[0] === 'string' ||
-            payload[0] instanceof String ||
-            payload[0]._bsontype === 'ObjectID'
-          ) {
-            payload = {}
+  childObject = await childModel.findOne({ _id: childId })
+  if (childObject) {
+    let association = ownerModel.routeOptions.associations[associationName]
+    let extraFields = false
+    if (association.type === 'ONE_MANY') {
+      // EXPL: one-many associations are virtual, so only update the child reference
+      childObject[association.foreignField] = ownerObject._id
+      await childObject.save()
+    } else if (association.type === 'MANY_MANY') {
+      // EXPL: the payload is an array of Ids. No extra fields
+      if (
+        typeof payload[0] === 'string' ||
+        payload[0] instanceof String ||
+        payload[0]._bsontype === 'ObjectID'
+      ) {
+        payload = {}
 
-            extraFields = false
-          } else {
-            payload = payload.filter(function(object) {
-              // EXPL: the payload contains extra fields
-              return object.childId.toString() === childObject._id.toString()
-            })
+        extraFields = false
+      } else {
+        payload = payload.filter(object => {
+          // EXPL: the payload contains extra fields
+          return object.childId.toString() === childObject._id.toString()
+        })
 
-            payload = payload[0]
+        payload = payload[0]
 
-            payload = Object.assign({}, payload) // EXPL: break the reference to the original payload
+        payload = Object.assign({}, payload) // EXPL: break the reference to the original payload
 
-            delete payload.childId
+        delete payload.childId
 
-            extraFields = true
-          }
+        extraFields = true
+      }
 
-          // EXPL: if linking models aren't embeded, just upsert the linking model collection
-          let embedAssociation =
-            association.embedAssociation === undefined
-              ? config.embedAssociations
-              : association.embedAssociation
-          if (!embedAssociation) {
-            const linkingModel = association.include.through
-            let query = {}
-            query[ownerModel.modelName] = ownerObject._id
-            query[childModel.modelName] = childObject._id
+      // EXPL: if linking models aren't embeded, just upsert the linking model collection
+      let embedAssociation =
+        association.embedAssociation === undefined
+          ? config.embedAssociations
+          : association.embedAssociation
+      if (!embedAssociation) {
+        const linkingModel = association.include.through
+        let query = {}
+        query[ownerModel.modelName] = ownerObject._id
+        query[childModel.modelName] = childObject._id
 
-            payload[ownerModel.modelName] = ownerObject._id
-            payload[childModel.modelName] = childObject._id
+        payload[ownerModel.modelName] = ownerObject._id
+        payload[childModel.modelName] = childObject._id
 
-            promise = linkingModel.findOneAndUpdate(query, payload, {
-              new: true,
-              upsert: true,
-              runValidators: config.enableMongooseRunValidators
-            })
-          } else {
-            payload[childModel.modelName] = childObject._id
+        await linkingModel.findOneAndUpdate(query, payload, {
+          new: true,
+          upsert: true,
+          runValidators: config.enableMongooseRunValidators
+        })
+      } else {
+        payload[childModel.modelName] = childObject._id
 
-            let duplicate = ownerObject[associationName].filter(function(
-              associationObject
-            ) {
-              return (
-                associationObject[childModel.modelName].toString() ===
-                childId.toString()
-              )
-            })
-            duplicate = duplicate[0]
-
-            let duplicateIndex = ownerObject[associationName].indexOf(duplicate)
-
-            if (duplicateIndex < 0) {
-              // EXPL: if the association doesn't already exist, create it, otherwise update the extra fields
-              ownerObject[associationName].push(payload)
-            } else if (extraFields) {
-              // EXPL: only update if there are extra fields TODO: reference MANY_MANY bug where updating association that's just an id (i.e. no extra fields) causes an error and reference this as the fix
-              payload._id = ownerObject[associationName][duplicateIndex]._id // EXPL: retain the association instance id for consistency
-              ownerObject[associationName][duplicateIndex] = payload
-            }
-
-            payload = Object.assign({}, payload) // EXPL: break the reference to the original payload
-            delete payload._id
-
-            delete payload[childModel.modelName]
-            payload[ownerModel.modelName] = ownerObject._id
-            let childAssociation = {}
-            let childAssociations = childModel.routeOptions.associations
-            for (let childAssociationKey in childAssociations) {
-              let association = childAssociations[childAssociationKey]
-              if (
-                association.model === ownerModel.modelName &&
-                association.type === 'MANY_MANY'
-              ) {
-                // TODO: Add issue referencing a conflict when a model has two associations of the same model and one is a MANY_MANY, and reference this change as the fix
-                childAssociation = association
-              }
-            }
-
-            if (!childAssociation.include) {
-              throw new Error(
-                'Missing association between ' +
-                  ownerModel.modelName +
-                  ' and ' +
-                  childModel.modelName +
-                  '.'
-              )
-            }
-
-            let childAssociationName = childAssociation.include.as
-
-            if (!childObject[childAssociationName]) {
-              throw new Error(
-                childAssociationName + ' association does not exist.'
-              )
-            }
-
-            duplicate = childObject[childAssociationName].filter(function(
-              associationObject
-            ) {
-              return (
-                associationObject[ownerModel.modelName].toString() ===
-                ownerObject._id.toString()
-              )
-            })
-            duplicate = duplicate[0]
-
-            duplicateIndex = childObject[childAssociationName].indexOf(
-              duplicate
+        let duplicate = ownerObject[associationName].filter(
+          associationObject => {
+            return (
+              associationObject[childModel.modelName].toString() ===
+              childId.toString()
             )
-
-            if (duplicateIndex < 0) {
-              // EXPL: if the association doesn't already exist, create it, otherwise update the extra fields
-              childObject[childAssociationName].push(payload)
-            } else {
-              payload._id =
-                childObject[childAssociationName][duplicateIndex]._id // EXPL: retain the association instance id for consistency
-              childObject[childAssociationName][duplicateIndex] = payload
-            }
-
-            promise = Q.all([
-              ownerModel.findByIdAndUpdate(ownerObject._id, ownerObject, {
-                runValidators: config.enableMongooseRunValidators
-              }),
-              childModel.findByIdAndUpdate(childObject._id, childObject, {
-                runValidators: config.enableMongooseRunValidators
-              })
-            ])
           }
-        } else if (association.type === '_MANY') {
-          let duplicate = ownerObject[associationName].filter(function(
-            _childId
-          ) {
-            return _childId.toString() === childId.toString()
-          })
-          duplicate = duplicate[0]
+        )
+        duplicate = duplicate[0]
 
-          let duplicateIndex = ownerObject[associationName].indexOf(duplicate)
+        let duplicateIndex = ownerObject[associationName].indexOf(duplicate)
 
-          if (duplicateIndex < 0) {
-            // EXPL: if the association doesn't already exist, create it
-            ownerObject[associationName].push(childId)
-          }
-
-          promise = Q.all([
-            ownerModel.findByIdAndUpdate(ownerObject._id, ownerObject, {
-              runValidators: config.enableMongooseRunValidators
-            })
-          ])
-        } else {
-          deferred.reject(new Error('Association type incorrectly defined.'))
-          return deferred.promise
+        if (duplicateIndex < 0) {
+          // EXPL: if the association doesn't already exist, create it, otherwise update the extra fields
+          ownerObject[associationName].push(payload)
+        } else if (extraFields) {
+          // EXPL: only update if there are extra fields TODO: reference MANY_MANY bug where updating association that's just an id (i.e. no extra fields) causes an error and reference this as the fix
+          payload._id = ownerObject[associationName][duplicateIndex]._id // EXPL: retain the association instance id for consistency
+          ownerObject[associationName][duplicateIndex] = payload
         }
 
-        promise
-          .then(function() {
-            // TODO: add eventLogs
-            // TODO: allow eventLogs to log/support association extra fields
-            deferred.resolve()
-          })
-          .catch(function(error) {
-            Log.error(error)
-            deferred.reject(error)
-          })
-      } else {
-        deferred.reject(new Error('Child object not found.'))
-      }
-    })
-    .catch(function(error) {
-      Log.error(error)
-      deferred.reject(error)
-    })
+        payload = Object.assign({}, payload) // EXPL: break the reference to the original payload
+        delete payload._id
 
-  return deferred.promise
+        delete payload[childModel.modelName]
+        payload[ownerModel.modelName] = ownerObject._id
+        let childAssociation = {}
+        let childAssociations = childModel.routeOptions.associations
+        for (let childAssociationKey in childAssociations) {
+          let association = childAssociations[childAssociationKey]
+          if (
+            association.model === ownerModel.modelName &&
+            association.type === 'MANY_MANY'
+          ) {
+            // TODO: Add issue referencing a conflict when a model has two associations of the same model and one is a MANY_MANY, and reference this change as the fix
+            childAssociation = association
+          }
+        }
+
+        if (!childAssociation.include) {
+          throw Boom.badRequest(
+            'Missing association between ' +
+              ownerModel.modelName +
+              ' and ' +
+              childModel.modelName +
+              '.'
+          )
+        }
+
+        let childAssociationName = childAssociation.include.as
+
+        if (!childObject[childAssociationName]) {
+          throw Boom.badRequest(
+            childAssociationName + ' association does not exist.'
+          )
+        }
+
+        duplicate = childObject[childAssociationName].filter(
+          associationObject => {
+            return (
+              associationObject[ownerModel.modelName].toString() ===
+              ownerObject._id.toString()
+            )
+          }
+        )
+        duplicate = duplicate[0]
+
+        duplicateIndex = childObject[childAssociationName].indexOf(duplicate)
+
+        if (duplicateIndex < 0) {
+          // EXPL: if the association doesn't already exist, create it, otherwise update the extra fields
+          childObject[childAssociationName].push(payload)
+        } else {
+          payload._id = childObject[childAssociationName][duplicateIndex]._id // EXPL: retain the association instance id for consistency
+          childObject[childAssociationName][duplicateIndex] = payload
+        }
+
+        await Q.all([
+          ownerModel.findByIdAndUpdate(ownerObject._id, ownerObject, {
+            runValidators: config.enableMongooseRunValidators
+          }),
+          childModel.findByIdAndUpdate(childObject._id, childObject, {
+            runValidators: config.enableMongooseRunValidators
+          })
+        ])
+      }
+    } else if (association.type === '_MANY') {
+      let duplicate = ownerObject[associationName].filter(_childId => {
+        return _childId.toString() === childId.toString()
+      })
+      duplicate = duplicate[0]
+
+      let duplicateIndex = ownerObject[associationName].indexOf(duplicate)
+
+      if (duplicateIndex < 0) {
+        // EXPL: if the association doesn't already exist, create it
+        ownerObject[associationName].push(childId)
+      }
+
+      await Q.all([
+        ownerModel.findByIdAndUpdate(ownerObject._id, ownerObject, {
+          runValidators: config.enableMongooseRunValidators
+        })
+      ])
+    } else {
+      throw Boom.badRequest('Association type incorrectly defined.')
+    }
+  } else {
+    throw Boom.notFound('Child object not found.')
+  }
 }
 
 /**
  * Remove an association instance between two resources
- * @param request
- * @param server
  * @param ownerModel
  * @param ownerObject
  * @param childModel
  * @param childId
  * @param associationName
- * @param options
  * @param Log
  * @returns {*|promise}
  * @private
  */
-function _removeAssociation(
+async function _removeAssociation(
   ownerModel,
   ownerObject,
   childModel,
@@ -1946,140 +1562,111 @@ function _removeAssociation(
   associationName,
   Log
 ) {
-  let deferred = Q.defer()
+  let childObject = await childModel.findOne({ _id: childId })
+  if (childObject) {
+    let association = ownerModel.routeOptions.associations[associationName]
+    let associationType = association.type
+    if (associationType === 'ONE_MANY') {
+      // EXPL: one-many associations are virtual, so only update the child reference
+      // childObject[association.foreignField] = null; //TODO: set reference to null instead of deleting it?
+      // EXPL: only delete the reference if the ids match
+      if (
+        childObject[association.foreignField] &&
+        childObject[association.foreignField].toString() ===
+          ownerObject._id.toString()
+      ) {
+        childObject[association.foreignField] = undefined
+      }
+      await childObject.save()
+    } else if (associationType === 'MANY_MANY') {
+      // EXPL: remove references from both models
 
-  childModel
-    .findOne({ _id: childId })
-    .then(function(childObject) {
-      if (childObject) {
-        let promise = {}
-        let association = ownerModel.routeOptions.associations[associationName]
-        let associationType = association.type
-        if (associationType === 'ONE_MANY') {
-          // EXPL: one-many associations are virtual, so only update the child reference
-          // childObject[association.foreignField] = null; //TODO: set reference to null instead of deleting it?
-          // EXPL: only delete the reference if the ids match
-          if (
-            childObject[association.foreignField] &&
-            childObject[association.foreignField].toString() ===
-              ownerObject._id.toString()
-          ) {
-            childObject[association.foreignField] = undefined
-          }
-          promise = childObject.save()
-        } else if (associationType === 'MANY_MANY') {
-          // EXPL: remove references from both models
+      // EXPL: if linking models aren't embeded, just upsert the linking model collection
+      let embedAssociation =
+        association.embedAssociation === undefined
+          ? config.embedAssociations
+          : association.embedAssociation
+      if (!embedAssociation) {
+        const linkingModel = association.include.through
+        let query = {}
+        query[ownerModel.modelName] = ownerObject._id
+        query[childModel.modelName] = childObject._id
 
-          // EXPL: if linking models aren't embeded, just upsert the linking model collection
-          let embedAssociation =
-            association.embedAssociation === undefined
-              ? config.embedAssociations
-              : association.embedAssociation
-          if (!embedAssociation) {
-            const linkingModel = association.include.through
-            let query = {}
-            query[ownerModel.modelName] = ownerObject._id
-            query[childModel.modelName] = childObject._id
+        await linkingModel.findOneAndRemove(query)
+      } else {
+        // EXPL: remove the associated child from the owner
+        let deleteChild = ownerObject[associationName].filter(child => {
+          return (
+            child[childModel.modelName].toString() ===
+            childObject._id.toString()
+          )
+        })
+        deleteChild = deleteChild[0]
 
-            promise = linkingModel.findOneAndRemove(query)
-          } else {
-            // EXPL: remove the associated child from the owner
-            let deleteChild = ownerObject[associationName].filter(function(
-              child
-            ) {
-              return (
-                child[childModel.modelName].toString() ===
-                childObject._id.toString()
-              )
-            })
-            deleteChild = deleteChild[0]
-
-            let index = ownerObject[associationName].indexOf(deleteChild)
-            if (index > -1) {
-              ownerObject[associationName].splice(index, 1)
-            }
-
-            // EXPL: get the child association name
-            let childAssociation = {}
-            let childAssociations = childModel.routeOptions.associations
-            for (let childAssociationKey in childAssociations) {
-              let association = childAssociations[childAssociationKey]
-              if (association.model === ownerModel.modelName) {
-                childAssociation = association
-              }
-            }
-            let childAssociationName = childAssociation.include.as
-
-            // EXPL: remove the associated owner from the child
-            let deleteOwner = childObject[childAssociationName].filter(function(
-              owner
-            ) {
-              return (
-                owner[ownerModel.modelName].toString() ===
-                ownerObject._id.toString()
-              )
-            })
-            deleteOwner = deleteOwner[0]
-
-            index = childObject[childAssociationName].indexOf(deleteOwner)
-            if (index > -1) {
-              childObject[childAssociationName].splice(index, 1)
-            }
-
-            promise = Q.all([
-              ownerModel.findByIdAndUpdate(ownerObject._id, ownerObject, {
-                runValidators: config.enableMongooseRunValidators
-              }),
-              childModel.findByIdAndUpdate(childObject._id, childObject, {
-                runValidators: config.enableMongooseRunValidators
-              })
-            ])
-          }
-        } else if (associationType === '_MANY') {
-          // EXPL: remove reference from owner model
-
-          // EXPL: remove the associated child from the owner
-          let deleteChild = ownerObject[associationName].filter(function(
-            childId
-          ) {
-            return childId.toString() === childObject._id.toString()
-          })
-          deleteChild = deleteChild[0]
-
-          let index = ownerObject[associationName].indexOf(deleteChild)
-          if (index > -1) {
-            ownerObject[associationName].splice(index, 1)
-          }
-
-          promise = Q.all([
-            ownerModel.findByIdAndUpdate(ownerObject._id, ownerObject, {
-              runValidators: config.enableMongooseRunValidators
-            })
-          ])
-        } else {
-          deferred.reject(new Error('Association type incorrectly defined.'))
-          return deferred.promise
+        let index = ownerObject[associationName].indexOf(deleteChild)
+        if (index > -1) {
+          ownerObject[associationName].splice(index, 1)
         }
 
-        promise
-          .then(function() {
-            // TODO: add eventLogs
-            deferred.resolve()
-          })
-          .catch(function(error) {
-            Log.error(error)
-            deferred.reject(error)
-          })
-      } else {
-        deferred.reject(new Error('Child object not found.'))
-      }
-    })
-    .catch(function(error) {
-      Log.error(error)
-      deferred.reject(error)
-    })
+        // EXPL: get the child association name
+        let childAssociation = {}
+        let childAssociations = childModel.routeOptions.associations
+        for (let childAssociationKey in childAssociations) {
+          let association = childAssociations[childAssociationKey]
+          if (association.model === ownerModel.modelName) {
+            childAssociation = association
+          }
+        }
+        let childAssociationName = childAssociation.include.as
 
-  return deferred.promise
+        // EXPL: remove the associated owner from the child
+        let deleteOwner = childObject[childAssociationName].filter(owner => {
+          return (
+            owner[ownerModel.modelName].toString() ===
+            ownerObject._id.toString()
+          )
+        })
+        deleteOwner = deleteOwner[0]
+
+        index = childObject[childAssociationName].indexOf(deleteOwner)
+        if (index > -1) {
+          childObject[childAssociationName].splice(index, 1)
+        }
+
+        await Q.all([
+          ownerModel.findByIdAndUpdate(ownerObject._id, ownerObject, {
+            runValidators: config.enableMongooseRunValidators
+          }),
+          childModel.findByIdAndUpdate(childObject._id, childObject, {
+            runValidators: config.enableMongooseRunValidators
+          })
+        ])
+      }
+    } else if (associationType === '_MANY') {
+      // EXPL: remove reference from owner model
+
+      // EXPL: remove the associated child from the owner
+      let deleteChild = ownerObject[associationName].filter(childId => {
+        return childId.toString() === childObject._id.toString()
+      })
+      deleteChild = deleteChild[0]
+
+      let index = ownerObject[associationName].indexOf(deleteChild)
+      if (index > -1) {
+        ownerObject[associationName].splice(index, 1)
+      }
+
+      await Q.all([
+        ownerModel.findByIdAndUpdate(ownerObject._id, ownerObject, {
+          runValidators: config.enableMongooseRunValidators
+        })
+      ])
+    } else {
+      throw Boom.badRequest('Association type incorrectly defined.')
+    }
+  } else {
+    throw Boom.notFound('Child object not found.')
+  }
 }
 
 /**
@@ -2123,5 +1710,16 @@ function filterDeletedEmbeds(result, parent, parentkey, depth, Log) {
     }
     // Log.log("JUMPING OUT");
     return true
+  }
+}
+
+function handleError(err, message, boomFunction, Log) {
+  message = message || 'There was an error processing the request.'
+  boomFunction = boomFunction || Boom.badImplementation
+  if (!err.isBoom) {
+    Log.error(err)
+    throw boomFunction(message)
+  } else {
+    throw err
   }
 }

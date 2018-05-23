@@ -14,7 +14,6 @@ const restHelperFactory = require('./utilities/rest-helper-factory')
 const handlerHelper = require('./utilities/handler-helper')
 const joiHelper = require('./utilities/joi-mongoose-helper')
 const testHelper = require('./utilities/test-helper')
-const errorHelper = require('./utilities/error-helper')
 const modelGenerator = require('./utilities/model-generator')
 const apiGenerator = require('./utilities/api-generator')
 const defaultConfig = require('./config')
@@ -47,8 +46,7 @@ module.exports = {
   getLogger: getLogger,
   logUtil: logUtil,
   joiHelper: joiHelper,
-  testHelper: testHelper,
-  errorHelper: errorHelper
+  testHelper: testHelper
 }
 
 function register(server, options) {
