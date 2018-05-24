@@ -2,14 +2,13 @@
 
 let gulp = require('gulp')
 let exit = require('gulp-exit')
-let Q = require('q')
 let mongoose = require('mongoose')
 let config = require('../config')
 let restHapi = require('../rest-hapi')
 let path = require('path')
 
 gulp.task('seed', ['models'], function() {
-  mongoose.Promise = Q.Promise
+  mongoose.Promise = Promise
 
   mongoose.connect(restHapi.config.mongo.URI)
 
@@ -76,8 +75,7 @@ gulp.task('seed', ['models'], function() {
 function dropCollections(models) {
   restHapi.config.loglevel = 'LOG'
   let Log = restHapi.getLogger('unseed')
-  let deferred = Q.defer()
-  models.user
+  return models.user
     .remove({})
     .then(function() {
       Log.log('roles removed')
@@ -85,12 +83,10 @@ function dropCollections(models) {
     })
     .then(function() {
       Log.log('users removed')
-      deferred.resolve()
     })
     .catch(function(error) {
       Log.error(error)
     })
-  return deferred.promise
 }
 
 gulp.task('models', function() {

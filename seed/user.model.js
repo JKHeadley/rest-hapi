@@ -1,4 +1,3 @@
-let Q = require('q')
 let Joi = require('joi')
 let bcrypt = require('bcryptjs')
 let RestHapi = require('rest-hapi')
@@ -137,14 +136,13 @@ module.exports = function(mongoose) {
       ],
       create: {
         pre: function(payload, Log) {
-          let deferred = Q.defer()
           let hashedPassword = mongoose
             .model('user')
             .generatePasswordHash(payload.password)
 
           payload.password = hashedPassword
-          deferred.resolve(payload)
-          return deferred.promise
+
+          return payload
         }
       }
     },

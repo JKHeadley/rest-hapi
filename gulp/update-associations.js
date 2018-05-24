@@ -2,7 +2,6 @@
 
 let gulp = require('gulp')
 let exit = require('gulp-exit')
-let Q = require('q')
 let mongoose = require('mongoose')
 let _ = require('lodash')
 let restHapi = require('../rest-hapi')
@@ -10,7 +9,7 @@ let restHapi = require('../rest-hapi')
 gulp.task('update-associations', [], function() {
   const uri = process.argv[6]
 
-  mongoose.Promise = Q.Promise
+  mongoose.Promise = Promise
 
   mongoose.connect(uri)
 
@@ -123,29 +122,10 @@ function getLinkingModel(model, association, Log) {
   return linkingModel
 }
 
-function applyActionToModels(action, models, embedAssociations, Log) {
-  let promiseChain = Q.when()
-
-  models.forEach(function(model) {
-    let promiseLink = function() {
-      let deferred = Q.defer()
-
-      action(model, embedAssociations, Log)
-        .then(function(result) {
-          deferred.resolve(result)
-        })
-        .catch(function(error) {
-          deferred.reject(error)
-        })
-      return deferred.promise
-    }
-
-    promiseChain = promiseChain.then(promiseLink).catch(function(error) {
-      throw error
-    })
-  })
-
-  return promiseChain
+async function applyActionToModels(action, models, embedAssociations, Log) {
+  for (let model of models) {
+    await action(model, embedAssociations, Log)
+  }
 }
 
 function addEmbedded(model, embedAssociations, Log) {
@@ -182,7 +162,7 @@ function addEmbedded(model, embedAssociations, Log) {
       }
     }
 
-    return Q.all(promises)
+    return Promise.all(promises)
   })
 }
 
@@ -210,7 +190,7 @@ function addEmbeddedAssociation(
           payload[associationName] = []
           return model.findByIdAndUpdate(document._id, payload, { new: true })
         } else {
-          return Q.when()
+          return Promise.resolve()
         }
       } else {
         result.forEach(function(linkingDocument) {
@@ -227,7 +207,7 @@ function addEmbeddedAssociation(
     promises.push(promise)
   })
 
-  return Q.all(promises)
+  return Promise.all(promises)
 }
 
 function removeLinking(model, embedAssociations, Log) {
@@ -252,7 +232,7 @@ function removeLinking(model, embedAssociations, Log) {
     }
   }
 
-  return Q.when()
+  return Promise.resolve()
 }
 
 function addLinking(model, embedAssociations, Log) {
@@ -286,7 +266,7 @@ function addLinking(model, embedAssociations, Log) {
         }
       }
     }
-    return Q.all(promises)
+    return Promise.all(promises)
   })
 }
 
@@ -322,7 +302,7 @@ function addLinkingAssociation(
     }
   })
 
-  return Q.all(promises)
+  return Promise.all(promises)
 }
 
 function removeEmbedded(model, embedAssociations, Log) {
@@ -350,7 +330,7 @@ function removeEmbedded(model, embedAssociations, Log) {
       }
     }
 
-    return Q.all(promises)
+    return Promise.all(promises)
   })
 }
 
@@ -380,5 +360,5 @@ function removeEmbeddedAssociation(model, associationName, data, Log) {
     promises.push(dummyModel.findByIdAndUpdate(document._id, payload))
   })
 
-  return Q.all(promises)
+  return Promise.all(promises)
 }

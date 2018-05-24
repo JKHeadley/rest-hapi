@@ -1144,7 +1144,7 @@ Test('end to end tests', function(t) {
 
                       // <editor-fold desc="Act">
                       .then(function() {
-                        return Q.all(promises)
+                        return Promise.all(promises)
                       })
                       // </editor-fold>
 
@@ -1470,7 +1470,7 @@ Test('end to end tests', function(t) {
 
                       // <editor-fold desc="Act">
                       .then(function() {
-                        return Q.all(promises)
+                        return Promise.all(promises)
                       })
                       // </editor-fold>
 
@@ -1725,7 +1725,7 @@ Test('end to end tests', function(t) {
 
                       // <editor-fold desc="Act">
                       .then(function() {
-                        return Q.all(promises)
+                        return Promise.all(promises)
                       })
                       // </editor-fold>
 
@@ -1875,7 +1875,7 @@ Test('end to end tests', function(t) {
 
                       // <editor-fold desc="Act">
                       .then(function() {
-                        return Q.all(promises)
+                        return Promise.all(promises)
                       })
                       // </editor-fold>
 
@@ -2085,7 +2085,7 @@ Test('end to end tests', function(t) {
 
                     // <editor-fold desc="Act">
                     .then(function() {
-                      return Q.all(promises)
+                      return Promise.all(promises)
                     })
                     // </editor-fold>
 
@@ -2210,7 +2210,7 @@ Test('end to end tests', function(t) {
 
                       // <editor-fold desc="Act">
                       .then(function() {
-                        return Q.all(promises)
+                        return Promise.all(promises)
                       })
                       // </editor-fold>
 
@@ -2618,7 +2618,7 @@ Test('end to end tests', function(t) {
 
                       // <editor-fold desc="Act">
                       .then(function() {
-                        return Q.all(promises)
+                        return Promise.all(promises)
                       })
                       // </editor-fold>
 
@@ -2947,7 +2947,7 @@ Test('end to end tests', function(t) {
 
                       // <editor-fold desc="Act">
                       .then(function() {
-                        return Q.all(promises)
+                        return Promise.all(promises)
                       })
                       // </editor-fold>
 
@@ -3204,7 +3204,7 @@ Test('end to end tests', function(t) {
 
                       // <editor-fold desc="Act">
                       .then(function() {
-                        return Q.all(promises)
+                        return Promise.all(promises)
                       })
                       // </editor-fold>
 
@@ -3354,7 +3354,7 @@ Test('end to end tests', function(t) {
 
                       // <editor-fold desc="Act">
                       .then(function() {
-                        return Q.all(promises)
+                        return Promise.all(promises)
                       })
                       // </editor-fold>
 
@@ -3563,7 +3563,7 @@ Test('end to end tests', function(t) {
 
                     // <editor-fold desc="Act">
                     .then(function() {
-                      return Q.all(promises)
+                      return Promise.all(promises)
                     })
                     // </editor-fold>
 
@@ -3688,7 +3688,7 @@ Test('end to end tests', function(t) {
 
                       // <editor-fold desc="Act">
                       .then(function() {
-                        return Q.all(promises)
+                        return Promise.all(promises)
                       })
                       // </editor-fold>
 
@@ -3919,7 +3919,7 @@ Test('end to end tests', function(t) {
 
                     // <editor-fold desc="Act">
                     .then(function() {
-                      return Q.all(promises)
+                      return Promise.all(promises)
                     })
                     // </editor-fold>
 
@@ -4133,7 +4133,7 @@ Test('end to end tests', function(t) {
 
                     // <editor-fold desc="Act">
                     .then(function() {
-                      return Q.all(promises)
+                      return Promise.all(promises)
                     })
                     // </editor-fold>
 
@@ -4358,7 +4358,7 @@ Test('end to end tests', function(t) {
 
                     // <editor-fold desc="Act">
                     .then(function() {
-                      return Q.all(promises)
+                      return Promise.all(promises)
                     })
                     // </editor-fold>
 
@@ -4586,7 +4586,7 @@ Test('end to end tests', function(t) {
 
                     // <editor-fold desc="Act">
                     .then(function() {
-                      return Q.all(promises)
+                      return Promise.all(promises)
                     })
                     // </editor-fold>
 
@@ -4782,7 +4782,7 @@ Test('end to end tests', function(t) {
 
                     // <editor-fold desc="Act">
                     .then(function() {
-                      return Q.all(promises)
+                      return Promise.all(promises)
                     })
                     // </editor-fold>
 
@@ -5259,7 +5259,7 @@ Test('end to end tests', function(t) {
 
                     // <editor-fold desc="Act">
                     .then(function() {
-                      return Q.all(promises)
+                      return Promise.all(promises)
                     })
                     // </editor-fold>
 
@@ -6008,7 +6008,7 @@ Test('end to end tests', function(t) {
 
                     // <editor-fold desc="Act">
                     .then(function() {
-                      return Q.all(promises)
+                      return Promise.all(promises)
                     })
                     // </editor-fold>
 
@@ -6711,7 +6711,7 @@ Test('end to end tests', function(t) {
 
                     // <editor-fold desc="Act">
                     .then(function() {
-                      return Q.all(promises)
+                      return Promise.all(promises)
                     })
                     // </editor-fold>
 
@@ -6898,7 +6898,7 @@ Test('end to end tests', function(t) {
 
                     // <editor-fold desc="Act">
                     .then(function() {
-                      return Q.all(promises)
+                      return Promise.all(promises)
                     })
                     // </editor-fold>
 
@@ -7046,7 +7046,7 @@ Test('end to end tests', function(t) {
 
                       // <editor-fold desc="Act">
                       .then(function() {
-                        return Q.all(promises)
+                        return Promise.all(promises)
                       })
                       // </editor-fold>
 
@@ -7233,7 +7233,7 @@ Test('end to end tests', function(t) {
 
                       // <editor-fold desc="Act">
                       .then(function() {
-                        return Q.all(promises)
+                        return Promise.all(promises)
                       })
                       // </editor-fold>
 

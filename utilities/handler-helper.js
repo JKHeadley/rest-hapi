@@ -3,7 +3,6 @@
 let Boom = require('boom')
 let QueryHelper = require('./query-helper')
 let JoiMongooseHelper = require('./joi-mongoose-helper')
-let Q = require('q')
 let config = require('../config')
 let _ = require('lodash')
 
@@ -87,7 +86,7 @@ async function _listHandler(model, request, Log) {
         model.routeOptions.list &&
         model.routeOptions.list.pre
       ) {
-        query = await Q.fcall(model.routeOptions.list.pre, query, request, Log)
+        query = await model.routeOptions.list.pre(query, request, Log)
       }
     } catch (err) {
       handleError(err, 'There was a preprocessing error.', Boom.badRequest, Log)
@@ -129,12 +128,7 @@ async function _listHandler(model, request, Log) {
         model.routeOptions.list &&
         model.routeOptions.list.post
       ) {
-        result = await Q.fcall(
-          model.routeOptions.list.post,
-          request,
-          result,
-          Log
-        )
+        result = await model.routeOptions.list.post(request, result, Log)
       }
     } catch (err) {
       handleError(
@@ -245,13 +239,7 @@ async function _findHandler(model, _id, request, Log) {
         model.routeOptions.find &&
         model.routeOptions.find.pre
       ) {
-        query = await Q.fcall(
-          model.routeOptions.find.pre,
-          _id,
-          query,
-          request,
-          Log
-        )
+        query = await model.routeOptions.find.pre(_id, query, request, Log)
       }
     } catch (err) {
       handleError(err, 'There was a preprocessing error.', Boom.badRequest, Log)
@@ -278,12 +266,7 @@ async function _findHandler(model, _id, request, Log) {
           model.routeOptions.find &&
           model.routeOptions.find.post
         ) {
-          data = await Q.fcall(
-            model.routeOptions.find.post,
-            request,
-            result,
-            Log
-          )
+          data = await model.routeOptions.find.post(request, result, Log)
         }
       } catch (err) {
         handleError(
@@ -372,7 +355,7 @@ async function _createHandler(model, request, Log) {
         model.routeOptions.create.pre
       ) {
         for (let document of payload) {
-          await Q.fcall(model.routeOptions.create.pre, document, request, Log)
+          await model.routeOptions.create.pre(document, request, Log)
         }
       }
     } catch (err) {
@@ -425,13 +408,7 @@ async function _createHandler(model, request, Log) {
         model.routeOptions.create.post
       ) {
         for (let document of result) {
-          await Q.fcall(
-            model.routeOptions.create.post,
-            document,
-            request,
-            result,
-            Log
-          )
+          await model.routeOptions.create.post(document, request, result, Log)
         }
       }
     } catch (err) {
@@ -484,8 +461,7 @@ async function _updateHandler(model, _id, request, Log) {
         model.routeOptions.update &&
         model.routeOptions.update.pre
       ) {
-        payload = await Q.fcall(
-          model.routeOptions.update.pre,
+        payload = await model.routeOptions.update.pre(
           _id,
           payload,
           request,
@@ -530,12 +506,7 @@ async function _updateHandler(model, _id, request, Log) {
           model.routeOptions.update &&
           model.routeOptions.update.post
         ) {
-          result = await Q.fcall(
-            model.routeOptions.update.post,
-            request,
-            result,
-            Log
-          )
+          result = await model.routeOptions.update.post(request, result, Log)
         }
       } catch (err) {
         handleError(
@@ -586,13 +557,7 @@ async function _deleteOneHandler(model, _id, hardDelete, request, Log) {
         model.routeOptions.delete &&
         model.routeOptions.delete.pre
       ) {
-        await Q.fcall(
-          model.routeOptions.delete.pre,
-          _id,
-          hardDelete,
-          request,
-          Log
-        )
+        await model.routeOptions.delete.pre(_id, hardDelete, request, Log)
       }
     } catch (err) {
       handleError(
@@ -642,8 +607,7 @@ async function _deleteOneHandler(model, _id, hardDelete, request, Log) {
           model.routeOptions.delete &&
           model.routeOptions.delete.post
         ) {
-          await Q.fcall(
-            model.routeOptions.delete.post,
+          await model.routeOptions.delete.post(
             hardDelete,
             deleted,
             request,
@@ -687,7 +651,7 @@ function _deleteMany(model, payload, Log) {
  * @returns {object} A promise returning true if the delete succeeds.
  * @private
  */
-// TODO: prevent Q.all from catching first error and returning early. Catch individual errors and return a list
+// TODO: prevent Promise.all from catching first error and returning early. Catch individual errors and return a list
 // TODO(cont) of ids that failed
 async function _deleteManyHandler(model, request, Log) {
   try {
@@ -706,7 +670,7 @@ async function _deleteManyHandler(model, request, Log) {
       }
     }
 
-    await Q.all(promises)
+    await Promise.all(promises)
     return true
   } catch (err) {
     handleError(err, null, null, Log)
@@ -788,8 +752,7 @@ async function _addOneHandler(
           ownerModel.routeOptions.add[associationName] &&
           ownerModel.routeOptions.add[associationName].pre
         ) {
-          payload = await Q.fcall(
-            ownerModel.routeOptions.add[associationName].pre,
+          payload = await ownerModel.routeOptions.add[associationName].pre(
             payload,
             request,
             Log
@@ -894,8 +857,7 @@ async function _removeOneHandler(
           ownerModel.routeOptions.remove[associationName] &&
           ownerModel.routeOptions.remove[associationName].pre
         ) {
-          await Q.fcall(
-            ownerModel.routeOptions.remove[associationName].pre,
+          await ownerModel.routeOptions.remove[associationName].pre(
             {},
             request,
             Log
@@ -1004,8 +966,7 @@ async function _addManyHandler(
           ownerModel.routeOptions.add[associationName] &&
           ownerModel.routeOptions.add[associationName].pre
         ) {
-          payload = await Q.fcall(
-            ownerModel.routeOptions.add[associationName].pre,
+          payload = await ownerModel.routeOptions.add[associationName].pre(
             payload,
             request,
             Log
@@ -1131,8 +1092,7 @@ async function _removeManyHandler(
           ownerModel.routeOptions.remove[associationName] &&
           ownerModel.routeOptions.remove[associationName].pre
         ) {
-          payload = await Q.fcall(
-            ownerModel.routeOptions.remove[associationName].pre,
+          payload = await ownerModel.routeOptions.remove[associationName].pre(
             payload,
             request,
             Log
@@ -1328,12 +1288,9 @@ async function _getAllHandler(
           ownerModel.routeOptions.getAll[associationName] &&
           ownerModel.routeOptions.getAll[associationName].post
         ) {
-          listResult.docs = await Q.fcall(
-            ownerModel.routeOptions.getAll[associationName].post,
-            request,
-            result.docs,
-            Log
-          )
+          listResult.docs = await ownerModel.routeOptions.getAll[
+            associationName
+          ].post(request, result.docs, Log)
         }
       } catch (err) {
         handleError(
@@ -1508,7 +1465,7 @@ async function _setAssociation(
           childObject[childAssociationName][duplicateIndex] = payload
         }
 
-        await Q.all([
+        await Promise.all([
           ownerModel.findByIdAndUpdate(ownerObject._id, ownerObject, {
             runValidators: config.enableMongooseRunValidators
           }),
@@ -1530,7 +1487,7 @@ async function _setAssociation(
         ownerObject[associationName].push(childId)
       }
 
-      await Q.all([
+      await Promise.all([
         ownerModel.findByIdAndUpdate(ownerObject._id, ownerObject, {
           runValidators: config.enableMongooseRunValidators
         })
@@ -1633,7 +1590,7 @@ async function _removeAssociation(
           childObject[childAssociationName].splice(index, 1)
         }
 
-        await Q.all([
+        await Promise.all([
           ownerModel.findByIdAndUpdate(ownerObject._id, ownerObject, {
             runValidators: config.enableMongooseRunValidators
           }),
@@ -1656,7 +1613,7 @@ async function _removeAssociation(
         ownerObject[associationName].splice(index, 1)
       }
 
-      await Q.all([
+      await Promise.all([
         ownerModel.findByIdAndUpdate(ownerObject._id, ownerObject, {
           runValidators: config.enableMongooseRunValidators
         })

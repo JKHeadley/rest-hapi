@@ -67,7 +67,6 @@
     "mkdirp": "0.5.1",
     "mongoose": "^4.6.3",
     "mrhorse": "^3.0.1",
-    "q": "^1.4.1",
     "qs": "^6.2.1",
     "require-all": "^2.1.0",
     "require-dir": "~0.3.2",
@@ -79,6 +78,7 @@
     "query-string": "^5.0.0"
   },
   "devDependencies": {
+    "q": "^1.4.1",
     "babel-eslint": "^8.2.3",
     "clear-require": "^2.0.0",
     "decache": "4.4.0",

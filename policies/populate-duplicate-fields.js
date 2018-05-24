@@ -2,7 +2,6 @@
 
 const Boom = require('boom')
 const _ = require('lodash')
-const Q = require('q')
 
 const internals = {}
 
@@ -39,27 +38,26 @@ internals.populateDuplicateFields = function(model, mongoose, Log) {
             ) {
               const childModel = mongoose.model(association.model)
 
-              const deferred = Q.defer()
-              childModel.findOne({ _id: doc[key] }).then(function(result) {
-                const docsToUpdate = payload.filter(function(docToFind) {
-                  return docToFind[key] === result._id.toString()
-                })
-                // EXPL: Populate each duplicated field for this association.
-                // NOTE: We are updating the original payload
-                duplicate.forEach(function(prop) {
-                  docsToUpdate.forEach(function(docToUpdate) {
-                    docToUpdate[prop.as] = result[prop.field]
+              let promise = childModel
+                .findOne({ _id: doc[key] })
+                .then(function(result) {
+                  const docsToUpdate = payload.filter(function(docToFind) {
+                    return docToFind[key] === result._id.toString()
                   })
+                  // EXPL: Populate each duplicated field for this association.
+                  // NOTE: We are updating the original payload
+                  for (let prop of duplicate) {
+                    for (let docToUpdate of docsToUpdate) {
+                      docToUpdate[prop.as] = result[prop.field]
+                    }
+                  }
                 })
-
-                deferred.resolve()
-              })
-              promises.push(deferred.promise)
+              promises.push(promise)
             }
           }
         }
 
-        await Q.all(promises)
+        await Promise.all(promises)
         return h.continue
       }
       return h.continue

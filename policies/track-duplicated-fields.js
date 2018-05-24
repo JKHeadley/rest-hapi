@@ -2,7 +2,6 @@
 
 const Boom = require('boom')
 const _ = require('lodash')
-const Q = require('q')
 
 const internals = {}
 
@@ -73,7 +72,7 @@ internals.trackFields = function(model, mongoose, payload, result, Log) {
     }
   }
 
-  return Q.all(promises)
+  return Promise.all(promises)
 }
 
 /**
@@ -100,7 +99,7 @@ internals.findAndUpdate = async function(
     )
   })
 
-  return Q.all(promises)
+  return Promise.all(promises)
 }
 
 /**
