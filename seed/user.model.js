@@ -78,28 +78,21 @@ module.exports = function(mongoose) {
 
           Log.note('Generating Password Update endpoint for ' + collectionName)
 
-          let handler = function(request, h) {
-            let hashedPassword = model.generatePasswordHash(
-              request.payload.password
-            )
-            return model
-              .findByIdAndUpdate(request.params._id, {
+          let handler = async function(request, h) {
+            try {
+              let hashedPassword = model.generatePasswordHash(
+                request.payload.password
+              )
+
+              await model.findByIdAndUpdate(request.params._id, {
                 password: hashedPassword
               })
-              .then(function(result) {
-                if (result) {
-                  return h.response('Password updated.').code(200)
-                } else {
-                  throw Boom.notFound('No resource was found with that id.')
-                }
-              })
-              .catch(function(error) {
-                Log.error('error: ', error)
-                throw Boom.badImplementation(
-                  'An error occurred updating the resource.',
-                  error
-                )
-              })
+
+              return h.response('Password updated.').code(200)
+            } catch (err) {
+              Log.error(err)
+              throw Boom.badImplementation(err)
+            }
           }
 
           server.route({
