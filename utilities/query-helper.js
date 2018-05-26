@@ -2,7 +2,7 @@
 
 let _ = require('lodash')
 let validationHelper = require('./validation-helper')
-let globals = require('../components/globals')
+let globals = require('../globals')
 let config = require('../config')
 
 // TODO-DONE: mulit-level/multi-priority sorting (i.e. sort first by lastName, then by firstName) implemented via comma seperated sort list
