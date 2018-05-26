@@ -14,7 +14,7 @@ let restHapiPolicies = require('./policy-generator')
 // TODO: remove "options"?
 // TODO: change model "alias" to "routeAlias" (or remove the option)
 
-module.exports = function(logger, mongoose, server) {
+module.exports = function(Log, mongoose, server) {
   let HandlerHelper = require('./handler-helper-factory')()
 
   let headersValidation
@@ -40,10 +40,10 @@ module.exports = function(logger, mongoose, server) {
       // TODO: generate multiple DELETE routes at /RESOURCE and at
       // TODO: /RESOURCE/{ownerId}/ASSOCIATION that take a list of Id's as a payload
       try {
-        validationHelper.validateModel(model, logger)
+        validationHelper.validateModel(model, Log)
 
         let collectionName = model.collectionDisplayName || model.modelName
-        let Log = logger.bind(chalk.blue(collectionName))
+        Log = Log.bind(chalk.blue(collectionName))
 
         options = options || {}
 
@@ -129,7 +129,7 @@ module.exports = function(logger, mongoose, server) {
           }
         }
       } catch (error) {
-        logger.error('Error:', error)
+        Log.error('Error:', error)
         throw error
       }
     },
