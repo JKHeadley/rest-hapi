@@ -2,10 +2,7 @@
  * config.js - Configuration settings for the generated API
  */
 let config = {}
-config.server = {}
 config.mongo = {}
-
-// TODO: remove config.server?
 
 /**
  * Your app title goes here.
@@ -281,15 +278,6 @@ config.enableResponseFail = false
  * If set to true, (and authStrategy is not false) then endpoints will be generated with pre-defined
  * scopes based on the model definition.
  * default: false
- * @deprecated since v0.29.0, use "config.generateRouteScopes" instead
- * @type {boolean}
- */
-config.generateScopes = false
-
-/**
- * If set to true, (and authStrategy is not false) then endpoints will be generated with pre-defined
- * scopes based on the model definition.
- * default: false
  * @type {boolean}
  */
 config.generateRouteScopes = false
@@ -319,7 +307,7 @@ config.logRoutes = false
  * - ERROR application business logic error condition
  * - FATAL system error condition
  */
-config.loglevel = 'DEBUG'
+config.loglevel = 'NOTE'
 
 /**
  * Determines the initial expansion state of the swagger docs

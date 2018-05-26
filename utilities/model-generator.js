@@ -93,7 +93,7 @@ module.exports = function(mongoose, Log, config) {
 
       for (let modelKey in models) {
         // EXPL: Generate scopes if enabled
-        if (config.generateScopes) {
+        if (config.generateRouteScopes) {
           let model = models[modelKey]
           authHelper.generateScopeForModel(model, Log)
         }

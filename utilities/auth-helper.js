@@ -11,8 +11,6 @@ module.exports = {
    * @returns {Array}: A list of authorization scopes for the endpoint.
    */
   generateScopeForEndpoint: function(model, type, Log) {
-    // NOTE: As of v0.29.0 routeOptions.scope is replaced with routeOptions.routeScope and
-    // routeOptions.scope.scope is replaced with routeOptions.routeScope.rootScope
     let routeScope = model.routeOptions.routeScope || {}
     let rootScope = routeScope.rootScope
     let scope = []
@@ -64,12 +62,7 @@ module.exports = {
     const modelName =
       model.collectionName[0].toUpperCase() + model.collectionName.slice(1)
 
-    // NOTE: As of v0.29.0 routeOptions.scope is replaced with routeOptions.routeScope and
-    // routeOptions.scope.scope is replaced with routeOptions.routeScope.rootScope
-    let routeScope =
-      model.routeOptions.routeScope || model.routeOptions.scope || {}
-    routeScope.rootScope = routeScope.rootScope || routeScope.scope
-    delete routeScope.scope
+    let routeScope = model.routeOptions.routeScope || {}
     if (!routeScope.rootScope) {
       delete routeScope.rootScope
     }
