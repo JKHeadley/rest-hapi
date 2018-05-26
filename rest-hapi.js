@@ -1,6 +1,7 @@
 'use strict'
 
 const extend = require('extend')
+const _ = require('lodash')
 const path = require('path')
 const Inert = require('inert')
 const Vision = require('vision')
@@ -16,6 +17,7 @@ const testHelper = require('./utilities/test-helper')
 const modelGenerator = require('./utilities/model-generator')
 const apiGenerator = require('./utilities/api-generator')
 const defaultConfig = require('./config')
+const globals = require('./globals')
 
 let modelsGenerated = false
 let globalModels = {}
@@ -51,24 +53,22 @@ module.exports = {
 async function register(server, options) {
   let config = defaultConfig
 
-  extend(true, config, module.exports.config)
+  // Overwrite the default config with config set by the user
+  extend(true, config, options.config)
+  module.exports.config = config
 
   let logger = getLogger('api')
 
   module.exports.logger = logger
 
-  // EXPL: add the logger object to the request object for access later
+  // Add the logger object to the request object for access later
   server.ext('onRequest', (request, h) => {
     request.logger = logger
 
     return h.continue
   })
 
-  let mongoose = require('./components/mongoose-init')(
-    options.mongoose,
-    logger,
-    config
-  )
+  let mongoose = mongooseInit(options.mongoose, logger, config)
 
   logUtil.logActionStart(logger, 'Initializing Server')
 
@@ -203,4 +203,22 @@ function getLogger(label) {
   rootLogger.logLevel = config.loglevel
 
   return rootLogger
+}
+
+function mongooseInit(mongoose, logger, config) {
+  mongoose.Promise = Promise
+
+  logger = logUtil.bindHelper(logger, 'mongoose')
+
+  logUtil.logActionStart(
+    logger,
+    'Connecting to Database',
+    _.omit(config.mongo, ['pass'])
+  )
+
+  mongoose.connect(config.mongo.URI, { useMongoClient: true })
+
+  globals.mongoose = mongoose
+
+  return mongoose
 }
