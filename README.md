@@ -3,7 +3,7 @@
 A RESTful API generator for the [hapi](https://github.com/hapijs/hapi) framework utilizing the [mongoose](https://github.com/Automattic/mongoose) ODM.
 
 [![Build Status](https://travis-ci.org/JKHeadley/rest-hapi.svg?branch=master)](https://travis-ci.org/JKHeadley/rest-hapi) 
-[![Codecov](https://img.shields.io/codecov/c/github/codecov/example-python.svg)](https://github.com/JKHeadley/rest-hapi)
+[![codecov](https://codecov.io/gh/JKHeadley/rest-hapi/branch/master/graph/badge.svg)](https://codecov.io/gh/JKHeadley/rest-hapi)
 [![npm](https://img.shields.io/npm/dt/rest-hapi.svg)](https://www.npmjs.com/package/rest-hapi) 
 [![npm](https://img.shields.io/npm/v/rest-hapi.svg)](https://www.npmjs.com/package/rest-hapi)
 [![StackShare](https://img.shields.io/badge/tech-stack-0690fa.svg?style=flat)](https://stackshare.io/JKHeadley/rest-hapi)
