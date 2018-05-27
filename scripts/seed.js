@@ -4,9 +4,7 @@ let mongoose = require('mongoose')
 let config = require('../config')
 let restHapi = require('../rest-hapi')
 let path = require('path')
-let mv = require('mv')
-
-module.exports = async () => {
+let fs = require('fs-extra')(async function seed() {
   restHapi.config.loglevel = 'DEBUG'
   let Log = restHapi.getLogger('seed')
   try {
@@ -60,13 +58,13 @@ module.exports = async () => {
     ]
     await restHapi.create(models.user, users, Log)
   } catch (err) {
-    Log.error(err)
+    console.error(err)
   }
-}
+})()
 
 function moveModels() {
   return new Promise((resolve, reject) => {
-    mv(
+    fs.copy(
       './seed/**/*.*',
       path.join(__dirname, '/../../../', config.modelPath),
       err => {
