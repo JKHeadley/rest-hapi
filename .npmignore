@@ -2,3 +2,5 @@
 _config.yml
 .idea
 tests
+.nyc_output
+coverage

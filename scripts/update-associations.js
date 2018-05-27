@@ -1,45 +1,36 @@
 'use strict'
 
-let gulp = require('gulp')
-let exit = require('gulp-exit')
+let path = require('path')
 let mongoose = require('mongoose')
 let _ = require('lodash')
 let restHapi = require('../rest-hapi')
+;(async function updateAssociations() {
+  restHapi.config.loglevel = 'DEBUG'
+  let Log = restHapi.getLogger('update-associations')
+  try {
+    const mongoURI = process.argv[3]
 
-gulp.task('update-associations', [], function() {
-  const uri = process.argv[6]
+    mongoose.Promise = Promise
 
-  mongoose.Promise = Promise
+    mongoose.connect(mongoURI, {
+      useMongoClient: true
+    })
 
-  mongoose.connect(uri)
+    let embedAssociations = process.argv[5] === 'true'
 
-  let embedAssociations = process.argv[8] === 'true'
+    let modelPath = path.join(__dirname, '/../../../models')
 
-  let modelPath = 'models'
+    if (process.argv[7]) {
+      modelPath = process.argv[7]
+    }
 
-  if (process.argv[10]) {
-    modelPath = process.argv[10]
-  }
+    restHapi.config.absoluteModelPath = true
+    restHapi.config.modelPath = modelPath
+    restHapi.config.embedAssociations = embedAssociations
 
-  let modelPathBase = __dirname
+    let models = await restHapi.generateModels(mongoose)
 
-  modelPathBase = modelPathBase.split('/')
-
-  modelPathBase = modelPathBase.filter(function(item) {
-    return item !== 'node_modules' && item !== 'rest-hapi' && item !== 'gulp'
-  })
-
-  modelPathBase = modelPathBase.join('/')
-
-  restHapi.config.absoluteModelPath = true
-  restHapi.config.modelPath = modelPathBase + '/' + modelPath
-  restHapi.config.embedAssociations = embedAssociations
-
-  return restHapi.generateModels(mongoose).then(function(models) {
-    restHapi.config.loglevel = 'DEBUG'
-    let Log = restHapi.getLogger('update-associations')
-
-    Log.debug('URI:', uri)
+    Log.debug('mongoURI:', mongoURI)
     Log.debug('embedAssociations:', embedAssociations)
     Log.debug('modelPath:', restHapi.config.modelPath)
 
@@ -49,41 +40,27 @@ gulp.task('update-associations', [], function() {
       modelsArray.push(models[modelName])
     }
 
-    return applyActionToModels(addEmbedded, modelsArray, embedAssociations, Log)
-      .then(function() {
-        return applyActionToModels(
-          removeLinking,
-          modelsArray,
-          embedAssociations,
-          Log
-        )
-      })
-      .then(function() {
-        return applyActionToModels(
-          addLinking,
-          modelsArray,
-          embedAssociations,
-          Log
-        )
-      })
-      .then(function() {
-        return applyActionToModels(
-          removeEmbedded,
-          modelsArray,
-          embedAssociations,
-          Log
-        )
-      })
-      .then(function() {
-        Log.debug('DONE')
-        return gulp.src('').pipe(exit())
-      })
-      .catch(function(error) {
-        Log.error(error)
-        return gulp.src('').pipe(exit())
-      })
-  })
-})
+    await applyActionToModels(addEmbedded, modelsArray, embedAssociations, Log)
+    await applyActionToModels(
+      removeLinking,
+      modelsArray,
+      embedAssociations,
+      Log
+    )
+    await applyActionToModels(addLinking, modelsArray, embedAssociations, Log)
+    await applyActionToModels(
+      removeEmbedded,
+      modelsArray,
+      embedAssociations,
+      Log
+    )
+    Log.debug('DONE')
+    process.exit()
+  } catch (err) {
+    Log.error(err)
+    process.exit()
+  }
+})()
 
 function getLinkingModel(model, association, Log) {
   let linkingModel = null
