@@ -1,5 +1,6 @@
 let Joi = require('joi')
-let bcrypt = require('bcryptjs')
+// NOTE: Install bcrypt then uncomment the line below
+// let bcrypt = require('bcryptjs')
 let RestHapi = require('rest-hapi')
 
 // TODO: assign a unique text index to email field
@@ -141,8 +142,10 @@ module.exports = function(mongoose) {
     },
 
     generatePasswordHash: function(password) {
-      let salt = bcrypt.genSaltSync(10)
-      let hash = bcrypt.hashSync(password, salt)
+      let hash = password
+      // NOTE: Uncomment these two lines once bcrypt is installed
+      // let salt = bcrypt.genSaltSync(10)
+      // hash = bcrypt.hashSync(password, salt)
       return hash
     }
   }
