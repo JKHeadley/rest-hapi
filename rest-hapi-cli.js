@@ -21,7 +21,7 @@ if (isWindows) {
 
 switch (command) {
   case 'seed':
-    exec('gulp seed --gulpfile ' + cmdString, function(err, stdout, stderr) {
+    exec('npm run seed', function(err, stdout, stderr) {
       console.log(stdout)
       console.log(stderr)
       if (err) {
@@ -30,7 +30,7 @@ switch (command) {
     })
     break
   case 'test':
-    exec('gulp test --gulpfile ' + cmdString, function(err, stdout, stderr) {
+    exec('npm run test', function(err, stdout, stderr) {
       console.log(stdout)
       console.log(stderr)
       if (err) {
