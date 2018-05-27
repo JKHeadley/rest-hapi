@@ -12,7 +12,7 @@ let exec = require('child_process').exec
 
 let isWindows = /^win/.test(process.platform)
 
-let cmdString = '$PWD/node_modules/rest-hapi/scripts/seed.js'
+let cmdString = '$PWD/node_modules/rest-hapi/scripts/'
 
 if (isWindows) {
   // This will fix the error "No gulpfile found" on windows OS
@@ -21,7 +21,11 @@ if (isWindows) {
 
 switch (command) {
   case 'seed':
-    exec('node ' + cmdString + ' ' + args, function(err, stdout, stderr) {
+    exec('node ' + cmdString + 'seed.js ' + args, function(
+      err,
+      stdout,
+      stderr
+    ) {
       console.log(stdout)
       console.log(stderr)
       if (err) {
@@ -40,8 +44,9 @@ switch (command) {
     break
   case 'update-associations':
     exec(
-      'gulp update-associations --gulpfile ' +
+      'node ' +
         cmdString +
+        'update-associations.js' +
         ' --options ' +
         args.join(' --options '),
       function(err, stdout, stderr) {

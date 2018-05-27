@@ -17,7 +17,6 @@
     "test": "npm run test-unit && npm run test-e2e",
     "test-unit": "tape ./tests/unit/*.tests.js",
     "test-e2e": "tape ./tests/e2e/*.tests.js",
-    "seed": "node ./scripts/seed.js",
     "patch-release-git": "git add . && git commit -a -m 'patch release' && git push && npm version patch && npm publish",
     "patch-release": "npm version patch && npm publish",
     "precommit": "lint-staged",
