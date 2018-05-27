@@ -1,45 +1,33 @@
-'use strict';
+'use strict'
 
-var Boom = require('boom');
-var Q = require('q');
-var extend = require('util')._extend;
-var handlerHelper = require('./handler-helper');
-var errorHelper = require('./error-helper');
-let config = require("../config");
+let Boom = require('boom')
+let handlerHelper = require('./handler-helper')
 
-//TODO: add bulk delete/delete many
+// TODO: add bulk delete/delete many
 
-//TODO: consolidate eventLog functionality
+// TODO: consolidate eventLog functionality
 
-//TODO-DONE: make returns more consistent/return all reply's
+// TODO-DONE: make returns more consistent/return all reply's
 
-//TODO: make sure pre and post is supported for appropriate endpoints
+// TODO: make sure pre and post is supported for appropriate endpoints
 
-//TODO: handle errors/status responses appropriately
+// TODO: handle errors/status responses appropriately
 
-//TODO: include option to set all default fields to NULL so they exist and are returned with queries
+// TODO: include option to set all default fields to NULL so they exist and are returned with queries
 
-//TODO: possibly refactor/remove routeOptions
+// TODO: possibly refactor/remove routeOptions
 
-//TODO: apply .lean() before any exec() to speed up execution time when returning data
+// TODO: apply .lean() before any exec() to speed up execution time when returning data
 
-//TODO: possibly execute .toJSON() on all return data to reduce data size
+// TODO: possibly execute .toJSON() on all return data to reduce data size
 
-//TODO-DONE: update hapi version
+// TODO: look into using glue
 
-//TODO: look into using glue
+// TODO: abstract mongoose logic into CRUD utility methods that can be called directly with rest-hapi plugin
+// TODO:(cont) This will allow users to CRUD data in extra endpoints using rest-hapi functions.
 
-//TODO: abstract mongoose logic into CRUD utility methods that can be called directly with rest-hapi plugin
-//TODO:(cont) This will allow users to CRUD data in extra endpoints using rest-hapi functions.
-
-var mongoose, server;
-module.exports = function (_mongoose, _server) {
-
-  mongoose = _mongoose;
-  server = _server;
-
+module.exports = function() {
   return {
-
     /**
      * Handles incoming GET requests to /RESOURCE
      * @param model: A mongoose model.
@@ -134,9 +122,8 @@ module.exports = function (_mongoose, _server) {
      * @returns {Function} A handler function
      */
     generateAssociationGetAllHandler: generateAssociationGetAllHandler
-  };
-
-};
+  }
+}
 
 /**
  * Handles incoming GET requests to /RESOURCE
@@ -146,26 +133,22 @@ module.exports = function (_mongoose, _server) {
  * @returns {Function} A handler function
  */
 function generateListHandler(model, options, Log) {
-  options = options || {};
+  options = options || {}
 
-  return function (request, reply) {
+  return async function(request, h) {
     try {
-      Log.log("params(%s), query(%s), payload(%s)", JSON.stringify(request.params), JSON.stringify(request.query), JSON.stringify(request.payload));
+      Log.log(
+        'params(%s), query(%s), payload(%s)',
+        JSON.stringify(request.params),
+        JSON.stringify(request.query),
+        JSON.stringify(request.payload)
+      )
 
-      handlerHelper.listHandler(model, request, Log)
-          .then(function(result) {
-            const pageData = result.pageData;
-            delete result.pageData;
-            return reply(result).code(200);
-          })
-          .catch(function(error) {
-            var response = errorHelper.formatResponse(error, Log);
-            return reply(response);
-          })
-    }
-    catch(error) {
-      Log.error("error: ", error);
-      return reply(Boom.badRequest("There was an error processing the request.", error));
+      let result = await handlerHelper.listHandler(model, request, Log)
+      delete result.pageData
+      return h.response(result).code(200)
+    } catch (err) {
+      handleError(err, Log)
     }
   }
 }
@@ -178,24 +161,26 @@ function generateListHandler(model, options, Log) {
  * @returns {Function} A handler function
  */
 function generateFindHandler(model, options, Log) {
-  options = options || {};
+  options = options || {}
 
-  return function (request, reply) {
+  return async function(request, h) {
     try {
-      Log.log("params(%s), query(%s), payload(%s)", JSON.stringify(request.params), JSON.stringify(request.query), JSON.stringify(request.payload));
+      Log.log(
+        'params(%s), query(%s), payload(%s)',
+        JSON.stringify(request.params),
+        JSON.stringify(request.query),
+        JSON.stringify(request.payload)
+      )
 
-      handlerHelper.findHandler(model, request.params._id, request, Log)
-          .then(function(result) {
-            return reply(result).code(200);
-          })
-          .catch(function(error) {
-            var response = errorHelper.formatResponse(error, Log);
-            return reply(response);
-          })
-    }
-    catch(error) {
-      Log.error("error: ", error);
-      return reply(Boom.badRequest("There was an error processing the request.", error));
+      let result = await handlerHelper.findHandler(
+        model,
+        request.params._id,
+        request,
+        Log
+      )
+      return h.response(result).code(200)
+    } catch (err) {
+      handleError(err, Log)
     }
   }
 }
@@ -208,24 +193,21 @@ function generateFindHandler(model, options, Log) {
  * @returns {Function} A handler function
  */
 function generateCreateHandler(model, options, Log) {
-  options = options || {};
+  options = options || {}
 
-  return function (request, reply) {
+  return async function(request, h) {
     try {
-      Log.log("params(%s), query(%s), payload(%s)", JSON.stringify(request.params), JSON.stringify(request.query), JSON.stringify(request.payload));
+      Log.log(
+        'params(%s), query(%s), payload(%s)',
+        JSON.stringify(request.params),
+        JSON.stringify(request.query),
+        JSON.stringify(request.payload)
+      )
 
-      handlerHelper.createHandler(model, request, Log)
-          .then(function(result) {
-            return reply(result).code(201);
-          })
-          .catch(function(error) {
-            var response = errorHelper.formatResponse(error, Log);
-            return reply(response);
-          })
-    }
-    catch(error) {
-      Log.error(error);
-      return reply(Boom.badRequest("There was an error processing the request.", error));
+      let result = await handlerHelper.createHandler(model, request, Log)
+      return h.response(result).code(201)
+    } catch (err) {
+      handleError(err, Log)
     }
   }
 }
@@ -238,24 +220,26 @@ function generateCreateHandler(model, options, Log) {
  * @returns {Function} A handler function
  */
 function generateUpdateHandler(model, options, Log) {
-  options = options || {};
+  options = options || {}
 
-  return function (request, reply) {
+  return async function(request, h) {
     try {
-      Log.log("params(%s), query(%s), payload(%s)", JSON.stringify(request.params), JSON.stringify(request.query), JSON.stringify(request.payload));
+      Log.log(
+        'params(%s), query(%s), payload(%s)',
+        JSON.stringify(request.params),
+        JSON.stringify(request.query),
+        JSON.stringify(request.payload)
+      )
 
-      handlerHelper.updateHandler(model, request.params._id, request, Log)
-          .then(function(result) {
-            return reply(result).code(200);
-          })
-          .catch(function(error) {
-            var response = errorHelper.formatResponse(error, Log);
-            return reply(response);
-          })
-    }
-    catch(error) {
-      Log.error("error: ", error);
-      return reply(Boom.badRequest("There was an error processing the request.", error));
+      let result = await handlerHelper.updateHandler(
+        model,
+        request.params._id,
+        request,
+        Log
+      )
+      return h.response(result).code(200)
+    } catch (err) {
+      handleError(err, Log)
     }
   }
 }
@@ -268,33 +252,33 @@ function generateUpdateHandler(model, options, Log) {
  * @returns {Function} A handler function
  */
 function generateDeleteHandler(model, options, Log) {
-  options = options || {};
+  options = options || {}
 
-  return function (request, reply) {
+  return async function(request, h) {
     try {
-      Log.log("params(%s), query(%s), payload(%s)", JSON.stringify(request.params), JSON.stringify(request.query), JSON.stringify(request.payload));
+      Log.log(
+        'params(%s), query(%s), payload(%s)',
+        JSON.stringify(request.params),
+        JSON.stringify(request.query),
+        JSON.stringify(request.payload)
+      )
 
-      let promise = {};
       if (request.params._id) {
-        var hardDelete = request.payload ? request.payload.hardDelete : false;
-        promise = handlerHelper.deleteOneHandler(model, request.params._id, hardDelete, request, Log);
-      }
-      else {
-        promise = handlerHelper.deleteManyHandler(model, request, Log);
+        let hardDelete = request.payload ? request.payload.hardDelete : false
+        await handlerHelper.deleteOneHandler(
+          model,
+          request.params._id,
+          hardDelete,
+          request,
+          Log
+        )
+      } else {
+        await handlerHelper.deleteManyHandler(model, request, Log)
       }
 
-      promise
-          .then(function(result) {
-            return reply().code(204);
-          })
-          .catch(function(error) {
-            var response = errorHelper.formatResponse(error, Log);
-            return reply(response);
-          })
-    }
-    catch(error) {
-      Log.error("error: ", error);
-      return reply(Boom.badRequest("There was an error processing the request.", error));
+      return h.response().code(204)
+    } catch (err) {
+      handleError(err, Log)
     }
   }
 }
@@ -307,27 +291,38 @@ function generateDeleteHandler(model, options, Log) {
  * @param Log: A logging object.
  * @returns {Function} A handler function
  */
-function generateAssociationAddOneHandler(ownerModel, association, options, Log) {
-  var associationName = association.include.as;
-  var childModel = association.include.model;
-  var addMethodName = "addOne" + associationName[0].toUpperCase() + associationName.slice(1, -1);
+function generateAssociationAddOneHandler(
+  ownerModel,
+  association,
+  options,
+  Log
+) {
+  let associationName = association.include.as
+  let childModel = association.include.model
+  let addMethodName =
+    'addOne' + associationName[0].toUpperCase() + associationName.slice(1, -1)
 
-  return function (request, reply) {
+  return async function(request, h) {
     try {
-      Log.log(addMethodName + " + params(%s), query(%s), payload(%s)", JSON.stringify(request.params), JSON.stringify(request.query), JSON.stringify(request.payload));
+      Log.log(
+        addMethodName + ' + params(%s), query(%s), payload(%s)',
+        JSON.stringify(request.params),
+        JSON.stringify(request.query),
+        JSON.stringify(request.payload)
+      )
 
-      handlerHelper.addOneHandler(ownerModel, request.params.ownerId, childModel, request.params.childId, associationName, request, Log)
-          .then(function(result) {
-            return reply().code(204);
-          })
-          .catch(function(error) {
-            var response = errorHelper.formatResponse(error, Log);
-            return reply(response);
-          })
-    }
-    catch(error) {
-      Log.error("error: ", error);
-      reply(Boom.badRequest("There was an error processing the request.", error));
+      await handlerHelper.addOneHandler(
+        ownerModel,
+        request.params.ownerId,
+        childModel,
+        request.params.childId,
+        associationName,
+        request,
+        Log
+      )
+      return h.response().code(204)
+    } catch (err) {
+      handleError(err, Log)
     }
   }
 }
@@ -340,27 +335,40 @@ function generateAssociationAddOneHandler(ownerModel, association, options, Log)
  * @param Log: A logging object.
  * @returns {Function} A handler function
  */
-function generateAssociationRemoveOneHandler(ownerModel, association, options, Log) {
-  var associationName = association.include.as;
-  var childModel = association.include.model;
-  var removeMethodName = "removeOne" + associationName[0].toUpperCase() + associationName.slice(1, -1);
+function generateAssociationRemoveOneHandler(
+  ownerModel,
+  association,
+  options,
+  Log
+) {
+  let associationName = association.include.as
+  let childModel = association.include.model
+  let removeMethodName =
+    'removeOne' +
+    associationName[0].toUpperCase() +
+    associationName.slice(1, -1)
 
-  return function (request, reply) {
+  return async function(request, h) {
     try {
-      Log.log(removeMethodName + " + params(%s), query(%s), payload(%s)", JSON.stringify(request.params), JSON.stringify(request.query), JSON.stringify(request.payload));
+      Log.log(
+        removeMethodName + ' + params(%s), query(%s), payload(%s)',
+        JSON.stringify(request.params),
+        JSON.stringify(request.query),
+        JSON.stringify(request.payload)
+      )
 
-      handlerHelper.removeOneHandler(ownerModel, request.params.ownerId, childModel, request.params.childId, associationName, request, Log)
-          .then(function(result) {
-            return reply().code(204);
-          })
-          .catch(function(error) {
-            var response = errorHelper.formatResponse(error, Log);
-            return reply(response);
-          })
-    }
-    catch(error) {
-      Log.error("error: ", error);
-      reply(Boom.badRequest("There was an error processing the request.", error));
+      await handlerHelper.removeOneHandler(
+        ownerModel,
+        request.params.ownerId,
+        childModel,
+        request.params.childId,
+        associationName,
+        request,
+        Log
+      )
+      return h.response().code(204)
+    } catch (err) {
+      handleError(err, Log)
     }
   }
 }
@@ -373,32 +381,42 @@ function generateAssociationRemoveOneHandler(ownerModel, association, options, L
  * @param Log: A logging object.
  * @returns {Function} A handler function
  */
-function generateAssociationAddManyHandler(ownerModel, association, options, Log) {
-  var associationName = association.include.as;
-  var childModel = association.include.model;
-  var addMethodName = "addMany" + associationName[0].toUpperCase() + associationName.slice(1);
+function generateAssociationAddManyHandler(
+  ownerModel,
+  association,
+  options,
+  Log
+) {
+  let associationName = association.include.as
+  let childModel = association.include.model
+  let addMethodName =
+    'addMany' + associationName[0].toUpperCase() + associationName.slice(1)
 
-  return function (request, reply) {
+  return async function(request, h) {
     try {
-      Log.log(addMethodName + " + params(%s), query(%s), payload(%s)", JSON.stringify(request.params), JSON.stringify(request.query), JSON.stringify(request.payload));
+      Log.log(
+        addMethodName + ' + params(%s), query(%s), payload(%s)',
+        JSON.stringify(request.params),
+        JSON.stringify(request.query),
+        JSON.stringify(request.payload)
+      )
 
-      handlerHelper.addManyHandler(ownerModel, request.params.ownerId, childModel, associationName, request, Log)
-          .then(function(result) {
-            return reply().code(204);
-          })
-          .catch(function(error) {
-            var response = errorHelper.formatResponse(error, Log);
-            return reply(response);
-          })
-    }
-    catch(error) {
-      Log.error("error: ", error);
-      reply(Boom.badRequest("There was an error processing the request.", error));
+      await handlerHelper.addManyHandler(
+        ownerModel,
+        request.params.ownerId,
+        childModel,
+        associationName,
+        request,
+        Log
+      )
+      return h.response().code(204)
+    } catch (err) {
+      handleError(err, Log)
     }
   }
 }
 
-//TODO: need to make sure removeMany calls are sequential, otherwise errors occur
+// TODO: need to make sure removeMany calls are sequential, otherwise errors occur
 /**
  * Handles incoming POST requests to /OWNER_RESOURCE/{ownerId}/CHILD_RESOURCE
  * @param ownerModel: A mongoose model.
@@ -407,28 +425,37 @@ function generateAssociationAddManyHandler(ownerModel, association, options, Log
  * @param Log: A logging object.
  * @returns {Function} A handler function
  */
-function generateAssociationRemoveManyHandler(ownerModel, association, options, Log) {
-  var associationName = association.include.as;
-  var childModel = association.include.model;
-  var removeMethodName = "removeMany" + associationName[0].toUpperCase() + associationName.slice(1);
+function generateAssociationRemoveManyHandler(
+  ownerModel,
+  association,
+  options,
+  Log
+) {
+  let associationName = association.include.as
+  let childModel = association.include.model
+  let removeMethodName =
+    'removeMany' + associationName[0].toUpperCase() + associationName.slice(1)
 
-  return function (request, reply) {
+  return async function(request, h) {
     try {
-      Log.log(removeMethodName + " + params(%s), query(%s), payload(%s)", JSON.stringify(request.params), JSON.stringify(request.query), JSON.stringify(request.payload));
+      Log.log(
+        removeMethodName + ' + params(%s), query(%s), payload(%s)',
+        JSON.stringify(request.params),
+        JSON.stringify(request.query),
+        JSON.stringify(request.payload)
+      )
 
-      handlerHelper.removeManyHandler(ownerModel, request.params.ownerId, childModel, associationName, request, Log)
-          .then(function(result) {
-            Log.debug("result:", result);
-            return reply().code(204);
-          })
-          .catch(function(error) {
-            var response = errorHelper.formatResponse(error, Log);
-            return reply(response);
-          })
-    }
-    catch(error) {
-      Log.error("error: ", error);
-      reply(Boom.badRequest("There was an error processing the request.", error));
+      await handlerHelper.removeManyHandler(
+        ownerModel,
+        request.params.ownerId,
+        childModel,
+        associationName,
+        request,
+        Log
+      )
+      return h.response().code(204)
+    } catch (err) {
+      handleError(err, Log)
     }
   }
 }
@@ -441,27 +468,47 @@ function generateAssociationRemoveManyHandler(ownerModel, association, options, 
  * @param Log: A logging object.
  * @returns {Function} A handler function
  */
-function generateAssociationGetAllHandler(ownerModel, association, options, Log) {
-  var associationName = association.include.as;
-  var childModel = association.include.model;
-  var getAllMethodName = association.getAllMethodName || "get" + associationName[0].toUpperCase() + associationName.slice(1);
+function generateAssociationGetAllHandler(
+  ownerModel,
+  association,
+  options,
+  Log
+) {
+  let associationName = association.include.as
+  let childModel = association.include.model
+  let getAllMethodName =
+    association.getAllMethodName ||
+    'get' + associationName[0].toUpperCase() + associationName.slice(1)
 
-  return function (request, reply) {
+  return async function(request, h) {
     try {
-      Log.log(getAllMethodName + " + params(%s), query(%s), payload(%s)", JSON.stringify(request.params), JSON.stringify(request.query), JSON.stringify(request.payload));
+      Log.log(
+        getAllMethodName + ' + params(%s), query(%s), payload(%s)',
+        JSON.stringify(request.params),
+        JSON.stringify(request.query),
+        JSON.stringify(request.payload)
+      )
 
-      handlerHelper.getAllHandler(ownerModel, request.params.ownerId, childModel, associationName, request, Log)
-          .then(function(result) {
-            return reply(result).code(200);
-          })
-          .catch(function(error) {
-            var response = errorHelper.formatResponse(error, Log);
-            return reply(response);
-          })
+      let result = await handlerHelper.getAllHandler(
+        ownerModel,
+        request.params.ownerId,
+        childModel,
+        associationName,
+        request,
+        Log
+      )
+      return h.response(result).code(200)
+    } catch (err) {
+      handleError(err, Log)
     }
-    catch(error) {
-      Log.error("error: ", error);
-      reply(Boom.badRequest("There was an error processing the request.", error));
-    }
+  }
+}
+
+function handleError(err, Log) {
+  if (!err.isBoom) {
+    Log.error(err)
+    throw Boom.badImplementation('There was an error processing the request.')
+  } else {
+    throw err
   }
 }

@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Changed
+- Throwing errors in middleware functions.
+- RestHapi.logger and request.logger are now RestHapi.Log and request.Log
+- Replaced config.generateScopes with config.generateRouteScopes
+- Replaced all gulp scripts with npm/node scripts
 
 ## [0.43.0] - 2018-03-23
 ### Changed

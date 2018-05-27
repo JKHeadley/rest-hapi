@@ -1,7 +1,7 @@
-module.exports = function (mongoose) {
-  var modelName = "group";
-  var Types = mongoose.Schema.Types;
-  var Schema = new mongoose.Schema({
+module.exports = function(mongoose) {
+  let modelName = 'group'
+  let Types = mongoose.Schema.Types
+  let Schema = new mongoose.Schema({
     name: {
       type: Types.String,
       required: true
@@ -9,26 +9,26 @@ module.exports = function (mongoose) {
     description: {
       type: Types.String
     }
-  });
-  
+  })
+
   Schema.statics = {
-    collectionName:modelName,
+    collectionName: modelName,
     routeOptions: {
       associations: {
         users: {
-          type: "MANY_MANY",
-          alias: "user",
-          model: "user"
+          type: 'MANY_MANY',
+          alias: 'user',
+          model: 'user'
         },
         permissions: {
-          type: "MANY_MANY",
-          alias: "permission",
-          model: "permission",
-          linkingModel: "group_permission"
+          type: 'MANY_MANY',
+          alias: 'permission',
+          model: 'permission',
+          linkingModel: 'group_permission'
         }
       }
     }
-  };
-  
-  return Schema;
-};
+  }
+
+  return Schema
+}

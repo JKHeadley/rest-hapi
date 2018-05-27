@@ -2,12 +2,13 @@
 
 A RESTful API generator for the [hapi](https://github.com/hapijs/hapi) framework utilizing the [mongoose](https://github.com/Automattic/mongoose) ODM.
 
-[![Build Status](https://travis-ci.org/JKHeadley/rest-hapi.svg?branch=master)](https://travis-ci.org/JKHeadley/rest-hapi) [![npm](https://img.shields.io/npm/dt/rest-hapi.svg)](https://www.npmjs.com/package/rest-hapi) [![npm](https://img.shields.io/npm/v/rest-hapi.svg)](https://www.npmjs.com/package/rest-hapi)
+[![Build Status](https://travis-ci.org/JKHeadley/rest-hapi.svg?branch=master)](https://travis-ci.org/JKHeadley/rest-hapi) 
+[![codecov](https://codecov.io/gh/JKHeadley/rest-hapi/branch/master/graph/badge.svg)](https://codecov.io/gh/JKHeadley/rest-hapi)
+[![npm](https://img.shields.io/npm/dt/rest-hapi.svg)](https://www.npmjs.com/package/rest-hapi) 
+[![npm](https://img.shields.io/npm/v/rest-hapi.svg)](https://www.npmjs.com/package/rest-hapi)
 [![StackShare](https://img.shields.io/badge/tech-stack-0690fa.svg?style=flat)](https://stackshare.io/JKHeadley/rest-hapi)
 
 rest-hapi is a hapi plugin intended to abstract the work involved in setting up API routes/validation/handlers/etc. for the purpose of rapid app development.  At the same time it provides a powerful combination of [relational](#associations) structure with [NoSQL](#creating-endpoints) flexibility.  You define your models and the rest is done for you.  Have your own API server up and running in minutes!
-
-# **NOTE:** The [duplicate fields](#duplicate-fields) feature is now available with v0.37.0. Check it out!
 
 ## Features
 
@@ -28,9 +29,7 @@ rest-hapi is a hapi plugin intended to abstract the work involved in setting up 
 
 View the swagger docs for the live demos:
 
-appy: http://ec2-52-25-112-131.us-west-2.compute.amazonaws.com:8125
-
-rest-hapi-demo: http://ec2-52-25-112-131.us-west-2.compute.amazonaws.com:8124
+appy: https://api.appyapp.io
 
 ## Example Projects
 
@@ -41,7 +40,7 @@ rest-hapi-demo: http://ec2-52-25-112-131.us-west-2.compute.amazonaws.com:8124
 ## Readme contents
 - [Requirements](#requirements)
 - [Installation](#installation)
-- [First time setup/Demo](#first-time-setupdemo)
+- [Getting started](#getting-started)
 - [Using the plugin](#using-the-plugin)
 - [Configuration](#configuration)
 - [Swagger documentation](#swagger-documentation)
@@ -116,13 +115,19 @@ $ npm install rest-hapi
 
 [Back to top](#readme-contents)
 
-### First time setup/Demo
-**WARNING**: This will clear all data in the following MongoDB collections (in the db defined in ``restHapi.config``, default ``mongodb://localhost/rest_hapi``) if they exist: ``users``, ``roles``.
+### Getting started
+**WARNING**: This will clear all data in the following MongoDB collections (in the db defined in ``restHapi.config``, default ``mongodb://localhost:27017/rest_hapi``) if they exist: ``users``, ``roles``.
 
 If you would like to seed your database with some demo models/data, run:
 
 ```
 $ ./node_modules/.bin/rest-hapi-cli seed
+```
+
+If you need a db different than the default, you can add the URI as an argument to the command:
+
+```
+$ ./node_modules/.bin/rest-hapi-cli seed mongodb://localhost:27017/other_db
 ```
 
 NOTE: The password for all seed users is ``1234``.
@@ -136,34 +141,37 @@ You can use these models as templates for your models or delete them later if yo
 As rest-hapi is a hapi plugin, you'll need to set up a hapi server to generate API endpoints.  You'll also need to set up a [mongoose](https://github.com/Automattic/mongoose) instance and include it in the plugin's options when you register. Below is an example nodejs script ``api.js`` with the minimum requirements to set up an API with rest-hapi:
 
 ```javascript
-'use strict';
+'use strict'
 
-let Hapi = require('hapi');
-let mongoose = require('mongoose');
-let restHapi = require('rest-hapi');
+let Hapi = require('hapi')
+let mongoose = require('mongoose')
+let RestHapi = require('rest-hapi')
 
-function api(){
+async function api(){
+  try {
+    let server = Hapi.Server({ port: 8080 })
 
-    let server = new Hapi.Server();
+    await server.register({
+      plugin: RestHapi,
+      options: {
+        mongoose: mongoose,
+        config: config
+      }
+    })
 
-    server.connection({ port: 8124 });
+    await server.start()
 
-    server.register({
-            register: restHapi,
-            options: {
-                mongoose: mongoose
-            }
-        },
-        function() {
-            server.start();
-        });
-
-    return server;
+    console.log("Server ready", server.info)
+    
+    return server
+  } catch (err) {
+    console.log("Error starting server:", err);
+  }
 }
 
-module.exports = api();
+module.exports = api()
 ```
-You can then run ``$ node api.js`` and point your browser to [http://localhost:8124/](http://localhost:8124/) to view the swagger docs (NOTE: API endpoints will only be generated if you have provided models. See [First time setup/Demo](#first-time-setupdemo) or [Creating endpoints](#creating-endpoints).)
+You can then run ``$ node api.js`` and point your browser to [http://localhost:8080/](http://localhost:8080/) to view the swagger docs (NOTE: API endpoints will only be generated if you have provided models. See [Getting started](#getting-started) or [Creating endpoints](#creating-endpoints).)
 
 [Back to top](#readme-contents)
 
@@ -175,63 +183,62 @@ Configuration of rest-hapi is handled through the ``restHapi.config`` object.  B
 /**
  * config.js - Configuration settings for the generated API
  */
-var config = {};
-config.server = {};
-config.mongo = {};
+let config = {}
+config.mongo = {}
 
 /**
  * Your app title goes here.
  * @type {string}
  */
-config.appTitle = "rest-hapi API";
+config.appTitle = 'rest-hapi API'
 
 /**
  * Your app version goes here.
  * @type {string}
  */
-config.version = '1.0.0';
+config.version = '1.0.0'
 
 /**
  * Flag signifying whether the absolute path to the models directory is provided
  * default: false
  * @type {boolean}
  */
-config.absoluteModelPath = false;
+config.absoluteModelPath = false
 
 /**
  * Path to the models directory
  * default: 'models'
  * @type {string}
  */
-config.modelPath = 'models';
+config.modelPath = 'models'
 
 /**
  * Flag signifying whether the absolute path to the api directory is provided
  * @type {boolean}
  */
-config.absoluteApiPath = false;
+config.absoluteApiPath = false
 
 /**
  * Path to the directory for additional endpoints
  * default: 'api'
  * @type {string}
  */
-config.apiPath = 'api';
+config.apiPath = 'api'
 
 /**
  * Cors settings for generated endpoints. Can be set to false to disable.
  * @type {{additionalHeaders: string[], additionalExposedHeaders: string[]}}
  */
-config.cors =  {
-    additionalHeaders: [],
-    additionalExposedHeaders: []
-};
+config.cors = {
+  additionalHeaders: [],
+  additionalExposedHeaders: []
+}
 
 /**
  * Mongo settings
  * - config.mongo.URI = 'mongodb://localhost/rest_hapi'; (local db, default)
  */
-config.mongo.URI = 'mongodb://localhost/rest_hapi';
+config.mongo.URI = 'mongodb://localhost/rest_hapi'
 
 /**
  * Authentication strategy to be used for all generated endpoints.
@@ -239,7 +246,7 @@ config.mongo.URI = 'mongodb://localhost/rest_hapi';
  * default: false
  * @type {boolean/string}
  */
-config.authStrategy = false;
+config.authStrategy = false
 
 /**
  * If set to false, MANY_MANY associations (including linking model data) will be saved in their own collection in th db.  This is useful if a single document
@@ -252,7 +259,7 @@ config.authStrategy = false;
  * default: false
  * @type {boolean}
  */
-config.embedAssociations = false;
+config.embedAssociations = false
 
 /**
  * MetaData options:
@@ -263,19 +270,19 @@ config.embedAssociations = false;
  * - updatedBy: (default: false) _id of user that last updated the document.
  * - updatedBy: (default: false) _id of user that soft deleted the document.
  */
-config.enableCreatedAt = true;
-config.enableUpdatedAt = true;
-config.enableDeletedAt = true;
-config.enableCreatedBy = false;
-config.enableUpdatedBy = false;
-config.enableDeletedBy = false;
+config.enableCreatedAt = true
+config.enableUpdatedAt = true
+config.enableDeletedAt = true
+config.enableCreatedBy = false
+config.enableUpdatedBy = false
+config.enableDeletedBy = false
 
 /**
  * Enables raw $where mongoose queries
  * default: true
  * @type {boolean}
  */
-config.enableWhereQueries = true;
+config.enableWhereQueries = true
 
 /**
  * Enables fields from an associated model to be duplicated. Similar to permanently embedding an associated field within
@@ -283,7 +290,7 @@ config.enableWhereQueries = true;
  * default: false
  * @type {boolean}
  */
-config.enableDuplicateFields = false;
+config.enableDuplicateFields = false
 
 /**
  * When true, duplicated fields will update whenever the original field is updated.
@@ -291,21 +298,21 @@ config.enableDuplicateFields = false;
  * default: false
  * @type {boolean}
  */
-config.trackDuplicatedFields = false;
+config.trackDuplicatedFields = false
 
 /**
  * When enabled, all create, update, associate, and delete events are recorded in an auditLog collection.
  * default: true
  * @type {boolean}
  */
-config.enableAuditLog = true;
+config.enableAuditLog = true
 
 /**
  * Values added here will be applied to the scope of the auditLog endpoint.
  * default: []
  * @type {Array}
  */
-config.auditLogScope = [];
+config.auditLogScope = []
 
 /**
  * Specifies the TTL (time to live/lifetime/expiration) of auditLog documents. Accepts values in seconds unless specified
@@ -314,35 +321,35 @@ config.auditLogScope = [];
  * default: null (does not expire)
  * @type {string}
  */
-config.auditLogTTL = null;
+config.auditLogTTL = null
 
 /**
  * Enables policies via mrhorse (https://github.com/mark-bradshaw/mrhorse).
  * default: false
  * @type {boolean}
  */
-config.enablePolicies = false;
+config.enablePolicies = false
 
 /**
  * Flag signifying whether the absolute path to the policies directory is provided.
  * default: false
  * @type {boolean}
  */
-config.absolutePolicyPath = false;
+config.absolutePolicyPath = false
 
 /**
  * Path to the directory for mrhorse policies (https://github.com/mark-bradshaw/mrhorse).
  * default: 'policies'
  * @type {string}
  */
-config.policyPath = 'policies';
+config.policyPath = 'policies'
 
 /**
  * Enables document level authorization.
  * default: true
  * @type {boolean}
  */
-config.enableDocumentScopes = true;
+config.enableDocumentScopes = true
 
 /**
  * If true, modifies the root scope of any document to allow access to the document's creator.
@@ -356,42 +363,42 @@ config.enableDocumentScopes = true;
  * default: false
  * @type {boolean}
  */
-config.authorizeDocumentCreator = false;
+config.authorizeDocumentCreator = false
 
 /**
  * Same as "authorizeDocumentCreator", but modifies the "readScope" rather than the root scope.
  * default: false
  * @type {boolean}
  */
-config.authorizeDocumentCreatorToRead = false;
+config.authorizeDocumentCreatorToRead = false
 
 /**
  * Same as "authorizeDocumentCreator", but modifies the "updateScope" rather than the root scope.
  * default: false
  * @type {boolean}
  */
-config.authorizeDocumentCreatorToUpdate = false;
+config.authorizeDocumentCreatorToUpdate = false
 
 /**
  * Same as "authorizeDocumentCreator", but modifies the "deleteScope" rather than the root scope.
  * default: false
  * @type {boolean}
  */
-config.authorizeDocumentCreatorToDelete = false;
+config.authorizeDocumentCreatorToDelete = false
 
 /**
  * Same as "authorizeDocumentCreator", but modifies the "associateScope" rather than the root scope.
  * default: false
  * @type {boolean}
  */
-config.authorizeDocumentCreatorToAssociate = false;
+config.authorizeDocumentCreatorToAssociate = false
 
 /**
  * This is the path/key to the user _id stored in your request.auth.credentials object.
  * default: "user._id"
  * @type {string}
  */
-config.userIdKey = "user._id";
+config.userIdKey = 'user._id'
 
 /**
  * Determines what action takes place when one or more document scope checks fail for requests dealing with multiple
@@ -401,7 +408,7 @@ config.userIdKey = "user._id";
  * default: false
  * @type {boolean}
  */
-config.enableDocumentScopeFail = false;
+config.enableDocumentScopeFail = false
 
 /**
  * Flag specifying whether to text index all string fields for all models to enable text search.
@@ -409,7 +416,7 @@ config.enableDocumentScopeFail = false;
  * default: false.
  * @type {boolean}
  */
-config.enableTextSearch = false;
+config.enableTextSearch = false
 
 /**
  * Soft delete options
@@ -419,17 +426,17 @@ config.enableTextSearch = false;
  * NOTE: this option is known to be buggy
  * @type {boolean}
  */
-config.enableSoftDelete = false;
-config.filterDeletedEmbeds = false;
+config.enableSoftDelete = false
+config.filterDeletedEmbeds = false
 
 /**
  * Validation options:
  * default: true
  * @type {boolean}
  */
-config.enableQueryValidation = true;
-config.enablePayloadValidation = true;
-config.enableResponseValidation = true;
+config.enableQueryValidation = true
+config.enablePayloadValidation = true
+config.enableResponseValidation = true
 
 /**
  * Mongoose validation options:
@@ -438,7 +445,7 @@ config.enableResponseValidation = true;
  * default: false
  * @type {boolean}
  */
-config.enableMongooseRunValidators = false;
+config.enableMongooseRunValidators = false
 
 /**
  * Determines the hapi failAction of each response. Options are:
@@ -447,16 +454,7 @@ config.enableMongooseRunValidators = false;
  * default: false
  * @type {boolean}
  */
-config.enableResponseFail = false;
-
-/**
- * If set to true, (and authStrategy is not false) then endpoints will be generated with pre-defined
- * scopes based on the model definition.
- * default: false
- * @deprecated since v0.29.0, use "config.generateRouteScopes" instead
- * @type {boolean}
- */
-config.generateScopes = false;
+config.enableResponseFail = false
 
 /**
  * If set to true, (and authStrategy is not false) then endpoints will be generated with pre-defined
@@ -464,21 +462,21 @@ config.generateScopes = false;
  * default: false
  * @type {boolean}
  */
-config.generateRouteScopes = false;
+config.generateRouteScopes = false
 
 /**
  * If set to true, the scope for each endpoint will be logged when then endpoint is generated.
  * default: false
  * @type {boolean}
  */
-config.logScopes = false;
+config.logScopes = false
 
 /**
  * If set to true, each route will be logged as it is generated.
  * default: false
  * @type {boolean}
  */
-config.logRoutes = false;
+config.logRoutes = false
 
 /**
  * Log level options:
@@ -491,7 +489,7 @@ config.logRoutes = false;
  * - ERROR application business logic error condition
  * - FATAL system error condition
  */
-config.loglevel = "DEBUG";
+config.loglevel = 'NOTE'
 
 /**
  * Determines the initial expansion state of the swagger docs
@@ -499,9 +497,23 @@ config.loglevel = "DEBUG";
  * default: 'none'
  * @type {string}
  */
-config.docExpansion = 'none';
+config.docExpansion = 'none'
 
-module.exports = config;
+/**
+ * If set to false, SwaggerUI will not be generated.
+ * - options: 'true', 'false' (default: 'true')
+ * @type {boolean}
+ */
+config.enableSwaggerUI = true
+
+/**
+ * If set to true, swagger will use the https protocol rather than http.
+ * - options: 'true', 'false' (default: 'false')
+ * @type {boolean}
+ */
+config.enableSwaggerHttps = false
+
+module.exports = config
 ```
 
 [Back to top](#rest-hapi)
@@ -509,7 +521,7 @@ module.exports = config;
 ## Swagger documentation
 
 Swagger documentation is automatically generated for all endpoints and can be viewed by pointing a browser
-at the server URL.  By default this will be [http://localhost:8124/](http://localhost:8124/).  The swagger docs provide quick 
+at the server URL.  If you use the [getting started script](#getting-started) this will be [http://localhost:8080/](http://localhost:8080/).  The swagger docs provide quick 
 access to testing your endpoints along with model schema descriptions and query options.
 
 [Back to top](#readme-contents)
@@ -526,7 +538,7 @@ with the file structure of ``{model name}.model.js``.  These models must adhere 
 'use strict';
 
 module.exports = function (mongoose) {
-    var Schema = new mongoose.Schema({
+    let Schema = new mongoose.Schema({
         /*fill in schema fields*/
     });
 
@@ -547,9 +559,9 @@ As a concrete example, here is a ``user`` model:
 'use strict';
 
 module.exports = function (mongoose) {
-  var modelName = "user";
-  var Types = mongoose.Schema.Types;
-  var Schema = new mongoose.Schema({
+  let modelName = "user";
+  let Types = mongoose.Schema.Types;
+  let Schema = new mongoose.Schema({
     email: {
       type: Types.String,
       required: true,
@@ -595,7 +607,7 @@ Standalone endpoints can be generated by adding files to your ``api`` directory.
 ```javascript
 'use strict';
 
-module.exports = function (server, mongoose, logger) {
+module.exports = function (server, mongoose, Log) {
     /*register hapi endpoint here*/
 };
 ```
@@ -607,19 +619,19 @@ As a concrete example, here is a ``hello-world`` endpoint that will show in the 
 ```javascript
 'use strict';
 
-module.exports = function (server, mongoose, logger) {
+module.exports = function (server, mongoose, Log) {
     server.route({
       method: 'GET',
       path: '/hello-world',
       config: {
-        handler: function(request, reply) { reply("Hello World") },
+        handler: function(request, h) { return "Hello World" },
         tags: ['api'],
         plugins: {
           'hapi-swagger': {}
         }
       }
-    });
-};
+    })
+}
 ```
 
 **NOTE:** If your ``api`` directory is not in your projects root directory, you will need to specify the path (relative to your projects root directory) by assigning the path to the ``config.apiPath`` property and you will need to set the ``config.absoluteApiPath`` property to ``true``.
@@ -630,16 +642,16 @@ module.exports = function (server, mongoose, logger) {
 If endpoints beyond the generated CRUD endpoints are needed for a model, they can easily be added as an item in the ``routeOptions.extraEndpoints`` array.  The endpoint logic should be contained within a function using the footprint: ``function (server, model, options, Log)``. For example, if we wanted to add a ``Password Update`` endpoint to the ``user`` model, it could look like this:
 
 ```javascript
-'use strict';
+'use strict'
 
-var Joi = require('joi');
-var bcrypt = require('bcrypt');
-var restHapi = require('rest-hapi');
+let Joi = require('joi')
+let bcrypt = require('bcrypt')
+let restHapi = require('rest-hapi')
 
 module.exports = function (mongoose) {
-  var modelName = "user";
-  var Types = mongoose.Schema.Types;
-  var Schema = new mongoose.Schema({
+  let modelName = "user"
+  let Types = mongoose.Schema.Types
+  let Schema = new mongoose.Schema({
     email: {
       type: Types.String,
       required: true,
@@ -651,35 +663,39 @@ module.exports = function (mongoose) {
       exclude: true,
       allowOnUpdate: false
     }
-  });
-  
+  })
+
   Schema.statics = {
     collectionName:modelName,
     routeOptions: {
       extraEndpoints: [
-        //Password Update Endpoint
+        // Password Update Endpoint
         function (server, model, options, Log) {
-          Log = Log.bind("Password Update");
-          var Boom = require('boom');
+          Log = Log.bind("Password Update")
+          let Boom = require('boom')
 
-          var collectionName = model.collectionDisplayName || model.modelName;
+          let collectionName = model.collectionDisplayName || model.modelName
 
-          Log.note("Generating Password Update endpoint for " + collectionName);
+          Log.note("Generating Password Update endpoint for " + collectionName)
 
-          var handler = function (request, reply) {
-            var hashedPassword = model.generatePasswordHash(request.payload.password);
-            return restHapi.update(model, request.params._id, {password: hashedPassword}, Log).then(function (result) {
+          let handler = async function (request, h) {
+            try {
+              let hashedPassword = model.generatePasswordHash(request.payload.password)
+              let result = await restHapi.update(model, request.params._id, {password: hashedPassword}, Log)
               if (result) {
-                return reply("Password updated.").code(200);
+                return h.response("Password updated.").code(200)
               }
               else {
-                return reply(Boom.notFound("No resource was found with that id."));
+                throw Boom.notFound("No resource was found with that id.")
               }
-            })
-            .catch(function (error) {
-              Log.error("error: ", error);
-              return reply(Boom.badImplementation("An error occurred updating the resource.", error));
-            });
+            } catch(err) {
+              if (!err.isBoom) {
+                Log.error(err)
+                throw Boom.badImplementation(err)
+              } else {
+                throw err
+              }
+            }
           }
 
           server.route({
@@ -696,7 +712,7 @@ module.exports = function (mongoose) {
                 },
                 payload: {
                   password: Joi.string().required()
-                  .description('The user\'s new password')
+                    .description('The user\'s new password')
                 }
               },
               plugins: {
@@ -710,40 +726,21 @@ module.exports = function (mongoose) {
                 }
               }
             }
-          });
+          })
         }
       ]
     },
-    
+
     generatePasswordHash: function(password) {
-      var salt = bcrypt.genSaltSync(10);
-      var hash = bcrypt.hashSync(password, salt);
-      return hash;
+      let salt = bcrypt.genSaltSync(10)
+      let hash = bcrypt.hashSync(password, salt)
+      return hash
     }
-  };
-  
-  return Schema;
-};
+  }
 
-```
+  return Schema
+}
 
-### Error handling
-rest-hapi exposes an `errorHelper.formatResponse` method that can be helpful when handling errors with additional/standalone endpoints. This function handles [rest-hapi method](#mongoose-wrapper-methods) errors appropriately and always returns a [Boom](https://github.com/hapijs/boom) object. Consider the handler method below for an example:
-
-```javascript
-const deactivateAccountHandler = function (request, reply) {
-
-        const _id = request.params._id;
-
-        return RestHapi.update(User, _id, { isActive: false }, Log)
-          .then(function (user) {
-            return reply(user);
-          })
-          .catch(function (error) {
-            Log.error(error);
-            return reply(RestHapi.errorHelper.formatResponse(error));
-          });
-      };
 ```
 
 [Back to top](#readme-contents)
@@ -751,8 +748,6 @@ const deactivateAccountHandler = function (request, reply) {
 ## Associations
 
 The rest-hapi framework supports model associations that mimic associations in a relational database.  This includes [one-one](#one_one), [one-many](#one_manymany_one), [many-one](#one_manymany_one), and [many-many](#many_many) relationships.  Associations are created by adding the relevant schema fields and populating the ``associations`` object within ``routeOptions``.  Associations exists as references to a document's ``_id`` field, and can be populated to return the associated object.  See [Querying](#querying) for more details on how to populate associations.
-
-***Update: One sided [-many](#_many) relationships are available as of v0.19.0***
 
 ### ONE_ONE
 
@@ -772,9 +767,9 @@ required for all associations.
 'use strict';
 
 module.exports = function (mongoose) {
-  var modelName = "user";
-  var Types = mongoose.Schema.Types;
-  var Schema = new mongoose.Schema({
+  let modelName = "user";
+  let Types = mongoose.Schema.Types;
+  let Schema = new mongoose.Schema({
     email: {
       type: Types.String,
       required: true,
@@ -814,9 +809,9 @@ module.exports = function (mongoose) {
 'use strict';
 
 module.exports = function (mongoose) {
-  var modelName = "dog";
-  var Types = mongoose.Schema.Types;
-  var Schema = new mongoose.Schema({
+  let modelName = "dog";
+  let Types = mongoose.Schema.Types;
+  let Schema = new mongoose.Schema({
     name: {
       type: Types.String,
       required: true
@@ -862,9 +857,9 @@ include a ``ref`` property with the associated model name.
 'use strict';
 
 module.exports = function (mongoose) {
-  var modelName = "user";
-  var Types = mongoose.Schema.Types;
-  var Schema = new mongoose.Schema({
+  let modelName = "user";
+  let Types = mongoose.Schema.Types;
+  let Schema = new mongoose.Schema({
     email: {
       type: Types.String,
       required: true,
@@ -905,9 +900,9 @@ module.exports = function (mongoose) {
 'use strict';
 
 module.exports = function (mongoose) {
-  var modelName = "role";
-  var Types = mongoose.Schema.Types;
-  var Schema = new mongoose.Schema({
+  let modelName = "role";
+  let Types = mongoose.Schema.Types;
+  let Schema = new mongoose.Schema({
     name: {
       type: Types.String,
       required: true,
@@ -963,9 +958,9 @@ to multiple ``group`` instances and vice versa.
 'use strict';
 
 module.exports = function (mongoose) {
-  var modelName = "user";
-  var Types = mongoose.Schema.Types;
-  var Schema = new mongoose.Schema({
+  let modelName = "user";
+  let Types = mongoose.Schema.Types;
+  let Schema = new mongoose.Schema({
     email: {
       type: Types.String,
       required: true,
@@ -1002,9 +997,9 @@ module.exports = function (mongoose) {
 'use strict';
 
 module.exports = function (mongoose) {
-  var modelName = "group";
-  var Types = mongoose.Schema.Types;
-  var Schema = new mongoose.Schema({
+  let modelName = "group";
+  let Types = mongoose.Schema.Types;
+  let Schema = new mongoose.Schema({
     name: {
       type: Types.String,
       required: true,
@@ -1074,9 +1069,9 @@ association property **must** match the linking model ``modleName`` property.
 'use strict';
 
 module.exports = function (mongoose) {
-  var modelName = "user";
-  var Types = mongoose.Schema.Types;
-  var Schema = new mongoose.Schema({
+  let modelName = "user";
+  let Types = mongoose.Schema.Types;
+  let Schema = new mongoose.Schema({
     email: {
       type: Types.String,
       required: true,
@@ -1114,13 +1109,13 @@ module.exports = function (mongoose) {
 ```javascript
 'use strict';
 
-var mongoose = require("mongoose");
+let mongoose = require("mongoose");
 
 module.exports = function () {
 
-  var Types = mongoose.Schema.Types;
+  let Types = mongoose.Schema.Types;
 
-  var Model = {
+  let Model = {
     Schema: {
       friendsSince: {
         type: Types.Date
@@ -1162,9 +1157,9 @@ The `config.embedAssociations` can be overwritten for individual associations th
 'use strict';
 
 module.exports = function (mongoose) {
-    var modelName = "group";
-    var Types = mongoose.Schema.Types;
-    var Schema = new mongoose.Schema({
+    let modelName = "group";
+    let Types = mongoose.Schema.Types;
+    let Schema = new mongoose.Schema({
         name: {
             type: Types.String,
             required: true,
@@ -1196,9 +1191,9 @@ module.exports = function (mongoose) {
 'use strict';
 
 module.exports = function (mongoose) {
-    var modelName = "user";
-    var Types = mongoose.Schema.Types;
-    var Schema = new mongoose.Schema({
+    let modelName = "user";
+    let Types = mongoose.Schema.Types;
+    let Schema = new mongoose.Schema({
         name: {
             type: Types.String,
             required: true
@@ -1253,9 +1248,9 @@ A one-sided -many relationship can exists between two models. This allows the pa
 'use strict';
 
 module.exports = function (mongoose) {
-  var modelName = "post";
-  var Types = mongoose.Schema.Types;
-  var Schema = new mongoose.Schema({
+  let modelName = "post";
+  let Types = mongoose.Schema.Types;
+  let Schema = new mongoose.Schema({
     caption: {
       type: Types.String
     }
@@ -1325,9 +1320,9 @@ to alter the association path name.  For example:
 'use strict';
 
 module.exports = function (mongoose) {
-  var modelName = "user";
-  var Types = mongoose.Schema.Types;
-  var Schema = new mongoose.Schema({
+  let modelName = "user";
+  let Types = mongoose.Schema.Types;
+  let Schema = new mongoose.Schema({
     email: {
       type: Types.String,
       required: true,
@@ -1556,9 +1551,9 @@ In the code below, the `name` field of the role model will be duplicated in the 
 'use strict';
 
 module.exports = function (mongoose) {
-  var modelName = "role";
-  var Types = mongoose.Schema.Types;
-  var Schema = new mongoose.Schema({
+  let modelName = "role";
+  let Types = mongoose.Schema.Types;
+  let Schema = new mongoose.Schema({
     name: {
       type: Types.String,
       required: true
@@ -1592,9 +1587,9 @@ module.exports = function (mongoose) {
 'use strict';
 
 module.exports = function (mongoose) {
-  var modelName = "user";
-  var Types = mongoose.Schema.Types;
-  var Schema = new mongoose.Schema({
+  let modelName = "user";
+  let Types = mongoose.Schema.Types;
+  let Schema = new mongoose.Schema({
     email: {
       type: Types.String,
       unique: true
@@ -1765,9 +1760,9 @@ One interesting property of duplicate fields is that they themselves can be dupl
 'use strict';
 
 module.exports = function (mongoose) {
-  var modelName = "business";
-  var Types = mongoose.Schema.Types;
-  var Schema = new mongoose.Schema({
+  let modelName = "business";
+  let Types = mongoose.Schema.Types;
+  let Schema = new mongoose.Schema({
     name: {
       type: Types.String,
       required: true
@@ -1800,9 +1795,9 @@ module.exports = function (mongoose) {
 ```javascript'use strict';
 
 module.exports = function (mongoose) {
-  var modelName = "role";
-  var Types = mongoose.Schema.Types;
-  var Schema = new mongoose.Schema({
+  let modelName = "role";
+  let Types = mongoose.Schema.Types;
+  let Schema = new mongoose.Schema({
     name: {
       type: Types.String,
       required: true
@@ -1847,9 +1842,9 @@ module.exports = function (mongoose) {
 ```javascript'use strict';
 
 module.exports = function (mongoose) {
-  var modelName = "user";
-  var Types = mongoose.Schema.Types;
-  var Schema = new mongoose.Schema({
+  let modelName = "user";
+  let Types = mongoose.Schema.Types;
+  let Schema = new mongoose.Schema({
     email: {
       type: Types.String,
       unique: true
@@ -2125,12 +2120,12 @@ using a static method ``generatePasswordHash``.
 ```javascript
 'use strict';
 
-var bcrypt = require('bcrypt');
+let bcrypt = require('bcrypt');
 
 module.exports = function (mongoose) {
-  var modelName = "user";
-  var Types = mongoose.Schema.Types;
-  var Schema = new mongoose.Schema({
+  let modelName = "user";
+  let Types = mongoose.Schema.Types;
+  let Schema = new mongoose.Schema({
     email: {
       type: Types.String,
       unique: true
@@ -2148,7 +2143,7 @@ module.exports = function (mongoose) {
     routeOptions: {
       create: {
         pre: function (payload, request, Log) {
-          var hashedPassword = mongoose.model('user').generatePasswordHash(payload.password);
+          let hashedPassword = mongoose.model('user').generatePasswordHash(payload.password);
 
           payload.password = hashedPassword;
           
@@ -2158,8 +2153,8 @@ module.exports = function (mongoose) {
     },
 
     generatePasswordHash: function(password) {
-      var salt = bcrypt.genSaltSync(10);
-      var hash = bcrypt.hashSync(password, salt);
+      let salt = bcrypt.genSaltSync(10);
+      let hash = bcrypt.hashSync(password, salt);
       return hash;
     }
   };
@@ -2168,12 +2163,12 @@ module.exports = function (mongoose) {
 };
 ```
 
-Custom errors can be returned in middleware functions simply by throwing the error message as a string.  This will result in a 400 error response with your custom message. Ex:
+If a `Boom` error is thrown within a middleware function, that error will become the server response.  Ex:
 
 ```javascript
       create: {
         pre: function (payload, request, Log) {
-          throw "TEST ERROR"
+          throw Boom.badRequest("TEST ERROR")
         }
       }
 ```
@@ -2231,8 +2226,6 @@ rest-hapi takes advantage of the ``scope`` property within the ``auth`` route co
 
 In rest-hapi, each generated endpoint has its ``scope`` property set based on model properties within the ``routeOptions.routeScope`` object. There are three types of scopes that can be set: a root scope property, action scope properties, and association scope properties. A description of these can be seen below.
 
-**NOTE:** As of v0.29.0 `routeOptions.scope` and `routeOptions.scope.scope` have been deprecated and replaced with `routeOptions.routeScope` and `routeOptions.routeScope.rootScope`
-
 The first type of scope is a ``rootScope`` property that, when set, is applied to all generated endpoints for that model. 
 
 The second is an action specific scope property that only applies to endpoints corresponding with the action. A list of these action scope properties can be seen below:
@@ -2253,9 +2246,9 @@ In the example below, users with the ``Admin`` scope in their authentication cre
 'use strict';
 
 module.exports = function (mongoose) {
-  var modelName = "user";
-  var Types = mongoose.Schema.Types;
-  var Schema = new mongoose.Schema({
+  let modelName = "user";
+  let Types = mongoose.Schema.Types;
+  let Schema = new mongoose.Schema({
     email: {
       type: Types.String,
       required: true,
@@ -2632,31 +2625,32 @@ To provide an example of the power of policies within rest-hapi, consider the fo
 A developer wants to implement document authorization, but wants to maintain control over the implementation and have the option of providing functionality outside of what is available with rest-hapi's built in [document authorization](#document-authorization). They want to only allow the user that creates a document to be able to modify the document. They decide to implement this via the policy below (`docAuth.js`).
 
 ```javascript
-'use strict';
+'use strict'
 
-const Boom = require('boom');
+const Boom = require('boom')
 
-let docAuth = function(request, reply, next) {
-    let Log = request.logger;
+let docAuth = async function(request, h) {
+    let Log = request.logger
     try {
-        let model = request.route.settings.plugins.model;
-
-        let userId = request.auth.credentials.user._id;
-
-        return model.findById(request.params._id)
-            .then(function(document) {
-                if (document && document.createdBy.toString() === userId.toString()) {
-                    return next(null, true);
-                }
-                else {
-                    return next(Boom.notFound("No resource was found with that id."), false);
-                }
-            })
-
+      let model = request.route.settings.plugins.model
+    
+      let userId = request.auth.credentials.user._id
+    
+      let document = await model.findById(request.params._id)
+        
+      if (document && document.createdBy.toString() === userId.toString()) {
+        return h.continue
+      } else {
+        throw Boom.notFound("No resource was found with that id.")
+      }
     }
     catch (err) {
-        Log.error("ERROR", err);
-        return next(Boom.badImplementation(err), false);
+      if (!err.isBoom) {
+        Log.error(err)
+        throw Boom.badImplementation(err)
+      } else {
+        throw err
+      }
     }
 };
 
@@ -2674,9 +2668,9 @@ They can then apply this policy to their model routes like so:
 'use strict';
 
 module.exports = function (mongoose) {
-  var modelName = "blog";
-  var Types = mongoose.Schema.Types;
-  var Schema = new mongoose.Schema({
+  let modelName = "blog";
+  let Types = mongoose.Schema.Types;
+  let Schema = new mongoose.Schema({
     title: {
       type: Types.String,
       required: true
@@ -2923,45 +2917,16 @@ This assumes that your authentication credentials (request.auth.credentials) wil
 [Back to top](#readme-contents)
 
 ## Model generation
-In some situations models may be required before or without endpoint generation. For example some hapi plugins may require models to exist before the routes are registered. In these cases rest-hapi provides a ``generateModels`` function that can be called independently.  See below for example usage:
+In some situations models may be required before or without endpoint generation. For example some hapi plugins may require models to exist before the routes are registered. In these cases rest-hapi provides a ``generateModels`` function that can be called independently.
 
-```javascript
-'use strict';
-
-restHapi.generateModels(mongoose)
-        .then(function() {
-            server.register(require('hapi-auth-jwt2'), (err) => {
-                require('./utilities/auth').applyJwtStrategy(server);  //requires models to exist
-
-                server.register({
-                    register: restHapi,
-                    options: {
-                        mongoose: mongoose
-                    }
-                }, function(err) {
-
-                    server.start(function (err) {
-
-                        server.log('info', 'Server initialized: ' + server.info);
-
-                        restHapi.logUtil.logActionComplete(restHapi.logger, "Server Initialized", server.info);
-                    });
-                });
-            });
-        })
-        .catch(function(error) {
-            console.log("There was an error generating the models: ", error)
-        });
-```
-
-NOTE: See the [appy seed file](https://github.com/JKHeadley/appy/blob/master/gulp/seed.js) (or [gulp/seed.js](https://github.com/JKHeadley/rest-hapi/blob/master/gulp/seed.js)) for another example usage of ``generateModels``.
+NOTE: See the [appy seed file](https://github.com/JKHeadley/appy/blob/master/gulp/seed.js) (or [scripts/seed.js](https://github.com/JKHeadley/rest-hapi/blob/master/scripts/seed.js)) for another example usage of ``generateModels``.
 
 [Back to top](#readme-contents)
 
 ## Testing
 If you have downloaded the source you can run the tests with:
 ```
-$ gulp test
+$ npm test
 ```
 
 [Back to top](#readme-contents)
@@ -2986,7 +2951,4 @@ Building a project with rest-hapi? [Open a PR](https://github.com/JKHeadley/rest
 ## Contributing
 Please reference the contributing doc: https://github.com/JKHeadley/rest-hapi/blob/master/CONTRIBUTING.md
 
-## Join the team 
- Do you want to collaborate? Join the project at https://projectgroupie.com/projects/206
- 
 [Back to top](#readme-contents)

@@ -1,189 +1,102 @@
-'use strict';
+'use strict'
 
-const _ = require('lodash'),
-    extend = require('extend'),
-    Inert = require('inert'),
-    Vision = require('vision'),
-    HS = require('hapi-swagger'),
-    MH = require('mrhorse'),
-    logging = require('loggin'),
-    logUtil = require('./utilities/log-util'),
-    chalk = require('chalk'),
-    Q = require("q"),
-    fs = require("fs"),
-    restHelperFactory = require('./utilities/rest-helper-factory'),
-    handlerHelper = require('./utilities/handler-helper'),
-    joiHelper = require('./utilities/joi-mongoose-helper'),
-    testHelper = require('./utilities/test-helper'),
-    errorHelper = require('./utilities/error-helper'),
-    modelGenerator = require('./utilities/model-generator'),
-    apiGenerator = require('./utilities/api-generator'),
-    defaultConfig = require('./config');
+const extend = require('extend')
+const _ = require('lodash')
+const path = require('path')
+const Inert = require('inert')
+const Vision = require('vision')
+const HapiSwagger = require('hapi-swagger')
+const Mrhorse = require('mrhorse')
+const logging = require('loggin')
+const logUtil = require('./utilities/log-util')
+const chalk = require('chalk')
+const restHelperFactory = require('./utilities/rest-helper-factory')
+const handlerHelper = require('./utilities/handler-helper')
+const joiHelper = require('./utilities/joi-mongoose-helper')
+const testHelper = require('./utilities/test-helper')
+const modelGenerator = require('./utilities/model-generator')
+const apiGenerator = require('./utilities/api-generator')
+const defaultConfig = require('./config')
+const globals = require('./globals')
 
-let modelsGenerated = false;
-let globalModels = {};
+const internals = {
+  modelsGenerated: false,
+  globalModels: {}
+}
 
 module.exports = {
-    config: defaultConfig,
-    register: register,
-    generateModels: generateModels,
-    list: handlerHelper.list,
-    find: handlerHelper.find,
-    create: handlerHelper.create,
-    update: handlerHelper.update,
-    deleteOne: handlerHelper.deleteOne,
-    deleteMany: handlerHelper.deleteMany,
-    addOne: handlerHelper.addOne,
-    removeOne: handlerHelper.removeOne,
-    addMany: handlerHelper.addMany,
-    removeMany: handlerHelper.removeMany,
-    getAll: handlerHelper.getAll,
-    logger: {},
-    getLogger: getLogger,
-    logUtil: logUtil,
-    joiHelper: joiHelper,
-    testHelper: testHelper,
-    errorHelper: errorHelper
-};
+  plugin: {
+    name: 'rest-hapi',
+    version: '1.0.0',
+    register
+  },
+  config: defaultConfig,
+  generateModels: generateModels,
+  list: handlerHelper.list,
+  find: handlerHelper.find,
+  create: handlerHelper.create,
+  update: handlerHelper.update,
+  deleteOne: handlerHelper.deleteOne,
+  deleteMany: handlerHelper.deleteMany,
+  addOne: handlerHelper.addOne,
+  removeOne: handlerHelper.removeOne,
+  addMany: handlerHelper.addMany,
+  removeMany: handlerHelper.removeMany,
+  getAll: handlerHelper.getAll,
+  Log: {},
+  getLogger: getLogger,
+  logUtil: logUtil,
+  joiHelper: joiHelper,
+  testHelper: testHelper
+}
 
-function register(server, options, next) {
+async function register(server, options) {
+  let config = defaultConfig
 
-    let config = defaultConfig;
+  // Overwrite the default config with config set by the user
+  extend(true, config, options.config)
+  module.exports.config = config
 
-    extend(true, config, module.exports.config);
+  let Log = getLogger('api')
 
-    var logger = getLogger("api");
+  module.exports.Log = Log
 
-    module.exports.logger = logger;
+  // Add the Log object to the request object for access later
+  server.ext('onRequest', (request, h) => {
+    request.Log = Log
 
-    //EXPL: add the logger object to the request object for access later
-    server.ext('onRequest', function (request, reply) {
+    return h.continue
+  })
 
-        request.logger = logger;
+  const mongoose = mongooseInit(options.mongoose, Log, config)
 
-        return reply.continue();
-    });
+  logUtil.logActionStart(Log, 'Initializing Server')
 
-    let mongoose = require('./components/mongoose-init')(options.mongoose, logger, config);
+  let models
 
-    logUtil.logActionStart(logger, "Initializing Server");
-
-    let promise = {};
-
-    if (modelsGenerated) {
-        promise = Q.when(globalModels);
+  if (internals.modelsGenerated) {
+    // Models generated previously
+    models = internals.globalModels
+  } else {
+    try {
+      models = await modelGenerator(mongoose, Log, config)
+    } catch (err) {
+      if (err.message.includes('no such file')) {
+        Log.error(
+          'The policies directory provided does not exist. ' +
+            "Try setting the 'policyPath' property of the config file."
+        )
+      } else {
+        throw err
+      }
     }
-    else {
-        promise = modelGenerator(mongoose, logger, config);
-    }
+  }
 
-    let models = {};
+  registerHapiSwagger(server, Log, config)
 
-    promise
-        .then(function(result) {
-            models = result;
+  registerMrHorse(server, Log, config)
 
-            //EXPL: setup hapi-swagger plugin
-            //region Hapi-Swagger Plugin
-            let swaggerOptions = {
-                documentationPath: '/',
-                info: {
-                    title: config.appTitle,
-                    version: config.version
-                },
-                expanded: config.docExpansion,
-                swaggerUI: config.enableSwaggerUI,
-                documentationPage: config.enableSwaggerUI,
-                schemes: config.enableSwaggerHttps ? ['https'] : ['http'],
-                reuseDefinitions: false
-            };
-
-            let HapiSwagger = {
-                register: HS,
-                options: swaggerOptions
-            };
-            //endregion
-
-            return server.register([
-                Inert,
-                Vision,
-                HapiSwagger,
-            ])
-        })
-        .then(function () {
-
-            //EXPL: setup mrhorse policy plugin
-            //region Mrhorse Plugin
-            let policyPath = "";
-            let Mrhorse = null;
-
-            if (config.enablePolicies) {
-                if (config.absolutePolicyPath === true) {
-                    policyPath = config.policyPath;
-                }
-                else {
-                    policyPath = __dirname.replace('node_modules/rest-hapi', config.policyPath);
-                }
-
-            }
-            else {
-                policyPath = __dirname + '/policies'
-            }
-
-            Mrhorse = {
-                register: MH,
-                options: {
-                    policyDirectory: policyPath
-                }
-            };
-            //endregion
-
-            if (Mrhorse) {
-                return server.register([
-                    Mrhorse
-                ])
-                    .then(function(result) {
-                        if (config.enablePolicies) {
-                            server.plugins.mrhorse.loadPolicies(server, {
-                                policyDirectory: __dirname + '/policies'
-                            }, function(err) {
-                                if (err) {
-                                    logger.error("ERROR:", err);
-                                }
-                            });
-                        }
-                    });
-            }
-            else {
-                return null;
-            }
-        })
-        .catch(function (error) {
-            if (error.message.includes('no such file')) {
-                logger.error("The policies directory provided does not exist. " +
-                    "Try setting the 'policyPath' property of the config file.");
-            }
-            else {
-                throw error;
-            }
-        })
-        .then(function() {
-            const restHelper = restHelperFactory(logger, mongoose, server);
-
-            for (let modelKey in models) {//EXPL: generate endpoints for all of the models
-                let model = models[modelKey];
-                restHelper.generateRoutes(server, model, {models: models})
-            }
-
-            return apiGenerator(server, mongoose, logger, config)
-        })
-        .then(function() {
-            next();
-        })
-        .catch(function (error) {
-            logger.error(error);
-            return next(error);
-        })
+  return generateRoutes(server, mongoose, models, Log, config)
 }
 
 /**
@@ -193,38 +106,137 @@ function register(server, options, next) {
  * @returns {*}
  */
 function generateModels(mongoose) {
+  internals.modelsGenerated = true
 
-    modelsGenerated = true;
+  let config = defaultConfig
 
-    let config = defaultConfig;
+  extend(true, config, module.exports.config)
 
-    extend(true, config, module.exports.config);
+  let Log = getLogger('models')
 
-    var logger = getLogger("models");
+  module.exports.Log = Log
 
-    module.exports.logger = logger;
-
-    return modelGenerator(mongoose, logger, config)
-        .then(function(models) {
-            globalModels = models;
-            return models;
-        });
+  return modelGenerator(mongoose, Log, config).then(function(models) {
+    internals.globalModels = models
+    return models
+  })
 }
 
+/**
+ * Get a new Log object with a root label.
+ * @param label: The root label for the Log.
+ * @returns {*}
+ */
 function getLogger(label) {
-    let config = defaultConfig;
+  let config = defaultConfig
 
-    extend(true, config, module.exports.config);
+  extend(true, config, module.exports.config)
 
-    let rootLogger = logging.getLogger(chalk.gray(label));
+  let rootLogger = logging.getLogger(chalk.gray(label))
 
-    rootLogger.logLevel = config.loglevel;
+  rootLogger.logLevel = config.loglevel
 
-    return rootLogger;
+  return rootLogger
 }
 
+/**
+ * Connect mongoose and add to globals.
+ * @param mongoose
+ * @param Log
+ * @param config
+ * @returns {*}
+ */
+function mongooseInit(mongoose, Log, config) {
+  mongoose.Promise = Promise
 
-register.attributes = {
-    name: 'rest-hapi',
-    version: '1.0.0'
-};
+  logUtil.logActionStart(
+    Log,
+    'Connecting to Database',
+    _.omit(config.mongo, ['pass'])
+  )
+
+  mongoose.connect(config.mongo.URI, { useMongoClient: true })
+
+  globals.mongoose = mongoose
+
+  return mongoose
+}
+
+/**
+ * Register and configure the mrhorse plugin.
+ * @param server
+ * @param Log
+ * @param config
+ * @returns {Promise<void>}
+ */
+async function registerMrHorse(server, Log, config) {
+  let policyPath = ''
+
+  if (config.enablePolicies) {
+    if (config.absolutePolicyPath === true) {
+      policyPath = config.policyPath
+    } else {
+      policyPath = __dirname.replace(
+        'node_modules/rest-hapi',
+        config.policyPath
+      )
+    }
+  } else {
+    policyPath = path.join(__dirname, '/policies')
+  }
+  await server.register([
+    {
+      plugin: Mrhorse,
+      options: {
+        policyDirectory: policyPath
+      }
+    }
+  ])
+
+  if (config.enablePolicies) {
+    await server.plugins.mrhorse.loadPolicies(server, {
+      policyDirectory: path.join(__dirname, '/policies')
+    })
+  }
+}
+
+/**
+ * Register and configure the hapi-swagger plugin.
+ * @param server
+ * @param Log
+ * @param config
+ * @returns {Promise<void>}
+ */
+async function registerHapiSwagger(server, Log, config) {
+  let swaggerOptions = {
+    documentationPath: '/',
+    info: {
+      title: config.appTitle,
+      version: config.version
+    },
+    expanded: config.docExpansion,
+    swaggerUI: config.enableSwaggerUI,
+    documentationPage: config.enableSwaggerUI,
+    schemes: config.enableSwaggerHttps ? ['https'] : ['http'],
+    reuseDefinitions: false
+  }
+
+  await server.register([
+    Inert,
+    Vision,
+    { plugin: HapiSwagger, options: swaggerOptions }
+  ])
+}
+
+function generateRoutes(server, mongoose, models, Log, config) {
+  const restHelper = restHelperFactory(Log, mongoose, server)
+
+  for (let modelKey in models) {
+    // Generate endpoints for all of the models
+    let model = models[modelKey]
+    restHelper.generateRoutes(server, model, { models: models })
+  }
+
+  // Generate custom endpoints
+  return apiGenerator(server, mongoose, Log, config)
+}

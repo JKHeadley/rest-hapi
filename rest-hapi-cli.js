@@ -1,45 +1,63 @@
 #! /usr/bin/env node
 
-var userArgs = process.argv.slice(2);
+let userArgs = process.argv.slice(2)
 
-var command = userArgs[0];
+let command = userArgs[0]
 
-var args = userArgs;
+let args = userArgs
 
-args.shift();
+args.shift()
 
-var exec = require('child_process').exec;
+let exec = require('child_process').exec
 
-var isWindows = /^win/.test(process.platform);
+let isWindows = /^win/.test(process.platform)
 
-var cmdString = '$PWD/node_modules/rest-hapi/gulpfile.js';
+let cmdString = '$PWD/node_modules/rest-hapi/scripts/'
 
 if (isWindows) {
-	// This will fix the error "No gulpfile found" on windows OS
-	cmdString = './node_modules/rest-hapi/gulpfile.js';
+  cmdString = './node_modules/rest-hapi'
 }
 
 switch (command) {
-	case "seed":
-		exec('gulp seed --gulpfile ' + cmdString, function(err, stdout, stderr) {
-			console.log(stdout);
-			console.log(stderr);
-		});
-		break;
-	case "test":
-		exec('gulp test --gulpfile ' + cmdString, function(err, stdout, stderr) {
-			console.log(stdout);
-			console.log(stderr);
-		});
-		break;
-	case "update-associations":
-		exec('gulp update-associations --gulpfile ' + cmdString + " --options " + args.join(' --options '), function(err, stdout, stderr) {
-			console.log(stdout);
-			console.log(stderr);
-		});
-		break;
-	default:
-		console.error("error, unknown command:", command);
-		break;
+  case 'seed':
+    exec('node ' + cmdString + 'seed.js ' + args, function(
+      err,
+      stdout,
+      stderr
+    ) {
+      console.log(stdout)
+      console.log(stderr)
+      if (err) {
+        throw err
+      }
+    })
+    break
+  case 'test':
+    exec('npm run test', function(err, stdout, stderr) {
+      console.log(stdout)
+      console.log(stderr)
+      if (err) {
+        throw err
+      }
+    })
+    break
+  case 'update-associations':
+    exec(
+      'node ' +
+        cmdString +
+        'update-associations.js' +
+        ' --options ' +
+        args.join(' --options '),
+      function(err, stdout, stderr) {
+        console.log(stdout)
+        console.log(stderr)
+        if (err) {
+          throw err
+        }
+      }
+    )
+    break
+  default:
+    console.error('error, unknown command:', command)
+    break
 }
-

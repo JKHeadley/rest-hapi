@@ -1,22 +1,34 @@
 {
   "name": "rest-hapi",
-  "version": "0.43.2",
+  "version": "0.43.0",
   "description": "A RESTful API generator for hapi",
   "main": "rest-hapi.js",
   "bin": {
     "rest-hapi-cli": "./rest-hapi-cli.js"
   },
   "engines": {
-    "node": ">=6.0.0",
+    "node": ">=8.10.0",
     "npm": ">=4.0.0"
   },
   "directories": {
     "test": "tests"
   },
   "scripts": {
-    "test": "gulp test",
+    "test": "nyc tape ./tests/unit/*.tests.js ./tests/e2e/*.tests.js",
+    "posttest": "npm run report-coverage",
+    "test-unit": "nyc tape ./tests/unit/*.tests.js",
+    "test-e2e": "nyc tape ./tests/e2e/*.tests.js",
+    "report-coverage": "nyc report --reporter=text-lcov > coverage.lcov && codecov",
     "patch-release-git": "git add . && git commit -a -m 'patch release' && git push && npm version patch && npm publish",
-    "patch-release": "npm version patch && npm publish"
+    "patch-release": "npm version patch && npm publish",
+    "precommit": "lint-staged",
+    "lint": "eslint --fix **/*.js ./"
+  },
+  "lint-staged": {
+    "**/*.js": [
+      "eslint --fix",
+      "git add"
+    ]
   },
   "repository": {
     "type": "git",
@@ -42,37 +54,45 @@
   "dependencies": {
     "bcryptjs": "latest",
     "blue-tape": "^1.0.0",
-    "boom": "^5.1.0",
+    "boom": "^7.2.0",
     "chalk": "*",
     "extend": "^3.0.0",
-    "gulp": "^3.9.1",
-    "gulp-exit": "0.0.2",
-    "gulp-tape": "latest",
-    "hapi": "^16.4.3",
-    "hapi-swagger": "7.8.1",
-    "hoek": "^4.2.1",
-    "inert": "^4.2.0",
-    "joi": "^10.6.0",
+    "fs-extra": "^6.0.1",
+    "hapi": "^17.4.0",
+    "hapi-swagger": "9.1.1",
+    "inert": "^5.1.0",
+    "joi": "^13.3.0",
     "joi-objectid": "^2.0.0",
-    "jwt-simple": "^0.5.1",
     "lodash": "~4.17.4",
     "loggin": "^3.0.1",
     "mkdirp": "0.5.1",
     "mongoose": "^4.6.3",
-    "mrhorse": "^2.3.1",
-    "q": "^1.4.1",
-    "qs": "^6.2.1",
+    "mrhorse": "^3.0.1",
     "query-string": "^5.0.0",
     "require-all": "^2.1.0",
-    "require-dir": "~0.3.2",
-    "tap-colorize": "latest",
     "tape": "latest",
-    "vision": "^4.1.1"
+    "vision": "^5.3.2"
   },
   "devDependencies": {
-    "decache": "^4.4.0",
+    "babel-eslint": "^8.2.3",
+    "clear-require": "^2.0.0",
+    "decache": "4.4.0",
+    "eslint": "^4.19.1",
+    "eslint-config-prettier": "^2.9.0",
+    "eslint-config-prettier-standard": "^2.0.0",
+    "eslint-config-standard": "^11.0.0",
+    "eslint-plugin-import": "^2.11.0",
+    "eslint-plugin-node": "^6.0.1",
+    "eslint-plugin-prettier": "^2.6.0",
+    "eslint-plugin-promise": "^3.7.0",
+    "eslint-plugin-standard": "^3.1.0",
+    "husky": "^0.14.3",
+    "lint-staged": "^7.1.0",
     "mockgoose": "^7.3.3",
+    "nyc": "^11.8.0",
+    "prettier": "1.12.1",
     "proxyquire": "^1.7.10",
+    "q": "^1.4.1",
     "rewire": "^2.5.2",
     "rmdir": "^1.2.0",
     "sinon": "^3.3.0",
