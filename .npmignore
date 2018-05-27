@@ -4,3 +4,4 @@ _config.yml
 tests
 .nyc_output
 coverage
+coverage.lcov
