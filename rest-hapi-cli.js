@@ -15,7 +15,6 @@ let isWindows = /^win/.test(process.platform)
 let cmdString = '$PWD/node_modules/rest-hapi/scripts/'
 
 if (isWindows) {
-  // This will fix the error "No gulpfile found" on windows OS
   cmdString = './node_modules/rest-hapi'
 }
 

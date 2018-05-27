@@ -1,9 +1,9 @@
 language: node_js
 node_js:
-  - 6.0.0
+  - 8.10.0
 
 install: true
 before_script:
   - npm install
 script:
-  - gulp test-unit
+  - npm run test
