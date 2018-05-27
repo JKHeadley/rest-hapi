@@ -4,7 +4,10 @@ let mongoose = require('mongoose')
 let config = require('../config')
 let restHapi = require('../rest-hapi')
 let path = require('path')
-let fs = require('fs-extra')(async function seed() {
+let fs = require('fs-extra')
+
+let mongoURI = process.argv.slice(2)[0]
+;(async function seed() {
   restHapi.config.loglevel = 'DEBUG'
   let Log = restHapi.getLogger('seed')
   try {
@@ -12,7 +15,10 @@ let fs = require('fs-extra')(async function seed() {
 
     mongoose.Promise = Promise
 
-    mongoose.connect(restHapi.config.mongo.URI)
+    mongoURI = mongoURI || restHapi.config.mongo.URI
+    mongoose.connect(mongoURI, {
+      useMongoClient: true
+    })
 
     let models = await restHapi.generateModels(mongoose)
 
@@ -57,15 +63,17 @@ let fs = require('fs-extra')(async function seed() {
       }
     ]
     await restHapi.create(models.user, users, Log)
+    process.exit()
   } catch (err) {
-    console.error(err)
+    Log.error(err)
+    process.exit()
   }
 })()
 
 function moveModels() {
   return new Promise((resolve, reject) => {
     fs.copy(
-      './seed/**/*.*',
+      path.join(__dirname, '../seed'),
       path.join(__dirname, '/../../../', config.modelPath),
       err => {
         if (err) {
