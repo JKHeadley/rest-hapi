@@ -35,11 +35,13 @@ module.exports = {
    * @param model: A mongoose model object.
    * @param query: The incoming request query.
    * @param mongooseQuery: A mongoose query.
-   * @param Log: A logging object.
+   * @param logger: A logging object.
    * @returns {*}: A modified mongoose query.
    */
-  createMongooseQuery: function(model, query, mongooseQuery, Log) {
-    validationHelper.validateModel(model, Log)
+  createMongooseQuery: function(model, query, mongooseQuery, logger) {
+    // This line has to come first
+    validationHelper.validateModel(model, logger)
+    const Log = logger.bind()
     // (email == 'test@user.com' && (firstName == 'test2@user.com' || firstName == 'test4@user.com')) && (age < 15 || age > 30)
     // LITERAL
     // {
@@ -144,11 +146,12 @@ module.exports = {
   /**
    * Get a list of fields that can be returned as part of a query result.
    * @param model: A mongoose model object.
-   * @param Log: A logging object.
+   * @param logger: A logging object.
    * @returns {Array}: A list of fields.
    */
-  getReadableFields: function(model, Log) {
-    validationHelper.validateModel(model, Log)
+  getReadableFields: function(model, logger) {
+    // This line has to come first
+    validationHelper.validateModel(model, logger)
 
     let readableFields = []
 
@@ -167,11 +170,13 @@ module.exports = {
   /**
    * Get a list of valid query sort inputs.
    * @param model: A mongoose model object.
-   * @param Log: A logging object.
+   * @param logger: A logging object.
    * @returns {Array}: A list of fields.
    */
-  getSortableFields: function(model, Log) {
-    validationHelper.validateModel(model, Log)
+  getSortableFields: function(model, logger) {
+    // This line has to come first
+    validationHelper.validateModel(model, logger)
+    const Log = logger.bind()
 
     let sortableFields = this.getReadableFields(model, Log)
 
@@ -186,11 +191,12 @@ module.exports = {
   /**
    * Get a list of fields that can be queried against.
    * @param model: A mongoose model object.
-   * @param Log: A logging object.
+   * @param logger: A logging object.
    * @returns {Array}: A list of fields.
    */
-  getQueryableFields: function(model, Log) {
-    validationHelper.validateModel(model, Log)
+  getQueryableFields: function(model, logger) {
+    // This line has to come first
+    validationHelper.validateModel(model, logger)
 
     let queryableFields = []
 
@@ -223,8 +229,9 @@ module.exports = {
     return queryableFields
   },
 
-  getStringFields: function(model, Log) {
-    validationHelper.validateModel(model, Log)
+  getStringFields: function(model, logger) {
+    // This line has to come first
+    validationHelper.validateModel(model, logger)
 
     let stringFields = []
 
@@ -244,10 +251,11 @@ module.exports = {
    * Handle pagination for the query if needed.
    * @param query: The incoming request query.
    * @param mongooseQuery: A mongoose query.
-   * @param Log: A logging object.
+   * @param logger: A logging object.
    * @returns {*}: The updated mongoose query.
    */
-  paginate: function(query, mongooseQuery, Log) {
+  paginate: function(query, mongooseQuery, logger) {
+    const Log = logger.bind()
     if (query.$page) {
       mongooseQuery = this.setPage(query, mongooseQuery, Log)
     } else {
@@ -263,10 +271,10 @@ module.exports = {
    * Set the skip amount for the mongoose query. Typically used for paging.
    * @param query: The incoming request query.
    * @param mongooseQuery: A mongoose query.
-   * @param Log: A logging object.
+   * @param logger: A logging object.
    * @returns {*}: The updated mongoose query.
    */
-  setSkip: function(query, mongooseQuery, Log) {
+  setSkip: function(query, mongooseQuery, logger) {
     if (query.$skip) {
       mongooseQuery.skip(query.$skip)
     }
@@ -277,10 +285,10 @@ module.exports = {
    * Set the page for the mongoose query. Typically used for paging.
    * @param query: The incoming request query.
    * @param mongooseQuery: A mongoose query.
-   * @param Log: A logging object.
+   * @param logger: A logging object.
    * @returns {*}: The updated mongoose query.
    */
-  setPage: function(query, mongooseQuery, Log) {
+  setPage: function(query, mongooseQuery, logger) {
     if (query.$page) {
       mongooseQuery.skip((query.$page - 1) * query.$limit)
     }
@@ -291,10 +299,10 @@ module.exports = {
    * Set the limit amount for the mongoose query. Typically used for paging.
    * @param query: The incoming request query.
    * @param mongooseQuery: A mongoose query.
-   * @param Log: A logging object.
+   * @param logger: A logging object.
    * @returns {*}: The updated mongoose query.
    */
-  setLimit: function(query, mongooseQuery, Log) {
+  setLimit: function(query, mongooseQuery, logger) {
     // TODO: possible default limit of 20?
     if (query.$limit) {
       mongooseQuery.limit(query.$limit)
@@ -306,10 +314,10 @@ module.exports = {
    * Set the list of objectIds to exclude.
    * @param query: The incoming request query.
    * @param mongooseQuery: A mongoose query.
-   * @param Log: A logging object.
+   * @param logger: A logging object.
    * @returns {*}: The updated mongoose query.
    */
-  setExclude: function(query, mongooseQuery, Log) {
+  setExclude: function(query, mongooseQuery, logger) {
     if (query.$exclude) {
       if (!Array.isArray(query.$exclude)) {
         query.$exclude = query.$exclude.split(',')
@@ -325,9 +333,10 @@ module.exports = {
    * Perform a regex search on the models immediate fields
    * @param query:The incoming request query.
    * @param model: A mongoose model object
-   * @param Log: A logging object
+   * @param logger: A logging object
    */
-  setTermSearch: function(query, model, Log) {
+  setTermSearch: function(query, model, logger) {
+    const Log = logger.bind()
     if (query.$term) {
       query.$or = [] // TODO: allow option to choose ANDing or ORing of searchFields/queryableFields
       let queryableFields = this.getQueryableFields(model, Log)
@@ -375,7 +384,8 @@ module.exports = {
    * @param attributesFilter: A filter that lists the fields to be returned.
    * Must be updated to include the newly embedded fields.
    * @param associations: The current model associations.
-   * @param Log: A logging object.
+   * @param model: A mongoose model object
+   * @param logger: A logging object.
    * @returns {{mongooseQuery: *, attributesFilter: *}}: The updated mongooseQuery and attributesFilter.
    */
   populateEmbeddedDocs: function(
@@ -384,8 +394,9 @@ module.exports = {
     attributesFilter,
     associations,
     model,
-    Log
+    logger
   ) {
+    const Log = logger.bind()
     if (query.$embed) {
       if (!Array.isArray(query.$embed)) {
         query.$embed = query.$embed.split(',')
@@ -418,10 +429,10 @@ module.exports = {
    * Set the sort priority for the mongoose query.
    * @param query: The incoming request query.
    * @param mongooseQuery: A mongoose query.
-   * @param Log: A logging object.
+   * @param logger: A logging object.
    * @returns {*}: The updated mongoose query.
    */
-  setSort: function(query, mongooseQuery, Log) {
+  setSort: function(query, mongooseQuery, logger) {
     if (query.$sort) {
       if (Array.isArray(query.$sort)) {
         query.$sort = query.$sort.join(' ')
@@ -436,11 +447,13 @@ module.exports = {
    * Create a list of selected fields to be returned based on the '$select' query property.
    * @param query: The incoming request query.
    * @param model: A mongoose model object.
-   * @param Log: A logging object.
+   * @param logger: A logging object.
    * @returns {string}
    */
-  createAttributesFilter: function(query, model, Log) {
-    validationHelper.validateModel(model, Log)
+  createAttributesFilter: function(query, model, logger) {
+    // This line has to come first
+    validationHelper.validateModel(model, logger)
+
     let attributesFilter = []
     let fields = model.schema.paths
     let fieldNames = []
@@ -488,7 +501,7 @@ module.exports = {
  * @param index: The current index of the "embeds" array.
  * @param embeds: An array of strings representing nested fields to be populated.
  * @param associations: The current model associations.
- * @param Log: A logging object.
+ * @param logger: A logging object.
  * @returns {*}: The updated populate object.
  */
 function nestPopulate(
@@ -498,8 +511,9 @@ function nestPopulate(
   embeds,
   associations,
   model,
-  Log
+  logger
 ) {
+  const Log = logger.bind()
   let embed = embeds[index]
   let association = associations[embed]
 
@@ -614,10 +628,10 @@ function nestPopulate(
  * Creates an association object from a model property if the property is a reference id
  * @param model
  * @param embed
- * @param Log
+ * @param logger
  * @returns {*} The association object or null if no reference is found
  */
-function getReference(model, embed, Log) {
+function getReference(model, embed, logger) {
   let property = model.schema.obj[embed]
   while (_.isArray(property)) {
     property = property[0]

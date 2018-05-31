@@ -43,7 +43,7 @@ module.exports = {
   addMany: handlerHelper.addMany,
   removeMany: handlerHelper.removeMany,
   getAll: handlerHelper.getAll,
-  Log: {},
+  logger: {},
   getLogger: getLogger,
   logUtil: logUtil,
   joiHelper: joiHelper,
@@ -59,11 +59,11 @@ async function register(server, options) {
 
   let Log = getLogger('api')
 
-  module.exports.Log = Log
+  module.exports.logger = Log
 
-  // Add the Log object to the request object for access later
+  // Add the logger object to the request object for access later
   server.ext('onRequest', (request, h) => {
-    request.Log = Log
+    request.logger = Log
 
     return h.continue
   })
@@ -114,7 +114,7 @@ function generateModels(mongoose) {
 
   let Log = getLogger('models')
 
-  module.exports.Log = Log
+  module.exports.logger = Log
 
   return modelGenerator(mongoose, Log, config).then(function(models) {
     internals.globalModels = models
@@ -142,11 +142,13 @@ function getLogger(label) {
 /**
  * Connect mongoose and add to globals.
  * @param mongoose
- * @param Log
+ * @param logger
  * @param config
  * @returns {*}
  */
-function mongooseInit(mongoose, Log, config) {
+function mongooseInit(mongoose, logger, config) {
+  const Log = logger.bind('mongoose-init')
+
   mongoose.Promise = Promise
 
   logUtil.logActionStart(
@@ -155,9 +157,11 @@ function mongooseInit(mongoose, Log, config) {
     _.omit(config.mongo, ['pass'])
   )
 
-  mongoose.connect(config.mongo.URI, { useMongoClient: true })
+  mongoose.connect(config.mongo.URI)
 
   globals.mongoose = mongoose
+
+  Log.log('mongoose connected')
 
   return mongoose
 }
@@ -165,11 +169,13 @@ function mongooseInit(mongoose, Log, config) {
 /**
  * Register and configure the mrhorse plugin.
  * @param server
- * @param Log
+ * @param logger
  * @param config
  * @returns {Promise<void>}
  */
-async function registerMrHorse(server, Log, config) {
+async function registerMrHorse(server, logger, config) {
+  const Log = logger.bind('register-MrHorse')
+
   let policyPath = ''
 
   if (config.enablePolicies) {
@@ -198,16 +204,20 @@ async function registerMrHorse(server, Log, config) {
       policyDirectory: path.join(__dirname, '/policies')
     })
   }
+
+  Log.info('MrHorse plugin registered')
 }
 
 /**
  * Register and configure the hapi-swagger plugin.
  * @param server
- * @param Log
+ * @param logger
  * @param config
  * @returns {Promise<void>}
  */
-async function registerHapiSwagger(server, Log, config) {
+async function registerHapiSwagger(server, logger, config) {
+  const Log = logger.bind('register-hapi-swagger')
+
   let swaggerOptions = {
     documentationPath: '/',
     info: {
@@ -226,10 +236,14 @@ async function registerHapiSwagger(server, Log, config) {
     Vision,
     { plugin: HapiSwagger, options: swaggerOptions }
   ])
+
+  Log.info('hapi-swagger plugin registered')
 }
 
-function generateRoutes(server, mongoose, models, Log, config) {
-  const restHelper = restHelperFactory(Log, mongoose, server)
+function generateRoutes(server, mongoose, models, logger, config) {
+  const Log = logger.bind('generate-routes')
+
+  const restHelper = restHelperFactory(logger, mongoose, server)
 
   for (let modelKey in models) {
     // Generate endpoints for all of the models

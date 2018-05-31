@@ -8,15 +8,15 @@ const internals = {}
 /**
  * Policy to populate duplicate fields when an association is created or updated.
  * @param model
- * @param Log
+ * @param logger
  * @returns {populateDuplicateFields}
  */
-internals.populateDuplicateFields = function(model, mongoose, Log) {
+internals.populateDuplicateFields = function(model, mongoose, logger) {
   const populateDuplicateFieldsForModel = async function addDocumentScopeForModel(
     request,
     h
   ) {
-    Log = Log.bind('populateDuplicateFields')
+    const Log = logger.bind('populateDuplicateFields')
     try {
       let payload = request.payload
       if (!_.isArray(request.payload)) {

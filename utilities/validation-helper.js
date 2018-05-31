@@ -6,10 +6,10 @@ module.exports = {
   /**
    * Assert that a given model follows the mongoose model format.
    * @param model
-   * @param Log
+   * @param logger
    * @returns {boolean}
    */
-  validateModel: function(model, Log) {
+  validateModel: function(model, logger) {
     assert(
       model.schema,
       "model not mongoose format. 'schema' property required."

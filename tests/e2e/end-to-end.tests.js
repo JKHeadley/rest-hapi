@@ -10,7 +10,7 @@ const QueryString = require('query-string')
 const Hapi = require('hapi')
 
 const Mongoose = require('mongoose')
-Mongoose.Promise = Q.Promise
+Mongoose.Promise = Promise
 const Mockgoose = require('mockgoose').Mockgoose
 const mockgoose = new Mockgoose(Mongoose)
 

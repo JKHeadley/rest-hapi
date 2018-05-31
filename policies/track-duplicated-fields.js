@@ -8,15 +8,15 @@ const internals = {}
 /**
  * Policy to update any duplicate fields when the original field changes.
  * @param model
- * @param Log
+ * @param logger
  * @returns {trackDuplicatedFields}
  */
-internals.trackDuplicatedFields = function(model, mongoose, Log) {
+internals.trackDuplicatedFields = function(model, mongoose, logger) {
   const trackDuplicatedFieldsForModel = async function addDocumentScopeForModel(
     request,
     h
   ) {
-    Log = Log.bind('trackDuplicatedFields')
+    const Log = logger.bind('trackDuplicatedFields')
     try {
       if (_.isError(request.response)) {
         return h.continue
@@ -48,10 +48,11 @@ internals.trackDuplicatedFields.applyPoint = 'onPostHandler'
  * @param mongoose
  * @param payload
  * @param result
- * @param Log
+ * @param logger
  * @returns {*}
  */
-internals.trackFields = function(model, mongoose, payload, result, Log) {
+internals.trackFields = function(model, mongoose, payload, result, logger) {
+  const Log = logger.bind('trackFields')
   let promises = []
   for (const key in payload) {
     const field = model.schema.obj[key]
@@ -81,21 +82,21 @@ internals.trackFields = function(model, mongoose, payload, result, Log) {
  * @param childModel
  * @param query
  * @param newProp
- * @param Log
+ * @param logger
  */
 internals.findAndUpdate = async function(
   mongoose,
   childModel,
   query,
   newProp,
-  Log
+  logger
 ) {
   let result = await childModel.find(query)
   let promises = []
 
   result.forEach(function(doc) {
     promises.push(
-      internals.updateField(mongoose, childModel, doc._id, newProp, Log)
+      internals.updateField(mongoose, childModel, doc._id, newProp, logger)
     )
   })
 
@@ -109,17 +110,17 @@ internals.findAndUpdate = async function(
  * @param childModel
  * @param _id
  * @param newProp
- * @param Log
+ * @param logger
  */
 internals.updateField = async function(
   mongoose,
   childModel,
   _id,
   newProp,
-  Log
+  logger
 ) {
   let result = await childModel.findByIdAndUpdate(_id, newProp, { new: true })
-  return internals.trackFields(childModel, mongoose, newProp, result, Log)
+  return internals.trackFields(childModel, mongoose, newProp, result, logger)
 }
 
 module.exports = {

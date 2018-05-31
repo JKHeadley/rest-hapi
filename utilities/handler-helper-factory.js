@@ -32,7 +32,7 @@ module.exports = function() {
      * Handles incoming GET requests to /RESOURCE
      * @param model: A mongoose model.
      * @param options: Options object.
-     * @param Log: A logging object.
+     * @param logger: A logging object.
      * @returns {Function} A handler function
      */
     generateListHandler: generateListHandler,
@@ -41,7 +41,7 @@ module.exports = function() {
      * Handles incoming GET requests to /RESOURCE/{_id}
      * @param model: A mongoose model.
      * @param options: Options object.
-     * @param Log: A logging object.
+     * @param logger: A logging object.
      * @returns {Function} A handler function
      */
     generateFindHandler: generateFindHandler,
@@ -50,7 +50,7 @@ module.exports = function() {
      * Handles incoming POST requests to /RESOURCE
      * @param model: A mongoose model.
      * @param options: Options object.
-     * @param Log: A logging object.
+     * @param logger: A logging object.
      * @returns {Function} A handler function
      */
     generateCreateHandler: generateCreateHandler,
@@ -59,7 +59,7 @@ module.exports = function() {
      * Handles incoming DELETE requests to /RESOURCE/{_id}
      * @param model: A mongoose model.
      * @param options: Options object.
-     * @param Log: A logging object.
+     * @param logger: A logging object.
      * @returns {Function} A handler function
      */
     generateDeleteHandler: generateDeleteHandler,
@@ -68,7 +68,7 @@ module.exports = function() {
      * Handles incoming UPDATE requests to /RESOURCE/{_id}
      * @param model: A mongoose model.
      * @param options: Options object.
-     * @param Log: A logging object.
+     * @param logger: A logging object.
      * @returns {Function} A handler function
      */
     generateUpdateHandler: generateUpdateHandler,
@@ -78,7 +78,7 @@ module.exports = function() {
      * @param ownerModel: A mongoose model.
      * @param association: An object containing the association data/child mongoose model.
      * @param options: Options object.
-     * @param Log: A logging object.
+     * @param logger: A logging object.
      * @returns {Function} A handler function
      */
     generateAssociationAddOneHandler: generateAssociationAddOneHandler,
@@ -88,7 +88,7 @@ module.exports = function() {
      * @param ownerModel: A mongoose model.
      * @param association: An object containing the association data/child mongoose model.
      * @param options: Options object.
-     * @param Log: A logging object.
+     * @param logger: A logging object.
      * @returns {Function} A handler function
      */
     generateAssociationRemoveOneHandler: generateAssociationRemoveOneHandler,
@@ -98,7 +98,7 @@ module.exports = function() {
      * @param ownerModel: A mongoose model.
      * @param association: An object containing the association data/child mongoose model.
      * @param options: Options object.
-     * @param Log: A logging object.
+     * @param logger: A logging object.
      * @returns {Function} A handler function
      */
     generateAssociationAddManyHandler: generateAssociationAddManyHandler,
@@ -108,7 +108,7 @@ module.exports = function() {
      * @param ownerModel: A mongoose model.
      * @param association: An object containing the association data/child mongoose model.
      * @param options: Options object.
-     * @param Log: A logging object.
+     * @param logger: A logging object.
      * @returns {Function} A handler function
      */
     generateAssociationRemoveManyHandler: generateAssociationRemoveManyHandler,
@@ -118,7 +118,7 @@ module.exports = function() {
      * @param ownerModel: A mongoose model.
      * @param association: An object containing the association data/child mongoose model.
      * @param options: Options object.
-     * @param Log: A logging object.
+     * @param logger: A logging object.
      * @returns {Function} A handler function
      */
     generateAssociationGetAllHandler: generateAssociationGetAllHandler
@@ -129,10 +129,11 @@ module.exports = function() {
  * Handles incoming GET requests to /RESOURCE
  * @param model: A mongoose model.
  * @param options: Options object.
- * @param Log: A logging object.
+ * @param logger: A logging object.
  * @returns {Function} A handler function
  */
-function generateListHandler(model, options, Log) {
+function generateListHandler(model, options, logger) {
+  const Log = logger.bind()
   options = options || {}
 
   return async function(request, h) {
@@ -157,10 +158,11 @@ function generateListHandler(model, options, Log) {
  * Handles incoming GET requests to /RESOURCE/{_id}
  * @param model: A mongoose model.
  * @param options: Options object.
- * @param Log: A logging object.
+ * @param logger: A logging object.
  * @returns {Function} A handler function
  */
-function generateFindHandler(model, options, Log) {
+function generateFindHandler(model, options, logger) {
+  const Log = logger.bind()
   options = options || {}
 
   return async function(request, h) {
@@ -189,10 +191,11 @@ function generateFindHandler(model, options, Log) {
  * Handles incoming POST requests to /RESOURCE
  * @param model: A mongoose model.
  * @param options: Options object.
- * @param Log: A logging object.
+ * @param logger: A logging object.
  * @returns {Function} A handler function
  */
-function generateCreateHandler(model, options, Log) {
+function generateCreateHandler(model, options, logger) {
+  const Log = logger.bind()
   options = options || {}
 
   return async function(request, h) {
@@ -216,10 +219,11 @@ function generateCreateHandler(model, options, Log) {
  * Handles incoming UPDATE requests to /RESOURCE/{_id}
  * @param model: A mongoose model.
  * @param options: Options object.
- * @param Log: A logging object.
+ * @param logger: A logging object.
  * @returns {Function} A handler function
  */
-function generateUpdateHandler(model, options, Log) {
+function generateUpdateHandler(model, options, logger) {
+  const Log = logger.bind()
   options = options || {}
 
   return async function(request, h) {
@@ -248,10 +252,11 @@ function generateUpdateHandler(model, options, Log) {
  * Handles incoming DELETE requests to /RESOURCE/{_id} or /RESOURCE
  * @param model: A mongoose model.
  * @param options: Options object.
- * @param Log: A logging object.
+ * @param logger: A logging object.
  * @returns {Function} A handler function
  */
-function generateDeleteHandler(model, options, Log) {
+function generateDeleteHandler(model, options, logger) {
+  const Log = logger.bind()
   options = options || {}
 
   return async function(request, h) {
@@ -288,15 +293,16 @@ function generateDeleteHandler(model, options, Log) {
  * @param ownerModel: A mongoose model.
  * @param association: An object containing the association data/child mongoose model.
  * @param options: Options object.
- * @param Log: A logging object.
+ * @param logger: A logging object.
  * @returns {Function} A handler function
  */
 function generateAssociationAddOneHandler(
   ownerModel,
   association,
   options,
-  Log
+  logger
 ) {
+  const Log = logger.bind()
   let associationName = association.include.as
   let childModel = association.include.model
   let addMethodName =
@@ -332,15 +338,16 @@ function generateAssociationAddOneHandler(
  * @param ownerModel: A mongoose model.
  * @param association: An object containing the association data/child mongoose model.
  * @param options: Options object.
- * @param Log: A logging object.
+ * @param logger: A logging object.
  * @returns {Function} A handler function
  */
 function generateAssociationRemoveOneHandler(
   ownerModel,
   association,
   options,
-  Log
+  logger
 ) {
+  const Log = logger.bind()
   let associationName = association.include.as
   let childModel = association.include.model
   let removeMethodName =
@@ -378,15 +385,16 @@ function generateAssociationRemoveOneHandler(
  * @param ownerModel: A mongoose model.
  * @param association: An object containing the association data/child mongoose model.
  * @param options: Options object.
- * @param Log: A logging object.
+ * @param logger: A logging object.
  * @returns {Function} A handler function
  */
 function generateAssociationAddManyHandler(
   ownerModel,
   association,
   options,
-  Log
+  logger
 ) {
+  const Log = logger.bind()
   let associationName = association.include.as
   let childModel = association.include.model
   let addMethodName =
@@ -422,15 +430,16 @@ function generateAssociationAddManyHandler(
  * @param ownerModel: A mongoose model.
  * @param association: An object containing the association data/child mongoose model.
  * @param options: Options object.
- * @param Log: A logging object.
+ * @param logger: A logging object.
  * @returns {Function} A handler function
  */
 function generateAssociationRemoveManyHandler(
   ownerModel,
   association,
   options,
-  Log
+  logger
 ) {
+  const Log = logger.bind()
   let associationName = association.include.as
   let childModel = association.include.model
   let removeMethodName =
@@ -465,15 +474,16 @@ function generateAssociationRemoveManyHandler(
  * @param ownerModel: A mongoose model.
  * @param association: An object containing the association data/child mongoose model.
  * @param options: Options object.
- * @param Log: A logging object.
+ * @param logger: A logging object.
  * @returns {Function} A handler function
  */
 function generateAssociationGetAllHandler(
   ownerModel,
   association,
   options,
-  Log
+  logger
 ) {
+  const Log = logger.bind()
   let associationName = association.include.as
   let childModel = association.include.model
   let getAllMethodName =
@@ -504,9 +514,9 @@ function generateAssociationGetAllHandler(
   }
 }
 
-function handleError(err, Log) {
+function handleError(err, logger) {
   if (!err.isBoom) {
-    Log.error(err)
+    logger.error(err)
     throw Boom.badImplementation('There was an error processing the request.')
   } else {
     throw err

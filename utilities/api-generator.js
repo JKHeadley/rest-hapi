@@ -7,11 +7,13 @@ let path = require('path')
  * This module reads in all the files that define additional endpoints and generates those endpoints.
  * @param server
  * @param mongoose
- * @param Log
+ * @param logger
  * @param config
  * @returns {*|promise}
  */
-module.exports = function(server, mongoose, Log, config) {
+module.exports = function(server, mongoose, logger, config) {
+  const Log = logger.bind('api-generator')
+
   let apiPath = ''
 
   if (config.absoluteApiPath === true) {
@@ -47,7 +49,7 @@ module.exports = function(server, mongoose, Log, config) {
           let fileName = path.basename(file, '.js')
 
           // EXPL: register all the additional endpoints
-          require(apiPath + '/' + fileName)(server, mongoose, Log)
+          require(apiPath + '/' + fileName)(server, mongoose, logger)
         }
       }
 

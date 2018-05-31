@@ -140,13 +140,14 @@ module.exports = function(logger, mongoose, server) {
      * @param server: A Hapi server.
      * @param model: A mongoose model.
      * @param options: Options object.
-     * @param Log: A logging object.
+     * @param logger: A logging object.
      */
-    generateListEndpoint: function(server, model, options, Log) {
-      validationHelper.validateModel(model, Log)
+    generateListEndpoint: function(server, model, options, logger) {
+      // This line must come first
+      validationHelper.validateModel(model, logger)
+      const Log = logger.bind(chalk.yellow('List'))
 
       let collectionName = model.collectionDisplayName || model.modelName
-      Log = Log.bind(chalk.yellow('List'))
       options = options || {}
 
       if (config.logRoutes) {
@@ -264,13 +265,14 @@ module.exports = function(logger, mongoose, server) {
      * @param server: A Hapi server.
      * @param model: A mongoose model.
      * @param options: Options object.
-     * @param Log: A logging object.
+     * @param logger: A logging object.
      */
-    generateFindEndpoint: function(server, model, options, Log) {
-      validationHelper.validateModel(model, Log)
+    generateFindEndpoint: function(server, model, options, logger) {
+      // This line must come first
+      validationHelper.validateModel(model, logger)
+      const Log = logger.bind(chalk.yellow('Find'))
 
       let collectionName = model.collectionDisplayName || model.modelName
-      Log = Log.bind(chalk.yellow('Find'))
       if (config.logRoutes) {
         Log.note('Generating Find endpoint for ' + collectionName)
       }
@@ -386,13 +388,14 @@ module.exports = function(logger, mongoose, server) {
      * @param server: A Hapi server.
      * @param model: A mongoose model.
      * @param options: Options object.
-     * @param Log: A logging object.
+     * @param logger: A logging object.
      */
-    generateCreateEndpoint: function(server, model, options, Log) {
-      validationHelper.validateModel(model, Log)
+    generateCreateEndpoint: function(server, model, options, logger) {
+      // This line must come first
+      validationHelper.validateModel(model, logger)
+      const Log = logger.bind(chalk.yellow('Create'))
 
       let collectionName = model.collectionDisplayName || model.modelName
-      Log = Log.bind(chalk.yellow('Create'))
       if (config.logRoutes) {
         Log.note('Generating Create endpoint for ' + collectionName)
       }
@@ -576,13 +579,14 @@ module.exports = function(logger, mongoose, server) {
      * @param server: A Hapi server.
      * @param model: A mongoose model.
      * @param options: Options object.
-     * @param Log: A logging object.
+     * @param logger: A logging object.
      */
-    generateDeleteOneEndpoint: function(server, model, options, Log) {
-      validationHelper.validateModel(model, Log)
+    generateDeleteOneEndpoint: function(server, model, options, logger) {
+      // This line must come first
+      validationHelper.validateModel(model, logger)
+      const Log = logger.bind(chalk.yellow('DeleteOne'))
 
       let collectionName = model.collectionDisplayName || model.modelName
-      Log = Log.bind(chalk.yellow('DeleteOne'))
       if (config.logRoutes) {
         Log.note('Generating Delete One endpoint for ' + collectionName)
       }
@@ -706,14 +710,15 @@ module.exports = function(logger, mongoose, server) {
      * @param server: A Hapi server.
      * @param model: A mongoose model.
      * @param options: Options object.
-     * @param Log: A logging object.
+     * @param logger: A logging object.
      */
     // TODO: handle partial deletes (return list of ids that failed/were not found)
-    generateDeleteManyEndpoint: function(server, model, options, Log) {
-      validationHelper.validateModel(model, Log)
+    generateDeleteManyEndpoint: function(server, model, options, logger) {
+      // This line must come first
+      validationHelper.validateModel(model, logger)
+      const Log = logger.bind(chalk.yellow('DeleteMany'))
 
       let collectionName = model.collectionDisplayName || model.modelName
-      Log = Log.bind(chalk.yellow('DeleteMany'))
       if (config.logRoutes) {
         Log.note('Generating Delete Many endpoint for ' + collectionName)
       }
@@ -841,13 +846,14 @@ module.exports = function(logger, mongoose, server) {
      * @param server: A Hapi server.
      * @param model: A mongoose model.
      * @param options: Options object.
-     * @param Log: A logging object.
+     * @param logger: A logging object.
      */
-    generateUpdateEndpoint: function(server, model, options, Log) {
-      validationHelper.validateModel(model, Log)
+    generateUpdateEndpoint: function(server, model, options, logger) {
+      // This line must come first
+      validationHelper.validateModel(model, logger)
+      const Log = logger.bind(chalk.yellow('Update'))
 
       let collectionName = model.collectionDisplayName || model.modelName
-      Log = Log.bind(chalk.yellow('Update'))
       if (config.logRoutes) {
         Log.note('Generating Update endpoint for ' + collectionName)
       }
@@ -991,16 +997,18 @@ module.exports = function(logger, mongoose, server) {
      * @param ownerModel: A mongoose model.
      * @param association: An object containing the association data/child mongoose model.
      * @param options: Options object.
-     * @param Log: A logging object.
+     * @param logger: A logging object.
      */
     generateAssociationAddOneEndpoint: function(
       server,
       ownerModel,
       association,
       options,
-      Log
+      logger
     ) {
-      validationHelper.validateModel(ownerModel, Log)
+      // This line must come first
+      validationHelper.validateModel(ownerModel, logger)
+      const Log = logger.bind(chalk.yellow('AddOne'))
 
       assert(
         ownerModel.routeOptions.associations,
@@ -1017,7 +1025,6 @@ module.exports = function(logger, mongoose, server) {
       let childModelName =
         childModel.collectionDisplayName || childModel.modelName
 
-      Log = Log.bind(chalk.yellow('AddOne'))
       if (config.logRoutes) {
         Log.note(
           'Generating addOne association endpoint for ' +
@@ -1194,16 +1201,18 @@ module.exports = function(logger, mongoose, server) {
      * @param ownerModel: A mongoose model.
      * @param association: An object containing the association data/child mongoose model.
      * @param options: Options object.
-     * @param Log: A logging object.
+     * @param logger: A logging object.
      */
     generateAssociationRemoveOneEndpoint: function(
       server,
       ownerModel,
       association,
       options,
-      Log
+      logger
     ) {
-      validationHelper.validateModel(ownerModel, Log)
+      // This line must come first
+      validationHelper.validateModel(ownerModel, logger)
+      const Log = logger.bind(chalk.yellow('RemoveOne'))
 
       assert(
         ownerModel.routeOptions.associations,
@@ -1220,7 +1229,6 @@ module.exports = function(logger, mongoose, server) {
       let childModelName =
         childModel.collectionDisplayName || childModel.modelName
 
-      Log = Log.bind(chalk.yellow('RemoveOne'))
       if (config.logRoutes) {
         Log.note(
           'Generating removeOne association endpoint for ' +
@@ -1374,16 +1382,18 @@ module.exports = function(logger, mongoose, server) {
      * @param ownerModel: A mongoose model.
      * @param association: An object containing the association data/child mongoose model.
      * @param options: Options object.
-     * @param Log: A logging object.
+     * @param logger: A logging object.
      */
     generateAssociationAddManyEndpoint: function(
       server,
       ownerModel,
       association,
       options,
-      Log
+      logger
     ) {
-      validationHelper.validateModel(ownerModel, Log)
+      // This line must come first
+      validationHelper.validateModel(ownerModel, logger)
+      const Log = logger.bind(chalk.yellow('AddMany'))
 
       assert(
         ownerModel.routeOptions.associations,
@@ -1400,7 +1410,6 @@ module.exports = function(logger, mongoose, server) {
       let childModelName =
         childModel.collectionDisplayName || childModel.modelName
 
-      Log = Log.bind(chalk.yellow('AddMany'))
       if (config.logRoutes) {
         Log.note(
           'Generating addMany association endpoint for ' +
@@ -1584,16 +1593,18 @@ module.exports = function(logger, mongoose, server) {
      * @param ownerModel: A mongoose model.
      * @param association: An object containing the association data/child mongoose model.
      * @param options: Options object.
-     * @param Log: A logging object.
+     * @param logger: A logging object.
      */
     generateAssociationRemoveManyEndpoint: function(
       server,
       ownerModel,
       association,
       options,
-      Log
+      logger
     ) {
-      validationHelper.validateModel(ownerModel, Log)
+      // This line must come first
+      validationHelper.validateModel(ownerModel, logger)
+      const Log = logger.bind(chalk.yellow('RemoveMany'))
 
       assert(
         ownerModel.routeOptions.associations,
@@ -1610,7 +1621,6 @@ module.exports = function(logger, mongoose, server) {
       let childModelName =
         childModel.collectionDisplayName || childModel.modelName
 
-      Log = Log.bind(chalk.yellow('RemoveMany'))
       if (config.logRoutes) {
         Log.note(
           'Generating removeMany association endpoint for ' +
@@ -1771,16 +1781,18 @@ module.exports = function(logger, mongoose, server) {
      * @param ownerModel: A mongoose model.
      * @param association: An object containing the association data/child mongoose model.
      * @param options: Options object.
-     * @param Log: A logging object.
+     * @param logger: A logging object.
      */
     generateAssociationGetAllEndpoint: function(
       server,
       ownerModel,
       association,
       options,
-      Log
+      logger
     ) {
-      validationHelper.validateModel(ownerModel, Log)
+      // This line must come first
+      validationHelper.validateModel(ownerModel, logger)
+      const Log = logger.bind(chalk.yellow('GetAll'))
 
       assert(
         ownerModel.routeOptions.associations,
@@ -1793,7 +1805,6 @@ module.exports = function(logger, mongoose, server) {
       let ownerModelName =
         ownerModel.collectionDisplayName || ownerModel.modelName
 
-      Log = Log.bind(chalk.yellow('GetAll'))
       if (config.logRoutes) {
         Log.note(
           'Generating list association endpoint for ' +

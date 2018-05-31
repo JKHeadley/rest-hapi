@@ -8,13 +8,13 @@ const internals = {}
 /**
  * Policy to log create actions.
  * @param model
- * @param Log
+ * @param logger
  * @returns {logCreateForModel}
  */
-internals.logCreate = function(mongoose, model, Log) {
+internals.logCreate = function(mongoose, model, logger) {
   const logCreateForModel = async function logCreateForModel(request, h) {
+    const Log = logger.bind('logCreate')
     try {
-      Log = Log.bind('logCreate')
       const AuditLog = mongoose.model('auditLog')
 
       const ipAddress = internals.getIP(request)
@@ -65,13 +65,13 @@ internals.logCreate.applyPoint = 'onPreResponse'
 /**
  * Policy to log update actions.
  * @param model
- * @param Log
+ * @param logger
  * @returns {logUpdateForModel}
  */
-internals.logUpdate = function(mongoose, model, Log) {
+internals.logUpdate = function(mongoose, model, logger) {
   const logUpdateForModel = async function logUpdateForModel(request, h) {
+    const Log = logger.bind('logUpdate')
     try {
-      Log = Log.bind('logUpdate')
       const AuditLog = mongoose.model('auditLog')
 
       const ipAddress = internals.getIP(request)
@@ -117,13 +117,13 @@ module.exports = {
 /**
  * Policy to log delete actions.
  * @param model
- * @param Log
+ * @param logger
  * @returns {logDeleteForModel}
  */
-internals.logDelete = function(mongoose, model, Log) {
+internals.logDelete = function(mongoose, model, logger) {
   const logDeleteForModel = async function logDeleteForModel(request, h) {
+    const Log = logger.bind('logDelete')
     try {
-      Log = Log.bind('logDelete')
       const AuditLog = mongoose.model('auditLog')
 
       const ipAddress = internals.getIP(request)
@@ -176,7 +176,7 @@ module.exports = {
 /**
  * Policy to log add actions.
  * @param model
- * @param Log
+ * @param logger
  * @returns {logAddForModel}
  */
 internals.logAdd = function(
@@ -184,11 +184,11 @@ internals.logAdd = function(
   ownerModel,
   childModel,
   associationType,
-  Log
+  logger
 ) {
   const logAddForModel = async function logAddForModel(request, h) {
+    const Log = logger.bind('logAdd')
     try {
-      Log = Log.bind('logAdd')
       const AuditLog = mongoose.model('auditLog')
 
       const ipAddress = internals.getIP(request)
@@ -248,7 +248,7 @@ internals.logAdd.applyPoint = 'onPreResponse'
 /**
  * Policy to log remove actions.
  * @param model
- * @param Log
+ * @param logger
  * @returns {logRemoveForModel}
  */
 internals.logRemove = function(
@@ -256,11 +256,11 @@ internals.logRemove = function(
   ownerModel,
   childModel,
   associationType,
-  Log
+  logger
 ) {
   const logRemoveForModel = async function logRemoveForModel(request, h) {
+    const Log = logger.bind('logRemove')
     try {
-      Log = Log.bind('logRemove')
       const AuditLog = mongoose.model('auditLog')
 
       const ipAddress = internals.getIP(request)
