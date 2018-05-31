@@ -71,8 +71,8 @@ module.exports = function(mongoose) {
       },
       extraEndpoints: [
         // Password Update Endpoint
-        function(server, model, options, Log) {
-          Log = Log.bind('Password Update')
+        function(server, model, options, logger) {
+          const Log = logger.bind('Password Update')
           let Boom = require('boom')
 
           let collectionName = model.collectionDisplayName || model.modelName
@@ -129,7 +129,7 @@ module.exports = function(mongoose) {
         }
       ],
       create: {
-        pre: function(payload, Log) {
+        pre: function(payload, logger) {
           let hashedPassword = mongoose
             .model('user')
             .generatePasswordHash(payload.password)

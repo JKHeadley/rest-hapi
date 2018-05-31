@@ -18,10 +18,11 @@ const internals = {}
 /**
  * Generates a Joi object that validates a query result for a specific model
  * @param model: A mongoose model object.
- * @param Log: A logging object.
+ * @param logger: A logging object.
  * @returns {*}: A Joi object
  */
-internals.generateJoiReadModel = function(model, Log) {
+internals.generateJoiReadModel = function(model, logger) {
+  const Log = logger.bind()
   validationHelper.validateModel(model, Log)
 
   let readModelBase = {}
@@ -125,10 +126,11 @@ internals.generateJoiReadModel = function(model, Log) {
 /**
  * Generates a Joi object that validates a query request payload for updating a document
  * @param model: A mongoose model object.
- * @param Log: A logging object.
+ * @param logger: A logging object.
  * @returns {*}: A Joi object
  */
-internals.generateJoiUpdateModel = function(model, Log) {
+internals.generateJoiUpdateModel = function(model, logger) {
+  const Log = logger.bind()
   validationHelper.validateModel(model, Log)
 
   let updateModelBase = {}
@@ -184,10 +186,11 @@ internals.generateJoiUpdateModel = function(model, Log) {
 /**
  * Generates a Joi object that validates a request payload for creating a document
  * @param model: A mongoose model object.
- * @param Log: A logging object.
+ * @param logger: A logging object.
  * @returns {*}: A Joi object
  */
-internals.generateJoiCreateModel = function(model, Log) {
+internals.generateJoiCreateModel = function(model, logger) {
+  const Log = logger.bind()
   validationHelper.validateModel(model, Log)
 
   let createModelBase = {}
@@ -244,10 +247,11 @@ internals.generateJoiCreateModel = function(model, Log) {
 /**
  * Generates a Joi object that validates a request query for the list function
  * @param model: A mongoose model object.
- * @param Log: A logging object.
+ * @param logger: A logging object.
  * @returns {*}: A Joi object
  */
-internals.generateJoiListQueryModel = function(model, Log) {
+internals.generateJoiListQueryModel = function(model, logger) {
+  const Log = logger.bind()
   let queryModel = {
     $skip: Joi.number()
       .integer()
@@ -376,10 +380,11 @@ internals.generateJoiListQueryModel = function(model, Log) {
 /**
  * Generates a Joi object that validates a request query for the find function
  * @param model: A mongoose model object.
- * @param Log: A logging object.
+ * @param logger: A logging object.
  * @returns {*}: A Joi object
  */
-internals.generateJoiFindQueryModel = function(model, Log) {
+internals.generateJoiFindQueryModel = function(model, logger) {
+  const Log = logger.bind()
   let queryModel = {}
 
   let readableFields = queryHelper.getReadableFields(model, Log)
@@ -429,7 +434,7 @@ internals.generateJoiFindQueryModel = function(model, Log) {
  * @param field: A model field
  * @param fieldName: The name of the field
  * @param modelType: The type of CRUD model being generated
- * @param Log: A logging object
+ * @param logger: A logging object
  * @returns {*}: A Joi object
  */
 internals.generateJoiFieldModel = function(
@@ -437,8 +442,9 @@ internals.generateJoiFieldModel = function(
   field,
   fieldName,
   modelType,
-  Log
+  logger
 ) {
+  const Log = logger.bind()
   let fieldModel = {}
   let joiModelFunction = {}
 
@@ -519,10 +525,10 @@ internals.generateJoiFieldModel = function(
 /**
  * Returns a Joi object based on the mongoose field type.
  * @param field: A field from a mongoose model.
- * @param Log: A logging object.
+ * @param logger: A logging object.
  * @returns {*}: A Joi object.
  */
-internals.generateJoiModelFromFieldType = function(field, Log) {
+internals.generateJoiModelFromFieldType = function(field, logger) {
   let model
 
   // assert(field.type, "incorrect field format");

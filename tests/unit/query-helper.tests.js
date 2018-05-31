@@ -59,7 +59,7 @@ test('query-helper.getQueryableFields', function(t) {
     t,
     queryHelper.getQueryableFields,
     'queryHelper.getQueryableFields',
-    ['model', 'Log'],
+    ['model', 'logger'],
     Log
   )
 
@@ -311,7 +311,7 @@ test('query-helper.getReadableFields', function(t) {
     t,
     queryHelper.getReadableFields,
     'queryHelper.getReadableFields',
-    ['model', 'Log'],
+    ['model', 'logger'],
     Log
   )
 
@@ -428,7 +428,7 @@ test('query-helper.getSortableFields', function(t) {
     t,
     queryHelper.getSortableFields,
     'queryHelper.getSortableFields',
-    ['model', 'Log'],
+    ['model', 'logger'],
     Log
   )
 
@@ -634,6 +634,7 @@ test('query-helper.populateEmbeddedDocs', function(t) {
         mongooseQuery,
         attributesFilter,
         {},
+        {},
         Log
       )
       // </editor-fold>
@@ -676,6 +677,7 @@ test('query-helper.populateEmbeddedDocs', function(t) {
         query,
         mongooseQuery,
         attributesFilter,
+        {},
         {},
         Log
       )
@@ -722,6 +724,7 @@ test('query-helper.populateEmbeddedDocs', function(t) {
         mongooseQuery,
         attributesFilter,
         {},
+        {},
         Log
       )
       // </editor-fold>
@@ -762,6 +765,7 @@ test('query-helper.populateEmbeddedDocs', function(t) {
         query,
         mongooseQuery,
         attributesFilter,
+        {},
         {},
         Log
       )

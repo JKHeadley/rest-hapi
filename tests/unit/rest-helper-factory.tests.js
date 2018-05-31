@@ -5149,7 +5149,7 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
     t,
     restHelperFactory.generateAssociationAddOneEndpoint,
     'restHelperFactory.generateAssociationAddOneEndpoint',
-    ['server', 'model', 'options', 'Log'],
+    ['server', 'ownerModel', 'associations', 'options', 'logger'],
     Log
   )
 
@@ -6402,7 +6402,7 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
     t,
     restHelperFactory.generateAssociationRemoveOneEndpoint,
     'restHelperFactory.generateAssociationRemoveOneEndpoint',
-    ['server', 'model', 'options', 'Log'],
+    ['server', 'ownerModel', 'associations', 'options', 'logger'],
     Log
   )
 
@@ -7555,7 +7555,7 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
     t,
     restHelperFactory.generateAssociationAddManyEndpoint,
     'restHelperFactory.generateAssociationAddManyEndpoint',
-    ['server', 'model', 'options', 'Log'],
+    ['server', 'ownerModel', 'associations', 'options', 'logger'],
     Log
   )
 
@@ -8817,7 +8817,7 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
     t,
     restHelperFactory.generateAssociationGetAllEndpoint,
     'restHelperFactory.generateAssociationGetAllEndpoint',
-    ['server', 'model', 'options', 'Log'],
+    ['server', 'ownerModel', 'associations', 'options', 'logger'],
     Log
   )
 

@@ -62,7 +62,7 @@ let restHapi = require('../rest-hapi')
   }
 })()
 
-function getLinkingModel(model, association, Log) {
+function getLinkingModel(model, association, logger) {
   let linkingModel = null
   let linkingModelExists = false
   try {
@@ -99,13 +99,13 @@ function getLinkingModel(model, association, Log) {
   return linkingModel
 }
 
-async function applyActionToModels(action, models, embedAssociations, Log) {
+async function applyActionToModels(action, models, embedAssociations, logger) {
   for (let model of models) {
-    await action(model, embedAssociations, Log)
+    await action(model, embedAssociations, logger)
   }
 }
 
-function addEmbedded(model, embedAssociations, Log) {
+function addEmbedded(model, embedAssociations, logger) {
   return model.find().then(function(data) {
     let promises = []
 
@@ -131,7 +131,7 @@ function addEmbedded(model, embedAssociations, Log) {
                 associationName,
                 linkingModel,
                 data,
-                Log
+                logger
               )
             )
           }
@@ -148,7 +148,7 @@ function addEmbeddedAssociation(
   associationName,
   linkingModel,
   data,
-  Log
+  logger
 ) {
   let promises = []
 
@@ -187,7 +187,7 @@ function addEmbeddedAssociation(
   return Promise.all(promises)
 }
 
-function removeLinking(model, embedAssociations, Log) {
+function removeLinking(model, embedAssociations, logger) {
   for (let associationName in model.routeOptions.associations) {
     let association = model.routeOptions.associations[associationName]
 
@@ -197,7 +197,7 @@ function removeLinking(model, embedAssociations, Log) {
           ? embedAssociations
           : association.embedAssociation
 
-      let linkingModel = getLinkingModel(model, association, Log)
+      let linkingModel = getLinkingModel(model, association, logger)
 
       if (linkingModel) {
         if (embedAssociation) {
@@ -212,7 +212,7 @@ function removeLinking(model, embedAssociations, Log) {
   return Promise.resolve()
 }
 
-function addLinking(model, embedAssociations, Log) {
+function addLinking(model, embedAssociations, logger) {
   return model.find().then(function(data) {
     let promises = []
 
@@ -225,7 +225,7 @@ function addLinking(model, embedAssociations, Log) {
             ? embedAssociations
             : association.embedAssociation
 
-        let linkingModel = getLinkingModel(model, association, Log)
+        let linkingModel = getLinkingModel(model, association, logger)
 
         if (linkingModel) {
           if (!embedAssociation) {
@@ -236,7 +236,7 @@ function addLinking(model, embedAssociations, Log) {
                 association,
                 linkingModel,
                 data,
-                Log
+                logger
               )
             )
           }
@@ -253,7 +253,7 @@ function addLinkingAssociation(
   association,
   linkingModel,
   data,
-  Log
+  logger
 ) {
   let promises = []
 
@@ -282,7 +282,7 @@ function addLinkingAssociation(
   return Promise.all(promises)
 }
 
-function removeEmbedded(model, embedAssociations, Log) {
+function removeEmbedded(model, embedAssociations, logger) {
   return model.find().then(function(data) {
     let promises = []
 
@@ -295,12 +295,12 @@ function removeEmbedded(model, embedAssociations, Log) {
             ? embedAssociations
             : association.embedAssociation
 
-        let linkingModel = getLinkingModel(model, association, Log)
+        let linkingModel = getLinkingModel(model, association, logger)
 
         if (linkingModel) {
           if (!embedAssociation) {
             promises.push(
-              removeEmbeddedAssociation(model, associationName, data, Log)
+              removeEmbeddedAssociation(model, associationName, data, logger)
             )
           }
         }
@@ -311,7 +311,7 @@ function removeEmbedded(model, embedAssociations, Log) {
   })
 }
 
-function removeEmbeddedAssociation(model, associationName, data, Log) {
+function removeEmbeddedAssociation(model, associationName, data, logger) {
   let promises = []
 
   let newField = {}

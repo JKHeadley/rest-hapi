@@ -9,15 +9,15 @@ const internals = {}
 /**
  * Policy to authorize a document's creator to perform any action on the document.
  * @param model
- * @param Log
+ * @param logger
  * @returns {authorizeDocumentCreatorForModel}
  */
-internals.authorizeDocumentCreator = function(model, Log) {
+internals.authorizeDocumentCreator = function(model, logger) {
   const authorizeDocumentCreatorForModel = function authorizeDocumentCreatorForModel(
     request,
     h
   ) {
-    Log = Log.bind('authorizeDocumentCreator')
+    const Log = logger.bind('authorizeDocumentCreator')
 
     return internals.addScope('root', request, h, Log)
   }
@@ -30,15 +30,15 @@ internals.authorizeDocumentCreator.applyPoint = 'onPreHandler'
 /**
  * Policy to authorize a document's creator to perform read actions on the document.
  * @param model
- * @param Log
+ * @param logger
  * @returns {authorizeDocumentCreatorToReadForModel}
  */
-internals.authorizeDocumentCreatorToRead = function(model, Log) {
+internals.authorizeDocumentCreatorToRead = function(model, logger) {
   const authorizeDocumentCreatorToReadForModel = function authorizeDocumentCreatorToReadForModel(
     request,
     h
   ) {
-    Log = Log.bind('authorizeDocumentCreatorToRead')
+    const Log = logger.bind('authorizeDocumentCreatorToRead')
 
     return internals.addScope('read', request, h, Log)
   }
@@ -51,15 +51,15 @@ internals.authorizeDocumentCreatorToRead.applyPoint = 'onPreHandler'
 /**
  * Policy to authorize a document's creator to perform update actions on the document.
  * @param model
- * @param Log
+ * @param logger
  * @returns {authorizeDocumentCreatorToUpdateForModel}
  */
-internals.authorizeDocumentCreatorToUpdate = function(model, Log) {
+internals.authorizeDocumentCreatorToUpdate = function(model, logger) {
   const authorizeDocumentCreatorToUpdateForModel = function authorizeDocumentCreatorToUpdateForModel(
     request,
     h
   ) {
-    Log = Log.bind('authorizeDocumentCreatorToUpdate')
+    const Log = logger.bind('authorizeDocumentCreatorToUpdate')
 
     return internals.addScope('update', request, h, Log)
   }
@@ -72,15 +72,15 @@ internals.authorizeDocumentCreatorToUpdate.applyPoint = 'onPreHandler'
 /**
  * Policy to authorize a document's creator to perform delete actions on the document.
  * @param model
- * @param Log
+ * @param logger
  * @returns {authorizeDocumentCreatorToDeleteForModel}
  */
-internals.authorizeDocumentCreatorToDelete = function(model, Log) {
+internals.authorizeDocumentCreatorToDelete = function(model, logger) {
   const authorizeDocumentCreatorToDeleteForModel = function authorizeDocumentCreatorToDeleteForModel(
     request,
     h
   ) {
-    Log = Log.bind('authorizeDocumentCreatorToDelete')
+    const Log = logger.bind('authorizeDocumentCreatorToDelete')
 
     return internals.addScope('delete', request, h, Log)
   }
@@ -93,15 +93,15 @@ internals.authorizeDocumentCreatorToDelete.applyPoint = 'onPreHandler'
 /**
  * Policy to authorize a document's creator to perform associate actions on the document.
  * @param model
- * @param Log
+ * @param logger
  * @returns {authorizeDocumentCreatorToAssociateForModel}
  */
-internals.authorizeDocumentCreatorToAssociate = function(model, Log) {
+internals.authorizeDocumentCreatorToAssociate = function(model, logger) {
   const authorizeDocumentCreatorToAssociateForModel = function authorizeDocumentCreatorToAssociateForModel(
     request,
     h
   ) {
-    Log = Log.bind('authorizeDocumentCreatorToAssociate')
+    const Log = logger.bind('authorizeDocumentCreatorToAssociate')
 
     return internals.addScope('associate', request, h, Log)
   }
@@ -116,10 +116,11 @@ internals.authorizeDocumentCreatorToAssociate.applyPoint = 'onPreHandler'
  * @param action
  * @param request
  * @param h
- * @param Log
+ * @param logger
  * @returns {*}
  */
-internals.addScope = function(action, request, h, Log) {
+internals.addScope = function(action, request, h, logger) {
+  const Log = logger.bind()
   try {
     let scopeType = ''
     switch (action) {
@@ -174,7 +175,7 @@ internals.addScope = function(action, request, h, Log) {
     if (err.isBoom) {
       throw err
     } else {
-      Log.error('ERROR:', err)
+      Log.error(err)
       throw Boom.badImplementation(err)
     }
   }

@@ -9,12 +9,12 @@ const internals = {}
 /**
  * Policy to add the creating user's _id to the document's "createdBy" property.
  * @param model
- * @param Log
+ * @param logger
  * @returns {addCreatedByForModel}
  */
-internals.addCreatedBy = function(model, Log) {
+internals.addCreatedBy = function(model, logger) {
   const addCreatedByForModel = function addCreatedByForModel(request, h) {
-    Log = Log.bind('addCreatedBy')
+    const Log = logger.bind('addCreatedBy')
 
     return internals.addMeta('create', request, h, Log)
   }
@@ -27,12 +27,12 @@ internals.addCreatedBy.applyPoint = 'onPreHandler'
 /**
  * Policy to add the updating user's _id to the document's "updatedBy" property.
  * @param model
- * @param Log
+ * @param logger
  * @returns {addUpdatedByForModel}
  */
-internals.addUpdatedBy = function(model, Log) {
+internals.addUpdatedBy = function(model, logger) {
   const addUpdatedByForModel = function addUpdatedByForModel(request, h) {
-    Log = Log.bind('addUpdatedBy')
+    const Log = logger.bind('addUpdatedBy')
 
     return internals.addMeta('update', request, h, Log)
   }
@@ -45,12 +45,12 @@ internals.addUpdatedBy.applyPoint = 'onPreHandler'
 /**
  * Policy to add the deleting user's _id to the document's "deletedBy" property.
  * @param model
- * @param Log
+ * @param logger
  * @returns {addDeletedByForModel}
  */
-internals.addDeletedBy = function(model, Log) {
+internals.addDeletedBy = function(model, logger) {
   const addDeletedByForModel = function addDeletedByForModel(request, h) {
-    Log = Log.bind('addDeletedBy')
+    const Log = logger.bind('addDeletedBy')
 
     if (_.isArray(request.payload)) {
       request.payload = request.payload.map(function(data) {
@@ -75,10 +75,12 @@ internals.addDeletedBy.applyPoint = 'onPreHandler'
  * @param action
  * @param request
  * @param h
- * @param Log
+ * @param logger
  * @returns {*}
  */
-internals.addMeta = function(action, request, h, Log) {
+internals.addMeta = function(action, request, h, logger) {
+  const Log = logger.bind()
+
   try {
     let metaType = ''
     switch (action) {
@@ -118,7 +120,7 @@ internals.addMeta = function(action, request, h, Log) {
     if (err.isBoom) {
       throw err
     } else {
-      Log.error('ERROR:', err)
+      Log.error(err)
       throw Boom.badImplementation(err)
     }
   }

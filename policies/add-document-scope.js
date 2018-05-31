@@ -8,15 +8,15 @@ const internals = {}
 /**
  * Policy to append any document scopes defined in the routeOptions to any existing scope.
  * @param model
- * @param Log
+ * @param logger
  * @returns {addDocumentScopeForModel}
  */
-internals.addDocumentScope = function(model, Log) {
+internals.addDocumentScope = function(model, logger) {
   const addDocumentScopeForModel = function addDocumentScopeForModel(
     request,
     h
   ) {
-    Log = Log.bind('addDocumentScope')
+    const Log = logger.bind('addDocumentScope')
     try {
       let scope = model.routeOptions.documentScope
 

@@ -10,12 +10,12 @@ const internals = {}
 // TODO: update get query to filter based on scopes in pre rather than "commenting out" unauthorized docs
 // TODO (cont): in post. This should make authorization "transparent" and work with pagination
 
-internals.enforceDocumentScopePre = function(model, Log) {
+internals.enforceDocumentScopePre = function(model, logger) {
   const enforceDocumentScopePreForModel = async function enforceDocumentScopePreForModel(
     request,
     h
   ) {
-    Log = Log.bind('enforceDocumentScopePre')
+    const Log = logger.bind('enforceDocumentScopePre')
 
     try {
       const userScope = request.auth.credentials.scope
@@ -92,12 +92,12 @@ internals.enforceDocumentScopePre = function(model, Log) {
 }
 internals.enforceDocumentScopePre.applyPoint = 'onPreHandler'
 
-internals.enforceDocumentScopePost = function(model, Log) {
+internals.enforceDocumentScopePost = function(model, logger) {
   const enforceDocumentScopePostForModel = function enforceDocumentScopePostForModel(
     request,
     h
   ) {
-    Log = Log.bind('enforceDocumentScopePost')
+    const Log = logger.bind('enforceDocumentScopePost')
 
     try {
       if (_.isError(request.response)) {
@@ -178,7 +178,7 @@ internals.verifyScopeById = async function(
   documentIds,
   action,
   userScope,
-  Log
+  logger
 ) {
   const query = {
     _id: {
@@ -186,10 +186,11 @@ internals.verifyScopeById = async function(
     }
   }
   let documents = await model.find(query, 'scope')
-  return internals.verifyScope(documents, action, userScope, Log)
+  return internals.verifyScope(documents, action, userScope, logger)
 }
 
-internals.verifyScope = function(documents, action, userScope, Log) {
+internals.verifyScope = function(documents, action, userScope, logger) {
+  const Log = logger.bind()
   let authorized = true
   let unauthorizedDocs = []
   try {
@@ -260,7 +261,7 @@ internals.verifyScope = function(documents, action, userScope, Log) {
   return { authorized: authorized, unauthorizedDocs: unauthorizedDocs }
 }
 
-internals.compareScopes = function(userScope, documentScope, Log) {
+internals.compareScopes = function(userScope, documentScope, logger) {
   userScope = userScope || []
   let fobiddenScope = []
   let requiredScope = []

@@ -8,11 +8,13 @@ let path = require('path')
 /**
  * This module reads in all the model files and generates the corresponding mongoose models.
  * @param mongoose
- * @param Log
+ * @param logger
  * @param config
  * @returns {*|promise}
  */
-module.exports = function(mongoose, Log, config) {
+module.exports = function(mongoose, logger, config) {
+  const Log = logger.bind('model-generator')
+
   let models = {}
   let schemas = {}
   let modelPath = ''
@@ -95,7 +97,7 @@ module.exports = function(mongoose, Log, config) {
         // EXPL: Generate scopes if enabled
         if (config.generateRouteScopes) {
           let model = models[modelKey]
-          authHelper.generateScopeForModel(model, Log)
+          authHelper.generateScopeForModel(model, logger)
         }
       }
 

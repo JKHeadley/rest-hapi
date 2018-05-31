@@ -26,8 +26,14 @@ internals.testModelParameter = function(
     test = t.test
   }
 
-  let modelIndex = parameters.indexOf('model')
-  let logIndex = parameters.indexOf('Log')
+  let modelIndex =
+    parameters.indexOf('model') >= 0
+      ? parameters.indexOf('model')
+      : parameters.indexOf('ownerModel')
+  let logIndex =
+    parameters.indexOf('Log') >= 0
+      ? parameters.indexOf('Log')
+      : parameters.indexOf('logger')
   let paramCopy = {}
 
   parameters[logIndex] = Log

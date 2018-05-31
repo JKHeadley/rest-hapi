@@ -7,10 +7,10 @@ module.exports = {
    * Generates the proper scope for an endpoint based on the model routeOptions
    * @param model: A mongoose model
    * @param type: The scope CRUD type. Valid values are 'create', 'read', 'update', 'delete', and 'associate'.
-   * @param Log: A logging object
+   * @param logger: A logging object
    * @returns {Array}: A list of authorization scopes for the endpoint.
    */
-  generateScopeForEndpoint: function(model, type, Log) {
+  generateScopeForEndpoint: function(model, type, logger) {
     let routeScope = model.routeOptions.routeScope || {}
     let rootScope = routeScope.rootScope
     let scope = []
@@ -58,7 +58,7 @@ module.exports = {
     return scope
   },
 
-  generateScopeForModel: function(model, Log) {
+  generateScopeForModel: function(model, logger) {
     const modelName =
       model.collectionName[0].toUpperCase() + model.collectionName.slice(1)
 
@@ -124,7 +124,7 @@ module.exports = {
       ]
     }
 
-    // EXPL: merge any existing scope fields with the generated scope
+    // Merge any existing scope fields with the generated scope
     for (const key in routeScope) {
       if (scope[key]) {
         if (!_.isArray(scope[key])) {
