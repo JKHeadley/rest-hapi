@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [1.2.0] - 2018-05-31
 ### Changed
 - Updated dependencies to fix security vulnerability.
-- 
+- Refactored logging to be more consistent.
 
 ## [1.0.0] - 2018-05-27
 Please see the [release notes](https://github.com/JKHeadley/rest-hapi/issues/120).
@@ -250,10 +250,10 @@ post(hardDelete, deleted, Log) | post(hardDelete, deleted, request, Log)
 [0.38.0]: https://github.com/jkheadley/rest-hapi/compare/v0.37.0...v0.38.0
 [0.39.0]: https://github.com/jkheadley/rest-hapi/compare/v0.38.0...v0.39.0
 [0.40.0]: https://github.com/jkheadley/rest-hapi/compare/v0.39.0...v0.40.0
-[0.41.0]: https://github.com/jkheadley/rest-hapi/compare/v0.41.0...v0.40.0
-[0.42.0]: https://github.com/jkheadley/rest-hapi/compare/v0.42.0...v0.41.0
-[0.43.0]: https://github.com/jkheadley/rest-hapi/compare/v0.43.0...v0.42.0
-[1.0.0]: https://github.com/jkheadley/rest-hapi/compare/v1.0.1...v0.43.0
-[1.2.0]: https://github.com/jkheadley/rest-hapi/compare/v1.2.0...v1.0.1
+[0.41.0]: https://github.com/jkheadley/rest-hapi/compare/v0.40.0...v0.41.0
+[0.42.0]: https://github.com/jkheadley/rest-hapi/compare/v0.41.0...v0.42.0
+[0.43.0]: https://github.com/jkheadley/rest-hapi/compare/v0.42.0...v0.43.0
+[1.0.0]: https://github.com/jkheadley/rest-hapi/compare/v0.43.0...v1.0.1
+[1.2.0]: https://github.com/jkheadley/rest-hapi/compare/v1.0.1...v1.2.0
 
 [BREAKING]: https://github.com/JKHeadley/rest-hapi/releases
