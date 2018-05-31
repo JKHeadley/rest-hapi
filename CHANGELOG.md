@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [1.2.0] - 2018-05-31
+### Changed
+- Updated dependencies to fix security vulnerability.
+- 
+
 ## [1.0.0] - 2018-05-27
 Please see the [release notes](https://github.com/JKHeadley/rest-hapi/issues/120).
 
@@ -249,5 +254,6 @@ post(hardDelete, deleted, Log) | post(hardDelete, deleted, request, Log)
 [0.42.0]: https://github.com/jkheadley/rest-hapi/compare/v0.42.0...v0.41.0
 [0.43.0]: https://github.com/jkheadley/rest-hapi/compare/v0.43.0...v0.42.0
 [1.0.0]: https://github.com/jkheadley/rest-hapi/compare/v1.0.1...v0.43.0
+[1.2.0]: https://github.com/jkheadley/rest-hapi/compare/v1.2.0...v1.0.1
 
 [BREAKING]: https://github.com/JKHeadley/rest-hapi/releases
