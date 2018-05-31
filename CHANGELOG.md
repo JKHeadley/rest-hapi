@@ -11,7 +11,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Updated dependencies to fix security vulnerability.
 - Refactored logging to be more consistent.
 
-## [1.0.0] - 2018-05-27
+## [1.0.0] - 2018-05-27 [BREAKING]
 Please see the [release notes](https://github.com/JKHeadley/rest-hapi/issues/120).
 
 ## [0.43.0] - 2018-03-23
