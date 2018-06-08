@@ -12,4 +12,4 @@
 7. Your pull request will be reviewed along with change requests or comments.
 8. After all requests are complete, your pull request will be merged in.
 
-**NOTE**: Don't forget to update the docs! ;)
+**NOTE**: Don't forget to update the docs! 😉
