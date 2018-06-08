@@ -1,4 +1,4 @@
-# ![rest-hapi-logo](https://user-images.githubusercontent.com/12631935/41144105-5c22e030-6ac1-11e8-999c-42bbfbf775c1.png)
+![rest-hapi-logo-alt](https://user-images.githubusercontent.com/12631935/41144156-931d244c-6ac1-11e8-86e5-24fd5fcda8ec.png)
 
 A RESTful API generator for the [hapi](https://github.com/hapijs/hapi) framework utilizing the [mongoose](https://github.com/Automattic/mongoose) ODM.
 
