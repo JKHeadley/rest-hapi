@@ -241,7 +241,7 @@ async function registerHapiSwagger(server, logger, config) {
 }
 
 function generateRoutes(server, mongoose, models, logger, config) {
-  const Log = logger.bind('generate-routes')
+  const Log = logger.bind()
 
   const restHelper = restHelperFactory(logger, mongoose, server)
 

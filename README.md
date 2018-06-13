@@ -132,7 +132,7 @@ If you need a db different than the default, you can add the URI as an argument 
 $ ./node_modules/.bin/rest-hapi-cli seed mongodb://localhost:27017/other_db
 ```
 
-NOTE: The password for all seed users is ``1234``.
+**NOTE**: The password for all seed users is ``1234``.
 
 You can use these models as templates for your models or delete them later if you wish.
 

@@ -22,7 +22,7 @@ let mongoURI = process.argv.slice(2)[0]
 
     let models = await restHapi.generateModels(mongoose)
 
-    let password = 'root'
+    let password = '1234'
 
     await dropCollections(models)
 
@@ -42,7 +42,7 @@ let mongoURI = process.argv.slice(2)[0]
       }
     ]
 
-    await restHapi.create(models.role, roles, Log)
+    roles = await restHapi.create(models.role, roles, Log)
 
     Log.log('seeding users')
     let users = [

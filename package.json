@@ -52,7 +52,6 @@
   },
   "homepage": "https://github.com/JKHeadley/rest-hapi#readme",
   "dependencies": {
-    "bcryptjs": "latest",
     "blue-tape": "^1.0.0",
     "boom": "^7.2.0",
     "chalk": "*",
