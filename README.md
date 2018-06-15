@@ -114,4 +114,4 @@ If you have any questions/issues/feature requests, please feel free to open an [
 Like this project? Please star it! 
 
 ## Contributing
-Please reference the contributing doc: https://github.com/JKHeadley/rest-hapi/blob/master/CONTRIBUTING.md
+Please reference the [contributing doc](https://github.com/JKHeadley/rest-hapi/blob/master/CONTRIBUTING.md) 
