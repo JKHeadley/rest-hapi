@@ -5,7 +5,7 @@ sidebar_label: Metadata
 ---
 
 ## Timestamps
-rest-hapi supports the following optional timestamp metadata:
+rest-hapi supports the following optional timestamp metadata for documents:
 - createdAt (default enabled, activated via [`config.enableCreatedAt`](configuration.md#enablecreatedat))
 - updatedAt (default enabled, activated via [`config.enableUpdatedAt`](configuration.md#enableupdatedat))
 - deletedAt (default enabled, activated via [`config.enableDeletedAt`](configuration.md#enabledeletedat)) (see [Soft delete](soft-delete.md))
