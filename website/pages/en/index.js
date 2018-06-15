@@ -299,7 +299,7 @@ const TryOut = props => {
   return (
     <Container
       padding={['bottom', 'top']}
-      background="highlight"
+      background="dark"
       align={'center'}
       id="try">
       <div className="productShowcaseSection paddingBottom">
