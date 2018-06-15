@@ -2,10 +2,9 @@
 
 <br />
 
+
 <div align="center">
-  <strong style="
-    font-size: 30px;
-">rest-hapi</strong>
+  <strong><h2>rest-hapi</h2></strong>
 </div>
 
 <br />
