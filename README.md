@@ -71,28 +71,28 @@ You need [Node.js](https://nodejs.org/en/) installed and you'll need [MongoDB](h
 
 ## Quick Start
 
-Clone the demo repo
+1) Clone the demo repo
 ```
 $ git clone https://github.com/JKHeadley/rest-hapi-demo.git
 $ cd rest-hapi-demo
 ```
 
-Install the dependencies
+2) Install the dependencies
 ```
 $ npm install
 ```
 
-Seed the models
+3) Seed the models
 ```
 $ ./node_modules/.bin/rest-hapi-cli seed
 ```
 
-Start the api
+4) Start the api
 ```
 $ npm start
 ```
 
-View the api docs at 
+5) View the api docs at 
 
 [http://localhost:8080/](http://localhost:8080/)
 
