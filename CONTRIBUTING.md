@@ -1,4 +1,4 @@
-#How To Contribute
+# How To Contribute
 
 1. Fork the repo
 2. Create a branch off of the *master* branch. Prefix your branch with either "feature/", "bugfix/", or something similar describing the type of update, and then add a descriptive name such as "bugfix/random\_files_erased".
