@@ -4,9 +4,10 @@
 
 
 <div align="center">
-  <strong><h2>rest-hapi</h2>
-<br /></strong>
+  <strong>rest-hapi</strong>
 </div>
+
+<br />
 
 <div align="center">
   <strong>A RESTful API generator</strong>
