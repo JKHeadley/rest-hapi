@@ -48,11 +48,41 @@ rest-hapi is a [hapi](https://hapijs.com/) plugin that generates RESTful API end
 * Mongoose [wrapper methods](https://jkheadley.github.io/rest-hapi/docs/mongoose-wrapper-methods.html)
 * ...and more!
 
-## Live demos
+## Live demo
 
-View the swagger docs for the live demos:
+View the swagger docs for the live demo:
 
-appy: https://api.appyapp.io
+https://jkheadley.github.io/rest-hapi/demo
+
+Or, for a more complete example, check out the [appy](https://appyapp.io) api:
+
+https://api.appyapp.io
+
+## Quick Start
+
+clone the demo repo
+```
+$ git clone https://github.com/JKHeadley/rest-hapi-demo.git
+```
+
+install the dependencies
+```
+$ npm install
+```
+
+seed the models
+```
+$ ./node_modules/.bin/rest-hapi-cli seed
+```
+
+start the api
+```
+$ npm start
+```
+
+view the api docs at 
+
+[http://localhost:8080/](http://localhost:8080/)
 
 ## Example Projects
 
