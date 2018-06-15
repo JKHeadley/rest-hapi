@@ -10,6 +10,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 - Added 'swaggerHost' config option.
 
+### Changed
+- Removed bcrypt dependency
+
+### Fixed
+- Attempt to fix windows error
+
 ## [1.2.0] - 2018-05-31
 ### Changed
 - Updated dependencies to fix security vulnerability.
