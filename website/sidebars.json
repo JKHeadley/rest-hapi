@@ -1,0 +1,33 @@
+{
+  "docs": {
+    "Quick Start": [
+      "getting-started",
+      "swagger-documentation"
+    ],
+    "Usage": [
+      "configuration",
+      "creating-endpoints",
+      "associations",
+      "route-customization",
+      "querying",
+      "duplicate-fields",
+      "validation",
+      "middleware",
+      "authorization",
+      "audit-logs",
+      "policies",
+      "mongoose-wrapper-methods",
+      "soft-delete",
+      "metadata",
+      "model-generation"
+    ],
+    "Other": [
+      "testing",
+      "questions",
+      "support"
+    ]
+  },
+  "docs-other": {
+    "First Category": ["doc4", "doc5"]
+  }
+}
