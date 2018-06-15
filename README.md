@@ -104,14 +104,6 @@ $ npm start
 
 [rest-hapi-demo](https://github.com/JKHeadley/rest-hapi-demo): A simple demo project implementing rest-hapi in a hapi server.
 
-
-## Contributors
-
-Thanks goes to each one of our contributors! :pray:
-[Become a contributor](CONTRIBUTING.md).
-
-<a href="https://github.com/JKHeadley/rest-hapi/graphs/contributors"><img src="https://opencollective.com/rest-hapi/contributors.svg?width=890&button=false" /></a>
-
 ## License
 MIT
 
