@@ -1,8 +1,29 @@
 <p align="center"><a href="https://jkheadley.github.io/rest-hapi/" target="_blank" rel="noopener noreferrer"><img width="367" height="298" src="https://user-images.githubusercontent.com/12631935/41144156-931d244c-6ac1-11e8-86e5-24fd5fcda8ec.png" alt="rest-hapi logo"></a></p>
 
+<br />
+
 <div align="center">
-  <strong>A RESTful API generator for the [hapi](https://github.com/hapijs/hapi) framework utilizing the [mongoose](https://github.com/Automattic/mongoose) ODM.</strong>
+  <strong>A RESTful API generator</strong>
 </div>
+
+<br />
+
+<div align="center">
+  <a href="https://travis-ci.org/JKHeadley/rest-hapi">
+    <img alt="TravisCI" src="https://img.shields.io/circleci/project/github/JKHeadley/rest-hapi/master.svg?style=flat-square">
+  </a>
+  <a href="https://codecov.io/gh/JKHeadley/rest-hapi">
+    <img alt="Codecov" src="https://img.shields.io/codecov/c/github/JKHeadley/rest-hapi.svg?style=flat-square">
+  </a>
+  <a href="https://www.npmjs.com/package/rest-hapi">
+    <img alt="npm" src="https://img.shields.io/npm/dt/rest-hapi.svg?style=flat-square">
+  </a>
+  <a href="https://www.npmjs.com/package/rest-hapi">
+    <img alt="npm" src="https://img.shields.io/npm/v/rest-hapi.svg?style=flat-square">
+  </a>
+</div>
+
+<br />
 
 
 [![Build Status](https://travis-ci.org/JKHeadley/rest-hapi.svg?branch=master)](https://travis-ci.org/JKHeadley/rest-hapi) 
