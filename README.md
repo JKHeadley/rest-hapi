@@ -3,7 +3,7 @@
 <br />
 
 <div align="center">
-  <strong style=font-size:48px>rest-hapi</strong>
+  <strong><span style="font-size:48px">rest-hapi</span></strong>
 </div>
 
 <br />
