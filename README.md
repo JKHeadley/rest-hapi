@@ -35,18 +35,18 @@ rest-hapi is a [hapi](https://hapijs.com/) plugin that generates RESTful API end
 
 ## Features
 
-* Automatic generation of [CRUD](#creating-endpoints) endpoints with [middleware](#middleware) support
-* Automatic generation of [association](#associations) endpoints
-* [joi](https://github.com/hapijs/joi) [validation](#validation)
-* Route-level and document-level [authorization](#authorization)
-* [Swagger docs](#swagger-documentation) for all generated endpoints via [hapi-swagger](https://github.com/glennjones/hapi-swagger)
-* [Query parameter](#querying) support for searching, sorting, filtering, pagination, and embedding of associated models
-* Endpoint activity history through [Audit Logs](#audit-logs)
-* Support for [policies](#policies) via [mrhorse](https://github.com/mark-bradshaw/mrhorse)
-* [Duplicate fields](#duplicate-fields)
-* Support for ["soft" delete](#soft-delete)
-* Optional [metadata](#metadata)
-* Mongoose [wrapper methods](#mongoose-wrapper-methods)
+* Automatic generation of [CRUD](https://jkheadley.github.io/rest-hapi/docs/creating-endpoints.html) and [association](https://jkheadley.github.io/rest-hapi/docs/associations.html) endpoints with [middleware](https://jkheadley.github.io/rest-hapi/docs/middleware.html) support
+* [joi](https://github.com/hapijs/joi) [validation](https://jkheadley.github.io/rest-hapi/docs/validation.html)
+* Route-level and document-level [authorization](https://jkheadley.github.io/rest-hapi/docs/authorization.html)
+* [Swagger docs](https://jkheadley.github.io/rest-hapi/docs/swagger-documentation.html) for all generated endpoints
+* [Query parameter](https://jkheadley.github.io/rest-hapi/docs/querying.html) support for searching, sorting, filtering, pagination, and embedding of associated models
+* Endpoint activity history through [Audit Logs](https://jkheadley.github.io/rest-hapi/docs/audit-logs.html)
+* Support for [policies](https://jkheadley.github.io/rest-hapi/docs/policies.html) via [mrhorse](https://github.com/mark-bradshaw/mrhorse)
+* [Duplicate fields](https://jkheadley.github.io/rest-hapi/docs/duplicate-fields.html)
+* Support for ["soft" delete](https://jkheadley.github.io/rest-hapi/docs/soft-delete.html)
+* Optional [metadata](https://jkheadley.github.io/rest-hapi/docs/metadata.html) for documents
+* Mongoose [wrapper methods](https://jkheadley.github.io/rest-hapi/docs/mongoose-wrapper-methods.html)
+* ...and more!
 
 ## Live demos
 
