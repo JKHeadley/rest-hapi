@@ -465,3 +465,13 @@ config.enableSwaggerUI = true
  */
 config.enableSwaggerHttps = false
 ```
+
+## swaggerHost
+```javascript
+/**
+ * Sets the host used for swagger requests. Useful for an api behind a reverse proxy.
+ * default: undefined
+ * @type {boolean}
+ */
+config.swaggerHost = undefined
+```
