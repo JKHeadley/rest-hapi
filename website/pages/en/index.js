@@ -286,8 +286,8 @@ const Swagger = props => {
               </span>
             </div>
           </div>
-          <div className="blockImage">
-            <img src="/rest-hapi/img/appy-api-screenshot.png" />
+          <div className="blockImage screenshot">
+              <img src="/rest-hapi/img/appy-api-screenshot.png" />
           </div>
         </div>
       </div>

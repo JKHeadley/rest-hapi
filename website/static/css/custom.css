@@ -26,3 +26,21 @@
     line-height: 1em;
     text-align: center;
 }
+
+
+.screenshot {
+    -webkit-box-shadow: 10px 9px 55px -9px rgba(0,0,0,0.72);
+    -moz-box-shadow: 10px 9px 55px -9px rgba(0,0,0,0.72);
+    box-shadow: 10px 9px 55px -9px rgba(0,0,0,0.72);
+    display: inline-block;
+    margin-left: 4em;
+    border-radius: 8px;
+    border: 0;
+    position: relative;
+}
+
+.screenshot img {
+    display: block;
+    border-radius: 8px;
+    width: 35em;
+}
