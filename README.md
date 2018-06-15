@@ -10,7 +10,7 @@
 
 <div align="center">
   <a href="https://travis-ci.org/JKHeadley/rest-hapi">
-    <img alt="TravisCI" src="https://img.shields.io/travisci/project/github/JKHeadley/rest-hapi/master.svg?style=flat-square">
+    <img alt="TravisCI" src="https://img.shields.io/travis/project/github/JKHeadley/rest-hapi/master.svg?style=flat-square">
   </a>
   <a href="https://codecov.io/gh/JKHeadley/rest-hapi">
     <img alt="Codecov" src="https://img.shields.io/codecov/c/github/JKHeadley/rest-hapi.svg?style=flat-square">
@@ -20,6 +20,12 @@
   </a>
   <a href="https://www.npmjs.com/package/rest-hapi">
     <img alt="npm" src="https://img.shields.io/npm/v/rest-hapi.svg?style=flat-square">
+  </a>
+  <a href="https://www.npmjs.com/package/rest-hapi">
+    <img alt="StackShare" src="https://img.shields.io/badge/tech-stack-0690fa.svg?style=flat-square">
+  </a>
+  <a href="https://gitter.im/rest-hapi/Lobby">
+    <img alt="Join the chat at https://gitter.im/rest-hapi/Lobby" src="https://badges.gitter.im/rest-hapi/Lobby.svg?style=flat-square">
   </a>
 </div>
 
