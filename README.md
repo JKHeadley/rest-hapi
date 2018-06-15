@@ -3,6 +3,12 @@
 <br />
 
 <div align="center">
+  <strong style=font-size: 200%>rest-hapi</strong>
+</div>
+
+<br />
+
+<div align="center">
   <strong>A RESTful API generator</strong>
 </div>
 
