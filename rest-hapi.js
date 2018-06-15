@@ -224,6 +224,7 @@ async function registerHapiSwagger(server, logger, config) {
       title: config.appTitle,
       version: config.version
     },
+    host: config.swaggerHost,
     expanded: config.docExpansion,
     swaggerUI: config.enableSwaggerUI,
     documentationPage: config.enableSwaggerUI,
