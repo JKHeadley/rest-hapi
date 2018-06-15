@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [1.3.0] - 2018-06-14
+### Added
+- Added 'swaggerHost' config option.
+
 ## [1.2.0] - 2018-05-31
 ### Changed
 - Updated dependencies to fix security vulnerability.
@@ -226,7 +230,7 @@ post(hardDelete, deleted, Log) | post(hardDelete, deleted, request, Log)
 
 
 
-[Unreleased]: https://github.com/jkheadley/rest-hapi/compare/v1.0.0...HEAD
+[Unreleased]: https://github.com/jkheadley/rest-hapi/compare/v1.3.0...HEAD
 [0.20.0]: https://github.com/jkheadley/rest-hapi/compare/v0.19.2...v0.20.0
 [0.20.2]: https://github.com/jkheadley/rest-hapi/compare/v0.20.0...v0.20.2
 [0.20.3]: https://github.com/jkheadley/rest-hapi/compare/v0.20.2...v0.20.3
@@ -255,5 +259,6 @@ post(hardDelete, deleted, Log) | post(hardDelete, deleted, request, Log)
 [0.43.0]: https://github.com/jkheadley/rest-hapi/compare/v0.42.0...v0.43.0
 [1.0.0]: https://github.com/jkheadley/rest-hapi/compare/v0.43.0...v1.0.1
 [1.2.0]: https://github.com/jkheadley/rest-hapi/compare/v1.0.1...v1.2.0
+[1.3.0]: https://github.com/jkheadley/rest-hapi/compare/v1.2.0...v1.3.0
 
 [BREAKING]: https://github.com/JKHeadley/rest-hapi/releases
