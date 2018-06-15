@@ -18,7 +18,7 @@ class Users extends React.Component {
       return null
     }
     const editUrl =
-      siteConfig.docsRepoUrl + '/edit/master/website/data/users.js'
+      siteConfig.repoUrl + '/edit/master/website/data/users.js'
     const showcase = siteConfig.users.map((user, i) => {
       return (
         <a href={user.infoLink} key={i}>
