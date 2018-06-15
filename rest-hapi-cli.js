@@ -15,7 +15,7 @@ let isWindows = /^win/.test(process.platform)
 let cmdString = '$PWD/node_modules/rest-hapi/scripts/'
 
 if (isWindows) {
-  cmdString = './node_modules/rest-hapi'
+  cmdString = './node_modules/rest-hapi/scripts/'
 }
 
 switch (command) {
