@@ -61,116 +61,48 @@ Or, for a more complete example, check out the [appy](https://appyapp.io) api:
 
 https://api.appyapp.io
 
-## Quick Start
+## Documentation
 
-clone the demo repo
-```
-$ git clone https://github.com/JKHeadley/rest-hapi-demo.git
-```
-
-install the dependencies
-```
-$ npm install
-```
-
-seed the models
-```
-$ ./node_modules/.bin/rest-hapi-cli seed
-```
-
-start the api
-```
-$ npm start
-```
-
-view the api docs at 
-
-[http://localhost:8080/](http://localhost:8080/)
-
-## Example Projects
-
-[appy](https://github.com/JKHeadley/appy): A ready-to-go user system built on rest-hapi.
-
-[rest-hapi-demo](https://github.com/JKHeadley/rest-hapi-demo): A simple demo project implementing rest-hapi in a hapi server.
-
+Check out the docs on the [official site](https://jkheadley.github.io/rest-hapi)!
 
 ## Requirements
 
 You need [Node.js](https://nodejs.org/en/) installed and you'll need [MongoDB](https://docs.mongodb.com/manual/installation/) installed and running.
 
-[Back to top](#readme-contents)
+## Quick Start
 
-## Installation
-
+Clone the demo repo
 ```
-$ npm install rest-hapi
+$ git clone https://github.com/JKHeadley/rest-hapi-demo.git
+$ cd rest-hapi-demo
 ```
 
-[Back to top](#readme-contents)
+Install the dependencies
+```
+$ npm install
+```
 
-### Getting started
-**WARNING**: This will clear all data in the following MongoDB collections (in the db defined in ``restHapi.config``, default ``mongodb://localhost:27017/rest_hapi``) if they exist: ``users``, ``roles``.
-
-If you would like to seed your database with some demo models/data, run:
-
+Seed the models
 ```
 $ ./node_modules/.bin/rest-hapi-cli seed
 ```
 
-If you need a db different than the default, you can add the URI as an argument to the command:
-
+Start the api
 ```
-$ ./node_modules/.bin/rest-hapi-cli seed mongodb://localhost:27017/other_db
+$ npm start
 ```
 
-**NOTE**: The password for all seed users is ``1234``.
+View the api docs at 
 
-You can use these models as templates for your models or delete them later if you wish.
+[http://localhost:8080/](http://localhost:8080/)
 
-[Back to top](#readme-contents)
+...Have fun!
 
-## Using the plugin
+## Example Projects
 
-As rest-hapi is a hapi plugin, you'll need to set up a hapi server to generate API endpoints.  You'll also need to set up a [mongoose](https://github.com/Automattic/mongoose) instance and include it in the plugin's options when you register. Below is an example nodejs script ``api.js`` with the minimum requirements to set up an API with rest-hapi:
+[appy](https://github.com/JKHeadley/appy): A boilerplate web app.
 
-```javascript
-'use strict'
-
-let Hapi = require('hapi')
-let mongoose = require('mongoose')
-let RestHapi = require('rest-hapi')
-
-async function api(){
-  try {
-    let server = Hapi.Server({ port: 8080 })
-
-    await server.register({
-      plugin: RestHapi,
-      options: {
-        mongoose: mongoose,
-        config: config
-      }
-    })
-
-    await server.start()
-
-    console.log("Server ready", server.info)
-    
-    return server
-  } catch (err) {
-    console.log("Error starting server:", err);
-  }
-}
-
-module.exports = api()
-```
-You can then run ``$ node api.js`` and point your browser to [http://localhost:8080/](http://localhost:8080/) to view the swagger docs (NOTE: API endpoints will only be generated if you have provided models. See [Getting started](#getting-started) or [Creating endpoints](#creating-endpoints).)
-
-## Testing
-If you have downloaded the source you can run the tests with:
-```
-$ npm test
-```
+[rest-hapi-demo](https://github.com/JKHeadley/rest-hapi-demo): A simple demo project implementing rest-hapi in a hapi server.
 
 ## License
 MIT
