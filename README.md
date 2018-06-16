@@ -109,7 +109,7 @@ $ npm start
 Support us with a monthly donation and help us continue our activities!
 [Become a backer](https://opencollective.com/rest-hapi#backers).
 
-<a href="https://opencollective.com/warriorjs#backers"><img src="https://opencollective.com/warriorjs/backers.svg?width=890" /></a>
+<a href="https://opencollective.com/rest-hapi#backers"><img src="https://opencollective.com/rest-hapi/backers.svg?width=890" /></a>
 ## License
 MIT
 
