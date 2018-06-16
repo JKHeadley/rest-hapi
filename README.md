@@ -87,12 +87,12 @@ $ npm install
 $ ./node_modules/.bin/rest-hapi-cli seed
 ```
 
-4) Start the api
+4) Start the server
 ```
 $ npm start
 ```
 
-5) View the api docs at 
+5) View the API docs at 
 
 [http://localhost:8080/](http://localhost:8080/)
 

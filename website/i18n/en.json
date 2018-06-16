@@ -16,8 +16,8 @@
     "Creating Endpoints": "Creating Endpoints",
     "duplicate-fields": "Duplicate Fields",
     "Duplicate Fields": "Duplicate Fields",
-    "getting-started": "Getting Started",
-    "Getting Started": "Getting Started",
+    "introduction": "Introduction",
+    "Introduction": "Introduction",
     "metadata": "Metadata",
     "Metadata": "Metadata",
     "middleware": "Middleware",
@@ -34,6 +34,8 @@
     "Querying": "Querying",
     "questions": "Questions",
     "Questions": "Questions",
+    "quick-start": "Quick Start",
+    "Quick Start": "Quick Start",
     "route-customization": "Route Customization",
     "Route Customization": "Route Customization",
     "soft-delete": "Soft Delete",
@@ -51,10 +53,11 @@
     "Blog": "Blog",
     "Users": "Users",
     "GitHub": "GitHub",
-    "Quick Start": "Quick Start",
+    "Getting Started": "Getting Started",
     "Usage": "Usage",
     "Other": "Other",
-    "First Category": "First Category"
+    "First Category": "First Category",
+    "getting-started": "Getting Started"
   },
   "pages-strings": {
     "Help Translate|recruit community translators for your project": "Help Translate",

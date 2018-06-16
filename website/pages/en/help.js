@@ -23,7 +23,7 @@ class Help extends React.Component {
     const supportLinks = [
       {
         content: `Learn more about rest-hapi using the [documentation on this site.](${docUrl(
-          'getting-started.html',
+          'quick-start.html',
           language
         )})`,
         title: 'Browse the docs'

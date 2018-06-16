@@ -1,7 +1,8 @@
 {
   "docs": {
-    "Quick Start": [
-      "getting-started",
+    "Getting Started": [
+      "quick-start",
+      "introduction",
       "swagger-documentation"
     ],
     "Usage": [

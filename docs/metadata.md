@@ -47,7 +47,7 @@ Ex:
 
 ``mongoose.model('user').findByIdAndUpdate(_id, payload)`` will not modify ``updatedAt`` whereas
 
-``restHapi.update(mongoose.model('user'), _id, payload)`` will. (see [Mongoose wrapper methods](mongoose-wrapper-methods.md))
+``RestHapi.update(mongoose.model('user'), _id, payload)`` will. (see [Mongoose wrapper methods](mongoose-wrapper-methods.md))
 
 ## User tags
 In addition to timestamps, the following user tag metadata can be added to a document:

@@ -5,7 +5,7 @@ sidebar_label: Configuration
 ---
 
 
-Configuration of rest-hapi is handled through the ``restHapi.config`` object.  Below is a description of the current configuration options/properties.
+Configuration of rest-hapi is handled through the ``RestHapi.config`` object. See the [introduction](introduction.md#using-the-plugin) for an example.  Below is a description of the current configuration options/properties.
 
 ## appTitle
 ```javascript
