@@ -15,7 +15,7 @@ const siteConfig = {
   title: 'rest-hapi' /* title for your website */,
   tagline: 'A RESTful API generator ',
   url: 'https://jkheadley.github.io' /* your website url */,
-  baseUrl: '/rest-hapi/' /* base url for your project */,
+  baseUrl: '/' /* base url for your project */,
   repoUrl: 'https://github.com/JKHeadley/rest-hapi',
   // For github.io type URLs, you would set the url and baseUrl like:
   //   url: 'https://facebook.github.io',
