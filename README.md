@@ -111,7 +111,7 @@ We welcome contributions to rest-hapi! These are the many ways you can help:
 - Submit patches and features
 - Improve the [documentation and website](https://jkheadley.github.io/rest-hapi/)
 - Report bugs
-- Follow us on [Twitter](https://twitter.com/rest-hapi)
+- Follow us on [Twitter](https://twitter.com/resthapi)
 - Participate in the [gitter community](https://gitter.im/rest-hapi/Lobby)
 - And [donate financially](https://opencollective.com/rest-hapi)!
 
