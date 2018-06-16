@@ -104,14 +104,33 @@ $ npm start
 
 [rest-hapi-demo](https://github.com/JKHeadley/rest-hapi-demo): A simple demo project implementing rest-hapi in a hapi server.
 
+## Contributing
+
+We welcome contributions to rest-hapi! These are the many ways you can help:
+
+- Submit patches and features
+- Improve the [documentation and website](https://jkheadley.github.io/rest-hapi/)
+- Report bugs
+- Follow us on [Twitter](https://twitter.com/resthapi)
+- Participate in the [gitter community](https://gitter.im/rest-hapi/Lobby)
+- And [donate financially](https://opencollective.com/rest-hapi)!
+
+Please read our [contribution guide](CONTRIBUTING.md) to get started. Also note
+that this project is released with a
+[Contributor Code of Conduct](CODE_OF_CONDUCT.md), please make sure to review
+and follow it.
+
+## Contributors
+
+Thanks goes to each one of our contributors! :pray:
+[Become a contributor](CONTRIBUTING.md).
+
 ## Backers
 
 Support us with a monthly donation and help us continue our activities!
 [Become a backer](https://opencollective.com/rest-hapi#backers).
 
 <a href="https://opencollective.com/rest-hapi#backers"><img src="https://opencollective.com/rest-hapi/backers.svg?width=890" /></a>
-## License
-MIT
 
 ## Questions?
 If you have any questions/issues/feature requests, please feel free to open an [issue](https://github.com/JKHeadley/rest-hapi/issues/new).  We'd love to hear from you!
@@ -119,5 +138,5 @@ If you have any questions/issues/feature requests, please feel free to open an [
 ## Support
 Like this project? Please star it! 
 
-## Contributing
-Please reference the [contributing doc](https://github.com/JKHeadley/rest-hapi/blob/master/CONTRIBUTING.md) 
+## License
+rest-hapi is licensed under a [MIT License](LICENSE).
