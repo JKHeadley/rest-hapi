@@ -92,10 +92,6 @@ const siteConfig = {
 
   scrollToTop: true,
 
-  scrollToTopOptions: {
-    zIndex: 1000
-  },
-
   editUrl: 'https://github.com/JKHeadley/rest-hapi/tree/master/docs/'
   // You may provide arbitrary config keys to be used as needed by your
   // template. For example, if you need your repo's URL...
