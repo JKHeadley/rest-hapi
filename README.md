@@ -106,7 +106,7 @@ $ npm start
 
 ## Contributing
 
-We welcome contributions to WarriorJS! These are the many ways you can help:
+We welcome contributions to rest-hapi! These are the many ways you can help:
 
 - Submit patches and features
 - Improve the [documentation and website](https://jkheadley.github.io/rest-hapi/)
