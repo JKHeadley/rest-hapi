@@ -310,7 +310,7 @@ const TryOut = props => {
           button below to play with the live demo.
         </MarkdownBlock>
         {/* <p>Check out the live demo or </p> */}
-        <a className="button" href={pageUrl('demo.html', props.language)}>
+        <a className="button" href="https://demo.resthapi.com">
           LIVE DEMO
         </a>
       </div>
