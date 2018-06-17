@@ -14,7 +14,8 @@ const users = require('./data/users')
 const siteConfig = {
   title: 'rest-hapi' /* title for your website */,
   tagline: 'A RESTful API generator ',
-  url: 'https://jkheadley.github.io' /* your website url */,
+  url: 'https://resthapi.com' /* your website url */,
+  cname: 'resthapi.com',
   baseUrl: '/' /* base url for your project */,
   repoUrl: 'https://github.com/JKHeadley/rest-hapi',
   // For github.io type URLs, you would set the url and baseUrl like:
