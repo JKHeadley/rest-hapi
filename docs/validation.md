@@ -60,7 +60,7 @@ queryable: false | field cannot be included as a query parameter
 exclude: true | field cannot be included in a response or as part of a query
 allowNull: true | field accepts ``null`` as a valid value
 
-## Joi Helper Methods
+## Joi helper methods
 rest-hapi exposes the helper methods it uses to generate Joi models through the `joiHelper` property. Combined with the exposed [mongoose wrapper methods](mongoose-wrapper-methods.md), this allows you to easily create [custom endpoints](creating-endpoints.md#standalone-endpoints). You can see a description of these methods below:
 
 ### generateJoiReadModel
