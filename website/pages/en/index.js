@@ -157,7 +157,7 @@ const FeatureCallout = props => (
     style={{ textAlign: 'center' }}>
     <h2>What does it do?</h2>
     <MarkdownBlock>
-      rest-hapi uses mongoose schemas to generate
+      rest-hapi uses [mongoose](http://mongoosejs.com/) schemas to generate
       [CRUD](docs/creating-endpoints.html) and
       [association](docs/associations.html) REST API endpoints. Generating the
       endpoints allows for a rich set of [configurable](docs/configuration.html)
