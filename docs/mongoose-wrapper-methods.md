@@ -26,7 +26,7 @@ The available methods are:
 - removeMany
 - getAll
 
-When used with the [model generating](model-generation.md) function, these methods provide a quick and easy way to start adding rich, relational data to your db. Check out the [appy seed file](https://github.com/JKHeadley/appy/blob/master/gulp/seed.js) for an excellent example of these methods in action, or refer to the [Additional endpoints](creating-endpoints.md#additional-endpoints) section example.
+When used with the [model generating](model-generation.md) function, these methods provide a quick and easy way to start adding rich, relational data to your db. Check out the [seed script](https://github.com/JKHeadley/rest-hapi/blob/master/scripts/seed.js) for an example of these methods in action, or refer to the [Additional endpoints](creating-endpoints.md#additional-endpoints) section example.
 
 A more detailed description of each method can be found below:
 
