@@ -76,6 +76,9 @@ class Footer extends React.Component {
               aria-label="Star this project on GitHub">
               Star
             </a>
+            <a href="https://twitter.com/intent/tweet?text=Generate%20RESTful%20API%20endpoints%20with%20rest-hapi!&url=https:/resthapi.com&via=resthapi&hashtags=REST,API,mongoosejs,hapijs,nodejs,MongoDB">
+              <img alt="rest-hapi tweet" src="https://img.shields.io/twitter/url/http/shields.io.svg?style=social"/>
+            </a>
           </div>
         </section>
         <section className="copyright">{this.props.config.copyright}</section>
