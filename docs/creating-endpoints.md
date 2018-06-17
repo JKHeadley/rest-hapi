@@ -10,7 +10,7 @@ Creating endpoints with rest-hapi can be accomplished three different ways:
 - defining [standalone endpoints](#standalone-endpoints)
 - [adding endpoints](#additional-endpoints) to a model
 
-## Model Endpoints
+## Model endpoints
 Restful endpoints are automatically generated based off of any mongoose models that you add to your ``models`` directory with the file structure of ``{model name}.model.js``.  These models must adhere to the following format:
 
 ```javascript
