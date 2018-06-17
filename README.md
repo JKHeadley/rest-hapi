@@ -30,9 +30,11 @@
   <a href="https://gitter.im/rest-hapi/Lobby">
     <img alt="Join the chat at https://gitter.im/rest-hapi/Lobby" src="https://badges.gitter.im/rest-hapi/Lobby.svg?style=flat-square">
   </a>
+  <a href="https://twitter.com/intent/tweet?text=Generate%20RESTful%20API%20endpoints%20with%20rest-hapi!&url=https:/resthapi.com&via=resthapi&hashtags=REST,API,mongoosejs,hapijs,nodejs,MongoDB">
+    <img alt="rest-hapi tweet" src="https://img.shields.io/twitter/url/http/shields.io.svg?style=social">
+  </a>
 </div>
 
-<br />
 
 rest-hapi is a [hapi](https://hapijs.com/) plugin that generates RESTful API endpoints based on [mongoose](http://mongoosejs.com/) schemas. It provides a powerful combination of [relational](https://jkheadley.github.io/rest-hapi/docs/associations.html) structure with [NoSQL](https://jkheadley.github.io/rest-hapi/docs/creating-endpoints.html) flexibility.  You define your data models and the rest is done for you.  Have your API server up and running in minutes!
 
