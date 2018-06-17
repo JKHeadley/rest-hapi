@@ -234,7 +234,9 @@ const Validation = props => {
       <div className="gridBlock">
         <div className="blockElement alignCenter imageAlignSide imageAlignLeft twoByGridBlock">
           <div className="blockImage">
-            <img src="/img/joi.png" />
+            <a href="https://github.com/hapijs/joi">
+              <img src="/img/joi.png" />
+            </a>
           </div>
           <div className="blockContent">
             <h2>
@@ -287,7 +289,9 @@ const Swagger = props => {
             </div>
           </div>
           <div className="blockImage screenshot">
+            <a href="https://api.appyapp.io">
               <img src="/img/appy-api-screenshot.png" />
+            </a>
           </div>
         </div>
       </div>
