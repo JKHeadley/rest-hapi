@@ -159,7 +159,7 @@ const FeatureCallout = props => (
     <MarkdownBlock>
       rest-hapi uses [mongoose](http://mongoosejs.com/) schemas to generate
       [CRUD](docs/creating-endpoints.html) and
-      [association](docs/associations.html) REST API endpoints. Generating the
+      [association](docs/associations.html) REST API endpoints on a [hapi](https://hapijs.com/) server. Generating the
       endpoints allows for a rich set of [configurable](docs/configuration.html)
       features such as:
     </MarkdownBlock>
