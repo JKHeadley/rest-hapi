@@ -92,6 +92,9 @@ const siteConfig = {
   twitterImage: 'img/rest-hapi-logo-alt.png',
 
   scrollToTop: true,
+  scrollToTopOptions: {
+    zIndex: 1000,
+  },
 
   editUrl: 'https://github.com/JKHeadley/rest-hapi/tree/master/docs/'
   // You may provide arbitrary config keys to be used as needed by your
