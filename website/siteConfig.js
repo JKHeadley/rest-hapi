@@ -101,7 +101,13 @@ const siteConfig = {
   // template. For example, if you need your repo's URL...
   //   repoUrl: 'https://github.com/facebook/test-site',
 
-  gaTrackingId: 'UA-120977991-1'
+  gaTrackingId: 'UA-120977991-1',
+
+  algolia: {
+    apiKey: '4eb5c5341e81e918812cfcc02ae3cd04',
+    indexName: 'react_hapi',
+    algoliaOptions: {} // Optional, if provided by Algolia
+  },
 }
 
 module.exports = siteConfig
