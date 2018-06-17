@@ -110,7 +110,7 @@ If endpoints beyond the generated CRUD endpoints are needed for a model, they ca
 // models/user.model.js
 let Joi = require('joi')
 let bcrypt = require('bcrypt')
-let restHapi = require('rest-hapi')
+let RestHapi = require('rest-hapi')
 
 module.exports = function (mongoose) {
   let modelName = "user"
@@ -145,7 +145,7 @@ module.exports = function (mongoose) {
           let handler = async function (request, h) {
             try {
               let hashedPassword = model.generatePasswordHash(request.payload.password)
-              let result = await restHapi.update(model, request.params._id, {password: hashedPassword}, Log)
+              let result = await RestHapi.update(model, request.params._id, {password: hashedPassword}, Log)
               if (result) {
                 return h.response("Password updated.").code(200)
               }
