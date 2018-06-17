@@ -55,7 +55,7 @@ rest-hapi is a [hapi](https://hapijs.com/) plugin that generates RESTful API end
 
 View the swagger docs for the live demo:
 
-https://resthapi.com/demo
+https://demo.resthapi.com
 
 Or, for a more complete example, check out the [appy](https://appyapp.io) api:
 
