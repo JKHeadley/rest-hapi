@@ -220,7 +220,7 @@ const Querying = props => {
             </div>
           </div>
           <div className="blockImage">
-            <img src="/rest-hapi/img/querying.png" />
+            <img src="/img/querying.png" />
           </div>
         </div>
       </div>
@@ -234,7 +234,7 @@ const Validation = props => {
       <div className="gridBlock">
         <div className="blockElement alignCenter imageAlignSide imageAlignLeft twoByGridBlock">
           <div className="blockImage">
-            <img src="/rest-hapi/img/joi.png" />
+            <img src="/img/joi.png" />
           </div>
           <div className="blockContent">
             <h2>
@@ -287,7 +287,7 @@ const Swagger = props => {
             </div>
           </div>
           <div className="blockImage screenshot">
-              <img src="/rest-hapi/img/appy-api-screenshot.png" />
+              <img src="/img/appy-api-screenshot.png" />
           </div>
         </div>
       </div>
