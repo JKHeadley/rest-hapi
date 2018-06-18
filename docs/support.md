@@ -24,7 +24,7 @@ and follow it.
 
 ## Contributors
 
-Of course we want to thank all of our current contributors! 🙏
+Of course we want to thank all of our current contributors!
 
 <a href="https://github.com/JKHeadley/rest-hapi/graphs/contributors"><img src="https://opencollective.com/rest-hapi/contributors.svg?width=890&button=false" /></a>
 
