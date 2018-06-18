@@ -298,8 +298,8 @@ const Swagger = props => {
             </div>
           </div>
           <div className="blockImage screenshot">
-            <a href="https://api.appyapp.io">
-              <img src="/img/appy-api-screenshot.png" />
+            <a href="https://demo.resthapi.com">
+              <img src="https://user-images.githubusercontent.com/12631935/41555472-b0bbf3c4-72ec-11e8-9a27-509ff5c02649.gif" />
             </a>
           </div>
         </div>
