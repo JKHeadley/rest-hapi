@@ -222,6 +222,9 @@ const Querying = props => {
                 <div className="blockContentHighlight">
                   <MarkdownBlock>{sh`http get :8080/user \$limit==2 \$sort==email \$embed==role`}</MarkdownBlock>
                 </div>
+                <MarkdownBlock>
+                  (Using [httpie](https://httpie.org/))
+                </MarkdownBlock>
               </span>
             </div>
           </div>
