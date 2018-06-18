@@ -104,8 +104,8 @@ const siteConfig = {
   gaTrackingId: 'UA-120977991-1',
 
   algolia: {
-    apiKey: '4eb5c5341e81e918812cfcc02ae3cd04',
-    indexName: 'react_hapi',
+    apiKey: '7457aa83151e8c66250259e3571ac308',
+    indexName: 'rest_hapi',
     algoliaOptions: {} // Optional, if provided by Algolia
   },
 }
