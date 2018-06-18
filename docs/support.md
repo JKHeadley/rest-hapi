@@ -23,4 +23,4 @@ that this project is released with a
 and follow it.
 
 ## License
-rest-hapi is licensed under a [MIT License](https://github.com/JKHeadley/rest-hapi/blob/master/LICENSE.md).
+rest-hapi is licensed under a [MIT License](https://github.com/JKHeadley/rest-hapi/blob/master/LICENSE.txt).
