@@ -127,6 +127,8 @@ and follow it.
 Thanks goes to each one of our contributors! :pray:
 [Become a contributor](CONTRIBUTING.md).
 
+<a href="https://github.com/JKHeadley/rest-hapi/graphs/contributors"><img src="https://opencollective.com/rest-hapi/contributors.svg?width=890&button=false" /></a>
+
 ## Backers
 
 Support us with a monthly donation and help us continue our activities!
