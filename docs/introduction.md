@@ -84,4 +84,4 @@ $ ./node_modules/.bin/rest-hapi-cli seed mongodb://localhost:27017/other_db
 
 You can use these models as templates for your models or delete them later if you wish.
 
-For a ready-to-go demo project see [rest-hapi-demo](https://github.com/JKHeadley/rest-hapi-demo)
+For a ready-to-go demo project see [quick start](quick-start.md)
