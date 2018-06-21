@@ -24,7 +24,7 @@
   <a href="https://www.npmjs.com/package/rest-hapi">
     <img alt="npm" src="https://img.shields.io/npm/v/rest-hapi.svg?style=flat-square">
   </a>
-  <a href="https://www.npmjs.com/package/rest-hapi">
+  <a href="https://stackshare.io/JKHeadley/rest-hapi">
     <img alt="StackShare" src="https://img.shields.io/badge/tech-stack-0690fa.svg?style=flat-square">
   </a>
   <a href="https://gitter.im/rest-hapi/Lobby">
@@ -74,6 +74,7 @@ Check out the docs on the [official site](https://jkheadley.github.io/rest-hapi)
 You need [Node.js](https://nodejs.org/en/) installed and you'll need [MongoDB](https://docs.mongodb.com/manual/installation/) installed and running.
 
 ## Quick Start
+![rest-hapi-demo-alt](https://user-images.githubusercontent.com/12631935/41741346-a6bb6ba6-754f-11e8-8c81-753956674c1a.gif)
 
 1) Clone the demo repo
 ```
