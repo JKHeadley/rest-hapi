@@ -11,7 +11,7 @@ Like this project? Please [star it](https://github.com/JKHeadley/rest-hapi)!
 We welcome contributions to rest-hapi! These are the many ways you can help:
 
 - Submit patches and features
-- Improve the [documentation and website](https://jkheadley.github.io/rest-hapi/)
+- Improve the documentation and website (created with [docusaurus](https://docusaurus.io/), check it out!)
 - Report bugs
 - Follow us on [Twitter](https://twitter.com/resthapi)
 - Participate in the [gitter community](https://gitter.im/rest-hapi/Lobby)
