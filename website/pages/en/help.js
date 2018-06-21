@@ -24,7 +24,7 @@ class Help extends React.Component {
       {
         content: `Learn more about rest-hapi using the [documentation on this site.](${docUrl(
           'quick-start.html',
-          language
+          null
         )})`,
         title: 'Browse the docs'
       },
