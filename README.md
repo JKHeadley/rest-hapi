@@ -74,6 +74,7 @@ Check out the docs on the [official site](https://jkheadley.github.io/rest-hapi)
 You need [Node.js](https://nodejs.org/en/) installed and you'll need [MongoDB](https://docs.mongodb.com/manual/installation/) installed and running.
 
 ## Quick Start
+![rest-hapi-demo-alt](https://user-images.githubusercontent.com/12631935/41741346-a6bb6ba6-754f-11e8-8c81-753956674c1a.gif)
 
 1) Clone the demo repo
 ```
