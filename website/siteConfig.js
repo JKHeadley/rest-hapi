@@ -108,6 +108,11 @@ const siteConfig = {
     indexName: 'rest_hapi',
     algoliaOptions: {} // Optional, if provided by Algolia
   },
+
+  facebookAppId: '2157963944448868',
+  facebookComments: true,
+  twitter: true,
+  twitterUsername: 'resthapi'
 }
 
 module.exports = siteConfig

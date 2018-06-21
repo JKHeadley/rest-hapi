@@ -1,3 +1,4 @@
+const PropTypes = require('prop-types');
 /**
  * Copyright (c) 2017-present, Facebook, Inc.
  *
@@ -6,6 +7,57 @@
  */
 
 const React = require('react')
+
+const SocialFooter = props => (
+  <div>
+    <h5>Social</h5>
+    <div className="social">
+      <a
+        className="github-button" // part of the https://buttons.github.io/buttons.js script in siteConfig.js
+        href={`https://github.com/${props.config.organizationName}/${
+          props.config.projectName
+          }`}
+        data-count-href={`/${props.config.organizationName}/${
+          props.config.projectName
+          }/stargazers`}
+        data-show-count="true"
+        data-count-aria-label="# stargazers on GitHub"
+        aria-label="Star this project on GitHub">
+        {props.config.projectName}
+      </a>
+    </div>
+    <div className="social">
+      <a href="https://twitter.com/intent/tweet?text=Generate%20RESTful%20API%20endpoints%20with%20rest-hapi!&url=https://resthapi.com&via=resthapi&hashtags=REST,API,mongoosejs,hapijs,nodejs,MongoDB">
+        <img alt="rest-hapi tweet" src="https://img.shields.io/twitter/url/http/shields.io.svg?style=social"/>
+      </a>
+    </div>
+    {props.config.twitterUsername && (
+      <div className="social">
+        <a
+          href={`https://twitter.com/${props.config.twitterUsername}`}
+          className="twitter-follow-button">
+          Follow @{props.config.twitterUsername}
+        </a>
+      </div>
+    )}
+    {props.config.facebookAppId && (
+      <div className="social">
+        <div
+          className="fb-like"
+          data-href={props.config.url}
+          data-layout="standard"
+          data-share="true"
+          data-width="225"
+          data-show-faces="false"
+        />
+      </div>
+    )}
+  </div>
+);
+
+SocialFooter.propTypes = {
+  config: PropTypes.object,
+};
 
 class Footer extends React.Component {
   docUrl(doc, language) {
@@ -55,32 +107,10 @@ class Footer extends React.Component {
               Stack Overflow
             </a>
             <a href="https://gitter.im/rest-hapi">Project Chat</a>
-            <a
-              href="https://twitter.com/resthapi"
-              target="_blank"
-              rel="noreferrer noopener">
-              Twitter
-            </a>
-          </div>
-          <div>
-            <h5>More</h5>
             <a href="https://opencollective.com/rest-hapi">Donate</a>
             <a href={this.props.config.baseUrl + 'blog'}>Blog</a>
-            <a href="https://github.com/JKHeadley/rest-hapi">GitHub</a>
-            <a
-              className="github-button"
-              href={this.props.config.repoUrl}
-              data-icon="octicon-star"
-              data-count-href="/JKHeadley/rest-hapi/stargazers"
-              data-show-count={true}
-              data-count-aria-label="# stargazers on GitHub"
-              aria-label="Star this project on GitHub">
-              Star
-            </a>
-            <a href="https://twitter.com/intent/tweet?text=Generate%20RESTful%20API%20endpoints%20with%20rest-hapi!&url=https://resthapi.com&via=resthapi&hashtags=REST,API,mongoosejs,hapijs,nodejs,MongoDB">
-              <img alt="rest-hapi tweet" src="https://img.shields.io/twitter/url/http/shields.io.svg?style=social"/>
-            </a>
           </div>
+          <SocialFooter config={this.props.config} />
         </section>
         <section className="copyright">{this.props.config.copyright}</section>
       </footer>
