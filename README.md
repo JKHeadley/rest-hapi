@@ -55,7 +55,8 @@ rest-hapi is a [hapi](https://hapijs.com/) plugin that generates RESTful API end
 
 ## Live demo
 
-![rest-hapi-demo](https://user-images.githubusercontent.com/12631935/41555472-b0bbf3c4-72ec-11e8-9a27-509ff5c02649.gif)
+![rest-hapi-demo-optimized](https://user-images.githubusercontent.com/12631935/41813184-b31cac6a-76e5-11e8-84c3-881d98e6c65d.gif)
+
 
 View the swagger docs for the live demo:
 
@@ -74,7 +75,7 @@ Check out the docs on the [official site](https://jkheadley.github.io/rest-hapi)
 You need [Node.js](https://nodejs.org/en/) installed and you'll need [MongoDB](https://docs.mongodb.com/manual/installation/) installed and running.
 
 ## Quick Start
-![rest-hapi-demo-alt](https://user-images.githubusercontent.com/12631935/41741346-a6bb6ba6-754f-11e8-8c81-753956674c1a.gif)
+![rest-hapi-demo-alt-optimized](https://user-images.githubusercontent.com/12631935/41813206-0d2298a0-76e6-11e8-95d4-9b1e521c179e.gif)
 
 1) Clone the demo repo
 ```
