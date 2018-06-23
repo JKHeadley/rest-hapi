@@ -34,12 +34,11 @@ async function api(){
         appTitle: "My API",
     };
 
-    RestHapi.config = config;
-
     await server.register({
       plugin: RestHapi,
       options: {
         mongoose,
+        config
       }
     })
 
