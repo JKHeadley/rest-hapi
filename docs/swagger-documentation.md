@@ -8,4 +8,4 @@ Swagger documentation (via [hapi-swagger](https://github.com/glennjones/hapi-swa
 
 Below is an example from [demo.resthapi.com](https://demo.resthapi.com):
 
-![swagger](https://user-images.githubusercontent.com/12631935/41555472-b0bbf3c4-72ec-11e8-9a27-509ff5c02649.gif)
+![swagger](https://user-images.githubusercontent.com/12631935/41813184-b31cac6a-76e5-11e8-84c3-881d98e6c65d.gif)

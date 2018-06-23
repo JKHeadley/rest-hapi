@@ -10,7 +10,7 @@ You need [Node.js](https://nodejs.org/en/) ^8.10.0 installed and you'll need [Mo
 
 ## Demo
 
-![rest-hapi-demo-alt](https://user-images.githubusercontent.com/12631935/41741346-a6bb6ba6-754f-11e8-8c81-753956674c1a.gif)
+![rest-hapi-demo-alt](https://user-images.githubusercontent.com/12631935/41813206-0d2298a0-76e6-11e8-95d4-9b1e521c179e.gif)
 
 The quickest way to get rest-hapi running on your machine is with the [rest-hapi-demo](https://github.com/JKHeadley/rest-hapi-demo) project:
 
