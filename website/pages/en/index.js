@@ -88,7 +88,10 @@ class HomeSplash extends React.Component {
       <SplashContainer>
         <div className="inner">
           <h2 className="projectTitle">
-            <img title="rest-hapi" src={imgUrl('rest-hapi-logo-alt.png')} />
+            <div id="animated-logo" className="animation-bounce">
+              <img title="rest-hapi" src={imgUrl('rest-hapi-logo-alt.png')} />
+            </div>
+            {/*<img title="rest-hapi" src={imgUrl('rest-hapi-logo-alt.png')} />*/}
           </h2>
           {/* <Logo img_src={imgUrl('rest-hapi-logo-alt.png')} /> */}
           <ProjectTitle />
