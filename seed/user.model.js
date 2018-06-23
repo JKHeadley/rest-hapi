@@ -27,25 +27,8 @@ module.exports = function(mongoose) {
     },
     role: {
       type: Types.ObjectId,
-      ref: 'role'
-    },
-    token: {
-      type: Types.String,
-      allowNull: true,
-      exclude: true,
-      allowOnUpdate: false,
-      allowOnCreate: false
-    },
-    tokenCreatedAt: {
-      type: Types.String,
-      allowNull: true,
-      exclude: true,
-      allowOnUpdate: false,
-      allowOnCreate: false
-    },
-    accountActivated: {
-      type: Types.Boolean,
-      default: false
+      ref: 'role',
+      required: true
     }
   })
 
