@@ -6,7 +6,7 @@
 <p align="center"><a href="https://jkheadley.github.io/rest-hapi/" target="_blank" rel="noopener noreferrer"><img width="150" height="46" src="https://user-images.githubusercontent.com/12631935/41491054-c208589a-70ab-11e8-9bac-b1ad47123a30.png" alt="rest-hapi title"></a></p>
 
 <div align="center">
-  <strong>A RESTful API generator</strong> <a href="https://twitter.com/intent/tweet?text=Generate%20RESTful%20API%20endpoints%20with%20rest-hapi!&url=https://resthapi.com&via=resthapi&hashtags=REST,API,mongoosejs,hapijs,nodejs,MongoDB">
+  <strong>A RESTful API generator</strong> <a href="https://twitter.com/intent/tweet?text=Generate%20RESTful%20API%20endpoints%20with%20rest-hapi!&url=https://resthapi.com&via=resthapi&hashtags=mongoosejs,hapijs,nodejs,MongoDB">
     <img alt="rest-hapi tweet" src="https://img.shields.io/twitter/url/http/shields.io.svg?style=social">
   </a> 
 </div>
