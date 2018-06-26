@@ -22,9 +22,9 @@ Because “good enough” is sometimes all it takes
 Because everyone’s “standard” might be different
 …you name it
 
-<iframe width="420" height="315"
-src="https://www.youtube.com/watch?time_continue=1&v=nSKp2StlS6s">
-</iframe>
+<p align="center">
+<iframe width="560" height="315" src="https://www.youtube.com/embed/nSKp2StlS6s" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+</p>
 
 > don’t be that developer…
 
