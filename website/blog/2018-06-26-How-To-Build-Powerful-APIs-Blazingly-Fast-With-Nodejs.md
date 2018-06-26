@@ -91,7 +91,7 @@ The more it improved the more I felt we had really tapped into a goldmine for RE
 
 > rest-hapi
 
-After nearly two years of hard work and development I’m excited to introduce [rest-hapi v1](https://github.com/JKHeadley/rest-hap) to the web development community. We’ve been able to pack a lot of useful features into the tool so far including:
+After nearly two years of hard work and development I’m excited to introduce [rest-hapi v1](https://github.com/JKHeadley/rest-hapi) to the web development community. We’ve been able to pack a lot of useful features into the tool so far including:
 
 - Automatic generation of [CRUD](https://jkheadley.github.io/rest-hapi/docs/creating-endpoints.html) and [association](https://jkheadley.github.io/rest-hapi/docs/associations.html) endpoints with [middleware](https://jkheadley.github.io/rest-hapi/docs/middleware.html) support
 - [joi](https://github.com/hapijs/joi) [validation](https://jkheadley.github.io/rest-hapi/docs/validation.html)
