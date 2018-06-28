@@ -194,7 +194,7 @@ As shown in the example above, duplicate field names have a default form of [ass
           model: "role",
           duplicate: [{
             field: 'name',
-            as' title'
+            as: 'title'
           }]
         }
       }
