@@ -179,7 +179,7 @@ DELETE /role/{ownerId}/user/{childId}   Remove a single user object from a role'
 
 ## MANY_MANY
 
-Below is an example of a many-many relationship between the ``user`` and``group`` models. In this relationship a single ``user`` instance can belong to multiple ``group`` instances and vice versa.
+Below is an example of a many-many relationship between the ``user`` and ``group`` models. In this relationship a single ``user`` instance can belong to multiple ``group`` instances and vice versa.
 
 
 ```javascript
