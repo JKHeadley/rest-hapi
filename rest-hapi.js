@@ -98,7 +98,7 @@ async function register(server, options) {
 
   await registerMrHorse(server, Log, config)
 
-  return generateRoutes(server, mongoose, models, Log, config)
+  await generateRoutes(server, mongoose, models, Log, config)
 }
 
 /**
