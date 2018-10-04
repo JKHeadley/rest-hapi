@@ -14,6 +14,8 @@ You need [Node.js](https://nodejs.org/en/) ^8.10.0 installed and you'll need [Mo
 
 The quickest way to get rest-hapi running on your machine is with the [rest-hapi-demo](https://github.com/JKHeadley/rest-hapi-demo) project:
 
+(NOTE: For an alternative quick start, check out his [awesome yeoman generator](https://github.com/vinaybedre/generator-resthapi) for rest-hapi.)
+
 1) Clone the repo
 ```sh
 $ git clone https://github.com/JKHeadley/rest-hapi-demo.git
