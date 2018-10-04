@@ -76,6 +76,8 @@ You need [Node.js](https://nodejs.org/en/) installed and you'll need [MongoDB](h
 ## Quick Start
 ![rest-hapi-demo-alt-optimized](https://user-images.githubusercontent.com/12631935/41813206-0d2298a0-76e6-11e8-95d4-9b1e521c179e.gif)
 
+(**NOTE:** For an alternative quick start, check out his [awesome yeoman generator](https://github.com/vinaybedre/generator-resthapi) for rest-hapi.)
+
 1) Clone the demo repo
 ```
 $ git clone https://github.com/JKHeadley/rest-hapi-demo.git
