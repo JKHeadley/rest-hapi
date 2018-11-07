@@ -92,6 +92,14 @@ async function register(server, options) {
     }
   }
 
+  server.method('getModel', modelName => {
+    if (typeof models[modelName] === 'undefined') {
+      throw new Error(`model ${modelName} does'nt exist!`)
+    }
+
+    return models[modelName]
+  })
+
   if (!config.disableSwagger) {
     await registerHapiSwagger(server, Log, config)
   }
