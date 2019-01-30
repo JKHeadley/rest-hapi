@@ -110,7 +110,9 @@ module.exports = function(mongoose) {
   }
 
   if (!_.isEmpty(Config.auditLogScope)) {
-    Schema.statics.routeOptions.routeScope.rootScope = Config.auditLogScope
+    Schema.statics.routeOptions.routeScope = {
+      rootScope: Config.auditLogScope
+    }
   }
 
   return Schema
