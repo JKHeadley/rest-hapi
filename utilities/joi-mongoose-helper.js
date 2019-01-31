@@ -300,10 +300,15 @@ internals.generateJoiListQueryModel = function(model, logger) {
       "A regex search parameter. Slower than `$text` search but supports partial matches and doesn't require " +
         'indexing. This can be refined using the `$searchFields` parameter.'
     )
-    queryModel.$termAND = Joi.object().description(
-      "A json object as text for regex search parameter. Slower than `$text` search but supports partial matches and doesn't require " +
-        'indexing. '
-    )
+    queryModel.$termByField = Joi.object()
+      .keys(
+        queryableFields.reduce((obj, key) => _.set(obj, key, Joi.string()), {})
+      )
+      .description(
+        'A json object to specify what terms to search for specific fields. Field terms are ANDed and $termByField is ' +
+          ' ORed with $term. Valid fields include: ' +
+          queryableFields.toString().replace(/,/g, ', ')
+      )
     queryModel.$searchFields = Joi.alternatives().try(
       Joi.array()
         .items(Joi.string().valid(queryableFields))

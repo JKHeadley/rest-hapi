@@ -373,14 +373,14 @@ module.exports = {
     }
 
     // EXPL: $and condition on requested properties
-    if (query.$termAND) {
+    if (query.$termByField) {
       query.$and = []
-      for (let key in query.$termAND) {
+      for (let key in query.$termByField) {
         query.$and.push({
-          [key]: new RegExp(query.$termAND[key])
+          [key]: new RegExp(query.$termByField[key])
         })
       }
-      delete query.$termAND
+      delete query.$termByField
     }
 
     delete query.$searchFields
