@@ -680,7 +680,7 @@ internals.isObjectId = function(arg) {
  */
 internals.isValidField = function(fieldName, field, model) {
   // const invalidFieldNames = ['__t', '__v', 'id', 'scope', 'enum'];
-  const invalidFieldNames = ['__t', '__v', 'id']
+  const invalidFieldNames = ['__t', '__v']
 
   if (!_.isObject(field)) {
     return false
