@@ -1863,10 +1863,6 @@ test('joi-mongoose-helper.isValidField', function(t) {
         isValidField('__v', {}, {}) === false,
         'isValidField returns false for __v field'
       )
-      t.ok(
-        isValidField('id', {}, {}) === false,
-        'isValidField returns false for id field'
-      )
       // </editor-fold>
 
       // <editor-fold desc="Restore">
