@@ -473,7 +473,11 @@ module.exports = {
 
     for (let i = 0; i < fieldNames.length; i++) {
       let fieldName = fieldNames[i]
-      if (fields[fieldName] && fieldName !== '__v') {
+      if (
+        fields[fieldName] &&
+        fieldName !== '__v' &&
+        fieldName.substr(-2) !== '$*'
+      ) {
         let field = fields[fieldName].options
         let association = associations
           ? associations[fields[fieldName].path] || {}
