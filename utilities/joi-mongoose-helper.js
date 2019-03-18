@@ -679,8 +679,7 @@ internals.isObjectId = function(arg) {
  * @returns {boolean}
  */
 internals.isValidField = function(fieldName, field, model) {
-  // const invalidFieldNames = ['__t', '__v', 'id', 'scope', 'enum'];
-  const invalidFieldNames = ['__t', '__v', 'id']
+  const invalidFieldNames = ['__t', '__v']
 
   if (!_.isObject(field)) {
     return false
@@ -699,6 +698,11 @@ internals.isValidField = function(fieldName, field, model) {
   // EXPL: ignore the '_id' field for fake models
   if (model.fakeModel && !model.isArray) {
     invalidFieldNames.push('_id')
+  }
+
+  // EXPL: ignore the 'id' field if it is a virtual field (i.e. not included in the user-defined schema)
+  if (_.get(model, 'schema.virtuals.id', null)) {
+    invalidFieldNames.push('id')
   }
 
   if (invalidFieldNames.indexOf(fieldName) > -1) {

@@ -1842,7 +1842,7 @@ test('joi-mongoose-helper.isValidField', function(t) {
     'joi-mongoose-helper.isValidField returns false for pre-defined invalid fields.',
     function(t) {
       // <editor-fold desc="Arrange">
-      t.plan(3)
+      t.plan(4)
 
       let joiMongooseHelper = rewire('../../utilities/joi-mongoose-helper')
       let isValidField = sinon.spy(
@@ -1864,8 +1864,12 @@ test('joi-mongoose-helper.isValidField', function(t) {
         'isValidField returns false for __v field'
       )
       t.ok(
-        isValidField('id', {}, {}) === false,
-        'isValidField returns false for id field'
+        isValidField('id', {}, { schema: { virtuals: { id: {} } } }) === false,
+        'isValidField returns false for id field if it is virtual'
+      )
+      t.ok(
+        isValidField('id', {}, {}) === true,
+        'isValidField returns true for id field if it is a user defined property'
       )
       // </editor-fold>
 
