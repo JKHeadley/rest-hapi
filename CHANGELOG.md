@@ -7,7 +7,17 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased]
 
 ## [1.4.0] - 2019-03-18
-### Various updates
+### Added
+- [feat: Add option to disable swagger](https://github.com/JKHeadley/rest-hapi/commit/b70a5360c40a6bce052cdc5937e24d9669b16e71)
+- [update: allow 'id' user defined property in schema](https://github.com/JKHeadley/rest-hapi/pull/169)
+- [Filter out fields postfixed with $\* ](https://github.com/JKHeadley/rest-hapi/pull/167)
+
+### Changed
+- [Bump minimatch to ^3.0.4 because of vulnerability](https://github.com/JKHeadley/rest-hapi/commit/8931d8d229dad80e08386ecc178c32ca8684128b)
+
+### Fixed
+- [fix undefined pointer when enabling auditLogScope](https://github.com/JKHeadley/rest-hapi/commit/d2e1340957d6620f3ab0d3b450a927e2859e0379)
+
 
 ## [1.3.0] - 2018-06-14
 ### Added
