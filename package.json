@@ -88,7 +88,7 @@
     "eslint-plugin-standard": "^4.0.0",
     "husky": "^1.1.2",
     "lint-staged": "^7.3.0",
-    "mockgoose": "^7.3.5",
+    "mongodb-memory-server": "^4.2.1",
     "nyc": "^13.1.0",
     "prettier": "1.14.3",
     "proxyquire": "^2.1.0",

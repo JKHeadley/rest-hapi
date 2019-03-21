@@ -9,10 +9,18 @@ const Q = require('q')
 const QueryString = require('query-string')
 const Hapi = require('hapi')
 
-const Mongoose = require('mongoose')
+const MongoMemoryServer = require('mongodb-memory-server').MongoMemoryServer
+const mongoServer = new MongoMemoryServer({
+  instance: {
+    port: 27017,
+    dbName: 'rest_hapi'
+  }
+})
+
+// TODO: Possibly require this in every test and decache it to avoid unexpected
+// errors between tests.
+let Mongoose = require('mongoose')
 Mongoose.Promise = Promise
-const Mockgoose = require('mockgoose').Mockgoose
-const mockgoose = new Mockgoose(Mongoose)
 
 let Log = Logging.getLogger('tests')
 Log.logLevel = 'DEBUG'
@@ -29,9 +37,9 @@ internals.onFinish = function() {
 Test.onFinish(internals.onFinish)
 
 Test('end to end tests', function(t) {
-  mockgoose
-    .prepareStorage()
-    .then(function() {
+  mongoServer
+    .getConnectionString()
+    .then(() => {
       return t.test('basic CRUD tests', function(t) {
         return (
           Q.when()
@@ -482,7 +490,7 @@ Test('end to end tests', function(t) {
                         delete Mongoose.modelSchemas[key]
                       })
 
-                      return mockgoose.helper.reset()
+                      return Mongoose.connection.db.dropDatabase()
                     })
                 )
                 // </editor-fold>
@@ -773,7 +781,7 @@ Test('end to end tests', function(t) {
                         delete Mongoose.modelSchemas[key]
                       })
 
-                      return mockgoose.helper.reset()
+                      return Mongoose.connection.db.dropDatabase()
                     })
                 )
                 // </editor-fold>
@@ -1215,14 +1223,11 @@ Test('end to end tests', function(t) {
                         Decache('../../rest-hapi')
 
                         Decache('../config')
-                        Object.keys(Mongoose.models).forEach(function(key) {
-                          delete Mongoose.models[key]
-                        })
-                        Object.keys(Mongoose.modelSchemas).forEach(function(
-                          key
-                        ) {
-                          delete Mongoose.modelSchemas[key]
-                        })
+
+                        // NOTE: We decache mongoose here instead of clearing the schemas to prevent an
+                        // undefined schema bug in mongoose arrays that only seems to appear in the next
+                        // test.
+                        Decache('mongoose')
                       })
                   )
                   // </editor-fold>
@@ -1235,6 +1240,8 @@ Test('end to end tests', function(t) {
                 'adding and retrieving MANY_MANY associations works',
                 function(t) {
                   // <editor-fold desc="Arrange">
+                  Mongoose = require('mongoose')
+                  Mongoose.Promise = Promise
                   const RestHapi = require('../../rest-hapi')
                   const server = new Hapi.Server()
 
@@ -2253,7 +2260,7 @@ Test('end to end tests', function(t) {
                           delete Mongoose.modelSchemas[key]
                         })
 
-                        return mockgoose.helper.reset()
+                        return Mongoose.connection.db.dropDatabase()
                       })
                   )
                   // </editor-fold>
@@ -3738,7 +3745,7 @@ Test('end to end tests', function(t) {
                           delete Mongoose.modelSchemas[key]
                         })
 
-                        return mockgoose.helper.reset()
+                        return Mongoose.connection.db.dropDatabase()
                       })
                   )
                   // </editor-fold>
@@ -6529,7 +6536,7 @@ Test('end to end tests', function(t) {
                         delete Mongoose.modelSchemas[key]
                       })
 
-                      return mockgoose.helper.reset()
+                      return Mongoose.connection.db.dropDatabase()
                     })
                 )
                 // </editor-fold>
