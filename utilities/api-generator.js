@@ -11,7 +11,7 @@ let path = require('path')
  * @param config
  * @returns {*|promise}
  */
-module.exports = function(server, mongoose, logger, config) {
+module.exports = async function(server, mongoose, logger, config) {
   const Log = logger.bind('api-generator')
 
   let apiPath = ''
@@ -22,38 +22,29 @@ module.exports = function(server, mongoose, logger, config) {
     apiPath = path.join(__dirname, '/../../../', config.apiPath)
   }
 
-  return new Promise((resolve, reject) => {
-    fs.readdir(apiPath, (err, files) => {
-      if (err) {
-        if (err.message.includes('no such file')) {
-          if (config.absoluteApiPath === true) {
-            Log.error(err)
-            reject(
-              new Error(
-                'The api directory provided is either empty or does not exist. ' +
-                  "Try setting the 'apiPath' property of the config file."
-              )
-            )
-          } else {
-            resolve()
-          }
-        } else {
-          reject(err)
-        }
-        return
+  try {
+    const files = fs.readdirSync(apiPath)
+
+    for (let file of files) {
+      let ext = path.extname(file)
+      if (ext === '.js') {
+        let fileName = path.basename(file, '.js')
+
+        // EXPL: register all the additional endpoints
+        require(apiPath + '/' + fileName)(server, mongoose, logger)
       }
-
-      for (let file of files) {
-        let ext = path.extname(file)
-        if (ext === '.js') {
-          let fileName = path.basename(file, '.js')
-
-          // EXPL: register all the additional endpoints
-          require(apiPath + '/' + fileName)(server, mongoose, logger)
-        }
+    }
+  } catch (err) {
+    if (err.message.includes('no such file')) {
+      if (config.absoluteApiPath === true) {
+        Log.error(err)
+        throw new Error(
+          'The api directory provided is either empty or does not exist. ' +
+            "Try setting the 'apiPath' property of the config file."
+        )
       }
-
-      resolve()
-    })
-  })
+    } else {
+      throw err
+    }
+  }
 }
