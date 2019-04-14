@@ -310,6 +310,14 @@ config.logRoutes = false
 config.loglevel = 'NOTE'
 
 /**
+ * Set swagger options as per https://github.com/glennjones/hapi-swagger/blob/master/optionsreference.md
+ * Options set here will override swagger config options below
+ *
+ * @type {Object}
+ */
+config.swaggerOptions = {}
+
+/**
  * Determines the initial expansion state of the swagger docs
  * - options: 'none', 'list', 'full' (default: 'none')
  * default: 'none'

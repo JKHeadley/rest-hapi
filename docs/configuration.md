@@ -435,6 +435,15 @@ config.logRoutes = false
 config.loglevel = 'NOTE'
 ```
 
+## swaggerOptions
+```javascript
+/**
+ * Set swagger options as per https://github.com/glennjones/hapi-swagger/blob/master/optionsreference.md
+ * Options set here will override swagger config options below
+ * @type {Object}
+ config.swaggerOptions = {}
+ ```
+
 ## docExpansion
 ```javascript
 /**
