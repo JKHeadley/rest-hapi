@@ -129,7 +129,7 @@ config.embedAssociations = false
  * - deletedAt: (default: true) date specifying when the document was soft deleted.
  * - createdBy: (default: false) _id of user that created the document.
  * - updatedBy: (default: false) _id of user that last updated the document.
- * - updatedBy: (default: false) _id of user that soft deleted the document.
+ * - deletedBy: (default: false) _id of user that soft deleted the document.
  */
 config.enableCreatedAt = true
 config.enableUpdatedAt = true
