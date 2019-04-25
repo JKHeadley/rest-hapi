@@ -81,10 +81,35 @@ module.exports = function(mongoose, logger, config) {
         )
       }
 
+      let modelsComplete = true
       for (let schemaKey in extendedSchemas) {
         // EXPL: Create models with final schemas
         let schema = extendedSchemas[schemaKey]
-        models[schemaKey] = modelHelper.createModel(schema, mongoose)
+        // EXPL: Skip inherited models
+        if (!schema.statics.parentModel) {
+          models[schemaKey] = modelHelper.createModel(schema, mongoose)
+        } else {
+          modelsComplete = false
+        }
+      }
+
+      while (!modelsComplete) {
+        modelsComplete = true
+        for (let schemaKey in extendedSchemas) {
+          // EXPL: Create inherited models
+          let schema = extendedSchemas[schemaKey]
+          if (schema.statics.parentModel && !models[schemaKey]) {
+            if (models[schema.statics.parentModel]) {
+              models[schemaKey] = modelHelper.createModel(
+                schema,
+                mongoose,
+                models
+              )
+            } else {
+              modelsComplete = false
+            }
+          }
+        }
       }
 
       for (let modelKey in models) {

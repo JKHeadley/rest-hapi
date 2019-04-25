@@ -14,7 +14,13 @@ const internals = {}
  * @param Schema: A mongoose schema object.
  * @returns {*}: The resulting mongoose model.
  */
-internals.createModel = function(Schema, mongoose) {
+internals.createModel = function(Schema, mongoose, models) {
+  if (Schema.statics.parentModel) {
+    return models[Schema.statics.parentModel].discriminator(
+      Schema.statics.collectionName,
+      Schema
+    )
+  }
   const Types = mongoose.Schema.Types
   // TODO: require createdAt and updatedAt
   if (Schema.statics.collectionName !== 'auditLog') {

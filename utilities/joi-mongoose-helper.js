@@ -152,7 +152,10 @@ internals.generateJoiUpdateModel = function(model, logger) {
         association.type === '_MANY'
       : false
 
-    if (internals.isValidField(fieldName, field, model)) {
+    if (
+      internals.isValidField(fieldName, field, model) &&
+      !field.$skipDiscriminatorCheck
+    ) {
       if (field.updateModel) {
         updateModelBase[fieldName] = field.updateModel
       } else if (
@@ -212,7 +215,10 @@ internals.generateJoiCreateModel = function(model, logger) {
         association.type === '_MANY'
       : false
 
-    if (internals.isValidField(fieldName, field, model)) {
+    if (
+      internals.isValidField(fieldName, field, model) &&
+      !field.$skipDiscriminatorCheck
+    ) {
       // EXPL: use the field createModel if one is defined
       if (field.createModel) {
         createModelBase[fieldName] = field.createModel
