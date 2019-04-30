@@ -6,6 +6,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [1.5.0] - 2019-04-30
+### Added
+- [Added general swagger options](https://github.com/JKHeadley/rest-hapi/pull/172)
+
+### Changed
+- [Updated dependencies](https://github.com/JKHeadley/rest-hapi/pull/146)
+
 ## [1.4.0] - 2019-03-18
 ### Added
 - [feat: Add option to disable swagger](https://github.com/JKHeadley/rest-hapi/commit/b70a5360c40a6bce052cdc5937e24d9669b16e71)
@@ -249,7 +256,7 @@ post(hardDelete, deleted, Log) | post(hardDelete, deleted, request, Log)
 
 
 
-[Unreleased]: https://github.com/jkheadley/rest-hapi/compare/v1.4.0...HEAD
+[Unreleased]: https://github.com/jkheadley/rest-hapi/compare/v1.5.0...HEAD
 [0.20.0]: https://github.com/jkheadley/rest-hapi/compare/v0.19.2...v0.20.0
 [0.20.2]: https://github.com/jkheadley/rest-hapi/compare/v0.20.0...v0.20.2
 [0.20.3]: https://github.com/jkheadley/rest-hapi/compare/v0.20.2...v0.20.3
@@ -280,5 +287,6 @@ post(hardDelete, deleted, Log) | post(hardDelete, deleted, request, Log)
 [1.2.0]: https://github.com/jkheadley/rest-hapi/compare/v1.0.1...v1.2.0
 [1.3.0]: https://github.com/jkheadley/rest-hapi/compare/v1.2.0...v1.3.0
 [1.4.0]: https://github.com/jkheadley/rest-hapi/compare/v1.3.0...v1.4.0
+[1.5.0]: https://github.com/jkheadley/rest-hapi/compare/v1.4.0...v1.5.0
 
 [BREAKING]: https://github.com/JKHeadley/rest-hapi/releases
