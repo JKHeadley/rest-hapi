@@ -176,6 +176,7 @@ module.exports = function(logger, mongoose, server) {
       }
 
       let auth = false
+      let listHeadersValidation = Object.assign(headersValidation, {})
 
       if (config.authStrategy && model.routeOptions.readAuth !== false) {
         auth = {
@@ -191,7 +192,7 @@ module.exports = function(logger, mongoose, server) {
           }
         }
       } else {
-        headersValidation = null
+        listHeadersValidation = null
       }
 
       let policies = []
@@ -219,7 +220,7 @@ module.exports = function(logger, mongoose, server) {
           cors: config.cors,
           validate: {
             query: queryModel,
-            headers: headersValidation
+            headers: listHeadersValidation
           },
           plugins: {
             model: model,
@@ -300,6 +301,7 @@ module.exports = function(logger, mongoose, server) {
       }
 
       let auth = false
+      let findHeadersValidation = Object.assign(headersValidation, {})
 
       if (config.authStrategy && model.routeOptions.readAuth !== false) {
         auth = {
@@ -318,7 +320,7 @@ module.exports = function(logger, mongoose, server) {
           }
         }
       } else {
-        headersValidation = null
+        findHeadersValidation = null
       }
 
       let policies = []
@@ -349,7 +351,7 @@ module.exports = function(logger, mongoose, server) {
             params: {
               _id: Joi.objectId().required()
             },
-            headers: headersValidation
+            headers: findHeadersValidation
           },
           plugins: {
             model: model,
@@ -441,6 +443,7 @@ module.exports = function(logger, mongoose, server) {
       }
 
       let auth = false
+      let createHeadersValidation = Object.assign(headersValidation, {})
 
       if (config.authStrategy && model.routeOptions.createAuth !== false) {
         auth = {
@@ -456,7 +459,7 @@ module.exports = function(logger, mongoose, server) {
           }
         }
       } else {
-        headersValidation = null
+        createHeadersValidation = null
       }
 
       let policies = []
@@ -544,7 +547,7 @@ module.exports = function(logger, mongoose, server) {
           tags: ['api', collectionName],
           validate: {
             payload: createModel,
-            headers: headersValidation
+            headers: createHeadersValidation
           },
           plugins: {
             model: model,
@@ -613,6 +616,7 @@ module.exports = function(logger, mongoose, server) {
       }
 
       let auth = false
+      let deleteOneHeadersValidation = Object.assign(headersValidation, {})
 
       if (config.authStrategy && model.routeOptions.deleteAuth !== false) {
         auth = {
@@ -631,7 +635,7 @@ module.exports = function(logger, mongoose, server) {
           }
         }
       } else {
-        headersValidation = null
+        deleteOneHeadersValidation = null
       }
 
       let policies = []
@@ -670,7 +674,7 @@ module.exports = function(logger, mongoose, server) {
               _id: Joi.objectId().required()
             },
             payload: payloadModel,
-            headers: headersValidation
+            headers: deleteOneHeadersValidation
           },
           plugins: {
             model: model,
@@ -755,6 +759,7 @@ module.exports = function(logger, mongoose, server) {
       }
 
       let auth = false
+      let deleteManyHeadersValidation = Object.assign(headersValidation, {})
 
       if (config.authStrategy && model.routeOptions.deleteAuth !== false) {
         auth = {
@@ -770,7 +775,7 @@ module.exports = function(logger, mongoose, server) {
           }
         }
       } else {
-        headersValidation = null
+        deleteManyHeadersValidation = null
       }
 
       let policies = []
@@ -806,7 +811,7 @@ module.exports = function(logger, mongoose, server) {
           tags: ['api', collectionName],
           validate: {
             payload: payloadModel,
-            headers: headersValidation
+            headers: deleteManyHeadersValidation
           },
           plugins: {
             model: model,
@@ -889,6 +894,7 @@ module.exports = function(logger, mongoose, server) {
       }
 
       let auth = false
+      let updateHeadersValidation = Object.assign(headersValidation, {})
 
       if (config.authStrategy && model.routeOptions.updateAuth !== false) {
         auth = {
@@ -907,7 +913,7 @@ module.exports = function(logger, mongoose, server) {
           }
         }
       } else {
-        headersValidation = null
+        updateHeadersValidation = null
       }
 
       let policies = []
@@ -957,7 +963,7 @@ module.exports = function(logger, mongoose, server) {
               _id: Joi.objectId().required()
             },
             payload: updateModel,
-            headers: headersValidation
+            headers: updateHeadersValidation
           },
           plugins: {
             model: model,
@@ -1069,6 +1075,7 @@ module.exports = function(logger, mongoose, server) {
       }
 
       let auth = false
+      let addOneHeadersValidation = Object.assign(headersValidation, {})
 
       if (
         config.authStrategy &&
@@ -1109,7 +1116,7 @@ module.exports = function(logger, mongoose, server) {
           }
         }
       } else {
-        headersValidation = null
+        addOneHeadersValidation = null
       }
 
       let policies = []
@@ -1161,7 +1168,7 @@ module.exports = function(logger, mongoose, server) {
               childId: Joi.objectId().required()
             },
             payload: payloadValidation,
-            headers: headersValidation
+            headers: addOneHeadersValidation
           },
           plugins: {
             ownerModel: ownerModel,
@@ -1251,6 +1258,7 @@ module.exports = function(logger, mongoose, server) {
       )
 
       let auth = false
+      let removeOneHeadersValidation = Object.assign(headersValidation, {})
 
       if (
         config.authStrategy &&
@@ -1291,7 +1299,7 @@ module.exports = function(logger, mongoose, server) {
           }
         }
       } else {
-        headersValidation = null
+        removeOneHeadersValidation = null
       }
 
       let policies = []
@@ -1342,7 +1350,7 @@ module.exports = function(logger, mongoose, server) {
               ownerId: Joi.objectId().required(),
               childId: Joi.objectId().required()
             },
-            headers: headersValidation
+            headers: removeOneHeadersValidation
           },
           plugins: {
             ownerModel: ownerModel,
@@ -1470,6 +1478,7 @@ module.exports = function(logger, mongoose, server) {
       }
 
       let auth = false
+      let addManyHeadersValidation = Object.assign(headersValidation, {})
 
       if (
         config.authStrategy &&
@@ -1505,7 +1514,7 @@ module.exports = function(logger, mongoose, server) {
           }
         }
       } else {
-        headersValidation = null
+        addManyHeadersValidation = null
       }
 
       let policies = []
@@ -1556,7 +1565,7 @@ module.exports = function(logger, mongoose, server) {
               ownerId: Joi.objectId().required()
             },
             payload: payloadValidation,
-            headers: headersValidation
+            headers: addManyHeadersValidation
           },
           plugins: {
             ownerModel: ownerModel,
@@ -1654,6 +1663,7 @@ module.exports = function(logger, mongoose, server) {
       )
 
       let auth = false
+      let removeManyHeadersValidation = Object.assign(headersValidation, {})
 
       if (
         config.authStrategy &&
@@ -1693,7 +1703,7 @@ module.exports = function(logger, mongoose, server) {
           }
         }
       } else {
-        headersValidation = null
+        removeManyHeadersValidation = null
       }
 
       let policies = []
@@ -1744,7 +1754,7 @@ module.exports = function(logger, mongoose, server) {
               ownerId: Joi.objectId().required()
             },
             payload: payloadValidation,
-            headers: headersValidation
+            headers: removeManyHeadersValidation
           },
           plugins: {
             ownerModel: ownerModel,
@@ -1858,6 +1868,7 @@ module.exports = function(logger, mongoose, server) {
       }
 
       let auth = false
+      let getAllHeadersValidation = Object.assign(headersValidation, {})
 
       if (config.authStrategy && ownerModel.routeOptions.readAuth !== false) {
         auth = {
@@ -1886,7 +1897,7 @@ module.exports = function(logger, mongoose, server) {
           }
         }
       } else {
-        headersValidation = null
+        getAllHeadersValidation = null
       }
 
       let policies = []
@@ -1920,7 +1931,7 @@ module.exports = function(logger, mongoose, server) {
             params: {
               ownerId: Joi.objectId().required()
             },
-            headers: headersValidation
+            headers: getAllHeadersValidation
           },
           plugins: {
             ownerModel: ownerModel,
