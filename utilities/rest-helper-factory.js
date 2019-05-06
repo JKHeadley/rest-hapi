@@ -237,7 +237,10 @@ module.exports = function(logger, mongoose, server) {
                     'The authentication header was missing/malformed, or the token has expired.'
                 },
                 { code: 500, message: 'There was an unknown error.' },
-                { code: 503, message: 'There was a problem with the database.' }
+                {
+                  code: 503,
+                  message: 'There was a problem with the database.'
+                }
               ]
             },
             policies: policies
@@ -372,7 +375,10 @@ module.exports = function(logger, mongoose, server) {
                   message: 'There was no resource found with that ID.'
                 },
                 { code: 500, message: 'There was an unknown error.' },
-                { code: 503, message: 'There was a problem with the database.' }
+                {
+                  code: 503,
+                  message: 'There was a problem with the database.'
+                }
               ]
             },
             policies: policies
@@ -564,7 +570,10 @@ module.exports = function(logger, mongoose, server) {
                     'The authentication header was missing/malformed, or the token has expired.'
                 },
                 { code: 500, message: 'There was an unknown error.' },
-                { code: 503, message: 'There was a problem with the database.' }
+                {
+                  code: 503,
+                  message: 'There was a problem with the database.'
+                }
               ]
             },
             policies: policies
@@ -695,7 +704,10 @@ module.exports = function(logger, mongoose, server) {
                   message: 'There was no resource found with that ID.'
                 },
                 { code: 500, message: 'There was an unknown error.' },
-                { code: 503, message: 'There was a problem with the database.' }
+                {
+                  code: 503,
+                  message: 'There was a problem with the database.'
+                }
               ]
             },
             policies: policies
@@ -832,7 +844,10 @@ module.exports = function(logger, mongoose, server) {
                   message: 'There was no resource found with that ID.'
                 },
                 { code: 500, message: 'There was an unknown error.' },
-                { code: 503, message: 'There was a problem with the database.' }
+                {
+                  code: 503,
+                  message: 'There was a problem with the database.'
+                }
               ]
             },
             policies: policies
@@ -984,7 +999,10 @@ module.exports = function(logger, mongoose, server) {
                   message: 'There was no resource found with that ID.'
                 },
                 { code: 500, message: 'There was an unknown error.' },
-                { code: 503, message: 'There was a problem with the database.' }
+                {
+                  code: 503,
+                  message: 'There was a problem with the database.'
+                }
               ]
             },
             policies: policies
@@ -1077,9 +1095,16 @@ module.exports = function(logger, mongoose, server) {
       let auth = false
       let addOneHeadersValidation = Object.assign(headersValidation, {})
 
+      if (ownerModel.routeOptions.associateAuth === false) {
+        Log.warning(
+          '"associateAuth" property is deprecated, please use "addAuth" instead.'
+        )
+      }
+
       if (
         config.authStrategy &&
-        ownerModel.routeOptions.associateAuth !== false
+        ownerModel.routeOptions.associateAuth !== false &&
+        association.addAuth !== false
       ) {
         auth = {
           strategy: config.authStrategy
@@ -1190,7 +1215,10 @@ module.exports = function(logger, mongoose, server) {
                   message: 'There was no resource found with that ID.'
                 },
                 { code: 500, message: 'There was an unknown error.' },
-                { code: 503, message: 'There was a problem with the database.' }
+                {
+                  code: 503,
+                  message: 'There was a problem with the database.'
+                }
               ]
             },
             policies: policies
@@ -1260,9 +1288,16 @@ module.exports = function(logger, mongoose, server) {
       let auth = false
       let removeOneHeadersValidation = Object.assign(headersValidation, {})
 
+      if (ownerModel.routeOptions.associateAuth === false) {
+        Log.warning(
+          '"associateAuth" property is deprecated, please use "removeAuth" instead.'
+        )
+      }
+
       if (
         config.authStrategy &&
-        ownerModel.routeOptions.associateAuth !== false
+        ownerModel.routeOptions.associateAuth !== false &&
+        association.removeAuth !== false
       ) {
         auth = {
           strategy: config.authStrategy
@@ -1372,7 +1407,10 @@ module.exports = function(logger, mongoose, server) {
                   message: 'There was no resource found with that ID.'
                 },
                 { code: 500, message: 'There was an unknown error.' },
-                { code: 503, message: 'There was a problem with the database.' }
+                {
+                  code: 503,
+                  message: 'There was a problem with the database.'
+                }
               ]
             },
             policies: policies
@@ -1480,9 +1518,16 @@ module.exports = function(logger, mongoose, server) {
       let auth = false
       let addManyHeadersValidation = Object.assign(headersValidation, {})
 
+      if (ownerModel.routeOptions.associateAuth === false) {
+        Log.warning(
+          '"associateAuth" property is deprecated, please use "addAuth" instead.'
+        )
+      }
+
       if (
         config.authStrategy &&
-        ownerModel.routeOptions.associateAuth !== false
+        ownerModel.routeOptions.associateAuth !== false &&
+        association.addAuth !== false
       ) {
         auth = {
           strategy: config.authStrategy
@@ -1584,7 +1629,10 @@ module.exports = function(logger, mongoose, server) {
                   message: 'There was no resource found with that ID.'
                 },
                 { code: 500, message: 'There was an unknown error.' },
-                { code: 503, message: 'There was a problem with the database.' }
+                {
+                  code: 503,
+                  message: 'There was a problem with the database.'
+                }
               ]
             },
             policies: policies
@@ -1665,9 +1713,16 @@ module.exports = function(logger, mongoose, server) {
       let auth = false
       let removeManyHeadersValidation = Object.assign(headersValidation, {})
 
+      if (ownerModel.routeOptions.associateAuth === false) {
+        Log.warning(
+          '"associateAuth" property is deprecated, please use "removeAuth" instead.'
+        )
+      }
+
       if (
         config.authStrategy &&
-        ownerModel.routeOptions.associateAuth !== false
+        ownerModel.routeOptions.associateAuth !== false &&
+        association.removeAuth !== false
       ) {
         auth = {
           strategy: config.authStrategy
@@ -1773,7 +1828,10 @@ module.exports = function(logger, mongoose, server) {
                   message: 'There was no resource found with that ID.'
                 },
                 { code: 500, message: 'There was an unknown error.' },
-                { code: 503, message: 'There was a problem with the database.' }
+                {
+                  code: 503,
+                  message: 'There was a problem with the database.'
+                }
               ]
             },
             policies: policies
@@ -1870,7 +1928,17 @@ module.exports = function(logger, mongoose, server) {
       let auth = false
       let getAllHeadersValidation = Object.assign(headersValidation, {})
 
-      if (config.authStrategy && ownerModel.routeOptions.readAuth !== false) {
+      if (ownerModel.routeOptions.associateAuth === false) {
+        Log.warning(
+          '"routeOptions.readAuth" property is deprecated for associations, please use "association.readAuth" instead.'
+        )
+      }
+
+      if (
+        config.authStrategy &&
+        ownerModel.routeOptions.readAuth !== false &&
+        association.readAuth !== false
+      ) {
         auth = {
           strategy: config.authStrategy
         }
@@ -1950,7 +2018,10 @@ module.exports = function(logger, mongoose, server) {
                   message: 'There was no resource found with that ID.'
                 },
                 { code: 500, message: 'There was an unknown error.' },
-                { code: 503, message: 'There was a problem with the database.' }
+                {
+                  code: 503,
+                  message: 'There was a problem with the database.'
+                }
               ]
             },
             policies: policies
