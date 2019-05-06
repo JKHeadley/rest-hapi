@@ -1276,6 +1276,62 @@ test('rest-helper-factory.generateListEndpoint', function(t) {
   )
 
   t.test(
+    'rest-helper-factory.generateListEndpoint calls server.route with no authentication if readAuth is false',
+    sinon.test(function(t) {
+      // <editor-fold desc="Arrange">
+      let server = this.stub({
+        route: function() {}
+      })
+
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
+      )
+      let handlerHelperStubWrapper = this.stub()
+      handlerHelperStubWrapper.returns(handlerHelperStub)
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
+        'generateJoiReadModel'
+      ).callsFake(function() {
+        return Joi.any()
+      })
+      let config = { authStrategy: 'TEST_AUTH' }
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub,
+          '../config': config
+        }
+      )(Log, mongoose, server)
+
+      t.plan(1)
+
+      let userSchema = new mongoose.Schema({})
+      userSchema.statics = { routeOptions: { readAuth: false } }
+
+      let userModel = mongoose.model('user', userSchema)
+      // </editor-fold>
+
+      // <editor-fold desc="Act">
+      restHelperFactory.generateListEndpoint(server, userModel, {}, Log)
+      // </editor-fold>
+
+      // <editor-fold desc="Assert">
+      let serverObject = server.route.args[0][0]
+      // Log.debug(JSON.stringify(serverObject));
+      t.deepEqual(serverObject.config.auth, false, 'auth disabled')
+      // </editor-fold>
+
+      // <editor-fold desc="Restore">
+      delete mongoose.models.user
+      delete mongoose.modelSchemas.user
+      // </editor-fold>
+    })
+  )
+
+  t.test(
     'rest-helper-factory.generateListEndpoint calls server.route with correct collectionName',
     sinon.test(function(t) {
       // <editor-fold desc="Arrange">
@@ -2144,6 +2200,62 @@ test('rest-helper-factory.generateFindEndpoint', function(t) {
         { strategy: config.authStrategy },
         'config auth used'
       )
+      // </editor-fold>
+
+      // <editor-fold desc="Restore">
+      delete mongoose.models.user
+      delete mongoose.modelSchemas.user
+      // </editor-fold>
+    })
+  )
+
+  t.test(
+    'rest-helper-factory.generateFindEndpoint calls server.route with no authentication if readAuth is false',
+    sinon.test(function(t) {
+      // <editor-fold desc="Arrange">
+      let server = this.stub({
+        route: function() {}
+      })
+
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
+      )
+      let handlerHelperStubWrapper = this.stub()
+      handlerHelperStubWrapper.returns(handlerHelperStub)
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
+        'generateJoiReadModel'
+      ).callsFake(function() {
+        return Joi.any()
+      })
+      let config = { authStrategy: 'TEST_AUTH' }
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub,
+          '../config': config
+        }
+      )(Log, mongoose, server)
+
+      t.plan(1)
+
+      let userSchema = new mongoose.Schema({})
+      userSchema.statics = { routeOptions: { readAuth: false } }
+
+      let userModel = mongoose.model('user', userSchema)
+      // </editor-fold>
+
+      // <editor-fold desc="Act">
+      restHelperFactory.generateFindEndpoint(server, userModel, {}, Log)
+      // </editor-fold>
+
+      // <editor-fold desc="Assert">
+      let serverObject = server.route.args[0][0]
+      // Log.debug(JSON.stringify(serverObject));
+      t.deepEqual(serverObject.config.auth, false, 'auth disabled')
       // </editor-fold>
 
       // <editor-fold desc="Restore">
@@ -3083,6 +3195,63 @@ test('rest-helper-factory.generateCreateEndpoint', function(t) {
   )
 
   t.test(
+    'rest-helper-factory.generateCreateEndpoint calls server.route with no authentication if creatAuth is false',
+    sinon.test(function(t) {
+      // <editor-fold desc="Arrange">
+      let server = this.stub({ route: function() {} })
+
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
+      )
+      let handlerHelperStubWrapper = this.stub()
+      handlerHelperStubWrapper.returns(handlerHelperStub)
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
+        'generateJoiReadModel'
+      ).callsFake(function() {
+        return Joi.any().label('TEST')
+      })
+      joiMongooseHelperStub.generateJoiCreateModel = this.spy(function() {
+        return Joi.any().label('TEST')
+      })
+      let config = { authStrategy: 'TEST_AUTH' }
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub,
+          '../config': config
+        }
+      )(Log, mongoose, server)
+
+      t.plan(1)
+
+      let userSchema = new mongoose.Schema({})
+      userSchema.statics = { routeOptions: { createAuth: false } }
+
+      let userModel = mongoose.model('user', userSchema)
+      // </editor-fold>
+
+      // <editor-fold desc="Act">
+      restHelperFactory.generateCreateEndpoint(server, userModel, {}, Log)
+      // </editor-fold>
+
+      // <editor-fold desc="Assert">
+      let serverObject = server.route.args[0][0]
+      // Log.debug(JSON.stringify(serverObject));
+      t.deepEqual(serverObject.config.auth, false, 'auth disabled')
+      // </editor-fold>
+
+      // <editor-fold desc="Restore">
+      delete mongoose.models.user
+      delete mongoose.modelSchemas.user
+      // </editor-fold>
+    })
+  )
+
+  t.test(
     'rest-helper-factory.generateCreateEndpoint calls server.route with correct collectionName',
     sinon.test(function(t) {
       // <editor-fold desc="Arrange">
@@ -3822,6 +3991,62 @@ test('rest-helper-factory.generateDeleteOneEndpoint', function(t) {
         { strategy: config.authStrategy },
         'config auth used'
       )
+      // </editor-fold>
+
+      // <editor-fold desc="Restore">
+      delete mongoose.models.user
+      delete mongoose.modelSchemas.user
+      // </editor-fold>
+    })
+  )
+
+  t.test(
+    'rest-helper-factory.generateDeleteOneEndpoint calls server.route without authentication if deleteAuth is false',
+    sinon.test(function(t) {
+      // <editor-fold desc="Arrange">
+      let server = this.stub({
+        route: function() {}
+      })
+
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
+      )
+      let handlerHelperStubWrapper = this.stub()
+      handlerHelperStubWrapper.returns(handlerHelperStub)
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
+        'generateJoiReadModel'
+      ).callsFake(function() {
+        return Joi.any()
+      })
+      let config = { authStrategy: 'TEST_AUTH' }
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub,
+          '../config': config
+        }
+      )(Log, mongoose, server)
+
+      t.plan(1)
+
+      let userSchema = new mongoose.Schema({})
+      userSchema.statics = { routeOptions: { deleteAuth: false } }
+
+      let userModel = mongoose.model('user', userSchema)
+      // </editor-fold>
+
+      // <editor-fold desc="Act">
+      restHelperFactory.generateDeleteOneEndpoint(server, userModel, {}, Log)
+      // </editor-fold>
+
+      // <editor-fold desc="Assert">
+      let serverObject = server.route.args[0][0]
+      // Log.debug(JSON.stringify(serverObject));
+      t.deepEqual(serverObject.config.auth, false, 'auth disabled')
       // </editor-fold>
 
       // <editor-fold desc="Restore">
@@ -4656,6 +4881,65 @@ test('rest-helper-factory.generateUpdateEndpoint', function(t) {
         { strategy: config.authStrategy },
         'config auth used'
       )
+      // </editor-fold>
+
+      // <editor-fold desc="Restore">
+      delete mongoose.models.user
+      delete mongoose.modelSchemas.user
+      // </editor-fold>
+    })
+  )
+
+  t.test(
+    'rest-helper-factory.generateUpdateEndpoint calls server.route without authentication if updateAuth is false',
+    sinon.test(function(t) {
+      // <editor-fold desc="Arrange">
+      let server = this.stub({
+        route: function() {}
+      })
+
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
+      )
+      let handlerHelperStubWrapper = this.stub()
+      handlerHelperStubWrapper.returns(handlerHelperStub)
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
+        'generateJoiReadModel'
+      ).callsFake(function() {
+        return Joi.any()
+      })
+      joiMongooseHelperStub.generateJoiUpdateModel = this.spy(function() {
+        return Joi.any()
+      })
+      let config = { authStrategy: 'TEST_AUTH' }
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub,
+          '../config': config
+        }
+      )(Log, mongoose, server)
+
+      t.plan(1)
+
+      let userSchema = new mongoose.Schema({})
+      userSchema.statics = { routeOptions: { updateAuth: false } }
+
+      let userModel = mongoose.model('user', userSchema)
+      // </editor-fold>
+
+      // <editor-fold desc="Act">
+      restHelperFactory.generateUpdateEndpoint(server, userModel, {}, Log)
+      // </editor-fold>
+
+      // <editor-fold desc="Assert">
+      let serverObject = server.route.args[0][0]
+      // Log.debug(JSON.stringify(serverObject));
+      t.deepEqual(serverObject.config.auth, false, 'auth disabled')
       // </editor-fold>
 
       // <editor-fold desc="Restore">
@@ -5753,6 +6037,80 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
         { strategy: config.authStrategy },
         'config auth used'
       )
+      // </editor-fold>
+
+      // <editor-fold desc="Restore">
+      delete mongoose.models.user
+      delete mongoose.modelSchemas.user
+      // </editor-fold>
+    })
+  )
+
+  t.test(
+    'rest-helper-factory.generateAssociationAddOneEndpoint calls server.route without authentication if addAuth is false',
+    sinon.test(function(t) {
+      // <editor-fold desc="Arrange">
+      let server = this.stub({
+        route: function() {}
+      })
+
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
+      )
+      let handlerHelperStubWrapper = this.stub()
+      handlerHelperStubWrapper.returns(handlerHelperStub)
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
+        'generateJoiCreateModel'
+      ).callsFake(function() {
+        return Joi.any()
+      })
+      let config = { authStrategy: 'TEST_AUTH' }
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub,
+          '../config': config
+        }
+      )(Log, mongoose, server)
+
+      t.plan(1)
+
+      let userSchema = new mongoose.Schema({})
+      userSchema.statics = { routeOptions: {} }
+      userSchema.statics = {
+        routeOptions: {
+          associations: {}
+        }
+      }
+
+      let userModel = mongoose.model('user', userSchema)
+
+      let association = {
+        include: {
+          model: { schema: { methods: {} }, modelName: 'testAssociation' }
+        },
+        addAuth: false
+      }
+      // </editor-fold>
+
+      // <editor-fold desc="Act">
+      restHelperFactory.generateAssociationAddOneEndpoint(
+        server,
+        userModel,
+        association,
+        {},
+        Log
+      )
+      // </editor-fold>
+
+      // <editor-fold desc="Assert">
+      let serverObject = server.route.args[0][0]
+      // Log.debug(JSON.stringify(serverObject));
+      t.deepEqual(serverObject.config.auth, false, 'auth disabled')
       // </editor-fold>
 
       // <editor-fold desc="Restore">
@@ -7018,6 +7376,80 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
   )
 
   t.test(
+    'rest-helper-factory.generateAssociationRemoveOneEndpoint calls server.route without authentication if removeAuth is false',
+    sinon.test(function(t) {
+      // <editor-fold desc="Arrange">
+      let server = this.stub({
+        route: function() {}
+      })
+
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
+      )
+      let handlerHelperStubWrapper = this.stub()
+      handlerHelperStubWrapper.returns(handlerHelperStub)
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
+        'generateJoiReadModel'
+      ).callsFake(function() {
+        return Joi.any()
+      })
+      let config = { authStrategy: 'TEST_AUTH' }
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub,
+          '../config': config
+        }
+      )(Log, mongoose, server)
+
+      t.plan(1)
+
+      let userSchema = new mongoose.Schema({})
+      userSchema.statics = { routeOptions: {} }
+      userSchema.statics = {
+        routeOptions: {
+          associations: {}
+        }
+      }
+
+      let userModel = mongoose.model('user', userSchema)
+
+      let association = {
+        include: {
+          model: { schema: { methods: {} }, modelName: 'testAssociation' }
+        },
+        removeAuth: false
+      }
+      // </editor-fold>
+
+      // <editor-fold desc="Act">
+      restHelperFactory.generateAssociationRemoveOneEndpoint(
+        server,
+        userModel,
+        association,
+        {},
+        Log
+      )
+      // </editor-fold>
+
+      // <editor-fold desc="Assert">
+      let serverObject = server.route.args[0][0]
+      // Log.debug(JSON.stringify(serverObject));
+      t.deepEqual(serverObject.config.auth, false, 'auth disabled')
+      // </editor-fold>
+
+      // <editor-fold desc="Restore">
+      delete mongoose.models.user
+      delete mongoose.modelSchemas.user
+      // </editor-fold>
+    })
+  )
+
+  t.test(
     'rest-helper-factory.generateAssociationRemoveOneEndpoint calls server.route with correct associationName and ownerModelName',
     sinon.test(function(t) {
       // <editor-fold desc="Arrange">
@@ -8152,6 +8584,80 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
         { strategy: config.authStrategy },
         'config auth used'
       )
+      // </editor-fold>
+
+      // <editor-fold desc="Restore">
+      delete mongoose.models.user
+      delete mongoose.modelSchemas.user
+      // </editor-fold>
+    })
+  )
+
+  t.test(
+    'rest-helper-factory.generateAssociationAddManyEndpoint calls server.route without authentication if addAuth is false',
+    sinon.test(function(t) {
+      // <editor-fold desc="Arrange">
+      let server = this.stub({
+        route: function() {}
+      })
+
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
+      )
+      let handlerHelperStubWrapper = this.stub()
+      handlerHelperStubWrapper.returns(handlerHelperStub)
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
+        'generateJoiReadModel'
+      ).callsFake(function() {
+        return Joi.any()
+      })
+      let config = { authStrategy: 'TEST_AUTH' }
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub,
+          '../config': config
+        }
+      )(Log, mongoose, server)
+
+      t.plan(1)
+
+      let userSchema = new mongoose.Schema({})
+      userSchema.statics = { routeOptions: {} }
+      userSchema.statics = {
+        routeOptions: {
+          associations: {}
+        }
+      }
+
+      let userModel = mongoose.model('user', userSchema)
+
+      let association = {
+        include: {
+          model: { schema: { methods: {} }, modelName: 'testAssociation' }
+        },
+        addAuth: false
+      }
+      // </editor-fold>
+
+      // <editor-fold desc="Act">
+      restHelperFactory.generateAssociationAddManyEndpoint(
+        server,
+        userModel,
+        association,
+        {},
+        Log
+      )
+      // </editor-fold>
+
+      // <editor-fold desc="Assert">
+      let serverObject = server.route.args[0][0]
+      // Log.debug(JSON.stringify(serverObject));
+      t.deepEqual(serverObject.config.auth, false, 'auth disabled')
       // </editor-fold>
 
       // <editor-fold desc="Restore">
@@ -9556,6 +10062,78 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
         { strategy: config.authStrategy },
         'config auth used'
       )
+      // </editor-fold>
+
+      // <editor-fold desc="Restore">
+      delete mongoose.models.user
+      delete mongoose.modelSchemas.user
+      delete mongoose.models.child
+      delete mongoose.modelSchemas.child
+      // </editor-fold>
+    })
+  )
+
+  t.test(
+    'rest-helper-factory.generateAssociationGetAllEndpoint calls server.route without authentication if readAuth is false',
+    sinon.test(function(t) {
+      // <editor-fold desc="Arrange">
+      let server = this.stub({
+        route: function() {}
+      })
+
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
+      )
+      let handlerHelperStubWrapper = this.stub()
+      handlerHelperStubWrapper.returns(handlerHelperStub)
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
+        'generateJoiReadModel'
+      ).callsFake(function() {
+        return Joi.any()
+      })
+      let config = { authStrategy: 'TEST_AUTH' }
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub,
+          '../config': config
+        }
+      )(Log, mongoose, server)
+
+      t.plan(1)
+
+      let userSchema = new mongoose.Schema({})
+      userSchema.statics = { routeOptions: {} }
+      userSchema.statics = {
+        routeOptions: {
+          associations: {}
+        }
+      }
+
+      let userModel = mongoose.model('user', userSchema)
+
+      let childModel = mongoose.model('child', userSchema)
+      let association = { include: { model: childModel }, readAuth: false }
+      // </editor-fold>
+
+      // <editor-fold desc="Act">
+      restHelperFactory.generateAssociationGetAllEndpoint(
+        server,
+        userModel,
+        association,
+        {},
+        Log
+      )
+      // </editor-fold>
+
+      // <editor-fold desc="Assert">
+      let serverObject = server.route.args[0][0]
+      // Log.debug(JSON.stringify(serverObject));
+      t.deepEqual(serverObject.config.auth, false, 'auth disabled')
       // </editor-fold>
 
       // <editor-fold desc="Restore">
