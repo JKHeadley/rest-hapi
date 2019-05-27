@@ -26,7 +26,7 @@
   <a href="https://www.npmjs.com/package/rest-hapi">
     <img alt="npm" src="https://img.shields.io/npm/v/rest-hapi.svg?style=flat-square">
   </a>
-  <a href="https://stackshare.io/JKHeadley/rest-hapi">
+  <a href="https://stackshare.io/rest-hapi">
     <img alt="StackShare" src="https://img.shields.io/badge/tech-stack-0690fa.svg?style=flat-square">
   </a>
   <a href="https://gitter.im/rest-hapi/Lobby">
