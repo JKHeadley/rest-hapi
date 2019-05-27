@@ -1096,7 +1096,7 @@ module.exports = function(logger, mongoose, server) {
       let addOneHeadersValidation = Object.assign(headersValidation, {})
 
       if (ownerModel.routeOptions.associateAuth === false) {
-        Log.warning(
+        Log.warn(
           '"associateAuth" property is deprecated, please use "addAuth" instead.'
         )
       }
@@ -1289,7 +1289,7 @@ module.exports = function(logger, mongoose, server) {
       let removeOneHeadersValidation = Object.assign(headersValidation, {})
 
       if (ownerModel.routeOptions.associateAuth === false) {
-        Log.warning(
+        Log.warn(
           '"associateAuth" property is deprecated, please use "removeAuth" instead.'
         )
       }
@@ -1519,7 +1519,7 @@ module.exports = function(logger, mongoose, server) {
       let addManyHeadersValidation = Object.assign(headersValidation, {})
 
       if (ownerModel.routeOptions.associateAuth === false) {
-        Log.warning(
+        Log.warn(
           '"associateAuth" property is deprecated, please use "addAuth" instead.'
         )
       }
@@ -1714,7 +1714,7 @@ module.exports = function(logger, mongoose, server) {
       let removeManyHeadersValidation = Object.assign(headersValidation, {})
 
       if (ownerModel.routeOptions.associateAuth === false) {
-        Log.warning(
+        Log.warn(
           '"associateAuth" property is deprecated, please use "removeAuth" instead.'
         )
       }
@@ -1929,7 +1929,7 @@ module.exports = function(logger, mongoose, server) {
       let getAllHeadersValidation = Object.assign(headersValidation, {})
 
       if (ownerModel.routeOptions.associateAuth === false) {
-        Log.warning(
+        Log.warn(
           '"routeOptions.readAuth" property is deprecated for associations, please use "association.readAuth" instead.'
         )
       }
