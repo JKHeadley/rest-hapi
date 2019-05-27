@@ -5580,6 +5580,82 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
   )
 
   t.test(
+    'rest-helper-factory.generateAssociationAddOneEndpoint warns associateAuth is deprecated',
+    sinon.test(function(t) {
+      // <editor-fold desc="Arrange">
+      let server = this.stub({
+        route: function() {}
+      })
+
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
+      )
+      let handlerHelperStubWrapper = this.stub()
+      handlerHelperStubWrapper.returns(handlerHelperStub)
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
+        'generateJoiCreateModel'
+      ).callsFake(function() {
+        return Joi.any()
+      })
+      // EXPL: Spy on the 'warn' method
+      const logSpy = this.spy()
+      this.stub(Log, 'bind').callsFake(() => {
+        return { warn: logSpy }
+      })
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub
+        }
+      )(Log, mongoose, server)
+
+      t.plan(1)
+
+      let userSchema = new mongoose.Schema({})
+      userSchema.statics = { routeOptions: {} }
+      userSchema.statics = {
+        routeOptions: {
+          associateAuth: false,
+          associations: {}
+        }
+      }
+
+      let userModel = mongoose.model('user', userSchema)
+
+      let association = {
+        include: {
+          model: { schema: { methods: {} }, modelName: 'testAssociation' }
+        }
+      }
+      // </editor-fold>
+
+      // <editor-fold desc="Act">
+      restHelperFactory.generateAssociationAddOneEndpoint(
+        server,
+        userModel,
+        association,
+        {},
+        Log
+      )
+      // </editor-fold>
+
+      // <editor-fold desc="Assert">
+      t.ok(logSpy.called, 'Log.warn called')
+      // </editor-fold>
+
+      // <editor-fold desc="Restore">
+      delete mongoose.models.user
+      delete mongoose.modelSchemas.user
+      Log.bind.restore()
+      // </editor-fold>
+    })
+  )
+
+  t.test(
     'rest-helper-factory.generateAssociationAddOneEndpoint calls handlerHelper.generateAssociationAddOneHandler',
     sinon.test(function(t) {
       // <editor-fold desc="Arrange">
@@ -6907,6 +6983,82 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
   )
 
   t.test(
+    'rest-helper-factory.generateAssociationRemoveOneEndpoint warns associateAuth is deprecated',
+    sinon.test(function(t) {
+      // <editor-fold desc="Arrange">
+      let server = this.stub({
+        route: function() {}
+      })
+
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
+      )
+      let handlerHelperStubWrapper = this.stub()
+      handlerHelperStubWrapper.returns(handlerHelperStub)
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
+        'generateJoiCreateModel'
+      ).callsFake(function() {
+        return Joi.any()
+      })
+      // EXPL: Spy on the 'warn' method
+      const logSpy = this.spy()
+      this.stub(Log, 'bind').callsFake(() => {
+        return { warn: logSpy }
+      })
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub
+        }
+      )(Log, mongoose, server)
+
+      t.plan(1)
+
+      let userSchema = new mongoose.Schema({})
+      userSchema.statics = { routeOptions: {} }
+      userSchema.statics = {
+        routeOptions: {
+          associateAuth: false,
+          associations: {}
+        }
+      }
+
+      let userModel = mongoose.model('user', userSchema)
+
+      let association = {
+        include: {
+          model: { schema: { methods: {} }, modelName: 'testAssociation' }
+        }
+      }
+      // </editor-fold>
+
+      // <editor-fold desc="Act">
+      restHelperFactory.generateAssociationRemoveOneEndpoint(
+        server,
+        userModel,
+        association,
+        {},
+        Log
+      )
+      // </editor-fold>
+
+      // <editor-fold desc="Assert">
+      t.ok(logSpy.called, 'Log.warn called')
+      // </editor-fold>
+
+      // <editor-fold desc="Restore">
+      delete mongoose.models.user
+      delete mongoose.modelSchemas.user
+      Log.bind.restore()
+      // </editor-fold>
+    })
+  )
+
+  t.test(
     'rest-helper-factory.generateAssociationRemoveOneEndpoint calls handlerHelper.generateAssociationRemoveOneHandler',
     sinon.test(function(t) {
       // <editor-fold desc="Arrange">
@@ -8129,6 +8281,82 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
       // <editor-fold desc="Restore">
       delete mongoose.models.user
       delete mongoose.modelSchemas.user
+      // </editor-fold>
+    })
+  )
+
+  t.test(
+    'rest-helper-factory.generateAssociationAddManyEndpoint warns associateAuth is deprecated',
+    sinon.test(function(t) {
+      // <editor-fold desc="Arrange">
+      let server = this.stub({
+        route: function() {}
+      })
+
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
+      )
+      let handlerHelperStubWrapper = this.stub()
+      handlerHelperStubWrapper.returns(handlerHelperStub)
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
+        'generateJoiCreateModel'
+      ).callsFake(function() {
+        return Joi.any()
+      })
+      // EXPL: Spy on the 'warn' method
+      const logSpy = this.spy()
+      this.stub(Log, 'bind').callsFake(() => {
+        return { warn: logSpy }
+      })
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub
+        }
+      )(Log, mongoose, server)
+
+      t.plan(1)
+
+      let userSchema = new mongoose.Schema({})
+      userSchema.statics = { routeOptions: {} }
+      userSchema.statics = {
+        routeOptions: {
+          associateAuth: false,
+          associations: {}
+        }
+      }
+
+      let userModel = mongoose.model('user', userSchema)
+
+      let association = {
+        include: {
+          model: { schema: { methods: {} }, modelName: 'testAssociation' }
+        }
+      }
+      // </editor-fold>
+
+      // <editor-fold desc="Act">
+      restHelperFactory.generateAssociationAddManyEndpoint(
+        server,
+        userModel,
+        association,
+        {},
+        Log
+      )
+      // </editor-fold>
+
+      // <editor-fold desc="Assert">
+      t.ok(logSpy.called, 'Log.warn called')
+      // </editor-fold>
+
+      // <editor-fold desc="Restore">
+      delete mongoose.models.user
+      delete mongoose.modelSchemas.user
+      Log.bind.restore()
       // </editor-fold>
     })
   )
@@ -9465,6 +9693,83 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
       // <editor-fold desc="Restore">
       delete mongoose.models.user
       delete mongoose.modelSchemas.user
+      // </editor-fold>
+    })
+  )
+
+  t.test(
+    'rest-helper-factory.generateAssociationGetAllEndpoint warns associateAuth is deprecated',
+    sinon.test(function(t) {
+      // <editor-fold desc="Arrange">
+      let server = this.stub({
+        route: function() {}
+      })
+
+      let handlerHelperStub = this.stub(
+        require('../../utilities/handler-helper-factory')(this.spy(), server)
+      )
+      let handlerHelperStubWrapper = this.stub()
+      handlerHelperStubWrapper.returns(handlerHelperStub)
+      let queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let joiMongooseHelperStub = this.stub(
+        require('../../utilities/joi-mongoose-helper'),
+        'generateJoiReadModel'
+      ).callsFake(function() {
+        return Joi.any()
+      })
+      joiMongooseHelperStub.generateJoiListQueryModel = () => Joi.any()
+      // EXPL: Spy on the 'warn' method
+      const logSpy = this.spy()
+      this.stub(Log, 'bind').callsFake(() => {
+        return { warn: logSpy }
+      })
+      let restHelperFactory = proxyquire(
+        '../../utilities/rest-helper-factory',
+        {
+          './handler-helper-factory': handlerHelperStubWrapper,
+          './query-helper': queryHelperStub,
+          './joi-mongoose-helper': joiMongooseHelperStub
+        }
+      )(Log, mongoose, server)
+
+      t.plan(1)
+
+      let userSchema = new mongoose.Schema({})
+      userSchema.statics = { routeOptions: {} }
+      userSchema.statics = {
+        routeOptions: {
+          associateAuth: false,
+          associations: {}
+        }
+      }
+
+      let userModel = mongoose.model('user', userSchema)
+
+      let association = {
+        include: {
+          model: { schema: { methods: {} }, modelName: 'testAssociation' }
+        }
+      }
+      // </editor-fold>
+
+      // <editor-fold desc="Act">
+      restHelperFactory.generateAssociationGetAllEndpoint(
+        server,
+        userModel,
+        association,
+        {},
+        Log
+      )
+      // </editor-fold>
+
+      // <editor-fold desc="Assert">
+      t.ok(logSpy.called, 'Log.warn called')
+      // </editor-fold>
+
+      // <editor-fold desc="Restore">
+      delete mongoose.models.user
+      delete mongoose.modelSchemas.user
+      Log.bind.restore()
       // </editor-fold>
     })
   )
