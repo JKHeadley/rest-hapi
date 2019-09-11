@@ -3,7 +3,6 @@
 const path = require('path')
 const Decache = require('decache')
 const Q = require('q')
-const QueryString = require('query-string')
 const Hapi = require('hapi')
 
 module.exports = (t, Mongoose, internals, Log) =>
@@ -41,43 +40,18 @@ module.exports = (t, Mongoose, internals, Log) =>
                 .then(function() {
                   server.start()
 
-                  const method = 'POST'
-                  const url = '/role'
-                  const params = {}
-                  const query = {}
-                  const payload = {
-                    name: 'test'
-                  }
-                  const credentials = {}
-
-                  let fullUrl = url
-                  for (const key in params) {
-                    fullUrl = fullUrl.replace('{' + key + '}', params[key])
-                  }
-                  fullUrl = fullUrl + '?' + QueryString.stringify(query)
-
-                  const injectOptions = {
-                    method: method,
-                    url: fullUrl,
-                    payload: payload,
-                    credentials: credentials
-                  }
-
-                  return injectOptions
-                })
-
-                // </editor-fold>
-
-                // <editor-fold desc="Act">
-                .then(function(injectOptions) {
-                  return server.inject(injectOptions)
+                  return RestHapi.create({
+                    model: Mongoose.model('role'),
+                    payload: { name: 'test' },
+                    restCall: true
+                  })
                 })
                 // </editor-fold>
 
                 // <editor-fold desc="Assert">
                 .then(function(response) {
                   t.equals(
-                    response.result.name,
+                    response.name,
                     'test',
                     'role with name "test" created'
                   )
@@ -130,45 +104,21 @@ module.exports = (t, Mongoose, internals, Log) =>
                 .then(function() {
                   server.start()
 
-                  const method = 'GET'
-                  const url = '/role'
-                  const params = {}
-                  const query = {}
-                  const payload = {}
-                  const credentials = {}
-
-                  let fullUrl = url
-                  for (const key in params) {
-                    fullUrl = fullUrl.replace('{' + key + '}', params[key])
-                  }
-                  fullUrl = fullUrl + '?' + QueryString.stringify(query)
-
-                  const injectOptions = {
-                    method: method,
-                    url: fullUrl,
-                    payload: payload,
-                    credentials: credentials
-                  }
-
-                  return injectOptions
-                })
-
-                // </editor-fold>
-
-                // <editor-fold desc="Act">
-                .then(function(injectOptions) {
-                  return server.inject(injectOptions)
+                  return RestHapi.list({
+                    model: Mongoose.model('role'),
+                    restCall: true
+                  })
                 })
                 // </editor-fold>
 
                 // <editor-fold desc="Assert">
                 .then(function(response) {
                   t.equals(
-                    response.result.docs[0].name,
+                    response.docs[0].name,
                     'test',
                     'role with name "test" retrieved'
                   )
-                  internals.previous = response.result
+                  internals.previous = response
                 })
                 // </editor-fold>
 
@@ -221,47 +171,22 @@ module.exports = (t, Mongoose, internals, Log) =>
                 .then(function() {
                   server.start()
 
-                  const method = 'GET'
-                  const url = '/role/{_id}'
-                  const params = {
-                    _id: internals.previous.docs[0]._id
-                  }
-                  const query = {}
-                  const payload = {}
-                  const credentials = {}
-
-                  let fullUrl = url
-                  for (const key in params) {
-                    fullUrl = fullUrl.replace('{' + key + '}', params[key])
-                  }
-                  fullUrl = fullUrl + '?' + QueryString.stringify(query)
-
-                  const injectOptions = {
-                    method: method,
-                    url: fullUrl,
-                    payload: payload,
-                    credentials: credentials
-                  }
-
-                  return injectOptions
-                })
-
-                // </editor-fold>
-
-                // <editor-fold desc="Act">
-                .then(function(injectOptions) {
-                  return server.inject(injectOptions)
+                  return RestHapi.find({
+                    model: Mongoose.model('role'),
+                    _id: internals.previous.docs[0]._id,
+                    restCall: true
+                  })
                 })
                 // </editor-fold>
 
                 // <editor-fold desc="Assert">
                 .then(function(response) {
                   t.equals(
-                    response.result.name,
+                    response.name,
                     'test',
                     'role with name "test" retrieved'
                   )
-                  internals.previous = response.result
+                  internals.previous = response
                 })
                 // </editor-fold>
 
@@ -311,49 +236,25 @@ module.exports = (t, Mongoose, internals, Log) =>
                 .then(function() {
                   server.start()
 
-                  const method = 'PUT'
-                  const url = '/role/{_id}'
-                  const params = {
-                    _id: internals.previous._id
-                  }
-                  const query = {}
-                  const payload = {
-                    name: 'test_updated'
-                  }
-                  const credentials = {}
-
-                  let fullUrl = url
-                  for (const key in params) {
-                    fullUrl = fullUrl.replace('{' + key + '}', params[key])
-                  }
-                  fullUrl = fullUrl + '?' + QueryString.stringify(query)
-
-                  const injectOptions = {
-                    method: method,
-                    url: fullUrl,
-                    payload: payload,
-                    credentials: credentials
-                  }
-
-                  return injectOptions
-                })
-
-                // </editor-fold>
-
-                // <editor-fold desc="Act">
-                .then(function(injectOptions) {
-                  return server.inject(injectOptions)
+                  return RestHapi.update({
+                    model: Mongoose.model('role'),
+                    _id: internals.previous._id,
+                    payload: {
+                      name: 'test_updated'
+                    },
+                    restCall: true
+                  })
                 })
                 // </editor-fold>
 
                 // <editor-fold desc="Assert">
                 .then(function(response) {
                   t.equals(
-                    response.result.name,
+                    response.name,
                     'test_updated',
                     'role with name "test_updated" returned'
                   )
-                  internals.previous = response.result
+                  internals.previous = response
                 })
                 // </editor-fold>
 
@@ -403,36 +304,11 @@ module.exports = (t, Mongoose, internals, Log) =>
                 .then(function() {
                   server.start()
 
-                  const method = 'DELETE'
-                  const url = '/role/{_id}'
-                  const params = {
-                    _id: internals.previous._id
-                  }
-                  const query = {}
-                  const payload = {}
-                  const credentials = {}
-
-                  let fullUrl = url
-                  for (const key in params) {
-                    fullUrl = fullUrl.replace('{' + key + '}', params[key])
-                  }
-                  fullUrl = fullUrl + '?' + QueryString.stringify(query)
-
-                  const injectOptions = {
-                    method: method,
-                    url: fullUrl,
-                    payload: payload,
-                    credentials: credentials
-                  }
-
-                  return injectOptions
-                })
-
-                // </editor-fold>
-
-                // <editor-fold desc="Act">
-                .then(function(injectOptions) {
-                  return server.inject(injectOptions)
+                  return RestHapi.deleteOne({
+                    model: Mongoose.model('role'),
+                    _id: internals.previous._id,
+                    restCall: true
+                  })
                 })
                 // </editor-fold>
 

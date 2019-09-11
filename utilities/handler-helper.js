@@ -5,6 +5,7 @@ let QueryHelper = require('./query-helper')
 let JoiMongooseHelper = require('./joi-mongoose-helper')
 let config = require('../config')
 let _ = require('lodash')
+let assert = require('assert')
 
 // TODO: add a "clean" method that clears out all soft-deleted docs
 // TODO: add an optional TTL config setting that determines how long soft-deleted docs remain in the system
@@ -58,17 +59,71 @@ module.exports = {
 }
 
 /**
- * List function exposed as a mongoose wrapper.
- * @param model: A mongoose model.
- * @param query: rest-hapi query parameters to be converted to a mongoose query.
- * @param Log: A logging object.
+ * Finds a list of model documents.
+ * @param  {...any} args
+ * **Positional:**
+ * - function list(model, query, Log)
+ *
+ * **Named:**
+ * - function list({
+ *      model,
+ *      query,
+ *      Log = RestHapi.getLogger('list'),
+ *      restCall = false,
+ *      credentials = {}
+ *   })
+ *
+ * **Params:**
+ * - model: A mongoose model.
+ * - query: rest-hapi query parameters to be converted to a mongoose query.
+ * - Log: A logging object.
+ * - restCall: If 'true', then will call GET /model
+ * - credentials: Credentials for accessing the endpoint.
+ *
  * @returns {object} A promise for the resulting model documents or the count of the query results.
- * @private
  */
-function _list(model, query, Log) {
+function _list(...args) {
+  if (args.length > 1) {
+    return _listV1(...args)
+  } else {
+    return _listV2(...args)
+  }
+}
+
+function _listV1(model, query, Log) {
   let request = { query: query }
   return _listHandler(model, request, Log)
 }
+
+async function _listV2({
+  model,
+  query,
+  Log,
+  restCall = false,
+  credentials = {}
+}) {
+  let RestHapi = require('../rest-hapi')
+  Log = Log || RestHapi.getLogger('list')
+
+  if (restCall) {
+    credentials = defaultCreds(credentials)
+
+    let request = {
+      method: 'Get',
+      url: `/${model.routeOptions.alias || model.modelName}`,
+      query,
+      credentials,
+      headers: { authorization: 'Bearer' }
+    }
+
+    const injectOptions = RestHapi.testHelper.mockInjection(request)
+    let { result } = await RestHapi.server.inject(injectOptions)
+    return result
+  } else {
+    return _listV1(model, query, Log)
+  }
+}
+
 /**
  * Finds a list of model documents.
  * @param model: A mongoose model.
@@ -209,18 +264,75 @@ async function _listHandler(model, request, Log) {
 }
 
 /**
- * Find function exposed as a mongoose wrapper.
- * @param model: A mongoose model.
- * @param _id: The document id.
- * @param query: rest-hapi query parameters to be converted to a mongoose query.
- * @param Log: A logging object.
+ * Finds a model document.
+ * @param  {...any} args
+ * **Positional:**
+ * - function find(model, _id, query, Log)
+ *
+ * **Named:**
+ * - function find({
+ *      model,
+ *      _id,
+ *      query,
+ *      Log = RestHapi.getLogger('find'),
+ *      restCall = false,
+ *      credentials = {}
+ *   })
+ *
+ * **Params:**
+ * - model: A mongoose model.
+ * - _id: The document id.
+ * - query: rest-hapi query parameters to be converted to a mongoose query.
+ * - Log: A logging object.
+ * - restCall: If 'true', then will call GET /model/{_id}
+ * - credentials: Credentials for accessing the endpoint.
+ *
  * @returns {object} A promise for the resulting model document.
- * @private
  */
-function _find(model, _id, query, Log) {
+function _find(...args) {
+  if (args.length > 1) {
+    return _findV1(...args)
+  } else {
+    return _findV2(...args)
+  }
+}
+
+function _findV1(model, _id, query, Log) {
   let request = { params: { _id: _id }, query: query }
   return _findHandler(model, _id, request, Log)
 }
+
+async function _findV2({
+  model,
+  _id,
+  query,
+  Log,
+  restCall = false,
+  credentials = {}
+}) {
+  let RestHapi = require('../rest-hapi')
+  Log = Log || RestHapi.getLogger('find')
+
+  if (restCall) {
+    credentials = defaultCreds(credentials)
+
+    let request = {
+      method: 'Get',
+      url: `/${model.routeOptions.alias || model.modelName}/${_id}`,
+      params: { _id },
+      query,
+      credentials,
+      headers: { authorization: 'Bearer' }
+    }
+
+    const injectOptions = RestHapi.testHelper.mockInjection(request)
+    let { result } = await RestHapi.server.inject(injectOptions)
+    return result
+  } else {
+    return _findV1(model, _id, query, Log)
+  }
+}
+
 /**
  * Finds a model document.
  * @param model: A mongoose model.
@@ -313,17 +425,71 @@ async function _findHandler(model, _id, request, Log) {
 }
 
 /**
- * Create function exposed as a mongoose wrapper.
- * @param model: A mongoose model.
- * @param payload: Data used to create the model document/s.
- * @param Log: A logging object.
- * @returns {object} A promise for the resulting model document/s.
- * @private
+ * Creates one or more model documents.
+ * @param  {...any} args
+ * **Positional:**
+ * - function create(model, payload, Log)
+ *
+ * **Named:**
+ * - function create({
+ *      model,
+ *      payload,
+ *      Log = RestHapi.getLogger('create'),
+ *      restCall = false,
+ *      credentials = {}
+ *   })
+ *
+ * **Params:**
+ * - model: A mongoose model.
+ * - payload: Data used to create the model document/s.
+ * - Log: A logging object.
+ * - restCall: If 'true', then will call POST /model
+ * - credentials: Credentials for accessing the endpoint.
+ *
+ * @returns {object} A promise for the resulting model document.
  */
-function _create(model, payload, Log) {
+function _create(...args) {
+  if (args.length > 1) {
+    return _createV1(...args)
+  } else {
+    return _createV2(...args)
+  }
+}
+
+function _createV1(model, payload, Log) {
   let request = { payload: payload }
   return _createHandler(model, request, Log)
 }
+
+async function _createV2({
+  model,
+  payload,
+  Log,
+  restCall = false,
+  credentials = {}
+}) {
+  let RestHapi = require('../rest-hapi')
+  Log = Log || RestHapi.getLogger('create')
+
+  if (restCall) {
+    credentials = defaultCreds(credentials)
+
+    let request = {
+      method: 'Post',
+      url: `/${model.routeOptions.alias || model.modelName}`,
+      payload,
+      credentials,
+      headers: { authorization: 'Bearer' }
+    }
+
+    const injectOptions = RestHapi.testHelper.mockInjection(request)
+    let { result } = await RestHapi.server.inject(injectOptions)
+    return result
+  } else {
+    return _createV1(model, payload, Log)
+  }
+}
+
 // TODO: make sure errors are catching in correct order
 /**
  * Creates one or more model documents.
@@ -431,18 +597,75 @@ async function _createHandler(model, request, Log) {
 }
 
 /**
- * Update function exposed as a mongoose wrapper.
- * @param model: A mongoose model.
- * @param _id: The document id.
- * @param payload: Data used to update the model document.
- * @param Log: A logging object.
+ * Updates a model document.
+ * @param  {...any} args
+ * **Positional:**
+ * - function update(model, _id, payload, Log)
+ *
+ * **Named:**
+ * - function update({
+ *      model,
+ *      _id,
+ *      payload,
+ *      Log = RestHapi.getLogger('update'),
+ *      restCall = false,
+ *      credentials = {}
+ *   })
+ *
+ * **Params:**
+ * - model: A mongoose model.
+ * - _id: The document id.
+ * - payload: Data used to update the model document.
+ * - Log: A logging object.
+ * - restCall: If 'true', then will call PUT /model/{_id}
+ * - credentials: Credentials for accessing the endpoint.
+ *
  * @returns {object} A promise for the resulting model document.
- * @private
  */
-function _update(model, _id, payload, Log) {
+function _update(...args) {
+  if (args.length > 1) {
+    return _updateV1(...args)
+  } else {
+    return _updateV2(...args)
+  }
+}
+
+function _updateV1(model, _id, payload, Log) {
   let request = { params: { _id: _id }, payload: payload }
   return _updateHandler(model, _id, request, Log)
 }
+
+async function _updateV2({
+  model,
+  _id,
+  payload,
+  Log,
+  restCall = false,
+  credentials = {}
+}) {
+  let RestHapi = require('../rest-hapi')
+  Log = Log || RestHapi.getLogger('update')
+
+  if (restCall) {
+    credentials = defaultCreds(credentials)
+
+    let request = {
+      method: 'Put',
+      url: `/${model.routeOptions.alias || model.modelName}/${_id}`,
+      params: { _id },
+      payload,
+      credentials,
+      headers: { authorization: 'Bearer' }
+    }
+
+    const injectOptions = RestHapi.testHelper.mockInjection(request)
+    let { result } = await RestHapi.server.inject(injectOptions)
+    return result
+  } else {
+    return _updateV1(model, _id, payload, Log)
+  }
+}
+
 /**
  * Updates a model document.
  * @param model: A mongoose model.
@@ -526,18 +749,74 @@ async function _updateHandler(model, _id, request, Log) {
 }
 
 /**
- * DeleteOne function exposed as a mongoose wrapper.
- * @param model: A mongoose model.
- * @param _id: The document id.
- * @param hardDelete: Flag used to determine a soft or hard delete.
- * @param Log: A logging object.
- * @returns {object} A promise returning true if the delete succeeds.
- * @private
+ * Deletes a model document.
+ * @param  {...any} args
+ * **Positional:**
+ * - function delete(model, _id, hardDelete, Log)
+ *
+ * **Named:**
+ * - function delete({
+ *      model,
+ *      _id,
+ *      hardDelete = false,
+ *      Log = RestHapi.getLogger('delete'),
+ *      restCall = false,
+ *      credentials = {}
+ *   })
+ *
+ * **Params:**
+ * - model: A mongoose model.
+ * - _id: The document id.
+ * - hardDelete: Flag used to determine a soft or hard delete.
+ * - Log: A logging object.
+ * - restCall: If 'true', then will call PUT /model/{_id}
+ * - credentials: Credentials for accessing the endpoint.
+ *
+ * @returns {object} A promise for the resulting model document.
  */
-function _deleteOne(model, _id, hardDelete, Log) {
+function _deleteOne(...args) {
+  if (args.length > 1) {
+    return _deleteOneV1(...args)
+  } else {
+    return _deleteOneV2(...args)
+  }
+}
+
+function _deleteOneV1(model, _id, hardDelete, Log) {
   let request = { params: { _id: _id } }
   return _deleteOneHandler(model, _id, hardDelete, request, Log)
 }
+
+async function _deleteOneV2({
+  model,
+  _id,
+  hardDelete = false,
+  Log,
+  restCall = false,
+  credentials = {}
+}) {
+  let RestHapi = require('../rest-hapi')
+  Log = Log || RestHapi.getLogger('deleteOne')
+
+  if (restCall) {
+    credentials = defaultCreds(credentials)
+
+    let request = {
+      method: 'Delete',
+      url: `/${model.routeOptions.alias || model.modelName}/${_id}`,
+      params: { _id },
+      credentials,
+      headers: { authorization: 'Bearer' }
+    }
+
+    const injectOptions = RestHapi.testHelper.mockInjection(request)
+    let { result } = await RestHapi.server.inject(injectOptions)
+    return result
+  } else {
+    return _deleteOneV1(model, _id, hardDelete, Log)
+  }
+}
+
 /**
  * Deletes a model document
  * @param model: A mongoose model.
@@ -632,17 +911,73 @@ async function _deleteOneHandler(model, _id, hardDelete, request, Log) {
 }
 
 /**
- * DeleteMany function exposed as a mongoose wrapper.
- * @param model: A mongoose model.
- * @param payload: Either an array of ids or an array of objects containing an id and a "hardDelete" flag.
- * @param Log: A logging object.
- * @returns {object} A promise returning true if the delete succeeds.
- * @private
+ * Deletes multiple documents.
+ * @param  {...any} args
+ * **Positional:**
+ * - function delete(model, payload, Log)
+ *
+ * **Named:**
+ * - function delete({
+ *      model,
+ *      _id,
+ *      payload,
+ *      Log = RestHapi.getLogger('delete'),
+ *      restCall = false,
+ *      credentials = {}
+ *   })
+ *
+ * **Params:**
+ * - model: A mongoose model.
+ * - _id: The document id.
+ * - payload: Either an array of ids or an array of objects containing an id and a "hardDelete" flag.
+ * - Log: A logging object.
+ * - restCall: If 'true', then will call PUT /model/{_id}
+ * - credentials: Credentials for accessing the endpoint.
+ *
+ * @returns {object} A promise for the resulting model document.
  */
-function _deleteMany(model, payload, Log) {
+function _deleteMany(...args) {
+  if (args.length > 1) {
+    return _deleteManyV1(...args)
+  } else {
+    return _deleteManyV2(...args)
+  }
+}
+
+function _deleteManyV1(model, payload, Log) {
   let request = { payload: payload }
   return _deleteManyHandler(model, request, Log)
 }
+
+async function _deleteManyV2({
+  model,
+  payload,
+  Log,
+  restCall = false,
+  credentials = {}
+}) {
+  let RestHapi = require('../rest-hapi')
+  Log = Log || RestHapi.getLogger('deleteOne')
+
+  if (restCall) {
+    credentials = defaultCreds(credentials)
+
+    let request = {
+      method: 'Delete',
+      url: `/${model.routeOptions.alias || model.modelName}`,
+      payload,
+      credentials,
+      headers: { authorization: 'Bearer' }
+    }
+
+    const injectOptions = RestHapi.testHelper.mockInjection(request)
+    let { result } = await RestHapi.server.inject(injectOptions)
+    return result
+  } else {
+    return _deleteManyV1(model, payload, Log)
+  }
+}
+
 /**
  * Deletes multiple documents.
  * @param model: A mongoose model.
@@ -1668,6 +2003,20 @@ function filterDeletedEmbeds(result, parent, parentkey, depth, Log) {
     // Log.log("JUMPING OUT");
     return true
   }
+}
+
+/**
+ * Helper function for "restCall === true" calls
+ * @param {*} credentials
+ */
+function defaultCreds(credentials) {
+  if (credentials.scope) {
+    assert(_.isArray(credentials.scope), 'Credentials scope must be an array.')
+    credentials.scope.push('root')
+  } else {
+    credentials.scope = ['root']
+  }
+  return credentials
 }
 
 function handleError(err, message, boomFunction, Log) {

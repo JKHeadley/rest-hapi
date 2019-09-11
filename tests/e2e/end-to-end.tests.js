@@ -41,6 +41,10 @@ internals.onFinish = function() {
 
 Test.onFinish(internals.onFinish)
 
+process.on('unhandledRejection', error => {
+  console.log('Unhandled error:', error.message)
+})
+
 function restore(Mongoose) {
   Decache('../../rest-hapi')
 
