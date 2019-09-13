@@ -1,0 +1,38 @@
+{
+  "version-1.6.x-docs": {
+    "Getting Started": [
+      "version-1.6.x-quick-start",
+      "version-1.6.x-introduction",
+      "version-1.6.x-swagger-documentation"
+    ],
+    "Usage": [
+      "version-1.6.x-configuration",
+      "version-1.6.x-creating-endpoints",
+      "version-1.6.x-associations",
+      "version-1.6.x-route-customization",
+      "version-1.6.x-querying",
+      "version-1.6.x-duplicate-fields",
+      "version-1.6.x-validation",
+      "version-1.6.x-middleware",
+      "version-1.6.x-authentication",
+      "version-1.6.x-authorization",
+      "version-1.6.x-audit-logs",
+      "version-1.6.x-policies",
+      "version-1.6.x-mongoose-wrapper-methods",
+      "version-1.6.x-soft-delete",
+      "version-1.6.x-metadata",
+      "version-1.6.x-model-generation"
+    ],
+    "Other": [
+      "version-1.6.x-testing",
+      "version-1.6.x-questions",
+      "version-1.6.x-support"
+    ]
+  },
+  "version-1.6.x-docs-other": {
+    "First Category": [
+      "version-1.6.x-doc4",
+      "version-1.6.x-doc5"
+    ]
+  }
+}
