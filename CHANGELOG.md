@@ -6,6 +6,19 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [1.7.0] - 2019-09-13
+### Added
+- [Named parameters for wrapper methods](https://github.com/JKHeadley/rest-hapi/pull/200)
+- [Simulated REST calls](https://github.com/JKHeadley/rest-hapi/pull/200)
+- [Exposed `server` and `models` in RestHapi object](https://github.com/JKHeadley/rest-hapi/pull/200)
+
+## [1.6.0] - 2019-05-06
+### Added
+- [Updated code for disabling authentication on specific endpoints.](https://github.com/JKHeadley/rest-hapi/pull/177)
+
+### Fixed
+- [Independent header validation for each endpoint](https://github.com/JKHeadley/rest-hapi/pull/176)
+
 ## [1.5.0] - 2019-04-30
 ### Added
 - [Added general swagger options](https://github.com/JKHeadley/rest-hapi/pull/172)
@@ -256,7 +269,7 @@ post(hardDelete, deleted, Log) | post(hardDelete, deleted, request, Log)
 
 
 
-[Unreleased]: https://github.com/jkheadley/rest-hapi/compare/v1.5.0...HEAD
+[Unreleased]: https://github.com/jkheadley/rest-hapi/compare/v1.6.0...HEAD
 [0.20.0]: https://github.com/jkheadley/rest-hapi/compare/v0.19.2...v0.20.0
 [0.20.2]: https://github.com/jkheadley/rest-hapi/compare/v0.20.0...v0.20.2
 [0.20.3]: https://github.com/jkheadley/rest-hapi/compare/v0.20.2...v0.20.3
@@ -288,5 +301,7 @@ post(hardDelete, deleted, Log) | post(hardDelete, deleted, request, Log)
 [1.3.0]: https://github.com/jkheadley/rest-hapi/compare/v1.2.0...v1.3.0
 [1.4.0]: https://github.com/jkheadley/rest-hapi/compare/v1.3.0...v1.4.0
 [1.5.0]: https://github.com/jkheadley/rest-hapi/compare/v1.4.0...v1.5.0
+[1.6.0]: https://github.com/jkheadley/rest-hapi/compare/v1.5.0...v1.6.0
+[1.7.0]: https://github.com/jkheadley/rest-hapi/compare/v1.6.0...v1.7.0
 
 [BREAKING]: https://github.com/JKHeadley/rest-hapi/releases
