@@ -14,10 +14,14 @@ let mongoose = require('mongoose')
 let Types = mongoose.Schema.Types
 let logging = require('loggin')
 let logger = logging.getLogger('tests')
-logger.logLevel = 'ERROR'
+logger.logLevel = 'FATAL'
 let testHelper = require('../../utilities/test-helper')
 let Joi = require('joi')
 let Q = require('q')
+
+process.on('unhandledRejection', error => {
+  console.log('Unhandled error:', error.message)
+})
 
 test('handler-helper exists and has expected members', function(t) {
   // <editor-fold desc="Arrange">

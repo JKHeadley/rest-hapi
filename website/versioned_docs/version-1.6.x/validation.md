@@ -1,7 +1,8 @@
 ---
-id: validation
+id: version-1.6.x-validation
 title: Validation
 sidebar_label: Validation
+original_id: validation
 ---
 
 ## Route validation
@@ -59,21 +60,6 @@ allowOnCreate: false | field excluded from create model
 queryable: false | field cannot be included as a query parameter
 exclude: true | field cannot be included in a response or as part of a query
 allowNull: true | field accepts ``null`` as a valid value
-
-## Hapi Validation Response
-By default hapi will not respond with details of validation failures for security reasons. If you would like to see these details you need to sepcify a `failAction` for validation like so:
-```javascript
-const server = Hapi.Server({
-    routes: {
-        validate: {
-            failAction: async (request, h, err) => {
-                RestHapi.logger.error(err)
-                throw err
-            }
-        }
-    }
-})
-```
 
 ## Joi helper methods
 rest-hapi exposes the helper methods it uses to generate Joi models through the `joiHelper` property. Combined with the exposed [mongoose wrapper methods](mongoose-wrapper-methods.md), this allows you to easily create [custom endpoints](creating-endpoints.md#standalone-endpoints). You can see a description of these methods below:

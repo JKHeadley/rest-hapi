@@ -47,10 +47,14 @@ module.exports = {
   getLogger: getLogger,
   logUtil: logUtil,
   joiHelper: joiHelper,
-  testHelper: testHelper
+  testHelper: testHelper,
+  server: {},
+  models: {}
 }
 
 async function register(server, options) {
+  module.exports.server = server
+
   let config = defaultConfig
 
   // Overwrite the default config with config set by the user
@@ -92,6 +96,8 @@ async function register(server, options) {
     }
   }
 
+  module.exports.models = models
+
   if (!config.disableSwagger) {
     await registerHapiSwagger(server, Log, config)
   }
@@ -120,6 +126,7 @@ function generateModels(mongoose) {
 
   return modelGenerator(mongoose, Log, config).then(function(models) {
     internals.globalModels = models
+    module.exports.models = models
     return models
   })
 }
@@ -159,7 +166,10 @@ function mongooseInit(mongoose, logger, config) {
     _.omit(config.mongo, ['pass'])
   )
 
-  mongoose.connect(config.mongo.URI)
+  mongoose.connect(
+    config.mongo.URI,
+    { useMongoClient: true }
+  )
 
   globals.mongoose = mongoose
 

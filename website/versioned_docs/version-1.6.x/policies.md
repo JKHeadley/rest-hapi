@@ -1,7 +1,8 @@
 ---
-id: policies
+id: version-1.6.x-policies
 title: Policies
 sidebar_label: Policies
+original_id: policies
 ---
 
 rest-hapi comes with built-in support for policies via the [mrhorse](https://github.com/mark-bradshaw/mrhorse) plugin. Policies provide a powerful method of applying the same business logic to multiple routes declaratively. They can be inserted at any point in the [hapi request lifecycle](https://hapijs.com/api#request-lifecycle), allowing you to layer your business logic in a clean, organized, and centralized manner. We highly recommend you learn more about the details and benefits of policies in the [mrhorse readme](https://github.com/mark-bradshaw/mrhorse).
@@ -70,7 +71,7 @@ Since policies and [middleware functions](middleware.md) seem to provide similar
 Policies | Middleware
 --- | ---
 Policies are most useful when applied to multiple routes for multiple models, which is why they are located in a centralized place | Middleware functions are meant to be both model and endpoint specific
-Policies are only active when an endpoint is called | Middleware functions are active when either an endpoint is called or when a [wrapper method](mongoose-wrapper-methods.md) is used (**UPDATE** As of v1.7.x policies can be [accessed programmatically via wrapper methods](mongoose-wrapper-methods.md#simulated-rest-calls))
+Policies are only active when an endpoint is called | Middleware functions are active when either an endpoint is called or when a [wrapper method](mongoose-wrapper-methods.md) is used
 Policies can run before (`onPreHandler`) or after (`onPostHander`) the handler function | Since middleware functions are run as part of the handler, a `pre` middleware function will run after any `onPreHandler` policy, and a `post` middlware function will run before any `onPostHandler` policy
 
 ## Example: custom authorization via policies

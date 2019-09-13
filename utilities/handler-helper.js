@@ -58,20 +58,71 @@ module.exports = {
 }
 
 /**
- * List function exposed as a mongoose wrapper.
- * @param model: A mongoose model.
- * @param query: rest-hapi query parameters to be converted to a mongoose query.
- * @param Log: A logging object.
+ * Finds a list of model documents.
+ * @param  {...any} args
+ * **Positional:**
+ * - function list(model, query, Log)
+ *
+ * **Named:**
+ * - function list({
+ *      model,
+ *      query,
+ *      Log = RestHapi.getLogger('list'),
+ *      restCall = false,
+ *      credentials
+ *   })
+ *
+ * **Params:**
+ * - model {object | string}: A mongoose model.
+ * - query: rest-hapi query parameters to be converted to a mongoose query.
+ * - Log: A logging object.
+ * - restCall: If 'true', then will call GET /model
+ * - credentials: Credentials for accessing the endpoint.
+ *
  * @returns {object} A promise for the resulting model documents or the count of the query results.
- * @private
  */
-function _list(model, query, Log) {
+function _list(...args) {
+  if (args.length > 1) {
+    return _listV1(...args)
+  } else {
+    return _listV2(...args)
+  }
+}
+
+function _listV1(model, query, Log) {
+  model = getModel(model)
   let request = { query: query }
   return _listHandler(model, request, Log)
 }
+
+async function _listV2({ model, query, Log, restCall = false, credentials }) {
+  model = getModel(model)
+  let RestHapi = require('../rest-hapi')
+  Log = Log || RestHapi.getLogger('list')
+
+  if (restCall) {
+    assertServer()
+    credentials = defaultCreds(credentials)
+
+    let request = {
+      method: 'Get',
+      url: `/${model.routeOptions.alias || model.modelName}`,
+      query,
+      credentials,
+      headers: { authorization: 'Bearer' }
+    }
+
+    const injectOptions = RestHapi.testHelper.mockInjection(request)
+    let { result } = await RestHapi.server.inject(injectOptions)
+    return result
+  } else {
+    return _listV1(model, query, Log)
+  }
+}
+
 /**
  * Finds a list of model documents.
- * @param model: A mongoose model.
+ * @param model {object | string}: A mongoose model.
  * @param request: The Hapi request object, or a container for the wrapper query.
  * @param Log: A logging object.
  * @returns {object} A promise for the resulting model documents or the count of the query results.
@@ -209,21 +260,81 @@ async function _listHandler(model, request, Log) {
 }
 
 /**
- * Find function exposed as a mongoose wrapper.
- * @param model: A mongoose model.
- * @param _id: The document id.
- * @param query: rest-hapi query parameters to be converted to a mongoose query.
- * @param Log: A logging object.
+ * Finds a model document.
+ * @param  {...any} args
+ * **Positional:**
+ * - function find(model, _id, query, Log)
+ *
+ * **Named:**
+ * - function find({
+ *      model,
+ *      _id,
+ *      query,
+ *      Log = RestHapi.getLogger('find'),
+ *      restCall = false,
+ *      credentials
+ *   })
+ *
+ * **Params:**
+ * - model {object | string}: A mongoose model.
+ * - _id: The document id.
+ * - query: rest-hapi query parameters to be converted to a mongoose query.
+ * - Log: A logging object.
+ * - restCall: If 'true', then will call GET /model/{_id}
+ * - credentials: Credentials for accessing the endpoint.
+ *
  * @returns {object} A promise for the resulting model document.
- * @private
  */
-function _find(model, _id, query, Log) {
+function _find(...args) {
+  if (args.length > 1) {
+    return _findV1(...args)
+  } else {
+    return _findV2(...args)
+  }
+}
+
+function _findV1(model, _id, query, Log) {
+  model = getModel(model)
   let request = { params: { _id: _id }, query: query }
   return _findHandler(model, _id, request, Log)
 }
+
+async function _findV2({
+  model,
+  _id,
+  query,
+  Log,
+  restCall = false,
+  credentials
+}) {
+  model = getModel(model)
+  let RestHapi = require('../rest-hapi')
+  Log = Log || RestHapi.getLogger('find')
+
+  if (restCall) {
+    assertServer()
+    credentials = defaultCreds(credentials)
+
+    let request = {
+      method: 'Get',
+      url: `/${model.routeOptions.alias || model.modelName}/${_id}`,
+      params: { _id },
+      query,
+      credentials,
+      headers: { authorization: 'Bearer' }
+    }
+
+    const injectOptions = RestHapi.testHelper.mockInjection(request)
+    let { result } = await RestHapi.server.inject(injectOptions)
+    return result
+  } else {
+    return _findV1(model, _id, query, Log)
+  }
+}
+
 /**
  * Finds a model document.
- * @param model: A mongoose model.
+ * @param model {object | string}: A mongoose model.
  * @param _id: The document id.
  * @param request: The Hapi request object, or a container for the wrapper query.
  * @param Log: A logging object.
@@ -313,21 +424,78 @@ async function _findHandler(model, _id, request, Log) {
 }
 
 /**
- * Create function exposed as a mongoose wrapper.
- * @param model: A mongoose model.
- * @param payload: Data used to create the model document/s.
- * @param Log: A logging object.
- * @returns {object} A promise for the resulting model document/s.
- * @private
+ * Creates one or more model documents.
+ * @param  {...any} args
+ * **Positional:**
+ * - function create(model, payload, Log)
+ *
+ * **Named:**
+ * - function create({
+ *      model,
+ *      payload,
+ *      Log = RestHapi.getLogger('create'),
+ *      restCall = false,
+ *      credentials
+ *   })
+ *
+ * **Params:**
+ * - model {object | string}: A mongoose model.
+ * - payload: Data used to create the model document/s.
+ * - Log: A logging object.
+ * - restCall: If 'true', then will call POST /model
+ * - credentials: Credentials for accessing the endpoint.
+ *
+ * @returns {object} A promise for the resulting model document.
  */
-function _create(model, payload, Log) {
+function _create(...args) {
+  if (args.length > 1) {
+    return _createV1(...args)
+  } else {
+    return _createV2(...args)
+  }
+}
+
+function _createV1(model, payload, Log) {
+  model = getModel(model)
   let request = { payload: payload }
   return _createHandler(model, request, Log)
 }
+
+async function _createV2({
+  model,
+  payload,
+  Log,
+  restCall = false,
+  credentials
+}) {
+  model = getModel(model)
+  let RestHapi = require('../rest-hapi')
+  Log = Log || RestHapi.getLogger('create')
+
+  if (restCall) {
+    assertServer()
+    credentials = defaultCreds(credentials)
+
+    let request = {
+      method: 'Post',
+      url: `/${model.routeOptions.alias || model.modelName}`,
+      payload,
+      credentials,
+      headers: { authorization: 'Bearer' }
+    }
+
+    const injectOptions = RestHapi.testHelper.mockInjection(request)
+    let { result } = await RestHapi.server.inject(injectOptions)
+    return result
+  } else {
+    return _createV1(model, payload, Log)
+  }
+}
+
 // TODO: make sure errors are catching in correct order
 /**
  * Creates one or more model documents.
- * @param model: A mongoose model.
+ * @param model {object | string}: A mongoose model.
  * @param request: The Hapi request object, or a container for the wrapper payload.
  * @param Log: A logging object.
  * @returns {object} A promise for the resulting model document/s.
@@ -431,21 +599,81 @@ async function _createHandler(model, request, Log) {
 }
 
 /**
- * Update function exposed as a mongoose wrapper.
- * @param model: A mongoose model.
- * @param _id: The document id.
- * @param payload: Data used to update the model document.
- * @param Log: A logging object.
+ * Updates a model document.
+ * @param  {...any} args
+ * **Positional:**
+ * - function update(model, _id, payload, Log)
+ *
+ * **Named:**
+ * - function update({
+ *      model,
+ *      _id,
+ *      payload,
+ *      Log = RestHapi.getLogger('update'),
+ *      restCall = false,
+ *      credentials
+ *   })
+ *
+ * **Params:**
+ * - model {object | string}: A mongoose model.
+ * - _id: The document id.
+ * - payload: Data used to update the model document.
+ * - Log: A logging object.
+ * - restCall: If 'true', then will call PUT /model/{_id}
+ * - credentials: Credentials for accessing the endpoint.
+ *
  * @returns {object} A promise for the resulting model document.
- * @private
  */
-function _update(model, _id, payload, Log) {
+function _update(...args) {
+  if (args.length > 1) {
+    return _updateV1(...args)
+  } else {
+    return _updateV2(...args)
+  }
+}
+
+function _updateV1(model, _id, payload, Log) {
+  model = getModel(model)
   let request = { params: { _id: _id }, payload: payload }
   return _updateHandler(model, _id, request, Log)
 }
+
+async function _updateV2({
+  model,
+  _id,
+  payload,
+  Log,
+  restCall = false,
+  credentials
+}) {
+  model = getModel(model)
+  let RestHapi = require('../rest-hapi')
+  Log = Log || RestHapi.getLogger('update')
+
+  if (restCall) {
+    assertServer()
+    credentials = defaultCreds(credentials)
+
+    let request = {
+      method: 'Put',
+      url: `/${model.routeOptions.alias || model.modelName}/${_id}`,
+      params: { _id },
+      payload,
+      credentials,
+      headers: { authorization: 'Bearer' }
+    }
+
+    const injectOptions = RestHapi.testHelper.mockInjection(request)
+    let { result } = await RestHapi.server.inject(injectOptions)
+    return result
+  } else {
+    return _updateV1(model, _id, payload, Log)
+  }
+}
+
 /**
  * Updates a model document.
- * @param model: A mongoose model.
+ * @param model {object | string}: A mongoose model.
  * @param _id: The document id.
  * @param request: The Hapi request object, or a container for the wrapper payload.
  * @param Log: A logging object.
@@ -526,21 +754,80 @@ async function _updateHandler(model, _id, request, Log) {
 }
 
 /**
- * DeleteOne function exposed as a mongoose wrapper.
- * @param model: A mongoose model.
- * @param _id: The document id.
- * @param hardDelete: Flag used to determine a soft or hard delete.
- * @param Log: A logging object.
- * @returns {object} A promise returning true if the delete succeeds.
- * @private
+ * Deletes a model document.
+ * @param  {...any} args
+ * **Positional:**
+ * - function deleteOne(model, _id, hardDelete = false, Log)
+ *
+ * **Named:**
+ * - function deleteOne({
+ *      model,
+ *      _id,
+ *      hardDelete = false,
+ *      Log = RestHapi.getLogger('deleteOne'),
+ *      restCall = false,
+ *      credentials
+ *   })
+ *
+ * **Params:**
+ * - model {object | string}: A mongoose model.
+ * - _id: The document id.
+ * - hardDelete: Flag used to determine a soft or hard delete.
+ * - Log: A logging object.
+ * - restCall: If 'true', then will call PUT /model/{_id}
+ * - credentials: Credentials for accessing the endpoint.
+ *
+ * @returns {object} A promise for the resulting model document.
  */
-function _deleteOne(model, _id, hardDelete, Log) {
+function _deleteOne(...args) {
+  if (args.length > 1) {
+    return _deleteOneV1(...args)
+  } else {
+    return _deleteOneV2(...args)
+  }
+}
+
+function _deleteOneV1(model, _id, hardDelete, Log) {
+  model = getModel(model)
   let request = { params: { _id: _id } }
   return _deleteOneHandler(model, _id, hardDelete, request, Log)
 }
+
+async function _deleteOneV2({
+  model,
+  _id,
+  hardDelete = false,
+  Log,
+  restCall = false,
+  credentials
+}) {
+  model = getModel(model)
+  let RestHapi = require('../rest-hapi')
+  Log = Log || RestHapi.getLogger('deleteOne')
+
+  if (restCall) {
+    assertServer()
+    credentials = defaultCreds(credentials)
+
+    let request = {
+      method: 'Delete',
+      url: `/${model.routeOptions.alias || model.modelName}/${_id}`,
+      params: { _id },
+      credentials,
+      headers: { authorization: 'Bearer' }
+    }
+
+    const injectOptions = RestHapi.testHelper.mockInjection(request)
+    let { result } = await RestHapi.server.inject(injectOptions)
+    return result
+  } else {
+    return _deleteOneV1(model, _id, hardDelete, Log)
+  }
+}
+
 /**
  * Deletes a model document
- * @param model: A mongoose model.
+ * @param model {object | string}: A mongoose model.
  * @param _id: The document id.
  * @param hardDelete: Flag used to determine a soft or hard delete.
  * @param request: The Hapi request object.
@@ -632,20 +919,79 @@ async function _deleteOneHandler(model, _id, hardDelete, request, Log) {
 }
 
 /**
- * DeleteMany function exposed as a mongoose wrapper.
- * @param model: A mongoose model.
- * @param payload: Either an array of ids or an array of objects containing an id and a "hardDelete" flag.
- * @param Log: A logging object.
- * @returns {object} A promise returning true if the delete succeeds.
- * @private
+ * Deletes multiple documents.
+ * @param  {...any} args
+ * **Positional:**
+ * - function deleteMany(model, payload, Log)
+ *
+ * **Named:**
+ * - function deleteMany({
+ *      model,
+ *      _id,
+ *      payload,
+ *      Log = RestHapi.getLogger('delete'),
+ *      restCall = false,
+ *      credentials
+ *   })
+ *
+ * **Params:**
+ * - model {object | string}: A mongoose model.
+ * - _id: The document id.
+ * - payload: Either an array of ids or an array of objects containing an id and a "hardDelete" flag.
+ * - Log: A logging object.
+ * - restCall: If 'true', then will call PUT /model/{_id}
+ * - credentials: Credentials for accessing the endpoint.
+ *
+ * @returns {object} A promise for the resulting model document.
  */
-function _deleteMany(model, payload, Log) {
+function _deleteMany(...args) {
+  if (args.length > 1) {
+    return _deleteManyV1(...args)
+  } else {
+    return _deleteManyV2(...args)
+  }
+}
+
+function _deleteManyV1(model, payload, Log) {
+  model = getModel(model)
   let request = { payload: payload }
   return _deleteManyHandler(model, request, Log)
 }
+
+async function _deleteManyV2({
+  model,
+  payload,
+  Log,
+  restCall = false,
+  credentials
+}) {
+  model = getModel(model)
+  let RestHapi = require('../rest-hapi')
+  Log = Log || RestHapi.getLogger('deleteOne')
+
+  if (restCall) {
+    assertServer()
+    credentials = defaultCreds(credentials)
+
+    let request = {
+      method: 'Delete',
+      url: `/${model.routeOptions.alias || model.modelName}`,
+      payload,
+      credentials,
+      headers: { authorization: 'Bearer' }
+    }
+
+    const injectOptions = RestHapi.testHelper.mockInjection(request)
+    let { result } = await RestHapi.server.inject(injectOptions)
+    return result
+  } else {
+    return _deleteManyV1(model, payload, Log)
+  }
+}
+
 /**
  * Deletes multiple documents.
- * @param model: A mongoose model.
+ * @param model {object | string}: A mongoose model.
  * @param request: The Hapi request object, or a container for the wrapper payload.
  * @param Log: A logging object.
  * @returns {object} A promise returning true if the delete succeeds.
@@ -678,18 +1024,54 @@ async function _deleteManyHandler(model, request, Log) {
 }
 
 /**
- * AddOne function exposed as a mongoose wrapper.
- * @param ownerModel: The model that is being added to.
- * @param ownerId: The id of the owner document.
- * @param childModel: The model that is being added.
- * @param childId: The id of the child document.
- * @param associationName: The name of the association from the ownerModel's perspective.
- * @param payload: An object containing an extra linking-model fields.
- * @param Log: A logging object
- * @returns {object} A promise returning true if the add succeeds.
- * @private
+ * Adds an association to a document
+ * @param  {...any} args
+ * **Positional:**
+ * - function addOne(
+ *      ownerModel,
+ *      ownerId,
+ *      childModel,
+ *      childId,
+ *      associationName,
+ *      payload,
+ *      Log
+ *   )
+ *
+ * **Named:**
+ * - function addOne({
+ *      ownerModel,
+ *      ownerId,
+ *      childModel,
+ *      childId,
+ *      associationName,
+ *      payload = {},
+ *      Log = RestHapi.getLogger('addOne'),
+ *      restCall = false,
+ *      credentials
+ *   })
+ *
+ * **Params:**
+ * - ownerModel {object | string}: The model that is being added to.
+ * - ownerId: The id of the owner document.
+ * - childModel {object | string}: The model that is being added.
+ * - childId: The id of the child document.
+ * - associationName: The name of the association from the ownerModel's perspective.
+ * - payload: An object containing an extra linking-model fields.
+ * - Log: A logging object
+ * - restCall: If 'true', then will call PUT /model/{_id}
+ * - credentials: Credentials for accessing the endpoint.
+ *
+ * @returns {object} A promise for the resulting model document.
  */
-function _addOne(
+function _addOne(...args) {
+  if (args.length > 1) {
+    return _addOneV1(...args)
+  } else {
+    return _addOneV2(...args)
+  }
+}
+
+function _addOneV1(
   ownerModel,
   ownerId,
   childModel,
@@ -698,6 +1080,8 @@ function _addOne(
   payload,
   Log
 ) {
+  ownerModel = getModel(ownerModel)
+  childModel = getModel(childModel)
   let request = {
     params: { ownerId: ownerId, childId: childId },
     payload: payload
@@ -712,11 +1096,58 @@ function _addOne(
     Log
   )
 }
+
+async function _addOneV2({
+  ownerModel,
+  ownerId,
+  childModel,
+  childId,
+  associationName,
+  payload = {},
+  Log,
+  restCall = false,
+  credentials
+}) {
+  ownerModel = getModel(ownerModel)
+  childModel = getModel(childModel)
+  let RestHapi = require('../rest-hapi')
+  Log = Log || RestHapi.getLogger('addOne')
+
+  if (restCall) {
+    assertServer()
+    credentials = defaultCreds(credentials)
+
+    let request = {
+      method: 'Put',
+      url: `/${ownerModel.routeOptions.alias ||
+        ownerModel.modelName}/${ownerId}/${associationName}/${childId}`,
+      payload,
+      params: { ownerId, childId },
+      credentials,
+      headers: { authorization: 'Bearer' }
+    }
+
+    const injectOptions = RestHapi.testHelper.mockInjection(request)
+    let { result } = await RestHapi.server.inject(injectOptions)
+    return result
+  } else {
+    return _addOneV1(
+      ownerModel,
+      ownerId,
+      childModel,
+      childId,
+      associationName,
+      payload,
+      Log
+    )
+  }
+}
+
 /**
  * Adds an association to a document
- * @param ownerModel: The model that is being added to.
+ * @param ownerModel {object | string}: The model that is being added to.
  * @param ownerId: The id of the owner document.
- * @param childModel: The model that is being added.
+ * @param childModel {object | string}: The model that is being added.
  * @param childId: The id of the child document.
  * @param associationName: The name of the association from the ownerModel's perspective.
  * @param request: The Hapi request object, or a container for the wrapper payload.
@@ -795,25 +1226,68 @@ async function _addOneHandler(
 }
 
 /**
- * RemoveOne function exposed as a mongoose wrapper.
- * @param ownerModel: The model that is being removed from.
- * @param ownerId: The id of the owner document.
- * @param childModel: The model that is being removed.
- * @param childId: The id of the child document.
- * @param associationName: The name of the association from the ownerModel's perspective.
- * @param Log: A logging object
- * @returns {object} A promise returning true if the remove succeeds.
- * @private
+ * Removes an association to a document
+ * @param  {...any} args
+ * **Positional:**
+ * - function removeOne(
+ *      ownerModel,
+ *      ownerId,
+ *      childModel,
+ *      childId,
+ *      associationName,
+ *      payload,
+ *      Log
+ *   )
+ *
+ * **Named:**
+ * - function removeOne({
+ *      ownerModel,
+ *      ownerId,
+ *      childModel,
+ *      childId,
+ *      associationName,
+ *      payload = {},
+ *      Log = RestHapi.getLogger('removeOne'),
+ *      restCall = false,
+ *      credentials
+ *   })
+ *
+ * **Params:**
+ * - ownerModel {object | string}: The model that is being removed from.
+ * - ownerId: The id of the owner document.
+ * - childModel {object | string}: The model that is being removed.
+ * - childId: The id of the child document.
+ * - associationName: The name of the association from the ownerModel's perspective.
+ * - payload: An object containing an extra linking-model fields.
+ * - Log: A logging object
+ * - restCall: If 'true', then will call PUT /model/{_id}
+ * - credentials: Credentials for accessing the endpoint.
+ *
+ * @returns {object} A promise for the resulting model document.
  */
-function _removeOne(
+function _removeOne(...args) {
+  if (args.length > 1) {
+    return _removeOneV1(...args)
+  } else {
+    return _removeOneV2(...args)
+  }
+}
+
+function _removeOneV1(
   ownerModel,
   ownerId,
   childModel,
   childId,
   associationName,
+  payload,
   Log
 ) {
-  let request = { params: { ownerId: ownerId, childId: childId } }
+  ownerModel = getModel(ownerModel)
+  childModel = getModel(childModel)
+  let request = {
+    params: { ownerId: ownerId, childId: childId },
+    payload: payload
+  }
   return _removeOneHandler(
     ownerModel,
     ownerId,
@@ -824,11 +1298,57 @@ function _removeOne(
     Log
   )
 }
+
+async function _removeOneV2({
+  ownerModel,
+  ownerId,
+  childModel,
+  childId,
+  associationName,
+  payload = {},
+  Log,
+  restCall = false,
+  credentials
+}) {
+  ownerModel = getModel(ownerModel)
+  childModel = getModel(childModel)
+  let RestHapi = require('../rest-hapi')
+  Log = Log || RestHapi.getLogger('removeOne')
+
+  if (restCall) {
+    assertServer()
+    credentials = defaultCreds(credentials)
+
+    let request = {
+      method: 'Delete',
+      url: `/${ownerModel.routeOptions.alias ||
+        ownerModel.modelName}/${ownerId}/${associationName}/${childId}`,
+      payload,
+      params: { ownerId, childId },
+      credentials,
+      headers: { authorization: 'Bearer' }
+    }
+
+    const injectOptions = RestHapi.testHelper.mockInjection(request)
+    let { result } = await RestHapi.server.inject(injectOptions)
+    return result
+  } else {
+    return _removeOneV1(
+      ownerModel,
+      ownerId,
+      childModel,
+      childId,
+      associationName,
+      payload,
+      Log
+    )
+  }
+}
 /**
  * Removes an association to a document
- * @param ownerModel: The model that is being removed from.
+ * @param ownerModel {object | string}: The model that is being removed from.
  * @param ownerId: The id of the owner document.
- * @param childModel: The model that is being removed.
+ * @param childModel {object | string}: The model that is being removed.
  * @param childId: The id of the child document.
  * @param associationName: The name of the association from the ownerModel's perspective.
  * @param request: The Hapi request object.
@@ -899,17 +1419,51 @@ async function _removeOneHandler(
 }
 
 /**
- * AddMany function exposed as a mongoose wrapper.
- * @param ownerModel: The model that is being added to.
- * @param ownerId: The id of the owner document.
- * @param childModel: The model that is being added.
- * @param associationName: The name of the association from the ownerModel's perspective.
- * @param payload: Either a list of id's or a list of id's along with extra linking-model fields.
- * @param Log: A logging object
- * @returns {object} A promise returning true if the add succeeds.
- * @private
+ * Adds multiple associations to a document.
+ * @param  {...any} args
+ * **Positional:**
+ * - function addMany(
+ *      ownerModel,
+ *      ownerId,
+ *      childModel,
+ *      associationName,
+ *      payload,
+ *      Log
+ *   )
+ *
+ * **Named:**
+ * - function addMany({
+ *      ownerModel,
+ *      ownerId,
+ *      childModel,
+ *      associationName,
+ *      payload = {},
+ *      Log = RestHapi.getLogger('addMany'),
+ *      restCall = false,
+ *      credentials
+ *   })
+ *
+ * **Params:**
+ * - ownerModel {object | string}: The model that is being added to.
+ * - ownerId: The id of the owner document.
+ * - childModel {object | string}: The model that is being added.
+ * - associationName: The name of the association from the ownerModel's perspective.
+ * - payload: Either a list of id's or a list of id's along with extra linking-model fields.
+ * - Log: A logging object
+ * - restCall: If 'true', then will call PUT /model/{_id}
+ * - credentials: Credentials for accessing the endpoint.
+ *
+ * @returns {object} A promise for the resulting model document.
  */
-function _addMany(
+function _addMany(...args) {
+  if (args.length > 1) {
+    return _addManyV1(...args)
+  } else {
+    return _addManyV2(...args)
+  }
+}
+
+function _addManyV1(
   ownerModel,
   ownerId,
   childModel,
@@ -917,6 +1471,8 @@ function _addMany(
   payload,
   Log
 ) {
+  ownerModel = getModel(ownerModel)
+  childModel = getModel(childModel)
   let request = { params: { ownerId: ownerId }, payload: payload }
   return _addManyHandler(
     ownerModel,
@@ -927,11 +1483,56 @@ function _addMany(
     Log
   )
 }
+
+async function _addManyV2({
+  ownerModel,
+  ownerId,
+  childModel,
+  associationName,
+  payload = {},
+  Log,
+  restCall = false,
+  credentials
+}) {
+  ownerModel = getModel(ownerModel)
+  childModel = getModel(childModel)
+  let RestHapi = require('../rest-hapi')
+  Log = Log || RestHapi.getLogger('addMany')
+
+  if (restCall) {
+    assertServer()
+    credentials = defaultCreds(credentials)
+
+    let request = {
+      method: 'Post',
+      url: `/${ownerModel.routeOptions.alias ||
+        ownerModel.modelName}/${ownerId}/${associationName}`,
+      payload,
+      params: { ownerId },
+      credentials,
+      headers: { authorization: 'Bearer' }
+    }
+
+    const injectOptions = RestHapi.testHelper.mockInjection(request)
+    let { result } = await RestHapi.server.inject(injectOptions)
+    return result
+  } else {
+    return _addManyV1(
+      ownerModel,
+      ownerId,
+      childModel,
+      associationName,
+      payload,
+      Log
+    )
+  }
+}
+
 /**
  * Adds multiple associations to a document.
- * @param ownerModel: The model that is being added to.
+ * @param ownerModel {object | string}: The model that is being added to.
  * @param ownerId: The id of the owner document.
- * @param childModel: The model that is being added.
+ * @param childModel {object | string}: The model that is being added.
  * @param associationName: The name of the association from the ownerModel's perspective.
  * @param request: The Hapi request object, or a container for the wrapper payload.
  * @param Log: A logging object
@@ -1026,17 +1627,51 @@ async function _addManyHandler(
 }
 
 /**
- * RemoveMany function exposed as a mongoose wrapper.
- * @param ownerModel: The model that is being removed from.
- * @param ownerId: The id of the owner document.
- * @param childModel: The model that is being removed.
- * @param associationName: The name of the association from the ownerModel's perspective.
- * @param payload: A list of ids
- * @param Log: A logging object
- * @returns {object} A promise returning true if the remove succeeds.
- * @private
+ * Removes multiple associations from a document
+ * @param  {...any} args
+ * **Positional:**
+ * - function removeMany(
+ *      ownerModel,
+ *      ownerId,
+ *      childModel,
+ *      associationName,
+ *      payload,
+ *      Log
+ *   )
+ *
+ * **Named:**
+ * - function removeMany({
+ *      ownerModel,
+ *      ownerId,
+ *      childModel,
+ *      associationName,
+ *      payload = {},
+ *      Log = RestHapi.getLogger('removeMany'),
+ *      restCall = false,
+ *      credentials
+ *   })
+ *
+ * **Params:**
+ * - ownerModel {object | string}: The model that is being added from.
+ * - ownerId: The id of the owner document.
+ * - childModel {object | string}: The model that is being removed.
+ * - associationName: The name of the association from the ownerModel's perspective.
+ * - payload: Either a list of id's or a list of id's along with extra linking-model fields.
+ * - Log: A logging object
+ * - restCall: If 'true', then will call PUT /model/{_id}
+ * - credentials: Credentials for accessing the endpoint.
+ *
+ * @returns {object} A promise for the resulting model document.
  */
-function _removeMany(
+function _removeMany(...args) {
+  if (args.length > 1) {
+    return _removeManyV1(...args)
+  } else {
+    return _removeManyV2(...args)
+  }
+}
+
+function _removeManyV1(
   ownerModel,
   ownerId,
   childModel,
@@ -1044,6 +1679,8 @@ function _removeMany(
   payload,
   Log
 ) {
+  ownerModel = getModel(ownerModel)
+  childModel = getModel(childModel)
   let request = { params: { ownerId: ownerId }, payload: payload }
   return _removeManyHandler(
     ownerModel,
@@ -1054,11 +1691,56 @@ function _removeMany(
     Log
   )
 }
+
+async function _removeManyV2({
+  ownerModel,
+  ownerId,
+  childModel,
+  associationName,
+  payload = {},
+  Log,
+  restCall = false,
+  credentials
+}) {
+  ownerModel = getModel(ownerModel)
+  childModel = getModel(childModel)
+  let RestHapi = require('../rest-hapi')
+  Log = Log || RestHapi.getLogger('removeMany')
+
+  if (restCall) {
+    assertServer()
+    credentials = defaultCreds(credentials)
+
+    let request = {
+      method: 'Delete',
+      url: `/${ownerModel.routeOptions.alias ||
+        ownerModel.modelName}/${ownerId}/${associationName}`,
+      payload,
+      params: { ownerId },
+      credentials,
+      headers: { authorization: 'Bearer' }
+    }
+
+    const injectOptions = RestHapi.testHelper.mockInjection(request)
+    let { result } = await RestHapi.server.inject(injectOptions)
+    return result
+  } else {
+    return _removeManyV1(
+      ownerModel,
+      ownerId,
+      childModel,
+      associationName,
+      payload,
+      Log
+    )
+  }
+}
+
 /**
  * Removes multiple associations from a document
- * @param ownerModel: The model that is being removed from.
+ * @param ownerModel {object | string}: The model that is being removed from.
  * @param ownerId: The id of the owner document.
- * @param childModel: The model that is being removed.
+ * @param childModel {object | string}: The model that is being removed.
  * @param associationName: The name of the association from the ownerModel's perspective.
  * @param request: The Hapi request object, or a container for the wrapper payload.
  * @param Log: A logging object
@@ -1136,18 +1818,61 @@ async function _removeManyHandler(
 }
 
 /**
- * GetAll function exposed as a mongoose wrapper.
- * @param ownerModel: The model that is being added to.
- * @param ownerId: The id of the owner document.
- * @param childModel: The model that is being added.
- * @param associationName: The name of the association from the ownerModel's perspective.
- * @param query: rest-hapi query parameters to be converted to a mongoose query.
- * @param Log: A logging object
- * @returns {object} A promise for the resulting model documents or the count of the query results.
- * @private
+ * Get all of the associations for a document
+ * @param  {...any} args
+ * **Positional:**
+ * - function getAll(
+ *      ownerModel,
+ *      ownerId,
+ *      childModel,
+ *      associationName,
+ *      query,
+ *      Log
+ *   )
+ *
+ * **Named:**
+ * - function getAll({
+ *      ownerModel,
+ *      ownerId,
+ *      childModel,
+ *      associationName,
+ *      query,
+ *      Log = RestHapi.getLogger('getAll'),
+ *      restCall = false,
+ *      credentials
+ *   })
+ *
+ * **Params:**
+ * - ownerModel {object | string}: The model that is being added to.
+ * - ownerId: The id of the owner document.
+ * - childModel {object | string}: The model that is being added.
+ * - associationName: The name of the association from the ownerModel's perspective.
+ * - query: rest-hapi query parameters to be converted to a mongoose query.
+ * - Log: A logging object
+ * - restCall: If 'true', then will call PUT /model/{_id}
+ * - credentials: Credentials for accessing the endpoint.
+ *
+ * @returns {object} A promise for the resulting model document.
  */
-function _getAll(ownerModel, ownerId, childModel, associationName, query, Log) {
-  let request = { params: { ownerId: ownerId }, query: query }
+function _getAll(...args) {
+  if (args.length > 1) {
+    return _getAllV1(...args)
+  } else {
+    return _getAllV2(...args)
+  }
+}
+
+function _getAllV1(
+  ownerModel,
+  ownerId,
+  childModel,
+  associationName,
+  query,
+  Log
+) {
+  ownerModel = getModel(ownerModel)
+  childModel = getModel(childModel)
+  let request = { params: { ownerId: ownerId }, query }
   return _getAllHandler(
     ownerModel,
     ownerId,
@@ -1157,11 +1882,56 @@ function _getAll(ownerModel, ownerId, childModel, associationName, query, Log) {
     Log
   )
 }
+
+async function _getAllV2({
+  ownerModel,
+  ownerId,
+  childModel,
+  associationName,
+  query,
+  Log,
+  restCall = false,
+  credentials
+}) {
+  ownerModel = getModel(ownerModel)
+  childModel = getModel(childModel)
+  let RestHapi = require('../rest-hapi')
+  Log = Log || RestHapi.getLogger('getAll')
+
+  if (restCall) {
+    assertServer()
+    credentials = defaultCreds(credentials)
+
+    let request = {
+      method: 'Get',
+      url: `/${ownerModel.routeOptions.alias ||
+        ownerModel.modelName}/${ownerId}/${associationName}`,
+      query,
+      params: { ownerId },
+      credentials,
+      headers: { authorization: 'Bearer' }
+    }
+
+    const injectOptions = RestHapi.testHelper.mockInjection(request)
+    let { result } = await RestHapi.server.inject(injectOptions)
+    return result
+  } else {
+    return _getAllV1(
+      ownerModel,
+      ownerId,
+      childModel,
+      associationName,
+      query,
+      Log
+    )
+  }
+}
+
 /**
  * Get all of the associations for a document
- * @param ownerModel: The model that is being added to.
+ * @param ownerModel {object | string}: The model that is being added to.
  * @param ownerId: The id of the owner document.
- * @param childModel: The model that is being added.
+ * @param childModel {object | string}: The model that is being added.
  * @param associationName: The name of the association from the ownerModel's perspective.
  * @param request: The Hapi request object, or a container for the wrapper query.
  * @param Log: A logging object
@@ -1667,6 +2437,34 @@ function filterDeletedEmbeds(result, parent, parentkey, depth, Log) {
     }
     // Log.log("JUMPING OUT");
     return true
+  }
+}
+
+/**
+ * Helper function for "restCall === true" calls
+ * @param {*} credentials
+ */
+function defaultCreds(credentials) {
+  return credentials || { scope: ['root'] }
+}
+
+function assertServer() {
+  let RestHapi = require('../rest-hapi')
+  if (_.isEmpty(RestHapi.server)) {
+    const error = new Error(
+      'No server found. You must register rest-hapi with a hapi server before using `restCall = true`.'
+    )
+    error.type = 'no-server'
+    throw error
+  }
+}
+
+function getModel(model) {
+  let RestHapi = require('../rest-hapi')
+  if (typeof model === 'string') {
+    return RestHapi.models[model]
+  } else {
+    return model
   }
 }
 
