@@ -16,9 +16,12 @@ let mongoURI = process.argv.slice(2)[0]
     mongoose.Promise = Promise
 
     mongoURI = mongoURI || RestHapi.config.mongo.URI
-    mongoose.connect(mongoURI, {
-      useMongoClient: true
-    })
+    mongoose.connect(
+      mongoURI,
+      {
+        useMongoClient: true
+      }
+    )
 
     let models = await RestHapi.generateModels(mongoose)
 

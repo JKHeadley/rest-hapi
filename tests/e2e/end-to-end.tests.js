@@ -13,6 +13,7 @@ const BasicNonEmbedTests = require('./basic-non-embed.tests')
 const AuditLogTests = require('./audit-log.tests')
 const AdvanceAssocTests = require('./advance-assoc.tests')
 const DuplicateFieldTests = require('./duplicate-field.tests')
+const MiscTests = require('./misc.tests')
 
 const MongoMemoryServer = require('mongodb-memory-server').MongoMemoryServer
 const mongoServer = new MongoMemoryServer({
@@ -82,6 +83,9 @@ Test('end to end tests', function(t) {
     })
     .then(function() {
       return DuplicateFieldTests(t, Mongoose, internals, Log, restore)
+    })
+    .then(function() {
+      return MiscTests(t, Mongoose, internals, Log, restore)
     })
     .then(function() {
       return t.test('clearing cache', function(t) {

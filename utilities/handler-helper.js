@@ -101,6 +101,7 @@ async function _listV2({ model, query, Log, restCall = false, credentials }) {
   Log = Log || RestHapi.getLogger('list')
 
   if (restCall) {
+    assertServer()
     credentials = defaultCreds(credentials)
 
     let request = {
@@ -311,6 +312,7 @@ async function _findV2({
   Log = Log || RestHapi.getLogger('find')
 
   if (restCall) {
+    assertServer()
     credentials = defaultCreds(credentials)
 
     let request = {
@@ -471,6 +473,7 @@ async function _createV2({
   Log = Log || RestHapi.getLogger('create')
 
   if (restCall) {
+    assertServer()
     credentials = defaultCreds(credentials)
 
     let request = {
@@ -648,6 +651,7 @@ async function _updateV2({
   Log = Log || RestHapi.getLogger('update')
 
   if (restCall) {
+    assertServer()
     credentials = defaultCreds(credentials)
 
     let request = {
@@ -802,6 +806,7 @@ async function _deleteOneV2({
   Log = Log || RestHapi.getLogger('deleteOne')
 
   if (restCall) {
+    assertServer()
     credentials = defaultCreds(credentials)
 
     let request = {
@@ -965,6 +970,7 @@ async function _deleteManyV2({
   Log = Log || RestHapi.getLogger('deleteOne')
 
   if (restCall) {
+    assertServer()
     credentials = defaultCreds(credentials)
 
     let request = {
@@ -1108,6 +1114,7 @@ async function _addOneV2({
   Log = Log || RestHapi.getLogger('addOne')
 
   if (restCall) {
+    assertServer()
     credentials = defaultCreds(credentials)
 
     let request = {
@@ -1309,6 +1316,7 @@ async function _removeOneV2({
   Log = Log || RestHapi.getLogger('removeOne')
 
   if (restCall) {
+    assertServer()
     credentials = defaultCreds(credentials)
 
     let request = {
@@ -1492,6 +1500,7 @@ async function _addManyV2({
   Log = Log || RestHapi.getLogger('addMany')
 
   if (restCall) {
+    assertServer()
     credentials = defaultCreds(credentials)
 
     let request = {
@@ -1699,6 +1708,7 @@ async function _removeManyV2({
   Log = Log || RestHapi.getLogger('removeMany')
 
   if (restCall) {
+    assertServer()
     credentials = defaultCreds(credentials)
 
     let request = {
@@ -1889,6 +1899,7 @@ async function _getAllV2({
   Log = Log || RestHapi.getLogger('getAll')
 
   if (restCall) {
+    assertServer()
     credentials = defaultCreds(credentials)
 
     let request = {
@@ -2435,6 +2446,17 @@ function filterDeletedEmbeds(result, parent, parentkey, depth, Log) {
  */
 function defaultCreds(credentials) {
   return credentials || { scope: ['root'] }
+}
+
+function assertServer() {
+  let RestHapi = require('../rest-hapi')
+  if (_.isEmpty(RestHapi.server)) {
+    const error = new Error(
+      'No server found. You must register rest-hapi with a hapi server before using `restCall = true`.'
+    )
+    error.type = 'no-server'
+    throw error
+  }
 }
 
 function getModel(model) {

@@ -126,6 +126,7 @@ function generateModels(mongoose) {
 
   return modelGenerator(mongoose, Log, config).then(function(models) {
     internals.globalModels = models
+    module.exports.models = models
     return models
   })
 }
