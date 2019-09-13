@@ -70,7 +70,7 @@ Since policies and [middleware functions](middleware.md) seem to provide similar
 Policies | Middleware
 --- | ---
 Policies are most useful when applied to multiple routes for multiple models, which is why they are located in a centralized place | Middleware functions are meant to be both model and endpoint specific
-Policies are only active when an endpoint is called | Middleware functions are active when either an endpoint is called or when a [wrapper method](mongoose-wrapper-methods.md) is used
+Policies are only active when an endpoint is called | Middleware functions are active when either an endpoint is called or when a [wrapper method](mongoose-wrapper-methods.md) is used (**UPDATE** As of v1.7.x policies can be [accessed programmatically via wrapper methods](mongoose-wrapper-methods.md#simulated-rest-calls))
 Policies can run before (`onPreHandler`) or after (`onPostHander`) the handler function | Since middleware functions are run as part of the handler, a `pre` middleware function will run after any `onPreHandler` policy, and a `post` middlware function will run before any `onPostHandler` policy
 
 ## Example: custom authorization via policies

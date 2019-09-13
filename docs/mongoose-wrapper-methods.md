@@ -29,13 +29,13 @@ The available methods are:
 When used with the [model generating](model-generation.md) function, these methods provide a quick and easy way to start adding rich, relational data to your db. Check out the [seed script](https://github.com/JKHeadley/rest-hapi/blob/master/scripts/seed.js) for an example of these methods in action, or refer to the [Additional endpoints](creating-endpoints.md#additional-endpoints) section example.
 
 ## Simulated REST Calls
-As of v1.7.x wrapper methods accept a `restCall` (named) parameter that, when `true`, simulates a full http REST call. This can be useful for programmatically testing your endpoints or for taking advantage of additional features such as [audit logs](audit-logs.md), [duplicate fields](duplicate-fields.md), and [policies](policies.md).
+As of v1.7.x wrapper methods accept a `restCall` (named) parameter that, when `true`, simulates a full http REST call. This can be useful for programmatically testing your endpoints or for taking advantage of additional endpoint features such as [validation](validation.md), [audit logs](audit-logs.md), [duplicate fields](duplicate-fields.md), and [policies](policies.md).
 
 > **NOTE:** Simulated REST calls will only work after registering rest-hapi as a hapi plugin (i.e. endpoints have been generated). They can't be used if only the [models](model-generation.md) have been generated.
 
 A more detailed description of each method can be found below:
 
-> **NOTE:** Each method supports both `positional` and `named` parameters, though it is recommended to use the `named` parameters since this format support all current options (such as `restCall`) whereas `positional` does not.
+> **NOTE:** Each method supports both `positional` and `named` parameters, though it is recommended to use the `named` parameters since this format supports all current options (such as `restCall`) whereas `positional` does not.
 
 ## list
 ```javascript
