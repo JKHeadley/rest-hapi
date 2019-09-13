@@ -48,7 +48,8 @@ module.exports = {
   logUtil: logUtil,
   joiHelper: joiHelper,
   testHelper: testHelper,
-  server: {}
+  server: {},
+  models: {}
 }
 
 async function register(server, options) {
@@ -94,6 +95,8 @@ async function register(server, options) {
       }
     }
   }
+
+  module.exports.models = models
 
   if (!config.disableSwagger) {
     await registerHapiSwagger(server, Log, config)

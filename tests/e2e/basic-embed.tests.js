@@ -50,100 +50,56 @@ module.exports = (t, Mongoose, internals, Log) => {
                 .then(function() {
                   server.start()
 
-                  let payload = {
-                    email: 'test@user.com',
-                    password: 'root'
-                  }
-
-                  const request = {
-                    method: 'POST',
-                    url: '/user',
-                    params: {},
-                    query: {},
-                    payload: payload,
-                    credentials: {},
-                    headers: {}
-                  }
-
-                  const injectOptions = TestHelper.mockInjection(request)
-
-                  return server.inject(injectOptions)
+                  return RestHapi.create({
+                    model: 'user',
+                    payload: {
+                      email: 'test@user.com',
+                      password: 'root'
+                    },
+                    restCall: true
+                  })
                 })
                 .then(function(response) {
-                  user = response.result
+                  user = response
 
-                  let payload = {
-                    status: 'Enabled',
-                    user: user._id
-                  }
-
-                  const request = {
-                    method: 'POST',
-                    url: '/user-profile',
-                    params: {},
-                    query: {},
-                    payload: payload,
-                    credentials: {},
-                    headers: {}
-                  }
-
-                  const injectOptions = TestHelper.mockInjection(request)
-
-                  return server.inject(injectOptions)
+                  return RestHapi.create({
+                    model: 'userProfile',
+                    payload: {
+                      status: 'Enabled',
+                      user: user._id
+                    },
+                    restCall: true
+                  })
                 })
                 .then(function(response) {
-                  userProfile = response.result
+                  userProfile = response
                   userProfiles.push(userProfiles)
 
-                  let payload = {
-                    profile: userProfile._id
-                  }
-
-                  const request = {
-                    method: 'PUT',
-                    url: '/user/{_id}',
-                    params: { _id: user._id },
-                    query: {},
-                    payload: payload,
-                    credentials: {},
-                    headers: {}
-                  }
-
-                  const injectOptions = TestHelper.mockInjection(request)
-
-                  return server.inject(injectOptions)
+                  return RestHapi.update({
+                    model: 'user',
+                    _id: user._id,
+                    payload: {
+                      profile: userProfile._id
+                    },
+                    restCall: true
+                  })
                 })
                 .then(function(response) {
-                  user = response.result
+                  user = response
                   users.push(user)
 
-                  const request = {
-                    method: 'GET',
-                    url: '/user',
-                    params: {},
+                  return RestHapi.list({
+                    model: 'user',
                     query: { $embed: ['profile'] },
-                    payload: {},
-                    credentials: {},
-                    headers: {}
-                  }
-
-                  const injectOptions = TestHelper.mockInjection(request)
-
-                  return injectOptions
-                })
-
-                // </editor-fold>
-
-                // <editor-fold desc="Act">
-                .then(function(injectOptions) {
-                  return server.inject(injectOptions)
+                    restCall: true
+                  })
                 })
                 // </editor-fold>
 
                 // <editor-fold desc="Assert">
                 .then(function(response) {
                   t.deepEquals(
-                    response.result.docs[0].profile,
+                    response.docs[0].profile,
                     userProfile,
                     'ONE_ONE association correct'
                   )
@@ -217,22 +173,14 @@ module.exports = (t, Mongoose, internals, Log) => {
                       }
                     ]
 
-                    const request = {
-                      method: 'POST',
-                      url: '/role',
-                      params: {},
-                      query: {},
-                      payload: payload,
-                      credentials: {},
-                      headers: {}
-                    }
-
-                    const injectOptions = TestHelper.mockInjection(request)
-
-                    return server.inject(injectOptions)
+                    return RestHapi.create({
+                      model: 'role',
+                      payload,
+                      restCall: true
+                    })
                   })
                   .then(function(response) {
-                    roles = roles.concat(response.result)
+                    roles = roles.concat(response)
 
                     let payload = [
                       {
@@ -250,121 +198,90 @@ module.exports = (t, Mongoose, internals, Log) => {
                       }
                     ]
 
-                    const request = {
-                      method: 'POST',
-                      url: '/user',
-                      params: {},
-                      query: {},
-                      payload: payload,
-                      credentials: {},
-                      headers: {}
-                    }
-
-                    const injectOptions = TestHelper.mockInjection(request)
-
-                    return server.inject(injectOptions)
+                    return RestHapi.create({
+                      model: 'user',
+                      payload,
+                      restCall: true
+                    })
                   })
                   .then(function(response) {
-                    users = users.concat(response.result)
+                    users = users.concat(response)
 
-                    const request = {
-                      method: 'PUT',
-                      url: '/role/{ownerId}/people/{childId}',
-                      params: {
-                        ownerId: roles[0]._id,
-                        childId: users[0]._id
-                      },
-                      query: {},
-                      payload: {},
-                      credentials: {},
-                      headers: {}
-                    }
-
-                    const injectOptions = TestHelper.mockInjection(request)
-
-                    return server.inject(injectOptions)
+                    return RestHapi.addOne({
+                      ownerModel: 'role',
+                      childModel: 'user',
+                      associationName: 'people',
+                      ownerId: roles[0]._id,
+                      childId: users[0]._id,
+                      restCall: true
+                    })
                   })
                   .then(function(response) {
                     let payload = [users[1]._id, users[2]._id]
 
-                    const request = {
-                      method: 'POST',
-                      url: '/role/{ownerId}/people',
-                      params: { ownerId: roles[0]._id },
-                      query: {},
-                      payload: payload,
-                      credentials: {},
-                      headers: {}
-                    }
-
-                    const injectOptions = TestHelper.mockInjection(request)
-
-                    return server.inject(injectOptions)
+                    return RestHapi.addMany({
+                      ownerModel: 'role',
+                      childModel: 'user',
+                      associationName: 'people',
+                      ownerId: roles[0]._id,
+                      payload,
+                      restCall: true
+                    })
                   })
                   .then(function(response) {
-                    const request = {
-                      method: 'GET',
-                      url: '/role/{_id}',
-                      params: { _id: roles[0]._id },
-                      query: { $embed: ['users'] },
-                      payload: {},
-                      credentials: {},
-                      headers: {}
-                    }
-
-                    const injectOptions = TestHelper.mockInjection(request)
-
-                    promises.push(server.inject(injectOptions))
+                    promises.push(
+                      RestHapi.find({
+                        model: 'role',
+                        _id: roles[0]._id,
+                        query: { $embed: ['users'] },
+                        restCall: true
+                      })
+                    )
                   })
                   .then(function(response) {
-                    const request = {
-                      method: 'GET',
-                      url: '/role/{ownerId}/people',
-                      params: { ownerId: roles[0]._id },
-                      query: { $embed: ['title'] },
-                      payload: {},
-                      credentials: {},
-                      headers: {}
-                    }
-
-                    const injectOptions = TestHelper.mockInjection(request)
-
-                    promises.push(server.inject(injectOptions))
+                    promises.push(
+                      RestHapi.getAll({
+                        ownerModel: 'role',
+                        childModel: 'user',
+                        associationName: 'people',
+                        ownerId: roles[0]._id,
+                        query: { $embed: ['title'] },
+                        restCall: true
+                      })
+                    )
                   })
                   .then(function(response) {
-                    const request = {
-                      method: 'GET',
-                      url: '/user',
-                      params: {},
-                      query: {
-                        $embed: ['title'],
-                        email: [users[0].email, users[1].email, users[2].email]
-                      },
-                      payload: {},
-                      credentials: {},
-                      headers: {}
-                    }
-
-                    const injectOptions = TestHelper.mockInjection(request)
-
-                    promises.push(server.inject(injectOptions))
+                    promises.push(
+                      RestHapi.list({
+                        model: 'user',
+                        _id: roles[0]._id,
+                        query: {
+                          $embed: ['title'],
+                          email: [
+                            users[0].email,
+                            users[1].email,
+                            users[2].email
+                          ]
+                        },
+                        restCall: true
+                      })
+                    )
                   })
                   .then(function(response) {
-                    const request = {
-                      method: 'GET',
-                      url: '/user',
-                      params: {},
-                      query: {
-                        email: [users[0].email, users[1].email, users[2].email]
-                      },
-                      payload: {},
-                      credentials: {},
-                      headers: {}
-                    }
-
-                    const injectOptions = TestHelper.mockInjection(request)
-
-                    promises.push(server.inject(injectOptions))
+                    promises.push(
+                      RestHapi.list({
+                        model: 'user',
+                        _id: roles[0]._id,
+                        query: {
+                          email: [
+                            users[0].email,
+                            users[1].email,
+                            users[2].email
+                          ]
+                        },
+                        restCall: true
+                      })
+                    )
                   })
                   // </editor-fold>
 
@@ -378,48 +295,48 @@ module.exports = (t, Mongoose, internals, Log) => {
                   .then(function(response) {
                     // EXPL: rearrange results to match order
                     let result1 = []
-                    response[0].result.users.forEach(function(user) {
+                    response[0].users.forEach(function(user) {
                       result1.push(
-                        response[3].result.docs.find(function(u) {
+                        response[3].docs.find(function(u) {
                           return u.email === user.email
                         })
                       )
                     })
                     let result2 = []
-                    response[1].result.docs.forEach(function(user) {
+                    response[1].docs.forEach(function(user) {
                       result2.push(
-                        response[2].result.docs.find(function(u) {
+                        response[2].docs.find(function(u) {
                           return u.email === user.email
                         })
                       )
                     })
                     t.equals(
-                      response[0].result.users.length,
+                      response[0].users.length,
                       3,
                       'users length correct 1'
                     )
                     t.equals(
-                      response[1].result.docs.length,
+                      response[1].docs.length,
                       3,
                       'users length correct 2'
                     )
                     t.equals(
-                      response[2].result.docs.length,
+                      response[2].docs.length,
                       3,
                       'users length correct 3'
                     )
                     t.equals(
-                      response[3].result.docs.length,
+                      response[3].docs.length,
                       3,
                       'users length correct 4'
                     )
                     t.deepEquals(
-                      response[0].result.users,
+                      response[0].users,
                       result1,
                       'ONE_MANY association correct'
                     )
                     t.deepEquals(
-                      response[1].result.docs,
+                      response[1].docs,
                       result2,
                       'MANY_ONE association correct'
                     )
@@ -1023,22 +940,14 @@ module.exports = (t, Mongoose, internals, Log) => {
                     }
                   })
                   .then(function(response) {
-                    const request = {
-                      method: 'DELETE',
-                      url: '/role/{ownerId}/people/{childId}',
-                      params: {
-                        ownerId: roles[0]._id,
-                        childId: users[0]._id
-                      },
-                      query: {},
-                      payload: {},
-                      credentials: {},
-                      headers: {}
-                    }
-
-                    const injectOptions = TestHelper.mockInjection(request)
-
-                    return server.inject(injectOptions)
+                    return RestHapi.removeOne({
+                      ownerModel: 'role',
+                      ownerId: roles[0]._id,
+                      childModel: 'user',
+                      childId: users[0]._id,
+                      associationName: 'people',
+                      restCall: true
+                    })
                   })
                   .then(function(response) {
                     let payload = [
@@ -1047,19 +956,14 @@ module.exports = (t, Mongoose, internals, Log) => {
                       users[3]._id // NOTE: this user doesn't belong to the role, so the association shouldn't be removed from the user
                     ]
 
-                    const request = {
-                      method: 'DELETE',
-                      url: '/role/{ownerId}/people',
-                      params: { ownerId: roles[0]._id },
-                      query: {},
-                      payload: payload,
-                      credentials: {},
-                      headers: {}
-                    }
-
-                    const injectOptions = TestHelper.mockInjection(request)
-
-                    return server.inject(injectOptions)
+                    return RestHapi.removeMany({
+                      ownerModel: 'role',
+                      ownerId: roles[0]._id,
+                      childModel: 'user',
+                      associationName: 'people',
+                      payload,
+                      restCall: true
+                    })
                   })
                   .then(function(response) {
                     const request = {

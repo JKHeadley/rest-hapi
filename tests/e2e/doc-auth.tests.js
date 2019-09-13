@@ -47,59 +47,32 @@ module.exports = (t, Mongoose, internals, Log) => {
                 .then(function() {
                   server.start()
 
-                  const request = {
-                    method: 'POST',
-                    url: '/role',
-                    params: {},
-                    query: {},
+                  return RestHapi.create({
+                    model: 'role',
                     payload: {
                       name: 'test'
                     },
+                    restCall: true,
                     credentials: {
                       user: { _id: userId }
-                    },
-                    headers: {
-                      authorization: 'testAuth'
                     }
-                  }
-
-                  const injectOptions = TestHelper.mockInjection(request)
-
-                  return server.inject(injectOptions)
+                  })
                 })
                 .then(function(response) {
-                  internals.previous = response.result
+                  internals.previous = response
 
-                  const request = {
-                    method: 'GET',
-                    url: '/role/{_id}',
-                    params: {
-                      _id: response.result._id
-                    },
-                    query: {},
-                    payload: {},
-                    credentials: {},
-                    headers: {
-                      authorization: 'testAuth'
-                    }
-                  }
-
-                  const injectOptions = TestHelper.mockInjection(request)
-
-                  return injectOptions
-                })
-
-                // </editor-fold>
-
-                // <editor-fold desc="Act">
-                .then(function(injectOptions) {
-                  return server.inject(injectOptions)
+                  return RestHapi.find({
+                    model: 'role',
+                    _id: response._id,
+                    restCall: true,
+                    credentials: { scope: ['wrong'] }
+                  })
                 })
                 // </editor-fold>
 
                 // <editor-fold desc="Assert">
                 .then(function(response) {
-                  t.equals(response.result.statusCode, 403, 'access denied')
+                  t.equals(response.statusCode, 403, 'access denied')
                 })
                 // </editor-fold>
 
