@@ -757,14 +757,14 @@ async function _updateHandler(model, _id, request, Log) {
  * Deletes a model document.
  * @param  {...any} args
  * **Positional:**
- * - function delete(model, _id, hardDelete, Log)
+ * - function deleteOne(model, _id, hardDelete = false, Log)
  *
  * **Named:**
- * - function delete({
+ * - function deleteOne({
  *      model,
  *      _id,
  *      hardDelete = false,
- *      Log = RestHapi.getLogger('delete'),
+ *      Log = RestHapi.getLogger('deleteOne'),
  *      restCall = false,
  *      credentials
  *   })
@@ -922,10 +922,10 @@ async function _deleteOneHandler(model, _id, hardDelete, request, Log) {
  * Deletes multiple documents.
  * @param  {...any} args
  * **Positional:**
- * - function delete(model, payload, Log)
+ * - function deleteMany(model, payload, Log)
  *
  * **Named:**
- * - function delete({
+ * - function deleteMany({
  *      model,
  *      _id,
  *      payload,
