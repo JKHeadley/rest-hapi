@@ -116,7 +116,7 @@ test('joi-mongoose-helper.generateJoiReadModel', function(t) {
         'generateJoiFieldModel called on email field'
       )
       t.ok(
-        Joi.object({ email: Joi.string().equal('test') }, readModel).error === null,
+        Joi.validate({ email: 'test' }, readModel).error === null,
         'email field allowed'
       )
       // </editor-fold>
