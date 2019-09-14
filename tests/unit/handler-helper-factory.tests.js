@@ -3,20 +3,20 @@
 // Temporarily disabling this rule for tests
 /* eslint no-unused-vars: 0 */
 
-let test = require('blue-tape')
-let _ = require('lodash')
-let sinon = require('sinon')
-let rewire = require('rewire')
-let proxyquire = require('proxyquire')
-let assert = require('assert')
-let mongoose = require('mongoose')
-let Types = mongoose.Schema.Types
-let logging = require('loggin')
-let logger = logging.getLogger('tests')
+const test = require('blue-tape')
+const _ = require('lodash')
+const sinon = require('sinon')
+const rewire = require('rewire')
+const proxyquire = require('proxyquire')
+const assert = require('assert')
+const mongoose = require('mongoose')
+const Types = mongoose.Schema.Types
+const logging = require('loggin')
+const logger = logging.getLogger('tests')
 logger.logLevel = 'ERROR'
-let testHelper = require('../../utilities/test-helper')
-let Joi = require('@hapi/joi')
-let Q = require('q')
+const testHelper = require('../../utilities/test-helper')
+const Joi = require('@hapi/joi')
+const Q = require('q')
 
 // test('handler-helper-factory exists and has expected members', function (t) {
 //   //<editor-fold desc="Arrange">

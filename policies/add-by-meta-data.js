@@ -97,10 +97,10 @@ internals.addMeta = function(action, request, h, logger) {
         throw new Error('Invalid action.')
     }
 
-    let userId = _.get(request.auth.credentials, config.userIdKey)
+    const userId = _.get(request.auth.credentials, config.userIdKey)
 
     if (!userId) {
-      let message =
+      const message =
         'User _id not found in auth credentials. Please specify the user _id path in "config.userIdKey"'
       Log.error(message)
       throw Boom.badRequest(message)

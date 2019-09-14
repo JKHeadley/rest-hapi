@@ -10,12 +10,12 @@ internals.policyObjects = require('require-all')(
 
 internals.policies = {}
 
-for (let policyName in internals.policyObjects) {
+for (const policyName in internals.policyObjects) {
   if (internals.policyObjects[policyName].applyPoint) {
     internals.policies[policyName] = internals.policyObjects[policyName]
   } else {
-    let policyObject = internals.policyObjects[policyName]
-    for (let policyName in policyObject) {
+    const policyObject = internals.policyObjects[policyName]
+    for (const policyName in policyObject) {
       internals.policies[policyName] = policyObject[policyName]
     }
   }

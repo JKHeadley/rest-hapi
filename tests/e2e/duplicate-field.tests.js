@@ -9,7 +9,7 @@ const Hapi = require('@hapi/hapi')
 module.exports = (t, Mongoose, internals, Log) => {
   return t.test('duplicate field tests', function(t) {
     let users = []
-    let userProfiles = []
+    const userProfiles = []
     let roles = []
     let businesses = []
     return (
@@ -33,7 +33,7 @@ module.exports = (t, Mongoose, internals, Log) => {
               )
             }
 
-            let promises = []
+            const promises = []
 
             RestHapi.config = config
 
@@ -49,7 +49,7 @@ module.exports = (t, Mongoose, internals, Log) => {
                 .then(function() {
                   server.start()
 
-                  let payload = [
+                  const payload = [
                     {
                       name: 'testBiz1',
                       description: 'A test business1.'
@@ -77,7 +77,7 @@ module.exports = (t, Mongoose, internals, Log) => {
                 .then(function(response) {
                   businesses = response.result
 
-                  let payload = [
+                  const payload = [
                     {
                       name: 'User',
                       description: 'A standard user account.',
@@ -111,7 +111,7 @@ module.exports = (t, Mongoose, internals, Log) => {
                 .then(function(response) {
                   roles = response.result
 
-                  let payload = [
+                  const payload = [
                     {
                       email: 'test@user.com',
                       password: 'root',
@@ -151,7 +151,7 @@ module.exports = (t, Mongoose, internals, Log) => {
                 .then(function(response) {
                   users = response.result
 
-                  let payload = {
+                  const payload = {
                     status: 'Enabled',
                     user: users[0]._id
                   }
@@ -316,7 +316,7 @@ module.exports = (t, Mongoose, internals, Log) => {
               )
             }
 
-            let promises = []
+            const promises = []
 
             RestHapi.config = config
 
@@ -332,7 +332,7 @@ module.exports = (t, Mongoose, internals, Log) => {
                 .then(function(response) {
                   server.start()
 
-                  let payload = {
+                  const payload = {
                     company: businesses[0]._id
                   }
 
@@ -348,12 +348,12 @@ module.exports = (t, Mongoose, internals, Log) => {
 
                   const injectOptions = TestHelper.mockInjection(request)
 
-                  let promise = server.inject(injectOptions)
+                  const promise = server.inject(injectOptions)
                   promises.push(promise)
                   return promise
                 })
                 .then(function() {
-                  let payload = {
+                  const payload = {
                     profile: userProfiles[0]._id
                   }
 
@@ -369,7 +369,7 @@ module.exports = (t, Mongoose, internals, Log) => {
 
                   const injectOptions = TestHelper.mockInjection(request)
 
-                  let promise = server.inject(injectOptions)
+                  const promise = server.inject(injectOptions)
                   promises.push(promise)
                   return promise
                 })
@@ -454,7 +454,7 @@ module.exports = (t, Mongoose, internals, Log) => {
                 )
               }
 
-              let promises = []
+              const promises = []
 
               RestHapi.config = config
 
@@ -470,7 +470,7 @@ module.exports = (t, Mongoose, internals, Log) => {
                   .then(function() {
                     server.start()
 
-                    let payload = {
+                    const payload = {
                       description: 'TEST'
                     }
 
@@ -549,7 +549,7 @@ module.exports = (t, Mongoose, internals, Log) => {
                   // <editor-fold desc="Assert">
                   .then(function(response) {
                     // rearrange results to match original order
-                    let result1 = []
+                    const result1 = []
                     roles.forEach(function(role) {
                       result1.push(
                         response[1].result.docs.find(function(doc) {
@@ -558,7 +558,7 @@ module.exports = (t, Mongoose, internals, Log) => {
                       )
                     })
 
-                    let result2 = []
+                    const result2 = []
                     users.forEach(function(user) {
                       result2.push(
                         response[0].result.docs.find(function(doc) {
@@ -659,7 +659,7 @@ module.exports = (t, Mongoose, internals, Log) => {
                 )
               }
 
-              let promises = []
+              const promises = []
 
               RestHapi.config = config
 
@@ -735,7 +735,7 @@ module.exports = (t, Mongoose, internals, Log) => {
                   // <editor-fold desc="Assert">
                   .then(function(response) {
                     // rearrange results to match original order
-                    let result1 = []
+                    const result1 = []
                     roles.forEach(function(role) {
                       result1.push(
                         response[1].result.docs.find(function(doc) {
@@ -744,7 +744,7 @@ module.exports = (t, Mongoose, internals, Log) => {
                       )
                     })
 
-                    let result2 = []
+                    const result2 = []
                     users.forEach(function(user) {
                       result2.push(
                         response[0].result.docs.find(function(doc) {

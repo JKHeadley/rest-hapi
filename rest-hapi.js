@@ -55,13 +55,13 @@ module.exports = {
 async function register(server, options) {
   module.exports.server = server
 
-  let config = defaultConfig
+  const config = defaultConfig
 
   // Overwrite the default config with config set by the user
   extend(true, config, options.config)
   module.exports.config = config
 
-  let Log = getLogger('api')
+  const Log = getLogger('api')
 
   module.exports.logger = Log
 
@@ -116,11 +116,11 @@ async function register(server, options) {
 function generateModels(mongoose) {
   internals.modelsGenerated = true
 
-  let config = defaultConfig
+  const config = defaultConfig
 
   extend(true, config, module.exports.config)
 
-  let Log = getLogger('models')
+  const Log = getLogger('models')
 
   module.exports.logger = Log
 
@@ -137,11 +137,11 @@ function generateModels(mongoose) {
  * @returns {*}
  */
 function getLogger(label) {
-  let config = defaultConfig
+  const config = defaultConfig
 
   extend(true, config, module.exports.config)
 
-  let rootLogger = logging.getLogger(chalk.gray(label))
+  const rootLogger = logging.getLogger(chalk.gray(label))
 
   rootLogger.logLevel = config.loglevel
 
@@ -166,10 +166,7 @@ function mongooseInit(mongoose, logger, config) {
     _.omit(config.mongo, ['pass'])
   )
 
-  mongoose.connect(
-    config.mongo.URI,
-    { useMongoClient: true }
-  )
+  mongoose.connect(config.mongo.URI, { useMongoClient: true })
 
   globals.mongoose = mongoose
 
@@ -267,9 +264,9 @@ function generateRoutes(server, mongoose, models, logger, config) {
 
   const restHelper = restHelperFactory(logger, mongoose, server)
 
-  for (let modelKey in models) {
+  for (const modelKey in models) {
     // Generate endpoints for all of the models
-    let model = models[modelKey]
+    const model = models[modelKey]
     restHelper.generateRoutes(server, model, { models: models })
   }
 

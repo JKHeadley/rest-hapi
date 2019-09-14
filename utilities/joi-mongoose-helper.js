@@ -1,12 +1,12 @@
 'use strict'
 
-let Joi = require('@hapi/joi')
+const Joi = require('@hapi/joi')
 Joi.objectId = require('joi-objectid')(Joi)
-let _ = require('lodash')
-let validationHelper = require('./validation-helper')
-let queryHelper = require('./query-helper')
-let config = require('../config')
-let mongoose = require('mongoose')
+const _ = require('lodash')
+const validationHelper = require('./validation-helper')
+const queryHelper = require('./query-helper')
+const config = require('../config')
+const mongoose = require('mongoose')
 
 // TODO: support "allowNull"
 // TODO: add ".default()" to paths that have a default value
@@ -25,18 +25,18 @@ internals.generateJoiReadModel = function(model, logger) {
   const Log = logger.bind()
   validationHelper.validateModel(model, Log)
 
-  let readModelBase = {}
+  const readModelBase = {}
 
-  let fields = model.schema.tree
+  const fields = model.schema.tree
 
-  let associations = model.routeOptions.associations
+  const associations = model.routeOptions.associations
     ? Object.keys(model.routeOptions.associations)
     : []
 
-  for (let fieldName in fields) {
-    let field = fields[fieldName]
+  for (const fieldName in fields) {
+    const field = fields[fieldName]
 
-    let isAssociation = associations.indexOf(fieldName)
+    const isAssociation = associations.indexOf(fieldName)
 
     if (field.readModel) {
       readModelBase[fieldName] = field.readModel
@@ -63,8 +63,8 @@ internals.generateJoiReadModel = function(model, logger) {
   }
 
   if (model.routeOptions && model.routeOptions.associations) {
-    for (let associationName in model.routeOptions.associations) {
-      let association = model.routeOptions.associations[associationName]
+    for (const associationName in model.routeOptions.associations) {
+      const association = model.routeOptions.associations[associationName]
 
       let associationModel = Joi.object()
 
@@ -75,7 +75,7 @@ internals.generateJoiReadModel = function(model, logger) {
             Log
           )
         }
-        let associationBase = {}
+        const associationBase = {}
         associationBase[association.model] = Joi.object()
         associationBase._id = internals.joiObjectId()
         // EXPL: remove the key for the current model
@@ -118,7 +118,9 @@ internals.generateJoiReadModel = function(model, logger) {
     }
   }
 
-  let readModel = Joi.object(readModelBase).label(model.modelName + 'ReadModel')
+  const readModel = Joi.object(readModelBase).label(
+    model.modelName + 'ReadModel'
+  )
 
   return readModel
 }
@@ -133,20 +135,20 @@ internals.generateJoiUpdateModel = function(model, logger) {
   const Log = logger.bind()
   validationHelper.validateModel(model, Log)
 
-  let updateModelBase = {}
+  const updateModelBase = {}
 
-  let fields = model.schema.tree
+  const fields = model.schema.tree
 
-  let associations = model.routeOptions.associations
+  const associations = model.routeOptions.associations
     ? model.routeOptions.associations
     : {}
 
-  for (let fieldName in fields) {
-    let field = fields[fieldName]
+  for (const fieldName in fields) {
+    const field = fields[fieldName]
 
-    let association = associations[fieldName] || null
+    const association = associations[fieldName] || null
 
-    let canUpdateAssociation = association
+    const canUpdateAssociation = association
       ? association.type === 'ONE_ONE' ||
         association.type === 'MANY_ONE' ||
         association.type === '_MANY'
@@ -176,7 +178,7 @@ internals.generateJoiUpdateModel = function(model, logger) {
     }
   }
 
-  let updateModel = Joi.object(updateModelBase).label(
+  const updateModel = Joi.object(updateModelBase).label(
     model.modelName + 'UpdateModel'
   )
 
@@ -193,20 +195,20 @@ internals.generateJoiCreateModel = function(model, logger) {
   const Log = logger.bind()
   validationHelper.validateModel(model, Log)
 
-  let createModelBase = {}
+  const createModelBase = {}
 
-  let fields = model.schema.tree
+  const fields = model.schema.tree
 
-  let associations = model.routeOptions.associations
+  const associations = model.routeOptions.associations
     ? model.routeOptions.associations
     : {}
 
-  for (let fieldName in fields) {
-    let field = fields[fieldName]
+  for (const fieldName in fields) {
+    const field = fields[fieldName]
 
-    let association = associations[fieldName] || null
+    const association = associations[fieldName] || null
 
-    let canCreateAssociation = association
+    const canCreateAssociation = association
       ? association.type === 'ONE_ONE' ||
         association.type === 'MANY_ONE' ||
         association.type === '_MANY'
@@ -237,7 +239,7 @@ internals.generateJoiCreateModel = function(model, logger) {
     }
   }
 
-  let createModel = Joi.object(createModelBase).label(
+  const createModel = Joi.object(createModelBase).label(
     model.modelName + 'CreateModel'
   )
 
@@ -276,11 +278,11 @@ internals.generateJoiListQueryModel = function(model, logger) {
       )
   }
 
-  let queryableFields = queryHelper.getQueryableFields(model, Log)
+  const queryableFields = queryHelper.getQueryableFields(model, Log)
 
-  let readableFields = queryHelper.getReadableFields(model, Log)
+  const readableFields = queryHelper.getReadableFields(model, Log)
 
-  let sortableFields = queryHelper.getSortableFields(model, Log)
+  const sortableFields = queryHelper.getSortableFields(model, Log)
 
   if (queryableFields && readableFields) {
     queryModel.$select = Joi.alternatives().try(
@@ -350,7 +352,9 @@ internals.generateJoiListQueryModel = function(model, logger) {
     })
   }
 
-  let associations = model.routeOptions ? model.routeOptions.associations : null
+  const associations = model.routeOptions
+    ? model.routeOptions.associations
+    : null
   if (associations) {
     queryModel.$embed = Joi.alternatives().try(
       Joi.array()
@@ -387,7 +391,7 @@ internals.generateJoiFindQueryModel = function(model, logger) {
   const Log = logger.bind()
   let queryModel = {}
 
-  let readableFields = queryHelper.getReadableFields(model, Log)
+  const readableFields = queryHelper.getReadableFields(model, Log)
 
   if (readableFields) {
     queryModel.$select = Joi.alternatives().try(
@@ -401,7 +405,9 @@ internals.generateJoiFindQueryModel = function(model, logger) {
     )
   }
 
-  let associations = model.routeOptions ? model.routeOptions.associations : null
+  const associations = model.routeOptions
+    ? model.routeOptions.associations
+    : null
   if (associations) {
     queryModel.$embed = Joi.alternatives().try(
       Joi.array()
@@ -448,8 +454,8 @@ internals.generateJoiFieldModel = function(
   let fieldModel = {}
   let joiModelFunction = {}
 
-  let nested = model.schema.nested
-  let instance = model.schema.paths[fieldName]
+  const nested = model.schema.nested
+  const instance = model.schema.paths[fieldName]
     ? model.schema.paths[fieldName].instance
     : null
 
@@ -465,7 +471,7 @@ internals.generateJoiFieldModel = function(
 
   if (instance === 'Mixed' && !nested[fieldName]) {
     // EXPL: check for any valid nested fields
-    for (let key in field) {
+    for (const key in field) {
       if (internals.isValidField(key, field[key], model)) {
         nested[fieldName] = true
       }
@@ -494,13 +500,13 @@ internals.generateJoiFieldModel = function(
     // EXPL: make a copy so field properties aren't deleted from the original model
     field = _.extend({}, field)
     // EXPL: remove all fields that aren't objects, since they can cause issues with the schema
-    for (let subField in field) {
+    for (const subField in field) {
       if (!_.isObject(field[subField])) {
         delete field[subField]
       }
     }
 
-    let nestedModel = {
+    const nestedModel = {
       modelName: model.modelName + '.' + fieldName,
       fakeModel: true,
       isArray: isArray,
@@ -510,7 +516,7 @@ internals.generateJoiFieldModel = function(
 
     fieldModel = joiModelFunction(nestedModel, Log)
     if (isArray) {
-      let label = fieldModel._flags.label
+      const label = fieldModel._flags.label
       fieldModel = Joi.array()
         .items(fieldModel)
         .label(label + 'Array')
@@ -534,7 +540,7 @@ internals.generateJoiModelFromFieldType = function(field, logger) {
   // assert(field.type, "incorrect field format");
 
   let isArray = false
-  let fieldCopy = _.extend({}, field)
+  const fieldCopy = _.extend({}, field)
 
   if (_.isArray(fieldCopy.type)) {
     isArray = true
@@ -646,11 +652,11 @@ internals.generateJoiModelFromFieldType = function(field, logger) {
  */
 internals.joiObjectId = function() {
   // EXPL: Rather than converting all objectIds to string for response, we allow raw mongoose.Types.ObjectId objects
-  let objectIdModel = Joi.object({
+  const objectIdModel = Joi.object({
     _bsontype: Joi.any().required(),
     id: Joi.any().required()
   })
-  let model = Joi.alternatives().try(
+  const model = Joi.alternatives().try(
     Joi.objectId().description('ObjectId'),
     objectIdModel
   )
@@ -662,7 +668,7 @@ internals.joiObjectId = function() {
  * @returns {boolean}
  */
 internals.isObjectId = function(arg) {
-  let result = Joi.validate(arg, internals.joiObjectId())
+  const result = Joi.validate(arg, internals.joiObjectId())
 
   if (result.error) {
     return false

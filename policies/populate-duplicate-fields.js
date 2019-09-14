@@ -25,11 +25,11 @@ internals.populateDuplicateFields = function(model, mongoose, logger) {
 
       const associations = model.schema.statics.routeOptions.associations
       if (associations) {
-        let promises = []
+        const promises = []
         for (const key in associations) {
           const association = associations[key]
           const duplicate = association.duplicate
-          for (let doc of payload) {
+          for (const doc of payload) {
             if (
               duplicate &&
               (association.type === 'MANY_ONE' ||
@@ -38,7 +38,7 @@ internals.populateDuplicateFields = function(model, mongoose, logger) {
             ) {
               const childModel = mongoose.model(association.model)
 
-              let promise = childModel
+              const promise = childModel
                 .findOne({ _id: doc[key] })
                 .then(function(result) {
                   const docsToUpdate = payload.filter(function(docToFind) {
@@ -46,8 +46,8 @@ internals.populateDuplicateFields = function(model, mongoose, logger) {
                   })
                   // EXPL: Populate each duplicated field for this association.
                   // NOTE: We are updating the original payload
-                  for (let prop of duplicate) {
-                    for (let docToUpdate of docsToUpdate) {
+                  for (const prop of duplicate) {
+                    for (const docToUpdate of docsToUpdate) {
                       docToUpdate[prop.as] = result[prop.field]
                     }
                   }

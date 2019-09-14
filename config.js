@@ -1,7 +1,7 @@
 /**
  * config.js - Configuration settings for the generated API
  */
-let config = {}
+const config = {}
 config.mongo = {}
 
 /**

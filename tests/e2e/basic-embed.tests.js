@@ -9,7 +9,7 @@ const Hapi = require('@hapi/hapi')
 module.exports = (t, Mongoose, internals, Log) => {
   return t.test('basic embedded association tests', function(t) {
     let users = []
-    let userProfiles = []
+    const userProfiles = []
     let roles = []
     let permissions = []
     let hashtags = []
@@ -142,7 +142,7 @@ module.exports = (t, Mongoose, internals, Log) => {
                 embedAssociations: true
               }
 
-              let promises = []
+              const promises = []
 
               RestHapi.config = config
 
@@ -158,7 +158,7 @@ module.exports = (t, Mongoose, internals, Log) => {
                   .then(function() {
                     server.start()
 
-                    let payload = [
+                    const payload = [
                       {
                         name: 'User',
                         description: 'A standard user account.'
@@ -182,7 +182,7 @@ module.exports = (t, Mongoose, internals, Log) => {
                   .then(function(response) {
                     roles = roles.concat(response)
 
-                    let payload = [
+                    const payload = [
                       {
                         email: 'test@user2.com',
                         password: 'root'
@@ -217,7 +217,7 @@ module.exports = (t, Mongoose, internals, Log) => {
                     })
                   })
                   .then(function(response) {
-                    let payload = [users[1]._id, users[2]._id]
+                    const payload = [users[1]._id, users[2]._id]
 
                     return RestHapi.addMany({
                       ownerModel: 'role',
@@ -294,7 +294,7 @@ module.exports = (t, Mongoose, internals, Log) => {
                   // <editor-fold desc="Assert">
                   .then(function(response) {
                     // EXPL: rearrange results to match order
-                    let result1 = []
+                    const result1 = []
                     response[0].users.forEach(function(user) {
                       result1.push(
                         response[3].docs.find(function(u) {
@@ -302,7 +302,7 @@ module.exports = (t, Mongoose, internals, Log) => {
                         })
                       )
                     })
-                    let result2 = []
+                    const result2 = []
                     response[1].docs.forEach(function(user) {
                       result2.push(
                         response[2].docs.find(function(u) {
@@ -381,7 +381,7 @@ module.exports = (t, Mongoose, internals, Log) => {
                 embedAssociations: true
               }
 
-              let promises = []
+              const promises = []
 
               RestHapi.config = config
 
@@ -397,7 +397,7 @@ module.exports = (t, Mongoose, internals, Log) => {
                   .then(function() {
                     server.start()
 
-                    let payload = [
+                    const payload = [
                       {
                         name: 'root',
                         description: 'Access to all endpoints'
@@ -445,7 +445,7 @@ module.exports = (t, Mongoose, internals, Log) => {
                   .then(function(response) {
                     permissions = permissions.concat(response.result)
 
-                    let payload = [
+                    const payload = [
                       permissions.find(function(p) {
                         return p.name === 'create'
                       })._id,
@@ -475,7 +475,7 @@ module.exports = (t, Mongoose, internals, Log) => {
                     return server.inject(injectOptions)
                   })
                   .then(function(response) {
-                    let payload = [
+                    const payload = [
                       {
                         enabled: true,
                         childId: permissions.find(function(p) {
@@ -505,7 +505,7 @@ module.exports = (t, Mongoose, internals, Log) => {
                     return server.inject(injectOptions)
                   })
                   .then(function(response) {
-                    let childId = permissions.find(function(p) {
+                    const childId = permissions.find(function(p) {
                       return p.name === 'root'
                     })._id
 
@@ -524,10 +524,10 @@ module.exports = (t, Mongoose, internals, Log) => {
                     return server.inject(injectOptions)
                   })
                   .then(function(response) {
-                    let childId = permissions.find(function(p) {
+                    const childId = permissions.find(function(p) {
                       return p.name === 'root'
                     })._id
-                    let payload = { enabled: false }
+                    const payload = { enabled: false }
                     const request = {
                       method: 'PUT',
                       url: '/user/{ownerId}/permissions/{childId}',
@@ -619,12 +619,12 @@ module.exports = (t, Mongoose, internals, Log) => {
 
                   // <editor-fold desc="Assert">
                   .then(function(response) {
-                    let result1Orig = response[0].result.permissions.map(
+                    const result1Orig = response[0].result.permissions.map(
                       function(obj) {
                         return obj.permission
                       }
                     )
-                    let result2Orig = response[2].result.permissions.map(
+                    const result2Orig = response[2].result.permissions.map(
                       function(obj) {
                         obj.permission.user_permission = {
                           enabled: obj.enabled
@@ -633,7 +633,7 @@ module.exports = (t, Mongoose, internals, Log) => {
                       }
                     )
                     // EXPL: rearrange results to match order
-                    let result1 = []
+                    const result1 = []
                     response[1].result.docs.forEach(function(permission) {
                       result1.push(
                         result1Orig.find(function(perm) {
@@ -641,7 +641,7 @@ module.exports = (t, Mongoose, internals, Log) => {
                         })
                       )
                     })
-                    let result2 = []
+                    const result2 = []
                     response[3].result.docs.forEach(function(permission) {
                       result2.push(
                         result2Orig.find(function(perm) {
@@ -703,7 +703,7 @@ module.exports = (t, Mongoose, internals, Log) => {
                 embedAssociations: true
               }
 
-              let promises = []
+              const promises = []
 
               RestHapi.config = config
 
@@ -719,7 +719,7 @@ module.exports = (t, Mongoose, internals, Log) => {
                   .then(function() {
                     server.start()
 
-                    let payload = [
+                    const payload = [
                       {
                         text: '#cool'
                       },
@@ -754,7 +754,7 @@ module.exports = (t, Mongoose, internals, Log) => {
                   .then(function(response) {
                     hashtags = hashtags.concat(response.result)
 
-                    let payload = {
+                    const payload = {
                       tags: [hashtags[0]._id, hashtags[1]._id]
                     }
 
@@ -773,7 +773,7 @@ module.exports = (t, Mongoose, internals, Log) => {
                     return server.inject(injectOptions)
                   })
                   .then(function(response) {
-                    let payload = {
+                    const payload = {
                       tags: [hashtags[0]._id, hashtags[2]._id, hashtags[4]._id]
                     }
 
@@ -810,7 +810,7 @@ module.exports = (t, Mongoose, internals, Log) => {
                     return server.inject(injectOptions)
                   })
                   .then(function(response) {
-                    let payload = [
+                    const payload = [
                       hashtags[2]._id, // NOTE: duplicate, should only be added once
                       hashtags[3]._id
                     ]
@@ -869,13 +869,13 @@ module.exports = (t, Mongoose, internals, Log) => {
 
                   // <editor-fold desc="Assert">
                   .then(function(response) {
-                    let result1 = [
+                    const result1 = [
                       hashtags[0],
                       hashtags[1],
                       hashtags[2],
                       hashtags[3]
                     ]
-                    let result2 = [hashtags[0], hashtags[2], hashtags[4]]
+                    const result2 = [hashtags[0], hashtags[2], hashtags[4]]
                     t.deepEquals(
                       response[0].result.tags,
                       result1,
@@ -926,7 +926,7 @@ module.exports = (t, Mongoose, internals, Log) => {
                 embedAssociations: true
               }
 
-              let promises = []
+              const promises = []
 
               RestHapi.config = config
 
@@ -950,7 +950,7 @@ module.exports = (t, Mongoose, internals, Log) => {
                     })
                   })
                   .then(function(response) {
-                    let payload = [
+                    const payload = [
                       users[1]._id,
                       users[2]._id,
                       users[3]._id // NOTE: this user doesn't belong to the role, so the association shouldn't be removed from the user
@@ -1067,7 +1067,7 @@ module.exports = (t, Mongoose, internals, Log) => {
               embedAssociations: true
             }
 
-            let promises = []
+            const promises = []
 
             RestHapi.config = config
 
@@ -1081,7 +1081,7 @@ module.exports = (t, Mongoose, internals, Log) => {
                   }
                 })
                 .then(function(response) {
-                  let childId = permissions.find(function(p) {
+                  const childId = permissions.find(function(p) {
                     return p.name === 'root'
                   })._id
 
@@ -1100,10 +1100,10 @@ module.exports = (t, Mongoose, internals, Log) => {
                   return server.inject(injectOptions)
                 })
                 .then(function(response) {
-                  let childId = permissions.find(function(p) {
+                  const childId = permissions.find(function(p) {
                     return p.name === 'root'
                   })._id
-                  let payload = { enabled: false }
+                  const payload = { enabled: false }
                   const request = {
                     method: 'DELETE',
                     url: '/user/{ownerId}/permissions/{childId}',
@@ -1119,7 +1119,7 @@ module.exports = (t, Mongoose, internals, Log) => {
                   return server.inject(injectOptions)
                 })
                 .then(function(response) {
-                  let payload = [
+                  const payload = [
                     permissions.find(function(p) {
                       return p.name === 'create'
                     })._id,
@@ -1149,7 +1149,7 @@ module.exports = (t, Mongoose, internals, Log) => {
                   return server.inject(injectOptions)
                 })
                 .then(function(response) {
-                  let payload = [
+                  const payload = [
                     permissions.find(function(p) {
                       return p.name === 'nothing'
                     })._id,
@@ -1261,7 +1261,7 @@ module.exports = (t, Mongoose, internals, Log) => {
                 embedAssociations: true
               }
 
-              let promises = []
+              const promises = []
 
               RestHapi.config = config
 
@@ -1293,7 +1293,7 @@ module.exports = (t, Mongoose, internals, Log) => {
                     return server.inject(injectOptions)
                   })
                   .then(function(response) {
-                    let payload = [
+                    const payload = [
                       hashtags[1]._id,
                       hashtags[2]._id,
                       hashtags[3]._id

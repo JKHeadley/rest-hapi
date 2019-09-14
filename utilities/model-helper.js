@@ -1,6 +1,6 @@
 'use strict'
 
-let config = require('../config')
+const config = require('../config')
 const _ = require('lodash')
 
 // TODO: allow "unique" field to be rest-hapi specific if soft deletes are enabled (i.e. implement a unique constraint based on the required field and the "isDeleted" flag)
@@ -19,7 +19,7 @@ internals.createModel = function(Schema, mongoose) {
   // TODO: require createdAt and updatedAt
   if (Schema.statics.collectionName !== 'auditLog') {
     if (config.enableCreatedAt) {
-      let createdAt = {
+      const createdAt = {
         createdAt: {
           type: Types.Date,
           allowOnCreate: false,
@@ -29,7 +29,7 @@ internals.createModel = function(Schema, mongoose) {
       Schema.add(createdAt)
     }
     if (config.enableUpdatedAt) {
-      let updatedAt = {
+      const updatedAt = {
         updatedAt: {
           type: Types.Date,
           allowOnCreate: false,
@@ -39,7 +39,7 @@ internals.createModel = function(Schema, mongoose) {
       Schema.add(updatedAt)
     }
     if (config.enableDeletedAt) {
-      let deletedAt = {
+      const deletedAt = {
         deletedAt: {
           type: Types.Date,
           allowOnCreate: false,
@@ -49,7 +49,7 @@ internals.createModel = function(Schema, mongoose) {
       Schema.add(deletedAt)
     }
     if (config.enableCreatedBy) {
-      let createdBy = {
+      const createdBy = {
         createdBy: {
           type: Types.ObjectId,
           allowOnCreate: false,
@@ -59,7 +59,7 @@ internals.createModel = function(Schema, mongoose) {
       Schema.add(createdBy)
     }
     if (config.enableUpdatedBy) {
-      let updatedBy = {
+      const updatedBy = {
         updatedBy: {
           type: Types.ObjectId,
           allowOnCreate: false,
@@ -69,7 +69,7 @@ internals.createModel = function(Schema, mongoose) {
       Schema.add(updatedBy)
     }
     if (config.enableDeletedBy) {
-      let deletedBy = {
+      const deletedBy = {
         deletedBy: {
           type: Types.ObjectId,
           allowOnCreate: false,
@@ -79,7 +79,7 @@ internals.createModel = function(Schema, mongoose) {
       Schema.add(deletedBy)
     }
     if (config.enableSoftDelete) {
-      let isDeleted = {
+      const isDeleted = {
         isDeleted: {
           type: Types.Boolean,
           allowOnCreate: false,
@@ -90,7 +90,7 @@ internals.createModel = function(Schema, mongoose) {
       Schema.add(isDeleted)
     }
     if (config.enableDocumentScopes) {
-      let scope = {
+      const scope = {
         scope: {
           rootScope: {
             type: [Types.String]
@@ -125,10 +125,10 @@ internals.createModel = function(Schema, mongoose) {
  * @returns {*}
  */
 internals.addDuplicateFields = function(schema, schemas) {
-  let associations = schema.statics.routeOptions.associations
+  const associations = schema.statics.routeOptions.associations
   if (associations) {
-    for (let key in associations) {
-      let association = associations[key]
+    for (const key in associations) {
+      const association = associations[key]
       if (
         association.duplicate &&
         (association.type === 'MANY_ONE' || association.type === 'ONE_ONE')
@@ -154,7 +154,7 @@ internals.addDuplicateFields = function(schema, schemas) {
 
         duplicate.forEach(function(prop) {
           const field = {}
-          let fieldName = prop.as
+          const fieldName = prop.as
           field[fieldName] = {
             type: childSchema.obj[prop.field].type,
             allowOnCreate: false,
@@ -185,26 +185,27 @@ internals.addDuplicateFields = function(schema, schemas) {
  */
 internals.extendSchemaAssociations = function(Schema, mongoose, modelPath) {
   if (Schema.statics.routeOptions) {
-    for (let associationKey in Schema.statics.routeOptions.associations) {
-      let association = Schema.statics.routeOptions.associations[associationKey]
+    for (const associationKey in Schema.statics.routeOptions.associations) {
+      const association =
+        Schema.statics.routeOptions.associations[associationKey]
       if (association.type === 'MANY_MANY') {
-        let extendObject = {}
-        let dataObject = {}
+        const extendObject = {}
+        const dataObject = {}
         dataObject[association.model] = {
           type: mongoose.Schema.Types.ObjectId,
           ref: association.model
         }
-        let embedAssociation =
+        const embedAssociation =
           association.embedAssociation === undefined
             ? config.embedAssociations
             : association.embedAssociation
         // EXPL: if a linking model is defined, add it to the association definition
         if (association.linkingModel) {
           let linkingModel
-          let linkingModelFiles = require('require-all')(
+          const linkingModelFiles = require('require-all')(
             modelPath + '/linking-models'
           )
-          for (let fileName in linkingModelFiles) {
+          for (const fileName in linkingModelFiles) {
             if (
               linkingModelFiles[fileName]().modelName ===
               association.linkingModel
@@ -242,7 +243,7 @@ internals.extendSchemaAssociations = function(Schema, mongoose, modelPath) {
                 ref: association.model
               }
 
-              let linkingModelSchema = new mongoose.Schema(
+              const linkingModelSchema = new mongoose.Schema(
                 linkingModel.Schema,
                 { collection: linkingModel.modelName }
               )
@@ -262,7 +263,7 @@ internals.extendSchemaAssociations = function(Schema, mongoose, modelPath) {
           // EXPL: if the association is embedded, extend original schema with linking model schema
           else {
             if (!modelExists) {
-              let linkingModelSchema = new mongoose.Schema(
+              const linkingModelSchema = new mongoose.Schema(
                 linkingModel.Schema,
                 { collection: linkingModel.modelName }
               )
@@ -272,8 +273,8 @@ internals.extendSchemaAssociations = function(Schema, mongoose, modelPath) {
               )
             }
 
-            for (let objectKey in linkingModel.Schema) {
-              let object = linkingModel.Schema[objectKey]
+            for (const objectKey in linkingModel.Schema) {
+              const object = linkingModel.Schema[objectKey]
               dataObject[objectKey] = object
             }
 
@@ -293,7 +294,7 @@ internals.extendSchemaAssociations = function(Schema, mongoose, modelPath) {
 
             association.include = {}
 
-            let modelExists = [true, true]
+            const modelExists = [true, true]
             try {
               association.include.through = mongoose.model(linkingModelName1)
               linkingModelName = linkingModelName1
@@ -310,7 +311,7 @@ internals.extendSchemaAssociations = function(Schema, mongoose, modelPath) {
             if (!modelExists[0] && !modelExists[1]) {
               const Types = mongoose.Schema.Types
 
-              let linkingModel = { Schema: {} }
+              const linkingModel = { Schema: {} }
 
               linkingModel.Schema[modelName] = {
                 type: Types.ObjectId,
@@ -320,7 +321,7 @@ internals.extendSchemaAssociations = function(Schema, mongoose, modelPath) {
                 type: Types.ObjectId,
                 ref: association.model
               }
-              let linkingModelSchema = new mongoose.Schema(
+              const linkingModelSchema = new mongoose.Schema(
                 linkingModel.Schema,
                 { collection: linkingModelName }
               )
@@ -355,7 +356,7 @@ internals.extendSchemaAssociations = function(Schema, mongoose, modelPath) {
         }
       } else if (association.type === '_MANY') {
         // EXPL: for one sided _many relationships, the association exists as a simple array of objectIds
-        let extendObject = {}
+        const extendObject = {}
         extendObject[associationKey] = {
           type: [mongoose.Schema.Types.ObjectId],
           ref: association.model
@@ -377,8 +378,9 @@ internals.extendSchemaAssociations = function(Schema, mongoose, modelPath) {
 // TODO: can probably simplify this to a model string/name reference since mongoose models can be accessed globally
 internals.associateModels = function(Schema, models) {
   if (Schema.statics.routeOptions) {
-    for (let associationKey in Schema.statics.routeOptions.associations) {
-      let association = Schema.statics.routeOptions.associations[associationKey]
+    for (const associationKey in Schema.statics.routeOptions.associations) {
+      const association =
+        Schema.statics.routeOptions.associations[associationKey]
       if (!association.include) {
         association.include = {}
       }

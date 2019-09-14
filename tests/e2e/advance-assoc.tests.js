@@ -33,7 +33,7 @@ module.exports = (t, Mongoose, internals, Log) => {
 
             let facilities = []
 
-            let promises = []
+            const promises = []
 
             return (
               server
@@ -47,7 +47,7 @@ module.exports = (t, Mongoose, internals, Log) => {
                 .then(function() {
                   server.start()
 
-                  let payload = [
+                  const payload = [
                     {
                       name: 'kitchen'
                     },
@@ -76,7 +76,7 @@ module.exports = (t, Mongoose, internals, Log) => {
                 .then(function(response) {
                   facilities = response.result
 
-                  let payload = {
+                  const payload = {
                     name: 'Big Building',
                     facilitiesPerFloor: [
                       { _id: facilities[0]._id },
@@ -125,14 +125,14 @@ module.exports = (t, Mongoose, internals, Log) => {
 
                 // <editor-fold desc="Assert">
                 .then(function(response) {
-                  let building = response[0].result.docs[0]
-                  let kitchen = building.facilitiesPerFloor.find(
+                  const building = response[0].result.docs[0]
+                  const kitchen = building.facilitiesPerFloor.find(
                     facility => facility.name === 'kitchen'
                   )
-                  let study = building.facilitiesPerFloor.find(
+                  const study = building.facilitiesPerFloor.find(
                     facility => facility.name === 'study'
                   )
-                  let office = building.facilitiesPerFloor.find(
+                  const office = building.facilitiesPerFloor.find(
                     facility => facility.name === 'office'
                   )
 

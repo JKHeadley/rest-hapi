@@ -1,7 +1,7 @@
 'use strict'
 
-let fs = require('fs')
-let path = require('path')
+const fs = require('fs')
+const path = require('path')
 
 /**
  * This module reads in all the files that define additional endpoints and generates those endpoints.
@@ -25,10 +25,10 @@ module.exports = async function(server, mongoose, logger, config) {
   try {
     const files = fs.readdirSync(apiPath)
 
-    for (let file of files) {
-      let ext = path.extname(file)
+    for (const file of files) {
+      const ext = path.extname(file)
       if (ext === '.js') {
-        let fileName = path.basename(file, '.js')
+        const fileName = path.basename(file, '.js')
 
         // EXPL: register all the additional endpoints
         require(apiPath + '/' + fileName)(server, mongoose, logger)

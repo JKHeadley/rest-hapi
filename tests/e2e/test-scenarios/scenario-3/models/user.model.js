@@ -3,9 +3,9 @@
 const Boom = require('@hapi/boom')
 
 module.exports = function(mongoose) {
-  let modelName = 'user'
-  let Types = mongoose.Schema.Types
-  let Schema = new mongoose.Schema(
+  const modelName = 'user'
+  const Types = mongoose.Schema.Types
+  const Schema = new mongoose.Schema(
     {
       email: {
         type: Types.String,

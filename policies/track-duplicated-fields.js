@@ -53,7 +53,7 @@ internals.trackDuplicatedFields.applyPoint = 'onPostHandler'
  */
 internals.trackFields = function(model, mongoose, payload, result, logger) {
   const Log = logger.bind('trackFields')
-  let promises = []
+  const promises = []
   for (const key in payload) {
     const field = model.schema.obj[key]
     // EXPL: Check each field that was updated. If the field has been duplicated, update each duplicate
@@ -91,8 +91,8 @@ internals.findAndUpdate = async function(
   newProp,
   logger
 ) {
-  let result = await childModel.find(query)
-  let promises = []
+  const result = await childModel.find(query)
+  const promises = []
 
   result.forEach(function(doc) {
     promises.push(
@@ -119,7 +119,7 @@ internals.updateField = async function(
   newProp,
   logger
 ) {
-  let result = await childModel.findByIdAndUpdate(_id, newProp, { new: true })
+  const result = await childModel.findByIdAndUpdate(_id, newProp, { new: true })
   return internals.trackFields(childModel, mongoose, newProp, result, logger)
 }
 

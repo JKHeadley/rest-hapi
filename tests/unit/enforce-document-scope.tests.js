@@ -21,7 +21,7 @@ sinon.test = sinonTest
 
 test('enforce-document-scope exists and has expected members', function(t) {
   // <editor-fold desc="Arrange">
-  let enforceDocumentScope = require('../../policies/enforce-document-scope')
+  const enforceDocumentScope = require('../../policies/enforce-document-scope')
 
   t.plan(3)
   // </editor-fold>
@@ -46,18 +46,20 @@ test('enforce-document-scope.compareScopes', function(t) {
       // <editor-fold desc="Arrange">
       t.plan(1)
 
-      let enforceDocumentScope = rewire('../../policies/enforce-document-scope')
-      let compareScopes = enforceDocumentScope.__get__(
+      const enforceDocumentScope = rewire(
+        '../../policies/enforce-document-scope'
+      )
+      const compareScopes = enforceDocumentScope.__get__(
         'internals.compareScopes'
       )
 
-      let userScope = ['allowed', 'forbidden']
+      const userScope = ['allowed', 'forbidden']
 
-      let documentScope = ['allowed', '!forbidden']
+      const documentScope = ['allowed', '!forbidden']
       // </editor-fold>
 
       // <editor-fold desc="Act">
-      let authorizedForDocument = compareScopes(userScope, documentScope)
+      const authorizedForDocument = compareScopes(userScope, documentScope)
       // </editor-fold>
 
       // <editor-fold desc="Assert">
@@ -75,18 +77,20 @@ test('enforce-document-scope.compareScopes', function(t) {
       // <editor-fold desc="Arrange">
       t.plan(1)
 
-      let enforceDocumentScope = rewire('../../policies/enforce-document-scope')
-      let compareScopes = enforceDocumentScope.__get__(
+      const enforceDocumentScope = rewire(
+        '../../policies/enforce-document-scope'
+      )
+      const compareScopes = enforceDocumentScope.__get__(
         'internals.compareScopes'
       )
 
-      let userScope = ['allowed']
+      const userScope = ['allowed']
 
-      let documentScope = ['allowed', '!forbidden']
+      const documentScope = ['allowed', '!forbidden']
       // </editor-fold>
 
       // <editor-fold desc="Act">
-      let authorizedForDocument = compareScopes(userScope, documentScope)
+      const authorizedForDocument = compareScopes(userScope, documentScope)
       // </editor-fold>
 
       // <editor-fold desc="Assert">
@@ -104,18 +108,20 @@ test('enforce-document-scope.compareScopes', function(t) {
       // <editor-fold desc="Arrange">
       t.plan(1)
 
-      let enforceDocumentScope = rewire('../../policies/enforce-document-scope')
-      let compareScopes = enforceDocumentScope.__get__(
+      const enforceDocumentScope = rewire(
+        '../../policies/enforce-document-scope'
+      )
+      const compareScopes = enforceDocumentScope.__get__(
         'internals.compareScopes'
       )
 
-      let userScope = ['allowed']
+      const userScope = ['allowed']
 
-      let documentScope = ['allowed', '!forbidden', '+required']
+      const documentScope = ['allowed', '!forbidden', '+required']
       // </editor-fold>
 
       // <editor-fold desc="Act">
-      let authorizedForDocument = compareScopes(userScope, documentScope)
+      const authorizedForDocument = compareScopes(userScope, documentScope)
       // </editor-fold>
 
       // <editor-fold desc="Assert">
@@ -133,18 +139,20 @@ test('enforce-document-scope.compareScopes', function(t) {
       // <editor-fold desc="Arrange">
       t.plan(1)
 
-      let enforceDocumentScope = rewire('../../policies/enforce-document-scope')
-      let compareScopes = enforceDocumentScope.__get__(
+      const enforceDocumentScope = rewire(
+        '../../policies/enforce-document-scope'
+      )
+      const compareScopes = enforceDocumentScope.__get__(
         'internals.compareScopes'
       )
 
-      let userScope = ['allowed', 'required']
+      const userScope = ['allowed', 'required']
 
-      let documentScope = ['allowed', '!forbidden', '+required']
+      const documentScope = ['allowed', '!forbidden', '+required']
       // </editor-fold>
 
       // <editor-fold desc="Act">
-      let authorizedForDocument = compareScopes(userScope, documentScope)
+      const authorizedForDocument = compareScopes(userScope, documentScope)
       // </editor-fold>
 
       // <editor-fold desc="Assert">
@@ -162,18 +170,20 @@ test('enforce-document-scope.compareScopes', function(t) {
       // <editor-fold desc="Arrange">
       t.plan(1)
 
-      let enforceDocumentScope = rewire('../../policies/enforce-document-scope')
-      let compareScopes = enforceDocumentScope.__get__(
+      const enforceDocumentScope = rewire(
+        '../../policies/enforce-document-scope'
+      )
+      const compareScopes = enforceDocumentScope.__get__(
         'internals.compareScopes'
       )
 
-      let userScope = ['test']
+      const userScope = ['test']
 
-      let documentScope = ['allowed']
+      const documentScope = ['allowed']
       // </editor-fold>
 
       // <editor-fold desc="Act">
-      let authorizedForDocument = compareScopes(userScope, documentScope)
+      const authorizedForDocument = compareScopes(userScope, documentScope)
       // </editor-fold>
 
       // <editor-fold desc="Assert">
@@ -191,18 +201,20 @@ test('enforce-document-scope.compareScopes', function(t) {
       // <editor-fold desc="Arrange">
       t.plan(1)
 
-      let enforceDocumentScope = rewire('../../policies/enforce-document-scope')
-      let compareScopes = enforceDocumentScope.__get__(
+      const enforceDocumentScope = rewire(
+        '../../policies/enforce-document-scope'
+      )
+      const compareScopes = enforceDocumentScope.__get__(
         'internals.compareScopes'
       )
 
-      let userScope = ['test', 'allowed']
+      const userScope = ['test', 'allowed']
 
-      let documentScope = ['allowed', 'also_allowed']
+      const documentScope = ['allowed', 'also_allowed']
       // </editor-fold>
 
       // <editor-fold desc="Act">
-      let authorizedForDocument = compareScopes(userScope, documentScope)
+      const authorizedForDocument = compareScopes(userScope, documentScope)
       // </editor-fold>
 
       // <editor-fold desc="Assert">
@@ -220,18 +232,20 @@ test('enforce-document-scope.compareScopes', function(t) {
       // <editor-fold desc="Arrange">
       t.plan(1)
 
-      let enforceDocumentScope = rewire('../../policies/enforce-document-scope')
-      let compareScopes = enforceDocumentScope.__get__(
+      const enforceDocumentScope = rewire(
+        '../../policies/enforce-document-scope'
+      )
+      const compareScopes = enforceDocumentScope.__get__(
         'internals.compareScopes'
       )
 
-      let userScope = ['test', 'allowed']
+      const userScope = ['test', 'allowed']
 
-      let documentScope = ['allowed', 'also_allowed']
+      const documentScope = ['allowed', 'also_allowed']
       // </editor-fold>
 
       // <editor-fold desc="Act">
-      let authorizedForDocument = compareScopes(userScope, documentScope)
+      const authorizedForDocument = compareScopes(userScope, documentScope)
       // </editor-fold>
 
       // <editor-fold desc="Assert">
@@ -249,18 +263,20 @@ test('enforce-document-scope.compareScopes', function(t) {
       // <editor-fold desc="Arrange">
       t.plan(1)
 
-      let enforceDocumentScope = rewire('../../policies/enforce-document-scope')
-      let compareScopes = enforceDocumentScope.__get__(
+      const enforceDocumentScope = rewire(
+        '../../policies/enforce-document-scope'
+      )
+      const compareScopes = enforceDocumentScope.__get__(
         'internals.compareScopes'
       )
 
-      let userScope = ['test', 'allowed', 'required']
+      const userScope = ['test', 'allowed', 'required']
 
-      let documentScope = ['allowed', '+required', '!forbidden', 'extra']
+      const documentScope = ['allowed', '+required', '!forbidden', 'extra']
       // </editor-fold>
 
       // <editor-fold desc="Act">
-      let authorizedForDocument = compareScopes(userScope, documentScope)
+      const authorizedForDocument = compareScopes(userScope, documentScope)
       // </editor-fold>
 
       // <editor-fold desc="Assert">
@@ -278,18 +294,20 @@ test('enforce-document-scope.compareScopes', function(t) {
       // <editor-fold desc="Arrange">
       t.plan(1)
 
-      let enforceDocumentScope = rewire('../../policies/enforce-document-scope')
-      let compareScopes = enforceDocumentScope.__get__(
+      const enforceDocumentScope = rewire(
+        '../../policies/enforce-document-scope'
+      )
+      const compareScopes = enforceDocumentScope.__get__(
         'internals.compareScopes'
       )
 
-      let userScope = ['test', 'required', 'nothing']
+      const userScope = ['test', 'required', 'nothing']
 
-      let documentScope = ['allowed', '+required', '!forbidden', 'extra']
+      const documentScope = ['allowed', '+required', '!forbidden', 'extra']
       // </editor-fold>
 
       // <editor-fold desc="Act">
-      let authorizedForDocument = compareScopes(userScope, documentScope)
+      const authorizedForDocument = compareScopes(userScope, documentScope)
       // </editor-fold>
 
       // <editor-fold desc="Assert">
@@ -311,16 +329,18 @@ test('enforce-document-scope.verifyScope', function(t) {
       // <editor-fold desc="Arrange">
       t.plan(1)
 
-      let enforceDocumentScope = rewire('../../policies/enforce-document-scope')
-      let compareScopes = this.spy(function() {
+      const enforceDocumentScope = rewire(
+        '../../policies/enforce-document-scope'
+      )
+      const compareScopes = this.spy(function() {
         return true
       })
       enforceDocumentScope.__set__('internals.compareScopes', compareScopes)
-      let verifyScope = this.spy(
+      const verifyScope = this.spy(
         enforceDocumentScope.__get__('internals.verifyScope')
       )
 
-      let document = {
+      const document = {
         scope: {
           rootScope: ['testRoot'],
           readScope: ['testRead'],
@@ -330,11 +350,11 @@ test('enforce-document-scope.verifyScope', function(t) {
         }
       }
 
-      let userScope = ['testUserScope']
+      const userScope = ['testUserScope']
       // </editor-fold>
 
       // <editor-fold desc="Act">
-      let result = verifyScope([document], 'read', userScope, Log)
+      const result = verifyScope([document], 'read', userScope, Log)
       // </editor-fold>
 
       // <editor-fold desc="Assert">
@@ -359,16 +379,18 @@ test('enforce-document-scope.verifyScope', function(t) {
       // <editor-fold desc="Arrange">
       t.plan(1)
 
-      let enforceDocumentScope = rewire('../../policies/enforce-document-scope')
-      let compareScopes = this.spy(function() {
+      const enforceDocumentScope = rewire(
+        '../../policies/enforce-document-scope'
+      )
+      const compareScopes = this.spy(function() {
         return true
       })
       enforceDocumentScope.__set__('internals.compareScopes', compareScopes)
-      let verifyScope = this.spy(
+      const verifyScope = this.spy(
         enforceDocumentScope.__get__('internals.verifyScope')
       )
 
-      let document = {
+      const document = {
         scope: {
           rootScope: ['testRoot'],
           readScope: ['testRead'],
@@ -378,11 +400,11 @@ test('enforce-document-scope.verifyScope', function(t) {
         }
       }
 
-      let userScope = ['testUserScope']
+      const userScope = ['testUserScope']
       // </editor-fold>
 
       // <editor-fold desc="Act">
-      let result = verifyScope([document], 'update', userScope, Log)
+      const result = verifyScope([document], 'update', userScope, Log)
       // </editor-fold>
 
       // <editor-fold desc="Assert">
@@ -407,16 +429,18 @@ test('enforce-document-scope.verifyScope', function(t) {
       // <editor-fold desc="Arrange">
       t.plan(1)
 
-      let enforceDocumentScope = rewire('../../policies/enforce-document-scope')
-      let compareScopes = this.spy(function() {
+      const enforceDocumentScope = rewire(
+        '../../policies/enforce-document-scope'
+      )
+      const compareScopes = this.spy(function() {
         return true
       })
       enforceDocumentScope.__set__('internals.compareScopes', compareScopes)
-      let verifyScope = this.spy(
+      const verifyScope = this.spy(
         enforceDocumentScope.__get__('internals.verifyScope')
       )
 
-      let document = {
+      const document = {
         scope: {
           rootScope: ['testRoot'],
           readScope: ['testRead'],
@@ -426,11 +450,11 @@ test('enforce-document-scope.verifyScope', function(t) {
         }
       }
 
-      let userScope = ['testUserScope']
+      const userScope = ['testUserScope']
       // </editor-fold>
 
       // <editor-fold desc="Act">
-      let result = verifyScope([document], 'delete', userScope, Log)
+      const result = verifyScope([document], 'delete', userScope, Log)
       // </editor-fold>
 
       // <editor-fold desc="Assert">
@@ -455,16 +479,18 @@ test('enforce-document-scope.verifyScope', function(t) {
       // <editor-fold desc="Arrange">
       t.plan(1)
 
-      let enforceDocumentScope = rewire('../../policies/enforce-document-scope')
-      let compareScopes = this.spy(function() {
+      const enforceDocumentScope = rewire(
+        '../../policies/enforce-document-scope'
+      )
+      const compareScopes = this.spy(function() {
         return true
       })
       enforceDocumentScope.__set__('internals.compareScopes', compareScopes)
-      let verifyScope = this.spy(
+      const verifyScope = this.spy(
         enforceDocumentScope.__get__('internals.verifyScope')
       )
 
-      let document = {
+      const document = {
         scope: {
           rootScope: ['testRoot'],
           readScope: ['testRead'],
@@ -474,11 +500,11 @@ test('enforce-document-scope.verifyScope', function(t) {
         }
       }
 
-      let userScope = ['testUserScope']
+      const userScope = ['testUserScope']
       // </editor-fold>
 
       // <editor-fold desc="Act">
-      let result = verifyScope([document], 'associate', userScope, Log)
+      const result = verifyScope([document], 'associate', userScope, Log)
       // </editor-fold>
 
       // <editor-fold desc="Assert">
@@ -503,16 +529,18 @@ test('enforce-document-scope.verifyScope', function(t) {
       // <editor-fold desc="Arrange">
       t.plan(1)
 
-      let enforceDocumentScope = rewire('../../policies/enforce-document-scope')
-      let compareScopes = this.spy(function() {
+      const enforceDocumentScope = rewire(
+        '../../policies/enforce-document-scope'
+      )
+      const compareScopes = this.spy(function() {
         return true
       })
       enforceDocumentScope.__set__('internals.compareScopes', compareScopes)
-      let verifyScope = this.spy(
+      const verifyScope = this.spy(
         enforceDocumentScope.__get__('internals.verifyScope')
       )
 
-      let document = {
+      const document = {
         scope: {
           readScope: ['testRead'],
           updateScope: ['testUpdate'],
@@ -521,11 +549,11 @@ test('enforce-document-scope.verifyScope', function(t) {
         }
       }
 
-      let userScope = ['testUserScope']
+      const userScope = ['testUserScope']
       // </editor-fold>
 
       // <editor-fold desc="Act">
-      let result = verifyScope([document], 'associate', userScope, Log)
+      const result = verifyScope([document], 'associate', userScope, Log)
       // </editor-fold>
 
       // <editor-fold desc="Assert">
@@ -546,26 +574,28 @@ test('enforce-document-scope.verifyScope', function(t) {
       // <editor-fold desc="Arrange">
       t.plan(1)
 
-      let enforceDocumentScope = rewire('../../policies/enforce-document-scope')
-      let compareScopes = this.spy(function() {
+      const enforceDocumentScope = rewire(
+        '../../policies/enforce-document-scope'
+      )
+      const compareScopes = this.spy(function() {
         return true
       })
       enforceDocumentScope.__set__('internals.compareScopes', compareScopes)
-      let verifyScope = this.spy(
+      const verifyScope = this.spy(
         enforceDocumentScope.__get__('internals.verifyScope')
       )
 
-      let document = {
+      const document = {
         scope: {
           rootScope: ['testRoot']
         }
       }
 
-      let userScope = ['testUserScope']
+      const userScope = ['testUserScope']
       // </editor-fold>
 
       // <editor-fold desc="Act">
-      let result = verifyScope([document], 'associate', userScope, Log)
+      const result = verifyScope([document], 'associate', userScope, Log)
       // </editor-fold>
 
       // <editor-fold desc="Assert">
@@ -586,24 +616,26 @@ test('enforce-document-scope.verifyScope', function(t) {
       // <editor-fold desc="Arrange">
       t.plan(1)
 
-      let enforceDocumentScope = rewire('../../policies/enforce-document-scope')
-      let compareScopes = this.spy(function() {
+      const enforceDocumentScope = rewire(
+        '../../policies/enforce-document-scope'
+      )
+      const compareScopes = this.spy(function() {
         return true
       })
       enforceDocumentScope.__set__('internals.compareScopes', compareScopes)
-      let verifyScope = this.spy(
+      const verifyScope = this.spy(
         enforceDocumentScope.__get__('internals.verifyScope')
       )
 
-      let document = {
+      const document = {
         scope: {}
       }
 
-      let userScope = ['testUserScope']
+      const userScope = ['testUserScope']
       // </editor-fold>
 
       // <editor-fold desc="Act">
-      let result = verifyScope([document], 'associate', userScope, Log)
+      const result = verifyScope([document], 'associate', userScope, Log)
       // </editor-fold>
 
       // <editor-fold desc="Assert">
@@ -621,17 +653,19 @@ test('enforce-document-scope.verifyScope', function(t) {
       // <editor-fold desc="Arrange">
       t.plan(1)
 
-      let enforceDocumentScope = rewire('../../policies/enforce-document-scope')
-      let compareScopes = this.spy(function() {
+      const enforceDocumentScope = rewire(
+        '../../policies/enforce-document-scope'
+      )
+      const compareScopes = this.spy(function() {
         return false
       })
       enforceDocumentScope.__set__('internals.compareScopes', compareScopes)
       enforceDocumentScope.__set__('config.enableDocumentScopeFail', true)
-      let verifyScope = this.spy(
+      const verifyScope = this.spy(
         enforceDocumentScope.__get__('internals.verifyScope')
       )
 
-      let document = {
+      const document = {
         scope: {
           rootScope: ['testRoot'],
           readScope: ['testRead'],
@@ -641,11 +675,11 @@ test('enforce-document-scope.verifyScope', function(t) {
         }
       }
 
-      let userScope = ['testUserScope']
+      const userScope = ['testUserScope']
       // </editor-fold>
 
       // <editor-fold desc="Act">
-      let result = verifyScope([document], 'associate', userScope, Log)
+      const result = verifyScope([document], 'associate', userScope, Log)
       // </editor-fold>
 
       // <editor-fold desc="Assert">
@@ -667,17 +701,19 @@ test('enforce-document-scope.verifyScope', function(t) {
       // <editor-fold desc="Arrange">
       t.plan(1)
 
-      let enforceDocumentScope = rewire('../../policies/enforce-document-scope')
-      let compareScopes = this.spy(function() {
+      const enforceDocumentScope = rewire(
+        '../../policies/enforce-document-scope'
+      )
+      const compareScopes = this.spy(function() {
         return false
       })
       enforceDocumentScope.__set__('internals.compareScopes', compareScopes)
       enforceDocumentScope.__set__('config.enableDocumentScopeFail', false)
-      let verifyScope = this.spy(
+      const verifyScope = this.spy(
         enforceDocumentScope.__get__('internals.verifyScope')
       )
 
-      let document = {
+      const document = {
         scope: {
           rootScope: ['testRoot'],
           readScope: ['testRead'],
@@ -687,11 +723,11 @@ test('enforce-document-scope.verifyScope', function(t) {
         }
       }
 
-      let userScope = ['testUserScope']
+      const userScope = ['testUserScope']
       // </editor-fold>
 
       // <editor-fold desc="Act">
-      let result = verifyScope([document], 'associate', userScope, Log)
+      const result = verifyScope([document], 'associate', userScope, Log)
       // </editor-fold>
 
       // <editor-fold desc="Assert">
@@ -717,24 +753,26 @@ test('enforce-document-scope.verifyScopeById', function(t) {
       // <editor-fold desc="Arrange">
       t.plan(1)
 
-      let enforceDocumentScope = rewire('../../policies/enforce-document-scope')
-      let verifyScope = this.spy(function() {
+      const enforceDocumentScope = rewire(
+        '../../policies/enforce-document-scope'
+      )
+      const verifyScope = this.spy(function() {
         return true
       })
       enforceDocumentScope.__set__('internals.verifyScope', verifyScope)
-      let verifyScopeById = this.spy(
+      const verifyScopeById = this.spy(
         enforceDocumentScope.__get__('internals.verifyScopeById')
       )
 
-      let model = {
+      const model = {
         find: this.spy(function() {
           return Q.when()
         })
       }
 
-      let userScope = ['testUserScope']
+      const userScope = ['testUserScope']
 
-      let documentIds = ['id1', 'id2']
+      const documentIds = ['id1', 'id2']
 
       const query = {
         _id: {
@@ -745,7 +783,7 @@ test('enforce-document-scope.verifyScopeById', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Act">
-      let result = verifyScopeById(model, documentIds, 'read', userScope, Log)
+      const result = verifyScopeById(model, documentIds, 'read', userScope, Log)
       // </editor-fold>
 
       // <editor-fold desc="Assert">
@@ -766,32 +804,34 @@ test('enforce-document-scope.verifyScopeById', function(t) {
       // <editor-fold desc="Arrange">
       t.plan(1)
 
-      let deferred = Q.defer()
-      let enforceDocumentScope = rewire('../../policies/enforce-document-scope')
-      let verifyScope = this.spy(function() {
+      const deferred = Q.defer()
+      const enforceDocumentScope = rewire(
+        '../../policies/enforce-document-scope'
+      )
+      const verifyScope = this.spy(function() {
         deferred.resolve()
         return true
       })
       enforceDocumentScope.__set__('internals.verifyScope', verifyScope)
-      let verifyScopeById = this.spy(
+      const verifyScopeById = this.spy(
         enforceDocumentScope.__get__('internals.verifyScopeById')
       )
 
-      let docs = ['doc1', 'doc2']
-      let model = {
+      const docs = ['doc1', 'doc2']
+      const model = {
         find: this.spy(function() {
           return Q.when(docs)
         })
       }
 
-      let userScope = ['testUserScope']
+      const userScope = ['testUserScope']
 
-      let documentIds = ['id1', 'id2']
+      const documentIds = ['id1', 'id2']
 
       // </editor-fold>
 
       // <editor-fold desc="Act">
-      let result = verifyScopeById(model, documentIds, 'read', userScope, Log)
+      const result = verifyScopeById(model, documentIds, 'read', userScope, Log)
       // </editor-fold>
 
       // <editor-fold desc="Assert">
@@ -817,19 +857,21 @@ test('enforce-document-scope.enforceDocumentScopePostForModel', function(t) {
       // <editor-fold desc="Arrange">
       t.plan(1)
 
-      let enforceDocumentScope = rewire('../../policies/enforce-document-scope')
-      let verifyScope = this.spy(function() {
+      const enforceDocumentScope = rewire(
+        '../../policies/enforce-document-scope'
+      )
+      const verifyScope = this.spy(function() {
         throw new Error('ERROR')
       })
       enforceDocumentScope.__set__('internals.verifyScope', verifyScope)
-      let model = {}
-      let enforceDocumentScopePostForModel = enforceDocumentScope.enforceDocumentScopePost(
+      const model = {}
+      const enforceDocumentScopePostForModel = enforceDocumentScope.enforceDocumentScopePost(
         model,
         Log
       )
-      let h = { continue: 'test' }
+      const h = { continue: 'test' }
 
-      let request = {
+      const request = {
         auth: {
           credentials: {
             scope: []
@@ -840,7 +882,7 @@ test('enforce-document-scope.enforceDocumentScopePostForModel', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Act">
-      let result = enforceDocumentScopePostForModel(request, h)
+      const result = enforceDocumentScopePostForModel(request, h)
       // </editor-fold>
 
       // <editor-fold desc="Assert">
@@ -858,20 +900,22 @@ test('enforce-document-scope.enforceDocumentScopePostForModel', function(t) {
       // <editor-fold desc="Arrange">
       t.plan(1)
 
-      let enforceDocumentScope = rewire('../../policies/enforce-document-scope')
-      let verifyScope = this.spy(function() {
+      const enforceDocumentScope = rewire(
+        '../../policies/enforce-document-scope'
+      )
+      const verifyScope = this.spy(function() {
         return { authorized: true }
       })
       enforceDocumentScope.__set__('internals.verifyScope', verifyScope)
-      let model = {}
-      let enforceDocumentScopePostForModel = enforceDocumentScope.enforceDocumentScopePost(
+      const model = {}
+      const enforceDocumentScopePostForModel = enforceDocumentScope.enforceDocumentScopePost(
         model,
         Log
       )
-      let h = { continue: 'test' }
-      let mockLog = Log.bind('enforceDocumentScopePost')
+      const h = { continue: 'test' }
+      const mockLog = Log.bind('enforceDocumentScopePost')
 
-      let request = {
+      const request = {
         auth: {
           credentials: {
             scope: ['mock user scope']
@@ -892,7 +936,7 @@ test('enforce-document-scope.enforceDocumentScopePostForModel', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Act">
-      let result = enforceDocumentScopePostForModel(request, h)
+      const result = enforceDocumentScopePostForModel(request, h)
       // </editor-fold>
 
       // <editor-fold desc="Assert">
@@ -914,20 +958,22 @@ test('enforce-document-scope.enforceDocumentScopePostForModel', function(t) {
       // <editor-fold desc="Arrange">
       t.plan(1)
 
-      let enforceDocumentScope = rewire('../../policies/enforce-document-scope')
-      let verifyScope = this.spy(function() {
+      const enforceDocumentScope = rewire(
+        '../../policies/enforce-document-scope'
+      )
+      const verifyScope = this.spy(function() {
         return { authorized: true }
       })
       enforceDocumentScope.__set__('internals.verifyScope', verifyScope)
-      let model = {}
-      let enforceDocumentScopePostForModel = enforceDocumentScope.enforceDocumentScopePost(
+      const model = {}
+      const enforceDocumentScopePostForModel = enforceDocumentScope.enforceDocumentScopePost(
         model,
         Log
       )
-      let h = { continue: 'test' }
-      let mockLog = Log.bind('enforceDocumentScopePost')
+      const h = { continue: 'test' }
+      const mockLog = Log.bind('enforceDocumentScopePost')
 
-      let request = {
+      const request = {
         auth: {
           credentials: {
             scope: ['mock user scope']
@@ -948,7 +994,7 @@ test('enforce-document-scope.enforceDocumentScopePostForModel', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Act">
-      let result = enforceDocumentScopePostForModel(request, h)
+      const result = enforceDocumentScopePostForModel(request, h)
       // </editor-fold>
 
       // <editor-fold desc="Assert">
@@ -970,20 +1016,22 @@ test('enforce-document-scope.enforceDocumentScopePostForModel', function(t) {
       // <editor-fold desc="Arrange">
       t.plan(1)
 
-      let enforceDocumentScope = rewire('../../policies/enforce-document-scope')
-      let verifyScope = this.spy(function() {
+      const enforceDocumentScope = rewire(
+        '../../policies/enforce-document-scope'
+      )
+      const verifyScope = this.spy(function() {
         return { authorized: true }
       })
       enforceDocumentScope.__set__('internals.verifyScope', verifyScope)
-      let model = {}
-      let enforceDocumentScopePostForModel = enforceDocumentScope.enforceDocumentScopePost(
+      const model = {}
+      const enforceDocumentScopePostForModel = enforceDocumentScope.enforceDocumentScopePost(
         model,
         Log
       )
-      let h = { continue: 'test' }
-      let mockLog = Log.bind('enforceDocumentScopePost')
+      const h = { continue: 'test' }
+      const mockLog = Log.bind('enforceDocumentScopePost')
 
-      let request = {
+      const request = {
         auth: {
           credentials: {
             scope: ['mock user scope']
@@ -1004,7 +1052,7 @@ test('enforce-document-scope.enforceDocumentScopePostForModel', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Act">
-      let result = enforceDocumentScopePostForModel(request, h)
+      const result = enforceDocumentScopePostForModel(request, h)
       // </editor-fold>
 
       // <editor-fold desc="Assert">
@@ -1022,21 +1070,23 @@ test('enforce-document-scope.enforceDocumentScopePostForModel', function(t) {
       // <editor-fold desc="Arrange">
       t.plan(1)
 
-      let enforceDocumentScope = rewire('../../policies/enforce-document-scope')
-      let verifyScope = this.spy(function() {
+      const enforceDocumentScope = rewire(
+        '../../policies/enforce-document-scope'
+      )
+      const verifyScope = this.spy(function() {
         return { authorized: false }
       })
       enforceDocumentScope.__set__('internals.verifyScope', verifyScope)
       enforceDocumentScope.__set__('config.enableDocumentScopeFail', false)
-      let model = {}
-      let enforceDocumentScopePostForModel = enforceDocumentScope.enforceDocumentScopePost(
+      const model = {}
+      const enforceDocumentScopePostForModel = enforceDocumentScope.enforceDocumentScopePost(
         model,
         Log
       )
-      let h = { continue: 'test' }
-      let mockLog = Log.bind('enforceDocumentScopePost')
+      const h = { continue: 'test' }
+      const mockLog = Log.bind('enforceDocumentScopePost')
 
-      let request = {
+      const request = {
         auth: {
           credentials: {
             scope: ['mock user scope']
@@ -1086,21 +1136,23 @@ test('enforce-document-scope.enforceDocumentScopePostForModel', function(t) {
       // <editor-fold desc="Arrange">
       t.plan(1)
 
-      let enforceDocumentScope = rewire('../../policies/enforce-document-scope')
-      let verifyScope = this.spy(function() {
+      const enforceDocumentScope = rewire(
+        '../../policies/enforce-document-scope'
+      )
+      const verifyScope = this.spy(function() {
         return { authorized: false }
       })
       enforceDocumentScope.__set__('internals.verifyScope', verifyScope)
       enforceDocumentScope.__set__('config.enableDocumentScopeFail', true)
-      let model = {}
-      let enforceDocumentScopePostForModel = enforceDocumentScope.enforceDocumentScopePost(
+      const model = {}
+      const enforceDocumentScopePostForModel = enforceDocumentScope.enforceDocumentScopePost(
         model,
         Log
       )
-      let h = { continue: 'test' }
-      let mockLog = Log.bind('enforceDocumentScopePost')
+      const h = { continue: 'test' }
+      const mockLog = Log.bind('enforceDocumentScopePost')
 
-      let request = {
+      const request = {
         auth: {
           credentials: {
             scope: ['mock user scope']
@@ -1148,21 +1200,23 @@ test('enforce-document-scope.enforceDocumentScopePostForModel', function(t) {
       // <editor-fold desc="Arrange">
       t.plan(2)
 
-      let enforceDocumentScope = rewire('../../policies/enforce-document-scope')
-      let verifyScope = this.spy(function() {
+      const enforceDocumentScope = rewire(
+        '../../policies/enforce-document-scope'
+      )
+      const verifyScope = this.spy(function() {
         return { authorized: false, unauthorizedDocs: [{ _id: 'failed doc' }] }
       })
       enforceDocumentScope.__set__('internals.verifyScope', verifyScope)
       enforceDocumentScope.__set__('config.enableDocumentScopeFail', false)
-      let model = {}
-      let enforceDocumentScopePostForModel = enforceDocumentScope.enforceDocumentScopePost(
+      const model = {}
+      const enforceDocumentScopePostForModel = enforceDocumentScope.enforceDocumentScopePost(
         model,
         Log
       )
-      let h = { continue: 'test' }
-      let mockLog = Log.bind('enforceDocumentScopePost')
+      const h = { continue: 'test' }
+      const mockLog = Log.bind('enforceDocumentScopePost')
 
-      let request = {
+      const request = {
         auth: {
           credentials: {
             scope: ['mock user scope']
@@ -1214,19 +1268,21 @@ test('enforce-document-scope.enforceDocumentScopePreForModel', function(t) {
       // <editor-fold desc="Arrange">
       t.plan(1)
 
-      let enforceDocumentScope = rewire('../../policies/enforce-document-scope')
-      let verifyScopeById = this.spy(function() {
+      const enforceDocumentScope = rewire(
+        '../../policies/enforce-document-scope'
+      )
+      const verifyScopeById = this.spy(function() {
         throw new Error('ERROR')
       })
       enforceDocumentScope.__set__('internals.verifyScopeById', verifyScopeById)
-      let model = {}
-      let enforceDocumentScopePreForModel = enforceDocumentScope.enforceDocumentScopePre(
+      const model = {}
+      const enforceDocumentScopePreForModel = enforceDocumentScope.enforceDocumentScopePre(
         model,
         Log
       )
-      let h = { continue: 'test' }
+      const h = { continue: 'test' }
 
-      let request = {
+      const request = {
         auth: {
           credentials: {
             scope: []
@@ -1238,7 +1294,7 @@ test('enforce-document-scope.enforceDocumentScopePreForModel', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Act">
-      let result = await enforceDocumentScopePreForModel(request, h)
+      const result = await enforceDocumentScopePreForModel(request, h)
       // </editor-fold>
 
       // <editor-fold desc="Assert">
@@ -1256,20 +1312,22 @@ test('enforce-document-scope.enforceDocumentScopePreForModel', function(t) {
       // <editor-fold desc="Arrange">
       t.plan(1)
 
-      let enforceDocumentScope = rewire('../../policies/enforce-document-scope')
-      let verifyScopeById = this.spy(function() {
+      const enforceDocumentScope = rewire(
+        '../../policies/enforce-document-scope'
+      )
+      const verifyScopeById = this.spy(function() {
         return Q.when({ authorized: true })
       })
       enforceDocumentScope.__set__('internals.verifyScopeById', verifyScopeById)
-      let model = {}
-      let enforceDocumentScopePreForModel = enforceDocumentScope.enforceDocumentScopePre(
+      const model = {}
+      const enforceDocumentScopePreForModel = enforceDocumentScope.enforceDocumentScopePre(
         model,
         Log
       )
-      let h = { continue: 'test' }
-      let mockLog = Log.bind('enforceDocumentScopePre')
+      const h = { continue: 'test' }
+      const mockLog = Log.bind('enforceDocumentScopePre')
 
-      let request = {
+      const request = {
         auth: {
           credentials: {
             scope: ['mock user scope']
@@ -1287,7 +1345,7 @@ test('enforce-document-scope.enforceDocumentScopePreForModel', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Act">
-      let result = enforceDocumentScopePreForModel(request, h)
+      const result = enforceDocumentScopePreForModel(request, h)
       // </editor-fold>
 
       // <editor-fold desc="Assert">
@@ -1309,20 +1367,22 @@ test('enforce-document-scope.enforceDocumentScopePreForModel', function(t) {
       // <editor-fold desc="Arrange">
       t.plan(1)
 
-      let enforceDocumentScope = rewire('../../policies/enforce-document-scope')
-      let verifyScopeById = this.spy(function() {
+      const enforceDocumentScope = rewire(
+        '../../policies/enforce-document-scope'
+      )
+      const verifyScopeById = this.spy(function() {
         return Q.when({ authorized: true })
       })
       enforceDocumentScope.__set__('internals.verifyScopeById', verifyScopeById)
-      let model = {}
-      let enforceDocumentScopePreForModel = enforceDocumentScope.enforceDocumentScopePre(
+      const model = {}
+      const enforceDocumentScopePreForModel = enforceDocumentScope.enforceDocumentScopePre(
         model,
         Log
       )
-      let h = { continue: 'test' }
-      let mockLog = Log.bind('enforceDocumentScopePre')
+      const h = { continue: 'test' }
+      const mockLog = Log.bind('enforceDocumentScopePre')
 
-      let request = {
+      const request = {
         auth: {
           credentials: {
             scope: ['mock user scope']
@@ -1340,7 +1400,7 @@ test('enforce-document-scope.enforceDocumentScopePreForModel', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Act">
-      let result = enforceDocumentScopePreForModel(request, h)
+      const result = enforceDocumentScopePreForModel(request, h)
       // </editor-fold>
 
       // <editor-fold desc="Assert">
@@ -1362,20 +1422,22 @@ test('enforce-document-scope.enforceDocumentScopePreForModel', function(t) {
       // <editor-fold desc="Arrange">
       t.plan(1)
 
-      let enforceDocumentScope = rewire('../../policies/enforce-document-scope')
-      let verifyScopeById = this.spy(function() {
+      const enforceDocumentScope = rewire(
+        '../../policies/enforce-document-scope'
+      )
+      const verifyScopeById = this.spy(function() {
         return Q.when({ authorized: true })
       })
       enforceDocumentScope.__set__('internals.verifyScopeById', verifyScopeById)
-      let model = {}
-      let enforceDocumentScopePreForModel = enforceDocumentScope.enforceDocumentScopePre(
+      const model = {}
+      const enforceDocumentScopePreForModel = enforceDocumentScope.enforceDocumentScopePre(
         model,
         Log
       )
-      let h = { continue: 'test' }
-      let mockLog = Log.bind('enforceDocumentScopePre')
+      const h = { continue: 'test' }
+      const mockLog = Log.bind('enforceDocumentScopePre')
 
-      let request = {
+      const request = {
         auth: {
           credentials: {
             scope: ['mock user scope']
@@ -1393,7 +1455,7 @@ test('enforce-document-scope.enforceDocumentScopePreForModel', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Act">
-      let result = enforceDocumentScopePreForModel(request, h)
+      const result = enforceDocumentScopePreForModel(request, h)
       // </editor-fold>
 
       // <editor-fold desc="Assert">
@@ -1415,20 +1477,22 @@ test('enforce-document-scope.enforceDocumentScopePreForModel', function(t) {
       // <editor-fold desc="Arrange">
       t.plan(1)
 
-      let enforceDocumentScope = rewire('../../policies/enforce-document-scope')
-      let verifyScopeById = this.spy(function() {
+      const enforceDocumentScope = rewire(
+        '../../policies/enforce-document-scope'
+      )
+      const verifyScopeById = this.spy(function() {
         return Q.when({ authorized: true })
       })
       enforceDocumentScope.__set__('internals.verifyScopeById', verifyScopeById)
-      let model = {}
-      let enforceDocumentScopePreForModel = enforceDocumentScope.enforceDocumentScopePre(
+      const model = {}
+      const enforceDocumentScopePreForModel = enforceDocumentScope.enforceDocumentScopePre(
         model,
         Log
       )
-      let h = { continue: 'test' }
-      let mockLog = Log.bind('enforceDocumentScopePre')
+      const h = { continue: 'test' }
+      const mockLog = Log.bind('enforceDocumentScopePre')
 
-      let request = {
+      const request = {
         auth: {
           credentials: {
             scope: ['mock user scope']
@@ -1446,7 +1510,7 @@ test('enforce-document-scope.enforceDocumentScopePreForModel', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Act">
-      let result = enforceDocumentScopePreForModel(request, h)
+      const result = enforceDocumentScopePreForModel(request, h)
       // </editor-fold>
 
       // <editor-fold desc="Assert">
@@ -1468,20 +1532,22 @@ test('enforce-document-scope.enforceDocumentScopePreForModel', function(t) {
       // <editor-fold desc="Arrange">
       t.plan(1)
 
-      let enforceDocumentScope = rewire('../../policies/enforce-document-scope')
-      let verifyScopeById = this.spy(function() {
+      const enforceDocumentScope = rewire(
+        '../../policies/enforce-document-scope'
+      )
+      const verifyScopeById = this.spy(function() {
         return Q.when({ authorized: true })
       })
       enforceDocumentScope.__set__('internals.verifyScopeById', verifyScopeById)
-      let model = {}
-      let enforceDocumentScopePreForModel = enforceDocumentScope.enforceDocumentScopePre(
+      const model = {}
+      const enforceDocumentScopePreForModel = enforceDocumentScope.enforceDocumentScopePre(
         model,
         Log
       )
-      let h = { continue: 'test' }
-      let mockLog = Log.bind('enforceDocumentScopePre')
+      const h = { continue: 'test' }
+      const mockLog = Log.bind('enforceDocumentScopePre')
 
-      let request = {
+      const request = {
         auth: {
           credentials: {
             scope: ['mock user scope']
@@ -1498,7 +1564,7 @@ test('enforce-document-scope.enforceDocumentScopePreForModel', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Act">
-      let result = enforceDocumentScopePreForModel(request, h)
+      const result = enforceDocumentScopePreForModel(request, h)
       // </editor-fold>
 
       // <editor-fold desc="Assert">
@@ -1520,21 +1586,23 @@ test('enforce-document-scope.enforceDocumentScopePreForModel', function(t) {
       // <editor-fold desc="Arrange">
       t.plan(1)
 
-      let deferred = Q.defer()
-      let enforceDocumentScope = rewire('../../policies/enforce-document-scope')
-      let verifyScopeById = this.spy(function() {
+      const deferred = Q.defer()
+      const enforceDocumentScope = rewire(
+        '../../policies/enforce-document-scope'
+      )
+      const verifyScopeById = this.spy(function() {
         return Q.when({ authorized: true })
       })
       enforceDocumentScope.__set__('internals.verifyScopeById', verifyScopeById)
-      let model = {}
-      let enforceDocumentScopePreForModel = enforceDocumentScope.enforceDocumentScopePre(
+      const model = {}
+      const enforceDocumentScopePreForModel = enforceDocumentScope.enforceDocumentScopePre(
         model,
         Log
       )
-      let h = { continue: 'test' }
-      let mockLog = Log.bind('enforceDocumentScopePre')
+      const h = { continue: 'test' }
+      const mockLog = Log.bind('enforceDocumentScopePre')
 
-      let request = {
+      const request = {
         auth: {
           credentials: {
             scope: ['mock user scope']
@@ -1551,7 +1619,7 @@ test('enforce-document-scope.enforceDocumentScopePreForModel', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Act">
-      let result = enforceDocumentScopePreForModel(request, h)
+      const result = enforceDocumentScopePreForModel(request, h)
       // </editor-fold>
 
       // <editor-fold desc="Assert">
@@ -1571,22 +1639,24 @@ test('enforce-document-scope.enforceDocumentScopePreForModel', function(t) {
       // <editor-fold desc="Arrange">
       t.plan(1)
 
-      let deferred = Q.defer()
-      let enforceDocumentScope = rewire('../../policies/enforce-document-scope')
-      let verifyScopeById = this.spy(function() {
+      const deferred = Q.defer()
+      const enforceDocumentScope = rewire(
+        '../../policies/enforce-document-scope'
+      )
+      const verifyScopeById = this.spy(function() {
         return Q.when({ authorized: false })
       })
       enforceDocumentScope.__set__('internals.verifyScopeById', verifyScopeById)
       enforceDocumentScope.__set__('config.enableDocumentScopeFail', true)
-      let model = {}
-      let enforceDocumentScopePreForModel = enforceDocumentScope.enforceDocumentScopePre(
+      const model = {}
+      const enforceDocumentScopePreForModel = enforceDocumentScope.enforceDocumentScopePre(
         model,
         Log
       )
-      let h = { continue: 'test' }
-      let mockLog = Log.bind('enforceDocumentScopePre')
+      const h = { continue: 'test' }
+      const mockLog = Log.bind('enforceDocumentScopePre')
 
-      let request = {
+      const request = {
         auth: {
           credentials: {
             scope: ['mock user scope']
@@ -1603,7 +1673,7 @@ test('enforce-document-scope.enforceDocumentScopePreForModel', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Act">
-      let result = enforceDocumentScopePreForModel(request, h)
+      const result = enforceDocumentScopePreForModel(request, h)
       // </editor-fold>
 
       // <editor-fold desc="Assert">
@@ -1627,22 +1697,24 @@ test('enforce-document-scope.enforceDocumentScopePreForModel', function(t) {
       // <editor-fold desc="Arrange">
       t.plan(1)
 
-      let deferred = Q.defer()
-      let enforceDocumentScope = rewire('../../policies/enforce-document-scope')
-      let verifyScopeById = this.spy(function() {
+      const deferred = Q.defer()
+      const enforceDocumentScope = rewire(
+        '../../policies/enforce-document-scope'
+      )
+      const verifyScopeById = this.spy(function() {
         return Q.when({ authorized: false })
       })
       enforceDocumentScope.__set__('internals.verifyScopeById', verifyScopeById)
       enforceDocumentScope.__set__('config.enableDocumentScopeFail', false)
-      let model = {}
-      let enforceDocumentScopePreForModel = enforceDocumentScope.enforceDocumentScopePre(
+      const model = {}
+      const enforceDocumentScopePreForModel = enforceDocumentScope.enforceDocumentScopePre(
         model,
         Log
       )
-      let h = { continue: 'test' }
-      let mockLog = Log.bind('enforceDocumentScopePre')
+      const h = { continue: 'test' }
+      const mockLog = Log.bind('enforceDocumentScopePre')
 
-      let request = {
+      const request = {
         auth: {
           credentials: {
             scope: ['mock user scope']
@@ -1660,7 +1732,7 @@ test('enforce-document-scope.enforceDocumentScopePreForModel', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Act">
-      let result = enforceDocumentScopePreForModel(request, h)
+      const result = enforceDocumentScopePreForModel(request, h)
       // </editor-fold>
 
       // <editor-fold desc="Assert">
@@ -1684,22 +1756,24 @@ test('enforce-document-scope.enforceDocumentScopePreForModel', function(t) {
       // <editor-fold desc="Arrange">
       t.plan(1)
 
-      let deferred = Q.defer()
-      let enforceDocumentScope = rewire('../../policies/enforce-document-scope')
-      let verifyScopeById = this.spy(function() {
+      const deferred = Q.defer()
+      const enforceDocumentScope = rewire(
+        '../../policies/enforce-document-scope'
+      )
+      const verifyScopeById = this.spy(function() {
         return Q.when({ authorized: false })
       })
       enforceDocumentScope.__set__('internals.verifyScopeById', verifyScopeById)
       enforceDocumentScope.__set__('config.enableDocumentScopeFail', false)
-      let model = {}
-      let enforceDocumentScopePreForModel = enforceDocumentScope.enforceDocumentScopePre(
+      const model = {}
+      const enforceDocumentScopePreForModel = enforceDocumentScope.enforceDocumentScopePre(
         model,
         Log
       )
-      let h = { continue: 'test' }
-      let mockLog = Log.bind('enforceDocumentScopePre')
+      const h = { continue: 'test' }
+      const mockLog = Log.bind('enforceDocumentScopePre')
 
-      let request = {
+      const request = {
         auth: {
           credentials: {
             scope: ['mock user scope']
@@ -1717,7 +1791,7 @@ test('enforce-document-scope.enforceDocumentScopePreForModel', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Act">
-      let result = enforceDocumentScopePreForModel(request, h)
+      const result = enforceDocumentScopePreForModel(request, h)
       // </editor-fold>
 
       // <editor-fold desc="Assert">
@@ -1741,9 +1815,11 @@ test('enforce-document-scope.enforceDocumentScopePreForModel', function(t) {
       // <editor-fold desc="Arrange">
       t.plan(1)
 
-      let deferred = Q.defer()
-      let enforceDocumentScope = rewire('../../policies/enforce-document-scope')
-      let verifyScopeById = this.spy(function() {
+      const deferred = Q.defer()
+      const enforceDocumentScope = rewire(
+        '../../policies/enforce-document-scope'
+      )
+      const verifyScopeById = this.spy(function() {
         return Q.when({
           authorized: false,
           unauthorizedDocs: [{ _id: 'failedId' }]
@@ -1751,15 +1827,15 @@ test('enforce-document-scope.enforceDocumentScopePreForModel', function(t) {
       })
       enforceDocumentScope.__set__('internals.verifyScopeById', verifyScopeById)
       enforceDocumentScope.__set__('config.enableDocumentScopeFail', false)
-      let model = {}
-      let enforceDocumentScopePreForModel = enforceDocumentScope.enforceDocumentScopePre(
+      const model = {}
+      const enforceDocumentScopePreForModel = enforceDocumentScope.enforceDocumentScopePre(
         model,
         Log
       )
-      let h = { continue: 'test' }
-      let mockLog = Log.bind('enforceDocumentScopePre')
+      const h = { continue: 'test' }
+      const mockLog = Log.bind('enforceDocumentScopePre')
 
-      let request = {
+      const request = {
         auth: {
           credentials: {
             scope: ['mock user scope']
@@ -1776,7 +1852,7 @@ test('enforce-document-scope.enforceDocumentScopePreForModel', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Act">
-      let result = enforceDocumentScopePreForModel(request, h)
+      const result = enforceDocumentScopePreForModel(request, h)
       // </editor-fold>
 
       // <editor-fold desc="Assert">

@@ -1,7 +1,7 @@
 'use strict'
 
 let test = require('tape')
-let _ = require('lodash')
+const _ = require('lodash')
 const QueryString = require('query-string')
 
 const internals = {}
@@ -26,11 +26,11 @@ internals.testModelParameter = function(
     test = t.test
   }
 
-  let modelIndex =
+  const modelIndex =
     parameters.indexOf('model') >= 0
       ? parameters.indexOf('model')
       : parameters.indexOf('ownerModel')
-  let logIndex =
+  const logIndex =
     parameters.indexOf('Log') >= 0
       ? parameters.indexOf('Log')
       : parameters.indexOf('logger')

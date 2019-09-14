@@ -67,8 +67,9 @@
     "lodash": "~4.17.15",
     "loggin": "^3.0.1",
     "mkdirp": "0.5.1",
-    "mongoose": "^5.7.1",
+    "mongoose": "^4.6.3",
     "mrhorse": "^4.0.0",
+    "prettier-config-standard": "^1.0.1",
     "query-string": "^6.8.3",
     "require-all": "^3.0.0",
     "tape": "latest"
@@ -96,7 +97,7 @@
     "q": "^1.5.1",
     "rewire": "^4.0.1",
     "rmdir": "^1.2.0",
-    "sinon": "^7.4.2",
-    "sinon-test": "^2.4.0"
+    "sinon": "^7.0.0",
+    "sinon-test": "^2.3.0"
   }
 }
