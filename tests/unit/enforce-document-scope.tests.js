@@ -10,7 +10,7 @@ const sinonTestFactory = require('sinon-test')
 const sinonTest = sinonTestFactory(sinon)
 const rewire = require('rewire')
 const logging = require('loggin')
-const Boom = require('boom')
+const Boom = require('@hapi/boom')
 const Q = require('q')
 
 let Log = logging.getLogger('tests')

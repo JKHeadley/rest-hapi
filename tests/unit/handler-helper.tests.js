@@ -3,7 +3,7 @@
 // Temporarily disabling this rule for tests
 /* eslint no-unused-vars: 0 */
 
-let Boom = require('boom')
+let Boom = require('@hapi/boom')
 let test = require('blue-tape')
 let _ = require('lodash')
 let sinon = require('sinon')
@@ -16,7 +16,7 @@ let logging = require('loggin')
 let logger = logging.getLogger('tests')
 logger.logLevel = 'FATAL'
 let testHelper = require('../../utilities/test-helper')
-let Joi = require('joi')
+let Joi = require('@hapi/joi')
 let Q = require('q')
 
 process.on('unhandledRejection', error => {
@@ -4645,7 +4645,7 @@ test('handler-helper.deleteOneHandler', function(t) {
 //       let Log = logger.bind("handler-helper");
 //       let server = sandbox.spy();
 //       let setAssociation = sandbox.spy(function(){ return Q.reject("error message") });
-//       let boomStub = sandbox.stub(require('boom'));
+//       let boomStub = sandbox.stub(require('@hapi/boom'));
 //       let handlerHelper = rewire('../../utilities/handler-helper');
 //       handlerHelper.__set__("setAssociation", setAssociation);
 //       handlerHelper.__set__("Boom", boomStub);
@@ -4697,7 +4697,7 @@ test('handler-helper.deleteOneHandler', function(t) {
 //       let sandbox = sinon.sandbox.create();
 //       let Log = logger.bind("handler-helper");
 //       let server = sandbox.spy();
-//       let boomStub = sandbox.stub(require('boom'));
+//       let boomStub = sandbox.stub(require('@hapi/boom'));
 //       let handlerHelper = rewire('../../utilities/handler-helper');
 //       handlerHelper.__set__("Boom", boomStub);
 //       handlerHelper = handlerHelper(mongoose, server);
@@ -4748,7 +4748,7 @@ test('handler-helper.deleteOneHandler', function(t) {
 //       let sandbox = sinon.sandbox.create();
 //       let Log = logger.bind("handler-helper");
 //       let server = sandbox.spy();
-//       let boomStub = sandbox.stub(require('boom'));
+//       let boomStub = sandbox.stub(require('@hapi/boom'));
 //       let handlerHelper = rewire('../../utilities/handler-helper');
 //       handlerHelper.__set__("Boom", boomStub);
 //       handlerHelper = handlerHelper(mongoose, server);
@@ -4953,7 +4953,7 @@ test('handler-helper.deleteOneHandler', function(t) {
 //       let Log = logger.bind("handler-helper");
 //       let server = sandbox.spy();
 //       let removeAssociation = sandbox.spy(function(){ return Q.reject("error message") });
-//       let boomStub = sandbox.stub(require('boom'));
+//       let boomStub = sandbox.stub(require('@hapi/boom'));
 //       let handlerHelper = rewire('../../utilities/handler-helper');
 //       handlerHelper.__set__("removeAssociation", removeAssociation);
 //       handlerHelper.__set__("Boom", boomStub);
@@ -5005,7 +5005,7 @@ test('handler-helper.deleteOneHandler', function(t) {
 //       let sandbox = sinon.sandbox.create();
 //       let Log = logger.bind("handler-helper");
 //       let server = sandbox.spy();
-//       let boomStub = sandbox.stub(require('boom'));
+//       let boomStub = sandbox.stub(require('@hapi/boom'));
 //       let handlerHelper = rewire('../../utilities/handler-helper');
 //       handlerHelper.__set__("Boom", boomStub);
 //       handlerHelper = handlerHelper(mongoose, server);
@@ -5056,7 +5056,7 @@ test('handler-helper.deleteOneHandler', function(t) {
 //       let sandbox = sinon.sandbox.create();
 //       let Log = logger.bind("handler-helper");
 //       let server = sandbox.spy();
-//       let boomStub = sandbox.stub(require('boom'));
+//       let boomStub = sandbox.stub(require('@hapi/boom'));
 //       let handlerHelper = rewire('../../utilities/handler-helper');
 //       handlerHelper.__set__("Boom", boomStub);
 //       handlerHelper = handlerHelper(mongoose, server);
@@ -5264,7 +5264,7 @@ test('handler-helper.deleteOneHandler', function(t) {
 //       let Log = logger.bind("handler-helper");
 //       let server = sandbox.spy();
 //       let setAssociation = sandbox.spy(function(){ return Q.reject("error message") });
-//       let boomStub = sandbox.stub(require('boom'));
+//       let boomStub = sandbox.stub(require('@hapi/boom'));
 //       let handlerHelper = rewire('../../utilities/handler-helper');
 //       handlerHelper.__set__("setAssociation", setAssociation);
 //       handlerHelper.__set__("Boom", boomStub);
@@ -5317,7 +5317,7 @@ test('handler-helper.deleteOneHandler', function(t) {
 //       let sandbox = sinon.sandbox.create();
 //       let Log = logger.bind("handler-helper");
 //       let server = sandbox.spy();
-//       let boomStub = sandbox.stub(require('boom'));
+//       let boomStub = sandbox.stub(require('@hapi/boom'));
 //       let handlerHelper = rewire('../../utilities/handler-helper');
 //       handlerHelper.__set__("Boom", boomStub);
 //       handlerHelper = handlerHelper(mongoose, server);
@@ -5369,7 +5369,7 @@ test('handler-helper.deleteOneHandler', function(t) {
 //       let sandbox = sinon.sandbox.create();
 //       let Log = logger.bind("handler-helper");
 //       let server = sandbox.spy();
-//       let boomStub = sandbox.stub(require('boom'));
+//       let boomStub = sandbox.stub(require('@hapi/boom'));
 //       let handlerHelper = rewire('../../utilities/handler-helper');
 //       handlerHelper.__set__("Boom", boomStub);
 //       handlerHelper = handlerHelper(mongoose, server);
@@ -5758,7 +5758,7 @@ test('handler-helper.deleteOneHandler', function(t) {
 //       let sandbox = sinon.sandbox.create();
 //       let Log = logger.bind("handler-helper");
 //       let server = sandbox.spy();
-//       let boomStub = sandbox.stub(require('boom'));
+//       let boomStub = sandbox.stub(require('@hapi/boom'));
 //       let handlerHelper = rewire('../../utilities/handler-helper');
 //       handlerHelper.__set__("Boom", boomStub);
 //       handlerHelper = handlerHelper(mongoose, server);

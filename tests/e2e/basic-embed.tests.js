@@ -4,7 +4,7 @@ const path = require('path')
 const TestHelper = require('../../utilities/test-helper')
 const Decache = require('decache')
 const Q = require('q')
-const Hapi = require('hapi')
+const Hapi = require('@hapi/hapi')
 
 module.exports = (t, Mongoose, internals, Log) => {
   return t.test('basic embedded association tests', function(t) {

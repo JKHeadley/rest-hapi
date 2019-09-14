@@ -1,6 +1,6 @@
 'use strict'
 
-let Boom = require('boom')
+let Boom = require('@hapi/boom')
 let QueryHelper = require('./query-helper')
 let JoiMongooseHelper = require('./joi-mongoose-helper')
 let config = require('../config')

@@ -18,7 +18,7 @@ let Log = logging.getLogger('tests')
 Log.logLevel = 'DEBUG'
 Log = Log.bind('joi-mongoose-helper')
 let testHelper = require('../../utilities/test-helper')
-let Joi = require('joi')
+let Joi = require('@hapi/joi')
 
 sinon.test = sinonTest
 

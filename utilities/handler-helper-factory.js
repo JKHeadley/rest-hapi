@@ -1,6 +1,6 @@
 'use strict'
 
-let Boom = require('boom')
+let Boom = require('@hapi/boom')
 let handlerHelper = require('./handler-helper')
 
 // TODO: add bulk delete/delete many

@@ -1,6 +1,6 @@
 'use strict'
 
-let Joi = require('joi')
+let Joi = require('@hapi/joi')
 Joi.objectId = require('joi-objectid')(Joi)
 let _ = require('lodash')
 let validationHelper = require('./validation-helper')

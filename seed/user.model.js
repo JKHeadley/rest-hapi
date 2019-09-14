@@ -1,4 +1,4 @@
-let Joi = require('joi')
+let Joi = require('@hapi/joi')
 // NOTE: Install bcrypt then uncomment the line below
 // let bcrypt = require('bcryptjs')
 let RestHapi = require('rest-hapi')
@@ -56,7 +56,7 @@ module.exports = function(mongoose) {
         // Password Update Endpoint
         function(server, model, options, logger) {
           const Log = logger.bind('Password Update')
-          let Boom = require('boom')
+          let Boom = require('@hapi/boom')
 
           let collectionName = model.collectionDisplayName || model.modelName
 
