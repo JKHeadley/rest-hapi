@@ -65,7 +65,7 @@
     "hapi-swagger": "10.1.1",
     "joi-objectid": "mkg20001/joi-objectid#chore/upgrade",
     "lodash": "~4.17.15",
-    "loggin": "mkg20001/loggin",
+    "loggin": "^3.0.1",
     "mkdirp": "0.5.1",
     "mongoose": "^4.6.3",
     "mrhorse": "^4.0.0",
