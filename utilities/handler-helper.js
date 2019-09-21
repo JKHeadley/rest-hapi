@@ -149,6 +149,7 @@ async function _listHandler(model, request, Log) {
       flatten = true
     }
     delete query.$flatten
+    const { $embed } = query
     if (query.$count) {
       mongooseQuery = model.count()
       mongooseQuery = QueryHelper.createMongooseQuery(
@@ -205,21 +206,16 @@ async function _listHandler(model, request, Log) {
               result[associationKey] = data[associationKey]
             }
           }
-          if (association.type === 'MANY_MANY' && flatten === true) {
-            // EXPL: remove additional fields and return a flattened array
-            if (result[associationKey]) {
-              result[associationKey] = result[associationKey].map(object => {
-                object = object[association.model]
-                return object
-              })
-            }
+
+          if (config.enableSoftDelete && config.filterDeletedEmbeds) {
+            // EXPL: remove soft deleted documents from populated properties
+            filterDeletedEmbeds(result, {}, '', 0, Log)
+          }
+
+          if (flatten && $embed) {
+            flattenEmbeds(result, associations, $embed)
           }
         }
-      }
-
-      if (config.enableSoftDelete && config.filterDeletedEmbeds) {
-        // EXPL: remove soft deleted documents from populated properties
-        filterDeletedEmbeds(result, {}, '', 0, Log)
       }
 
       Log.log('Result: %s', JSON.stringify(result))
@@ -361,6 +357,7 @@ async function _findHandler(model, _id, request, Log) {
       flatten = true
     }
     delete query.$flatten
+    const { $embed } = query
     let mongooseQuery = model.findOne({ _id: _id })
     mongooseQuery = QueryHelper.createMongooseQuery(
       model,
@@ -395,21 +392,16 @@ async function _findHandler(model, _id, request, Log) {
             // EXPL: we have to manually populate the return value for virtual (e.g. ONE_MANY) associations
             result[associationKey] = data[associationKey]
           }
-          if (association.type === 'MANY_MANY' && flatten === true) {
-            // EXPL: remove additional fields and return a flattened array
-            if (result[associationKey]) {
-              result[associationKey] = result[associationKey].map(object => {
-                object = object[association.model]
-                return object
-              })
-            }
-          }
         }
-      }
 
-      if (config.enableSoftDelete && config.filterDeletedEmbeds) {
-        // EXPL: remove soft deleted documents from populated properties
-        filterDeletedEmbeds(result, {}, '', 0, Log)
+        if (config.enableSoftDelete && config.filterDeletedEmbeds) {
+          // EXPL: remove soft deleted documents from populated properties
+          filterDeletedEmbeds(result, {}, '', 0, Log)
+        }
+
+        if (flatten && $embed) {
+          flattenEmbeds(result, associations, $embed)
+        }
       }
 
       Log.log('Result: %s', JSON.stringify(result))
@@ -927,7 +919,6 @@ async function _deleteOneHandler(model, _id, hardDelete, request, Log) {
  * **Named:**
  * - function deleteMany({
  *      model,
- *      _id,
  *      payload,
  *      Log = RestHapi.getLogger('delete'),
  *      restCall = false,
@@ -936,7 +927,6 @@ async function _deleteOneHandler(model, _id, hardDelete, request, Log) {
  *
  * **Params:**
  * - model {object | string}: A mongoose model.
- * - _id: The document id.
  * - payload: Either an array of ids or an array of objects containing an id and a "hardDelete" flag.
  * - Log: A logging object.
  * - restCall: If 'true', then will call PUT /model/{_id}
@@ -2441,6 +2431,46 @@ function filterDeletedEmbeds(result, parent, parentkey, depth, Log) {
 }
 
 /**
+ * Remove additional fields from embedded associations. Flattens recursively.
+ * @param {*} result
+ * @param {*} associations
+ * @param {*} $embed
+ */
+function flattenEmbeds(result, associations, $embed) {
+  if (!Array.isArray($embed)) {
+    $embed = $embed.split(',')
+  }
+  $embed.forEach(function(embedString) {
+    let embeds = embedString.split('.')
+    const currentEmbed = embeds[0]
+    const association = associations[currentEmbed]
+
+    if (result[currentEmbed] && Array.isArray(result[currentEmbed])) {
+      result[currentEmbed] = result[currentEmbed].map(object => {
+        if (object[association.model]) {
+          object = object[association.model]
+        }
+        return object
+      })
+
+      const remainingEmbeds = [...embeds]
+      remainingEmbeds.shift()
+
+      if (!_.isEmpty(remainingEmbeds)) {
+        const nextModel = getModel(association.model)
+        result[currentEmbed].forEach(function(nextResult) {
+          flattenEmbeds(
+            nextResult,
+            nextModel.routeOptions.associations,
+            remainingEmbeds
+          )
+        })
+      }
+    }
+  })
+}
+
+/**
  * Helper function for "restCall === true" calls
  * @param {*} credentials
  */
@@ -2460,7 +2490,7 @@ function assertServer() {
 }
 
 function getModel(model) {
-  let RestHapi = require('../rest-hapi')
+  const RestHapi = require('../rest-hapi')
   if (typeof model === 'string') {
     return RestHapi.models[model]
   } else {

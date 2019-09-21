@@ -12,9 +12,12 @@ let restHapi = require('../rest-hapi')
 
     mongoose.Promise = Promise
 
-    mongoose.connect(mongoURI, {
-      useMongoClient: true
-    })
+    mongoose.connect(
+      mongoURI,
+      {
+        useMongoClient: true
+      }
+    )
 
     let embedAssociations = process.argv[5] === 'true'
 
