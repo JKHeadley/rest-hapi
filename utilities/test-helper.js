@@ -176,7 +176,7 @@ internals.mockInjection = function(request) {
     method: request.method,
     url: fullUrl,
     payload: request.payload,
-    credentials: request.credentials,
+    auth: { credentials: request.credentials, strategy: 'default' },
     headers: request.headers
   }
 
