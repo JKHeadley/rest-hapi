@@ -21,7 +21,6 @@
     "report-coverage": "nyc report --reporter=text-lcov > coverage.lcov && codecov",
     "patch-release-git": "git add . && git commit -a -m 'patch release' && git push && npm version patch && npm publish",
     "patch-release": "npm version patch && npm publish",
-    "precommit": "lint-staged",
     "lint": "eslint --fix **/*.js ./"
   },
   "lint-staged": {
@@ -99,5 +98,10 @@
     "rmdir": "^1.2.0",
     "sinon": "^7.0.0",
     "sinon-test": "^2.3.0"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
   }
 }
