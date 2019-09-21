@@ -3,21 +3,21 @@
 // Temporarily disabling this rule for tests
 /* eslint no-unused-vars: 0 */
 
-let Boom = require('boom')
-let test = require('blue-tape')
-let _ = require('lodash')
-let sinon = require('sinon')
-let rewire = require('rewire')
-let proxyquire = require('proxyquire')
-let assert = require('assert')
-let mongoose = require('mongoose')
-let Types = mongoose.Schema.Types
-let logging = require('loggin')
-let logger = logging.getLogger('tests')
+const Boom = require('@hapi/boom')
+const test = require('blue-tape')
+const _ = require('lodash')
+const sinon = require('sinon')
+const rewire = require('rewire')
+const proxyquire = require('proxyquire')
+const assert = require('assert')
+const mongoose = require('mongoose')
+const Types = mongoose.Schema.Types
+const logging = require('loggin')
+const logger = logging.getLogger('tests')
 logger.logLevel = 'FATAL'
-let testHelper = require('../../utilities/test-helper')
-let Joi = require('joi')
-let Q = require('q')
+const testHelper = require('../../utilities/test-helper')
+const Joi = require('@hapi/joi')
+const Q = require('q')
 
 process.on('unhandledRejection', error => {
   console.log('Unhandled error:', error.message)
@@ -25,9 +25,9 @@ process.on('unhandledRejection', error => {
 
 test('handler-helper exists and has expected members', function(t) {
   // <editor-fold desc="Arrange">
-  let server = sinon.spy()
-  let Log = logger.bind('handler-helper')
-  let handlerHelper = require('../../utilities/handler-helper')
+  const server = sinon.spy()
+  const Log = logger.bind('handler-helper')
+  const handlerHelper = require('../../utilities/handler-helper')
 
   t.plan(21)
   // </editor-fold>
@@ -76,27 +76,31 @@ test('handler-helper.listHandler', function(t) {
           t
         ) {
           // <editor-fold desc="Arrange">
-          let sandbox = sinon.sandbox.create()
-          let Log = logger.bind('handler-helper')
-          let server = sandbox.spy()
-          let queryHelperStub = sandbox.stub(
+          const sandbox = sinon.sandbox.create()
+          const Log = logger.bind('handler-helper')
+          const server = sandbox.spy()
+          const queryHelperStub = sandbox.stub(
             require('../../utilities/query-helper')
           )
 
-          let handlerHelper = proxyquire('../../utilities/handler-helper', {
+          const handlerHelper = proxyquire('../../utilities/handler-helper', {
             './query-helper': queryHelperStub
           })
           sandbox.stub(Log, 'error').callsFake(function() {})
 
-          let userSchema = new mongoose.Schema({})
+          const userSchema = new mongoose.Schema({})
 
-          let userModel = mongoose.model('user', userSchema)
+          const userModel = mongoose.model('user', userSchema)
 
           userModel.find = sandbox.spy()
           // </editor-fold>
 
           // <editor-fold desc="Act">
-          let promise = handlerHelper.listHandler(userModel, { query: {} }, Log)
+          const promise = handlerHelper.listHandler(
+            userModel,
+            { query: {} },
+            Log
+          )
           // </editor-fold>
 
           // <editor-fold desc="Assert">
@@ -124,32 +128,32 @@ test('handler-helper.listHandler', function(t) {
           'handler-helper.listHandler calls QueryHelper.createMongooseQuery',
           function(t) {
             // <editor-fold desc="Arrange">
-            let sandbox = sinon.sandbox.create()
-            let Log = logger.bind('handler-helper')
-            let server = sandbox.spy()
-            let queryHelperStub = sandbox.stub(
+            const sandbox = sinon.sandbox.create()
+            const Log = logger.bind('handler-helper')
+            const server = sandbox.spy()
+            const queryHelperStub = sandbox.stub(
               require('../../utilities/query-helper')
             )
 
-            let handlerHelper = proxyquire('../../utilities/handler-helper', {
+            const handlerHelper = proxyquire('../../utilities/handler-helper', {
               './query-helper': queryHelperStub
             })
             sandbox.stub(Log, 'error').callsFake(function() {})
 
-            let userSchema = new mongoose.Schema({})
+            const userSchema = new mongoose.Schema({})
 
-            let userModel = mongoose.model('user', userSchema)
+            const userModel = mongoose.model('user', userSchema)
 
             userModel.find = sandbox.spy(function() {
               return 'TEST'
             })
 
-            let query = { test: {} }
-            let request = { query: query }
+            const query = { test: {} }
+            const request = { query: query }
             // </editor-fold>
 
             // <editor-fold desc="Act">
-            let promise = handlerHelper.listHandler(userModel, request, Log)
+            const promise = handlerHelper.listHandler(userModel, request, Log)
             // </editor-fold>
 
             // <editor-fold desc="Assert">
@@ -186,11 +190,11 @@ test('handler-helper.listHandler', function(t) {
           'handler-helper.listHandler calls mongooseQuery.count',
           function(t) {
             // <editor-fold desc="Arrange">
-            let sandbox = sinon.sandbox.create()
-            let Log = logger.bind('handler-helper')
-            let server = sandbox.spy()
-            let countSpy = sandbox.spy()
-            let queryHelperStub = sandbox.stub(
+            const sandbox = sinon.sandbox.create()
+            const Log = logger.bind('handler-helper')
+            const server = sandbox.spy()
+            const countSpy = sandbox.spy()
+            const queryHelperStub = sandbox.stub(
               require('../../utilities/query-helper')
             )
             queryHelperStub.createMongooseQuery = function() {
@@ -201,25 +205,25 @@ test('handler-helper.listHandler', function(t) {
               }
             }
 
-            let handlerHelper = proxyquire('../../utilities/handler-helper', {
+            const handlerHelper = proxyquire('../../utilities/handler-helper', {
               './query-helper': queryHelperStub
             })
             sandbox.stub(Log, 'error').callsFake(function() {})
 
-            let userSchema = new mongoose.Schema({})
+            const userSchema = new mongoose.Schema({})
 
-            let userModel = mongoose.model('user', userSchema)
+            const userModel = mongoose.model('user', userSchema)
 
             userModel.find = sandbox.spy(function() {
               return 'TEST'
             })
 
-            let query = { test: {} }
-            let request = { query: query }
+            const query = { test: {} }
+            const request = { query: query }
             // </editor-fold>
 
             // <editor-fold desc="Act">
-            let promise = handlerHelper.listHandler(userModel, request, Log)
+            const promise = handlerHelper.listHandler(userModel, request, Log)
             // </editor-fold>
 
             // <editor-fold desc="Assert">
@@ -248,26 +252,26 @@ test('handler-helper.listHandler', function(t) {
           'handler-helper.listHandler calls QueryHelper.paginate',
           function(t) {
             // <editor-fold desc="Arrange">
-            let sandbox = sinon.sandbox.create()
-            let Log = logger.bind('handler-helper')
-            let server = sandbox.spy()
-            let countSpy = sandbox.spy(function() {
+            const sandbox = sinon.sandbox.create()
+            const Log = logger.bind('handler-helper')
+            const server = sandbox.spy()
+            const countSpy = sandbox.spy(function() {
               return Q.when()
             })
-            let mongooseQuery1 = { count: countSpy }
-            let mongooseQuery2 = {
+            const mongooseQuery1 = { count: countSpy }
+            const mongooseQuery2 = {
               lean: function() {
                 return mongooseQuery1
               }
             }
-            let queryHelperStub = sandbox.stub(
+            const queryHelperStub = sandbox.stub(
               require('../../utilities/query-helper')
             )
             queryHelperStub.createMongooseQuery = function() {
               return mongooseQuery2
             }
-            let paginateDeferred = Q.defer()
-            let paginateSpy = sandbox.spy(function() {
+            const paginateDeferred = Q.defer()
+            const paginateSpy = sandbox.spy(function() {
               paginateDeferred.resolve()
               return {
                 exec: function() {
@@ -277,21 +281,21 @@ test('handler-helper.listHandler', function(t) {
             })
             queryHelperStub.paginate = paginateSpy
 
-            let handlerHelper = proxyquire('../../utilities/handler-helper', {
+            const handlerHelper = proxyquire('../../utilities/handler-helper', {
               './query-helper': queryHelperStub
             })
             sandbox.stub(Log, 'error').callsFake(function() {})
 
-            let userSchema = new mongoose.Schema({})
+            const userSchema = new mongoose.Schema({})
 
-            let userModel = mongoose.model('user', userSchema)
+            const userModel = mongoose.model('user', userSchema)
 
             userModel.find = sandbox.spy(function() {
               return 'TEST'
             })
 
-            let query = { test: {} }
-            let request = { query: query }
+            const query = { test: {} }
+            const request = { query: query }
             // </editor-fold>
 
             // <editor-fold desc="Act">
@@ -332,49 +336,49 @@ test('handler-helper.listHandler', function(t) {
           'handler-helper.listHandler calls mongooseQuery.exec',
           function(t) {
             // <editor-fold desc="Arrange">
-            let sandbox = sinon.sandbox.create()
-            let Log = logger.bind('handler-helper')
-            let server = sandbox.spy()
-            let countSpy = sandbox.spy(function() {
+            const sandbox = sinon.sandbox.create()
+            const Log = logger.bind('handler-helper')
+            const server = sandbox.spy()
+            const countSpy = sandbox.spy(function() {
               return Q.when()
             })
-            let mongooseQuery1 = { count: countSpy }
-            let mongooseQuery2 = {
+            const mongooseQuery1 = { count: countSpy }
+            const mongooseQuery2 = {
               lean: function() {
                 return mongooseQuery1
               }
             }
-            let queryHelperStub = sandbox.stub(
+            const queryHelperStub = sandbox.stub(
               require('../../utilities/query-helper')
             )
             queryHelperStub.createMongooseQuery = function() {
               return mongooseQuery2
             }
-            let deferred = Q.defer()
-            let execSpy = sandbox.spy(function() {
+            const deferred = Q.defer()
+            const execSpy = sandbox.spy(function() {
               deferred.resolve()
               return Q.when([])
             })
-            let paginateSpy = sandbox.spy(function() {
+            const paginateSpy = sandbox.spy(function() {
               return { exec: execSpy }
             })
             queryHelperStub.paginate = paginateSpy
 
-            let handlerHelper = proxyquire('../../utilities/handler-helper', {
+            const handlerHelper = proxyquire('../../utilities/handler-helper', {
               './query-helper': queryHelperStub
             })
             sandbox.stub(Log, 'error').callsFake(function() {})
 
-            let userSchema = new mongoose.Schema({})
+            const userSchema = new mongoose.Schema({})
 
-            let userModel = mongoose.model('user', userSchema)
+            const userModel = mongoose.model('user', userSchema)
 
             userModel.find = sandbox.spy(function() {
               return 'TEST'
             })
 
-            let query = { test: {} }
-            let request = { query: query }
+            const query = { test: {} }
+            const request = { query: query }
             // </editor-fold>
 
             // <editor-fold desc="Act">
@@ -408,22 +412,22 @@ test('handler-helper.listHandler', function(t) {
           'handler-helper.listHandler calls pre processing if it exists',
           function(t) {
             // <editor-fold desc="Arrange">
-            let sandbox = sinon.sandbox.create()
-            let Log = logger.bind('handler-helper')
-            let server = sandbox.spy()
+            const sandbox = sinon.sandbox.create()
+            const Log = logger.bind('handler-helper')
+            const server = sandbox.spy()
 
-            let queryHelperStub = sandbox.stub(
+            const queryHelperStub = sandbox.stub(
               require('../../utilities/query-helper')
             )
 
-            let handlerHelper = proxyquire('../../utilities/handler-helper', {
+            const handlerHelper = proxyquire('../../utilities/handler-helper', {
               './query-helper': queryHelperStub
             })
             sandbox.stub(Log, 'error').callsFake(function() {})
 
-            let userSchema = new mongoose.Schema({})
-            let preDeferred = Q.defer()
-            let preSpy = sandbox.spy(function() {
+            const userSchema = new mongoose.Schema({})
+            const preDeferred = Q.defer()
+            const preSpy = sandbox.spy(function() {
               preDeferred.resolve()
             })
             userSchema.statics = {
@@ -434,12 +438,12 @@ test('handler-helper.listHandler', function(t) {
               }
             }
 
-            let userModel = mongoose.model('user', userSchema)
+            const userModel = mongoose.model('user', userSchema)
 
             userModel.find = sandbox.spy()
 
-            let query = { test: {} }
-            let request = { query: query }
+            const query = { test: {} }
+            const request = { query: query }
             // </editor-fold>
 
             // <editor-fold desc="Act">
@@ -475,44 +479,44 @@ test('handler-helper.listHandler', function(t) {
           'handler-helper.listHandler calls post processing if it exists',
           async function(t) {
             // <editor-fold desc="Arrange">
-            let sandbox = sinon.sandbox.create()
-            let Log = logger.bind('handler-helper')
-            let server = sandbox.spy()
+            const sandbox = sinon.sandbox.create()
+            const Log = logger.bind('handler-helper')
+            const server = sandbox.spy()
 
-            let countSpy = sandbox.spy(function() {
+            const countSpy = sandbox.spy(function() {
               return Q.when()
             })
-            let mongooseQuery1 = { count: countSpy }
-            let mongooseQuery2 = {
+            const mongooseQuery1 = { count: countSpy }
+            const mongooseQuery2 = {
               lean: function() {
                 return mongooseQuery1
               }
             }
-            let queryHelperStub = sandbox.stub(
+            const queryHelperStub = sandbox.stub(
               require('../../utilities/query-helper')
             )
             queryHelperStub.createMongooseQuery = function() {
               return mongooseQuery2
             }
-            let deferred = Q.defer()
+            const deferred = Q.defer()
             deferred.resolve('TEST')
-            let execSpy = sandbox.spy(function() {
+            const execSpy = sandbox.spy(function() {
               return deferred.promise
             })
-            let paginateSpy = sandbox.spy(function() {
+            const paginateSpy = sandbox.spy(function() {
               return { exec: execSpy }
             })
             queryHelperStub.paginate = paginateSpy
 
-            let handlerHelper = proxyquire('../../utilities/handler-helper', {
+            const handlerHelper = proxyquire('../../utilities/handler-helper', {
               './query-helper': queryHelperStub
             })
 
             sandbox.stub(Log, 'error').callsFake(function() {})
 
-            let userSchema = new mongoose.Schema({})
+            const userSchema = new mongoose.Schema({})
 
-            let postSpy = sandbox.spy()
+            const postSpy = sandbox.spy()
             userSchema.statics = {
               routeOptions: {
                 list: {
@@ -521,16 +525,16 @@ test('handler-helper.listHandler', function(t) {
               }
             }
 
-            let userModel = mongoose.model('user', userSchema)
+            const userModel = mongoose.model('user', userSchema)
 
             userModel.find = sandbox.spy()
 
-            let query = { test: {} }
-            let request = { query: query }
+            const query = { test: {} }
+            const request = { query: query }
             // </editor-fold>
 
             // <editor-fold desc="Act">
-            let promise = handlerHelper.listHandler(userModel, request, Log)
+            const promise = handlerHelper.listHandler(userModel, request, Log)
             // </editor-fold>
 
             // <editor-fold desc="Assert">
@@ -559,22 +563,22 @@ test('handler-helper.listHandler', function(t) {
           'handler-helper.listHandler returns a list of results',
           async function(t) {
             // <editor-fold desc="Arrange">
-            let sandbox = sinon.sandbox.create()
-            let Log = logger.bind('handler-helper')
-            let server = sandbox.spy()
+            const sandbox = sinon.sandbox.create()
+            const Log = logger.bind('handler-helper')
+            const server = sandbox.spy()
 
-            let deferred = Q.defer()
-            let countSpy = sandbox.spy(function() {
-              let promise = Q.when('test')
+            const deferred = Q.defer()
+            const countSpy = sandbox.spy(function() {
+              const promise = Q.when('test')
               return promise
             })
-            let mongooseQuery1 = { count: countSpy }
-            let mongooseQuery2 = {
+            const mongooseQuery1 = { count: countSpy }
+            const mongooseQuery2 = {
               lean: function() {
                 return mongooseQuery1
               }
             }
-            let queryHelperStub = sandbox.stub(
+            const queryHelperStub = sandbox.stub(
               require('../../utilities/query-helper')
             )
             queryHelperStub.createMongooseQuery = function() {
@@ -582,31 +586,31 @@ test('handler-helper.listHandler', function(t) {
             }
             let result = ['TEST1', 'TEST2']
             deferred.resolve(result)
-            let execSpy = sandbox.spy(function() {
+            const execSpy = sandbox.spy(function() {
               return deferred.promise
             })
-            let paginateSpy = sandbox.spy(function() {
+            const paginateSpy = sandbox.spy(function() {
               return { exec: execSpy }
             })
             queryHelperStub.paginate = paginateSpy
 
-            let handlerHelper = proxyquire('../../utilities/handler-helper', {
+            const handlerHelper = proxyquire('../../utilities/handler-helper', {
               './query-helper': queryHelperStub
             })
             sandbox.stub(Log, 'error').callsFake(function() {})
 
-            let userSchema = new mongoose.Schema({})
+            const userSchema = new mongoose.Schema({})
 
-            let userModel = mongoose.model('user', userSchema)
+            const userModel = mongoose.model('user', userSchema)
 
             userModel.find = sandbox.spy()
 
-            let query = { test: {} }
-            let request = { query: query }
+            const query = { test: {} }
+            const request = { query: query }
             // </editor-fold>
 
             // <editor-fold desc="Act">
-            let promise = handlerHelper.listHandler(userModel, request, Log)
+            const promise = handlerHelper.listHandler(userModel, request, Log)
             // </editor-fold>
 
             // <editor-fold desc="Assert">
@@ -633,12 +637,12 @@ test('handler-helper.listHandler', function(t) {
           'handler-helper.listHandler returns pagination data',
           function(t) {
             // <editor-fold desc="Arrange">
-            let sandbox = sinon.sandbox.create()
-            let Log = logger.bind('handler-helper')
-            let server = sandbox.spy()
+            const sandbox = sinon.sandbox.create()
+            const Log = logger.bind('handler-helper')
+            const server = sandbox.spy()
 
-            let deferred = Q.defer()
-            let result = [
+            const deferred = Q.defer()
+            const result = [
               'TEST1',
               'TEST2',
               'TEST1',
@@ -652,47 +656,47 @@ test('handler-helper.listHandler', function(t) {
               'TEST1',
               'TEST2'
             ]
-            let countSpy = sandbox.spy(function() {
+            const countSpy = sandbox.spy(function() {
               return Q.when(result.length)
             })
-            let mongooseQuery1 = { count: countSpy }
-            let mongooseQuery2 = {
+            const mongooseQuery1 = { count: countSpy }
+            const mongooseQuery2 = {
               lean: function() {
                 return mongooseQuery1
               }
             }
-            let queryHelperStub = sandbox.stub(
+            const queryHelperStub = sandbox.stub(
               require('../../utilities/query-helper')
             )
             queryHelperStub.createMongooseQuery = function() {
               return mongooseQuery2
             }
             deferred.resolve(result)
-            let execSpy = sandbox.spy(function() {
+            const execSpy = sandbox.spy(function() {
               return deferred.promise
             })
-            let paginateSpy = sandbox.spy(function() {
+            const paginateSpy = sandbox.spy(function() {
               return { exec: execSpy }
             })
             queryHelperStub.paginate = paginateSpy
 
-            let handlerHelper = proxyquire('../../utilities/handler-helper', {
+            const handlerHelper = proxyquire('../../utilities/handler-helper', {
               './query-helper': queryHelperStub
             })
             sandbox.stub(Log, 'error').callsFake(function() {})
 
-            let userSchema = new mongoose.Schema({})
+            const userSchema = new mongoose.Schema({})
 
-            let userModel = mongoose.model('user', userSchema)
+            const userModel = mongoose.model('user', userSchema)
 
             userModel.find = sandbox.spy()
 
-            let query = { $page: 2, $limit: 3 }
-            let request = { query: query }
+            const query = { $page: 2, $limit: 3 }
+            const request = { query: query }
             // </editor-fold>
 
             // <editor-fold desc="Act">
-            let promise = handlerHelper.listHandler(userModel, request, Log)
+            const promise = handlerHelper.listHandler(userModel, request, Log)
             // </editor-fold>
 
             // <editor-fold desc="Assert">
@@ -737,42 +741,42 @@ test('handler-helper.listHandler', function(t) {
           'handler-helper.listHandler throws a generic postprocessing error',
           function(t) {
             // <editor-fold desc="Arrange">
-            let sandbox = sinon.sandbox.create()
-            let Log = logger.bind('handler-helper')
-            let server = sandbox.spy()
+            const sandbox = sinon.sandbox.create()
+            const Log = logger.bind('handler-helper')
+            const server = sandbox.spy()
 
-            let deferred = Q.defer()
-            let countSpy = sandbox.spy(function() {
+            const deferred = Q.defer()
+            const countSpy = sandbox.spy(function() {
               return Q.when()
             })
-            let mongooseQuery1 = { count: countSpy }
-            let mongooseQuery2 = {
+            const mongooseQuery1 = { count: countSpy }
+            const mongooseQuery2 = {
               lean: function() {
                 return mongooseQuery1
               }
             }
-            let queryHelperStub = sandbox.stub(
+            const queryHelperStub = sandbox.stub(
               require('../../utilities/query-helper')
             )
             queryHelperStub.createMongooseQuery = function() {
               return mongooseQuery2
             }
-            let result = ''
+            const result = ''
             deferred.resolve(result)
-            let execSpy = sandbox.spy(function() {
+            const execSpy = sandbox.spy(function() {
               return deferred.promise
             })
-            let paginateSpy = sandbox.spy(function() {
+            const paginateSpy = sandbox.spy(function() {
               return { exec: execSpy }
             })
             queryHelperStub.paginate = paginateSpy
 
-            let handlerHelper = proxyquire('../../utilities/handler-helper', {
+            const handlerHelper = proxyquire('../../utilities/handler-helper', {
               './query-helper': queryHelperStub
             })
             sandbox.stub(Log, 'error').callsFake(function() {})
 
-            let userSchema = new mongoose.Schema({})
+            const userSchema = new mongoose.Schema({})
             userSchema.statics = {
               routeOptions: {
                 list: {
@@ -783,16 +787,16 @@ test('handler-helper.listHandler', function(t) {
               }
             }
 
-            let userModel = mongoose.model('user', userSchema)
+            const userModel = mongoose.model('user', userSchema)
 
             userModel.find = sandbox.spy()
 
-            let query = { test: {} }
-            let request = { query: query }
+            const query = { test: {} }
+            const request = { query: query }
             // </editor-fold>
 
             // <editor-fold desc="Act">
-            let promise = handlerHelper.listHandler(userModel, request, Log)
+            const promise = handlerHelper.listHandler(userModel, request, Log)
             // </editor-fold>
 
             // <editor-fold desc="Assert">
@@ -825,44 +829,44 @@ test('handler-helper.listHandler', function(t) {
           'handler-helper.listHandler throws a custom postprocessing error',
           function(t) {
             // <editor-fold desc="Arrange">
-            let sandbox = sinon.sandbox.create()
-            let Log = logger.bind('handler-helper')
-            let server = sandbox.spy()
+            const sandbox = sinon.sandbox.create()
+            const Log = logger.bind('handler-helper')
+            const server = sandbox.spy()
 
-            let deferred = Q.defer()
-            let countSpy = sandbox.spy(function() {
+            const deferred = Q.defer()
+            const countSpy = sandbox.spy(function() {
               return Q.when()
             })
-            let mongooseQuery1 = { count: countSpy }
-            let mongooseQuery2 = {
+            const mongooseQuery1 = { count: countSpy }
+            const mongooseQuery2 = {
               lean: function() {
                 return mongooseQuery1
               }
             }
-            let queryHelperStub = sandbox.stub(
+            const queryHelperStub = sandbox.stub(
               require('../../utilities/query-helper')
             )
             queryHelperStub.createMongooseQuery = function() {
               return mongooseQuery2
             }
-            let result = ''
+            const result = ''
             deferred.resolve(result)
-            let execSpy = sandbox.spy(function() {
+            const execSpy = sandbox.spy(function() {
               return deferred.promise
             })
-            let paginateSpy = sandbox.spy(function() {
+            const paginateSpy = sandbox.spy(function() {
               return { exec: execSpy }
             })
             queryHelperStub.paginate = paginateSpy
 
-            let handlerHelper = proxyquire('../../utilities/handler-helper', {
+            const handlerHelper = proxyquire('../../utilities/handler-helper', {
               './query-helper': queryHelperStub
             })
             sandbox.stub(Log, 'error').callsFake(function() {})
 
-            let userSchema = new mongoose.Schema({})
-            let postDeferred = Q.defer()
-            let error = 'error message'
+            const userSchema = new mongoose.Schema({})
+            const postDeferred = Q.defer()
+            const error = 'error message'
             postDeferred.reject(error)
             userSchema.statics = {
               routeOptions: {
@@ -874,16 +878,16 @@ test('handler-helper.listHandler', function(t) {
               }
             }
 
-            let userModel = mongoose.model('user', userSchema)
+            const userModel = mongoose.model('user', userSchema)
 
             userModel.find = sandbox.spy()
 
-            let query = { test: {} }
-            let request = { query: query }
+            const query = { test: {} }
+            const request = { query: query }
             // </editor-fold>
 
             // <editor-fold desc="Act">
-            let promise = handlerHelper.listHandler(userModel, request, Log)
+            const promise = handlerHelper.listHandler(userModel, request, Log)
             // </editor-fold>
 
             // <editor-fold desc="Assert">
@@ -916,18 +920,18 @@ test('handler-helper.listHandler', function(t) {
           'handler-helper.listHandler throws a generic preprocessing error',
           function(t) {
             // <editor-fold desc="Arrange">
-            let sandbox = sinon.sandbox.create()
-            let Log = logger.bind('handler-helper')
-            let server = sandbox.spy()
-            let queryHelperStub = sandbox.stub(
+            const sandbox = sinon.sandbox.create()
+            const Log = logger.bind('handler-helper')
+            const server = sandbox.spy()
+            const queryHelperStub = sandbox.stub(
               require('../../utilities/query-helper')
             )
-            let handlerHelper = proxyquire('../../utilities/handler-helper', {
+            const handlerHelper = proxyquire('../../utilities/handler-helper', {
               './query-helper': queryHelperStub
             })
             sandbox.stub(Log, 'error').callsFake(function() {})
 
-            let userSchema = new mongoose.Schema({})
+            const userSchema = new mongoose.Schema({})
             userSchema.statics = {
               routeOptions: {
                 list: {
@@ -938,11 +942,11 @@ test('handler-helper.listHandler', function(t) {
               }
             }
 
-            let userModel = mongoose.model('user', userSchema)
+            const userModel = mongoose.model('user', userSchema)
             // </editor-fold>
 
             // <editor-fold desc="Act">
-            let promise = handlerHelper.listHandler(
+            const promise = handlerHelper.listHandler(
               userModel,
               { query: {} },
               Log
@@ -979,18 +983,18 @@ test('handler-helper.listHandler', function(t) {
           'handler-helper.listHandler throws a custom preprocessing error',
           function(t) {
             // <editor-fold desc="Arrange">
-            let sandbox = sinon.sandbox.create()
-            let Log = logger.bind('handler-helper')
-            let server = sandbox.spy()
-            let queryHelperStub = sandbox.stub(
+            const sandbox = sinon.sandbox.create()
+            const Log = logger.bind('handler-helper')
+            const server = sandbox.spy()
+            const queryHelperStub = sandbox.stub(
               require('../../utilities/query-helper')
             )
-            let handlerHelper = proxyquire('../../utilities/handler-helper', {
+            const handlerHelper = proxyquire('../../utilities/handler-helper', {
               './query-helper': queryHelperStub
             })
             sandbox.stub(Log, 'error').callsFake(function() {})
 
-            let userSchema = new mongoose.Schema({})
+            const userSchema = new mongoose.Schema({})
             userSchema.statics = {
               routeOptions: {
                 list: {
@@ -1001,11 +1005,11 @@ test('handler-helper.listHandler', function(t) {
               }
             }
 
-            let userModel = mongoose.model('user', userSchema)
+            const userModel = mongoose.model('user', userSchema)
             // </editor-fold>
 
             // <editor-fold desc="Act">
-            let promise = handlerHelper.listHandler(
+            const promise = handlerHelper.listHandler(
               userModel,
               { query: {} },
               Log
@@ -1042,38 +1046,38 @@ test('handler-helper.listHandler', function(t) {
           'handler-helper.listHandler throws a general processing error',
           function(t) {
             // <editor-fold desc="Arrange">
-            let sandbox = sinon.sandbox.create()
-            let Log = logger.bind('handler-helper')
-            let server = sandbox.spy()
-            let queryHelperStub = sandbox.stub(
+            const sandbox = sinon.sandbox.create()
+            const Log = logger.bind('handler-helper')
+            const server = sandbox.spy()
+            const queryHelperStub = sandbox.stub(
               require('../../utilities/query-helper')
             )
 
-            let execSpy = sandbox.spy(function() {
+            const execSpy = sandbox.spy(function() {
               return Q.reject()
             })
-            let paginateSpy = sandbox.spy(function() {
+            const paginateSpy = sandbox.spy(function() {
               return { exec: execSpy }
             })
             queryHelperStub.paginate = paginateSpy
 
-            let qStub = sandbox.stub(Q, 'when').callsFake(function() {
+            const qStub = sandbox.stub(Q, 'when').callsFake(function() {
               throw new Error('ERROR')
             })
 
-            let handlerHelper = proxyquire('../../utilities/handler-helper', {
+            const handlerHelper = proxyquire('../../utilities/handler-helper', {
               './query-helper': queryHelperStub,
               q: qStub
             })
             sandbox.stub(Log, 'error').callsFake(function() {})
 
-            let userSchema = new mongoose.Schema({})
+            const userSchema = new mongoose.Schema({})
 
-            let userModel = mongoose.model('user', userSchema)
+            const userModel = mongoose.model('user', userSchema)
             // </editor-fold>
 
             // <editor-fold desc="Act">
-            let promise = handlerHelper.listHandler(
+            const promise = handlerHelper.listHandler(
               userModel,
               { query: {} },
               Log
@@ -1116,29 +1120,29 @@ test('handler-helper.findHandler', function(t) {
           'handler-helper.findHandler calls model.findOne()',
           function(t) {
             // <editor-fold desc="Arrange">
-            let sandbox = sinon.sandbox.create()
-            let Log = logger.bind('handler-helper')
-            let server = sandbox.spy()
-            let queryHelperStub = sandbox.stub(
+            const sandbox = sinon.sandbox.create()
+            const Log = logger.bind('handler-helper')
+            const server = sandbox.spy()
+            const queryHelperStub = sandbox.stub(
               require('../../utilities/query-helper')
             )
 
-            let handlerHelper = proxyquire('../../utilities/handler-helper', {
+            const handlerHelper = proxyquire('../../utilities/handler-helper', {
               './query-helper': queryHelperStub
             })
             sandbox.stub(Log, 'error').callsFake(function() {})
 
-            let userSchema = new mongoose.Schema({})
+            const userSchema = new mongoose.Schema({})
 
-            let userModel = mongoose.model('user', userSchema)
+            const userModel = mongoose.model('user', userSchema)
 
             userModel.findOne = sandbox.spy()
 
-            let request = { params: { _id: 'TEST' } }
+            const request = { params: { _id: 'TEST' } }
             // </editor-fold>
 
             // <editor-fold desc="Act">
-            let promise = handlerHelper.findHandler(
+            const promise = handlerHelper.findHandler(
               userModel,
               'TEST',
               request,
@@ -1175,31 +1179,31 @@ test('handler-helper.findHandler', function(t) {
           'handler-helper.findHandler calls QueryHelper.createMongooseQuery',
           function(t) {
             // <editor-fold desc="Arrange">
-            let sandbox = sinon.sandbox.create()
-            let Log = logger.bind('handler-helper')
-            let server = sandbox.spy()
-            let queryHelperStub = sandbox.stub(
+            const sandbox = sinon.sandbox.create()
+            const Log = logger.bind('handler-helper')
+            const server = sandbox.spy()
+            const queryHelperStub = sandbox.stub(
               require('../../utilities/query-helper')
             )
 
-            let handlerHelper = proxyquire('../../utilities/handler-helper', {
+            const handlerHelper = proxyquire('../../utilities/handler-helper', {
               './query-helper': queryHelperStub
             })
             sandbox.stub(Log, 'error').callsFake(function() {})
 
-            let userSchema = new mongoose.Schema({})
+            const userSchema = new mongoose.Schema({})
 
-            let userModel = mongoose.model('user', userSchema)
+            const userModel = mongoose.model('user', userSchema)
 
             userModel.findOne = sandbox.spy(function() {
               return 'TEST'
             })
 
-            let request = { query: {}, params: { _id: 'TEST' } }
+            const request = { query: {}, params: { _id: 'TEST' } }
             // </editor-fold>
 
             // <editor-fold desc="Act">
-            let promise = handlerHelper.findHandler(
+            const promise = handlerHelper.findHandler(
               userModel,
               'TEST',
               request,
@@ -1241,22 +1245,22 @@ test('handler-helper.findHandler', function(t) {
           'handler-helper.findHandler calls pre processing if it exists',
           function(t) {
             // <editor-fold desc="Arrange">
-            let sandbox = sinon.sandbox.create()
-            let Log = logger.bind('handler-helper')
-            let server = sandbox.spy()
+            const sandbox = sinon.sandbox.create()
+            const Log = logger.bind('handler-helper')
+            const server = sandbox.spy()
 
-            let queryHelperStub = sandbox.stub(
+            const queryHelperStub = sandbox.stub(
               require('../../utilities/query-helper')
             )
 
-            let handlerHelper = proxyquire('../../utilities/handler-helper', {
+            const handlerHelper = proxyquire('../../utilities/handler-helper', {
               './query-helper': queryHelperStub
             })
             sandbox.stub(Log, 'error').callsFake(function() {})
 
-            let userSchema = new mongoose.Schema({})
-            let preDeferred = Q.defer()
-            let preSpy = sandbox.spy(function() {
+            const userSchema = new mongoose.Schema({})
+            const preDeferred = Q.defer()
+            const preSpy = sandbox.spy(function() {
               preDeferred.resolve()
             })
             userSchema.statics = {
@@ -1267,11 +1271,11 @@ test('handler-helper.findHandler', function(t) {
               }
             }
 
-            let userModel = mongoose.model('user', userSchema)
+            const userModel = mongoose.model('user', userSchema)
 
             userModel.findOne = sandbox.spy()
 
-            let request = { query: {}, params: { _id: {} } }
+            const request = { query: {}, params: { _id: {} } }
             // </editor-fold>
 
             // <editor-fold desc="Act">
@@ -1312,36 +1316,36 @@ test('handler-helper.findHandler', function(t) {
           'handler-helper.findHandler calls post processing if it exists',
           function(t) {
             // <editor-fold desc="Arrange">
-            let sandbox = sinon.sandbox.create()
-            let Log = logger.bind('handler-helper')
-            let server = sandbox.spy()
+            const sandbox = sinon.sandbox.create()
+            const Log = logger.bind('handler-helper')
+            const server = sandbox.spy()
 
-            let mongooseQuery1 = {
+            const mongooseQuery1 = {
               exec: function() {
                 return Q.when('TEST')
               }
             }
-            let mongooseQuery2 = {
+            const mongooseQuery2 = {
               lean: function() {
                 return mongooseQuery1
               }
             }
 
-            let queryHelperStub = sandbox.stub(
+            const queryHelperStub = sandbox.stub(
               require('../../utilities/query-helper')
             )
             queryHelperStub.createMongooseQuery = function() {
               return mongooseQuery2
             }
 
-            let handlerHelper = proxyquire('../../utilities/handler-helper', {
+            const handlerHelper = proxyquire('../../utilities/handler-helper', {
               './query-helper': queryHelperStub
             })
             sandbox.stub(Log, 'error').callsFake(function() {})
 
-            let userSchema = new mongoose.Schema({})
-            let deferred = Q.defer()
-            let postSpy = sandbox.spy(function() {
+            const userSchema = new mongoose.Schema({})
+            const deferred = Q.defer()
+            const postSpy = sandbox.spy(function() {
               deferred.resolve()
             })
             userSchema.statics = {
@@ -1352,11 +1356,11 @@ test('handler-helper.findHandler', function(t) {
               }
             }
 
-            let userModel = mongoose.model('user', userSchema)
+            const userModel = mongoose.model('user', userSchema)
 
             userModel.findOne = sandbox.spy()
 
-            let request = { query: {}, params: { _id: {} } }
+            const request = { query: {}, params: { _id: {} } }
             // </editor-fold>
 
             // <editor-fold desc="Act">
@@ -1392,44 +1396,44 @@ test('handler-helper.findHandler', function(t) {
           'handler-helper.findHandler returns a single result',
           function(t) {
             // <editor-fold desc="Arrange">
-            let sandbox = sinon.sandbox.create()
-            let Log = logger.bind('handler-helper')
-            let server = sandbox.spy()
+            const sandbox = sinon.sandbox.create()
+            const Log = logger.bind('handler-helper')
+            const server = sandbox.spy()
 
-            let mongooseQuery1 = {
+            const mongooseQuery1 = {
               exec: function() {
                 return Q.when('TEST1')
               }
             }
-            let mongooseQuery2 = {
+            const mongooseQuery2 = {
               lean: function() {
                 return mongooseQuery1
               }
             }
 
-            let queryHelperStub = sandbox.stub(
+            const queryHelperStub = sandbox.stub(
               require('../../utilities/query-helper')
             )
             queryHelperStub.createMongooseQuery = function() {
               return mongooseQuery2
             }
 
-            let handlerHelper = proxyquire('../../utilities/handler-helper', {
+            const handlerHelper = proxyquire('../../utilities/handler-helper', {
               './query-helper': queryHelperStub
             })
             sandbox.stub(Log, 'error').callsFake(function() {})
 
-            let userSchema = new mongoose.Schema({})
+            const userSchema = new mongoose.Schema({})
 
-            let userModel = mongoose.model('user', userSchema)
+            const userModel = mongoose.model('user', userSchema)
 
             userModel.findOne = sandbox.spy()
 
-            let request = { query: {}, params: { _id: {} } }
+            const request = { query: {}, params: { _id: {} } }
             // </editor-fold>
 
             // <editor-fold desc="Act">
-            let promise = handlerHelper.findHandler(
+            const promise = handlerHelper.findHandler(
               userModel,
               'TEST',
               request,
@@ -1464,36 +1468,36 @@ test('handler-helper.findHandler', function(t) {
           'handler-helper.findHandler throws a generic postprocessing error',
           function(t) {
             // <editor-fold desc="Arrange">
-            let sandbox = sinon.sandbox.create()
-            let Log = logger.bind('handler-helper')
-            let server = sandbox.spy()
+            const sandbox = sinon.sandbox.create()
+            const Log = logger.bind('handler-helper')
+            const server = sandbox.spy()
 
-            let mongooseQuery1 = {
+            const mongooseQuery1 = {
               exec: function() {
                 return Q.when('TEST')
               }
             }
-            let mongooseQuery2 = {
+            const mongooseQuery2 = {
               lean: function() {
                 return mongooseQuery1
               }
             }
 
-            let queryHelperStub = sandbox.stub(
+            const queryHelperStub = sandbox.stub(
               require('../../utilities/query-helper')
             )
             queryHelperStub.createMongooseQuery = function() {
               return mongooseQuery2
             }
 
-            let handlerHelper = proxyquire('../../utilities/handler-helper', {
+            const handlerHelper = proxyquire('../../utilities/handler-helper', {
               './query-helper': queryHelperStub
             })
             sandbox.stub(Log, 'error').callsFake(function() {})
 
-            let userSchema = new mongoose.Schema({})
-            let postDeferred = Q.defer()
-            let error = new Error()
+            const userSchema = new mongoose.Schema({})
+            const postDeferred = Q.defer()
+            const error = new Error()
             postDeferred.reject(error)
             userSchema.statics = {
               routeOptions: {
@@ -1505,15 +1509,15 @@ test('handler-helper.findHandler', function(t) {
               }
             }
 
-            let userModel = mongoose.model('user', userSchema)
+            const userModel = mongoose.model('user', userSchema)
 
             userModel.findOne = sandbox.spy()
 
-            let request = { query: {}, params: { _id: {} } }
+            const request = { query: {}, params: { _id: {} } }
             // </editor-fold>
 
             // <editor-fold desc="Act">
-            let promise = handlerHelper.findHandler(
+            const promise = handlerHelper.findHandler(
               userModel,
               'TEST',
               request,
@@ -1551,36 +1555,36 @@ test('handler-helper.findHandler', function(t) {
           'handler-helper.findHandler throws a custom postprocessing error',
           function(t) {
             // <editor-fold desc="Arrange">
-            let sandbox = sinon.sandbox.create()
-            let Log = logger.bind('handler-helper')
-            let server = sandbox.spy()
+            const sandbox = sinon.sandbox.create()
+            const Log = logger.bind('handler-helper')
+            const server = sandbox.spy()
 
-            let mongooseQuery1 = {
+            const mongooseQuery1 = {
               exec: function() {
                 return Q.when('TEST')
               }
             }
-            let mongooseQuery2 = {
+            const mongooseQuery2 = {
               lean: function() {
                 return mongooseQuery1
               }
             }
 
-            let queryHelperStub = sandbox.stub(
+            const queryHelperStub = sandbox.stub(
               require('../../utilities/query-helper')
             )
             queryHelperStub.createMongooseQuery = function() {
               return mongooseQuery2
             }
 
-            let handlerHelper = proxyquire('../../utilities/handler-helper', {
+            const handlerHelper = proxyquire('../../utilities/handler-helper', {
               './query-helper': queryHelperStub
             })
             sandbox.stub(Log, 'error').callsFake(function() {})
 
-            let userSchema = new mongoose.Schema({})
-            let postDeferred = Q.defer()
-            let error = 'error message'
+            const userSchema = new mongoose.Schema({})
+            const postDeferred = Q.defer()
+            const error = 'error message'
             postDeferred.reject(error)
             userSchema.statics = {
               routeOptions: {
@@ -1592,15 +1596,15 @@ test('handler-helper.findHandler', function(t) {
               }
             }
 
-            let userModel = mongoose.model('user', userSchema)
+            const userModel = mongoose.model('user', userSchema)
 
             userModel.findOne = sandbox.spy()
 
-            let request = { query: {}, params: { _id: {} } }
+            const request = { query: {}, params: { _id: {} } }
             // </editor-fold>
 
             // <editor-fold desc="Act">
-            let promise = handlerHelper.findHandler(
+            const promise = handlerHelper.findHandler(
               userModel,
               'TEST',
               request,
@@ -1638,43 +1642,43 @@ test('handler-helper.findHandler', function(t) {
           'handler-helper.findHandler throws a not found error',
           function(t) {
             // <editor-fold desc="Arrange">
-            let sandbox = sinon.sandbox.create()
-            let Log = logger.bind('handler-helper')
-            let server = sandbox.spy()
+            const sandbox = sinon.sandbox.create()
+            const Log = logger.bind('handler-helper')
+            const server = sandbox.spy()
 
-            let mongooseQuery1 = {
+            const mongooseQuery1 = {
               exec: function() {
                 return Q.when()
               }
             }
-            let mongooseQuery2 = {
+            const mongooseQuery2 = {
               lean: function() {
                 return mongooseQuery1
               }
             }
 
-            let queryHelperStub = sandbox.stub(
+            const queryHelperStub = sandbox.stub(
               require('../../utilities/query-helper')
             )
             queryHelperStub.createMongooseQuery = function() {
               return mongooseQuery2
             }
 
-            let handlerHelper = proxyquire('../../utilities/handler-helper', {
+            const handlerHelper = proxyquire('../../utilities/handler-helper', {
               './query-helper': queryHelperStub
             })
             sandbox.stub(Log, 'error').callsFake(function() {})
 
-            let userSchema = new mongoose.Schema({})
-            let userModel = mongoose.model('user', userSchema)
+            const userSchema = new mongoose.Schema({})
+            const userModel = mongoose.model('user', userSchema)
 
             userModel.findOne = sandbox.spy()
 
-            let request = { query: {}, params: { _id: 'TEST' } }
+            const request = { query: {}, params: { _id: 'TEST' } }
             // </editor-fold>
 
             // <editor-fold desc="Act">
-            let promise = handlerHelper.findHandler(
+            const promise = handlerHelper.findHandler(
               userModel,
               'TEST',
               request,
@@ -1712,18 +1716,18 @@ test('handler-helper.findHandler', function(t) {
           'handler-helper.findHandler throws a generic preprocessing error',
           function(t) {
             // <editor-fold desc="Arrange">
-            let sandbox = sinon.sandbox.create()
-            let Log = logger.bind('handler-helper')
-            let server = sandbox.spy()
-            let queryHelperStub = sandbox.stub(
+            const sandbox = sinon.sandbox.create()
+            const Log = logger.bind('handler-helper')
+            const server = sandbox.spy()
+            const queryHelperStub = sandbox.stub(
               require('../../utilities/query-helper')
             )
-            let handlerHelper = proxyquire('../../utilities/handler-helper', {
+            const handlerHelper = proxyquire('../../utilities/handler-helper', {
               './query-helper': queryHelperStub
             })
             sandbox.stub(Log, 'error').callsFake(function() {})
 
-            let userSchema = new mongoose.Schema({})
+            const userSchema = new mongoose.Schema({})
             userSchema.statics = {
               routeOptions: {
                 find: {
@@ -1734,13 +1738,13 @@ test('handler-helper.findHandler', function(t) {
               }
             }
 
-            let userModel = mongoose.model('user', userSchema)
+            const userModel = mongoose.model('user', userSchema)
 
-            let request = { query: {}, params: { _id: 'TEST' } }
+            const request = { query: {}, params: { _id: 'TEST' } }
             // </editor-fold>
 
             // <editor-fold desc="Act">
-            let promise = handlerHelper.findHandler(
+            const promise = handlerHelper.findHandler(
               userModel,
               'TEST',
               request,
@@ -1778,18 +1782,18 @@ test('handler-helper.findHandler', function(t) {
           'handler-helper.findHandler throws a custom preprocessing error',
           function(t) {
             // <editor-fold desc="Arrange">
-            let sandbox = sinon.sandbox.create()
-            let Log = logger.bind('handler-helper')
-            let server = sandbox.spy()
-            let queryHelperStub = sandbox.stub(
+            const sandbox = sinon.sandbox.create()
+            const Log = logger.bind('handler-helper')
+            const server = sandbox.spy()
+            const queryHelperStub = sandbox.stub(
               require('../../utilities/query-helper')
             )
-            let handlerHelper = proxyquire('../../utilities/handler-helper', {
+            const handlerHelper = proxyquire('../../utilities/handler-helper', {
               './query-helper': queryHelperStub
             })
             sandbox.stub(Log, 'error').callsFake(function() {})
 
-            let userSchema = new mongoose.Schema({})
+            const userSchema = new mongoose.Schema({})
             userSchema.statics = {
               routeOptions: {
                 find: {
@@ -1800,13 +1804,13 @@ test('handler-helper.findHandler', function(t) {
               }
             }
 
-            let userModel = mongoose.model('user', userSchema)
+            const userModel = mongoose.model('user', userSchema)
 
-            let request = { query: {}, params: { _id: 'TEST' } }
+            const request = { query: {}, params: { _id: 'TEST' } }
             // </editor-fold>
 
             // <editor-fold desc="Act">
-            let promise = handlerHelper.findHandler(
+            const promise = handlerHelper.findHandler(
               userModel,
               'TEST',
               request,
@@ -1844,32 +1848,32 @@ test('handler-helper.findHandler', function(t) {
           'handler-helper.findHandler throws a general processing error',
           function(t) {
             // <editor-fold desc="Arrange">
-            let sandbox = sinon.sandbox.create()
-            let Log = logger.bind('handler-helper')
-            let server = sandbox.spy()
-            let queryHelperStub = sandbox.stub(
+            const sandbox = sinon.sandbox.create()
+            const Log = logger.bind('handler-helper')
+            const server = sandbox.spy()
+            const queryHelperStub = sandbox.stub(
               require('../../utilities/query-helper')
             )
 
-            let qStub = sandbox.stub(Q, 'when').callsFake(function() {
+            const qStub = sandbox.stub(Q, 'when').callsFake(function() {
               throw new Error('ERROR')
             })
 
-            let handlerHelper = proxyquire('../../utilities/handler-helper', {
+            const handlerHelper = proxyquire('../../utilities/handler-helper', {
               './query-helper': queryHelperStub,
               q: qStub
             })
             sandbox.stub(Log, 'error').callsFake(function() {})
 
-            let userSchema = new mongoose.Schema({})
+            const userSchema = new mongoose.Schema({})
 
-            let userModel = mongoose.model('user', userSchema)
+            const userModel = mongoose.model('user', userSchema)
 
-            let request = { query: {}, params: { _id: 'TEST' } }
+            const request = { query: {}, params: { _id: 'TEST' } }
             // </editor-fold>
 
             // <editor-fold desc="Act">
-            let promise = handlerHelper.findHandler(
+            const promise = handlerHelper.findHandler(
               userModel,
               'TEST',
               request,
@@ -1913,21 +1917,21 @@ test('handler-helper.createHandler', function(t) {
           'handler-helper.createHandler calls pre processing if it exists',
           function(t) {
             // <editor-fold desc="Arrange">
-            let sandbox = sinon.sandbox.create()
-            let Log = logger.bind('handler-helper')
-            let server = sandbox.spy()
-            let queryHelperStub = sandbox.stub(
+            const sandbox = sinon.sandbox.create()
+            const Log = logger.bind('handler-helper')
+            const server = sandbox.spy()
+            const queryHelperStub = sandbox.stub(
               require('../../utilities/query-helper')
             )
 
-            let handlerHelper = proxyquire('../../utilities/handler-helper', {
+            const handlerHelper = proxyquire('../../utilities/handler-helper', {
               './query-helper': queryHelperStub
             })
             sandbox.stub(Log, 'error').callsFake(function() {})
 
-            let userSchema = new mongoose.Schema({})
-            let preDeferred = Q.defer()
-            let preSpy = sandbox.spy(function(payload) {
+            const userSchema = new mongoose.Schema({})
+            const preDeferred = Q.defer()
+            const preSpy = sandbox.spy(function(payload) {
               preDeferred.resolve()
               return Q.when(payload)
             })
@@ -1939,10 +1943,10 @@ test('handler-helper.createHandler', function(t) {
               }
             }
 
-            let userModel = mongoose.model('user', userSchema)
+            const userModel = mongoose.model('user', userSchema)
 
-            let payload = { field: 'value' }
-            let request = { payload: payload }
+            const payload = { field: 'value' }
+            const request = { payload: payload }
             // </editor-fold>
 
             // <editor-fold desc="Act">
@@ -1978,28 +1982,28 @@ test('handler-helper.createHandler', function(t) {
           'handler-helper.createHandler calls model.create',
           function(t) {
             // <editor-fold desc="Arrange">
-            let sandbox = sinon.sandbox.create()
-            let Log = logger.bind('handler-helper')
-            let server = sandbox.spy()
-            let queryHelperStub = sandbox.stub(
+            const sandbox = sinon.sandbox.create()
+            const Log = logger.bind('handler-helper')
+            const server = sandbox.spy()
+            const queryHelperStub = sandbox.stub(
               require('../../utilities/query-helper')
             )
 
-            let handlerHelper = proxyquire('../../utilities/handler-helper', {
+            const handlerHelper = proxyquire('../../utilities/handler-helper', {
               './query-helper': queryHelperStub
             })
             sandbox.stub(Log, 'error').callsFake(function() {})
 
-            let userSchema = new mongoose.Schema({})
+            const userSchema = new mongoose.Schema({})
 
-            let userModel = mongoose.model('user', userSchema)
-            let createDeferred = Q.defer()
+            const userModel = mongoose.model('user', userSchema)
+            const createDeferred = Q.defer()
             userModel.create = sandbox.spy(function() {
               return createDeferred.resolve()
             })
 
-            let payload = { field: 'value' }
-            let request = { payload: payload }
+            const payload = { field: 'value' }
+            const request = { payload: payload }
             // </editor-fold>
 
             // <editor-fold desc="Act">
@@ -2036,30 +2040,30 @@ test('handler-helper.createHandler', function(t) {
           'handler-helper.createHandler calls QueryHelper.createAttributesFilter',
           function(t) {
             // <editor-fold desc="Arrange">
-            let sandbox = sinon.sandbox.create()
-            let Log = logger.bind('handler-helper')
-            let server = sandbox.spy()
-            let queryHelperStub = sandbox.stub(
+            const sandbox = sinon.sandbox.create()
+            const Log = logger.bind('handler-helper')
+            const server = sandbox.spy()
+            const queryHelperStub = sandbox.stub(
               require('../../utilities/query-helper')
             )
-            let deferred = Q.defer()
+            const deferred = Q.defer()
             queryHelperStub.createAttributesFilter = sandbox.spy(function() {
               return deferred.resolve()
             })
 
-            let handlerHelper = proxyquire('../../utilities/handler-helper', {
+            const handlerHelper = proxyquire('../../utilities/handler-helper', {
               './query-helper': queryHelperStub
             })
             sandbox.stub(Log, 'error').callsFake(function() {})
 
-            let userSchema = new mongoose.Schema({})
+            const userSchema = new mongoose.Schema({})
 
-            let userModel = mongoose.model('user', userSchema)
+            const userModel = mongoose.model('user', userSchema)
             userModel.create = sandbox.spy(function() {
               return Q.when()
             })
 
-            let request = { query: 'TEST', payload: {} }
+            const request = { query: 'TEST', payload: {} }
             // </editor-fold>
 
             // <editor-fold desc="Act">
@@ -2099,33 +2103,33 @@ test('handler-helper.createHandler', function(t) {
           t
         ) {
           // <editor-fold desc="Arrange">
-          let sandbox = sinon.sandbox.create()
-          let Log = logger.bind('handler-helper')
-          let server = sandbox.spy()
-          let queryHelperStub = sandbox.stub(
+          const sandbox = sinon.sandbox.create()
+          const Log = logger.bind('handler-helper')
+          const server = sandbox.spy()
+          const queryHelperStub = sandbox.stub(
             require('../../utilities/query-helper')
           )
           queryHelperStub.createAttributesFilter = function() {
             return 'attributes'
           }
 
-          let handlerHelper = proxyquire('../../utilities/handler-helper', {
+          const handlerHelper = proxyquire('../../utilities/handler-helper', {
             './query-helper': queryHelperStub
           })
           sandbox.stub(Log, 'error').callsFake(function() {})
 
-          let userSchema = new mongoose.Schema({})
+          const userSchema = new mongoose.Schema({})
 
-          let userModel = mongoose.model('user', userSchema)
+          const userModel = mongoose.model('user', userSchema)
           userModel.create = sandbox.spy(function() {
             return Q.when([{ _id: 'TEST' }])
           })
-          let deferred = Q.defer()
+          const deferred = Q.defer()
           userModel.find = sandbox.spy(function() {
             return deferred.resolve()
           })
 
-          let request = { query: {}, payload: {} }
+          const request = { query: {}, payload: {} }
           // </editor-fold>
 
           // <editor-fold desc="Act">
@@ -2160,24 +2164,24 @@ test('handler-helper.createHandler', function(t) {
           'handler-helper.createHandler calls create.post if it exists',
           function(t) {
             // <editor-fold desc="Arrange">
-            let sandbox = sinon.sandbox.create()
-            let Log = logger.bind('handler-helper')
-            let server = sandbox.spy()
-            let queryHelperStub = sandbox.stub(
+            const sandbox = sinon.sandbox.create()
+            const Log = logger.bind('handler-helper')
+            const server = sandbox.spy()
+            const queryHelperStub = sandbox.stub(
               require('../../utilities/query-helper')
             )
             queryHelperStub.createAttributesFilter = function() {
               return 'attributes'
             }
 
-            let handlerHelper = proxyquire('../../utilities/handler-helper', {
+            const handlerHelper = proxyquire('../../utilities/handler-helper', {
               './query-helper': queryHelperStub
             })
             // sandbox.stub(Log, 'error').callsFake(function(){});
 
-            let userSchema = new mongoose.Schema({})
-            let deferred = Q.defer()
-            let postSpy = sandbox.spy(function() {
+            const userSchema = new mongoose.Schema({})
+            const deferred = Q.defer()
+            const postSpy = sandbox.spy(function() {
               return deferred.resolve()
             })
             userSchema.statics = {
@@ -2188,21 +2192,21 @@ test('handler-helper.createHandler', function(t) {
               }
             }
 
-            let userModel = mongoose.model('user', userSchema)
+            const userModel = mongoose.model('user', userSchema)
             userModel.create = sandbox.spy(function() {
               return Q.when([{ _id: 'TEST' }])
             })
 
-            let findExec = function() {
+            const findExec = function() {
               return Q.when([{ _id: 'TEST' }])
             }
-            let findLean = function() {
+            const findLean = function() {
               return { exec: findExec }
             }
-            let findSelect = function() {
+            const findSelect = function() {
               return { lean: findLean }
             }
-            let findWhere = function() {
+            const findWhere = function() {
               return { select: findSelect }
             }
 
@@ -2210,7 +2214,7 @@ test('handler-helper.createHandler', function(t) {
               return { where: findWhere }
             })
 
-            let request = { query: {}, payload: {} }
+            const request = { query: {}, payload: {} }
             // </editor-fold>
 
             // <editor-fold desc="Act">
@@ -2251,40 +2255,40 @@ test('handler-helper.createHandler', function(t) {
           'handler-helper.createHandler returns single result when payload is not an array',
           function(t) {
             // <editor-fold desc="Arrange">
-            let sandbox = sinon.sandbox.create()
-            let Log = logger.bind('handler-helper')
-            let server = sandbox.spy()
-            let queryHelperStub = sandbox.stub(
+            const sandbox = sinon.sandbox.create()
+            const Log = logger.bind('handler-helper')
+            const server = sandbox.spy()
+            const queryHelperStub = sandbox.stub(
               require('../../utilities/query-helper')
             )
             queryHelperStub.createAttributesFilter = function() {
               return 'attributes'
             }
-            let handlerHelper = proxyquire('../../utilities/handler-helper', {
+            const handlerHelper = proxyquire('../../utilities/handler-helper', {
               './query-helper': queryHelperStub
             })
             sandbox.stub(Log, 'error').callsFake(function() {})
 
-            let userSchema = new mongoose.Schema({})
+            const userSchema = new mongoose.Schema({})
 
-            let userModel = mongoose.model('user', userSchema)
+            const userModel = mongoose.model('user', userSchema)
             userModel.create = sandbox.spy(function() {
               return Q.when([{ _id: 'TEST' }])
             })
 
             // NOTE: payload is an object so we expect a single object to be returned
-            let payload = { _id: '3' }
+            const payload = { _id: '3' }
 
-            let findExec = function() {
+            const findExec = function() {
               return Q.when([payload])
             }
-            let findLean = function() {
+            const findLean = function() {
               return { exec: findExec }
             }
-            let findSelect = function() {
+            const findSelect = function() {
               return { lean: findLean }
             }
-            let findWhere = function() {
+            const findWhere = function() {
               return { select: findSelect }
             }
 
@@ -2292,11 +2296,11 @@ test('handler-helper.createHandler', function(t) {
               return { where: findWhere }
             })
 
-            let request = { query: {}, payload: payload }
+            const request = { query: {}, payload: payload }
             // </editor-fold>
 
             // <editor-fold desc="Act">
-            let promise = handlerHelper.createHandler(userModel, request, Log)
+            const promise = handlerHelper.createHandler(userModel, request, Log)
             // </editor-fold>
 
             // <editor-fold desc="Assert">
@@ -2325,40 +2329,40 @@ test('handler-helper.createHandler', function(t) {
           'handler-helper.createHandler returns an array when payload is an array',
           function(t) {
             // <editor-fold desc="Arrange">
-            let sandbox = sinon.sandbox.create()
-            let Log = logger.bind('handler-helper')
-            let server = sandbox.spy()
-            let queryHelperStub = sandbox.stub(
+            const sandbox = sinon.sandbox.create()
+            const Log = logger.bind('handler-helper')
+            const server = sandbox.spy()
+            const queryHelperStub = sandbox.stub(
               require('../../utilities/query-helper')
             )
             queryHelperStub.createAttributesFilter = function() {
               return 'attributes'
             }
-            let handlerHelper = proxyquire('../../utilities/handler-helper', {
+            const handlerHelper = proxyquire('../../utilities/handler-helper', {
               './query-helper': queryHelperStub
             })
             sandbox.stub(Log, 'error').callsFake(function() {})
 
-            let userSchema = new mongoose.Schema({})
+            const userSchema = new mongoose.Schema({})
 
-            let userModel = mongoose.model('user', userSchema)
+            const userModel = mongoose.model('user', userSchema)
             userModel.create = sandbox.spy(function() {
               return Q.when([{ _id: 'TEST' }])
             })
 
             // NOTE: payload is an array so we expect an array to be returned
-            let payload = [{ _id: '3' }, { _id: '4' }]
+            const payload = [{ _id: '3' }, { _id: '4' }]
 
-            let findExec = function() {
+            const findExec = function() {
               return Q.when(payload)
             }
-            let findLean = function() {
+            const findLean = function() {
               return { exec: findExec }
             }
-            let findSelect = function() {
+            const findSelect = function() {
               return { lean: findLean }
             }
-            let findWhere = function() {
+            const findWhere = function() {
               return { select: findSelect }
             }
 
@@ -2366,11 +2370,11 @@ test('handler-helper.createHandler', function(t) {
               return { where: findWhere }
             })
 
-            let request = { query: {}, payload: payload }
+            const request = { query: {}, payload: payload }
             // </editor-fold>
 
             // <editor-fold desc="Act">
-            let promise = handlerHelper.createHandler(userModel, request, Log)
+            const promise = handlerHelper.createHandler(userModel, request, Log)
             // </editor-fold>
 
             // <editor-fold desc="Assert">
@@ -2399,21 +2403,21 @@ test('handler-helper.createHandler', function(t) {
           'handler-helper.createHandler throws a generic postprocessing error',
           function(t) {
             // <editor-fold desc="Arrange">
-            let sandbox = sinon.sandbox.create()
-            let Log = logger.bind('handler-helper')
-            let server = sandbox.spy()
-            let queryHelperStub = sandbox.stub(
+            const sandbox = sinon.sandbox.create()
+            const Log = logger.bind('handler-helper')
+            const server = sandbox.spy()
+            const queryHelperStub = sandbox.stub(
               require('../../utilities/query-helper')
             )
             queryHelperStub.createAttributesFilter = function() {
               return 'attributes'
             }
-            let handlerHelper = proxyquire('../../utilities/handler-helper', {
+            const handlerHelper = proxyquire('../../utilities/handler-helper', {
               './query-helper': queryHelperStub
             })
             sandbox.stub(Log, 'error').callsFake(function() {})
 
-            let userSchema = new mongoose.Schema({})
+            const userSchema = new mongoose.Schema({})
             userSchema.statics = {
               routeOptions: {
                 create: {
@@ -2424,21 +2428,21 @@ test('handler-helper.createHandler', function(t) {
               }
             }
 
-            let userModel = mongoose.model('user', userSchema)
+            const userModel = mongoose.model('user', userSchema)
             userModel.create = sandbox.spy(function() {
               return Q.when([{ _id: 'TEST' }])
             })
 
-            let findExec = function() {
+            const findExec = function() {
               return Q.when([{ _id: 'TEST' }])
             }
-            let findLean = function() {
+            const findLean = function() {
               return { exec: findExec }
             }
-            let findSelect = function() {
+            const findSelect = function() {
               return { lean: findLean }
             }
-            let findWhere = function() {
+            const findWhere = function() {
               return { select: findSelect }
             }
 
@@ -2446,11 +2450,11 @@ test('handler-helper.createHandler', function(t) {
               return { where: findWhere }
             })
 
-            let request = { query: {}, payload: {} }
+            const request = { query: {}, payload: {} }
             // </editor-fold>
 
             // <editor-fold desc="Act">
-            let promise = handlerHelper.createHandler(userModel, request, Log)
+            const promise = handlerHelper.createHandler(userModel, request, Log)
             // </editor-fold>
 
             // <editor-fold desc="Assert">
@@ -2483,21 +2487,21 @@ test('handler-helper.createHandler', function(t) {
           'handler-helper.createHandler throws a custom postprocessing error',
           function(t) {
             // <editor-fold desc="Arrange">
-            let sandbox = sinon.sandbox.create()
-            let Log = logger.bind('handler-helper')
-            let server = sandbox.spy()
-            let queryHelperStub = sandbox.stub(
+            const sandbox = sinon.sandbox.create()
+            const Log = logger.bind('handler-helper')
+            const server = sandbox.spy()
+            const queryHelperStub = sandbox.stub(
               require('../../utilities/query-helper')
             )
             queryHelperStub.createAttributesFilter = function() {
               return 'attributes'
             }
-            let handlerHelper = proxyquire('../../utilities/handler-helper', {
+            const handlerHelper = proxyquire('../../utilities/handler-helper', {
               './query-helper': queryHelperStub
             })
             sandbox.stub(Log, 'error').callsFake(function() {})
 
-            let userSchema = new mongoose.Schema({})
+            const userSchema = new mongoose.Schema({})
             userSchema.statics = {
               routeOptions: {
                 create: {
@@ -2508,21 +2512,21 @@ test('handler-helper.createHandler', function(t) {
               }
             }
 
-            let userModel = mongoose.model('user', userSchema)
+            const userModel = mongoose.model('user', userSchema)
             userModel.create = sandbox.spy(function() {
               return Q.when([{ _id: 'TEST' }])
             })
 
-            let findExec = function() {
+            const findExec = function() {
               return Q.when([{ _id: 'TEST' }])
             }
-            let findLean = function() {
+            const findLean = function() {
               return { exec: findExec }
             }
-            let findSelect = function() {
+            const findSelect = function() {
               return { lean: findLean }
             }
-            let findWhere = function() {
+            const findWhere = function() {
               return { select: findSelect }
             }
 
@@ -2530,11 +2534,11 @@ test('handler-helper.createHandler', function(t) {
               return { where: findWhere }
             })
 
-            let request = { query: {}, payload: {} }
+            const request = { query: {}, payload: {} }
             // </editor-fold>
 
             // <editor-fold desc="Act">
-            let promise = handlerHelper.createHandler(userModel, request, Log)
+            const promise = handlerHelper.createHandler(userModel, request, Log)
             // </editor-fold>
 
             // <editor-fold desc="Assert">
@@ -2567,21 +2571,21 @@ test('handler-helper.createHandler', function(t) {
           'handler-helper.createHandler throws a create error',
           function(t) {
             // <editor-fold desc="Arrange">
-            let sandbox = sinon.sandbox.create()
-            let Log = logger.bind('handler-helper')
-            let server = sandbox.spy()
-            let queryHelperStub = sandbox.stub(
+            const sandbox = sinon.sandbox.create()
+            const Log = logger.bind('handler-helper')
+            const server = sandbox.spy()
+            const queryHelperStub = sandbox.stub(
               require('../../utilities/query-helper')
             )
             queryHelperStub.createAttributesFilter = function() {
               return 'attributes'
             }
-            let handlerHelper = proxyquire('../../utilities/handler-helper', {
+            const handlerHelper = proxyquire('../../utilities/handler-helper', {
               './query-helper': queryHelperStub
             })
             sandbox.stub(Log, 'error').callsFake(function() {})
 
-            let userSchema = new mongoose.Schema({})
+            const userSchema = new mongoose.Schema({})
             userSchema.statics = {
               routeOptions: {
                 create: {
@@ -2592,21 +2596,21 @@ test('handler-helper.createHandler', function(t) {
               }
             }
 
-            let userModel = mongoose.model('user', userSchema)
+            const userModel = mongoose.model('user', userSchema)
             userModel.create = sandbox.spy(function() {
               throw Boom.badRequest('error message')
             })
 
-            let findExec = function() {
+            const findExec = function() {
               return Q.when([{ _id: 'TEST' }])
             }
-            let findLean = function() {
+            const findLean = function() {
               return { exec: findExec }
             }
-            let findSelect = function() {
+            const findSelect = function() {
               return { lean: findLean }
             }
-            let findWhere = function() {
+            const findWhere = function() {
               return { select: findSelect }
             }
 
@@ -2614,11 +2618,11 @@ test('handler-helper.createHandler', function(t) {
               return { where: findWhere }
             })
 
-            let request = { query: {}, payload: {} }
+            const request = { query: {}, payload: {} }
             // </editor-fold>
 
             // <editor-fold desc="Act">
-            let promise = handlerHelper.createHandler(userModel, request, Log)
+            const promise = handlerHelper.createHandler(userModel, request, Log)
             // </editor-fold>
 
             // <editor-fold desc="Assert">
@@ -2651,21 +2655,21 @@ test('handler-helper.createHandler', function(t) {
           'handler-helper.createHandler throws a generic preprocessing error',
           function(t) {
             // <editor-fold desc="Arrange">
-            let sandbox = sinon.sandbox.create()
-            let Log = logger.bind('handler-helper')
-            let server = sandbox.spy()
-            let queryHelperStub = sandbox.stub(
+            const sandbox = sinon.sandbox.create()
+            const Log = logger.bind('handler-helper')
+            const server = sandbox.spy()
+            const queryHelperStub = sandbox.stub(
               require('../../utilities/query-helper')
             )
             queryHelperStub.createAttributesFilter = function() {
               return 'attributes'
             }
-            let handlerHelper = proxyquire('../../utilities/handler-helper', {
+            const handlerHelper = proxyquire('../../utilities/handler-helper', {
               './query-helper': queryHelperStub
             })
             sandbox.stub(Log, 'error').callsFake(function() {})
 
-            let userSchema = new mongoose.Schema({})
+            const userSchema = new mongoose.Schema({})
             userSchema.statics = {
               routeOptions: {
                 create: {
@@ -2676,13 +2680,13 @@ test('handler-helper.createHandler', function(t) {
               }
             }
 
-            let userModel = mongoose.model('user', userSchema)
+            const userModel = mongoose.model('user', userSchema)
 
-            let request = { query: {}, payload: { boo: 'boo' } }
+            const request = { query: {}, payload: { boo: 'boo' } }
             // </editor-fold>
 
             // <editor-fold desc="Act">
-            let promise = handlerHelper.createHandler(userModel, request, Log)
+            const promise = handlerHelper.createHandler(userModel, request, Log)
             // </editor-fold>
 
             // <editor-fold desc="Assert">
@@ -2715,21 +2719,21 @@ test('handler-helper.createHandler', function(t) {
           'handler-helper.createHandler throws a custom preprocessing error',
           function(t) {
             // <editor-fold desc="Arrange">
-            let sandbox = sinon.sandbox.create()
-            let Log = logger.bind('handler-helper')
-            let server = sandbox.spy()
-            let queryHelperStub = sandbox.stub(
+            const sandbox = sinon.sandbox.create()
+            const Log = logger.bind('handler-helper')
+            const server = sandbox.spy()
+            const queryHelperStub = sandbox.stub(
               require('../../utilities/query-helper')
             )
             queryHelperStub.createAttributesFilter = function() {
               return 'attributes'
             }
-            let handlerHelper = proxyquire('../../utilities/handler-helper', {
+            const handlerHelper = proxyquire('../../utilities/handler-helper', {
               './query-helper': queryHelperStub
             })
             sandbox.stub(Log, 'error').callsFake(function() {})
 
-            let userSchema = new mongoose.Schema({})
+            const userSchema = new mongoose.Schema({})
             userSchema.statics = {
               routeOptions: {
                 create: {
@@ -2740,13 +2744,13 @@ test('handler-helper.createHandler', function(t) {
               }
             }
 
-            let userModel = mongoose.model('user', userSchema)
+            const userModel = mongoose.model('user', userSchema)
 
-            let request = { query: {}, payload: {} }
+            const request = { query: {}, payload: {} }
             // </editor-fold>
 
             // <editor-fold desc="Act">
-            let promise = handlerHelper.createHandler(userModel, request, Log)
+            const promise = handlerHelper.createHandler(userModel, request, Log)
             // </editor-fold>
 
             // <editor-fold desc="Assert">
@@ -2779,22 +2783,22 @@ test('handler-helper.createHandler', function(t) {
           'handler-helper.createHandler throws a general processing error',
           function(t) {
             // <editor-fold desc="Arrange">
-            let sandbox = sinon.sandbox.create()
-            let Log = logger.bind('handler-helper')
-            let server = sandbox.spy()
-            let queryHelperStub = sandbox.stub(
+            const sandbox = sinon.sandbox.create()
+            const Log = logger.bind('handler-helper')
+            const server = sandbox.spy()
+            const queryHelperStub = sandbox.stub(
               require('../../utilities/query-helper')
             )
             queryHelperStub.createAttributesFilter = function() {
               return 'attributes'
             }
 
-            let handlerHelper = proxyquire('../../utilities/handler-helper', {
+            const handlerHelper = proxyquire('../../utilities/handler-helper', {
               './query-helper': queryHelperStub
             })
             sandbox.stub(Log, 'error').callsFake(function() {})
 
-            let userSchema = new mongoose.Schema({})
+            const userSchema = new mongoose.Schema({})
 
             let userModel = mongoose.model('user', userSchema)
 
@@ -2802,11 +2806,11 @@ test('handler-helper.createHandler', function(t) {
               throw new Error('ERROR')
             })
 
-            let request = { query: {}, payload: {} }
+            const request = { query: {}, payload: {} }
             // </editor-fold>
 
             // <editor-fold desc="Act">
-            let promise = handlerHelper.createHandler(userModel, request, Log)
+            const promise = handlerHelper.createHandler(userModel, request, Log)
             // </editor-fold>
 
             // <editor-fold desc="Assert">
@@ -2845,21 +2849,21 @@ test('handler-helper.updateHandler', function(t) {
           'handler-helper.updateHandler calls pre processing if it exists',
           function(t) {
             // <editor-fold desc="Arrange">
-            let sandbox = sinon.sandbox.create()
-            let Log = logger.bind('handler-helper')
-            let server = sandbox.spy()
-            let queryHelperStub = sandbox.stub(
+            const sandbox = sinon.sandbox.create()
+            const Log = logger.bind('handler-helper')
+            const server = sandbox.spy()
+            const queryHelperStub = sandbox.stub(
               require('../../utilities/query-helper')
             )
 
-            let handlerHelper = proxyquire('../../utilities/handler-helper', {
+            const handlerHelper = proxyquire('../../utilities/handler-helper', {
               './query-helper': queryHelperStub
             })
             sandbox.stub(Log, 'error').callsFake(function() {})
 
-            let userSchema = new mongoose.Schema({})
-            let preDeferred = Q.defer()
-            let preSpy = sandbox.spy(function() {
+            const userSchema = new mongoose.Schema({})
+            const preDeferred = Q.defer()
+            const preSpy = sandbox.spy(function() {
               preDeferred.resolve()
             })
             userSchema.statics = {
@@ -2870,11 +2874,11 @@ test('handler-helper.updateHandler', function(t) {
               }
             }
 
-            let userModel = mongoose.model('user', userSchema)
+            const userModel = mongoose.model('user', userSchema)
 
-            let payload = { name: 'TEST' }
+            const payload = { name: 'TEST' }
 
-            let request = { query: {}, payload: payload }
+            const request = { query: {}, payload: payload }
             // </editor-fold>
 
             // <editor-fold desc="Act">
@@ -2910,28 +2914,28 @@ test('handler-helper.updateHandler', function(t) {
           'handler-helper.updateHandler calls model.findByIdAndUpdate',
           function(t) {
             // <editor-fold desc="Arrange">
-            let sandbox = sinon.sandbox.create()
-            let Log = logger.bind('handler-helper')
-            let server = sandbox.spy()
-            let queryHelperStub = sandbox.stub(
+            const sandbox = sinon.sandbox.create()
+            const Log = logger.bind('handler-helper')
+            const server = sandbox.spy()
+            const queryHelperStub = sandbox.stub(
               require('../../utilities/query-helper')
             )
 
-            let handlerHelper = proxyquire('../../utilities/handler-helper', {
+            const handlerHelper = proxyquire('../../utilities/handler-helper', {
               './query-helper': queryHelperStub
             })
             sandbox.stub(Log, 'error').callsFake(function() {})
 
-            let userSchema = new mongoose.Schema({})
+            const userSchema = new mongoose.Schema({})
 
-            let userModel = mongoose.model('user', userSchema)
-            let updateDeferred = Q.defer()
+            const userModel = mongoose.model('user', userSchema)
+            const updateDeferred = Q.defer()
             userModel.findByIdAndUpdate = sandbox.spy(function() {
               return updateDeferred.resolve()
             })
 
-            let payload = { field: 'value' }
-            let request = {
+            const payload = { field: 'value' }
+            const request = {
               query: {},
               params: { _id: '_id' },
               payload: payload
@@ -2976,30 +2980,30 @@ test('handler-helper.updateHandler', function(t) {
           'handler-helper.updateHandler calls model.findByIdAndUpdate with runValidators: true',
           function(t) {
             // <editor-fold desc="Arrange">
-            let sandbox = sinon.sandbox.create()
-            let Log = logger.bind('handler-helper')
-            let server = sandbox.spy()
-            let config = { enableMongooseRunValidators: true }
-            let queryHelperStub = sandbox.stub(
+            const sandbox = sinon.sandbox.create()
+            const Log = logger.bind('handler-helper')
+            const server = sandbox.spy()
+            const config = { enableMongooseRunValidators: true }
+            const queryHelperStub = sandbox.stub(
               require('../../utilities/query-helper')
             )
 
-            let handlerHelper = proxyquire('../../utilities/handler-helper', {
+            const handlerHelper = proxyquire('../../utilities/handler-helper', {
               './query-helper': queryHelperStub,
               '../config': config
             })
             sandbox.stub(Log, 'error').callsFake(function() {})
 
-            let userSchema = new mongoose.Schema({})
+            const userSchema = new mongoose.Schema({})
 
-            let userModel = mongoose.model('user', userSchema)
-            let updateDeferred = Q.defer()
+            const userModel = mongoose.model('user', userSchema)
+            const updateDeferred = Q.defer()
             userModel.findByIdAndUpdate = sandbox.spy(function() {
               return updateDeferred.resolve()
             })
 
-            let payload = { field: 'value' }
-            let request = {
+            const payload = { field: 'value' }
+            const request = {
               query: {},
               params: { _id: '_id' },
               payload: payload
@@ -3044,30 +3048,34 @@ test('handler-helper.updateHandler', function(t) {
           'handler-helper.updateHandler calls QueryHelper.createAttributesFilter',
           function(t) {
             // <editor-fold desc="Arrange">
-            let sandbox = sinon.sandbox.create()
-            let Log = logger.bind('handler-helper')
-            let server = sandbox.spy()
-            let queryHelperStub = sandbox.stub(
+            const sandbox = sinon.sandbox.create()
+            const Log = logger.bind('handler-helper')
+            const server = sandbox.spy()
+            const queryHelperStub = sandbox.stub(
               require('../../utilities/query-helper')
             )
-            let deferred = Q.defer()
+            const deferred = Q.defer()
             queryHelperStub.createAttributesFilter = sandbox.spy(function() {
               return deferred.resolve()
             })
 
-            let handlerHelper = proxyquire('../../utilities/handler-helper', {
+            const handlerHelper = proxyquire('../../utilities/handler-helper', {
               './query-helper': queryHelperStub
             })
             sandbox.stub(Log, 'error').callsFake(function() {})
 
-            let userSchema = new mongoose.Schema({})
+            const userSchema = new mongoose.Schema({})
 
-            let userModel = mongoose.model('user', userSchema)
+            const userModel = mongoose.model('user', userSchema)
             userModel.findByIdAndUpdate = sandbox.spy(function() {
               return Q.when({})
             })
 
-            let request = { query: 'TEST', params: { _id: '_id' }, payload: {} }
+            const request = {
+              query: 'TEST',
+              params: { _id: '_id' },
+              payload: {}
+            }
             // </editor-fold>
 
             // <editor-fold desc="Act">
@@ -3110,33 +3118,33 @@ test('handler-helper.updateHandler', function(t) {
           'handler-helper.updateHandler calls model.findOne',
           function(t) {
             // <editor-fold desc="Arrange">
-            let sandbox = sinon.sandbox.create()
-            let Log = logger.bind('handler-helper')
-            let server = sandbox.spy()
-            let queryHelperStub = sandbox.stub(
+            const sandbox = sinon.sandbox.create()
+            const Log = logger.bind('handler-helper')
+            const server = sandbox.spy()
+            const queryHelperStub = sandbox.stub(
               require('../../utilities/query-helper')
             )
             queryHelperStub.createAttributesFilter = function() {
               return 'attributes'
             }
 
-            let handlerHelper = proxyquire('../../utilities/handler-helper', {
+            const handlerHelper = proxyquire('../../utilities/handler-helper', {
               './query-helper': queryHelperStub
             })
             sandbox.stub(Log, 'error').callsFake(function() {})
 
-            let userSchema = new mongoose.Schema({})
+            const userSchema = new mongoose.Schema({})
 
-            let userModel = mongoose.model('user', userSchema)
+            const userModel = mongoose.model('user', userSchema)
             userModel.findByIdAndUpdate = sandbox.spy(function() {
               return Q.when({ _id: 'TEST' })
             })
-            let deferred = Q.defer()
+            const deferred = Q.defer()
             userModel.findOne = sandbox.spy(function() {
               return deferred.resolve()
             })
 
-            let request = { query: {}, params: { _id: '_id' }, payload: {} }
+            const request = { query: {}, params: { _id: '_id' }, payload: {} }
             // </editor-fold>
 
             // <editor-fold desc="Act">
@@ -3175,21 +3183,21 @@ test('handler-helper.updateHandler', function(t) {
           'handler-helper.updateHandler calls update.post if it exists',
           function(t) {
             // <editor-fold desc="Arrange">
-            let sandbox = sinon.sandbox.create()
-            let Log = logger.bind('handler-helper')
-            let server = sandbox.spy()
-            let queryHelperStub = sandbox.stub(
+            const sandbox = sinon.sandbox.create()
+            const Log = logger.bind('handler-helper')
+            const server = sandbox.spy()
+            const queryHelperStub = sandbox.stub(
               require('../../utilities/query-helper')
             )
 
-            let handlerHelper = proxyquire('../../utilities/handler-helper', {
+            const handlerHelper = proxyquire('../../utilities/handler-helper', {
               './query-helper': queryHelperStub
             })
             sandbox.stub(Log, 'error').callsFake(function() {})
 
-            let userSchema = new mongoose.Schema({})
-            let deferred = Q.defer()
-            let postSpy = sandbox.spy(function() {
+            const userSchema = new mongoose.Schema({})
+            const deferred = Q.defer()
+            const postSpy = sandbox.spy(function() {
               return deferred.resolve()
             })
             userSchema.statics = {
@@ -3200,7 +3208,7 @@ test('handler-helper.updateHandler', function(t) {
               }
             }
 
-            let userModel = mongoose.model('user', userSchema)
+            const userModel = mongoose.model('user', userSchema)
             userModel.findByIdAndUpdate = sandbox.spy(function() {
               return Q.when({ _id: {} })
             })
@@ -3212,7 +3220,7 @@ test('handler-helper.updateHandler', function(t) {
               }
             })
 
-            let request = { query: {}, params: { _id: '_id' }, payload: {} }
+            const request = { query: {}, params: { _id: '_id' }, payload: {} }
             // </editor-fold>
 
             // <editor-fold desc="Act">
@@ -3248,21 +3256,21 @@ test('handler-helper.updateHandler', function(t) {
           t
         ) {
           // <editor-fold desc="Arrange">
-          let sandbox = sinon.sandbox.create()
-          let Log = logger.bind('handler-helper')
-          let server = sandbox.spy()
-          let queryHelperStub = sandbox.stub(
+          const sandbox = sinon.sandbox.create()
+          const Log = logger.bind('handler-helper')
+          const server = sandbox.spy()
+          const queryHelperStub = sandbox.stub(
             require('../../utilities/query-helper')
           )
 
-          let handlerHelper = proxyquire('../../utilities/handler-helper', {
+          const handlerHelper = proxyquire('../../utilities/handler-helper', {
             './query-helper': queryHelperStub
           })
           sandbox.stub(Log, 'error').callsFake(function() {})
 
-          let userSchema = new mongoose.Schema({})
+          const userSchema = new mongoose.Schema({})
 
-          let userModel = mongoose.model('user', userSchema)
+          const userModel = mongoose.model('user', userSchema)
           userModel.findByIdAndUpdate = sandbox.spy(function() {
             return Q.when({ _id: {} })
           })
@@ -3274,11 +3282,11 @@ test('handler-helper.updateHandler', function(t) {
             }
           })
 
-          let request = { query: {}, params: { _id: '_id' }, payload: {} }
+          const request = { query: {}, params: { _id: '_id' }, payload: {} }
           // </editor-fold>
 
           // <editor-fold desc="Act">
-          let promise = handlerHelper.updateHandler(
+          const promise = handlerHelper.updateHandler(
             userModel,
             '_id',
             request,
@@ -3311,21 +3319,21 @@ test('handler-helper.updateHandler', function(t) {
           'handler-helper.updateHandler throws a generic postprocessing error',
           function(t) {
             // <editor-fold desc="Arrange">
-            let sandbox = sinon.sandbox.create()
-            let Log = logger.bind('handler-helper')
-            let server = sandbox.spy()
-            let queryHelperStub = sandbox.stub(
+            const sandbox = sinon.sandbox.create()
+            const Log = logger.bind('handler-helper')
+            const server = sandbox.spy()
+            const queryHelperStub = sandbox.stub(
               require('../../utilities/query-helper')
             )
             queryHelperStub.createAttributesFilter = function() {
               return 'attributes'
             }
-            let handlerHelper = proxyquire('../../utilities/handler-helper', {
+            const handlerHelper = proxyquire('../../utilities/handler-helper', {
               './query-helper': queryHelperStub
             })
             sandbox.stub(Log, 'error').callsFake(function() {})
 
-            let userSchema = new mongoose.Schema({})
+            const userSchema = new mongoose.Schema({})
             userSchema.statics = {
               routeOptions: {
                 update: {
@@ -3336,7 +3344,7 @@ test('handler-helper.updateHandler', function(t) {
               }
             }
 
-            let userModel = mongoose.model('user', userSchema)
+            const userModel = mongoose.model('user', userSchema)
             userModel.findByIdAndUpdate = sandbox.spy(function() {
               return Q.when({ _id: {} })
             })
@@ -3348,11 +3356,11 @@ test('handler-helper.updateHandler', function(t) {
               }
             })
 
-            let request = { query: {}, params: { _id: '_id' }, payload: {} }
+            const request = { query: {}, params: { _id: '_id' }, payload: {} }
             // </editor-fold>
 
             // <editor-fold desc="Act">
-            let promise = handlerHelper.updateHandler(
+            const promise = handlerHelper.updateHandler(
               userModel,
               '_id',
               request,
@@ -3390,21 +3398,21 @@ test('handler-helper.updateHandler', function(t) {
           'handler-helper.updateHandler throws a custom postprocessing error',
           function(t) {
             // <editor-fold desc="Arrange">
-            let sandbox = sinon.sandbox.create()
-            let Log = logger.bind('handler-helper')
-            let server = sandbox.spy()
-            let queryHelperStub = sandbox.stub(
+            const sandbox = sinon.sandbox.create()
+            const Log = logger.bind('handler-helper')
+            const server = sandbox.spy()
+            const queryHelperStub = sandbox.stub(
               require('../../utilities/query-helper')
             )
             queryHelperStub.createAttributesFilter = function() {
               return 'attributes'
             }
-            let handlerHelper = proxyquire('../../utilities/handler-helper', {
+            const handlerHelper = proxyquire('../../utilities/handler-helper', {
               './query-helper': queryHelperStub
             })
             sandbox.stub(Log, 'error').callsFake(function() {})
 
-            let userSchema = new mongoose.Schema({})
+            const userSchema = new mongoose.Schema({})
             userSchema.statics = {
               routeOptions: {
                 update: {
@@ -3415,7 +3423,7 @@ test('handler-helper.updateHandler', function(t) {
               }
             }
 
-            let userModel = mongoose.model('user', userSchema)
+            const userModel = mongoose.model('user', userSchema)
             userModel.findByIdAndUpdate = sandbox.spy(function() {
               return Q.when({ _id: {} })
             })
@@ -3427,11 +3435,11 @@ test('handler-helper.updateHandler', function(t) {
               }
             })
 
-            let request = { query: {}, params: { _id: '_id' }, payload: {} }
+            const request = { query: {}, params: { _id: '_id' }, payload: {} }
             // </editor-fold>
 
             // <editor-fold desc="Act">
-            let promise = handlerHelper.updateHandler(
+            const promise = handlerHelper.updateHandler(
               userModel,
               '_id',
               request,
@@ -3469,32 +3477,32 @@ test('handler-helper.updateHandler', function(t) {
           'handler-helper.updateHandler throws a not found error',
           function(t) {
             // <editor-fold desc="Arrange">
-            let sandbox = sinon.sandbox.create()
-            let Log = logger.bind('handler-helper')
-            let server = sandbox.spy()
-            let queryHelperStub = sandbox.stub(
+            const sandbox = sinon.sandbox.create()
+            const Log = logger.bind('handler-helper')
+            const server = sandbox.spy()
+            const queryHelperStub = sandbox.stub(
               require('../../utilities/query-helper')
             )
             queryHelperStub.createAttributesFilter = function() {
               return 'attributes'
             }
-            let handlerHelper = proxyquire('../../utilities/handler-helper', {
+            const handlerHelper = proxyquire('../../utilities/handler-helper', {
               './query-helper': queryHelperStub
             })
             sandbox.stub(Log, 'error').callsFake(function() {})
 
-            let userSchema = new mongoose.Schema({})
+            const userSchema = new mongoose.Schema({})
 
-            let userModel = mongoose.model('user', userSchema)
+            const userModel = mongoose.model('user', userSchema)
             userModel.findByIdAndUpdate = sandbox.spy(function() {
               return Q.when()
             })
 
-            let request = { query: {}, params: { _id: '_id' }, payload: {} }
+            const request = { query: {}, params: { _id: '_id' }, payload: {} }
             // </editor-fold>
 
             // <editor-fold desc="Act">
-            let promise = handlerHelper.updateHandler(
+            const promise = handlerHelper.updateHandler(
               userModel,
               '_id',
               request,
@@ -3532,32 +3540,32 @@ test('handler-helper.updateHandler', function(t) {
           'handler-helper.updateHandler throws an update error',
           function(t) {
             // <editor-fold desc="Arrange">
-            let sandbox = sinon.sandbox.create()
-            let Log = logger.bind('handler-helper')
-            let server = sandbox.spy()
-            let queryHelperStub = sandbox.stub(
+            const sandbox = sinon.sandbox.create()
+            const Log = logger.bind('handler-helper')
+            const server = sandbox.spy()
+            const queryHelperStub = sandbox.stub(
               require('../../utilities/query-helper')
             )
             queryHelperStub.createAttributesFilter = function() {
               return 'attributes'
             }
-            let handlerHelper = proxyquire('../../utilities/handler-helper', {
+            const handlerHelper = proxyquire('../../utilities/handler-helper', {
               './query-helper': queryHelperStub
             })
             sandbox.stub(Log, 'error').callsFake(function() {})
 
-            let userSchema = new mongoose.Schema({})
+            const userSchema = new mongoose.Schema({})
 
-            let userModel = mongoose.model('user', userSchema)
+            const userModel = mongoose.model('user', userSchema)
             userModel.findByIdAndUpdate = sandbox.spy(function() {
               throw Boom.badRequest('error message')
             })
 
-            let request = { query: {}, params: { _id: '_id' }, payload: {} }
+            const request = { query: {}, params: { _id: '_id' }, payload: {} }
             // </editor-fold>
 
             // <editor-fold desc="Act">
-            let promise = handlerHelper.updateHandler(
+            const promise = handlerHelper.updateHandler(
               userModel,
               '_id',
               request,
@@ -3595,21 +3603,21 @@ test('handler-helper.updateHandler', function(t) {
           'handler-helper.updateHandler throws a generic preprocessing error',
           function(t) {
             // <editor-fold desc="Arrange">
-            let sandbox = sinon.sandbox.create()
-            let Log = logger.bind('handler-helper')
-            let server = sandbox.spy()
-            let queryHelperStub = sandbox.stub(
+            const sandbox = sinon.sandbox.create()
+            const Log = logger.bind('handler-helper')
+            const server = sandbox.spy()
+            const queryHelperStub = sandbox.stub(
               require('../../utilities/query-helper')
             )
             queryHelperStub.createAttributesFilter = function() {
               return 'attributes'
             }
-            let handlerHelper = proxyquire('../../utilities/handler-helper', {
+            const handlerHelper = proxyquire('../../utilities/handler-helper', {
               './query-helper': queryHelperStub
             })
             sandbox.stub(Log, 'error').callsFake(function() {})
 
-            let userSchema = new mongoose.Schema({})
+            const userSchema = new mongoose.Schema({})
             userSchema.statics = {
               routeOptions: {
                 update: {
@@ -3620,13 +3628,13 @@ test('handler-helper.updateHandler', function(t) {
               }
             }
 
-            let userModel = mongoose.model('user', userSchema)
+            const userModel = mongoose.model('user', userSchema)
 
-            let request = { query: {}, payload: {} }
+            const request = { query: {}, payload: {} }
             // </editor-fold>
 
             // <editor-fold desc="Act">
-            let promise = handlerHelper.updateHandler(
+            const promise = handlerHelper.updateHandler(
               userModel,
               '_id',
               request,
@@ -3664,21 +3672,21 @@ test('handler-helper.updateHandler', function(t) {
           'handler-helper.updateHandler throws a custom preprocessing error',
           function(t) {
             // <editor-fold desc="Arrange">
-            let sandbox = sinon.sandbox.create()
-            let Log = logger.bind('handler-helper')
-            let server = sandbox.spy()
-            let queryHelperStub = sandbox.stub(
+            const sandbox = sinon.sandbox.create()
+            const Log = logger.bind('handler-helper')
+            const server = sandbox.spy()
+            const queryHelperStub = sandbox.stub(
               require('../../utilities/query-helper')
             )
             queryHelperStub.createAttributesFilter = function() {
               return 'attributes'
             }
-            let handlerHelper = proxyquire('../../utilities/handler-helper', {
+            const handlerHelper = proxyquire('../../utilities/handler-helper', {
               './query-helper': queryHelperStub
             })
             sandbox.stub(Log, 'error').callsFake(function() {})
 
-            let userSchema = new mongoose.Schema({})
+            const userSchema = new mongoose.Schema({})
             userSchema.statics = {
               routeOptions: {
                 update: {
@@ -3689,13 +3697,13 @@ test('handler-helper.updateHandler', function(t) {
               }
             }
 
-            let userModel = mongoose.model('user', userSchema)
+            const userModel = mongoose.model('user', userSchema)
 
-            let request = { query: {}, payload: {} }
+            const request = { query: {}, payload: {} }
             // </editor-fold>
 
             // <editor-fold desc="Act">
-            let promise = handlerHelper.updateHandler(
+            const promise = handlerHelper.updateHandler(
               userModel,
               '_id',
               request,
@@ -3733,25 +3741,25 @@ test('handler-helper.updateHandler', function(t) {
           'handler-helper.update throws a processing error',
           function(t) {
             // <editor-fold desc="Arrange">
-            let sandbox = sinon.sandbox.create()
-            let Log = logger.bind('handler-helper')
-            let server = sandbox.spy()
-            let queryHelperStub = sandbox.stub(
+            const sandbox = sinon.sandbox.create()
+            const Log = logger.bind('handler-helper')
+            const server = sandbox.spy()
+            const queryHelperStub = sandbox.stub(
               require('../../utilities/query-helper')
             )
             queryHelperStub.createAttributesFilter = function() {
               return 'attributes'
             }
 
-            let handlerHelper = proxyquire('../../utilities/handler-helper', {
+            const handlerHelper = proxyquire('../../utilities/handler-helper', {
               './query-helper': queryHelperStub
             })
 
             sandbox.stub(Log, 'error').callsFake(function() {})
 
-            let userSchema = new mongoose.Schema({})
+            const userSchema = new mongoose.Schema({})
 
-            let userModel = mongoose.model('user', userSchema)
+            const userModel = mongoose.model('user', userSchema)
 
             sandbox.stub(userModel, 'findByIdAndUpdate').callsFake(function() {
               return {}
@@ -3760,11 +3768,11 @@ test('handler-helper.updateHandler', function(t) {
               throw new Error('ERROR')
             })
 
-            let request = { query: {}, payload: {} }
+            const request = { query: {}, payload: {} }
             // </editor-fold>
 
             // <editor-fold desc="Act">
-            let promise = handlerHelper.updateHandler(
+            const promise = handlerHelper.updateHandler(
               userModel,
               '_id',
               request,
@@ -3808,15 +3816,18 @@ test('handler-helper.deleteOneHandler', function(t) {
           'handler-helper.deleteOneHandler calls pre processing if it exists',
           function(t) {
             // <editor-fold desc="Arrange">
-            let sandbox = sinon.sandbox.create()
-            let Log = logger.bind('handler-helper')
-            let server = sandbox.spy()
-            let handlerHelper = proxyquire('../../utilities/handler-helper', {})
+            const sandbox = sinon.sandbox.create()
+            const Log = logger.bind('handler-helper')
+            const server = sandbox.spy()
+            const handlerHelper = proxyquire(
+              '../../utilities/handler-helper',
+              {}
+            )
             sandbox.stub(Log, 'error').callsFake(function() {})
 
-            let userSchema = new mongoose.Schema({})
-            let preDeferred = Q.defer()
-            let preSpy = sandbox.spy(function() {
+            const userSchema = new mongoose.Schema({})
+            const preDeferred = Q.defer()
+            const preSpy = sandbox.spy(function() {
               preDeferred.resolve()
             })
             userSchema.statics = {
@@ -3827,13 +3838,13 @@ test('handler-helper.deleteOneHandler', function(t) {
               }
             }
 
-            let userModel = mongoose.model('user', userSchema)
+            const userModel = mongoose.model('user', userSchema)
 
             sandbox.stub(userModel, 'findByIdAndRemove').callsFake(function() {
               return Q.when('DELETED')
             })
 
-            let request = { query: {} }
+            const request = { query: {} }
             // </editor-fold>
 
             // <editor-fold desc="Act">
@@ -3875,21 +3886,24 @@ test('handler-helper.deleteOneHandler', function(t) {
           'handler-helper.deleteOneHandler calls model.findByIdAndRemove',
           function(t) {
             // <editor-fold desc="Arrange">
-            let sandbox = sinon.sandbox.create()
-            let Log = logger.bind('handler-helper')
-            let server = sandbox.spy()
-            let handlerHelper = proxyquire('../../utilities/handler-helper', {})
+            const sandbox = sinon.sandbox.create()
+            const Log = logger.bind('handler-helper')
+            const server = sandbox.spy()
+            const handlerHelper = proxyquire(
+              '../../utilities/handler-helper',
+              {}
+            )
             sandbox.stub(Log, 'error').callsFake(function() {})
 
-            let userSchema = new mongoose.Schema({})
+            const userSchema = new mongoose.Schema({})
 
-            let userModel = mongoose.model('user', userSchema)
-            let deferred = Q.defer()
+            const userModel = mongoose.model('user', userSchema)
+            const deferred = Q.defer()
             sandbox.stub(userModel, 'findByIdAndRemove').callsFake(function() {
               return deferred.resolve('DELETED')
             })
 
-            let request = { query: {}, params: { _id: 'TEST' } }
+            const request = { query: {}, params: { _id: 'TEST' } }
             // </editor-fold>
 
             // <editor-fold desc="Act">
@@ -3931,24 +3945,24 @@ test('handler-helper.deleteOneHandler', function(t) {
           'handler-helper.deleteOneHandler calls model.findByIdAndUpdate when enableSoftDelete',
           function(t) {
             // <editor-fold desc="Arrange">
-            let sandbox = sinon.sandbox.create()
-            let Log = logger.bind('handler-helper')
-            let server = sandbox.spy()
-            let config = { enableSoftDelete: true }
-            let handlerHelper = proxyquire('../../utilities/handler-helper', {
+            const sandbox = sinon.sandbox.create()
+            const Log = logger.bind('handler-helper')
+            const server = sandbox.spy()
+            const config = { enableSoftDelete: true }
+            const handlerHelper = proxyquire('../../utilities/handler-helper', {
               '../config': config
             })
             sandbox.stub(Log, 'error').callsFake(function() {})
 
-            let userSchema = new mongoose.Schema({})
+            const userSchema = new mongoose.Schema({})
 
-            let userModel = mongoose.model('user', userSchema)
-            let deferred = Q.defer()
+            const userModel = mongoose.model('user', userSchema)
+            const deferred = Q.defer()
             sandbox.stub(userModel, 'findByIdAndUpdate').callsFake(function() {
               return deferred.resolve('DELETED')
             })
 
-            let request = { query: {}, params: { _id: 'TEST' } }
+            const request = { query: {}, params: { _id: 'TEST' } }
             // </editor-fold>
 
             // <editor-fold desc="Act">
@@ -3994,15 +4008,18 @@ test('handler-helper.deleteOneHandler', function(t) {
           'handler-helper.deleteOneHandler calls delete.post if it exists',
           function(t) {
             // <editor-fold desc="Arrange">
-            let sandbox = sinon.sandbox.create()
-            let Log = logger.bind('handler-helper')
-            let server = sandbox.spy()
-            let handlerHelper = proxyquire('../../utilities/handler-helper', {})
+            const sandbox = sinon.sandbox.create()
+            const Log = logger.bind('handler-helper')
+            const server = sandbox.spy()
+            const handlerHelper = proxyquire(
+              '../../utilities/handler-helper',
+              {}
+            )
             sandbox.stub(Log, 'error').callsFake(function() {})
 
-            let userSchema = new mongoose.Schema({})
-            let deferred = Q.defer()
-            let postSpy = sandbox.spy(function() {
+            const userSchema = new mongoose.Schema({})
+            const deferred = Q.defer()
+            const postSpy = sandbox.spy(function() {
               return deferred.resolve({})
             })
             userSchema.statics = {
@@ -4013,12 +4030,12 @@ test('handler-helper.deleteOneHandler', function(t) {
               }
             }
 
-            let userModel = mongoose.model('user', userSchema)
+            const userModel = mongoose.model('user', userSchema)
             sandbox.stub(userModel, 'findByIdAndRemove').callsFake(function() {
               return Q.when('DELETED')
             })
 
-            let request = { query: {}, params: { _id: 'TEST' } }
+            const request = { query: {}, params: { _id: 'TEST' } }
             // </editor-fold>
 
             // <editor-fold desc="Act">
@@ -4060,24 +4077,24 @@ test('handler-helper.deleteOneHandler', function(t) {
           t
         ) {
           // <editor-fold desc="Arrange">
-          let sandbox = sinon.sandbox.create()
-          let Log = logger.bind('handler-helper')
-          let server = sandbox.spy()
-          let handlerHelper = proxyquire('../../utilities/handler-helper', {})
+          const sandbox = sinon.sandbox.create()
+          const Log = logger.bind('handler-helper')
+          const server = sandbox.spy()
+          const handlerHelper = proxyquire('../../utilities/handler-helper', {})
           sandbox.stub(Log, 'error').callsFake(function() {})
 
-          let userSchema = new mongoose.Schema({})
+          const userSchema = new mongoose.Schema({})
 
-          let userModel = mongoose.model('user', userSchema)
+          const userModel = mongoose.model('user', userSchema)
           sandbox.stub(userModel, 'findByIdAndRemove').callsFake(function() {
             return Q.when('DELETED')
           })
 
-          let request = { query: {}, params: { _id: 'TEST' } }
+          const request = { query: {}, params: { _id: 'TEST' } }
           // </editor-fold>
 
           // <editor-fold desc="Act">
-          let promise = handlerHelper.deleteOneHandler(
+          const promise = handlerHelper.deleteOneHandler(
             userModel,
             'TEST',
             request,
@@ -4110,13 +4127,16 @@ test('handler-helper.deleteOneHandler', function(t) {
           'handler-helper.deleteOneHandler throws a generic postprocessing error',
           function(t) {
             // <editor-fold desc="Arrange">
-            let sandbox = sinon.sandbox.create()
-            let Log = logger.bind('handler-helper')
-            let server = sandbox.spy()
-            let handlerHelper = proxyquire('../../utilities/handler-helper', {})
+            const sandbox = sinon.sandbox.create()
+            const Log = logger.bind('handler-helper')
+            const server = sandbox.spy()
+            const handlerHelper = proxyquire(
+              '../../utilities/handler-helper',
+              {}
+            )
             sandbox.stub(Log, 'error').callsFake(function() {})
 
-            let userSchema = new mongoose.Schema({})
+            const userSchema = new mongoose.Schema({})
             userSchema.statics = {
               routeOptions: {
                 delete: {
@@ -4127,16 +4147,16 @@ test('handler-helper.deleteOneHandler', function(t) {
               }
             }
 
-            let userModel = mongoose.model('user', userSchema)
+            const userModel = mongoose.model('user', userSchema)
             sandbox.stub(userModel, 'findByIdAndRemove').callsFake(function() {
               return Q.when('DELETED')
             })
 
-            let request = { query: {}, params: { _id: 'TEST' } }
+            const request = { query: {}, params: { _id: 'TEST' } }
             // </editor-fold>
 
             // <editor-fold desc="Act">
-            let promise = handlerHelper.deleteOneHandler(
+            const promise = handlerHelper.deleteOneHandler(
               userModel,
               'TEST',
               false,
@@ -4175,13 +4195,16 @@ test('handler-helper.deleteOneHandler', function(t) {
           'handler-helper.deleteOneHandler throws a custom postprocessing error',
           function(t) {
             // <editor-fold desc="Arrange">
-            let sandbox = sinon.sandbox.create()
-            let Log = logger.bind('handler-helper')
-            let server = sandbox.spy()
-            let handlerHelper = proxyquire('../../utilities/handler-helper', {})
+            const sandbox = sinon.sandbox.create()
+            const Log = logger.bind('handler-helper')
+            const server = sandbox.spy()
+            const handlerHelper = proxyquire(
+              '../../utilities/handler-helper',
+              {}
+            )
             sandbox.stub(Log, 'error').callsFake(function() {})
 
-            let userSchema = new mongoose.Schema({})
+            const userSchema = new mongoose.Schema({})
             userSchema.statics = {
               routeOptions: {
                 delete: {
@@ -4192,16 +4215,16 @@ test('handler-helper.deleteOneHandler', function(t) {
               }
             }
 
-            let userModel = mongoose.model('user', userSchema)
+            const userModel = mongoose.model('user', userSchema)
             sandbox.stub(userModel, 'findByIdAndRemove').callsFake(function() {
               return Q.when('DELETED')
             })
 
-            let request = { query: {}, params: { _id: 'TEST' } }
+            const request = { query: {}, params: { _id: 'TEST' } }
             // </editor-fold>
 
             // <editor-fold desc="Act">
-            let promise = handlerHelper.deleteOneHandler(
+            const promise = handlerHelper.deleteOneHandler(
               userModel,
               'TEST',
               false,
@@ -4240,24 +4263,27 @@ test('handler-helper.deleteOneHandler', function(t) {
           'handler-helper.deleteOneHandler throws a not found error',
           function(t) {
             // <editor-fold desc="Arrange">
-            let sandbox = sinon.sandbox.create()
-            let Log = logger.bind('handler-helper')
-            let server = sandbox.spy()
-            let handlerHelper = proxyquire('../../utilities/handler-helper', {})
+            const sandbox = sinon.sandbox.create()
+            const Log = logger.bind('handler-helper')
+            const server = sandbox.spy()
+            const handlerHelper = proxyquire(
+              '../../utilities/handler-helper',
+              {}
+            )
             sandbox.stub(Log, 'error').callsFake(function() {})
 
-            let userSchema = new mongoose.Schema({})
+            const userSchema = new mongoose.Schema({})
 
-            let userModel = mongoose.model('user', userSchema)
+            const userModel = mongoose.model('user', userSchema)
             sandbox.stub(userModel, 'findByIdAndRemove').callsFake(function() {
               return Q.when('DELETED')
             })
 
-            let request = { query: {}, params: { _id: 'TEST' } }
+            const request = { query: {}, params: { _id: 'TEST' } }
             // </editor-fold>
 
             // <editor-fold desc="Act">
-            let promise = handlerHelper.deleteOneHandler(
+            const promise = handlerHelper.deleteOneHandler(
               userModel,
               'TEST',
               false,
@@ -4296,13 +4322,16 @@ test('handler-helper.deleteOneHandler', function(t) {
           'handler-helper.deleteOneHandler throws a generic preprocessing error',
           function(t) {
             // <editor-fold desc="Arrange">
-            let sandbox = sinon.sandbox.create()
-            let Log = logger.bind('handler-helper')
-            let server = sandbox.spy()
-            let handlerHelper = proxyquire('../../utilities/handler-helper', {})
+            const sandbox = sinon.sandbox.create()
+            const Log = logger.bind('handler-helper')
+            const server = sandbox.spy()
+            const handlerHelper = proxyquire(
+              '../../utilities/handler-helper',
+              {}
+            )
             sandbox.stub(Log, 'error').callsFake(function() {})
 
-            let userSchema = new mongoose.Schema({})
+            const userSchema = new mongoose.Schema({})
             userSchema.statics = {
               routeOptions: {
                 delete: {
@@ -4313,16 +4342,16 @@ test('handler-helper.deleteOneHandler', function(t) {
               }
             }
 
-            let userModel = mongoose.model('user', userSchema)
+            const userModel = mongoose.model('user', userSchema)
             sandbox.stub(userModel, 'findByIdAndRemove').callsFake(function() {
               return Q.when('DELETED')
             })
 
-            let request = { query: {}, params: { _id: 'TEST' } }
+            const request = { query: {}, params: { _id: 'TEST' } }
             // </editor-fold>
 
             // <editor-fold desc="Act">
-            let promise = handlerHelper.deleteOneHandler(
+            const promise = handlerHelper.deleteOneHandler(
               userModel,
               'TEST',
               false,
@@ -4361,13 +4390,16 @@ test('handler-helper.deleteOneHandler', function(t) {
           'handler-helper.deleteOneHandler calls reply with a preprocessing error',
           function(t) {
             // <editor-fold desc="Arrange">
-            let sandbox = sinon.sandbox.create()
-            let Log = logger.bind('handler-helper')
-            let server = sandbox.spy()
-            let handlerHelper = proxyquire('../../utilities/handler-helper', {})
+            const sandbox = sinon.sandbox.create()
+            const Log = logger.bind('handler-helper')
+            const server = sandbox.spy()
+            const handlerHelper = proxyquire(
+              '../../utilities/handler-helper',
+              {}
+            )
             sandbox.stub(Log, 'error').callsFake(function() {})
 
-            let userSchema = new mongoose.Schema({})
+            const userSchema = new mongoose.Schema({})
             userSchema.statics = {
               routeOptions: {
                 delete: {
@@ -4378,16 +4410,16 @@ test('handler-helper.deleteOneHandler', function(t) {
               }
             }
 
-            let userModel = mongoose.model('user', userSchema)
+            const userModel = mongoose.model('user', userSchema)
             sandbox.stub(userModel, 'findByIdAndRemove').callsFake(function() {
               return Q.when('DELETED')
             })
 
-            let request = { query: {}, params: { _id: 'TEST' } }
+            const request = { query: {}, params: { _id: 'TEST' } }
             // </editor-fold>
 
             // <editor-fold desc="Act">
-            let promise = handlerHelper.deleteOneHandler(
+            const promise = handlerHelper.deleteOneHandler(
               userModel,
               'TEST',
               false,
@@ -4426,32 +4458,32 @@ test('handler-helper.deleteOneHandler', function(t) {
           'handler-helper.deleteOneHandler throws a general processing error',
           function(t) {
             // <editor-fold desc="Arrange">
-            let sandbox = sinon.sandbox.create()
-            let Log = logger.bind('handler-helper')
-            let server = sandbox.spy()
-            let qStub = sandbox.stub(Q, 'when').callsFake(function() {
+            const sandbox = sinon.sandbox.create()
+            const Log = logger.bind('handler-helper')
+            const server = sandbox.spy()
+            const qStub = sandbox.stub(Q, 'when').callsFake(function() {
               throw new Error('ERROR')
             })
 
-            let handlerHelper = proxyquire('../../utilities/handler-helper', {
+            const handlerHelper = proxyquire('../../utilities/handler-helper', {
               q: qStub
             })
 
             sandbox.stub(Log, 'error').callsFake(function() {})
 
-            let userSchema = new mongoose.Schema({})
+            const userSchema = new mongoose.Schema({})
 
-            let userModel = mongoose.model('user', userSchema)
+            const userModel = mongoose.model('user', userSchema)
 
             sandbox.stub(userModel, 'findByIdAndRemove').callsFake(function() {
               throw new Error()
             })
 
-            let request = { query: {}, params: { _id: 'TEST' } }
+            const request = { query: {}, params: { _id: 'TEST' } }
             // </editor-fold>
 
             // <editor-fold desc="Act">
-            let promise = handlerHelper.deleteOneHandler(
+            const promise = handlerHelper.deleteOneHandler(
               userModel,
               'TEST',
               false,
@@ -4645,7 +4677,7 @@ test('handler-helper.deleteOneHandler', function(t) {
 //       let Log = logger.bind("handler-helper");
 //       let server = sandbox.spy();
 //       let setAssociation = sandbox.spy(function(){ return Q.reject("error message") });
-//       let boomStub = sandbox.stub(require('boom'));
+//       let boomStub = sandbox.stub(require('@hapi/boom'));
 //       let handlerHelper = rewire('../../utilities/handler-helper');
 //       handlerHelper.__set__("setAssociation", setAssociation);
 //       handlerHelper.__set__("Boom", boomStub);
@@ -4697,7 +4729,7 @@ test('handler-helper.deleteOneHandler', function(t) {
 //       let sandbox = sinon.sandbox.create();
 //       let Log = logger.bind("handler-helper");
 //       let server = sandbox.spy();
-//       let boomStub = sandbox.stub(require('boom'));
+//       let boomStub = sandbox.stub(require('@hapi/boom'));
 //       let handlerHelper = rewire('../../utilities/handler-helper');
 //       handlerHelper.__set__("Boom", boomStub);
 //       handlerHelper = handlerHelper(mongoose, server);
@@ -4748,7 +4780,7 @@ test('handler-helper.deleteOneHandler', function(t) {
 //       let sandbox = sinon.sandbox.create();
 //       let Log = logger.bind("handler-helper");
 //       let server = sandbox.spy();
-//       let boomStub = sandbox.stub(require('boom'));
+//       let boomStub = sandbox.stub(require('@hapi/boom'));
 //       let handlerHelper = rewire('../../utilities/handler-helper');
 //       handlerHelper.__set__("Boom", boomStub);
 //       handlerHelper = handlerHelper(mongoose, server);
@@ -4953,7 +4985,7 @@ test('handler-helper.deleteOneHandler', function(t) {
 //       let Log = logger.bind("handler-helper");
 //       let server = sandbox.spy();
 //       let removeAssociation = sandbox.spy(function(){ return Q.reject("error message") });
-//       let boomStub = sandbox.stub(require('boom'));
+//       let boomStub = sandbox.stub(require('@hapi/boom'));
 //       let handlerHelper = rewire('../../utilities/handler-helper');
 //       handlerHelper.__set__("removeAssociation", removeAssociation);
 //       handlerHelper.__set__("Boom", boomStub);
@@ -5005,7 +5037,7 @@ test('handler-helper.deleteOneHandler', function(t) {
 //       let sandbox = sinon.sandbox.create();
 //       let Log = logger.bind("handler-helper");
 //       let server = sandbox.spy();
-//       let boomStub = sandbox.stub(require('boom'));
+//       let boomStub = sandbox.stub(require('@hapi/boom'));
 //       let handlerHelper = rewire('../../utilities/handler-helper');
 //       handlerHelper.__set__("Boom", boomStub);
 //       handlerHelper = handlerHelper(mongoose, server);
@@ -5056,7 +5088,7 @@ test('handler-helper.deleteOneHandler', function(t) {
 //       let sandbox = sinon.sandbox.create();
 //       let Log = logger.bind("handler-helper");
 //       let server = sandbox.spy();
-//       let boomStub = sandbox.stub(require('boom'));
+//       let boomStub = sandbox.stub(require('@hapi/boom'));
 //       let handlerHelper = rewire('../../utilities/handler-helper');
 //       handlerHelper.__set__("Boom", boomStub);
 //       handlerHelper = handlerHelper(mongoose, server);
@@ -5264,7 +5296,7 @@ test('handler-helper.deleteOneHandler', function(t) {
 //       let Log = logger.bind("handler-helper");
 //       let server = sandbox.spy();
 //       let setAssociation = sandbox.spy(function(){ return Q.reject("error message") });
-//       let boomStub = sandbox.stub(require('boom'));
+//       let boomStub = sandbox.stub(require('@hapi/boom'));
 //       let handlerHelper = rewire('../../utilities/handler-helper');
 //       handlerHelper.__set__("setAssociation", setAssociation);
 //       handlerHelper.__set__("Boom", boomStub);
@@ -5317,7 +5349,7 @@ test('handler-helper.deleteOneHandler', function(t) {
 //       let sandbox = sinon.sandbox.create();
 //       let Log = logger.bind("handler-helper");
 //       let server = sandbox.spy();
-//       let boomStub = sandbox.stub(require('boom'));
+//       let boomStub = sandbox.stub(require('@hapi/boom'));
 //       let handlerHelper = rewire('../../utilities/handler-helper');
 //       handlerHelper.__set__("Boom", boomStub);
 //       handlerHelper = handlerHelper(mongoose, server);
@@ -5369,7 +5401,7 @@ test('handler-helper.deleteOneHandler', function(t) {
 //       let sandbox = sinon.sandbox.create();
 //       let Log = logger.bind("handler-helper");
 //       let server = sandbox.spy();
-//       let boomStub = sandbox.stub(require('boom'));
+//       let boomStub = sandbox.stub(require('@hapi/boom'));
 //       let handlerHelper = rewire('../../utilities/handler-helper');
 //       handlerHelper.__set__("Boom", boomStub);
 //       handlerHelper = handlerHelper(mongoose, server);
@@ -5758,7 +5790,7 @@ test('handler-helper.deleteOneHandler', function(t) {
 //       let sandbox = sinon.sandbox.create();
 //       let Log = logger.bind("handler-helper");
 //       let server = sandbox.spy();
-//       let boomStub = sandbox.stub(require('boom'));
+//       let boomStub = sandbox.stub(require('@hapi/boom'));
 //       let handlerHelper = rewire('../../utilities/handler-helper');
 //       handlerHelper.__set__("Boom", boomStub);
 //       handlerHelper = handlerHelper(mongoose, server);

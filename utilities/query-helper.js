@@ -1,9 +1,9 @@
 'use strict'
 
-let _ = require('lodash')
-let validationHelper = require('./validation-helper')
-let globals = require('../globals')
-let config = require('../config')
+const _ = require('lodash')
+const validationHelper = require('./validation-helper')
+const globals = require('../globals')
+const config = require('../config')
 
 // TODO-DONE: mulit-level/multi-priority sorting (i.e. sort first by lastName, then by firstName) implemented via comma seperated sort list
 // TODO: sorting through populate fields (Ex: sort users through role.name)
@@ -85,7 +85,7 @@ module.exports = {
       attributesFilter = '_id'
     }
 
-    let result = this.populateEmbeddedDocs(
+    const result = this.populateEmbeddedDocs(
       query,
       mongooseQuery,
       attributesFilter,
@@ -110,7 +110,7 @@ module.exports = {
     }
 
     // EXPL: Support single (string) inputs or multiple "or'd" inputs (arrays) for field queries
-    for (let fieldQueryKey in query) {
+    for (const fieldQueryKey in query) {
       let fieldQuery = query[fieldQueryKey]
       if (!Array.isArray(fieldQuery)) {
         fieldQuery = tryParseJSON(query[fieldQueryKey])
@@ -132,7 +132,7 @@ module.exports = {
     // EXPL: handle regex search
     this.setTermSearch(query, model, Log)
 
-    let whereQuery = _.extend({}, query)
+    const whereQuery = _.extend({}, query)
 
     // EXPL: delete pagination parameters
     delete whereQuery.$limit
@@ -153,12 +153,12 @@ module.exports = {
     // This line has to come first
     validationHelper.validateModel(model, logger)
 
-    let readableFields = []
+    const readableFields = []
 
-    let fields = model.schema.paths
+    const fields = model.schema.paths
 
-    for (let fieldName in fields) {
-      let field = fields[fieldName].options
+    for (const fieldName in fields) {
+      const field = fields[fieldName].options
       if (!field.exclude && fieldName !== '__v') {
         readableFields.push(fieldName)
       }
@@ -178,10 +178,10 @@ module.exports = {
     validationHelper.validateModel(model, logger)
     const Log = logger.bind()
 
-    let sortableFields = this.getReadableFields(model, Log)
+    const sortableFields = this.getReadableFields(model, Log)
 
     for (let i = sortableFields.length - 1; i >= 0; i--) {
-      let descendingField = '-' + sortableFields[i]
+      const descendingField = '-' + sortableFields[i]
       sortableFields.splice(i, 0, descendingField)
     }
 
@@ -198,20 +198,20 @@ module.exports = {
     // This line has to come first
     validationHelper.validateModel(model, logger)
 
-    let queryableFields = []
+    const queryableFields = []
 
-    let fields = model.schema.paths
-    let fieldNames = Object.keys(fields)
+    const fields = model.schema.paths
+    const fieldNames = Object.keys(fields)
 
-    let associations = model.routeOptions
+    const associations = model.routeOptions
       ? model.routeOptions.associations
       : null
 
     for (let i = 0; i < fieldNames.length; i++) {
-      let fieldName = fieldNames[i]
+      const fieldName = fieldNames[i]
       if (fields[fieldName] && fieldName !== '__v' && fieldName !== '__t') {
-        let field = fields[fieldName].options
-        let association = associations
+        const field = fields[fieldName].options
+        const association = associations
           ? associations[fields[fieldName].path] || {}
           : {}
 
@@ -233,12 +233,12 @@ module.exports = {
     // This line has to come first
     validationHelper.validateModel(model, logger)
 
-    let stringFields = []
+    const stringFields = []
 
-    let fields = model.schema.paths
+    const fields = model.schema.paths
 
-    for (let fieldName in fields) {
-      let field = fields[fieldName].options
+    for (const fieldName in fields) {
+      const field = fields[fieldName].options
       if (field.type.schemaName === 'String') {
         stringFields.push(fieldName)
       }
@@ -340,7 +340,7 @@ module.exports = {
     if (query.$term) {
       query.$or = [] // TODO: allow option to choose ANDing or ORing of searchFields/queryableFields
       let queryableFields = this.getQueryableFields(model, Log)
-      let stringFields = this.getStringFields(model, Log)
+      const stringFields = this.getStringFields(model, Log)
 
       // EXPL: we can only search fields that are a string type
       queryableFields = queryableFields.filter(function(field) {
@@ -359,13 +359,13 @@ module.exports = {
         })
 
         query.$searchFields.forEach(function(field) {
-          let obj = {}
+          const obj = {}
           obj[field] = new RegExp(query.$term, 'i')
           query.$or.push(obj)
         })
       } else {
         queryableFields.forEach(function(field) {
-          let obj = {}
+          const obj = {}
           obj[field] = new RegExp(query.$term, 'i')
           query.$or.push(obj)
         })
@@ -402,7 +402,7 @@ module.exports = {
         query.$embed = query.$embed.split(',')
       }
       query.$embed.forEach(function(embed) {
-        let embeds = embed.split('.')
+        const embeds = embed.split('.')
         let populate = {}
 
         populate = nestPopulate(
@@ -454,8 +454,8 @@ module.exports = {
     // This line has to come first
     validationHelper.validateModel(model, logger)
 
-    let attributesFilter = []
-    let fields = model.schema.paths
+    const attributesFilter = []
+    const fields = model.schema.paths
     let fieldNames = []
 
     if (query.$select) {
@@ -467,19 +467,19 @@ module.exports = {
       fieldNames = Object.keys(fields)
     }
 
-    let associations = model.routeOptions
+    const associations = model.routeOptions
       ? model.routeOptions.associations
       : null
 
     for (let i = 0; i < fieldNames.length; i++) {
-      let fieldName = fieldNames[i]
+      const fieldName = fieldNames[i]
       if (
         fields[fieldName] &&
         fieldName !== '__v' &&
         fieldName.substr(-2) !== '$*'
       ) {
-        let field = fields[fieldName].options
-        let association = associations
+        const field = fields[fieldName].options
+        const association = associations
           ? associations[fields[fieldName].path] || {}
           : {}
 
@@ -518,7 +518,7 @@ function nestPopulate(
   logger
 ) {
   const Log = logger.bind()
-  let embed = embeds[index]
+  const embed = embeds[index]
   let association = associations[embed]
 
   if (!association) {
@@ -528,13 +528,13 @@ function nestPopulate(
     }
   }
 
-  let embedAssociation =
+  const embedAssociation =
     association.embedAssociation === undefined
       ? config.embedAssociations
       : association.embedAssociation
   // EXPL: MANY_MANY associations where embedAssociation is false require an extra level of populating due to the linking collection,
   // therefore an extra embed is "inserted" into the embeds array
-  let inserted = associations[embed] === associations[embeds[index - 1]]
+  const inserted = associations[embed] === associations[embeds[index - 1]]
 
   let populatePath = ''
   let select = ''
@@ -652,7 +652,7 @@ function getReference(model, embed, logger) {
 
 function tryParseJSON(jsonString) {
   try {
-    let o = JSON.parse(jsonString)
+    const o = JSON.parse(jsonString)
 
     if (o && typeof o === 'object') {
       return o

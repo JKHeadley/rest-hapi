@@ -18,7 +18,7 @@ internals.logCreate = function(mongoose, model, logger) {
       const AuditLog = mongoose.model('auditLog')
 
       const ipAddress = internals.getIP(request)
-      let userId = _.get(request.auth.credentials, config.userIdKey)
+      const userId = _.get(request.auth.credentials, config.userIdKey)
       let documents = request.response.source
       if (documents) {
         if (_.isArray(documents)) {
@@ -75,8 +75,8 @@ internals.logUpdate = function(mongoose, model, logger) {
       const AuditLog = mongoose.model('auditLog')
 
       const ipAddress = internals.getIP(request)
-      let userId = _.get(request.auth.credentials, config.userIdKey)
-      let documents = [request.params._id]
+      const userId = _.get(request.auth.credentials, config.userIdKey)
+      const documents = [request.params._id]
 
       await AuditLog.create({
         method: 'PUT',
@@ -127,7 +127,7 @@ internals.logDelete = function(mongoose, model, logger) {
       const AuditLog = mongoose.model('auditLog')
 
       const ipAddress = internals.getIP(request)
-      let userId = _.get(request.auth.credentials, config.userIdKey)
+      const userId = _.get(request.auth.credentials, config.userIdKey)
       let documents = request.params._id || request.payload
       if (_.isArray(documents) && documents[0]._id) {
         documents = documents.map(function(doc) {
@@ -192,8 +192,8 @@ internals.logAdd = function(
       const AuditLog = mongoose.model('auditLog')
 
       const ipAddress = internals.getIP(request)
-      let userId = _.get(request.auth.credentials, config.userIdKey)
-      let documents = [request.params.ownerId]
+      const userId = _.get(request.auth.credentials, config.userIdKey)
+      const documents = [request.params.ownerId]
 
       if (request.params.childId) {
         documents.push(request.params.childId)
@@ -264,7 +264,7 @@ internals.logRemove = function(
       const AuditLog = mongoose.model('auditLog')
 
       const ipAddress = internals.getIP(request)
-      let userId = _.get(request.auth.credentials, config.userIdKey)
+      const userId = _.get(request.auth.credentials, config.userIdKey)
       let documents = [request.params.ownerId]
 
       if (request.params.childId) {

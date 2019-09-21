@@ -22,7 +22,7 @@ As rest-hapi is a hapi plugin, you'll need to set up a hapi server to generate A
 
 ```javascript
 // api.js
-let Hapi = require('hapi')
+let Hapi = require('@hapi/hapi')
 let mongoose = require('mongoose')
 let RestHapi = require('rest-hapi')
 

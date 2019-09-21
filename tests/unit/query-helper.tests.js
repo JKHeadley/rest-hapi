@@ -3,17 +3,17 @@
 // Temporarily disabling this rule for tests
 /* eslint no-unused-vars: 0 */
 
-let test = require('tape')
-let _ = require('lodash')
-let sinon = require('sinon')
-let rewire = require('rewire')
-let mongoose = require('mongoose')
-let Types = mongoose.Schema.Types
-let logging = require('loggin')
+const test = require('tape')
+const _ = require('lodash')
+const sinon = require('sinon')
+const rewire = require('rewire')
+const mongoose = require('mongoose')
+const Types = mongoose.Schema.Types
+const logging = require('loggin')
 let Log = logging.getLogger('tests')
 Log.logLevel = 'ERROR'
 Log = Log.bind('query-helper')
-let testHelper = require('../../utilities/test-helper')
+const testHelper = require('../../utilities/test-helper')
 
 // TODO: add tests for text search functions
 // TODO: add tests for $exclude param
@@ -21,7 +21,7 @@ let testHelper = require('../../utilities/test-helper')
 
 test('query-helper exists and has expected members', function(t) {
   // <editor-fold desc="Arrange">
-  let queryHelper = require('../../utilities/query-helper')
+  const queryHelper = require('../../utilities/query-helper')
 
   t.plan(11)
   // </editor-fold>
@@ -54,7 +54,7 @@ test('query-helper exists and has expected members', function(t) {
 })
 
 test('query-helper.getQueryableFields', function(t) {
-  let queryHelper = require('../../utilities/query-helper')
+  const queryHelper = require('../../utilities/query-helper')
   testHelper.testModelParameter(
     t,
     queryHelper.getQueryableFields,
@@ -67,11 +67,11 @@ test('query-helper.getQueryableFields', function(t) {
     'query-helper.getQueryableFields doesn\'t return fields with "queryable" set to false.',
     function(t) {
       // <editor-fold desc="Arrange">
-      let queryHelper = require('../../utilities/query-helper')
+      const queryHelper = require('../../utilities/query-helper')
 
       t.plan(6)
 
-      let userSchema = new mongoose.Schema({
+      const userSchema = new mongoose.Schema({
         email: {
           type: Types.String,
           queryable: true
@@ -90,11 +90,11 @@ test('query-helper.getQueryableFields', function(t) {
       })
 
       userSchema.statics = { routeOptions: {} }
-      let userModel = mongoose.model('user', userSchema)
+      const userModel = mongoose.model('user', userSchema)
       // </editor-fold>
 
       // <editor-fold desc="Act">
-      let result = queryHelper.getQueryableFields(userModel, Log)
+      const result = queryHelper.getQueryableFields(userModel, Log)
       // </editor-fold>
 
       // <editor-fold desc="Assert">
@@ -117,11 +117,11 @@ test('query-helper.getQueryableFields', function(t) {
     'query-helper.getQueryableFields doesn\'t return fields with "exclude" set to true.',
     function(t) {
       // <editor-fold desc="Arrange">
-      let queryHelper = require('../../utilities/query-helper')
+      const queryHelper = require('../../utilities/query-helper')
 
       t.plan(6)
 
-      let userSchema = new mongoose.Schema({
+      const userSchema = new mongoose.Schema({
         email: {
           type: Types.String,
           queryable: true
@@ -141,11 +141,11 @@ test('query-helper.getQueryableFields', function(t) {
       })
 
       userSchema.statics = { routeOptions: {} }
-      let userModel = mongoose.model('user', userSchema)
+      const userModel = mongoose.model('user', userSchema)
       // </editor-fold>
 
       // <editor-fold desc="Act">
-      let result = queryHelper.getQueryableFields(userModel, Log)
+      const result = queryHelper.getQueryableFields(userModel, Log)
       // </editor-fold>
 
       // <editor-fold desc="Assert">
@@ -168,11 +168,11 @@ test('query-helper.getQueryableFields', function(t) {
     'query-helper.getQueryableFields doesn\'t return the fields "__v", or "__t".',
     function(t) {
       // <editor-fold desc="Arrange">
-      let queryHelper = require('../../utilities/query-helper')
+      const queryHelper = require('../../utilities/query-helper')
 
       t.plan(4)
 
-      let userSchema = new mongoose.Schema({
+      const userSchema = new mongoose.Schema({
         email: {
           type: Types.String,
           queryable: true
@@ -192,14 +192,14 @@ test('query-helper.getQueryableFields', function(t) {
       })
 
       userSchema.statics = { routeOptions: {} }
-      let userModel = mongoose.model('user', userSchema)
+      const userModel = mongoose.model('user', userSchema)
 
-      let fields = userModel.schema.paths
-      let fieldNames = Object.keys(fields)
+      const fields = userModel.schema.paths
+      const fieldNames = Object.keys(fields)
       // </editor-fold>
 
       // <editor-fold desc="Act">
-      let result = queryHelper.getQueryableFields(userModel, Log)
+      const result = queryHelper.getQueryableFields(userModel, Log)
       // </editor-fold>
 
       // <editor-fold desc="Assert">
@@ -221,11 +221,11 @@ test('query-helper.getQueryableFields', function(t) {
     'query-helper.getQueryableFields returns association fields except for those of type "MANY_MANY".',
     function(t) {
       // <editor-fold desc="Arrange">
-      let queryHelper = require('../../utilities/query-helper')
+      const queryHelper = require('../../utilities/query-helper')
 
       t.plan(4)
 
-      let userSchema = new mongoose.Schema({
+      const userSchema = new mongoose.Schema({
         email: {
           type: Types.String,
           queryable: true
@@ -275,11 +275,11 @@ test('query-helper.getQueryableFields', function(t) {
         }
       }
 
-      let userModel = mongoose.model('user', userSchema)
+      const userModel = mongoose.model('user', userSchema)
       // </editor-fold>
 
       // <editor-fold desc="Act">
-      let result = queryHelper.getQueryableFields(userModel, Log)
+      const result = queryHelper.getQueryableFields(userModel, Log)
       // </editor-fold>
 
       // <editor-fold desc="Assert">
@@ -306,7 +306,7 @@ test('query-helper.getQueryableFields', function(t) {
 })
 
 test('query-helper.getReadableFields', function(t) {
-  let queryHelper = require('../../utilities/query-helper')
+  const queryHelper = require('../../utilities/query-helper')
   testHelper.testModelParameter(
     t,
     queryHelper.getReadableFields,
@@ -319,11 +319,11 @@ test('query-helper.getReadableFields', function(t) {
     'query-helper.getReadableFields doesn\'t return fields with "exclude" set to true.',
     function(t) {
       // <editor-fold desc="Arrange">
-      let queryHelper = require('../../utilities/query-helper')
+      const queryHelper = require('../../utilities/query-helper')
 
       t.plan(5)
 
-      let userSchema = new mongoose.Schema({
+      const userSchema = new mongoose.Schema({
         email: {
           type: Types.String,
           queryable: true
@@ -344,11 +344,11 @@ test('query-helper.getReadableFields', function(t) {
       })
 
       userSchema.statics = { routeOptions: {} }
-      let userModel = mongoose.model('user', userSchema)
+      const userModel = mongoose.model('user', userSchema)
       // </editor-fold>
 
       // <editor-fold desc="Act">
-      let result = queryHelper.getReadableFields(userModel, Log)
+      const result = queryHelper.getReadableFields(userModel, Log)
       // </editor-fold>
 
       // <editor-fold desc="Assert">
@@ -370,11 +370,11 @@ test('query-helper.getReadableFields', function(t) {
     'query-helper.getReadableFields doesn\'t return the field "__v".',
     function(t) {
       // <editor-fold desc="Arrange">
-      let queryHelper = require('../../utilities/query-helper')
+      const queryHelper = require('../../utilities/query-helper')
 
       t.plan(4)
 
-      let userSchema = new mongoose.Schema({
+      const userSchema = new mongoose.Schema({
         email: {
           type: Types.String,
           queryable: true
@@ -394,14 +394,14 @@ test('query-helper.getReadableFields', function(t) {
       })
 
       userSchema.statics = { routeOptions: {} }
-      let userModel = mongoose.model('user', userSchema)
+      const userModel = mongoose.model('user', userSchema)
 
-      let fields = userModel.schema.paths
-      let fieldNames = Object.keys(fields)
+      const fields = userModel.schema.paths
+      const fieldNames = Object.keys(fields)
       // </editor-fold>
 
       // <editor-fold desc="Act">
-      let result = queryHelper.getReadableFields(userModel, Log)
+      const result = queryHelper.getReadableFields(userModel, Log)
       // </editor-fold>
 
       // <editor-fold desc="Assert">
@@ -423,7 +423,7 @@ test('query-helper.getReadableFields', function(t) {
 })
 
 test('query-helper.getSortableFields', function(t) {
-  let queryHelper = require('../../utilities/query-helper')
+  const queryHelper = require('../../utilities/query-helper')
   testHelper.testModelParameter(
     t,
     queryHelper.getSortableFields,
@@ -436,7 +436,7 @@ test('query-helper.getSortableFields', function(t) {
     t
   ) {
     // <editor-fold desc="Arrange">
-    let queryHelper = require('../../utilities/query-helper')
+    const queryHelper = require('../../utilities/query-helper')
 
     t.plan(1)
 
@@ -444,10 +444,10 @@ test('query-helper.getSortableFields', function(t) {
       return []
     })
 
-    let userSchema = new mongoose.Schema({})
+    const userSchema = new mongoose.Schema({})
 
     userSchema.statics = { routeOptions: {} }
-    let userModel = mongoose.model('user', userSchema)
+    const userModel = mongoose.model('user', userSchema)
     // </editor-fold>
 
     // <editor-fold desc="Act">
@@ -467,7 +467,7 @@ test('query-helper.getSortableFields', function(t) {
 
   t.test('query-helper.getSortableFields returns valid list.', function(t) {
     // <editor-fold desc="Arrange">
-    let queryHelper = require('../../utilities/query-helper')
+    const queryHelper = require('../../utilities/query-helper')
 
     t.plan(1)
 
@@ -475,14 +475,14 @@ test('query-helper.getSortableFields', function(t) {
       return ['email', 'firstName', 'lastName']
     })
 
-    let userSchema = new mongoose.Schema({})
+    const userSchema = new mongoose.Schema({})
 
     userSchema.statics = { routeOptions: {} }
-    let userModel = mongoose.model('user', userSchema)
+    const userModel = mongoose.model('user', userSchema)
     // </editor-fold>
 
     // <editor-fold desc="Act">
-    let sortableFields = queryHelper.getSortableFields(userModel, Log)
+    const sortableFields = queryHelper.getSortableFields(userModel, Log)
     // </editor-fold>
 
     // <editor-fold desc="Assert">
@@ -508,17 +508,17 @@ test('query-helper.setSkip', function(t) {
     'query-helper.setSkip calls the "skip" function with the "$skip" query parameter.',
     function(t) {
       // <editor-fold desc="Arrange">
-      let queryHelper = require('../../utilities/query-helper')
+      const queryHelper = require('../../utilities/query-helper')
 
       t.plan(3)
 
-      let query = { $skip: 3 }
-      let mongooseQuery = {}
+      const query = { $skip: 3 }
+      const mongooseQuery = {}
       mongooseQuery.skip = sinon.spy()
       // </editor-fold>
 
       // <editor-fold desc="Act">
-      let result = queryHelper.setSkip(query, mongooseQuery, Log)
+      const result = queryHelper.setSkip(query, mongooseQuery, Log)
       // </editor-fold>
 
       // <editor-fold desc="Assert">
@@ -536,17 +536,17 @@ test('query-helper.setSkip', function(t) {
     'query-helper.setSkip doesn\'t call the "skip" function if the "$skip" query parameter is missing.',
     function(t) {
       // <editor-fold desc="Arrange">
-      let queryHelper = require('../../utilities/query-helper')
+      const queryHelper = require('../../utilities/query-helper')
 
       t.plan(2)
 
-      let query = {}
-      let mongooseQuery = {}
+      const query = {}
+      const mongooseQuery = {}
       mongooseQuery.skip = sinon.spy()
       // </editor-fold>
 
       // <editor-fold desc="Act">
-      let result = queryHelper.setSkip(query, mongooseQuery, Log)
+      const result = queryHelper.setSkip(query, mongooseQuery, Log)
       // </editor-fold>
 
       // <editor-fold desc="Assert">
@@ -564,17 +564,17 @@ test('query-helper.setLimit', function(t) {
     'query-helper.setLimit calls the "limit" function with the "$limit" query parameter.',
     function(t) {
       // <editor-fold desc="Arrange">
-      let queryHelper = require('../../utilities/query-helper')
+      const queryHelper = require('../../utilities/query-helper')
 
       t.plan(3)
 
-      let query = { $limit: 3 }
-      let mongooseQuery = {}
+      const query = { $limit: 3 }
+      const mongooseQuery = {}
       mongooseQuery.limit = sinon.spy()
       // </editor-fold>
 
       // <editor-fold desc="Act">
-      let result = queryHelper.setLimit(query, mongooseQuery, Log)
+      const result = queryHelper.setLimit(query, mongooseQuery, Log)
       // </editor-fold>
 
       // <editor-fold desc="Assert">
@@ -592,17 +592,17 @@ test('query-helper.setLimit', function(t) {
     'query-helper.setLimit doesn\'t call the "limit" function if the "$limit" query parameter is missing.',
     function(t) {
       // <editor-fold desc="Arrange">
-      let queryHelper = require('../../utilities/query-helper')
+      const queryHelper = require('../../utilities/query-helper')
 
       t.plan(2)
 
-      let query = {}
-      let mongooseQuery = {}
+      const query = {}
+      const mongooseQuery = {}
       mongooseQuery.limit = sinon.spy()
       // </editor-fold>
 
       // <editor-fold desc="Act">
-      let result = queryHelper.setLimit(query, mongooseQuery, Log)
+      const result = queryHelper.setLimit(query, mongooseQuery, Log)
       // </editor-fold>
 
       // <editor-fold desc="Assert">
@@ -620,16 +620,16 @@ test('query-helper.populateEmbeddedDocs', function(t) {
     'query-helper.populateEmbeddedDocs returns immediately if "$embed" query parameter is missing.',
     function(t) {
       // <editor-fold desc="Arrange">
-      let queryHelper = require('../../utilities/query-helper')
+      const queryHelper = require('../../utilities/query-helper')
 
       t.plan(2)
 
-      let attributesFilter = {}
-      let mongooseQuery = {}
+      const attributesFilter = {}
+      const mongooseQuery = {}
       // </editor-fold>
 
       // <editor-fold desc="Act">
-      let result = queryHelper.populateEmbeddedDocs(
+      const result = queryHelper.populateEmbeddedDocs(
         {},
         mongooseQuery,
         attributesFilter,
@@ -658,18 +658,18 @@ test('query-helper.populateEmbeddedDocs', function(t) {
     'query-helper.populateEmbeddedDocs generates populate object and calls "mongooseQuery.populate".',
     function(t) {
       // <editor-fold desc="Arrange">
-      let queryHelper = rewire('../../utilities/query-helper')
+      const queryHelper = rewire('../../utilities/query-helper')
 
-      let nestPopulate = sinon.stub()
+      const nestPopulate = sinon.stub()
       nestPopulate.returns({})
       queryHelper.__set__('nestPopulate', nestPopulate)
 
       t.plan(4)
 
-      let attributesFilter = {}
-      let mongooseQuery = {}
+      const attributesFilter = {}
+      const mongooseQuery = {}
       mongooseQuery.populate = sinon.spy()
-      let query = { $embed: ['title', 'profileImage', 'groups'] }
+      const query = { $embed: ['title', 'profileImage', 'groups'] }
       // </editor-fold>
 
       // <editor-fold desc="Act">
@@ -704,22 +704,22 @@ test('query-helper.populateEmbeddedDocs', function(t) {
     'query-helper.populateEmbeddedDocs returns updated attributesFilter.',
     function(t) {
       // <editor-fold desc="Arrange">
-      let queryHelper = rewire('../../utilities/query-helper')
+      const queryHelper = rewire('../../utilities/query-helper')
 
-      let nestPopulate = sinon.stub()
+      const nestPopulate = sinon.stub()
       nestPopulate.returns({})
       queryHelper.__set__('nestPopulate', nestPopulate)
 
       t.plan(1)
 
-      let attributesFilter = {}
-      let mongooseQuery = {}
+      const attributesFilter = {}
+      const mongooseQuery = {}
       mongooseQuery.populate = sinon.spy()
-      let query = { $embed: ['title', 'profileImage', 'groups'] }
+      const query = { $embed: ['title', 'profileImage', 'groups'] }
       // </editor-fold>
 
       // <editor-fold desc="Act">
-      let result = queryHelper.populateEmbeddedDocs(
+      const result = queryHelper.populateEmbeddedDocs(
         query,
         mongooseQuery,
         attributesFilter,
@@ -743,18 +743,18 @@ test('query-helper.populateEmbeddedDocs', function(t) {
     'query-helper.populateEmbeddedDocs deletes appropriate query params when finished.',
     function(t) {
       // <editor-fold desc="Arrange">
-      let queryHelper = rewire('../../utilities/query-helper')
+      const queryHelper = rewire('../../utilities/query-helper')
 
-      let nestPopulate = sinon.stub()
+      const nestPopulate = sinon.stub()
       nestPopulate.returns({})
       queryHelper.__set__('nestPopulate', nestPopulate)
 
       t.plan(2)
 
-      let attributesFilter = {}
-      let mongooseQuery = {}
+      const attributesFilter = {}
+      const mongooseQuery = {}
       mongooseQuery.populate = sinon.spy()
-      let query = {
+      const query = {
         $embed: ['title', 'profileImage', 'groups'],
         populateSelect: ''
       }
@@ -780,23 +780,23 @@ test('query-helper.populateEmbeddedDocs', function(t) {
 
   t.test('nestPopulate uses query.populateSelect if it exists.', function(t) {
     // <editor-fold desc="Arrange">
-    let queryHelper = rewire('../../utilities/query-helper')
+    const queryHelper = rewire('../../utilities/query-helper')
 
     sinon.stub(queryHelper, 'createAttributesFilter').callsFake(sinon.spy())
 
-    let nestPopulate = queryHelper.__get__('nestPopulate')
+    const nestPopulate = queryHelper.__get__('nestPopulate')
 
     t.plan(2)
 
-    let query = {
+    const query = {
       $embed: 'title.users.groups,profileImage,groups',
       populateSelect: {
         replace: sinon.spy()
       }
     }
 
-    let embeds = ['title']
-    let associations = {
+    const embeds = ['title']
+    const associations = {
       title: {
         type: {},
         model: {},
@@ -828,18 +828,18 @@ test('query-helper.populateEmbeddedDocs', function(t) {
     "nestPopulate uses createAttributesFilter if query.populateSelect doesn't exist.",
     function(t) {
       // <editor-fold desc="Arrange">
-      let queryHelper = rewire('../../utilities/query-helper')
+      const queryHelper = rewire('../../utilities/query-helper')
 
       sinon.stub(queryHelper, 'createAttributesFilter').callsFake(sinon.spy())
 
-      let nestPopulate = queryHelper.__get__('nestPopulate')
+      const nestPopulate = queryHelper.__get__('nestPopulate')
 
       t.plan(1)
 
-      let query = {}
+      const query = {}
 
-      let embeds = ['title']
-      let associations = {
+      const embeds = ['title']
+      const associations = {
         title: {
           type: {},
           model: {},
@@ -872,19 +872,19 @@ test('query-helper.populateEmbeddedDocs', function(t) {
     'nestPopulate uses association.model in populatePath if association.type is "MANY_MANY".',
     function(t) {
       // <editor-fold desc="Arrange">
-      let queryHelper = rewire('../../utilities/query-helper')
+      const queryHelper = rewire('../../utilities/query-helper')
 
       sinon.stub(queryHelper, 'createAttributesFilter').callsFake(sinon.spy())
 
-      let nestPopulate = queryHelper.__get__('nestPopulate')
+      const nestPopulate = queryHelper.__get__('nestPopulate')
 
       t.plan(2)
 
-      let query = {}
+      const query = {}
 
-      let embeds = ['title']
+      const embeds = ['title']
 
-      let associationsMany = {
+      const associationsMany = {
         title: {
           type: 'MANY_MANY',
           model: 'role',
@@ -895,7 +895,7 @@ test('query-helper.populateEmbeddedDocs', function(t) {
         }
       }
 
-      let associationsOne = {
+      const associationsOne = {
         title: {
           type: 'MANY_ONE',
           model: 'role',
@@ -909,7 +909,7 @@ test('query-helper.populateEmbeddedDocs', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Act">
-      let resultMany = nestPopulate(
+      const resultMany = nestPopulate(
         query,
         {},
         0,
@@ -918,7 +918,7 @@ test('query-helper.populateEmbeddedDocs', function(t) {
         {},
         Log
       )
-      let resultOne = nestPopulate(
+      const resultOne = nestPopulate(
         query,
         {},
         0,
@@ -942,24 +942,24 @@ test('query-helper.populateEmbeddedDocs', function(t) {
 
   t.test('nestPopulate handles nested embedding.', function(t) {
     // <editor-fold desc="Arrange">
-    let queryHelper = rewire('../../utilities/query-helper')
+    const queryHelper = rewire('../../utilities/query-helper')
 
-    let createAttributesFilter = sinon.stub()
+    const createAttributesFilter = sinon.stub()
     createAttributesFilter.returns('test')
 
     sinon
       .stub(queryHelper, 'createAttributesFilter')
       .callsFake(createAttributesFilter)
 
-    let nestPopulate = queryHelper.__get__('nestPopulate')
+    const nestPopulate = queryHelper.__get__('nestPopulate')
 
     t.plan(13)
 
-    let query = {}
+    const query = {}
 
-    let embeds = ['title', 'users', 'one', 'groups', 'teams']
+    const embeds = ['title', 'users', 'one', 'groups', 'teams']
 
-    let associationsFive = {
+    const associationsFive = {
       teams: {
         type: 'MANY_MANY',
         model: 'team',
@@ -971,7 +971,7 @@ test('query-helper.populateEmbeddedDocs', function(t) {
       }
     }
 
-    let associationsFour = {
+    const associationsFour = {
       groups: {
         type: 'MANY_MANY',
         model: 'group',
@@ -982,7 +982,7 @@ test('query-helper.populateEmbeddedDocs', function(t) {
       }
     }
 
-    let associationsThree = {
+    const associationsThree = {
       one: {
         type: 'ONE_ONE',
         model: 'one',
@@ -992,7 +992,7 @@ test('query-helper.populateEmbeddedDocs', function(t) {
       }
     }
 
-    let associationsTwo = {
+    const associationsTwo = {
       users: {
         type: 'ONE_MANY',
         model: 'user',
@@ -1002,7 +1002,7 @@ test('query-helper.populateEmbeddedDocs', function(t) {
       }
     }
 
-    let associationsOne = {
+    const associationsOne = {
       title: {
         type: 'MANY_ONE',
         model: 'role',
@@ -1015,7 +1015,15 @@ test('query-helper.populateEmbeddedDocs', function(t) {
     // </editor-fold>
 
     // <editor-fold desc="Act">
-    let populate = nestPopulate(query, {}, 0, embeds, associationsOne, {}, Log)
+    const populate = nestPopulate(
+      query,
+      {},
+      0,
+      embeds,
+      associationsOne,
+      {},
+      Log
+    )
     // </editor-fold>
 
     // <editor-fold desc="Assert">
@@ -1052,17 +1060,17 @@ test('query-helper.setSort', function(t) {
     'query-helper.setSort calls the "sort" function with the "$sort" query parameter.',
     function(t) {
       // <editor-fold desc="Arrange">
-      let queryHelper = require('../../utilities/query-helper')
+      const queryHelper = require('../../utilities/query-helper')
 
       t.plan(4)
 
-      let query = { $sort: ['email'] }
-      let mongooseQuery = {}
+      const query = { $sort: ['email'] }
+      const mongooseQuery = {}
       mongooseQuery.sort = sinon.spy()
       // </editor-fold>
 
       // <editor-fold desc="Act">
-      let result = queryHelper.setSort(query, mongooseQuery, Log)
+      const result = queryHelper.setSort(query, mongooseQuery, Log)
       // </editor-fold>
 
       // <editor-fold desc="Assert">
@@ -1081,12 +1089,12 @@ test('query-helper.setSort', function(t) {
     'query-helper.setSort replaces an array with a space separated string in the "$sort" parameter.',
     function(t) {
       // <editor-fold desc="Arrange">
-      let queryHelper = require('../../utilities/query-helper')
+      const queryHelper = require('../../utilities/query-helper')
 
       t.plan(1)
 
-      let query = { $sort: ['email', 'firstName', 'lastName'] }
-      let mongooseQuery = {}
+      const query = { $sort: ['email', 'firstName', 'lastName'] }
+      const mongooseQuery = {}
       mongooseQuery.sort = sinon.spy()
       // </editor-fold>
 
@@ -1107,17 +1115,17 @@ test('query-helper.setSort', function(t) {
     'query-helper.setSort doesn\'t call the "sort" function if the "$sort" query parameter is missing.',
     function(t) {
       // <editor-fold desc="Arrange">
-      let queryHelper = require('../../utilities/query-helper')
+      const queryHelper = require('../../utilities/query-helper')
 
       t.plan(2)
 
-      let query = {}
-      let mongooseQuery = {}
+      const query = {}
+      const mongooseQuery = {}
       mongooseQuery.sort = sinon.spy()
       // </editor-fold>
 
       // <editor-fold desc="Act">
-      let result = queryHelper.setSort(query, mongooseQuery, Log)
+      const result = queryHelper.setSort(query, mongooseQuery, Log)
       // </editor-fold>
 
       // <editor-fold desc="Assert">
@@ -1131,7 +1139,7 @@ test('query-helper.setSort', function(t) {
 })
 
 test('query-helper.createAttributesFilter', function(t) {
-  let queryHelper = require('../../utilities/query-helper')
+  const queryHelper = require('../../utilities/query-helper')
   testHelper.testModelParameter(
     t,
     queryHelper.createAttributesFilter,
@@ -1144,11 +1152,11 @@ test('query-helper.createAttributesFilter', function(t) {
     'query-helper.createAttributesFilter doesn\'t return fields with "exclude" set to true.',
     function(t) {
       // <editor-fold desc="Arrange">
-      let queryHelper = require('../../utilities/query-helper')
+      const queryHelper = require('../../utilities/query-helper')
 
       t.plan(1)
 
-      let userSchema = new mongoose.Schema({
+      const userSchema = new mongoose.Schema({
         email: {
           type: Types.String,
           queryable: true
@@ -1168,11 +1176,11 @@ test('query-helper.createAttributesFilter', function(t) {
       })
 
       userSchema.statics = { routeOptions: {} }
-      let userModel = mongoose.model('user', userSchema)
+      const userModel = mongoose.model('user', userSchema)
       // </editor-fold>
 
       // <editor-fold desc="Act">
-      let result = queryHelper.createAttributesFilter({}, userModel, Log)
+      const result = queryHelper.createAttributesFilter({}, userModel, Log)
       // </editor-fold>
 
       // <editor-fold desc="Assert">
@@ -1190,11 +1198,11 @@ test('query-helper.createAttributesFilter', function(t) {
     'query-helper.createAttributesFilter returns association fields except for those of type "MANY_MANY".',
     function(t) {
       // <editor-fold desc="Arrange">
-      let queryHelper = require('../../utilities/query-helper')
+      const queryHelper = require('../../utilities/query-helper')
 
       t.plan(1)
 
-      let userSchema = new mongoose.Schema({
+      const userSchema = new mongoose.Schema({
         email: {
           type: Types.String,
           queryable: true
@@ -1244,11 +1252,11 @@ test('query-helper.createAttributesFilter', function(t) {
         }
       }
 
-      let userModel = mongoose.model('user', userSchema)
+      const userModel = mongoose.model('user', userSchema)
       // </editor-fold>
 
       // <editor-fold desc="Act">
-      let result = queryHelper.createAttributesFilter({}, userModel, Log)
+      const result = queryHelper.createAttributesFilter({}, userModel, Log)
       // </editor-fold>
 
       // <editor-fold desc="Assert">
@@ -1270,11 +1278,11 @@ test('query-helper.createAttributesFilter', function(t) {
     'query-helper.createAttributesFilter only returns fields in "query.$select" if present.',
     function(t) {
       // <editor-fold desc="Arrange">
-      let queryHelper = require('../../utilities/query-helper')
+      const queryHelper = require('../../utilities/query-helper')
 
       t.plan(3)
 
-      let userSchema = new mongoose.Schema({
+      const userSchema = new mongoose.Schema({
         email: {
           type: Types.String,
           queryable: true
@@ -1305,16 +1313,16 @@ test('query-helper.createAttributesFilter', function(t) {
         }
       })
 
-      let query1 = { $select: ['email', 'lastName'] }
-      let query2 = { $select: 'email' }
+      const query1 = { $select: ['email', 'lastName'] }
+      const query2 = { $select: 'email' }
 
       userSchema.statics = { routeOptions: {} }
-      let userModel = mongoose.model('user', userSchema)
+      const userModel = mongoose.model('user', userSchema)
       // </editor-fold>
 
       // <editor-fold desc="Act">
-      let result1 = queryHelper.createAttributesFilter(query1, userModel, Log)
-      let result2 = queryHelper.createAttributesFilter(query2, userModel, Log)
+      const result1 = queryHelper.createAttributesFilter(query1, userModel, Log)
+      const result2 = queryHelper.createAttributesFilter(query2, userModel, Log)
       // </editor-fold>
 
       // <editor-fold desc="Assert">
@@ -1334,7 +1342,7 @@ test('query-helper.createAttributesFilter', function(t) {
 })
 
 test('query-helper.createMongooseQuery', function(t) {
-  let queryHelper = require('../../utilities/query-helper')
+  const queryHelper = require('../../utilities/query-helper')
   testHelper.testModelParameter(
     t,
     queryHelper.createMongooseQuery,
@@ -1347,9 +1355,9 @@ test('query-helper.createMongooseQuery', function(t) {
     t
   ) {
     // <editor-fold desc="Arrange">
-    let queryHelper = require('../../utilities/query-helper')
+    const queryHelper = require('../../utilities/query-helper')
 
-    let mongooseQuery = {
+    const mongooseQuery = {
       select: sinon.spy(),
       where: sinon.spy()
     }
@@ -1365,7 +1373,7 @@ test('query-helper.createMongooseQuery', function(t) {
 
     t.plan(5)
 
-    let userSchema = new mongoose.Schema({
+    const userSchema = new mongoose.Schema({
       email: {
         type: Types.String,
         queryable: true
@@ -1385,12 +1393,12 @@ test('query-helper.createMongooseQuery', function(t) {
     })
 
     userSchema.statics = { routeOptions: {} }
-    let userModel = mongoose.model('user', userSchema)
+    const userModel = mongoose.model('user', userSchema)
 
     // </editor-fold>
 
     // <editor-fold desc="Act">
-    let result = queryHelper.createMongooseQuery(
+    const result = queryHelper.createMongooseQuery(
       userModel,
       {},
       mongooseQuery,
@@ -1422,9 +1430,9 @@ test('query-helper.createMongooseQuery', function(t) {
     'query-helper.createMongooseQuery transforms field query arrays into mongoose format.',
     function(t) {
       // <editor-fold desc="Arrange">
-      let queryHelper = require('../../utilities/query-helper')
+      const queryHelper = require('../../utilities/query-helper')
 
-      let mongooseQuery = {
+      const mongooseQuery = {
         select: sinon.spy(),
         where: sinon.spy()
       }
@@ -1446,20 +1454,20 @@ test('query-helper.createMongooseQuery', function(t) {
 
       t.plan(2)
 
-      let userSchema = new mongoose.Schema()
+      const userSchema = new mongoose.Schema()
 
       userSchema.statics = { routeOptions: {} }
-      let userModel = mongoose.model('user', userSchema)
+      const userModel = mongoose.model('user', userSchema)
 
-      let query1 = { firstName: ['bob', 'bill'] }
-      let query2 = { firstName: '["bob","bill"]' }
+      const query1 = { firstName: ['bob', 'bill'] }
+      const query2 = { firstName: '["bob","bill"]' }
       // </editor-fold>
 
       // <editor-fold desc="Act">
       queryHelper.createMongooseQuery(userModel, query1, mongooseQuery, Log)
       queryHelper.createMongooseQuery(userModel, query2, mongooseQuery, Log)
-      let call1 = mongooseQuery.where.getCall(0)
-      let call2 = mongooseQuery.where.getCall(1)
+      const call1 = mongooseQuery.where.getCall(0)
+      const call2 = mongooseQuery.where.getCall(1)
       // </editor-fold>
 
       // <editor-fold desc="Assert">
@@ -1489,9 +1497,9 @@ test('query-helper.createMongooseQuery', function(t) {
     'query-helper.createMongooseQuery calls mongooseQuery.where twice if "$where" parameter exists.',
     function(t) {
       // <editor-fold desc="Arrange">
-      let queryHelper = require('../../utilities/query-helper')
+      const queryHelper = require('../../utilities/query-helper')
 
-      let mongooseQuery = {
+      const mongooseQuery = {
         select: sinon.spy(),
         where: sinon.spy()
       }
@@ -1513,7 +1521,7 @@ test('query-helper.createMongooseQuery', function(t) {
 
       t.plan(2)
 
-      let userSchema = new mongoose.Schema({
+      const userSchema = new mongoose.Schema({
         email: {
           type: Types.String,
           queryable: true
@@ -1533,13 +1541,13 @@ test('query-helper.createMongooseQuery', function(t) {
       })
 
       userSchema.statics = { routeOptions: {} }
-      let userModel = mongoose.model('user', userSchema)
+      const userModel = mongoose.model('user', userSchema)
 
-      let query = { $where: {} }
+      const query = { $where: {} }
       // </editor-fold>
 
       // <editor-fold desc="Act">
-      let result = queryHelper.createMongooseQuery(
+      const result = queryHelper.createMongooseQuery(
         userModel,
         query,
         mongooseQuery,
@@ -1573,9 +1581,9 @@ test('query-helper.createMongooseQuery', function(t) {
 test('query-helper.paginate', function(t) {
   t.test('query-helper.paginate calls correct methods.', function(t) {
     // <editor-fold desc="Arrange">
-    let queryHelper = require('../../utilities/query-helper')
+    const queryHelper = require('../../utilities/query-helper')
 
-    let mongooseQuery = {
+    const mongooseQuery = {
       select: sinon.spy(),
       where: sinon.spy()
     }
@@ -1591,7 +1599,7 @@ test('query-helper.paginate', function(t) {
 
     t.plan(3)
 
-    let userSchema = new mongoose.Schema({
+    const userSchema = new mongoose.Schema({
       email: {
         type: Types.String,
         queryable: true
@@ -1611,7 +1619,7 @@ test('query-helper.paginate', function(t) {
     })
 
     userSchema.statics = { routeOptions: {} }
-    let userModel = mongoose.model('user', userSchema)
+    const userModel = mongoose.model('user', userSchema)
 
     // </editor-fold>
 

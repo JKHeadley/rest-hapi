@@ -1,7 +1,7 @@
 module.exports = function(mongoose) {
-  let modelName = 'group'
-  let Types = mongoose.Schema.Types
-  let Schema = new mongoose.Schema({
+  const modelName = 'group'
+  const Types = mongoose.Schema.Types
+  const Schema = new mongoose.Schema({
     name: {
       type: Types.String,
       required: true

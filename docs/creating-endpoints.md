@@ -108,7 +108,7 @@ If endpoints beyond the generated CRUD endpoints are needed for a model, they ca
 
 ```javascript
 // models/user.model.js
-let Joi = require('joi')
+let Joi = require('@hapi/joi')
 let bcrypt = require('bcrypt')
 let RestHapi = require('rest-hapi')
 
@@ -136,7 +136,7 @@ module.exports = function (mongoose) {
         // Password Update Endpoint
         function (server, model, options, logger) {
           const Log = logger.bind("Password Update")
-          let Boom = require('boom')
+          let Boom = require('@hapi/boom')
 
           let collectionName = model.collectionDisplayName || model.modelName
 

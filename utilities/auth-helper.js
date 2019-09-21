@@ -11,8 +11,8 @@ module.exports = {
    * @returns {Array}: A list of authorization scopes for the endpoint.
    */
   generateScopeForEndpoint: function(model, type, logger) {
-    let routeScope = model.routeOptions.routeScope || {}
-    let rootScope = routeScope.rootScope
+    const routeScope = model.routeOptions.routeScope || {}
+    const rootScope = routeScope.rootScope
     let scope = []
 
     let additionalScope = null
@@ -62,7 +62,7 @@ module.exports = {
     const modelName =
       model.collectionName[0].toUpperCase() + model.collectionName.slice(1)
 
-    let routeScope = model.routeOptions.routeScope || {}
+    const routeScope = model.routeOptions.routeScope || {}
     if (!routeScope.rootScope) {
       delete routeScope.rootScope
     }

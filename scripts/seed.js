@@ -1,31 +1,28 @@
 'use strict'
 
-let mongoose = require('mongoose')
-let config = require('../config')
-let RestHapi = require('../rest-hapi')
-let path = require('path')
-let fs = require('fs-extra')
+const mongoose = require('mongoose')
+const config = require('../config')
+const RestHapi = require('../rest-hapi')
+const path = require('path')
+const fs = require('fs-extra')
 
 let mongoURI = process.argv.slice(2)[0]
 ;(async function seed() {
   RestHapi.config.loglevel = 'DEBUG'
-  let Log = RestHapi.getLogger('seed')
+  const Log = RestHapi.getLogger('seed')
   try {
     await moveModels()
 
     mongoose.Promise = Promise
 
     mongoURI = mongoURI || RestHapi.config.mongo.URI
-    mongoose.connect(
-      mongoURI,
-      {
-        useMongoClient: true
-      }
-    )
+    mongoose.connect(mongoURI, {
+      useMongoClient: true
+    })
 
-    let models = await RestHapi.generateModels(mongoose)
+    const models = await RestHapi.generateModels(mongoose)
 
-    let password = '1234'
+    const password = '1234'
 
     await dropCollections(models)
 
@@ -48,7 +45,7 @@ let mongoURI = process.argv.slice(2)[0]
     roles = await RestHapi.create(models.role, roles, Log)
 
     Log.log('seeding users')
-    let users = [
+    const users = [
       {
         email: 'test@account.com',
         password: password,
@@ -90,7 +87,7 @@ function moveModels() {
 
 async function dropCollections(models) {
   RestHapi.config.loglevel = 'LOG'
-  let Log = RestHapi.getLogger('unseed')
+  const Log = RestHapi.getLogger('unseed')
   try {
     await models.user.remove({})
     Log.log('roles removed')

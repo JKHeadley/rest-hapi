@@ -4,7 +4,7 @@ const path = require('path')
 const TestHelper = require('../../utilities/test-helper')
 const Decache = require('decache')
 const Q = require('q')
-const Hapi = require('hapi')
+const Hapi = require('@hapi/hapi')
 
 module.exports = (t, Mongoose, internals, Log) => {
   return t.test('audit log tests', function(t) {
@@ -36,7 +36,7 @@ module.exports = (t, Mongoose, internals, Log) => {
               )
             }
 
-            let promises = []
+            const promises = []
 
             RestHapi.config = config
 
@@ -206,11 +206,11 @@ module.exports = (t, Mongoose, internals, Log) => {
 
                 // <editor-fold desc="Assert">
                 .then(function(response) {
-                  let now = new Date()
+                  const now = new Date()
                   now.setUTCMinutes(0, 0, 0)
-                  let log1 = response[0].result.docs[1]
-                  let log2 = response[0].result.docs[2]
-                  let log3 = response[0].result.docs[3]
+                  const log1 = response[0].result.docs[1]
+                  const log2 = response[0].result.docs[2]
+                  const log3 = response[0].result.docs[3]
                   log1.date.setUTCMinutes(0, 0, 0)
                   log2.date.setUTCMinutes(0, 0, 0)
                   log3.date.setUTCMinutes(0, 0, 0)
@@ -336,7 +336,7 @@ module.exports = (t, Mongoose, internals, Log) => {
               )
             }
 
-            let promises = []
+            const promises = []
 
             RestHapi.config = config
 
@@ -417,10 +417,10 @@ module.exports = (t, Mongoose, internals, Log) => {
 
                 // <editor-fold desc="Assert">
                 .then(function(response) {
-                  let now = new Date()
+                  const now = new Date()
                   now.setUTCMinutes(0, 0, 0)
-                  let log1 = response[0].result.docs[4]
-                  let log2 = response[0].result.docs[5]
+                  const log1 = response[0].result.docs[4]
+                  const log2 = response[0].result.docs[5]
                   log1.date.setUTCMinutes(0, 0, 0)
                   log2.date.setUTCMinutes(0, 0, 0)
                   t.deepEqual(log1.method, 'PUT', 'method correct')
@@ -539,7 +539,7 @@ module.exports = (t, Mongoose, internals, Log) => {
               )
             }
 
-            let promises = []
+            const promises = []
 
             RestHapi.config = config
 
@@ -643,11 +643,11 @@ module.exports = (t, Mongoose, internals, Log) => {
 
                 // <editor-fold desc="Assert">
                 .then(function(response) {
-                  let now = new Date()
+                  const now = new Date()
                   now.setUTCMinutes(0, 0, 0)
-                  let log1 = response[0].result.docs[6]
-                  let log2 = response[0].result.docs[7]
-                  let log3 = response[0].result.docs[8]
+                  const log1 = response[0].result.docs[6]
+                  const log2 = response[0].result.docs[7]
+                  const log3 = response[0].result.docs[8]
                   log1.date.setUTCMinutes(0, 0, 0)
                   log2.date.setUTCMinutes(0, 0, 0)
                   log3.date.setUTCMinutes(0, 0, 0)
@@ -787,7 +787,7 @@ module.exports = (t, Mongoose, internals, Log) => {
               )
             }
 
-            let promises = []
+            const promises = []
 
             RestHapi.config = config
 
@@ -872,10 +872,10 @@ module.exports = (t, Mongoose, internals, Log) => {
 
                 // <editor-fold desc="Assert">
                 .then(function(response) {
-                  let now = new Date()
+                  const now = new Date()
                   now.setUTCMinutes(0, 0, 0)
-                  let log1 = response[0].result.docs[9]
-                  let log2 = response[0].result.docs[10]
+                  const log1 = response[0].result.docs[9]
+                  const log2 = response[0].result.docs[10]
                   log1.date.setUTCMinutes(0, 0, 0)
                   log2.date.setUTCMinutes(0, 0, 0)
                   t.deepEqual(log1.method, 'DELETE', 'method correct')
@@ -981,7 +981,7 @@ module.exports = (t, Mongoose, internals, Log) => {
               )
             }
 
-            let promises = []
+            const promises = []
 
             RestHapi.config = config
 
@@ -1069,10 +1069,10 @@ module.exports = (t, Mongoose, internals, Log) => {
 
                 // <editor-fold desc="Assert">
                 .then(function(response) {
-                  let now = new Date()
+                  const now = new Date()
                   now.setUTCMinutes(0, 0, 0)
-                  let log1 = response[0].result.docs[11]
-                  let log2 = response[0].result.docs[12]
+                  const log1 = response[0].result.docs[11]
+                  const log2 = response[0].result.docs[12]
                   log1.date.setUTCMinutes(0, 0, 0)
                   log2.date.setUTCMinutes(0, 0, 0)
                   t.deepEqual(log1.method, 'DELETE', 'method correct')
@@ -1184,7 +1184,7 @@ module.exports = (t, Mongoose, internals, Log) => {
               )
             }
 
-            let promises = []
+            const promises = []
 
             RestHapi.config = config
 
@@ -1547,17 +1547,17 @@ module.exports = (t, Mongoose, internals, Log) => {
 
                 // <editor-fold desc="Assert">
                 .then(function(response) {
-                  let now = new Date()
+                  const now = new Date()
                   now.setUTCMinutes(0, 0, 0)
-                  let log1 = response[0].result.docs[16]
-                  let log2 = response[0].result.docs[17]
-                  let log3 = response[0].result.docs[18]
-                  let log4 = response[0].result.docs[19]
-                  let log5 = response[0].result.docs[20]
-                  let log6 = response[0].result.docs[21]
-                  let log7 = response[0].result.docs[22]
-                  let log8 = response[0].result.docs[23]
-                  let log9 = response[0].result.docs[24]
+                  const log1 = response[0].result.docs[16]
+                  const log2 = response[0].result.docs[17]
+                  const log3 = response[0].result.docs[18]
+                  const log4 = response[0].result.docs[19]
+                  const log5 = response[0].result.docs[20]
+                  const log6 = response[0].result.docs[21]
+                  const log7 = response[0].result.docs[22]
+                  const log8 = response[0].result.docs[23]
+                  const log9 = response[0].result.docs[24]
                   log1.date.setUTCMinutes(0, 0, 0)
                   log2.date.setUTCMinutes(0, 0, 0)
                   log3.date.setUTCMinutes(0, 0, 0)
@@ -2063,7 +2063,7 @@ module.exports = (t, Mongoose, internals, Log) => {
               )
             }
 
-            let promises = []
+            const promises = []
 
             RestHapi.config = config
 
@@ -2291,17 +2291,17 @@ module.exports = (t, Mongoose, internals, Log) => {
 
                 // <editor-fold desc="Assert">
                 .then(function(response) {
-                  let now = new Date()
+                  const now = new Date()
                   now.setUTCMinutes(0, 0, 0)
-                  let log1 = response[0].result.docs[25]
-                  let log2 = response[0].result.docs[26]
-                  let log3 = response[0].result.docs[27]
-                  let log4 = response[0].result.docs[28]
-                  let log5 = response[0].result.docs[29]
-                  let log6 = response[0].result.docs[30]
-                  let log7 = response[0].result.docs[31]
-                  let log8 = response[0].result.docs[32]
-                  let log9 = response[0].result.docs[33]
+                  const log1 = response[0].result.docs[25]
+                  const log2 = response[0].result.docs[26]
+                  const log3 = response[0].result.docs[27]
+                  const log4 = response[0].result.docs[28]
+                  const log5 = response[0].result.docs[29]
+                  const log6 = response[0].result.docs[30]
+                  const log7 = response[0].result.docs[31]
+                  const log8 = response[0].result.docs[32]
+                  const log9 = response[0].result.docs[33]
                   log1.date.setUTCMinutes(0, 0, 0)
                   log2.date.setUTCMinutes(0, 0, 0)
                   log3.date.setUTCMinutes(0, 0, 0)

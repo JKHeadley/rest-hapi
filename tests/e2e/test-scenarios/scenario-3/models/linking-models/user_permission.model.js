@@ -1,11 +1,11 @@
 'use strict'
 
-let mongoose = require('mongoose')
+const mongoose = require('mongoose')
 
 module.exports = function() {
-  let Types = mongoose.Schema.Types
+  const Types = mongoose.Schema.Types
 
-  let Model = {
+  const Model = {
     Schema: {
       enabled: {
         type: Types.Boolean,

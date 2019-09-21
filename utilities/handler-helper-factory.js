@@ -1,7 +1,7 @@
 'use strict'
 
-let Boom = require('boom')
-let handlerHelper = require('./handler-helper')
+const Boom = require('@hapi/boom')
+const handlerHelper = require('./handler-helper')
 
 // TODO: add bulk delete/delete many
 
@@ -145,7 +145,7 @@ function generateListHandler(model, options, logger) {
         JSON.stringify(request.payload)
       )
 
-      let result = await handlerHelper.listHandler(model, request, Log)
+      const result = await handlerHelper.listHandler(model, request, Log)
       delete result.pageData
       return h.response(result).code(200)
     } catch (err) {
@@ -174,7 +174,7 @@ function generateFindHandler(model, options, logger) {
         JSON.stringify(request.payload)
       )
 
-      let result = await handlerHelper.findHandler(
+      const result = await handlerHelper.findHandler(
         model,
         request.params._id,
         request,
@@ -207,7 +207,7 @@ function generateCreateHandler(model, options, logger) {
         JSON.stringify(request.payload)
       )
 
-      let result = await handlerHelper.createHandler(model, request, Log)
+      const result = await handlerHelper.createHandler(model, request, Log)
       return h.response(result).code(201)
     } catch (err) {
       handleError(err, Log)
@@ -235,7 +235,7 @@ function generateUpdateHandler(model, options, logger) {
         JSON.stringify(request.payload)
       )
 
-      let result = await handlerHelper.updateHandler(
+      const result = await handlerHelper.updateHandler(
         model,
         request.params._id,
         request,
@@ -269,7 +269,7 @@ function generateDeleteHandler(model, options, logger) {
       )
 
       if (request.params._id) {
-        let hardDelete = request.payload ? request.payload.hardDelete : false
+        const hardDelete = request.payload ? request.payload.hardDelete : false
         await handlerHelper.deleteOneHandler(
           model,
           request.params._id,
@@ -303,9 +303,9 @@ function generateAssociationAddOneHandler(
   logger
 ) {
   const Log = logger.bind()
-  let associationName = association.include.as
-  let childModel = association.include.model
-  let addMethodName =
+  const associationName = association.include.as
+  const childModel = association.include.model
+  const addMethodName =
     'addOne' + associationName[0].toUpperCase() + associationName.slice(1, -1)
 
   return async function(request, h) {
@@ -348,9 +348,9 @@ function generateAssociationRemoveOneHandler(
   logger
 ) {
   const Log = logger.bind()
-  let associationName = association.include.as
-  let childModel = association.include.model
-  let removeMethodName =
+  const associationName = association.include.as
+  const childModel = association.include.model
+  const removeMethodName =
     'removeOne' +
     associationName[0].toUpperCase() +
     associationName.slice(1, -1)
@@ -395,9 +395,9 @@ function generateAssociationAddManyHandler(
   logger
 ) {
   const Log = logger.bind()
-  let associationName = association.include.as
-  let childModel = association.include.model
-  let addMethodName =
+  const associationName = association.include.as
+  const childModel = association.include.model
+  const addMethodName =
     'addMany' + associationName[0].toUpperCase() + associationName.slice(1)
 
   return async function(request, h) {
@@ -440,9 +440,9 @@ function generateAssociationRemoveManyHandler(
   logger
 ) {
   const Log = logger.bind()
-  let associationName = association.include.as
-  let childModel = association.include.model
-  let removeMethodName =
+  const associationName = association.include.as
+  const childModel = association.include.model
+  const removeMethodName =
     'removeMany' + associationName[0].toUpperCase() + associationName.slice(1)
 
   return async function(request, h) {
@@ -484,9 +484,9 @@ function generateAssociationGetAllHandler(
   logger
 ) {
   const Log = logger.bind()
-  let associationName = association.include.as
-  let childModel = association.include.model
-  let getAllMethodName =
+  const associationName = association.include.as
+  const childModel = association.include.model
+  const getAllMethodName =
     association.getAllMethodName ||
     'get' + associationName[0].toUpperCase() + associationName.slice(1)
 
@@ -499,7 +499,7 @@ function generateAssociationGetAllHandler(
         JSON.stringify(request.payload)
       )
 
-      let result = await handlerHelper.getAllHandler(
+      const result = await handlerHelper.getAllHandler(
         ownerModel,
         request.params.ownerId,
         childModel,

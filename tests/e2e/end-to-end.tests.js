@@ -25,7 +25,7 @@ const mongoServer = new MongoMemoryServer({
 
 // TODO: Possibly require this in every test and decache it to avoid unexpected
 // errors between tests.
-let Mongoose = require('mongoose')
+const Mongoose = require('mongoose')
 Mongoose.Promise = Promise
 
 let Log = Logging.getLogger('tests')

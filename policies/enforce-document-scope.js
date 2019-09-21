@@ -1,6 +1,6 @@
 'use strict'
 
-const Boom = require('boom')
+const Boom = require('@hapi/boom')
 const _ = require('lodash')
 const config = require('../config')
 
@@ -51,7 +51,7 @@ internals.enforceDocumentScopePre = function(model, logger) {
         return await h.continue
       }
 
-      let result = await internals.verifyScopeById(
+      const result = await internals.verifyScopeById(
         model,
         ids,
         action,
@@ -67,7 +67,7 @@ internals.enforceDocumentScopePre = function(model, logger) {
         !config.enableDocumentScopeFail &&
         !request.params._id
       ) {
-        let unauthorizedIds = result.unauthorizedDocs.map(function(document) {
+        const unauthorizedIds = result.unauthorizedDocs.map(function(document) {
           return document._id.toString()
         })
         request.payload = request.payload.filter(function(item) {
@@ -139,7 +139,9 @@ internals.enforceDocumentScopePost = function(model, logger) {
         } else if (request.params._id || config.enableDocumentScopeFail) {
           throw Boom.forbidden('Insufficient document scope.')
         } else {
-          let unauthorizedIds = result.unauthorizedDocs.map(function(document) {
+          const unauthorizedIds = result.unauthorizedDocs.map(function(
+            document
+          ) {
             return document._id.toString()
           })
           // EXPL: replace unauthorized docs with an error
@@ -185,7 +187,7 @@ internals.verifyScopeById = async function(
       $in: documentIds
     }
   }
-  let documents = await model.find(query, 'scope')
+  const documents = await model.find(query, 'scope')
   return internals.verifyScope(documents, action, userScope, logger)
 }
 
