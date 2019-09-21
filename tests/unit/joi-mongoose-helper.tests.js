@@ -19,7 +19,6 @@ Log.logLevel = 'DEBUG'
 Log = Log.bind('joi-mongoose-helper')
 const testHelper = require('../../utilities/test-helper')
 const Joi = require('@hapi/joi')
-const validateShim = require('./validate-shim.js')
 
 sinon.test = sinonTest
 
@@ -117,7 +116,7 @@ test('joi-mongoose-helper.generateJoiReadModel', function(t) {
         'generateJoiFieldModel called on email field'
       )
       t.ok(
-        validateShim({ email: 'test' }, readModel).error === null,
+        Joi.validate({ email: 'test' }, readModel).error === null,
         'email field allowed'
       )
       // </editor-fold>
@@ -173,11 +172,11 @@ test('joi-mongoose-helper.generateJoiReadModel', function(t) {
         'generateJoiFieldModel not called on email field'
       )
       t.ok(
-        validateShim({ email: 'wrong' }, readModel).error !== null,
+        Joi.validate({ email: 'wrong' }, readModel).error !== null,
         'wrong field value not valid'
       )
       t.ok(
-        validateShim({ email: 'test' }, readModel).error === null,
+        Joi.validate({ email: 'test' }, readModel).error === null,
         'correct field value valid'
       )
       // </editor-fold>
@@ -353,19 +352,19 @@ test('joi-mongoose-helper.generateJoiReadModel', function(t) {
 
       // <editor-fold desc="Assert">
       t.ok(
-        validateShim({ email: 'test' }, readModel).error === null,
+        Joi.validate({ email: 'test' }, readModel).error === null,
         'email field valid'
       )
       t.ok(
-        validateShim({ firstName: 'test' }, readModel).error !== null,
+        Joi.validate({ firstName: 'test' }, readModel).error !== null,
         'firstName field not valid'
       )
       t.ok(
-        validateShim({ lastName: 'test' }, readModel).error !== null,
+        Joi.validate({ lastName: 'test' }, readModel).error !== null,
         'lastName field not valid'
       )
       t.ok(
-        validateShim({ notAField: 'test' }, readModel).error !== null,
+        Joi.validate({ notAField: 'test' }, readModel).error !== null,
         'fields not listed not valid'
       )
       // </editor-fold>
@@ -409,9 +408,9 @@ test('joi-mongoose-helper.generateJoiReadModel', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Assert">
-      t.ok(validateShim({}, readModel).error !== null, 'email field required')
+      t.ok(Joi.validate({}, readModel).error !== null, 'email field required')
       t.ok(
-        validateShim({ email: 'test' }, readModel).error === null,
+        Joi.validate({ email: 'test' }, readModel).error === null,
         'email field valid'
       )
       // </editor-fold>
@@ -495,75 +494,75 @@ test('joi-mongoose-helper.generateJoiReadModel', function(t) {
         'generateJoiFieldModel not called on association fields'
       )
       t.ok(
-        validateShim({ title: {} }, readModel).error === null,
+        Joi.validate({ title: {} }, readModel).error === null,
         'title field valid'
       )
       t.ok(
-        validateShim({ title: null }, readModel).error !== null,
+        Joi.validate({ title: null }, readModel).error !== null,
         'null title field not valid'
       )
       t.ok(
-        validateShim({ title: '' }, readModel).error !== null,
+        Joi.validate({ title: '' }, readModel).error !== null,
         'non-object title field not valid'
       )
       t.ok(
-        validateShim({ profileImage: {} }, readModel).error === null,
+        Joi.validate({ profileImage: {} }, readModel).error === null,
         'profileImage field valid'
       )
       t.ok(
-        validateShim({ profileImage: null }, readModel).error !== null,
+        Joi.validate({ profileImage: null }, readModel).error !== null,
         'null profileImage note field valid'
       )
       t.ok(
-        validateShim({ profileImage: '' }, readModel).error !== null,
+        Joi.validate({ profileImage: '' }, readModel).error !== null,
         'non-object profileImage field not valid'
       )
       t.ok(
-        validateShim({ groups: [{}, {}] }, readModel).error === null,
+        Joi.validate({ groups: [{}, {}] }, readModel).error === null,
         'groups field valid'
       )
       t.ok(
-        validateShim({ groups: null }, readModel).error !== null,
+        Joi.validate({ groups: null }, readModel).error !== null,
         'null groups field not valid'
       )
       t.ok(
-        validateShim({ groups: ['', 3, {}] }, readModel).error !== null,
+        Joi.validate({ groups: ['', 3, {}] }, readModel).error !== null,
         'groups field must be array of objects'
       )
       t.ok(
-        validateShim({ friends: [{}, {}] }, readModel).error === null,
+        Joi.validate({ friends: [{}, {}] }, readModel).error === null,
         'friends field valid'
       )
       t.ok(
-        validateShim({ friends: null }, readModel).error !== null,
+        Joi.validate({ friends: null }, readModel).error !== null,
         'null friends field not valid'
       )
       t.ok(
-        validateShim({ friends: ['', 3, {}] }, readModel).error !== null,
+        Joi.validate({ friends: ['', 3, {}] }, readModel).error !== null,
         'friends field must be array of objects'
       )
       t.ok(
-        validateShim({ hashTags: [{}, {}] }, readModel).error === null,
+        Joi.validate({ hashTags: [{}, {}] }, readModel).error === null,
         'hashTags field valid'
       )
       t.ok(
-        validateShim({ hashTags: null }, readModel).error !== null,
+        Joi.validate({ hashTags: null }, readModel).error !== null,
         'null hashTags field not valid'
       )
       t.ok(
-        validateShim({ hashTags: ['', 3, {}] }, readModel).error !== null,
+        Joi.validate({ hashTags: ['', 3, {}] }, readModel).error !== null,
         'hashTags field must be array of objects'
       )
       t.ok(
-        validateShim({ permissions: [{}, {}] }, readModel).error === null,
+        Joi.validate({ permissions: [{}, {}] }, readModel).error === null,
         'permissions field valid'
       )
       t.ok(
-        validateShim({ permissions: null }, readModel).error !== null,
+        Joi.validate({ permissions: null }, readModel).error !== null,
         'null permissions field not valid'
       )
       t.ok(
-        validateShim({ permissions: ['', 3, {}] }, readModel).error !== null,
+        Joi.validate({ permissions: ['', 3, {}] }, readModel).error !== null,
         'permissions field must be array of objects'
       )
       // </editor-fold>
@@ -671,7 +670,7 @@ test('joi-mongoose-helper.generateJoiUpdateModel', function(t) {
         'generateJoiFieldModel called on email field'
       )
       t.ok(
-        validateShim({ email: 'test' }, updateModel).error === null,
+        Joi.validate({ email: 'test' }, updateModel).error === null,
         'email field allowed'
       )
       // </editor-fold>
@@ -730,11 +729,11 @@ test('joi-mongoose-helper.generateJoiUpdateModel', function(t) {
         'generateJoiFieldModel called on email field'
       )
       t.ok(
-        validateShim({ email: 'wrong' }, updateModel).error !== null,
+        Joi.validate({ email: 'wrong' }, updateModel).error !== null,
         'wrong field value not valid'
       )
       t.ok(
-        validateShim({ email: 'test' }, updateModel).error === null,
+        Joi.validate({ email: 'test' }, updateModel).error === null,
         'correct field value valid'
       )
       // </editor-fold>
@@ -840,15 +839,15 @@ test('joi-mongoose-helper.generateJoiUpdateModel', function(t) {
 
       // <editor-fold desc="Assert">
       t.ok(
-        validateShim({ email: 'test' }, updateModel).error === null,
+        Joi.validate({ email: 'test' }, updateModel).error === null,
         'email field valid'
       )
       t.ok(
-        validateShim({ firstName: 'test' }, updateModel).error !== null,
+        Joi.validate({ firstName: 'test' }, updateModel).error !== null,
         'firstName field not valid'
       )
       t.ok(
-        validateShim({ notAField: 'test' }, updateModel).error !== null,
+        Joi.validate({ notAField: 'test' }, updateModel).error !== null,
         'fields not listed not valid'
       )
       // </editor-fold>
@@ -895,9 +894,9 @@ test('joi-mongoose-helper.generateJoiUpdateModel', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Assert">
-      t.ok(validateShim({}, updateModel).error !== null, 'email field required')
+      t.ok(Joi.validate({}, updateModel).error !== null, 'email field required')
       t.ok(
-        validateShim({ email: 'test' }, updateModel).error === null,
+        Joi.validate({ email: 'test' }, updateModel).error === null,
         'email field valid'
       )
       // </editor-fold>
@@ -1140,7 +1139,7 @@ test('joi-mongoose-helper.generateJoiCreateModel', function(t) {
         'generateJoiFieldModel called on email field'
       )
       t.ok(
-        validateShim({ email: 'test' }, createModel).error === null,
+        Joi.validate({ email: 'test' }, createModel).error === null,
         'email field allowed'
       )
       // </editor-fold>
@@ -1199,11 +1198,11 @@ test('joi-mongoose-helper.generateJoiCreateModel', function(t) {
         'generateJoiFieldModel not called on email field'
       )
       t.ok(
-        validateShim({ email: 'wrong' }, createModel).error !== null,
+        Joi.validate({ email: 'wrong' }, createModel).error !== null,
         'wrong field value not valid'
       )
       t.ok(
-        validateShim({ email: 'test' }, createModel).error === null,
+        Joi.validate({ email: 'test' }, createModel).error === null,
         'correct field value valid'
       )
       // </editor-fold>
@@ -1309,15 +1308,15 @@ test('joi-mongoose-helper.generateJoiCreateModel', function(t) {
 
       // <editor-fold desc="Assert">
       t.ok(
-        validateShim({ email: 'test' }, createModel).error === null,
+        Joi.validate({ email: 'test' }, createModel).error === null,
         'email field valid'
       )
       t.ok(
-        validateShim({ firstName: 'test' }, createModel).error !== null,
+        Joi.validate({ firstName: 'test' }, createModel).error !== null,
         'firstName field not valid'
       )
       t.ok(
-        validateShim({ notAField: 'test' }, createModel).error !== null,
+        Joi.validate({ notAField: 'test' }, createModel).error !== null,
         'fields not listed not valid'
       )
       // </editor-fold>
@@ -1364,9 +1363,9 @@ test('joi-mongoose-helper.generateJoiCreateModel', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Assert">
-      t.ok(validateShim({}, createModel).error !== null, 'email field required')
+      t.ok(Joi.validate({}, createModel).error !== null, 'email field required')
       t.ok(
-        validateShim({ email: 'test' }, createModel).error === null,
+        Joi.validate({ email: 'test' }, createModel).error === null,
         'email field valid'
       )
       // </editor-fold>
@@ -1501,12 +1500,12 @@ test('joi-mongoose-helper.generateJoiCreateModel', function(t) {
         ),
         'generateJoiFieldModel called on hashTags field'
       )
-      // t.ok(validateShim({title: {}}, createModel).error !== null, "title field not valid format");
-      // t.ok(validateShim({title: "test"}, createModel).error === null, "title field valid format");
-      // t.ok(validateShim({profileImage: {}}, createModel).error !== null, "profileImage field not valid format");
-      // t.ok(validateShim({profileImage: "test"}, createModel).error === null, "profileImage field valid format");
-      // t.ok(validateShim({groups: "test"}, createModel).error !== null, "groups field not allowed");
-      // t.ok(validateShim({permissions: "test"}, createModel).error !== null, "permissions field not allowed");
+      // t.ok(Joi.validate({title: {}}, createModel).error !== null, "title field not valid format");
+      // t.ok(Joi.validate({title: "test"}, createModel).error === null, "title field valid format");
+      // t.ok(Joi.validate({profileImage: {}}, createModel).error !== null, "profileImage field not valid format");
+      // t.ok(Joi.validate({profileImage: "test"}, createModel).error === null, "profileImage field valid format");
+      // t.ok(Joi.validate({groups: "test"}, createModel).error !== null, "groups field not allowed");
+      // t.ok(Joi.validate({permissions: "test"}, createModel).error !== null, "permissions field not allowed");
       // </editor-fold>
 
       // <editor-fold desc="Restore">
@@ -2631,136 +2630,136 @@ test('joi-mongoose-helper.generateJoiListQueryModel', function(t) {
 
       // <editor-fold desc="Assert">
       t.ok(
-        validateShim({ $skip: 0 }, queryModel).error === null,
+        Joi.validate({ $skip: 0 }, queryModel).error === null,
         '$skip: 0 allowed'
       )
       t.ok(
-        validateShim({ $skip: -1 }, queryModel).error !== null,
+        Joi.validate({ $skip: -1 }, queryModel).error !== null,
         '$skip: -1 not allowed'
       )
       t.ok(
-        validateShim({ $skip: 'notint' }, queryModel).error !== null,
+        Joi.validate({ $skip: 'notint' }, queryModel).error !== null,
         "$skip: 'notint' not allowed"
       )
 
       t.ok(
-        validateShim({ $page: 0 }, queryModel).error === null,
+        Joi.validate({ $page: 0 }, queryModel).error === null,
         '$page: 0 allowed'
       )
       t.ok(
-        validateShim({ $page: -1 }, queryModel).error !== null,
+        Joi.validate({ $page: -1 }, queryModel).error !== null,
         '$page: -1 not allowed'
       )
       t.ok(
-        validateShim({ $page: 'notint' }, queryModel).error !== null,
+        Joi.validate({ $page: 'notint' }, queryModel).error !== null,
         "$page: 'notint' not allowed"
       )
 
       t.ok(
-        validateShim({ $limit: 0 }, queryModel).error === null,
+        Joi.validate({ $limit: 0 }, queryModel).error === null,
         '$skip: 0 allowed'
       )
       t.ok(
-        validateShim({ $limit: -1 }, queryModel).error !== null,
+        Joi.validate({ $limit: -1 }, queryModel).error !== null,
         '$skip: -1 not allowed'
       )
       t.ok(
-        validateShim({ $limit: 'notint' }, queryModel).error !== null,
+        Joi.validate({ $limit: 'notint' }, queryModel).error !== null,
         "$skip: 'notint' not allowed"
       )
 
       t.ok(
-        validateShim({ $select: 'readable' }, queryModel).error === null,
+        Joi.validate({ $select: 'readable' }, queryModel).error === null,
         "$select: 'readable' allowed"
       )
       t.ok(
-        validateShim({ $select: ['readable'] }, queryModel).error === null,
+        Joi.validate({ $select: ['readable'] }, queryModel).error === null,
         "$select: ['readable'] allowed"
       )
       t.ok(
-        validateShim({ $select: 'notreadable' }, queryModel).error !== null,
+        Joi.validate({ $select: 'notreadable' }, queryModel).error !== null,
         "$select: 'notreadable' not allowed"
       )
 
       t.ok(
-        validateShim({ $text: 'text' }, queryModel).error === null,
+        Joi.validate({ $text: 'text' }, queryModel).error === null,
         '$text field allowed'
       )
       t.ok(
-        validateShim({ $term: 'text' }, queryModel).error === null,
+        Joi.validate({ $term: 'text' }, queryModel).error === null,
         '$term field allowed'
       )
 
       t.ok(
-        validateShim({ $searchFields: 'queryable' }, queryModel).error === null,
+        Joi.validate({ $searchFields: 'queryable' }, queryModel).error === null,
         "$searchFields: 'queryable' allowed"
       )
       t.ok(
-        validateShim({ $searchFields: ['queryable'] }, queryModel).error ===
+        Joi.validate({ $searchFields: ['queryable'] }, queryModel).error ===
           null,
         "$searchFields: ['queryable'] allowed"
       )
       t.ok(
-        validateShim({ $searchFields: 'notqueryable' }, queryModel).error !==
+        Joi.validate({ $searchFields: 'notqueryable' }, queryModel).error !==
           null,
         "$searchFields: 'notqueryable' not allowed"
       )
 
       t.ok(
-        validateShim({ $sort: 'sortable' }, queryModel).error === null,
+        Joi.validate({ $sort: 'sortable' }, queryModel).error === null,
         "$sort: 'sortable' allowed"
       )
       t.ok(
-        validateShim({ $sort: ['sortable'] }, queryModel).error === null,
+        Joi.validate({ $sort: ['sortable'] }, queryModel).error === null,
         "$sort: ['sortable'] allowed"
       )
       t.ok(
-        validateShim({ $sort: 'notsortable' }, queryModel).error !== null,
+        Joi.validate({ $sort: 'notsortable' }, queryModel).error !== null,
         "$sort: 'notsortable' not allowed"
       )
 
       t.ok(
-        validateShim({ $exclude: 'objectId' }, queryModel).error === null,
+        Joi.validate({ $exclude: 'objectId' }, queryModel).error === null,
         "$exclude: 'objectId' allowed"
       )
       t.ok(
-        validateShim({ $exclude: ['objectId'] }, queryModel).error === null,
+        Joi.validate({ $exclude: ['objectId'] }, queryModel).error === null,
         "$exclude: ['objectId'] allowed"
       )
       t.ok(
-        validateShim({ $exclude: 'notobjectId' }, queryModel).error !== null,
+        Joi.validate({ $exclude: 'notobjectId' }, queryModel).error !== null,
         "$exclude: 'notobjectId' not allowed"
       )
 
       t.ok(
-        validateShim({ $count: true }, queryModel).error === null,
+        Joi.validate({ $count: true }, queryModel).error === null,
         '$count: true allowed'
       )
       t.ok(
-        validateShim({ $count: 'notbool' }, queryModel).error !== null,
+        Joi.validate({ $count: 'notbool' }, queryModel).error !== null,
         "$count: 'notbool' not allowed"
       )
 
       t.ok(
-        validateShim({ $where: 'text' }, queryModel).error !== null,
+        Joi.validate({ $where: 'text' }, queryModel).error !== null,
         '$where field not allowed'
       )
 
       t.ok(
-        validateShim({ queryable: 'text' }, queryModel).error === null,
+        Joi.validate({ queryable: 'text' }, queryModel).error === null,
         'queryable field allowed'
       )
       t.ok(
-        validateShim({ notafield: 'text' }, queryModel).error !== null,
+        Joi.validate({ notafield: 'text' }, queryModel).error !== null,
         'notafield field not allowed'
       )
 
       t.ok(
-        validateShim({ $embed: 'text' }, queryModel).error !== null,
+        Joi.validate({ $embed: 'text' }, queryModel).error !== null,
         '$embed field not allowed'
       )
       t.ok(
-        validateShim({ $flatten: true }, queryModel).error !== null,
+        Joi.validate({ $flatten: true }, queryModel).error !== null,
         '$flatten field not allowed'
       )
 
@@ -2835,7 +2834,7 @@ test('joi-mongoose-helper.generateJoiListQueryModel', function(t) {
 
       // <editor-fold desc="Assert">
       t.ok(
-        validateShim({ $where: 'text' }, queryModel).error === null,
+        Joi.validate({ $where: 'text' }, queryModel).error === null,
         '$where field allowed'
       )
       // </editor-fold>
@@ -2906,127 +2905,127 @@ test('joi-mongoose-helper.generateJoiListQueryModel', function(t) {
 
       // <editor-fold desc="Assert">
       t.ok(
-        validateShim({ $skip: 0 }, queryModel).error === null,
+        Joi.validate({ $skip: 0 }, queryModel).error === null,
         '$skip: 0 allowed'
       )
       t.ok(
-        validateShim({ $skip: -1 }, queryModel).error !== null,
+        Joi.validate({ $skip: -1 }, queryModel).error !== null,
         '$skip: -1 not allowed'
       )
       t.ok(
-        validateShim({ $skip: 'notint' }, queryModel).error !== null,
+        Joi.validate({ $skip: 'notint' }, queryModel).error !== null,
         "$skip: 'notint' not allowed"
       )
 
       t.ok(
-        validateShim({ $page: 0 }, queryModel).error === null,
+        Joi.validate({ $page: 0 }, queryModel).error === null,
         '$page: 0 allowed'
       )
       t.ok(
-        validateShim({ $page: -1 }, queryModel).error !== null,
+        Joi.validate({ $page: -1 }, queryModel).error !== null,
         '$page: -1 not allowed'
       )
       t.ok(
-        validateShim({ $page: 'notint' }, queryModel).error !== null,
+        Joi.validate({ $page: 'notint' }, queryModel).error !== null,
         "$page: 'notint' not allowed"
       )
 
       t.ok(
-        validateShim({ $limit: 0 }, queryModel).error === null,
+        Joi.validate({ $limit: 0 }, queryModel).error === null,
         '$skip: 0 allowed'
       )
       t.ok(
-        validateShim({ $limit: -1 }, queryModel).error !== null,
+        Joi.validate({ $limit: -1 }, queryModel).error !== null,
         '$skip: -1 not allowed'
       )
       t.ok(
-        validateShim({ $limit: 'notint' }, queryModel).error !== null,
+        Joi.validate({ $limit: 'notint' }, queryModel).error !== null,
         "$skip: 'notint' not allowed"
       )
 
       t.ok(
-        validateShim({ $select: 'readable' }, queryModel).error === null,
+        Joi.validate({ $select: 'readable' }, queryModel).error === null,
         "$select: 'readable' allowed"
       )
       t.ok(
-        validateShim({ $select: ['readable'] }, queryModel).error === null,
+        Joi.validate({ $select: ['readable'] }, queryModel).error === null,
         "$select: ['readable'] allowed"
       )
       t.ok(
-        validateShim({ $select: 'notreadable' }, queryModel).error !== null,
+        Joi.validate({ $select: 'notreadable' }, queryModel).error !== null,
         "$select: 'notreadable' not allowed"
       )
 
       t.ok(
-        validateShim({ $text: 'text' }, queryModel).error === null,
+        Joi.validate({ $text: 'text' }, queryModel).error === null,
         '$text field allowed'
       )
       t.ok(
-        validateShim({ $term: 'text' }, queryModel).error === null,
+        Joi.validate({ $term: 'text' }, queryModel).error === null,
         '$term field allowed'
       )
 
       t.ok(
-        validateShim({ $searchFields: 'queryable' }, queryModel).error === null,
+        Joi.validate({ $searchFields: 'queryable' }, queryModel).error === null,
         "$searchFields: 'queryable' allowed"
       )
       t.ok(
-        validateShim({ $searchFields: ['queryable'] }, queryModel).error ===
+        Joi.validate({ $searchFields: ['queryable'] }, queryModel).error ===
           null,
         "$searchFields: ['queryable'] allowed"
       )
       t.ok(
-        validateShim({ $searchFields: 'notqueryable' }, queryModel).error !==
+        Joi.validate({ $searchFields: 'notqueryable' }, queryModel).error !==
           null,
         "$searchFields: 'notqueryable' not allowed"
       )
 
       t.ok(
-        validateShim({ $sort: 'sortable' }, queryModel).error === null,
+        Joi.validate({ $sort: 'sortable' }, queryModel).error === null,
         "$sort: 'sortable' allowed"
       )
       t.ok(
-        validateShim({ $sort: ['sortable'] }, queryModel).error === null,
+        Joi.validate({ $sort: ['sortable'] }, queryModel).error === null,
         "$sort: ['sortable'] allowed"
       )
       t.ok(
-        validateShim({ $sort: 'notsortable' }, queryModel).error !== null,
+        Joi.validate({ $sort: 'notsortable' }, queryModel).error !== null,
         "$sort: 'notsortable' not allowed"
       )
 
       t.ok(
-        validateShim({ $exclude: 'objectId' }, queryModel).error === null,
+        Joi.validate({ $exclude: 'objectId' }, queryModel).error === null,
         "$exclude: 'objectId' allowed"
       )
       t.ok(
-        validateShim({ $exclude: ['objectId'] }, queryModel).error === null,
+        Joi.validate({ $exclude: ['objectId'] }, queryModel).error === null,
         "$exclude: ['objectId'] allowed"
       )
       t.ok(
-        validateShim({ $exclude: 'notobjectId' }, queryModel).error !== null,
+        Joi.validate({ $exclude: 'notobjectId' }, queryModel).error !== null,
         "$exclude: 'notobjectId' not allowed"
       )
 
       t.ok(
-        validateShim({ $count: true }, queryModel).error === null,
+        Joi.validate({ $count: true }, queryModel).error === null,
         '$count: true allowed'
       )
       t.ok(
-        validateShim({ $count: 'notbool' }, queryModel).error !== null,
+        Joi.validate({ $count: 'notbool' }, queryModel).error !== null,
         "$count: 'notbool' not allowed"
       )
 
       t.ok(
-        validateShim({ $where: 'text' }, queryModel).error === null,
+        Joi.validate({ $where: 'text' }, queryModel).error === null,
         '$where field allowed'
       )
 
       t.ok(
-        validateShim({ queryable: 'text' }, queryModel).error === null,
+        Joi.validate({ queryable: 'text' }, queryModel).error === null,
         'queryable field allowed'
       )
       t.ok(
-        validateShim({ notafield: 'text' }, queryModel).error === null,
+        Joi.validate({ notafield: 'text' }, queryModel).error === null,
         'notafield field allowed'
       )
       // </editor-fold>
@@ -3097,23 +3096,23 @@ test('joi-mongoose-helper.generateJoiListQueryModel', function(t) {
 
       // <editor-fold desc="Assert">
       t.ok(
-        validateShim({ $embed: 'text' }, queryModel).error === null,
+        Joi.validate({ $embed: 'text' }, queryModel).error === null,
         "$embed: 'text' allowed"
       )
       t.ok(
-        validateShim({ $embed: ['text'] }, queryModel).error === null,
+        Joi.validate({ $embed: ['text'] }, queryModel).error === null,
         "$embed: ['text'] allowed"
       )
       t.ok(
-        validateShim({ $embed: 0 }, queryModel).error !== null,
+        Joi.validate({ $embed: 0 }, queryModel).error !== null,
         '$embed: 0 not allowed'
       )
       t.ok(
-        validateShim({ $flatten: true }, queryModel).error === null,
+        Joi.validate({ $flatten: true }, queryModel).error === null,
         '$flatten: true allowed'
       )
       t.ok(
-        validateShim({ $flatten: 'text' }, queryModel).error !== null,
+        Joi.validate({ $flatten: 'text' }, queryModel).error !== null,
         "$flatten: 'text' not allowed"
       )
 
@@ -3224,29 +3223,29 @@ test('joi-mongoose-helper.generateJoiFindQueryModel', function(t) {
 
       // <editor-fold desc="Assert">
       t.ok(
-        validateShim({ $select: 'readable' }, queryModel).error === null,
+        Joi.validate({ $select: 'readable' }, queryModel).error === null,
         "$select: 'readable' allowed"
       )
       t.ok(
-        validateShim({ $select: ['readable'] }, queryModel).error === null,
+        Joi.validate({ $select: ['readable'] }, queryModel).error === null,
         "$select: ['readable'] allowed"
       )
       t.ok(
-        validateShim({ $select: 'notreadable' }, queryModel).error !== null,
+        Joi.validate({ $select: 'notreadable' }, queryModel).error !== null,
         "$select: 'notreadable' not allowed"
       )
 
       t.ok(
-        validateShim({ notafield: 'text' }, queryModel).error !== null,
+        Joi.validate({ notafield: 'text' }, queryModel).error !== null,
         'notafield field not allowed'
       )
 
       t.ok(
-        validateShim({ $embed: 'text' }, queryModel).error !== null,
+        Joi.validate({ $embed: 'text' }, queryModel).error !== null,
         '$embed field not allowed'
       )
       t.ok(
-        validateShim({ $flatten: true }, queryModel).error !== null,
+        Joi.validate({ $flatten: true }, queryModel).error !== null,
         '$flatten field not allowed'
       )
 
@@ -3318,20 +3317,20 @@ test('joi-mongoose-helper.generateJoiFindQueryModel', function(t) {
 
       // <editor-fold desc="Assert">
       t.ok(
-        validateShim({ $select: 'readable' }, queryModel).error === null,
+        Joi.validate({ $select: 'readable' }, queryModel).error === null,
         "$select: 'readable' allowed"
       )
       t.ok(
-        validateShim({ $select: ['readable'] }, queryModel).error === null,
+        Joi.validate({ $select: ['readable'] }, queryModel).error === null,
         "$select: ['readable'] allowed"
       )
       t.ok(
-        validateShim({ $select: 'notreadable' }, queryModel).error !== null,
+        Joi.validate({ $select: 'notreadable' }, queryModel).error !== null,
         "$select: 'notreadable' not allowed"
       )
 
       t.ok(
-        validateShim({ notafield: 'text' }, queryModel).error === null,
+        Joi.validate({ notafield: 'text' }, queryModel).error === null,
         'notafield field allowed'
       )
       // </editor-fold>
@@ -3402,23 +3401,23 @@ test('joi-mongoose-helper.generateJoiFindQueryModel', function(t) {
 
       // <editor-fold desc="Assert">
       t.ok(
-        validateShim({ $embed: 'text' }, queryModel).error === null,
+        Joi.validate({ $embed: 'text' }, queryModel).error === null,
         "$embed: 'text' allowed"
       )
       t.ok(
-        validateShim({ $embed: ['text'] }, queryModel).error === null,
+        Joi.validate({ $embed: ['text'] }, queryModel).error === null,
         "$embed: ['text'] allowed"
       )
       t.ok(
-        validateShim({ $embed: 0 }, queryModel).error !== null,
+        Joi.validate({ $embed: 0 }, queryModel).error !== null,
         '$embed: 0 not allowed'
       )
       t.ok(
-        validateShim({ $flatten: true }, queryModel).error === null,
+        Joi.validate({ $flatten: true }, queryModel).error === null,
         '$flatten: true allowed'
       )
       t.ok(
-        validateShim({ $flatten: 'text' }, queryModel).error !== null,
+        Joi.validate({ $flatten: 'text' }, queryModel).error !== null,
         "$flatten: 'text' not allowed"
       )
 

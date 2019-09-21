@@ -20,7 +20,6 @@ Log = Log.bind('rest-helper-factory')
 const testHelper = require('../../utilities/test-helper')
 const Joi = require('@hapi/joi')
 const fs = require('fs')
-const validateShim = require('./validate-shim.js')
 
 sinon.test = sinonTest
 
@@ -122,11 +121,11 @@ test('rest-helper-factory.defaultHeadersValidation', function(t) {
 
       // <editor-fold desc="Assert">
       t.ok(
-        validateShim(header1, defaultHeadersValidation).error !== null,
+        Joi.validate(header1, defaultHeadersValidation).error !== null,
         'no authorization fails validation'
       )
       t.ok(
-        validateShim(header2, defaultHeadersValidation).error === null,
+        Joi.validate(header2, defaultHeadersValidation).error === null,
         'authorization valid'
       )
       // </editor-fold>
@@ -162,7 +161,7 @@ test('rest-helper-factory.defaultHeadersValidation', function(t) {
 
       // <editor-fold desc="Assert">
       t.ok(
-        validateShim(header2, defaultHeadersValidation).error === null,
+        Joi.validate(header2, defaultHeadersValidation).error === null,
         'authorization valid'
       )
       // </editor-fold>
@@ -195,7 +194,7 @@ test('rest-helper-factory.defaultHeadersValidation', function(t) {
 
       // <editor-fold desc="Assert">
       t.ok(
-        validateShim(header, defaultHeadersValidation).error === null,
+        Joi.validate(header, defaultHeadersValidation).error === null,
         'unknown property valid'
       )
       // </editor-fold>
@@ -9295,14 +9294,14 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
       const serverObject = server.route.args[0][0]
       const validParam = serverObject.config.validate.params.ownerId
       t.ok(
-        validateShim('objectId', validParam).error === null,
+        Joi.validate('objectId', validParam).error === null,
         'params accept valid input'
       )
       t.ok(
-        validateShim('object', validParam).error !== null,
+        Joi.validate('object', validParam).error !== null,
         'params reject invalid input'
       )
-      t.ok(validateShim('', validParam).error !== null, 'params require input')
+      t.ok(Joi.validate('', validParam).error !== null, 'params require input')
       // </editor-fold>
 
       // <editor-fold desc="Restore">
