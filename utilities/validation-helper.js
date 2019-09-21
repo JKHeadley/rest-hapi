@@ -1,4 +1,4 @@
-let assert = require('assert')
+const assert = require('assert')
 
 // TODO: verify routeOptions exist
 
@@ -23,8 +23,8 @@ module.exports = {
       "model not mongoose format. 'schema.tree' property required."
     )
 
-    let fields = model.schema.paths
-    let fieldNames = Object.keys(fields)
+    const fields = model.schema.paths
+    const fieldNames = Object.keys(fields)
 
     assert(
       model.routeOptions,
@@ -32,7 +32,7 @@ module.exports = {
     )
 
     for (let i = 0; i < fieldNames.length; i++) {
-      let fieldName = fieldNames[i]
+      const fieldName = fieldNames[i]
       assert(
         fields[fieldName].options,
         "field not mongoose format. 'options' parameter required."

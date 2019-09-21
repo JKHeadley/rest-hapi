@@ -1,12 +1,12 @@
 'use strict'
 
-let path = require('path')
-let mongoose = require('mongoose')
-let _ = require('lodash')
-let restHapi = require('../rest-hapi')
+const path = require('path')
+const mongoose = require('mongoose')
+const _ = require('lodash')
+const restHapi = require('../rest-hapi')
 ;(async function updateAssociations() {
   restHapi.config.loglevel = 'DEBUG'
-  let Log = restHapi.getLogger('update-associations')
+  const Log = restHapi.getLogger('update-associations')
   try {
     const mongoURI = process.argv[3]
 
@@ -19,7 +19,7 @@ let restHapi = require('../rest-hapi')
       }
     )
 
-    let embedAssociations = process.argv[5] === 'true'
+    const embedAssociations = process.argv[5] === 'true'
 
     let modelPath = path.join(__dirname, '/../../../models')
 
@@ -31,15 +31,15 @@ let restHapi = require('../rest-hapi')
     restHapi.config.modelPath = modelPath
     restHapi.config.embedAssociations = embedAssociations
 
-    let models = await restHapi.generateModels(mongoose)
+    const models = await restHapi.generateModels(mongoose)
 
     Log.debug('mongoURI:', mongoURI)
     Log.debug('embedAssociations:', embedAssociations)
     Log.debug('modelPath:', restHapi.config.modelPath)
 
-    let modelsArray = []
+    const modelsArray = []
 
-    for (let modelName in models) {
+    for (const modelName in models) {
       modelsArray.push(models[modelName])
     }
 
@@ -84,16 +84,16 @@ function getLinkingModel(model, association, logger) {
     } catch (err) {}
   }
   if (!linkingModelExists) {
-    let schema = {}
+    const schema = {}
     schema[model.modelName] = {
       type: mongoose.Schema.Types.ObjectId
     }
     schema[association.model] = {
       type: mongoose.Schema.Types.ObjectId
     }
-    let linkingModelName = model.modelName + '_' + association.model
+    const linkingModelName = model.modelName + '_' + association.model
 
-    let linkingSchema = new mongoose.Schema(schema, {
+    const linkingSchema = new mongoose.Schema(schema, {
       collection: linkingModelName
     })
     linkingModel = mongoose.model(linkingModelName, linkingSchema)
@@ -103,28 +103,28 @@ function getLinkingModel(model, association, logger) {
 }
 
 async function applyActionToModels(action, models, embedAssociations, logger) {
-  for (let model of models) {
+  for (const model of models) {
     await action(model, embedAssociations, logger)
   }
 }
 
 function addEmbedded(model, embedAssociations, logger) {
   return model.find().then(function(data) {
-    let promises = []
+    const promises = []
 
-    for (let associationName in model.routeOptions.associations) {
-      let association = model.routeOptions.associations[associationName]
+    for (const associationName in model.routeOptions.associations) {
+      const association = model.routeOptions.associations[associationName]
 
       if (association.type === 'MANY_MANY') {
-        let embedAssociation =
+        const embedAssociation =
           association.embedAssociation === undefined
             ? embedAssociations
             : association.embedAssociation
 
-        let linkingModel = getLinkingModel(model, association)
+        const linkingModel = getLinkingModel(model, association)
 
         if (linkingModel) {
-          let embedded =
+          const embedded =
             data[0] && data[0][associationName] && data[0][associationName][0]
 
           if (embedAssociation && !embedded) {
@@ -153,20 +153,20 @@ function addEmbeddedAssociation(
   data,
   logger
 ) {
-  let promises = []
+  const promises = []
 
   data.forEach(function(document) {
-    let query = {}
-    let embedArray = []
+    const query = {}
+    const embedArray = []
     query[model.modelName] = document._id
-    let promise = linkingModel.find(query).then(function(result) {
+    const promise = linkingModel.find(query).then(function(result) {
       if (_.isEmpty(result)) {
         // EXPL: need to do this or else the empty association property will be erased
         if (
           !document[associationName] ||
           _.isEmpty(document[associationName])
         ) {
-          let payload = {}
+          const payload = {}
           payload[associationName] = []
           return model.findByIdAndUpdate(document._id, payload, { new: true })
         } else {
@@ -178,7 +178,7 @@ function addEmbeddedAssociation(
           embedArray.push(linkingDocument)
         })
 
-        let payload = {}
+        const payload = {}
         payload[associationName] = embedArray
 
         return model.findByIdAndUpdate(document._id, payload, { new: true })
@@ -191,16 +191,16 @@ function addEmbeddedAssociation(
 }
 
 function removeLinking(model, embedAssociations, logger) {
-  for (let associationName in model.routeOptions.associations) {
-    let association = model.routeOptions.associations[associationName]
+  for (const associationName in model.routeOptions.associations) {
+    const association = model.routeOptions.associations[associationName]
 
     if (association.type === 'MANY_MANY') {
-      let embedAssociation =
+      const embedAssociation =
         association.embedAssociation === undefined
           ? embedAssociations
           : association.embedAssociation
 
-      let linkingModel = getLinkingModel(model, association, logger)
+      const linkingModel = getLinkingModel(model, association, logger)
 
       if (linkingModel) {
         if (embedAssociation) {
@@ -217,18 +217,18 @@ function removeLinking(model, embedAssociations, logger) {
 
 function addLinking(model, embedAssociations, logger) {
   return model.find().then(function(data) {
-    let promises = []
+    const promises = []
 
-    for (let associationName in model.routeOptions.associations) {
-      let association = model.routeOptions.associations[associationName]
+    for (const associationName in model.routeOptions.associations) {
+      const association = model.routeOptions.associations[associationName]
 
       if (association.type === 'MANY_MANY') {
-        let embedAssociation =
+        const embedAssociation =
           association.embedAssociation === undefined
             ? embedAssociations
             : association.embedAssociation
 
-        let linkingModel = getLinkingModel(model, association, logger)
+        const linkingModel = getLinkingModel(model, association, logger)
 
         if (linkingModel) {
           if (!embedAssociation) {
@@ -258,21 +258,21 @@ function addLinkingAssociation(
   data,
   logger
 ) {
-  let promises = []
+  const promises = []
 
   data.forEach(function(document) {
-    let embedArray = document[associationName]
+    const embedArray = document[associationName]
 
     if (embedArray) {
       embedArray.forEach(function(embeddedData) {
-        let query = {}
+        const query = {}
         query[model.modelName] = document._id
         query[association.model] = embeddedData[association.model]
-        let promise = linkingModel
+        const promise = linkingModel
           .find(query)
           .then(function(linkingDataExists) {
             if (!linkingDataExists[0]) {
-              let linkingData = embeddedData
+              const linkingData = embeddedData
               linkingData[model.modelName] = document._id
               return linkingModel.create(linkingData)
             }
@@ -287,18 +287,18 @@ function addLinkingAssociation(
 
 function removeEmbedded(model, embedAssociations, logger) {
   return model.find().then(function(data) {
-    let promises = []
+    const promises = []
 
-    for (let associationName in model.routeOptions.associations) {
-      let association = model.routeOptions.associations[associationName]
+    for (const associationName in model.routeOptions.associations) {
+      const association = model.routeOptions.associations[associationName]
 
       if (association.type === 'MANY_MANY') {
-        let embedAssociation =
+        const embedAssociation =
           association.embedAssociation === undefined
             ? embedAssociations
             : association.embedAssociation
 
-        let linkingModel = getLinkingModel(model, association, logger)
+        const linkingModel = getLinkingModel(model, association, logger)
 
         if (linkingModel) {
           if (!embedAssociation) {
@@ -315,9 +315,9 @@ function removeEmbedded(model, embedAssociations, logger) {
 }
 
 function removeEmbeddedAssociation(model, associationName, data, logger) {
-  let promises = []
+  const promises = []
 
-  let newField = {}
+  const newField = {}
   newField[associationName] = {
     type: [mongoose.Schema.Types.Object]
   }
@@ -325,10 +325,10 @@ function removeEmbeddedAssociation(model, associationName, data, logger) {
   delete mongoose.models[model.modelName]
   delete mongoose.modelSchemas[model.modelName]
 
-  let dummySchema = new mongoose.Schema(newField, {
+  const dummySchema = new mongoose.Schema(newField, {
     collection: model.modelName
   })
-  let dummyModel = mongoose.model(model.modelName, dummySchema)
+  const dummyModel = mongoose.model(model.modelName, dummySchema)
 
   data.forEach(function(document) {
     const payload = {

@@ -1,6 +1,6 @@
 'use strict'
 
-const Boom = require('boom')
+const Boom = require('@hapi/boom')
 const _ = require('lodash')
 const config = require('../config')
 
@@ -143,10 +143,10 @@ internals.addScope = function(action, request, h, logger) {
         throw new Error('Invalid action.')
     }
 
-    let userId = _.get(request.auth.credentials, config.userIdKey)
+    const userId = _.get(request.auth.credentials, config.userIdKey)
 
     if (!userId) {
-      let message =
+      const message =
         'User _id not found in auth credentials. Please specify the user _id path in "config.userIdKey"'
       Log.error(message)
       throw Boom.badRequest(message)
@@ -154,7 +154,7 @@ internals.addScope = function(action, request, h, logger) {
 
     if (_.isArray(request.payload)) {
       request.payload.forEach(function(document) {
-        let scope = {}
+        const scope = {}
         scope[scopeType] = []
 
         document.scope = document.scope || scope
@@ -162,7 +162,7 @@ internals.addScope = function(action, request, h, logger) {
         document.scope[scopeType].push('user-' + userId)
       })
     } else {
-      let scope = {}
+      const scope = {}
       scope[scopeType] = []
 
       request.payload.scope = request.payload.scope || scope

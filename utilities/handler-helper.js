@@ -1,10 +1,10 @@
 'use strict'
 
-let Boom = require('boom')
-let QueryHelper = require('./query-helper')
-let JoiMongooseHelper = require('./joi-mongoose-helper')
-let config = require('../config')
-let _ = require('lodash')
+const Boom = require('@hapi/boom')
+const QueryHelper = require('./query-helper')
+const JoiMongooseHelper = require('./joi-mongoose-helper')
+const config = require('../config')
+const _ = require('lodash')
 
 // TODO: add a "clean" method that clears out all soft-deleted docs
 // TODO: add an optional TTL config setting that determines how long soft-deleted docs remain in the system
@@ -91,20 +91,20 @@ function _list(...args) {
 
 function _listV1(model, query, Log) {
   model = getModel(model)
-  let request = { query: query }
+  const request = { query: query }
   return _listHandler(model, request, Log)
 }
 
 async function _listV2({ model, query, Log, restCall = false, credentials }) {
   model = getModel(model)
-  let RestHapi = require('../rest-hapi')
+  const RestHapi = require('../rest-hapi')
   Log = Log || RestHapi.getLogger('list')
 
   if (restCall) {
     assertServer()
     credentials = defaultCreds(credentials)
 
-    let request = {
+    const request = {
       method: 'Get',
       url: `/${model.routeOptions.alias || model.modelName}`,
       query,
@@ -113,7 +113,7 @@ async function _listV2({ model, query, Log, restCall = false, credentials }) {
     }
 
     const injectOptions = RestHapi.testHelper.mockInjection(request)
-    let { result } = await RestHapi.server.inject(injectOptions)
+    const { result } = await RestHapi.server.inject(injectOptions)
     return result
   } else {
     return _listV1(model, query, Log)
@@ -158,7 +158,7 @@ async function _listHandler(model, request, Log) {
         mongooseQuery,
         Log
       ).lean()
-      let result = await mongooseQuery.exec()
+      const result = await mongooseQuery.exec()
       Log.log('Result: %s', JSON.stringify(result))
       return result
     }
@@ -170,7 +170,7 @@ async function _listHandler(model, request, Log) {
       mongooseQuery,
       Log
     ).lean()
-    let count = await mongooseQuery.count()
+    const count = await mongooseQuery.count()
     mongooseQuery = QueryHelper.paginate(query, mongooseQuery, Log)
     let result = await mongooseQuery.exec('find')
 
@@ -192,11 +192,11 @@ async function _listHandler(model, request, Log) {
     }
 
     result = result.map(data => {
-      let result = data
+      const result = data
       if (model.routeOptions) {
-        let associations = model.routeOptions.associations
-        for (let associationKey in associations) {
-          let association = associations[associationKey]
+        const associations = model.routeOptions.associations
+        for (const associationKey in associations) {
+          const association = associations[associationKey]
           if (association.type === 'ONE_MANY' && data[associationKey]) {
             // EXPL: we have to manually populate the return value for virtual (e.g. ONE_MANY) associations
             if (data[associationKey].toJSON) {
@@ -291,7 +291,7 @@ function _find(...args) {
 
 function _findV1(model, _id, query, Log) {
   model = getModel(model)
-  let request = { params: { _id: _id }, query: query }
+  const request = { params: { _id: _id }, query: query }
   return _findHandler(model, _id, request, Log)
 }
 
@@ -304,14 +304,14 @@ async function _findV2({
   credentials
 }) {
   model = getModel(model)
-  let RestHapi = require('../rest-hapi')
+  const RestHapi = require('../rest-hapi')
   Log = Log || RestHapi.getLogger('find')
 
   if (restCall) {
     assertServer()
     credentials = defaultCreds(credentials)
 
-    let request = {
+    const request = {
       method: 'Get',
       url: `/${model.routeOptions.alias || model.modelName}/${_id}`,
       params: { _id },
@@ -321,7 +321,7 @@ async function _findV2({
     }
 
     const injectOptions = RestHapi.testHelper.mockInjection(request)
-    let { result } = await RestHapi.server.inject(injectOptions)
+    const { result } = await RestHapi.server.inject(injectOptions)
     return result
   } else {
     return _findV1(model, _id, query, Log)
@@ -365,7 +365,7 @@ async function _findHandler(model, _id, request, Log) {
       mongooseQuery,
       Log
     ).lean()
-    let result = await mongooseQuery.exec()
+    const result = await mongooseQuery.exec()
     if (result) {
       let data = result
       try {
@@ -385,9 +385,9 @@ async function _findHandler(model, _id, request, Log) {
         )
       }
       if (model.routeOptions) {
-        let associations = model.routeOptions.associations
-        for (let associationKey in associations) {
-          let association = associations[associationKey]
+        const associations = model.routeOptions.associations
+        for (const associationKey in associations) {
+          const association = associations[associationKey]
           if (association.type === 'ONE_MANY' && data[associationKey]) {
             // EXPL: we have to manually populate the return value for virtual (e.g. ONE_MANY) associations
             result[associationKey] = data[associationKey]
@@ -449,7 +449,7 @@ function _create(...args) {
 
 function _createV1(model, payload, Log) {
   model = getModel(model)
-  let request = { payload: payload }
+  const request = { payload: payload }
   return _createHandler(model, request, Log)
 }
 
@@ -461,14 +461,14 @@ async function _createV2({
   credentials
 }) {
   model = getModel(model)
-  let RestHapi = require('../rest-hapi')
+  const RestHapi = require('../rest-hapi')
   Log = Log || RestHapi.getLogger('create')
 
   if (restCall) {
     assertServer()
     credentials = defaultCreds(credentials)
 
-    let request = {
+    const request = {
       method: 'Post',
       url: `/${model.routeOptions.alias || model.modelName}`,
       payload,
@@ -477,7 +477,7 @@ async function _createV2({
     }
 
     const injectOptions = RestHapi.testHelper.mockInjection(request)
-    let { result } = await RestHapi.server.inject(injectOptions)
+    const { result } = await RestHapi.server.inject(injectOptions)
     return result
   } else {
     return _createV1(model, payload, Log)
@@ -514,7 +514,7 @@ async function _createHandler(model, request, Log) {
         model.routeOptions.create &&
         model.routeOptions.create.pre
       ) {
-        for (let document of payload) {
+        for (const document of payload) {
           await model.routeOptions.create.pre(document, request, Log)
         }
       }
@@ -528,7 +528,7 @@ async function _createHandler(model, request, Log) {
     }
 
     if (config.enableCreatedAt) {
-      for (let document of payload) {
+      for (const document of payload) {
         document.createdAt = new Date()
       }
     }
@@ -548,13 +548,13 @@ async function _createHandler(model, request, Log) {
     }
 
     // EXPL: rather than returning the raw "create" data, we filter the data through a separate query
-    let attributes = QueryHelper.createAttributesFilter({}, model, Log)
+    const attributes = QueryHelper.createAttributesFilter({}, model, Log)
 
     data = data.map(item => {
       return item._id
     })
 
-    let result = await model
+    const result = await model
       .find()
       .where({ _id: { $in: data } })
       .select(attributes)
@@ -567,7 +567,7 @@ async function _createHandler(model, request, Log) {
         model.routeOptions.create &&
         model.routeOptions.create.post
       ) {
-        for (let document of result) {
+        for (const document of result) {
           await model.routeOptions.create.post(document, request, result, Log)
         }
       }
@@ -626,7 +626,7 @@ function _update(...args) {
 
 function _updateV1(model, _id, payload, Log) {
   model = getModel(model)
-  let request = { params: { _id: _id }, payload: payload }
+  const request = { params: { _id: _id }, payload: payload }
   return _updateHandler(model, _id, request, Log)
 }
 
@@ -639,14 +639,14 @@ async function _updateV2({
   credentials
 }) {
   model = getModel(model)
-  let RestHapi = require('../rest-hapi')
+  const RestHapi = require('../rest-hapi')
   Log = Log || RestHapi.getLogger('update')
 
   if (restCall) {
     assertServer()
     credentials = defaultCreds(credentials)
 
-    let request = {
+    const request = {
       method: 'Put',
       url: `/${model.routeOptions.alias || model.modelName}/${_id}`,
       params: { _id },
@@ -656,7 +656,7 @@ async function _updateV2({
     }
 
     const injectOptions = RestHapi.testHelper.mockInjection(request)
-    let { result } = await RestHapi.server.inject(injectOptions)
+    const { result } = await RestHapi.server.inject(injectOptions)
     return result
   } else {
     return _updateV1(model, _id, payload, Log)
@@ -716,7 +716,7 @@ async function _updateHandler(model, _id, request, Log) {
       }
     }
     if (result) {
-      let attributes = QueryHelper.createAttributesFilter({}, model, Log)
+      const attributes = QueryHelper.createAttributesFilter({}, model, Log)
 
       result = await model.findOne({ _id: result._id }, attributes).lean()
 
@@ -781,7 +781,7 @@ function _deleteOne(...args) {
 
 function _deleteOneV1(model, _id, hardDelete, Log) {
   model = getModel(model)
-  let request = { params: { _id: _id } }
+  const request = { params: { _id: _id } }
   return _deleteOneHandler(model, _id, hardDelete, request, Log)
 }
 
@@ -794,14 +794,14 @@ async function _deleteOneV2({
   credentials
 }) {
   model = getModel(model)
-  let RestHapi = require('../rest-hapi')
+  const RestHapi = require('../rest-hapi')
   Log = Log || RestHapi.getLogger('deleteOne')
 
   if (restCall) {
     assertServer()
     credentials = defaultCreds(credentials)
 
-    let request = {
+    const request = {
       method: 'Delete',
       url: `/${model.routeOptions.alias || model.modelName}/${_id}`,
       params: { _id },
@@ -810,7 +810,7 @@ async function _deleteOneV2({
     }
 
     const injectOptions = RestHapi.testHelper.mockInjection(request)
-    let { result } = await RestHapi.server.inject(injectOptions)
+    const { result } = await RestHapi.server.inject(injectOptions)
     return result
   } else {
     return _deleteOneV1(model, _id, hardDelete, Log)
@@ -850,12 +850,12 @@ async function _deleteOneHandler(model, _id, hardDelete, request, Log) {
 
     try {
       if (config.enableSoftDelete && !hardDelete) {
-        let payload = { isDeleted: true }
+        const payload = { isDeleted: true }
         if (config.enableDeletedAt) {
           payload.deletedAt = new Date()
         }
         if (config.enableDeletedBy && config.enableSoftDelete) {
-          let deletedBy =
+          const deletedBy =
             request.payload.deletedBy || request.payload[0].deletedBy
           if (deletedBy) {
             payload.deletedBy = deletedBy
@@ -944,7 +944,7 @@ function _deleteMany(...args) {
 
 function _deleteManyV1(model, payload, Log) {
   model = getModel(model)
-  let request = { payload: payload }
+  const request = { payload: payload }
   return _deleteManyHandler(model, request, Log)
 }
 
@@ -956,14 +956,14 @@ async function _deleteManyV2({
   credentials
 }) {
   model = getModel(model)
-  let RestHapi = require('../rest-hapi')
+  const RestHapi = require('../rest-hapi')
   Log = Log || RestHapi.getLogger('deleteOne')
 
   if (restCall) {
     assertServer()
     credentials = defaultCreds(credentials)
 
-    let request = {
+    const request = {
       method: 'Delete',
       url: `/${model.routeOptions.alias || model.modelName}`,
       payload,
@@ -972,7 +972,7 @@ async function _deleteManyV2({
     }
 
     const injectOptions = RestHapi.testHelper.mockInjection(request)
-    let { result } = await RestHapi.server.inject(injectOptions)
+    const { result } = await RestHapi.server.inject(injectOptions)
     return result
   } else {
     return _deleteManyV1(model, payload, Log)
@@ -992,11 +992,11 @@ async function _deleteManyV2({
 async function _deleteManyHandler(model, request, Log) {
   try {
     // EXPL: make a copy of the payload so that request.payload remains unchanged
-    let payload = request.payload.map(item => {
+    const payload = request.payload.map(item => {
       return _.isObject(item) ? _.assignIn({}, item) : item
     })
-    let promises = []
-    for (let arg of payload) {
+    const promises = []
+    for (const arg of payload) {
       if (JoiMongooseHelper.isObjectId(arg)) {
         promises.push(_deleteOneHandler(model, arg, false, request, Log))
       } else {
@@ -1072,7 +1072,7 @@ function _addOneV1(
 ) {
   ownerModel = getModel(ownerModel)
   childModel = getModel(childModel)
-  let request = {
+  const request = {
     params: { ownerId: ownerId, childId: childId },
     payload: payload
   }
@@ -1100,14 +1100,14 @@ async function _addOneV2({
 }) {
   ownerModel = getModel(ownerModel)
   childModel = getModel(childModel)
-  let RestHapi = require('../rest-hapi')
+  const RestHapi = require('../rest-hapi')
   Log = Log || RestHapi.getLogger('addOne')
 
   if (restCall) {
     assertServer()
     credentials = defaultCreds(credentials)
 
-    let request = {
+    const request = {
       method: 'Put',
       url: `/${ownerModel.routeOptions.alias ||
         ownerModel.modelName}/${ownerId}/${associationName}/${childId}`,
@@ -1118,7 +1118,7 @@ async function _addOneV2({
     }
 
     const injectOptions = RestHapi.testHelper.mockInjection(request)
-    let { result } = await RestHapi.server.inject(injectOptions)
+    const { result } = await RestHapi.server.inject(injectOptions)
     return result
   } else {
     return _addOneV1(
@@ -1155,7 +1155,7 @@ async function _addOneHandler(
   Log
 ) {
   try {
-    let ownerObject = await ownerModel
+    const ownerObject = await ownerModel
       .findOne({ _id: ownerId })
       .select(associationName)
     let payload = Object.assign({}, request.payload)
@@ -1274,7 +1274,7 @@ function _removeOneV1(
 ) {
   ownerModel = getModel(ownerModel)
   childModel = getModel(childModel)
-  let request = {
+  const request = {
     params: { ownerId: ownerId, childId: childId },
     payload: payload
   }
@@ -1302,14 +1302,14 @@ async function _removeOneV2({
 }) {
   ownerModel = getModel(ownerModel)
   childModel = getModel(childModel)
-  let RestHapi = require('../rest-hapi')
+  const RestHapi = require('../rest-hapi')
   Log = Log || RestHapi.getLogger('removeOne')
 
   if (restCall) {
     assertServer()
     credentials = defaultCreds(credentials)
 
-    let request = {
+    const request = {
       method: 'Delete',
       url: `/${ownerModel.routeOptions.alias ||
         ownerModel.modelName}/${ownerId}/${associationName}/${childId}`,
@@ -1320,7 +1320,7 @@ async function _removeOneV2({
     }
 
     const injectOptions = RestHapi.testHelper.mockInjection(request)
-    let { result } = await RestHapi.server.inject(injectOptions)
+    const { result } = await RestHapi.server.inject(injectOptions)
     return result
   } else {
     return _removeOneV1(
@@ -1356,7 +1356,7 @@ async function _removeOneHandler(
   Log
 ) {
   try {
-    let ownerObject = await ownerModel
+    const ownerObject = await ownerModel
       .findOne({ _id: ownerId })
       .select(associationName)
     if (ownerObject) {
@@ -1463,7 +1463,7 @@ function _addManyV1(
 ) {
   ownerModel = getModel(ownerModel)
   childModel = getModel(childModel)
-  let request = { params: { ownerId: ownerId }, payload: payload }
+  const request = { params: { ownerId: ownerId }, payload: payload }
   return _addManyHandler(
     ownerModel,
     ownerId,
@@ -1486,14 +1486,14 @@ async function _addManyV2({
 }) {
   ownerModel = getModel(ownerModel)
   childModel = getModel(childModel)
-  let RestHapi = require('../rest-hapi')
+  const RestHapi = require('../rest-hapi')
   Log = Log || RestHapi.getLogger('addMany')
 
   if (restCall) {
     assertServer()
     credentials = defaultCreds(credentials)
 
-    let request = {
+    const request = {
       method: 'Post',
       url: `/${ownerModel.routeOptions.alias ||
         ownerModel.modelName}/${ownerId}/${associationName}`,
@@ -1504,7 +1504,7 @@ async function _addManyV2({
     }
 
     const injectOptions = RestHapi.testHelper.mockInjection(request)
-    let { result } = await RestHapi.server.inject(injectOptions)
+    const { result } = await RestHapi.server.inject(injectOptions)
     return result
   } else {
     return _addManyV1(
@@ -1546,7 +1546,7 @@ async function _addManyHandler(
       throw Boom.badRequest('Payload is empty.')
     }
 
-    let ownerObject = await ownerModel
+    const ownerObject = await ownerModel
       .findOne({ _id: ownerId })
       .select(associationName)
     if (ownerObject) {
@@ -1587,7 +1587,7 @@ async function _addManyHandler(
         })
       }
 
-      for (let childId of childIds) {
+      for (const childId of childIds) {
         try {
           await _setAssociation(
             ownerModel,
@@ -1671,7 +1671,7 @@ function _removeManyV1(
 ) {
   ownerModel = getModel(ownerModel)
   childModel = getModel(childModel)
-  let request = { params: { ownerId: ownerId }, payload: payload }
+  const request = { params: { ownerId: ownerId }, payload: payload }
   return _removeManyHandler(
     ownerModel,
     ownerId,
@@ -1694,14 +1694,14 @@ async function _removeManyV2({
 }) {
   ownerModel = getModel(ownerModel)
   childModel = getModel(childModel)
-  let RestHapi = require('../rest-hapi')
+  const RestHapi = require('../rest-hapi')
   Log = Log || RestHapi.getLogger('removeMany')
 
   if (restCall) {
     assertServer()
     credentials = defaultCreds(credentials)
 
-    let request = {
+    const request = {
       method: 'Delete',
       url: `/${ownerModel.routeOptions.alias ||
         ownerModel.modelName}/${ownerId}/${associationName}`,
@@ -1712,7 +1712,7 @@ async function _removeManyV2({
     }
 
     const injectOptions = RestHapi.testHelper.mockInjection(request)
-    let { result } = await RestHapi.server.inject(injectOptions)
+    const { result } = await RestHapi.server.inject(injectOptions)
     return result
   } else {
     return _removeManyV1(
@@ -1753,7 +1753,7 @@ async function _removeManyHandler(
     if (_.isEmpty(request.payload)) {
       throw Boom.badRequest('Payload is empty.')
     }
-    let ownerObject = await ownerModel
+    const ownerObject = await ownerModel
       .findOne({ _id: ownerId })
       .select(associationName)
     if (ownerObject) {
@@ -1779,7 +1779,7 @@ async function _removeManyHandler(
         )
       }
 
-      for (let childId of payload) {
+      for (const childId of payload) {
         try {
           await _removeAssociation(
             ownerModel,
@@ -1862,7 +1862,7 @@ function _getAllV1(
 ) {
   ownerModel = getModel(ownerModel)
   childModel = getModel(childModel)
-  let request = { params: { ownerId: ownerId }, query }
+  const request = { params: { ownerId: ownerId }, query }
   return _getAllHandler(
     ownerModel,
     ownerId,
@@ -1885,14 +1885,14 @@ async function _getAllV2({
 }) {
   ownerModel = getModel(ownerModel)
   childModel = getModel(childModel)
-  let RestHapi = require('../rest-hapi')
+  const RestHapi = require('../rest-hapi')
   Log = Log || RestHapi.getLogger('getAll')
 
   if (restCall) {
     assertServer()
     credentials = defaultCreds(credentials)
 
-    let request = {
+    const request = {
       method: 'Get',
       url: `/${ownerModel.routeOptions.alias ||
         ownerModel.modelName}/${ownerId}/${associationName}`,
@@ -1903,7 +1903,7 @@ async function _getAllV2({
     }
 
     const injectOptions = RestHapi.testHelper.mockInjection(request)
-    let { result } = await RestHapi.server.inject(injectOptions)
+    const { result } = await RestHapi.server.inject(injectOptions)
     return result
   } else {
     return _getAllV1(
@@ -1937,12 +1937,12 @@ async function _getAllHandler(
   Log
 ) {
   try {
-    let query = request.query
+    const query = request.query
 
-    let association = ownerModel.routeOptions.associations[associationName]
-    let foreignField = association.foreignField
+    const association = ownerModel.routeOptions.associations[associationName]
+    const foreignField = association.foreignField
 
-    let ownerRequest = { query: {} }
+    const ownerRequest = { query: {} }
     ownerRequest.query.$embed = associationName
     ownerRequest.query.populateSelect = '_id'
     if (foreignField) {
@@ -2019,14 +2019,14 @@ async function _getAllHandler(
 
     request.query = query
 
-    let listResult = await _listHandler(childModel, request, Log)
+    const listResult = await _listHandler(childModel, request, Log)
 
     if (manyMany && association.linkingModel) {
       // EXPL: we have to manually insert the extra fields into the result
-      let extraFieldData = result
+      const extraFieldData = result
       if (_.isArray(listResult.docs)) {
-        for (let object of listResult.docs) {
-          let data = extraFieldData.find(data => {
+        for (const object of listResult.docs) {
+          const data = extraFieldData.find(data => {
             return (
               data[association.model]._id.toString() === object._id.toString()
             )
@@ -2034,7 +2034,7 @@ async function _getAllHandler(
           if (!data) {
             throw Boom.notFound('child object not found')
           }
-          let fields = data.toJSON()
+          const fields = data.toJSON()
           delete fields._id
           delete fields[association.model]
           object[association.linkingModel] = fields
@@ -2095,7 +2095,7 @@ async function _setAssociation(
 
   childObject = await childModel.findOne({ _id: childId })
   if (childObject) {
-    let association = ownerModel.routeOptions.associations[associationName]
+    const association = ownerModel.routeOptions.associations[associationName]
     let extraFields = false
     if (association.type === 'ONE_MANY') {
       // EXPL: one-many associations are virtual, so only update the child reference
@@ -2127,13 +2127,13 @@ async function _setAssociation(
       }
 
       // EXPL: if linking models aren't embeded, just upsert the linking model collection
-      let embedAssociation =
+      const embedAssociation =
         association.embedAssociation === undefined
           ? config.embedAssociations
           : association.embedAssociation
       if (!embedAssociation) {
         const linkingModel = association.include.through
-        let query = {}
+        const query = {}
         query[ownerModel.modelName] = ownerObject._id
         query[childModel.modelName] = childObject._id
 
@@ -2175,9 +2175,9 @@ async function _setAssociation(
         delete payload[childModel.modelName]
         payload[ownerModel.modelName] = ownerObject._id
         let childAssociation = {}
-        let childAssociations = childModel.routeOptions.associations
-        for (let childAssociationKey in childAssociations) {
-          let association = childAssociations[childAssociationKey]
+        const childAssociations = childModel.routeOptions.associations
+        for (const childAssociationKey in childAssociations) {
+          const association = childAssociations[childAssociationKey]
           if (
             association.model === ownerModel.modelName &&
             association.type === 'MANY_MANY'
@@ -2197,7 +2197,7 @@ async function _setAssociation(
           )
         }
 
-        let childAssociationName = childAssociation.include.as
+        const childAssociationName = childAssociation.include.as
 
         if (!childObject[childAssociationName]) {
           throw Boom.badRequest(
@@ -2240,7 +2240,7 @@ async function _setAssociation(
       })
       duplicate = duplicate[0]
 
-      let duplicateIndex = ownerObject[associationName].indexOf(duplicate)
+      const duplicateIndex = ownerObject[associationName].indexOf(duplicate)
 
       if (duplicateIndex < 0) {
         // EXPL: if the association doesn't already exist, create it
@@ -2279,10 +2279,10 @@ async function _removeAssociation(
   associationName,
   Log
 ) {
-  let childObject = await childModel.findOne({ _id: childId })
+  const childObject = await childModel.findOne({ _id: childId })
   if (childObject) {
-    let association = ownerModel.routeOptions.associations[associationName]
-    let associationType = association.type
+    const association = ownerModel.routeOptions.associations[associationName]
+    const associationType = association.type
     if (associationType === 'ONE_MANY') {
       // EXPL: one-many associations are virtual, so only update the child reference
       // childObject[association.foreignField] = null; //TODO: set reference to null instead of deleting it?
@@ -2299,13 +2299,13 @@ async function _removeAssociation(
       // EXPL: remove references from both models
 
       // EXPL: if linking models aren't embeded, just upsert the linking model collection
-      let embedAssociation =
+      const embedAssociation =
         association.embedAssociation === undefined
           ? config.embedAssociations
           : association.embedAssociation
       if (!embedAssociation) {
         const linkingModel = association.include.through
-        let query = {}
+        const query = {}
         query[ownerModel.modelName] = ownerObject._id
         query[childModel.modelName] = childObject._id
 
@@ -2327,14 +2327,14 @@ async function _removeAssociation(
 
         // EXPL: get the child association name
         let childAssociation = {}
-        let childAssociations = childModel.routeOptions.associations
-        for (let childAssociationKey in childAssociations) {
-          let association = childAssociations[childAssociationKey]
+        const childAssociations = childModel.routeOptions.associations
+        for (const childAssociationKey in childAssociations) {
+          const association = childAssociations[childAssociationKey]
           if (association.model === ownerModel.modelName) {
             childAssociation = association
           }
         }
-        let childAssociationName = childAssociation.include.as
+        const childAssociationName = childAssociation.include.as
 
         // EXPL: remove the associated owner from the child
         let deleteOwner = childObject[childAssociationName].filter(owner => {
@@ -2368,7 +2368,7 @@ async function _removeAssociation(
       })
       deleteChild = deleteChild[0]
 
-      let index = ownerObject[associationName].indexOf(deleteChild)
+      const index = ownerObject[associationName].indexOf(deleteChild)
       if (index > -1) {
         ownerObject[associationName].splice(index, 1)
       }
@@ -2400,7 +2400,7 @@ async function _removeAssociation(
 function filterDeletedEmbeds(result, parent, parentkey, depth, Log) {
   if (_.isArray(result)) {
     result = result.filter(function(obj) {
-      let keep = filterDeletedEmbeds(obj, result, parentkey, depth + 1, Log)
+      const keep = filterDeletedEmbeds(obj, result, parentkey, depth + 1, Log)
       // Log.log("KEEP:", keep);
       return keep
     })
@@ -2408,7 +2408,7 @@ function filterDeletedEmbeds(result, parent, parentkey, depth, Log) {
     // Log.note("AFTER:", result);
     parent[parentkey] = result
   } else {
-    for (let key in result) {
+    for (const key in result) {
       // Log.debug("KEY:", key);
       // Log.debug("VALUE:", result[key]);
       if (_.isArray(result[key])) {
@@ -2416,7 +2416,13 @@ function filterDeletedEmbeds(result, parent, parentkey, depth, Log) {
         filterDeletedEmbeds(result[key], result, key, depth + 1, Log)
       } else if (_.isObject(result[key]) && result[key]._id) {
         // Log.log("JUMPING IN OBJECT");
-        let keep = filterDeletedEmbeds(result[key], result, key, depth + 1, Log)
+        const keep = filterDeletedEmbeds(
+          result[key],
+          result,
+          key,
+          depth + 1,
+          Log
+        )
         if (!keep) {
           return false
         }
@@ -2479,7 +2485,7 @@ function defaultCreds(credentials) {
 }
 
 function assertServer() {
-  let RestHapi = require('../rest-hapi')
+  const RestHapi = require('../rest-hapi')
   if (_.isEmpty(RestHapi.server)) {
     const error = new Error(
       'No server found. You must register rest-hapi with a hapi server before using `restCall = true`.'

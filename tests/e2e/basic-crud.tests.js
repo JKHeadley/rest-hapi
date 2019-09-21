@@ -3,7 +3,7 @@
 const path = require('path')
 const Decache = require('decache')
 const Q = require('q')
-const Hapi = require('hapi')
+const Hapi = require('@hapi/hapi')
 
 module.exports = (t, Mongoose, internals, Log) =>
   t.test('basic CRUD tests', function(t) {

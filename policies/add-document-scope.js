@@ -1,6 +1,6 @@
 'use strict'
 
-const Boom = require('boom')
+const Boom = require('@hapi/boom')
 const _ = require('lodash')
 
 const internals = {}
@@ -18,10 +18,10 @@ internals.addDocumentScope = function(model, logger) {
   ) {
     const Log = logger.bind('addDocumentScope')
     try {
-      let scope = model.routeOptions.documentScope
+      const scope = model.routeOptions.documentScope
 
       if (scope) {
-        for (let scopeType in scope) {
+        for (const scopeType in scope) {
           if (_.isArray(request.payload)) {
             request.payload.forEach(function(document) {
               document.scope = document.scope || {}

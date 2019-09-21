@@ -1,16 +1,16 @@
 #! /usr/bin/env node
 
-let userArgs = process.argv.slice(2)
+const userArgs = process.argv.slice(2)
 
-let command = userArgs[0]
+const command = userArgs[0]
 
-let args = userArgs
+const args = userArgs
 
 args.shift()
 
-let exec = require('child_process').exec
+const exec = require('child_process').exec
 
-let isWindows = /^win/.test(process.platform)
+const isWindows = /^win/.test(process.platform)
 
 let cmdString = '$PWD/node_modules/rest-hapi/scripts/'
 

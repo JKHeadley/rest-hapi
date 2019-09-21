@@ -3,20 +3,20 @@
 // Temporarily disabling this rule for tests
 /* eslint no-unused-vars: 0 */
 
-let test = require('blue-tape')
-let _ = require('lodash')
-let sinon = require('sinon')
-let rewire = require('rewire')
-let proxyquire = require('proxyquire')
-let assert = require('assert')
-let mongoose = require('mongoose')
-let Types = mongoose.Schema.Types
-let logging = require('loggin')
-let logger = logging.getLogger('tests')
+const test = require('blue-tape')
+const _ = require('lodash')
+const sinon = require('sinon')
+const rewire = require('rewire')
+const proxyquire = require('proxyquire')
+const assert = require('assert')
+const mongoose = require('mongoose')
+const Types = mongoose.Schema.Types
+const logging = require('loggin')
+const logger = logging.getLogger('tests')
 logger.logLevel = 'ERROR'
-let testHelper = require('../../utilities/test-helper')
-let Joi = require('joi')
-let Q = require('q')
+const testHelper = require('../../utilities/test-helper')
+const Joi = require('@hapi/joi')
+const Q = require('q')
 
 // test('handler-helper-factory exists and has expected members', function (t) {
 //   //<editor-fold desc="Arrange">
@@ -288,7 +288,7 @@ let Q = require('q')
 //       let deferred = Q.defer();
 //       deferred.resolve("");
 //       queryHelperStub.createMongooseQuery = function(){ return { exec: function(){ return deferred.promise }}}
-//       let boomStub = sandbox.stub(require('boom'));
+//       let boomStub = sandbox.stub(require('@hapi/boom'));
 //       let handlerHelperFactory = proxyquire('../../utilities/handler-helper-factory', {
 //         './query-helper': queryHelperStub,
 //         'boom': boomStub
@@ -346,7 +346,7 @@ let Q = require('q')
 //       let queryHelperStub = sandbox.stub(require('../../utilities/query-helper'));
 //       let error = "error message";
 //       queryHelperStub.createMongooseQuery = function(){ return { exec: function(){ return Q.reject(error) }}};
-//       let boomStub = sandbox.stub(require('boom'));
+//       let boomStub = sandbox.stub(require('@hapi/boom'));
 //       let handlerHelperFactory = proxyquire('../../utilities/handler-helper-factory', {
 //         './query-helper': queryHelperStub,
 //         'boom': boomStub
@@ -392,7 +392,7 @@ let Q = require('q')
 //       let Log = logger.bind("handler-helper-factory");
 //       let server = sandbox.spy();
 //       let queryHelperStub = sandbox.stub(require('../../utilities/query-helper'));
-//       let boomStub = sandbox.stub(require('boom'));
+//       let boomStub = sandbox.stub(require('@hapi/boom'));
 //       let handlerHelperFactory = proxyquire('../../utilities/handler-helper-factory', {
 //         './query-helper': queryHelperStub,
 //         'boom': boomStub
@@ -631,7 +631,7 @@ let Q = require('q')
 //       let server = sandbox.spy();
 //       let queryHelperStub = sandbox.stub(require('../../utilities/query-helper'));
 //       queryHelperStub.createMongooseQuery = function(){ return { exec: function(){ return Q.when("TEST") }}}
-//       let boomStub = sandbox.stub(require('boom'));
+//       let boomStub = sandbox.stub(require('@hapi/boom'));
 //       let handlerHelperFactory = proxyquire('../../utilities/handler-helper-factory', {
 //         './query-helper': queryHelperStub,
 //         'boom': boomStub
@@ -688,7 +688,7 @@ let Q = require('q')
 //       let server = sandbox.spy();
 //       let queryHelperStub = sandbox.stub(require('../../utilities/query-helper'));
 //       queryHelperStub.createMongooseQuery = function(){ return { exec: function(){ return Q.when(null) }}}
-//       let boomStub = sandbox.stub(require('boom'));
+//       let boomStub = sandbox.stub(require('@hapi/boom'));
 //       let handlerHelperFactory = proxyquire('../../utilities/handler-helper-factory', {
 //         './query-helper': queryHelperStub,
 //         'boom': boomStub
@@ -746,7 +746,7 @@ let Q = require('q')
 //       let queryHelperStub = sandbox.stub(require('../../utilities/query-helper'));
 //       let error = "error message";
 //       queryHelperStub.createMongooseQuery = function(){ return { exec: function(){ return Q.reject(error) }}};
-//       let boomStub = sandbox.stub(require('boom'));
+//       let boomStub = sandbox.stub(require('@hapi/boom'));
 //       let handlerHelperFactory = proxyquire('../../utilities/handler-helper-factory', {
 //         './query-helper': queryHelperStub,
 //         'boom': boomStub
@@ -792,7 +792,7 @@ let Q = require('q')
 //       let Log = logger.bind("handler-helper-factory");
 //       let server = sandbox.spy();
 //       let queryHelperStub = sandbox.stub(require('../../utilities/query-helper'));
-//       let boomStub = sandbox.stub(require('boom'));
+//       let boomStub = sandbox.stub(require('@hapi/boom'));
 //       let handlerHelperFactory = proxyquire('../../utilities/handler-helper-factory', {
 //         './query-helper': queryHelperStub,
 //         'boom': boomStub
@@ -1128,7 +1128,7 @@ let Q = require('q')
 //       let server = sandbox.spy();
 //       let queryHelperStub = sandbox.stub(require('../../utilities/query-helper'));
 //       queryHelperStub.createAttributesFilter = function(){ return "attributes" };
-//       let boomStub = sandbox.stub(require('boom'));
+//       let boomStub = sandbox.stub(require('@hapi/boom'));
 //       let handlerHelperFactory = proxyquire('../../utilities/handler-helper-factory', {
 //         './query-helper': queryHelperStub,
 //         'boom': boomStub
@@ -1182,7 +1182,7 @@ let Q = require('q')
 //       let server = sandbox.spy();
 //       let queryHelperStub = sandbox.stub(require('../../utilities/query-helper'));
 //       queryHelperStub.createAttributesFilter = function(){ return "attributes" };
-//       let boomStub = sandbox.stub(require('boom'));
+//       let boomStub = sandbox.stub(require('@hapi/boom'));
 //       let handlerHelperFactory = proxyquire('../../utilities/handler-helper-factory', {
 //         './query-helper': queryHelperStub,
 //         'boom': boomStub
@@ -1235,7 +1235,7 @@ let Q = require('q')
 //       let server = sandbox.spy();
 //       let queryHelperStub = sandbox.stub(require('../../utilities/query-helper'));
 //       queryHelperStub.createAttributesFilter = function(){ return "attributes" };
-//       let boomStub = sandbox.stub(require('boom'));
+//       let boomStub = sandbox.stub(require('@hapi/boom'));
 //       let handlerHelperFactory = proxyquire('../../utilities/handler-helper-factory', {
 //         './query-helper': queryHelperStub,
 //         'boom': boomStub
@@ -1287,7 +1287,7 @@ let Q = require('q')
 //       let server = sandbox.spy();
 //       let queryHelperStub = sandbox.stub(require('../../utilities/query-helper'));
 //       queryHelperStub.createAttributesFilter = function(){ return "attributes" };
-//       let boomStub = sandbox.stub(require('boom'));
+//       let boomStub = sandbox.stub(require('@hapi/boom'));
 //       let handlerHelperFactory = proxyquire('../../utilities/handler-helper-factory', {
 //         './query-helper': queryHelperStub,
 //         'boom': boomStub
@@ -1524,7 +1524,7 @@ let Q = require('q')
 //       let sandbox = sinon.sandbox.create();
 //       let Log = logger.bind("handler-helper-factory");
 //       let server = sandbox.spy();
-//       let boomStub = sandbox.stub(require('boom'));
+//       let boomStub = sandbox.stub(require('@hapi/boom'));
 //       let handlerHelperFactory = proxyquire('../../utilities/handler-helper-factory', {
 //         'boom': boomStub
 //       })(mongoose, server);
@@ -1574,7 +1574,7 @@ let Q = require('q')
 //       let sandbox = sinon.sandbox.create();
 //       let Log = logger.bind("handler-helper-factory");
 //       let server = sandbox.spy();
-//       let boomStub = sandbox.stub(require('boom'));
+//       let boomStub = sandbox.stub(require('@hapi/boom'));
 //       let handlerHelperFactory = proxyquire('../../utilities/handler-helper-factory', {
 //         'boom': boomStub
 //       })(mongoose, server);
@@ -1619,7 +1619,7 @@ let Q = require('q')
 //       let server = sandbox.spy();
 //       let queryHelperStub = sandbox.stub(require('../../utilities/query-helper'));
 //       queryHelperStub.createAttributesFilter = function(){ return "attributes" };
-//       let boomStub = sandbox.stub(require('boom'));
+//       let boomStub = sandbox.stub(require('@hapi/boom'));
 //       let handlerHelperFactory = proxyquire('../../utilities/handler-helper-factory', {
 //         './query-helper': queryHelperStub,
 //         'boom': boomStub
@@ -1671,7 +1671,7 @@ let Q = require('q')
 //       let server = sandbox.spy();
 //       let queryHelperStub = sandbox.stub(require('../../utilities/query-helper'));
 //       queryHelperStub.createAttributesFilter = function(){ return "attributes" };
-//       let boomStub = sandbox.stub(require('boom'));
+//       let boomStub = sandbox.stub(require('@hapi/boom'));
 //       let handlerHelperFactory = proxyquire('../../utilities/handler-helper-factory', {
 //         './query-helper': queryHelperStub,
 //         'boom': boomStub
@@ -2011,7 +2011,7 @@ let Q = require('q')
 //       let server = sandbox.spy();
 //       let queryHelperStub = sandbox.stub(require('../../utilities/query-helper'));
 //       queryHelperStub.createAttributesFilter = function(){ return "attributes" };
-//       let boomStub = sandbox.stub(require('boom'));
+//       let boomStub = sandbox.stub(require('@hapi/boom'));
 //       let handlerHelperFactory = proxyquire('../../utilities/handler-helper-factory', {
 //         './query-helper': queryHelperStub,
 //         'boom': boomStub
@@ -2065,7 +2065,7 @@ let Q = require('q')
 //       let server = sandbox.spy();
 //       let queryHelperStub = sandbox.stub(require('../../utilities/query-helper'));
 //       queryHelperStub.createAttributesFilter = function(){ return "attributes" };
-//       let boomStub = sandbox.stub(require('boom'));
+//       let boomStub = sandbox.stub(require('@hapi/boom'));
 //       let handlerHelperFactory = proxyquire('../../utilities/handler-helper-factory', {
 //         './query-helper': queryHelperStub,
 //         'boom': boomStub
@@ -2111,7 +2111,7 @@ let Q = require('q')
 //       let server = sandbox.spy();
 //       let queryHelperStub = sandbox.stub(require('../../utilities/query-helper'));
 //       queryHelperStub.createAttributesFilter = function(){ return "attributes" };
-//       let boomStub = sandbox.stub(require('boom'));
+//       let boomStub = sandbox.stub(require('@hapi/boom'));
 //       let handlerHelperFactory = proxyquire('../../utilities/handler-helper-factory', {
 //         './query-helper': queryHelperStub,
 //         'boom': boomStub
@@ -2157,7 +2157,7 @@ let Q = require('q')
 //       let server = sandbox.spy();
 //       let queryHelperStub = sandbox.stub(require('../../utilities/query-helper'));
 //       queryHelperStub.createAttributesFilter = function(){ return "attributes" };
-//       let boomStub = sandbox.stub(require('boom'));
+//       let boomStub = sandbox.stub(require('@hapi/boom'));
 //       let handlerHelperFactory = proxyquire('../../utilities/handler-helper-factory', {
 //         './query-helper': queryHelperStub,
 //         'boom': boomStub
@@ -2209,7 +2209,7 @@ let Q = require('q')
 //       let server = sandbox.spy();
 //       let queryHelperStub = sandbox.stub(require('../../utilities/query-helper'));
 //       queryHelperStub.createAttributesFilter = function(){ return "attributes" };
-//       let boomStub = sandbox.stub(require('boom'));
+//       let boomStub = sandbox.stub(require('@hapi/boom'));
 //       let handlerHelperFactory = proxyquire('../../utilities/handler-helper-factory', {
 //         './query-helper': queryHelperStub,
 //         'boom': boomStub
@@ -2413,7 +2413,7 @@ let Q = require('q')
 //       let Log = logger.bind("handler-helper-factory");
 //       let server = sandbox.spy();
 //       let setAssociation = sandbox.spy(function(){ return Q.reject("error message") });
-//       let boomStub = sandbox.stub(require('boom'));
+//       let boomStub = sandbox.stub(require('@hapi/boom'));
 //       let handlerHelperFactory = rewire('../../utilities/handler-helper-factory');
 //       handlerHelperFactory.__set__("setAssociation", setAssociation);
 //       handlerHelperFactory.__set__("Boom", boomStub);
@@ -2465,7 +2465,7 @@ let Q = require('q')
 //       let sandbox = sinon.sandbox.create();
 //       let Log = logger.bind("handler-helper-factory");
 //       let server = sandbox.spy();
-//       let boomStub = sandbox.stub(require('boom'));
+//       let boomStub = sandbox.stub(require('@hapi/boom'));
 //       let handlerHelperFactory = rewire('../../utilities/handler-helper-factory');
 //       handlerHelperFactory.__set__("Boom", boomStub);
 //       handlerHelperFactory = handlerHelperFactory(mongoose, server);
@@ -2516,7 +2516,7 @@ let Q = require('q')
 //       let sandbox = sinon.sandbox.create();
 //       let Log = logger.bind("handler-helper-factory");
 //       let server = sandbox.spy();
-//       let boomStub = sandbox.stub(require('boom'));
+//       let boomStub = sandbox.stub(require('@hapi/boom'));
 //       let handlerHelperFactory = rewire('../../utilities/handler-helper-factory');
 //       handlerHelperFactory.__set__("Boom", boomStub);
 //       handlerHelperFactory = handlerHelperFactory(mongoose, server);
@@ -2721,7 +2721,7 @@ let Q = require('q')
 //       let Log = logger.bind("handler-helper-factory");
 //       let server = sandbox.spy();
 //       let removeAssociation = sandbox.spy(function(){ return Q.reject("error message") });
-//       let boomStub = sandbox.stub(require('boom'));
+//       let boomStub = sandbox.stub(require('@hapi/boom'));
 //       let handlerHelperFactory = rewire('../../utilities/handler-helper-factory');
 //       handlerHelperFactory.__set__("removeAssociation", removeAssociation);
 //       handlerHelperFactory.__set__("Boom", boomStub);
@@ -2773,7 +2773,7 @@ let Q = require('q')
 //       let sandbox = sinon.sandbox.create();
 //       let Log = logger.bind("handler-helper-factory");
 //       let server = sandbox.spy();
-//       let boomStub = sandbox.stub(require('boom'));
+//       let boomStub = sandbox.stub(require('@hapi/boom'));
 //       let handlerHelperFactory = rewire('../../utilities/handler-helper-factory');
 //       handlerHelperFactory.__set__("Boom", boomStub);
 //       handlerHelperFactory = handlerHelperFactory(mongoose, server);
@@ -2824,7 +2824,7 @@ let Q = require('q')
 //       let sandbox = sinon.sandbox.create();
 //       let Log = logger.bind("handler-helper-factory");
 //       let server = sandbox.spy();
-//       let boomStub = sandbox.stub(require('boom'));
+//       let boomStub = sandbox.stub(require('@hapi/boom'));
 //       let handlerHelperFactory = rewire('../../utilities/handler-helper-factory');
 //       handlerHelperFactory.__set__("Boom", boomStub);
 //       handlerHelperFactory = handlerHelperFactory(mongoose, server);
@@ -3032,7 +3032,7 @@ let Q = require('q')
 //       let Log = logger.bind("handler-helper-factory");
 //       let server = sandbox.spy();
 //       let setAssociation = sandbox.spy(function(){ return Q.reject("error message") });
-//       let boomStub = sandbox.stub(require('boom'));
+//       let boomStub = sandbox.stub(require('@hapi/boom'));
 //       let handlerHelperFactory = rewire('../../utilities/handler-helper-factory');
 //       handlerHelperFactory.__set__("setAssociation", setAssociation);
 //       handlerHelperFactory.__set__("Boom", boomStub);
@@ -3085,7 +3085,7 @@ let Q = require('q')
 //       let sandbox = sinon.sandbox.create();
 //       let Log = logger.bind("handler-helper-factory");
 //       let server = sandbox.spy();
-//       let boomStub = sandbox.stub(require('boom'));
+//       let boomStub = sandbox.stub(require('@hapi/boom'));
 //       let handlerHelperFactory = rewire('../../utilities/handler-helper-factory');
 //       handlerHelperFactory.__set__("Boom", boomStub);
 //       handlerHelperFactory = handlerHelperFactory(mongoose, server);
@@ -3137,7 +3137,7 @@ let Q = require('q')
 //       let sandbox = sinon.sandbox.create();
 //       let Log = logger.bind("handler-helper-factory");
 //       let server = sandbox.spy();
-//       let boomStub = sandbox.stub(require('boom'));
+//       let boomStub = sandbox.stub(require('@hapi/boom'));
 //       let handlerHelperFactory = rewire('../../utilities/handler-helper-factory');
 //       handlerHelperFactory.__set__("Boom", boomStub);
 //       handlerHelperFactory = handlerHelperFactory(mongoose, server);
@@ -3526,7 +3526,7 @@ let Q = require('q')
 //       let sandbox = sinon.sandbox.create();
 //       let Log = logger.bind("handler-helper-factory");
 //       let server = sandbox.spy();
-//       let boomStub = sandbox.stub(require('boom'));
+//       let boomStub = sandbox.stub(require('@hapi/boom'));
 //       let handlerHelperFactory = rewire('../../utilities/handler-helper-factory');
 //       handlerHelperFactory.__set__("Boom", boomStub);
 //       handlerHelperFactory = handlerHelperFactory(mongoose, server);
