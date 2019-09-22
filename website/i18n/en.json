@@ -4,62 +4,217 @@
     "next": "Next",
     "previous": "Previous",
     "tagline": "A RESTful API generator ",
-    "associations": "Associations",
-    "Assocations": "Assocations",
-    "audit-logs": "Audit Logs",
-    "Audit Logs": "Audit Logs",
-    "authentication": "Authentication",
-    "Authentication": "Authentication",
-    "authorization": "Authorization",
-    "Authorization": "Authorization",
-    "configuration": "Configuration",
-    "Configuration": "Configuration",
-    "creating-endpoints": "Creating Endpoints",
-    "Creating Endpoints": "Creating Endpoints",
-    "duplicate-fields": "Duplicate Fields",
-    "Duplicate Fields": "Duplicate Fields",
-    "introduction": "Introduction",
-    "Introduction": "Introduction",
-    "metadata": "Metadata",
-    "Metadata": "Metadata",
-    "middleware": "Middleware",
-    "Middleware": "Middleware",
-    "misc": "Miscellaneous",
-    "Miscellaneous": "Miscellaneous",
-    "model-generation": "Model Generation",
-    "Model Generation": "Model Generation",
-    "mongoose-wrapper-methods": "Mongoose Wrapper Methods",
-    "Mongoose Wrapper Methods": "Mongoose Wrapper Methods",
-    "policies": "Policies",
-    "Policies": "Policies",
-    "querying": "Querying",
-    "Querying": "Querying",
-    "questions": "Questions",
-    "Questions": "Questions",
-    "quick-start": "Quick Start",
-    "Quick Start": "Quick Start",
-    "route-customization": "Route Customization",
-    "Route Customization": "Route Customization",
-    "soft-delete": "Soft Delete",
-    "Soft Delete": "Soft Delete",
-    "support": "Support",
-    "Support": "Support",
-    "swagger-documentation": "Swagger Documentation",
-    "Swagger Documentation": "Swagger Documentation",
-    "testing": "Testing",
-    "Testing": "Testing",
-    "validation": "Validation",
-    "Validation": "Validation",
-    "Docs": "Docs",
-    "Help": "Help",
-    "Blog": "Blog",
-    "Users": "Users",
-    "GitHub": "GitHub",
-    "Getting Started": "Getting Started",
-    "Usage": "Usage",
-    "Other": "Other",
-    "First Category": "First Category",
-    "getting-started": "Getting Started"
+    "docs": {
+      "associations": {
+        "title": "Associations",
+        "sidebar_label": "Assocations"
+      },
+      "audit-logs": {
+        "title": "Audit Logs",
+        "sidebar_label": "Audit Logs"
+      },
+      "authentication": {
+        "title": "Authentication",
+        "sidebar_label": "Authentication"
+      },
+      "authorization": {
+        "title": "Authorization",
+        "sidebar_label": "Authorization"
+      },
+      "configuration": {
+        "title": "Configuration",
+        "sidebar_label": "Configuration"
+      },
+      "creating-endpoints": {
+        "title": "Creating Endpoints",
+        "sidebar_label": "Creating Endpoints"
+      },
+      "duplicate-fields": {
+        "title": "Duplicate Fields",
+        "sidebar_label": "Duplicate Fields"
+      },
+      "introduction": {
+        "title": "Introduction",
+        "sidebar_label": "Introduction"
+      },
+      "metadata": {
+        "title": "Metadata",
+        "sidebar_label": "Metadata"
+      },
+      "middleware": {
+        "title": "Middleware",
+        "sidebar_label": "Middleware"
+      },
+      "misc": {
+        "title": "Miscellaneous",
+        "sidebar_label": "Miscellaneous"
+      },
+      "model-generation": {
+        "title": "Model Generation",
+        "sidebar_label": "Model Generation"
+      },
+      "mongoose-wrapper-methods": {
+        "title": "Mongoose Wrapper Methods",
+        "sidebar_label": "Mongoose Wrapper Methods"
+      },
+      "policies": {
+        "title": "Policies",
+        "sidebar_label": "Policies"
+      },
+      "querying": {
+        "title": "Querying",
+        "sidebar_label": "Querying"
+      },
+      "questions": {
+        "title": "Questions",
+        "sidebar_label": "Questions"
+      },
+      "quick-start": {
+        "title": "Quick Start",
+        "sidebar_label": "Quick Start"
+      },
+      "route-customization": {
+        "title": "Route Customization",
+        "sidebar_label": "Route Customization"
+      },
+      "soft-delete": {
+        "title": "Soft Delete",
+        "sidebar_label": "Soft Delete"
+      },
+      "support": {
+        "title": "Support",
+        "sidebar_label": "Support"
+      },
+      "swagger-documentation": {
+        "title": "Swagger Documentation",
+        "sidebar_label": "Swagger Documentation"
+      },
+      "testing": {
+        "title": "Testing",
+        "sidebar_label": "Testing"
+      },
+      "validation": {
+        "title": "Validation",
+        "sidebar_label": "Validation"
+      },
+      "version-1.6.x/version-1.6.x-associations": {
+        "title": "Associations",
+        "sidebar_label": "Assocations"
+      },
+      "version-1.6.x/version-1.6.x-audit-logs": {
+        "title": "Audit Logs",
+        "sidebar_label": "Audit Logs"
+      },
+      "version-1.6.x/version-1.6.x-authentication": {
+        "title": "Authentication",
+        "sidebar_label": "Authentication"
+      },
+      "version-1.6.x/version-1.6.x-authorization": {
+        "title": "Authorization",
+        "sidebar_label": "Authorization"
+      },
+      "version-1.6.x/version-1.6.x-configuration": {
+        "title": "Configuration",
+        "sidebar_label": "Configuration"
+      },
+      "version-1.6.x/version-1.6.x-creating-endpoints": {
+        "title": "Creating Endpoints",
+        "sidebar_label": "Creating Endpoints"
+      },
+      "version-1.6.x/version-1.6.x-duplicate-fields": {
+        "title": "Duplicate Fields",
+        "sidebar_label": "Duplicate Fields"
+      },
+      "version-1.6.x/version-1.6.x-introduction": {
+        "title": "Introduction",
+        "sidebar_label": "Introduction"
+      },
+      "version-1.6.x/version-1.6.x-metadata": {
+        "title": "Metadata",
+        "sidebar_label": "Metadata"
+      },
+      "version-1.6.x/version-1.6.x-middleware": {
+        "title": "Middleware",
+        "sidebar_label": "Middleware"
+      },
+      "version-1.6.x/version-1.6.x-misc": {
+        "title": "Miscellaneous",
+        "sidebar_label": "Miscellaneous"
+      },
+      "version-1.6.x/version-1.6.x-model-generation": {
+        "title": "Model Generation",
+        "sidebar_label": "Model Generation"
+      },
+      "version-1.6.x/version-1.6.x-mongoose-wrapper-methods": {
+        "title": "Mongoose Wrapper Methods",
+        "sidebar_label": "Mongoose Wrapper Methods"
+      },
+      "version-1.6.x/version-1.6.x-policies": {
+        "title": "Policies",
+        "sidebar_label": "Policies"
+      },
+      "version-1.6.x/version-1.6.x-querying": {
+        "title": "Querying",
+        "sidebar_label": "Querying"
+      },
+      "version-1.6.x/version-1.6.x-questions": {
+        "title": "Questions",
+        "sidebar_label": "Questions"
+      },
+      "version-1.6.x/version-1.6.x-quick-start": {
+        "title": "Quick Start",
+        "sidebar_label": "Quick Start"
+      },
+      "version-1.6.x/version-1.6.x-route-customization": {
+        "title": "Route Customization",
+        "sidebar_label": "Route Customization"
+      },
+      "version-1.6.x/version-1.6.x-soft-delete": {
+        "title": "Soft Delete",
+        "sidebar_label": "Soft Delete"
+      },
+      "version-1.6.x/version-1.6.x-support": {
+        "title": "Support",
+        "sidebar_label": "Support"
+      },
+      "version-1.6.x/version-1.6.x-swagger-documentation": {
+        "title": "Swagger Documentation",
+        "sidebar_label": "Swagger Documentation"
+      },
+      "version-1.6.x/version-1.6.x-testing": {
+        "title": "Testing",
+        "sidebar_label": "Testing"
+      },
+      "version-1.6.x/version-1.6.x-validation": {
+        "title": "Validation",
+        "sidebar_label": "Validation"
+      },
+      "version-1.7.x/version-1.7.x-mongoose-wrapper-methods": {
+        "title": "Mongoose Wrapper Methods",
+        "sidebar_label": "Mongoose Wrapper Methods"
+      },
+      "version-1.7.x/version-1.7.x-policies": {
+        "title": "Policies",
+        "sidebar_label": "Policies"
+      },
+      "version-1.7.x/version-1.7.x-validation": {
+        "title": "Validation",
+        "sidebar_label": "Validation"
+      }
+    },
+    "links": {
+      "Docs": "Docs",
+      "Help": "Help",
+      "Blog": "Blog",
+      "Users": "Users",
+      "GitHub": "GitHub"
+    },
+    "categories": {
+      "Getting Started": "Getting Started",
+      "Usage": "Usage",
+      "Other": "Other",
+      "First Category": "First Category"
+    }
   },
   "pages-strings": {
     "Help Translate|recruit community translators for your project": "Help Translate",

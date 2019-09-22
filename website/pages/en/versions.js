@@ -18,9 +18,10 @@ const versions = require(CWD + '/versions.json');
 
 class Versions extends React.Component {
   render() {
-    const latestVersion = versions[0];
-    return (
-      <div className="docMainWrapper wrapper">
+  const { config: siteConfig } = this.props
+  const latestVersion = versions[0]
+  const repoUrl = `https://github.com/${siteConfig.organizationName}/${siteConfig.projectName}`
+    return <div className="docMainWrapper wrapper">
         <Container className="mainContainer versionsContainer">
           <div className="post">
             <header className="postHeader">
@@ -33,10 +34,16 @@ class Versions extends React.Component {
                 <tr>
                   <th>{latestVersion}</th>
                   <td>
-                    <a href={''}>Documentation</a>
+                    <a
+                      href={`${siteConfig.baseUrl}${siteConfig.docsUrl}/quick-start`}
+                    >
+                      Documentation
+                    </a>
                   </td>
                   <td>
-                    <a href={''}>Release Notes</a>
+                    <a href={`${repoUrl}/blob/master/CHANGELOG.md`}>
+                      Release Notes
+                    </a>
                   </td>
                 </tr>
               </tbody>
@@ -51,10 +58,16 @@ class Versions extends React.Component {
                 <tr>
                   <th>master</th>
                   <td>
-                    <a href={''}>Documentation</a>
+                    <a
+                      href={`${siteConfig.baseUrl}${siteConfig.docsUrl}/next/quick-start`}
+                    >
+                      Documentation
+                    </a>
                   </td>
                   <td>
-                    <a href={''}>Release Notes</a>
+                    <a href={`${repoUrl}/blob/master/CHANGELOG.md`}>
+                      Release Notes
+                    </a>
                   </td>
                 </tr>
               </tbody>
@@ -63,30 +76,34 @@ class Versions extends React.Component {
             <h3 id="archive">Past Versions</h3>
             <table className="versions">
               <tbody>
-                {versions.map(
-                  version =>
-                    version !== latestVersion && (
-                      <tr>
+                {versions.map(version => version !== latestVersion && <tr>
                         <th>{version}</th>
                         <td>
-                          <a href={''}>Documentation</a>
+                          <a
+                            href={`${siteConfig.baseUrl}${
+                              siteConfig.docsUrl
+                            }/${version}/quick-start`}
+                          >
+                            Documentation
+                          </a>
                         </td>
                         <td>
-                          <a href={''}>Release Notes</a>
+                          <a href={`${repoUrl}/blob/master/CHANGELOG.md`}>
+                            Release Notes
+                          </a>
                         </td>
-                      </tr>
-                    )
-                )}
+                      </tr>)}
               </tbody>
             </table>
             <p>
-              You can find past versions of this project{' '}
-              <a href="https://github.com/"> on GitHub </a>.
+              You can find past versions of this project <a href="https://github.com/">
+                {' '}
+                on GitHub{' '}
+              </a>.
             </p>
           </div>
         </Container>
       </div>
-    );
   }
 }
 
