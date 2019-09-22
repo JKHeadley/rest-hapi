@@ -149,6 +149,7 @@ async function _listHandler(model, request, Log) {
       flatten = true
     }
     delete query.$flatten
+    const { $embed } = query
     if (query.$count) {
       mongooseQuery = model.count()
       mongooseQuery = QueryHelper.createMongooseQuery(
@@ -205,21 +206,16 @@ async function _listHandler(model, request, Log) {
               result[associationKey] = data[associationKey]
             }
           }
-          if (association.type === 'MANY_MANY' && flatten === true) {
-            // EXPL: remove additional fields and return a flattened array
-            if (result[associationKey]) {
-              result[associationKey] = result[associationKey].map(object => {
-                object = object[association.model]
-                return object
-              })
-            }
+
+          if (config.enableSoftDelete && config.filterDeletedEmbeds) {
+            // EXPL: remove soft deleted documents from populated properties
+            filterDeletedEmbeds(result, {}, '', 0, Log)
+          }
+
+          if (flatten && $embed) {
+            flattenEmbeds(result, associations, $embed)
           }
         }
-      }
-
-      if (config.enableSoftDelete && config.filterDeletedEmbeds) {
-        // EXPL: remove soft deleted documents from populated properties
-        filterDeletedEmbeds(result, {}, '', 0, Log)
       }
 
       Log.log('Result: %s', JSON.stringify(result))
@@ -361,6 +357,7 @@ async function _findHandler(model, _id, request, Log) {
       flatten = true
     }
     delete query.$flatten
+    const { $embed } = query
     let mongooseQuery = model.findOne({ _id: _id })
     mongooseQuery = QueryHelper.createMongooseQuery(
       model,
@@ -395,21 +392,16 @@ async function _findHandler(model, _id, request, Log) {
             // EXPL: we have to manually populate the return value for virtual (e.g. ONE_MANY) associations
             result[associationKey] = data[associationKey]
           }
-          if (association.type === 'MANY_MANY' && flatten === true) {
-            // EXPL: remove additional fields and return a flattened array
-            if (result[associationKey]) {
-              result[associationKey] = result[associationKey].map(object => {
-                object = object[association.model]
-                return object
-              })
-            }
-          }
         }
-      }
 
-      if (config.enableSoftDelete && config.filterDeletedEmbeds) {
-        // EXPL: remove soft deleted documents from populated properties
-        filterDeletedEmbeds(result, {}, '', 0, Log)
+        if (config.enableSoftDelete && config.filterDeletedEmbeds) {
+          // EXPL: remove soft deleted documents from populated properties
+          filterDeletedEmbeds(result, {}, '', 0, Log)
+        }
+
+        if (flatten && $embed) {
+          flattenEmbeds(result, associations, $embed)
+        }
       }
 
       Log.log('Result: %s', JSON.stringify(result))
@@ -774,7 +766,7 @@ async function _updateHandler(model, _id, request, Log) {
  * - _id: The document id.
  * - hardDelete: Flag used to determine a soft or hard delete.
  * - Log: A logging object.
- * - restCall: If 'true', then will call PUT /model/{_id}
+ * - restCall: If 'true', then will call DELETE /model/{_id}
  * - credentials: Credentials for accessing the endpoint.
  *
  * @returns {object} A promise for the resulting model document.
@@ -927,7 +919,6 @@ async function _deleteOneHandler(model, _id, hardDelete, request, Log) {
  * **Named:**
  * - function deleteMany({
  *      model,
- *      _id,
  *      payload,
  *      Log = RestHapi.getLogger('delete'),
  *      restCall = false,
@@ -936,10 +927,9 @@ async function _deleteOneHandler(model, _id, hardDelete, request, Log) {
  *
  * **Params:**
  * - model {object | string}: A mongoose model.
- * - _id: The document id.
  * - payload: Either an array of ids or an array of objects containing an id and a "hardDelete" flag.
  * - Log: A logging object.
- * - restCall: If 'true', then will call PUT /model/{_id}
+ * - restCall: If 'true', then will call DELETE /model
  * - credentials: Credentials for accessing the endpoint.
  *
  * @returns {object} A promise for the resulting model document.
@@ -1058,7 +1048,7 @@ async function _deleteManyHandler(model, request, Log) {
  * - associationName: The name of the association from the ownerModel's perspective.
  * - payload: An object containing an extra linking-model fields.
  * - Log: A logging object
- * - restCall: If 'true', then will call PUT /model/{_id}
+ * - restCall: If 'true', then will call PUT /ownerModel/{ownerId}/childModel/{childId}
  * - credentials: Credentials for accessing the endpoint.
  *
  * @returns {object} A promise for the resulting model document.
@@ -1117,10 +1107,13 @@ async function _addOneV2({
     assertServer()
     credentials = defaultCreds(credentials)
 
+    const association = ownerModel.routeOptions.associations[associationName]
+    const ownerAlias = ownerModel.routeOptions.alias || ownerModel.modelName
+    const childAlias = association.alias || association.include.model.modelName
+
     const request = {
       method: 'Put',
-      url: `/${ownerModel.routeOptions.alias ||
-        ownerModel.modelName}/${ownerId}/${associationName}/${childId}`,
+      url: `/${ownerAlias}/${ownerId}/${childAlias}/${childId}`,
       payload,
       params: { ownerId, childId },
       credentials,
@@ -1260,7 +1253,7 @@ async function _addOneHandler(
  * - associationName: The name of the association from the ownerModel's perspective.
  * - payload: An object containing an extra linking-model fields.
  * - Log: A logging object
- * - restCall: If 'true', then will call PUT /model/{_id}
+ * - restCall: If 'true', then will call DELETE /ownerModel/{ownerId}/childModel/{childId}
  * - credentials: Credentials for accessing the endpoint.
  *
  * @returns {object} A promise for the resulting model document.
@@ -1319,10 +1312,13 @@ async function _removeOneV2({
     assertServer()
     credentials = defaultCreds(credentials)
 
+    const association = ownerModel.routeOptions.associations[associationName]
+    const ownerAlias = ownerModel.routeOptions.alias || ownerModel.modelName
+    const childAlias = association.alias || association.include.model.modelName
+
     const request = {
       method: 'Delete',
-      url: `/${ownerModel.routeOptions.alias ||
-        ownerModel.modelName}/${ownerId}/${associationName}/${childId}`,
+      url: `/${ownerAlias}/${ownerId}/${childAlias}/${childId}`,
       payload,
       params: { ownerId, childId },
       credentials,
@@ -1450,7 +1446,7 @@ async function _removeOneHandler(
  * - associationName: The name of the association from the ownerModel's perspective.
  * - payload: Either a list of id's or a list of id's along with extra linking-model fields.
  * - Log: A logging object
- * - restCall: If 'true', then will call PUT /model/{_id}
+ * - restCall: If 'true', then will call POST /ownerModel/{ownerId}/childModel
  * - credentials: Credentials for accessing the endpoint.
  *
  * @returns {object} A promise for the resulting model document.
@@ -1503,10 +1499,13 @@ async function _addManyV2({
     assertServer()
     credentials = defaultCreds(credentials)
 
+    const association = ownerModel.routeOptions.associations[associationName]
+    const ownerAlias = ownerModel.routeOptions.alias || ownerModel.modelName
+    const childAlias = association.alias || association.include.model.modelName
+
     const request = {
       method: 'Post',
-      url: `/${ownerModel.routeOptions.alias ||
-        ownerModel.modelName}/${ownerId}/${associationName}`,
+      url: `/${ownerAlias}/${ownerId}/${childAlias}`,
       payload,
       params: { ownerId },
       credentials,
@@ -1658,7 +1657,7 @@ async function _addManyHandler(
  * - associationName: The name of the association from the ownerModel's perspective.
  * - payload: Either a list of id's or a list of id's along with extra linking-model fields.
  * - Log: A logging object
- * - restCall: If 'true', then will call PUT /model/{_id}
+ * - restCall: If 'true', then will call DELETE /ownerModel/{ownerId}/childModel
  * - credentials: Credentials for accessing the endpoint.
  *
  * @returns {object} A promise for the resulting model document.
@@ -1711,10 +1710,13 @@ async function _removeManyV2({
     assertServer()
     credentials = defaultCreds(credentials)
 
+    const association = ownerModel.routeOptions.associations[associationName]
+    const ownerAlias = ownerModel.routeOptions.alias || ownerModel.modelName
+    const childAlias = association.alias || association.include.model.modelName
+
     const request = {
       method: 'Delete',
-      url: `/${ownerModel.routeOptions.alias ||
-        ownerModel.modelName}/${ownerId}/${associationName}`,
+      url: `/${ownerAlias}/${ownerId}/${childAlias}`,
       payload,
       params: { ownerId },
       credentials,
@@ -1849,7 +1851,7 @@ async function _removeManyHandler(
  * - associationName: The name of the association from the ownerModel's perspective.
  * - query: rest-hapi query parameters to be converted to a mongoose query.
  * - Log: A logging object
- * - restCall: If 'true', then will call PUT /model/{_id}
+ * - restCall: If 'true', then will call GET /ownerModel/{ownerId}/childModel
  * - credentials: Credentials for accessing the endpoint.
  *
  * @returns {object} A promise for the resulting model document.
@@ -1902,10 +1904,13 @@ async function _getAllV2({
     assertServer()
     credentials = defaultCreds(credentials)
 
+    const association = ownerModel.routeOptions.associations[associationName]
+    const ownerAlias = ownerModel.routeOptions.alias || ownerModel.modelName
+    const childAlias = association.alias || association.include.model.modelName
+
     const request = {
       method: 'Get',
-      url: `/${ownerModel.routeOptions.alias ||
-        ownerModel.modelName}/${ownerId}/${associationName}`,
+      url: `/${ownerAlias}/${ownerId}/${childAlias}`,
       query,
       params: { ownerId },
       credentials,
@@ -2101,9 +2106,7 @@ async function _setAssociation(
   payload,
   Log
 ) {
-  let childObject
-
-  childObject = await childModel.findOne({ _id: childId })
+  const childObject = await childModel.findOne({ _id: childId })
   if (childObject) {
     const association = ownerModel.routeOptions.associations[associationName]
     let extraFields = false
@@ -2444,6 +2447,46 @@ function filterDeletedEmbeds(result, parent, parentkey, depth, Log) {
     // Log.log("JUMPING OUT");
     return true
   }
+}
+
+/**
+ * Remove additional fields from embedded associations. Flattens recursively.
+ * @param {*} result
+ * @param {*} associations
+ * @param {*} $embed
+ */
+function flattenEmbeds(result, associations, $embed) {
+  if (!Array.isArray($embed)) {
+    $embed = $embed.split(',')
+  }
+  $embed.forEach(function(embedString) {
+    const embeds = embedString.split('.')
+    const currentEmbed = embeds[0]
+    const association = associations[currentEmbed]
+
+    if (result[currentEmbed] && Array.isArray(result[currentEmbed])) {
+      result[currentEmbed] = result[currentEmbed].map(object => {
+        if (object[association.model]) {
+          object = object[association.model]
+        }
+        return object
+      })
+
+      const remainingEmbeds = [...embeds]
+      remainingEmbeds.shift()
+
+      if (!_.isEmpty(remainingEmbeds)) {
+        const nextModel = getModel(association.model)
+        result[currentEmbed].forEach(function(nextResult) {
+          flattenEmbeds(
+            nextResult,
+            nextModel.routeOptions.associations,
+            remainingEmbeds
+          )
+        })
+      }
+    }
+  })
 }
 
 /**

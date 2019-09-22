@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [1.8.0] - 2019-09-21
+### Changed
+- [Updated dependencies (hapi v18)](https://github.com/JKHeadley/rest-hapi/pull/201)
+
 ## [1.7.0] - 2019-09-13
 ### Added
 - [Named parameters for wrapper methods](https://github.com/JKHeadley/rest-hapi/pull/200)
@@ -269,7 +273,7 @@ post(hardDelete, deleted, Log) | post(hardDelete, deleted, request, Log)
 
 
 
-[Unreleased]: https://github.com/jkheadley/rest-hapi/compare/v1.6.0...HEAD
+[Unreleased]: https://github.com/jkheadley/rest-hapi/compare/v1.8.0...HEAD
 [0.20.0]: https://github.com/jkheadley/rest-hapi/compare/v0.19.2...v0.20.0
 [0.20.2]: https://github.com/jkheadley/rest-hapi/compare/v0.20.0...v0.20.2
 [0.20.3]: https://github.com/jkheadley/rest-hapi/compare/v0.20.2...v0.20.3
@@ -303,5 +307,6 @@ post(hardDelete, deleted, Log) | post(hardDelete, deleted, request, Log)
 [1.5.0]: https://github.com/jkheadley/rest-hapi/compare/v1.4.0...v1.5.0
 [1.6.0]: https://github.com/jkheadley/rest-hapi/compare/v1.5.0...v1.6.0
 [1.7.0]: https://github.com/jkheadley/rest-hapi/compare/v1.6.0...v1.7.0
+[1.8.0]: https://github.com/jkheadley/rest-hapi/compare/v1.7.0...v1.8.0
 
 [BREAKING]: https://github.com/JKHeadley/rest-hapi/releases
