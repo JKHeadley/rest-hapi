@@ -2106,9 +2106,7 @@ async function _setAssociation(
   payload,
   Log
 ) {
-  let childObject
-
-  childObject = await childModel.findOne({ _id: childId })
+  const childObject = await childModel.findOne({ _id: childId })
   if (childObject) {
     const association = ownerModel.routeOptions.associations[associationName]
     let extraFields = false

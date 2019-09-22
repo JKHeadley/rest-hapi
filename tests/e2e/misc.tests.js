@@ -167,14 +167,13 @@ module.exports = (t, Mongoose, internals, Log) => {
                     payload: [
                       {
                         childId: tags[0]._id,
-                        rank: 0
+                        rank: 10
                       }
                     ],
                     restCall: true
                   })
                 })
                 .then(result => {
-                  Log.debug('addmany:', result)
                   return RestHapi.addMany({
                     ownerModel: 'segment',
                     ownerId: segments[1]._id,

@@ -210,7 +210,7 @@ module.exports = (t, Mongoose, internals, Log) => {
                     return RestHapi.addOne({
                       ownerModel: 'role',
                       childModel: 'user',
-                      associationName: 'people',
+                      associationName: 'users',
                       ownerId: roles[0]._id,
                       childId: users[0]._id,
                       restCall: true
@@ -222,7 +222,7 @@ module.exports = (t, Mongoose, internals, Log) => {
                     return RestHapi.addMany({
                       ownerModel: 'role',
                       childModel: 'user',
-                      associationName: 'people',
+                      associationName: 'users',
                       ownerId: roles[0]._id,
                       payload,
                       restCall: true
@@ -243,7 +243,7 @@ module.exports = (t, Mongoose, internals, Log) => {
                       RestHapi.getAll({
                         ownerModel: 'role',
                         childModel: 'user',
-                        associationName: 'people',
+                        associationName: 'users',
                         ownerId: roles[0]._id,
                         query: { $embed: ['title'] },
                         restCall: true
@@ -945,7 +945,7 @@ module.exports = (t, Mongoose, internals, Log) => {
                       ownerId: roles[0]._id,
                       childModel: 'user',
                       childId: users[0]._id,
-                      associationName: 'people',
+                      associationName: 'users',
                       restCall: true
                     })
                   })
@@ -960,7 +960,7 @@ module.exports = (t, Mongoose, internals, Log) => {
                       ownerModel: 'role',
                       ownerId: roles[0]._id,
                       childModel: 'user',
-                      associationName: 'people',
+                      associationName: 'users',
                       payload,
                       restCall: true
                     })
