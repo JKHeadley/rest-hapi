@@ -766,7 +766,7 @@ async function _updateHandler(model, _id, request, Log) {
  * - _id: The document id.
  * - hardDelete: Flag used to determine a soft or hard delete.
  * - Log: A logging object.
- * - restCall: If 'true', then will call PUT /model/{_id}
+ * - restCall: If 'true', then will call DELETE /model/{_id}
  * - credentials: Credentials for accessing the endpoint.
  *
  * @returns {object} A promise for the resulting model document.
@@ -929,7 +929,7 @@ async function _deleteOneHandler(model, _id, hardDelete, request, Log) {
  * - model {object | string}: A mongoose model.
  * - payload: Either an array of ids or an array of objects containing an id and a "hardDelete" flag.
  * - Log: A logging object.
- * - restCall: If 'true', then will call PUT /model/{_id}
+ * - restCall: If 'true', then will call DELETE /model
  * - credentials: Credentials for accessing the endpoint.
  *
  * @returns {object} A promise for the resulting model document.
@@ -1048,7 +1048,7 @@ async function _deleteManyHandler(model, request, Log) {
  * - associationName: The name of the association from the ownerModel's perspective.
  * - payload: An object containing an extra linking-model fields.
  * - Log: A logging object
- * - restCall: If 'true', then will call PUT /model/{_id}
+ * - restCall: If 'true', then will call PUT /ownerModel/{ownerId}/childModel/{childId}
  * - credentials: Credentials for accessing the endpoint.
  *
  * @returns {object} A promise for the resulting model document.
@@ -1250,7 +1250,7 @@ async function _addOneHandler(
  * - associationName: The name of the association from the ownerModel's perspective.
  * - payload: An object containing an extra linking-model fields.
  * - Log: A logging object
- * - restCall: If 'true', then will call PUT /model/{_id}
+ * - restCall: If 'true', then will call DELETE /ownerModel/{ownerId}/childModel/{childId}
  * - credentials: Credentials for accessing the endpoint.
  *
  * @returns {object} A promise for the resulting model document.
@@ -1440,7 +1440,7 @@ async function _removeOneHandler(
  * - associationName: The name of the association from the ownerModel's perspective.
  * - payload: Either a list of id's or a list of id's along with extra linking-model fields.
  * - Log: A logging object
- * - restCall: If 'true', then will call PUT /model/{_id}
+ * - restCall: If 'true', then will call POST /ownerModel/{ownerId}/childModel
  * - credentials: Credentials for accessing the endpoint.
  *
  * @returns {object} A promise for the resulting model document.
@@ -1648,7 +1648,7 @@ async function _addManyHandler(
  * - associationName: The name of the association from the ownerModel's perspective.
  * - payload: Either a list of id's or a list of id's along with extra linking-model fields.
  * - Log: A logging object
- * - restCall: If 'true', then will call PUT /model/{_id}
+ * - restCall: If 'true', then will call DELETE /ownerModel/{ownerId}/childModel
  * - credentials: Credentials for accessing the endpoint.
  *
  * @returns {object} A promise for the resulting model document.
@@ -1839,7 +1839,7 @@ async function _removeManyHandler(
  * - associationName: The name of the association from the ownerModel's perspective.
  * - query: rest-hapi query parameters to be converted to a mongoose query.
  * - Log: A logging object
- * - restCall: If 'true', then will call PUT /model/{_id}
+ * - restCall: If 'true', then will call GET /ownerModel/{ownerId}/childModel
  * - credentials: Credentials for accessing the endpoint.
  *
  * @returns {object} A promise for the resulting model document.
