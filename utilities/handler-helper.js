@@ -1107,10 +1107,13 @@ async function _addOneV2({
     assertServer()
     credentials = defaultCreds(credentials)
 
+    const association = ownerModel.routeOptions.associations[associationName]
+    const ownerAlias = ownerModel.routeOptions.alias || ownerModel.modelName
+    const childAlias = association.alias || association.include.model.modelName
+
     const request = {
       method: 'Put',
-      url: `/${ownerModel.routeOptions.alias ||
-        ownerModel.modelName}/${ownerId}/${associationName}/${childId}`,
+      url: `/${ownerAlias}/${ownerId}/${childAlias}/${childId}`,
       payload,
       params: { ownerId, childId },
       credentials,
@@ -1309,10 +1312,13 @@ async function _removeOneV2({
     assertServer()
     credentials = defaultCreds(credentials)
 
+    const association = ownerModel.routeOptions.associations[associationName]
+    const ownerAlias = ownerModel.routeOptions.alias || ownerModel.modelName
+    const childAlias = association.alias || association.include.model.modelName
+
     const request = {
       method: 'Delete',
-      url: `/${ownerModel.routeOptions.alias ||
-        ownerModel.modelName}/${ownerId}/${associationName}/${childId}`,
+      url: `/${ownerAlias}/${ownerId}/${childAlias}/${childId}`,
       payload,
       params: { ownerId, childId },
       credentials,
@@ -1493,10 +1499,13 @@ async function _addManyV2({
     assertServer()
     credentials = defaultCreds(credentials)
 
+    const association = ownerModel.routeOptions.associations[associationName]
+    const ownerAlias = ownerModel.routeOptions.alias || ownerModel.modelName
+    const childAlias = association.alias || association.include.model.modelName
+
     const request = {
       method: 'Post',
-      url: `/${ownerModel.routeOptions.alias ||
-        ownerModel.modelName}/${ownerId}/${associationName}`,
+      url: `/${ownerAlias}/${ownerId}/${childAlias}`,
       payload,
       params: { ownerId },
       credentials,
@@ -1701,10 +1710,13 @@ async function _removeManyV2({
     assertServer()
     credentials = defaultCreds(credentials)
 
+    const association = ownerModel.routeOptions.associations[associationName]
+    const ownerAlias = ownerModel.routeOptions.alias || ownerModel.modelName
+    const childAlias = association.alias || association.include.model.modelName
+
     const request = {
       method: 'Delete',
-      url: `/${ownerModel.routeOptions.alias ||
-        ownerModel.modelName}/${ownerId}/${associationName}`,
+      url: `/${ownerAlias}/${ownerId}/${childAlias}`,
       payload,
       params: { ownerId },
       credentials,
@@ -1892,10 +1904,13 @@ async function _getAllV2({
     assertServer()
     credentials = defaultCreds(credentials)
 
+    const association = ownerModel.routeOptions.associations[associationName]
+    const ownerAlias = ownerModel.routeOptions.alias || ownerModel.modelName
+    const childAlias = association.alias || association.include.model.modelName
+
     const request = {
       method: 'Get',
-      url: `/${ownerModel.routeOptions.alias ||
-        ownerModel.modelName}/${ownerId}/${associationName}`,
+      url: `/${ownerAlias}/${ownerId}/${childAlias}`,
       query,
       params: { ownerId },
       credentials,
@@ -2447,7 +2462,7 @@ function flattenEmbeds(result, associations, $embed) {
     $embed = $embed.split(',')
   }
   $embed.forEach(function(embedString) {
-    let embeds = embedString.split('.')
+    const embeds = embedString.split('.')
     const currentEmbed = embeds[0]
     const association = associations[currentEmbed]
 
