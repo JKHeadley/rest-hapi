@@ -33,7 +33,8 @@ module.exports = (t, Mongoose, internals, Log) => {
               modelPath: path.join(
                 __dirname,
                 '/test-scenarios/scenario-3/models'
-              )
+              ),
+              auditLogTTL: 60
             }
 
             const promises = []
