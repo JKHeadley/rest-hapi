@@ -6,15 +6,19 @@ const _ = require('lodash')
 module.exports = function(mongoose) {
   const modelName = 'auditLog'
   const Types = mongoose.Schema.Types
+  let dateField = {
+    type: Types.Date,
+    default: () => {
+      return Date.now()
+    }
+  }
+  if (Config.auditLogTTL) {
+    dateField.expires = Config.auditLogTTL
+  }
+
   const Schema = new mongoose.Schema(
     {
-      date: {
-        type: Types.Date,
-        default: () => {
-          return Date.now()
-        },
-        expires: Config.auditLogTTL
-      },
+      date: dateField,
       method: {
         type: Types.String,
         enum: ['POST', 'PUT', 'DELETE', 'GET', null],
