@@ -93,6 +93,7 @@ Test('end to end tests', function(t) {
           Object.keys(require.cache).forEach(function(key) {
             delete require.cache[key]
           })
+          restore(Mongoose)
 
           t.ok(true, 'DONE')
         })
