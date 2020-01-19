@@ -6,7 +6,7 @@ const _ = require('lodash')
 module.exports = function(mongoose) {
   const modelName = 'auditLog'
   const Types = mongoose.Schema.Types
-  let dateField = {
+  const dateField = {
     type: Types.Date,
     default: () => {
       return Date.now()
