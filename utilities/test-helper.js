@@ -3,6 +3,7 @@
 let test = require('tape')
 const _ = require('lodash')
 const QueryString = require('query-string')
+const config = require('../config')
 
 const internals = {}
 
@@ -176,7 +177,10 @@ internals.mockInjection = function(request) {
     method: request.method,
     url: fullUrl,
     payload: request.payload,
-    auth: { credentials: request.credentials, strategy: 'default' },
+    auth: {
+      credentials: request.credentials,
+      strategy: config.authStrategy || 'default'
+    },
     headers: request.headers
   }
 
