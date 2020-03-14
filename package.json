@@ -66,7 +66,7 @@
     "lodash": "~4.17.15",
     "loggin": "^3.0.2",
     "mkdirp": "0.5.1",
-    "mongoose": "^4.6.3",
+    "mongoose": "^5.0.0",
     "mrhorse": "^4.0.0",
     "prettier-config-standard": "^1.0.1",
     "query-string": "^6.8.3",
