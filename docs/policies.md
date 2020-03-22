@@ -52,7 +52,7 @@ You can apply policies to custom endpoints (whether [standalone](creating-endpoi
         plugins: {
           'hapi-swagger': {
             responseMessages: [
-              { code: 200, message: 'Success' },
+              { code: 204, message: 'Success' },
               { code: 400, message: 'Bad Request' },
               { code: 404, message: 'Not Found' },
               { code: 500, message: 'Internal Server Error' }
