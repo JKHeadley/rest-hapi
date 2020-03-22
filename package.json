@@ -7,7 +7,7 @@
     "rest-hapi-cli": "./rest-hapi-cli.js"
   },
   "engines": {
-    "node": ">=8.10.0",
+    "node": ">=12.14.1",
     "npm": ">=4.0.0"
   },
   "directories": {
