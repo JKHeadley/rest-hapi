@@ -98,5 +98,10 @@
     "rmdir": "^1.2.0",
     "sinon": "^7.0.0",
     "sinon-test": "^2.3.0"
+  },
+  "husky": {
+    "hooks": {
+      "pre-push": "lint-staged"
+    }
   }
 }
