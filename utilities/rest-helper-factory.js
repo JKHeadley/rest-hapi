@@ -1079,11 +1079,6 @@ module.exports = function(logger, mongoose, server) {
           association.include.through,
           Log
         )
-        payloadValidation._inner.children = payloadValidation._inner.children.filter(
-          function(key) {
-            return key.key !== ownerModelName && key.key !== childModelName
-          }
-        )
 
         if (!config.enablePayloadValidation) {
           const label = payloadValidation._flags.label
@@ -1487,11 +1482,6 @@ module.exports = function(logger, mongoose, server) {
         payloadValidation = joiMongooseHelper.generateJoiCreateModel(
           association.include.through,
           Log
-        )
-        payloadValidation._inner.children = payloadValidation._inner.children.filter(
-          function(key) {
-            return key.key !== ownerModelName && key.key !== childModelName
-          }
         )
         label = payloadValidation._flags.label + '_many'
         payloadValidation = payloadValidation.keys({
