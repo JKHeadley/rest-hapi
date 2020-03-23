@@ -20,7 +20,7 @@ Fields of type ``String`` can include further validation restrictions based on a
 
 Field Property | joi Validation
 --- | ---
-enum: [items] | Joi.any().only([items])
+enum: [items] | Joi.string().valid(...[items])
 regex: RegExp | Joi.string().regex(RegExp)
 stringType: 'email' | Joi.string().email()
 stringType: 'uri' | Joi.string().uri()
