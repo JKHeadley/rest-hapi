@@ -6,7 +6,7 @@ sidebar_label: Quick Start
 
 ## Requirements
 
-You need [Node.js](https://nodejs.org/en/) ^8.10.0 installed and you'll need [MongoDB](https://docs.mongodb.com/manual/installation/) installed and running.
+You need [Node.js](https://nodejs.org/en/) ^12.14.1 installed and you'll need [MongoDB](https://docs.mongodb.com/manual/installation/) installed and running.
 
 ## Demo
 

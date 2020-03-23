@@ -116,7 +116,7 @@ test('joi-mongoose-helper.generateJoiReadModel', function(t) {
         'generateJoiFieldModel called on email field'
       )
       t.ok(
-        Joi.validate({ email: 'test' }, readModel).error === null,
+        readModel.validate({ email: 'test' }).error === undefined,
         'email field allowed'
       )
       // </editor-fold>
@@ -146,7 +146,7 @@ test('joi-mongoose-helper.generateJoiReadModel', function(t) {
       const userSchema = new mongoose.Schema({
         email: {
           type: Types.String,
-          readModel: Joi.any().only('test')
+          readModel: Joi.string().valid('test')
         }
       })
 
@@ -172,11 +172,11 @@ test('joi-mongoose-helper.generateJoiReadModel', function(t) {
         'generateJoiFieldModel not called on email field'
       )
       t.ok(
-        Joi.validate({ email: 'wrong' }, readModel).error !== null,
+        readModel.validate({ email: 'wrong' }).error !== undefined,
         'wrong field value not valid'
       )
       t.ok(
-        Joi.validate({ email: 'test' }, readModel).error === null,
+        readModel.validate({ email: 'test' }).error === undefined,
         'correct field value valid'
       )
       // </editor-fold>
@@ -352,19 +352,19 @@ test('joi-mongoose-helper.generateJoiReadModel', function(t) {
 
       // <editor-fold desc="Assert">
       t.ok(
-        Joi.validate({ email: 'test' }, readModel).error === null,
+        readModel.validate({ email: 'test' }).error === undefined,
         'email field valid'
       )
       t.ok(
-        Joi.validate({ firstName: 'test' }, readModel).error !== null,
+        readModel.validate({ firstName: 'test' }).error !== undefined,
         'firstName field not valid'
       )
       t.ok(
-        Joi.validate({ lastName: 'test' }, readModel).error !== null,
+        readModel.validate({ lastName: 'test' }).error !== undefined,
         'lastName field not valid'
       )
       t.ok(
-        Joi.validate({ notAField: 'test' }, readModel).error !== null,
+        readModel.validate({ notAField: 'test' }).error !== undefined,
         'fields not listed not valid'
       )
       // </editor-fold>
@@ -408,9 +408,9 @@ test('joi-mongoose-helper.generateJoiReadModel', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Assert">
-      t.ok(Joi.validate({}, readModel).error !== null, 'email field required')
+      t.ok(readModel.validate({}).error !== undefined, 'email field required')
       t.ok(
-        Joi.validate({ email: 'test' }, readModel).error === null,
+        readModel.validate({ email: 'test' }).error === undefined,
         'email field valid'
       )
       // </editor-fold>
@@ -494,75 +494,75 @@ test('joi-mongoose-helper.generateJoiReadModel', function(t) {
         'generateJoiFieldModel not called on association fields'
       )
       t.ok(
-        Joi.validate({ title: {} }, readModel).error === null,
+        readModel.validate({ title: {} }).error === undefined,
         'title field valid'
       )
       t.ok(
-        Joi.validate({ title: null }, readModel).error !== null,
+        readModel.validate({ title: null }).error !== undefined,
         'null title field not valid'
       )
       t.ok(
-        Joi.validate({ title: '' }, readModel).error !== null,
+        readModel.validate({ title: '' }).error !== undefined,
         'non-object title field not valid'
       )
       t.ok(
-        Joi.validate({ profileImage: {} }, readModel).error === null,
+        readModel.validate({ profileImage: {} }).error === undefined,
         'profileImage field valid'
       )
       t.ok(
-        Joi.validate({ profileImage: null }, readModel).error !== null,
+        readModel.validate({ profileImage: null }).error !== undefined,
         'null profileImage note field valid'
       )
       t.ok(
-        Joi.validate({ profileImage: '' }, readModel).error !== null,
+        readModel.validate({ profileImage: '' }).error !== undefined,
         'non-object profileImage field not valid'
       )
       t.ok(
-        Joi.validate({ groups: [{}, {}] }, readModel).error === null,
+        readModel.validate({ groups: [{}, {}] }).error === undefined,
         'groups field valid'
       )
       t.ok(
-        Joi.validate({ groups: null }, readModel).error !== null,
+        readModel.validate({ groups: null }).error !== undefined,
         'null groups field not valid'
       )
       t.ok(
-        Joi.validate({ groups: ['', 3, {}] }, readModel).error !== null,
+        readModel.validate({ groups: ['', 3, {}] }).error !== undefined,
         'groups field must be array of objects'
       )
       t.ok(
-        Joi.validate({ friends: [{}, {}] }, readModel).error === null,
+        readModel.validate({ friends: [{}, {}] }).error === undefined,
         'friends field valid'
       )
       t.ok(
-        Joi.validate({ friends: null }, readModel).error !== null,
+        readModel.validate({ friends: null }).error !== undefined,
         'null friends field not valid'
       )
       t.ok(
-        Joi.validate({ friends: ['', 3, {}] }, readModel).error !== null,
+        readModel.validate({ friends: ['', 3, {}] }).error !== undefined,
         'friends field must be array of objects'
       )
       t.ok(
-        Joi.validate({ hashTags: [{}, {}] }, readModel).error === null,
+        readModel.validate({ hashTags: [{}, {}] }).error === undefined,
         'hashTags field valid'
       )
       t.ok(
-        Joi.validate({ hashTags: null }, readModel).error !== null,
+        readModel.validate({ hashTags: null }).error !== undefined,
         'null hashTags field not valid'
       )
       t.ok(
-        Joi.validate({ hashTags: ['', 3, {}] }, readModel).error !== null,
+        readModel.validate({ hashTags: ['', 3, {}] }).error !== undefined,
         'hashTags field must be array of objects'
       )
       t.ok(
-        Joi.validate({ permissions: [{}, {}] }, readModel).error === null,
+        readModel.validate({ permissions: [{}, {}] }).error === undefined,
         'permissions field valid'
       )
       t.ok(
-        Joi.validate({ permissions: null }, readModel).error !== null,
+        readModel.validate({ permissions: null }).error !== undefined,
         'null permissions field not valid'
       )
       t.ok(
-        Joi.validate({ permissions: ['', 3, {}] }, readModel).error !== null,
+        readModel.validate({ permissions: ['', 3, {}] }).error !== undefined,
         'permissions field must be array of objects'
       )
       // </editor-fold>
@@ -670,7 +670,7 @@ test('joi-mongoose-helper.generateJoiUpdateModel', function(t) {
         'generateJoiFieldModel called on email field'
       )
       t.ok(
-        Joi.validate({ email: 'test' }, updateModel).error === null,
+        updateModel.validate({ email: 'test' }).error === undefined,
         'email field allowed'
       )
       // </editor-fold>
@@ -700,7 +700,7 @@ test('joi-mongoose-helper.generateJoiUpdateModel', function(t) {
       const userSchema = new mongoose.Schema({
         email: {
           type: Types.String,
-          updateModel: Joi.any().only('test')
+          updateModel: Joi.string().valid('test')
         }
       })
 
@@ -729,11 +729,11 @@ test('joi-mongoose-helper.generateJoiUpdateModel', function(t) {
         'generateJoiFieldModel called on email field'
       )
       t.ok(
-        Joi.validate({ email: 'wrong' }, updateModel).error !== null,
+        updateModel.validate({ email: 'wrong' }).error !== undefined,
         'wrong field value not valid'
       )
       t.ok(
-        Joi.validate({ email: 'test' }, updateModel).error === null,
+        updateModel.validate({ email: 'test' }).error === undefined,
         'correct field value valid'
       )
       // </editor-fold>
@@ -839,15 +839,15 @@ test('joi-mongoose-helper.generateJoiUpdateModel', function(t) {
 
       // <editor-fold desc="Assert">
       t.ok(
-        Joi.validate({ email: 'test' }, updateModel).error === null,
+        updateModel.validate({ email: 'test' }).error === undefined,
         'email field valid'
       )
       t.ok(
-        Joi.validate({ firstName: 'test' }, updateModel).error !== null,
+        updateModel.validate({ firstName: 'test' }).error !== undefined,
         'firstName field not valid'
       )
       t.ok(
-        Joi.validate({ notAField: 'test' }, updateModel).error !== null,
+        updateModel.validate({ notAField: 'test' }).error !== undefined,
         'fields not listed not valid'
       )
       // </editor-fold>
@@ -894,9 +894,9 @@ test('joi-mongoose-helper.generateJoiUpdateModel', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Assert">
-      t.ok(Joi.validate({}, updateModel).error !== null, 'email field required')
+      t.ok(updateModel.validate({}).error !== undefined, 'email field required')
       t.ok(
-        Joi.validate({ email: 'test' }, updateModel).error === null,
+        updateModel.validate({ email: 'test' }).error === undefined,
         'email field valid'
       )
       // </editor-fold>
@@ -1139,7 +1139,7 @@ test('joi-mongoose-helper.generateJoiCreateModel', function(t) {
         'generateJoiFieldModel called on email field'
       )
       t.ok(
-        Joi.validate({ email: 'test' }, createModel).error === null,
+        createModel.validate({ email: 'test' }).error === undefined,
         'email field allowed'
       )
       // </editor-fold>
@@ -1169,7 +1169,7 @@ test('joi-mongoose-helper.generateJoiCreateModel', function(t) {
       const userSchema = new mongoose.Schema({
         email: {
           type: Types.String,
-          createModel: Joi.any().only('test')
+          createModel: Joi.string().valid('test')
         }
       })
 
@@ -1198,11 +1198,11 @@ test('joi-mongoose-helper.generateJoiCreateModel', function(t) {
         'generateJoiFieldModel not called on email field'
       )
       t.ok(
-        Joi.validate({ email: 'wrong' }, createModel).error !== null,
+        createModel.validate({ email: 'wrong' }).error !== undefined,
         'wrong field value not valid'
       )
       t.ok(
-        Joi.validate({ email: 'test' }, createModel).error === null,
+        createModel.validate({ email: 'test' }).error === undefined,
         'correct field value valid'
       )
       // </editor-fold>
@@ -1308,15 +1308,15 @@ test('joi-mongoose-helper.generateJoiCreateModel', function(t) {
 
       // <editor-fold desc="Assert">
       t.ok(
-        Joi.validate({ email: 'test' }, createModel).error === null,
+        createModel.validate({ email: 'test' }).error === undefined,
         'email field valid'
       )
       t.ok(
-        Joi.validate({ firstName: 'test' }, createModel).error !== null,
+        createModel.validate({ firstName: 'test' }).error !== undefined,
         'firstName field not valid'
       )
       t.ok(
-        Joi.validate({ notAField: 'test' }, createModel).error !== null,
+        createModel.validate({ notAField: 'test' }).error !== undefined,
         'fields not listed not valid'
       )
       // </editor-fold>
@@ -1363,9 +1363,9 @@ test('joi-mongoose-helper.generateJoiCreateModel', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Assert">
-      t.ok(Joi.validate({}, createModel).error !== null, 'email field required')
+      t.ok(createModel.validate({}).error !== undefined, 'email field required')
       t.ok(
-        Joi.validate({ email: 'test' }, createModel).error === null,
+        createModel.validate({ email: 'test' }).error === undefined,
         'email field valid'
       )
       // </editor-fold>
@@ -1500,12 +1500,12 @@ test('joi-mongoose-helper.generateJoiCreateModel', function(t) {
         ),
         'generateJoiFieldModel called on hashTags field'
       )
-      // t.ok(Joi.validate({title: {}}, createModel).error !== null, "title field not valid format");
-      // t.ok(Joi.validate({title: "test"}, createModel).error === null, "title field valid format");
-      // t.ok(Joi.validate({profileImage: {}}, createModel).error !== null, "profileImage field not valid format");
-      // t.ok(Joi.validate({profileImage: "test"}, createModel).error === null, "profileImage field valid format");
-      // t.ok(Joi.validate({groups: "test"}, createModel).error !== null, "groups field not allowed");
-      // t.ok(Joi.validate({permissions: "test"}, createModel).error !== null, "permissions field not allowed");
+      // t.ok(createModel.validate({title: {}}).error !== undefined, "title field not valid format");
+      // t.ok(createModel.validate({title: "test"}).error === undefined, "title field valid format");
+      // t.ok(createModel.validate({profileImage: {}}).error !== undefined, "profileImage field not valid format");
+      // t.ok(createModel.validate({profileImage: "test"}).error === undefined, "profileImage field valid format");
+      // t.ok(createModel.validate({groups: "test"}).error !== undefined, "groups field not allowed");
+      // t.ok(createModel.validate({permissions: "test"}).error !== undefined, "permissions field not allowed");
       // </editor-fold>
 
       // <editor-fold desc="Restore">
@@ -1659,60 +1659,63 @@ test('joi-mongoose-helper.generateJoiModelFromFieldType', function(t) {
       // <editor-fold desc="Assert">
       t.ok(joiObjectId.called, 'idModel calls joiObjectId')
       t.ok(
-        booleanModel.validate(true).error === null,
+        booleanModel.validate(true).error === undefined,
         'booleanModel validates a bool'
       )
       t.ok(
-        booleanModel.validate('').error !== null,
+        booleanModel.validate('').error !== undefined,
         'booleanModel rejects non bools'
       )
       t.ok(
-        numberModel.validate(3).error === null,
+        numberModel.validate(3).error === undefined,
         'numberModel validates a number'
       )
       t.ok(
-        numberModel.validate('').error !== null,
+        numberModel.validate('').error !== undefined,
         'numberModel rejects non numbers'
       )
       t.ok(
-        dateModel.validate(new Date()).error === null,
+        dateModel.validate(new Date()).error === undefined,
         'dateModel validates a date'
       )
-      t.ok(dateModel.validate('').error !== null, 'dateModel rejects non dates')
       t.ok(
-        stringModel.validate('test').error === null,
+        dateModel.validate('').error !== undefined,
+        'dateModel rejects non dates'
+      )
+      t.ok(
+        stringModel.validate('test').error === undefined,
         'stringModel validates a string'
       )
       t.ok(
-        stringModel.validate(0).error !== null,
+        stringModel.validate(0).error !== undefined,
         'stringModel rejects non strings'
       )
       t.ok(
-        enumModel.validate('test2').error === null,
+        enumModel.validate('test2').error === undefined,
         'enumModel validates an allowed value'
       )
       t.ok(
-        enumModel.validate('test').error !== null,
+        enumModel.validate('test').error !== undefined,
         'enumModel rejects a not allowed value'
       )
       t.ok(
-        regexModel.validate('abe129').error === null,
+        regexModel.validate('abe129').error === undefined,
         'regexModel validates an allowed value'
       )
       t.ok(
-        regexModel.validate('apml129').error !== null,
+        regexModel.validate('apml129').error !== undefined,
         'regexModel rejects a not allowed value'
       )
       t.ok(
-        invertedRegexModel.validate('nothexidecimal').error === null,
+        invertedRegexModel.validate('nothexidecimal').error === undefined,
         'invertedRegexModel validates an allowed value'
       )
       t.ok(
-        invertedRegexModel.validate('abe129').error !== null,
+        invertedRegexModel.validate('abe129').error !== undefined,
         'invertedRegexModel rejects a not allowed value'
       )
       t.ok(
-        allowNullModel.validate(null).error === null,
+        allowNullModel.validate(null).error === undefined,
         'allowNullModel validates a null value'
       )
       // </editor-fold>
@@ -1753,19 +1756,19 @@ test('joi-mongoose-helper.joiObjectId', function(t) {
 
       // <editor-fold desc="Assert">
       t.ok(
-        idModel.validate('57d8752088ac2472a7d04863').error === null,
+        idModel.validate('57d8752088ac2472a7d04863').error === undefined,
         'idModel validates an _id as a string'
       )
       t.ok(
-        idModel.validate(mongoose.Types.ObjectId()).error === null,
+        idModel.validate(mongoose.Types.ObjectId()).error === undefined,
         'idModel validates an _id object'
       )
       t.ok(
-        idModel.validate('57d8752088ac2472a7d04863Z').error !== null,
+        idModel.validate('57d8752088ac2472a7d04863Z').error !== undefined,
         'idModel rejects a _id with wrong format'
       )
       t.ok(
-        idModel.validate({}).error !== null,
+        idModel.validate({}).error !== undefined,
         'idModel rejects a _id object with wrong format'
       )
       // </editor-fold>
@@ -2385,23 +2388,23 @@ test('joi-mongoose-helper.generateJoiFieldModel', function(t) {
 
       // <editor-fold desc="Assert">
       t.ok(
-        fieldModel1.validate('test').error === null,
+        fieldModel1.validate('test').error === undefined,
         'fieldModel1 validates allowed string'
       )
       t.ok(
-        fieldModel1.validate('wrong').error !== null,
+        fieldModel1.validate('wrong').error !== undefined,
         'fieldModel1 fails wrong string'
       )
       t.ok(
-        fieldModel2.validate(['test', 'test']).error === null,
+        fieldModel2.validate(['test', 'test']).error === undefined,
         'fieldModel2 validates array of allowed strings'
       )
       t.ok(
-        fieldModel2.validate(['test', 'wrong']).error !== null,
+        fieldModel2.validate(['test', 'wrong']).error !== undefined,
         'fieldModel2 fails array containing wrong string'
       )
       t.ok(
-        fieldModel2.validate('test').error !== null,
+        fieldModel2.validate('test').error !== undefined,
         'fieldModel1 fails non-array'
       )
       t.equal(
@@ -2630,136 +2633,136 @@ test('joi-mongoose-helper.generateJoiListQueryModel', function(t) {
 
       // <editor-fold desc="Assert">
       t.ok(
-        Joi.validate({ $skip: 0 }, queryModel).error === null,
+        queryModel.validate({ $skip: 0 }).error === undefined,
         '$skip: 0 allowed'
       )
       t.ok(
-        Joi.validate({ $skip: -1 }, queryModel).error !== null,
+        queryModel.validate({ $skip: -1 }).error !== undefined,
         '$skip: -1 not allowed'
       )
       t.ok(
-        Joi.validate({ $skip: 'notint' }, queryModel).error !== null,
+        queryModel.validate({ $skip: 'notint' }).error !== undefined,
         "$skip: 'notint' not allowed"
       )
 
       t.ok(
-        Joi.validate({ $page: 0 }, queryModel).error === null,
+        queryModel.validate({ $page: 0 }).error === undefined,
         '$page: 0 allowed'
       )
       t.ok(
-        Joi.validate({ $page: -1 }, queryModel).error !== null,
+        queryModel.validate({ $page: -1 }).error !== undefined,
         '$page: -1 not allowed'
       )
       t.ok(
-        Joi.validate({ $page: 'notint' }, queryModel).error !== null,
+        queryModel.validate({ $page: 'notint' }).error !== undefined,
         "$page: 'notint' not allowed"
       )
 
       t.ok(
-        Joi.validate({ $limit: 0 }, queryModel).error === null,
+        queryModel.validate({ $limit: 0 }).error === undefined,
         '$skip: 0 allowed'
       )
       t.ok(
-        Joi.validate({ $limit: -1 }, queryModel).error !== null,
+        queryModel.validate({ $limit: -1 }).error !== undefined,
         '$skip: -1 not allowed'
       )
       t.ok(
-        Joi.validate({ $limit: 'notint' }, queryModel).error !== null,
+        queryModel.validate({ $limit: 'notint' }).error !== undefined,
         "$skip: 'notint' not allowed"
       )
 
       t.ok(
-        Joi.validate({ $select: 'readable' }, queryModel).error === null,
+        queryModel.validate({ $select: 'readable' }).error === undefined,
         "$select: 'readable' allowed"
       )
       t.ok(
-        Joi.validate({ $select: ['readable'] }, queryModel).error === null,
+        queryModel.validate({ $select: ['readable'] }).error === undefined,
         "$select: ['readable'] allowed"
       )
       t.ok(
-        Joi.validate({ $select: 'notreadable' }, queryModel).error !== null,
+        queryModel.validate({ $select: 'notreadable' }).error !== undefined,
         "$select: 'notreadable' not allowed"
       )
 
       t.ok(
-        Joi.validate({ $text: 'text' }, queryModel).error === null,
+        queryModel.validate({ $text: 'text' }).error === undefined,
         '$text field allowed'
       )
       t.ok(
-        Joi.validate({ $term: 'text' }, queryModel).error === null,
+        queryModel.validate({ $term: 'text' }).error === undefined,
         '$term field allowed'
       )
 
       t.ok(
-        Joi.validate({ $searchFields: 'queryable' }, queryModel).error === null,
+        queryModel.validate({ $searchFields: 'queryable' }).error === undefined,
         "$searchFields: 'queryable' allowed"
       )
       t.ok(
-        Joi.validate({ $searchFields: ['queryable'] }, queryModel).error ===
-          null,
+        queryModel.validate({ $searchFields: ['queryable'] }).error ===
+          undefined,
         "$searchFields: ['queryable'] allowed"
       )
       t.ok(
-        Joi.validate({ $searchFields: 'notqueryable' }, queryModel).error !==
-          null,
+        queryModel.validate({ $searchFields: 'notqueryable' }).error !==
+          undefined,
         "$searchFields: 'notqueryable' not allowed"
       )
 
       t.ok(
-        Joi.validate({ $sort: 'sortable' }, queryModel).error === null,
+        queryModel.validate({ $sort: 'sortable' }).error === undefined,
         "$sort: 'sortable' allowed"
       )
       t.ok(
-        Joi.validate({ $sort: ['sortable'] }, queryModel).error === null,
+        queryModel.validate({ $sort: ['sortable'] }).error === undefined,
         "$sort: ['sortable'] allowed"
       )
       t.ok(
-        Joi.validate({ $sort: 'notsortable' }, queryModel).error !== null,
+        queryModel.validate({ $sort: 'notsortable' }).error !== undefined,
         "$sort: 'notsortable' not allowed"
       )
 
       t.ok(
-        Joi.validate({ $exclude: 'objectId' }, queryModel).error === null,
+        queryModel.validate({ $exclude: 'objectId' }).error === undefined,
         "$exclude: 'objectId' allowed"
       )
       t.ok(
-        Joi.validate({ $exclude: ['objectId'] }, queryModel).error === null,
+        queryModel.validate({ $exclude: ['objectId'] }).error === undefined,
         "$exclude: ['objectId'] allowed"
       )
       t.ok(
-        Joi.validate({ $exclude: 'notobjectId' }, queryModel).error !== null,
+        queryModel.validate({ $exclude: 'notobjectId' }).error !== undefined,
         "$exclude: 'notobjectId' not allowed"
       )
 
       t.ok(
-        Joi.validate({ $count: true }, queryModel).error === null,
+        queryModel.validate({ $count: true }).error === undefined,
         '$count: true allowed'
       )
       t.ok(
-        Joi.validate({ $count: 'notbool' }, queryModel).error !== null,
+        queryModel.validate({ $count: 'notbool' }).error !== undefined,
         "$count: 'notbool' not allowed"
       )
 
       t.ok(
-        Joi.validate({ $where: 'text' }, queryModel).error !== null,
+        queryModel.validate({ $where: 'text' }).error !== undefined,
         '$where field not allowed'
       )
 
       t.ok(
-        Joi.validate({ queryable: 'text' }, queryModel).error === null,
+        queryModel.validate({ queryable: 'text' }).error === undefined,
         'queryable field allowed'
       )
       t.ok(
-        Joi.validate({ notafield: 'text' }, queryModel).error !== null,
+        queryModel.validate({ notafield: 'text' }).error !== undefined,
         'notafield field not allowed'
       )
 
       t.ok(
-        Joi.validate({ $embed: 'text' }, queryModel).error !== null,
+        queryModel.validate({ $embed: 'text' }).error !== undefined,
         '$embed field not allowed'
       )
       t.ok(
-        Joi.validate({ $flatten: true }, queryModel).error !== null,
+        queryModel.validate({ $flatten: true }).error !== undefined,
         '$flatten field not allowed'
       )
 
@@ -2834,7 +2837,7 @@ test('joi-mongoose-helper.generateJoiListQueryModel', function(t) {
 
       // <editor-fold desc="Assert">
       t.ok(
-        Joi.validate({ $where: 'text' }, queryModel).error === null,
+        queryModel.validate({ $where: 'text' }).error === undefined,
         '$where field allowed'
       )
       // </editor-fold>
@@ -2905,127 +2908,127 @@ test('joi-mongoose-helper.generateJoiListQueryModel', function(t) {
 
       // <editor-fold desc="Assert">
       t.ok(
-        Joi.validate({ $skip: 0 }, queryModel).error === null,
+        queryModel.validate({ $skip: 0 }).error === undefined,
         '$skip: 0 allowed'
       )
       t.ok(
-        Joi.validate({ $skip: -1 }, queryModel).error !== null,
+        queryModel.validate({ $skip: -1 }).error !== undefined,
         '$skip: -1 not allowed'
       )
       t.ok(
-        Joi.validate({ $skip: 'notint' }, queryModel).error !== null,
+        queryModel.validate({ $skip: 'notint' }).error !== undefined,
         "$skip: 'notint' not allowed"
       )
 
       t.ok(
-        Joi.validate({ $page: 0 }, queryModel).error === null,
+        queryModel.validate({ $page: 0 }).error === undefined,
         '$page: 0 allowed'
       )
       t.ok(
-        Joi.validate({ $page: -1 }, queryModel).error !== null,
+        queryModel.validate({ $page: -1 }).error !== undefined,
         '$page: -1 not allowed'
       )
       t.ok(
-        Joi.validate({ $page: 'notint' }, queryModel).error !== null,
+        queryModel.validate({ $page: 'notint' }).error !== undefined,
         "$page: 'notint' not allowed"
       )
 
       t.ok(
-        Joi.validate({ $limit: 0 }, queryModel).error === null,
+        queryModel.validate({ $limit: 0 }).error === undefined,
         '$skip: 0 allowed'
       )
       t.ok(
-        Joi.validate({ $limit: -1 }, queryModel).error !== null,
+        queryModel.validate({ $limit: -1 }).error !== undefined,
         '$skip: -1 not allowed'
       )
       t.ok(
-        Joi.validate({ $limit: 'notint' }, queryModel).error !== null,
+        queryModel.validate({ $limit: 'notint' }).error !== undefined,
         "$skip: 'notint' not allowed"
       )
 
       t.ok(
-        Joi.validate({ $select: 'readable' }, queryModel).error === null,
+        queryModel.validate({ $select: 'readable' }).error === undefined,
         "$select: 'readable' allowed"
       )
       t.ok(
-        Joi.validate({ $select: ['readable'] }, queryModel).error === null,
+        queryModel.validate({ $select: ['readable'] }).error === undefined,
         "$select: ['readable'] allowed"
       )
       t.ok(
-        Joi.validate({ $select: 'notreadable' }, queryModel).error !== null,
+        queryModel.validate({ $select: 'notreadable' }).error !== undefined,
         "$select: 'notreadable' not allowed"
       )
 
       t.ok(
-        Joi.validate({ $text: 'text' }, queryModel).error === null,
+        queryModel.validate({ $text: 'text' }).error === undefined,
         '$text field allowed'
       )
       t.ok(
-        Joi.validate({ $term: 'text' }, queryModel).error === null,
+        queryModel.validate({ $term: 'text' }).error === undefined,
         '$term field allowed'
       )
 
       t.ok(
-        Joi.validate({ $searchFields: 'queryable' }, queryModel).error === null,
+        queryModel.validate({ $searchFields: 'queryable' }).error === undefined,
         "$searchFields: 'queryable' allowed"
       )
       t.ok(
-        Joi.validate({ $searchFields: ['queryable'] }, queryModel).error ===
-          null,
+        queryModel.validate({ $searchFields: ['queryable'] }).error ===
+          undefined,
         "$searchFields: ['queryable'] allowed"
       )
       t.ok(
-        Joi.validate({ $searchFields: 'notqueryable' }, queryModel).error !==
-          null,
+        queryModel.validate({ $searchFields: 'notqueryable' }).error !==
+          undefined,
         "$searchFields: 'notqueryable' not allowed"
       )
 
       t.ok(
-        Joi.validate({ $sort: 'sortable' }, queryModel).error === null,
+        queryModel.validate({ $sort: 'sortable' }).error === undefined,
         "$sort: 'sortable' allowed"
       )
       t.ok(
-        Joi.validate({ $sort: ['sortable'] }, queryModel).error === null,
+        queryModel.validate({ $sort: ['sortable'] }).error === undefined,
         "$sort: ['sortable'] allowed"
       )
       t.ok(
-        Joi.validate({ $sort: 'notsortable' }, queryModel).error !== null,
+        queryModel.validate({ $sort: 'notsortable' }).error !== undefined,
         "$sort: 'notsortable' not allowed"
       )
 
       t.ok(
-        Joi.validate({ $exclude: 'objectId' }, queryModel).error === null,
+        queryModel.validate({ $exclude: 'objectId' }).error === undefined,
         "$exclude: 'objectId' allowed"
       )
       t.ok(
-        Joi.validate({ $exclude: ['objectId'] }, queryModel).error === null,
+        queryModel.validate({ $exclude: ['objectId'] }).error === undefined,
         "$exclude: ['objectId'] allowed"
       )
       t.ok(
-        Joi.validate({ $exclude: 'notobjectId' }, queryModel).error !== null,
+        queryModel.validate({ $exclude: 'notobjectId' }).error !== undefined,
         "$exclude: 'notobjectId' not allowed"
       )
 
       t.ok(
-        Joi.validate({ $count: true }, queryModel).error === null,
+        queryModel.validate({ $count: true }).error === undefined,
         '$count: true allowed'
       )
       t.ok(
-        Joi.validate({ $count: 'notbool' }, queryModel).error !== null,
+        queryModel.validate({ $count: 'notbool' }).error !== undefined,
         "$count: 'notbool' not allowed"
       )
 
       t.ok(
-        Joi.validate({ $where: 'text' }, queryModel).error === null,
+        queryModel.validate({ $where: 'text' }).error === undefined,
         '$where field allowed'
       )
 
       t.ok(
-        Joi.validate({ queryable: 'text' }, queryModel).error === null,
+        queryModel.validate({ queryable: 'text' }).error === undefined,
         'queryable field allowed'
       )
       t.ok(
-        Joi.validate({ notafield: 'text' }, queryModel).error === null,
+        queryModel.validate({ notafield: 'text' }).error === undefined,
         'notafield field allowed'
       )
       // </editor-fold>
@@ -3096,23 +3099,23 @@ test('joi-mongoose-helper.generateJoiListQueryModel', function(t) {
 
       // <editor-fold desc="Assert">
       t.ok(
-        Joi.validate({ $embed: 'text' }, queryModel).error === null,
+        queryModel.validate({ $embed: 'text' }).error === undefined,
         "$embed: 'text' allowed"
       )
       t.ok(
-        Joi.validate({ $embed: ['text'] }, queryModel).error === null,
+        queryModel.validate({ $embed: ['text'] }).error === undefined,
         "$embed: ['text'] allowed"
       )
       t.ok(
-        Joi.validate({ $embed: 0 }, queryModel).error !== null,
+        queryModel.validate({ $embed: 0 }).error !== undefined,
         '$embed: 0 not allowed'
       )
       t.ok(
-        Joi.validate({ $flatten: true }, queryModel).error === null,
+        queryModel.validate({ $flatten: true }).error === undefined,
         '$flatten: true allowed'
       )
       t.ok(
-        Joi.validate({ $flatten: 'text' }, queryModel).error !== null,
+        queryModel.validate({ $flatten: 'text' }).error !== undefined,
         "$flatten: 'text' not allowed"
       )
 
@@ -3223,29 +3226,29 @@ test('joi-mongoose-helper.generateJoiFindQueryModel', function(t) {
 
       // <editor-fold desc="Assert">
       t.ok(
-        Joi.validate({ $select: 'readable' }, queryModel).error === null,
+        queryModel.validate({ $select: 'readable' }).error === undefined,
         "$select: 'readable' allowed"
       )
       t.ok(
-        Joi.validate({ $select: ['readable'] }, queryModel).error === null,
+        queryModel.validate({ $select: ['readable'] }).error === undefined,
         "$select: ['readable'] allowed"
       )
       t.ok(
-        Joi.validate({ $select: 'notreadable' }, queryModel).error !== null,
+        queryModel.validate({ $select: 'notreadable' }).error !== undefined,
         "$select: 'notreadable' not allowed"
       )
 
       t.ok(
-        Joi.validate({ notafield: 'text' }, queryModel).error !== null,
+        queryModel.validate({ notafield: 'text' }).error !== undefined,
         'notafield field not allowed'
       )
 
       t.ok(
-        Joi.validate({ $embed: 'text' }, queryModel).error !== null,
+        queryModel.validate({ $embed: 'text' }).error !== undefined,
         '$embed field not allowed'
       )
       t.ok(
-        Joi.validate({ $flatten: true }, queryModel).error !== null,
+        queryModel.validate({ $flatten: true }).error !== undefined,
         '$flatten field not allowed'
       )
 
@@ -3317,20 +3320,20 @@ test('joi-mongoose-helper.generateJoiFindQueryModel', function(t) {
 
       // <editor-fold desc="Assert">
       t.ok(
-        Joi.validate({ $select: 'readable' }, queryModel).error === null,
+        queryModel.validate({ $select: 'readable' }).error === undefined,
         "$select: 'readable' allowed"
       )
       t.ok(
-        Joi.validate({ $select: ['readable'] }, queryModel).error === null,
+        queryModel.validate({ $select: ['readable'] }).error === undefined,
         "$select: ['readable'] allowed"
       )
       t.ok(
-        Joi.validate({ $select: 'notreadable' }, queryModel).error !== null,
+        queryModel.validate({ $select: 'notreadable' }).error !== undefined,
         "$select: 'notreadable' not allowed"
       )
 
       t.ok(
-        Joi.validate({ notafield: 'text' }, queryModel).error === null,
+        queryModel.validate({ notafield: 'text' }).error === undefined,
         'notafield field allowed'
       )
       // </editor-fold>
@@ -3401,23 +3404,23 @@ test('joi-mongoose-helper.generateJoiFindQueryModel', function(t) {
 
       // <editor-fold desc="Assert">
       t.ok(
-        Joi.validate({ $embed: 'text' }, queryModel).error === null,
+        queryModel.validate({ $embed: 'text' }).error === undefined,
         "$embed: 'text' allowed"
       )
       t.ok(
-        Joi.validate({ $embed: ['text'] }, queryModel).error === null,
+        queryModel.validate({ $embed: ['text'] }).error === undefined,
         "$embed: ['text'] allowed"
       )
       t.ok(
-        Joi.validate({ $embed: 0 }, queryModel).error !== null,
+        queryModel.validate({ $embed: 0 }).error !== undefined,
         '$embed: 0 not allowed'
       )
       t.ok(
-        Joi.validate({ $flatten: true }, queryModel).error === null,
+        queryModel.validate({ $flatten: true }).error === undefined,
         '$flatten: true allowed'
       )
       t.ok(
-        Joi.validate({ $flatten: 'text' }, queryModel).error !== null,
+        queryModel.validate({ $flatten: 'text' }).error !== undefined,
         "$flatten: 'text' not allowed"
       )
 

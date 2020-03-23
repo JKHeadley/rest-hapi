@@ -5,6 +5,7 @@ const _ = require('lodash')
 const path = require('path')
 const Inert = require('@hapi/inert')
 const Vision = require('@hapi/vision')
+const Joi = require('@hapi/joi')
 const HapiSwagger = require('hapi-swagger')
 const Mrhorse = require('mrhorse')
 const logging = require('loggin')
@@ -54,6 +55,8 @@ module.exports = {
 
 async function register(server, options) {
   module.exports.server = server
+
+  server.validator(Joi)
 
   const config = defaultConfig
 

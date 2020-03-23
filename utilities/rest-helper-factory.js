@@ -227,7 +227,7 @@ module.exports = function(logger, mongoose, server) {
             'hapi-swagger': {
               responseMessages: [
                 {
-                  code: 200,
+                  code: 204,
                   message: 'The resource(s) was/were found successfully.'
                 },
                 { code: 400, message: 'The request was malformed.' },
@@ -361,7 +361,7 @@ module.exports = function(logger, mongoose, server) {
             'hapi-swagger': {
               responseMessages: [
                 {
-                  code: 200,
+                  code: 204,
                   message: 'The resource(s) was/were found successfully.'
                 },
                 { code: 400, message: 'The request was malformed.' },
@@ -690,7 +690,7 @@ module.exports = function(logger, mongoose, server) {
             'hapi-swagger': {
               responseMessages: [
                 {
-                  code: 200,
+                  code: 204,
                   message: 'The resource was deleted successfully.'
                 },
                 { code: 400, message: 'The request was malformed.' },
@@ -830,7 +830,7 @@ module.exports = function(logger, mongoose, server) {
             'hapi-swagger': {
               responseMessages: [
                 {
-                  code: 200,
+                  code: 204,
                   message: 'The resource was deleted successfully.'
                 },
                 { code: 400, message: 'The request was malformed.' },
@@ -985,7 +985,7 @@ module.exports = function(logger, mongoose, server) {
             'hapi-swagger': {
               responseMessages: [
                 {
-                  code: 200,
+                  code: 204,
                   message: 'The resource was updated successfully.'
                 },
                 { code: 400, message: 'The request was malformed.' },
@@ -1078,11 +1078,6 @@ module.exports = function(logger, mongoose, server) {
         payloadValidation = joiMongooseHelper.generateJoiCreateModel(
           association.include.through,
           Log
-        )
-        payloadValidation._inner.children = payloadValidation._inner.children.filter(
-          function(key) {
-            return key.key !== ownerModelName && key.key !== childModelName
-          }
         )
 
         if (!config.enablePayloadValidation) {
@@ -1487,11 +1482,6 @@ module.exports = function(logger, mongoose, server) {
         payloadValidation = joiMongooseHelper.generateJoiCreateModel(
           association.include.through,
           Log
-        )
-        payloadValidation._inner.children = payloadValidation._inner.children.filter(
-          function(key) {
-            return key.key !== ownerModelName && key.key !== childModelName
-          }
         )
         label = payloadValidation._flags.label + '_many'
         payloadValidation = payloadValidation.keys({
@@ -2011,7 +2001,7 @@ module.exports = function(logger, mongoose, server) {
             association: association,
             'hapi-swagger': {
               responseMessages: [
-                { code: 200, message: 'The association was set successfully.' },
+                { code: 204, message: 'The association was set successfully.' },
                 { code: 400, message: 'The request was malformed.' },
                 {
                   code: 401,
