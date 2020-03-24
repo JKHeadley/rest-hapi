@@ -97,10 +97,12 @@ config.enableDeletedBy = false
 
 /**
  * Enables raw $where mongoose queries
- * default: true
+ * !!WARNING!!: This feature is meant for development ONLY and NOT in production as it provides direct query
+ * access to your database.
+ * default: false
  * @type {boolean}
  */
-config.enableWhereQueries = true
+config.enableWhereQueries = false
 
 /**
  * Enables fields from an associated model to be duplicated. Similar to permanently embedding an associated field within
