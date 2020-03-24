@@ -169,7 +169,10 @@ function mongooseInit(mongoose, logger, config) {
     _.omit(config.mongo, ['pass'])
   )
 
-  mongoose.connect(config.mongo.URI, { useMongoClient: true })
+  mongoose.connect(config.mongo.URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+  })
 
   globals.mongoose = mongoose
 

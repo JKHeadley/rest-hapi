@@ -184,10 +184,10 @@ test('handler-helper.listHandler', function(t) {
         )
       })
 
-      // handler-helper.listHandler calls mongooseQuery.count
+      // handler-helper.listHandler calls mongooseQuery.countDocuments
       .then(function() {
         return t.test(
-          'handler-helper.listHandler calls mongooseQuery.count',
+          'handler-helper.listHandler calls mongooseQuery.countDocuments',
           function(t) {
             // <editor-fold desc="Arrange">
             const sandbox = sinon.sandbox.create()
@@ -200,7 +200,7 @@ test('handler-helper.listHandler', function(t) {
             queryHelperStub.createMongooseQuery = function() {
               return {
                 lean: function() {
-                  return { count: countSpy }
+                  return { countDocuments: countSpy }
                 }
               }
             }
@@ -258,7 +258,7 @@ test('handler-helper.listHandler', function(t) {
             const countSpy = sandbox.spy(function() {
               return Q.when()
             })
-            const mongooseQuery1 = { count: countSpy }
+            const mongooseQuery1 = { countDocuments: countSpy }
             const mongooseQuery2 = {
               lean: function() {
                 return mongooseQuery1
@@ -342,7 +342,7 @@ test('handler-helper.listHandler', function(t) {
             const countSpy = sandbox.spy(function() {
               return Q.when()
             })
-            const mongooseQuery1 = { count: countSpy }
+            const mongooseQuery1 = { countDocuments: countSpy }
             const mongooseQuery2 = {
               lean: function() {
                 return mongooseQuery1
@@ -486,7 +486,7 @@ test('handler-helper.listHandler', function(t) {
             const countSpy = sandbox.spy(function() {
               return Q.when()
             })
-            const mongooseQuery1 = { count: countSpy }
+            const mongooseQuery1 = { countDocuments: countSpy }
             const mongooseQuery2 = {
               lean: function() {
                 return mongooseQuery1
@@ -572,7 +572,7 @@ test('handler-helper.listHandler', function(t) {
               const promise = Q.when('test')
               return promise
             })
-            const mongooseQuery1 = { count: countSpy }
+            const mongooseQuery1 = { countDocuments: countSpy }
             const mongooseQuery2 = {
               lean: function() {
                 return mongooseQuery1
@@ -659,7 +659,7 @@ test('handler-helper.listHandler', function(t) {
             const countSpy = sandbox.spy(function() {
               return Q.when(result.length)
             })
-            const mongooseQuery1 = { count: countSpy }
+            const mongooseQuery1 = { countDocuments: countSpy }
             const mongooseQuery2 = {
               lean: function() {
                 return mongooseQuery1
@@ -749,7 +749,7 @@ test('handler-helper.listHandler', function(t) {
             const countSpy = sandbox.spy(function() {
               return Q.when()
             })
-            const mongooseQuery1 = { count: countSpy }
+            const mongooseQuery1 = { countDocuments: countSpy }
             const mongooseQuery2 = {
               lean: function() {
                 return mongooseQuery1
@@ -837,7 +837,7 @@ test('handler-helper.listHandler', function(t) {
             const countSpy = sandbox.spy(function() {
               return Q.when()
             })
-            const mongooseQuery1 = { count: countSpy }
+            const mongooseQuery1 = { countDocuments: countSpy }
             const mongooseQuery2 = {
               lean: function() {
                 return mongooseQuery1
