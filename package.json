@@ -65,7 +65,7 @@
     "joi-objectid": "mkg20001/joi-objectid#chore/upgrade",
     "lodash": "~4.17.15",
     "loggin": "^3.0.2",
-    "mkdirp": "0.5.1",
+    "mkdirp": "^1.0.3",
     "mongoose": "^5.9.6",
     "mrhorse": "^6.0.0",
     "prettier-config-standard": "^1.0.1",
@@ -76,7 +76,7 @@
   "devDependencies": {
     "babel-eslint": "^10.0.3",
     "clear-require": "^3.0.0",
-    "codecov": "^3.5.0",
+    "codecov": "^3.6.5",
     "decache": "4.5.1",
     "eslint": "^6.4.0",
     "eslint-config-prettier": "^6.3.0",
