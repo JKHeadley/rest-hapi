@@ -236,11 +236,13 @@ internals.extendSchemaAssociations = function(Schema, mongoose, modelPath) {
               const Types = mongoose.Schema.Types
               linkingModel.Schema[modelName] = {
                 type: Types.ObjectId,
-                ref: modelName
+                ref: modelName,
+                allowOnCreate: false
               }
               linkingModel.Schema[association.model] = {
                 type: Types.ObjectId,
-                ref: association.model
+                ref: association.model,
+                allowOnCreate: false
               }
 
               const linkingModelSchema = new mongoose.Schema(

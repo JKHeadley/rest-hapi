@@ -1,6 +1,6 @@
 language: node_js
 node_js:
-  - 8.10.0
+  - 12.14.1
 
 jobs:
   include:

@@ -17,7 +17,8 @@ let mongoURI = process.argv.slice(2)[0]
 
     mongoURI = mongoURI || RestHapi.config.mongo.URI
     mongoose.connect(mongoURI, {
-      useMongoClient: true
+      useNewUrlParser: true,
+      useUnifiedTopology: true
     })
 
     const models = await RestHapi.generateModels(mongoose)

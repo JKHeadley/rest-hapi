@@ -347,13 +347,8 @@ test('model-helper.extendSchemaAssociations', function(t) {
       )
       const linkingModelfileName = linkingModelPath + 'test_linking.model.js'
 
-      mkdirp(linkingModelPath, function(err) {
+      mkdirp(linkingModelPath).then(() => {
         const deferred = Q.defer()
-
-        if (err) {
-          Log.error(err)
-          deferred.reject(err)
-        }
 
         fs.openSync(linkingModelfileName, 'w')
 

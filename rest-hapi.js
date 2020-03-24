@@ -5,6 +5,7 @@ const _ = require('lodash')
 const path = require('path')
 const Inert = require('@hapi/inert')
 const Vision = require('@hapi/vision')
+const Joi = require('@hapi/joi')
 const HapiSwagger = require('hapi-swagger')
 const Mrhorse = require('mrhorse')
 const logging = require('loggin')
@@ -46,6 +47,7 @@ module.exports = {
   logger: {},
   getLogger: getLogger,
   logUtil: logUtil,
+  joi: {},
   joiHelper: joiHelper,
   testHelper: testHelper,
   server: {},
@@ -54,6 +56,14 @@ module.exports = {
 
 async function register(server, options) {
   module.exports.server = server
+
+  // Register Joi as the default validator if one is not already registered.
+  if (!server.realm.validator) {
+    server.validator(Joi)
+    module.exports.joi = Joi
+  } else {
+    module.exports.joi = server.realm.validator
+  }
 
   const config = defaultConfig
 
@@ -166,7 +176,10 @@ function mongooseInit(mongoose, logger, config) {
     _.omit(config.mongo, ['pass'])
   )
 
-  mongoose.connect(config.mongo.URI, { useMongoClient: true })
+  mongoose.connect(config.mongo.URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+  })
 
   globals.mongoose = mongoose
 

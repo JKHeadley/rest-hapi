@@ -1,7 +1,8 @@
 ---
-id: validation
+id: version-2.0.x-validation
 title: Validation
 sidebar_label: Validation
+original_id: validation
 ---
 
 ## Route validation

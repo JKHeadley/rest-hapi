@@ -1,7 +1,8 @@
 ---
-id: introduction
+id: version-2.0.x-introduction
 title: Introduction
 sidebar_label: Introduction
+original_id: introduction
 ---
 
 ## Requirements

@@ -287,12 +287,12 @@ internals.generateJoiListQueryModel = function(model, logger) {
   if (queryableFields && readableFields) {
     queryModel.$select = Joi.alternatives().try(
       Joi.array()
-        .items(Joi.string().valid(readableFields))
+        .items(Joi.string().valid(...readableFields))
         .description(
           'A list of basic fields to be included in each resource. Valid values include: ' +
             readableFields.toString().replace(/,/g, ', ')
         ),
-      Joi.string().valid(readableFields)
+      Joi.string().valid(...readableFields)
     )
     queryModel.$text = Joi.any().description(
       'A full text search parameter. Takes advantage of indexes for efficient searching. Also implements stemming ' +
@@ -304,24 +304,24 @@ internals.generateJoiListQueryModel = function(model, logger) {
     )
     queryModel.$searchFields = Joi.alternatives().try(
       Joi.array()
-        .items(Joi.string().valid(queryableFields))
+        .items(Joi.string().valid(...queryableFields))
         .description(
           'A set of fields to apply the `$term` search parameter to. If this parameter is not included, the `$term` ' +
             'search parameter is applied to all searchable fields. Valid values include: ' +
             queryableFields.toString().replace(/,/g, ', ')
         ),
-      Joi.string().valid(queryableFields)
+      Joi.string().valid(...queryableFields)
     )
     queryModel.$sort = Joi.alternatives().try(
       Joi.array()
-        .items(Joi.string().valid(sortableFields))
+        .items(Joi.string().valid(...sortableFields))
         .description(
           'A set of fields to sort by. Including field name indicates it should be sorted ascending, while prepending ' +
             "'-' indicates descending. The default sort direction is 'ascending' (lowest value to highest value). Listing multiple" +
             'fields prioritizes the sort starting with the first field listed. Valid values include: ' +
             sortableFields.toString().replace(/,/g, ', ')
         ),
-      Joi.string().valid(sortableFields)
+      Joi.string().valid(...sortableFields)
     )
     queryModel.$exclude = Joi.alternatives().try(
       Joi.array()
@@ -396,12 +396,12 @@ internals.generateJoiFindQueryModel = function(model, logger) {
   if (readableFields) {
     queryModel.$select = Joi.alternatives().try(
       Joi.array()
-        .items(Joi.string().valid(readableFields))
+        .items(Joi.string().valid(...readableFields))
         .description(
           'A list of basic fields to be included in each resource. Valid values include: ' +
             readableFields.toString().replace(/,/g, ', ')
         ),
-      Joi.string().valid(readableFields)
+      Joi.string().valid(...readableFields)
     )
   }
 
@@ -571,7 +571,7 @@ internals.generateJoiModelFromFieldType = function(field, logger) {
       break
     case 'String':
       if (fieldCopy.enum) {
-        model = Joi.any().only(fieldCopy.enum)
+        model = Joi.string().valid(...fieldCopy.enum)
       } else if (fieldCopy.regex) {
         if (!(fieldCopy.regex instanceof RegExp)) {
           if (fieldCopy.regex.options) {
@@ -668,7 +668,7 @@ internals.joiObjectId = function() {
  * @returns {boolean}
  */
 internals.isObjectId = function(arg) {
-  const result = Joi.validate(arg, internals.joiObjectId())
+  const result = internals.joiObjectId().validate(arg)
 
   if (result.error) {
     return false

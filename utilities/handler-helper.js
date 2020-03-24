@@ -151,7 +151,7 @@ async function _listHandler(model, request, Log) {
     delete query.$flatten
     const { $embed } = query
     if (query.$count) {
-      mongooseQuery = model.count()
+      mongooseQuery = model.countDocuments()
       mongooseQuery = QueryHelper.createMongooseQuery(
         model,
         query,
@@ -170,7 +170,7 @@ async function _listHandler(model, request, Log) {
       mongooseQuery,
       Log
     ).lean()
-    const count = await mongooseQuery.count()
+    const count = await mongooseQuery.countDocuments()
     mongooseQuery = QueryHelper.paginate(query, mongooseQuery, Log)
     let result = await mongooseQuery.exec('find')
 

@@ -1,7 +1,8 @@
 ---
-id: configuration
+id: version-2.0.x-configuration
 title: Configuration
 sidebar_label: Configuration
+original_id: configuration
 ---
 
 

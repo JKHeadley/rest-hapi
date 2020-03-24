@@ -1,7 +1,8 @@
 ---
-id: querying
+id: version-2.0.x-querying
 title: Querying
 sidebar_label: Querying
+original_id: querying
 ---
 
 Query parameters can be added to GET requests to filter responses.  These parameters

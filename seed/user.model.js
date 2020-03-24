@@ -1,4 +1,3 @@
-const Joi = require('@hapi/joi')
 // NOTE: Install bcrypt then uncomment the line below
 // let bcrypt = require('bcryptjs')
 const RestHapi = require('rest-hapi')
@@ -92,7 +91,8 @@ module.exports = function(mongoose) {
                   _id: RestHapi.joiHelper.joiObjectId().required()
                 },
                 payload: {
-                  password: Joi.string()
+                  password: RestHapi.joi
+                    .string()
                     .required()
                     .description("The user's new password")
                 }
@@ -100,7 +100,7 @@ module.exports = function(mongoose) {
               plugins: {
                 'hapi-swagger': {
                   responseMessages: [
-                    { code: 200, message: 'Success' },
+                    { code: 204, message: 'Success' },
                     { code: 400, message: 'Bad Request' },
                     { code: 404, message: 'Not Found' },
                     { code: 500, message: 'Internal Server Error' }
