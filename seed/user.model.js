@@ -1,4 +1,3 @@
-const Joi = require('@hapi/joi')
 // NOTE: Install bcrypt then uncomment the line below
 // let bcrypt = require('bcryptjs')
 const RestHapi = require('rest-hapi')
@@ -92,7 +91,8 @@ module.exports = function(mongoose) {
                   _id: RestHapi.joiHelper.joiObjectId().required()
                 },
                 payload: {
-                  password: Joi.string()
+                  password: RestHapi.joi
+                    .string()
                     .required()
                     .description("The user's new password")
                 }
