@@ -47,6 +47,7 @@ module.exports = {
   logger: {},
   getLogger: getLogger,
   logUtil: logUtil,
+  joi: {},
   joiHelper: joiHelper,
   testHelper: testHelper,
   server: {},
@@ -56,7 +57,13 @@ module.exports = {
 async function register(server, options) {
   module.exports.server = server
 
-  server.validator(Joi)
+  // Register Joi as the default validator if one is not already registered.
+  if (!server.realm.validator) {
+    server.validator(Joi)
+    module.exports.joi = Joi
+  } else {
+    module.exports.joi = server.realm.validator
+  }
 
   const config = defaultConfig
 
