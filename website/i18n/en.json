@@ -200,6 +200,34 @@
       "version-1.7.x/version-1.7.x-validation": {
         "title": "Validation",
         "sidebar_label": "Validation"
+      },
+      "version-2.0.x/version-2.0.x-configuration": {
+        "title": "Configuration",
+        "sidebar_label": "Configuration"
+      },
+      "version-2.0.x/version-2.0.x-creating-endpoints": {
+        "title": "Creating Endpoints",
+        "sidebar_label": "Creating Endpoints"
+      },
+      "version-2.0.x/version-2.0.x-introduction": {
+        "title": "Introduction",
+        "sidebar_label": "Introduction"
+      },
+      "version-2.0.x/version-2.0.x-policies": {
+        "title": "Policies",
+        "sidebar_label": "Policies"
+      },
+      "version-2.0.x/version-2.0.x-querying": {
+        "title": "Querying",
+        "sidebar_label": "Querying"
+      },
+      "version-2.0.x/version-2.0.x-quick-start": {
+        "title": "Quick Start",
+        "sidebar_label": "Quick Start"
+      },
+      "version-2.0.x/version-2.0.x-validation": {
+        "title": "Validation",
+        "sidebar_label": "Validation"
       }
     },
     "links": {
