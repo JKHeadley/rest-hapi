@@ -13,7 +13,8 @@ const restHapi = require('../rest-hapi')
     mongoose.Promise = Promise
 
     mongoose.connect(mongoURI, {
-      useMongoClient: true
+      useNewUrlParser: true,
+      useUnifiedTopology: true
     })
 
     const embedAssociations = process.argv[5] === 'true'

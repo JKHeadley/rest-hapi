@@ -184,10 +184,10 @@ test('handler-helper.listHandler', function(t) {
         )
       })
 
-      // handler-helper.listHandler calls mongooseQuery.count
+      // handler-helper.listHandler calls mongooseQuery.countDocuments
       .then(function() {
         return t.test(
-          'handler-helper.listHandler calls mongooseQuery.count',
+          'handler-helper.listHandler calls mongooseQuery.countDocuments',
           function(t) {
             // <editor-fold desc="Arrange">
             const sandbox = sinon.sandbox.create()
@@ -200,7 +200,7 @@ test('handler-helper.listHandler', function(t) {
             queryHelperStub.createMongooseQuery = function() {
               return {
                 lean: function() {
-                  return { count: countSpy }
+                  return { countDocuments: countSpy }
                 }
               }
             }
