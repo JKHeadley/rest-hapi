@@ -1,7 +1,8 @@
 ---
-id: creating-endpoints
+id: version-2.0.x-creating-endpoints
 title: Creating Endpoints
 sidebar_label: Creating Endpoints
+original_id: creating-endpoints
 ---
 
 Creating endpoints with rest-hapi can be accomplished three different ways: 
