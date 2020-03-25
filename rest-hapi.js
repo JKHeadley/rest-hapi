@@ -205,7 +205,7 @@ async function registerMrHorse(server, logger, config) {
       policyPath = config.policyPath
     } else {
       policyPath = __dirname.replace(
-        'node_modules/rest-hapi',
+        path.join('node_modules', 'rest-hapi'),
         config.policyPath
       )
     }
