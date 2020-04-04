@@ -171,6 +171,13 @@ async function _listHandler(model, request, Log) {
       Log
     ).lean()
     const count = await mongooseQuery.countDocuments()
+
+    // allsow getting soft deleted count
+    let isDeletedCount = 0
+    if (config.enableSoftDelete) {
+      isDeletedCount = await mongooseQuery.countDocuments({ isDeleted: true })
+    }
+
     mongooseQuery = QueryHelper.paginate(query, mongooseQuery, Log)
     let result = await mongooseQuery.exec('find')
 
@@ -235,6 +242,11 @@ async function _listHandler(model, request, Log) {
       begin: (query.$page || 1) * query.$limit - query.$limit + 1,
       end: (query.$page || 1) * query.$limit,
       total: count
+    }
+
+    // show softDeleted items amount
+    if (config.enableSoftDelete) {
+      items.deleted = isDeletedCount
     }
 
     pages.total = Math.ceil(count / query.$limit)
