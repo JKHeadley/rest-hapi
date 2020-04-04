@@ -67,6 +67,7 @@ For any GET query that returns multiple documents, pagination data is returned a
     * begin - a number indicating what item number the results begin with.
     * end - a number indicating what item number the results end with.
     * total - a number indicating the total number of matching results.
+    * deleted - a number indicating the number of soft deleted in total of matching results if soft delete is activated.
 
 > **NOTE:** Pagination format borrowed from mongo-models [pagedFind](https://github.com/jedireza/mongo-models/blob/master/API.md#pagedfindfilter-fields-sort-limit-page-callback).
 
