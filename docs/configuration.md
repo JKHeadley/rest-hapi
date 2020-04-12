@@ -84,8 +84,10 @@ config.cors = {
 /**
  * Mongo settings
  * - config.mongo.URI = 'mongodb://localhost/rest_hapi'; (local db, default)
+ * - config.mongo.options = {} (mongoose options)
  */
 config.mongo.URI = 'mongodb://localhost/rest_hapi'
+config.mongo.options = {}
 ```
 
 ## authStrategy
