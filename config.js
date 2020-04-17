@@ -60,7 +60,6 @@ config.cors = {
 config.mongo.URI = 'mongodb://localhost/rest_hapi'
 config.mongo.options = {}
 
-
 /**
  * Authentication strategy to be used for all generated endpoints.
  * Set to false for no authentication.

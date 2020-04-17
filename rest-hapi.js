@@ -176,11 +176,13 @@ function mongooseInit(mongoose, logger, config) {
     _.omit(config.mongo, ['pass'])
   )
 
-  let options = Object.assign({
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  }, 
-  config.mongo.options)
+  const options = Object.assign(
+    {
+      useNewUrlParser: true,
+      useUnifiedTopology: true
+    },
+    config.mongo.options
+  )
 
   mongoose.connect(config.mongo.URI, options)
 

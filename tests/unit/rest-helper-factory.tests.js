@@ -6502,7 +6502,7 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
       //   JSON.stringify(Joi.object({ testKey: 'testValue' })),
       //   'correct payload validation with linking model'
       // )
-      t.equal(true, true, "TEMP")
+      t.equal(true, true, 'TEMP')
       t.equal(true, true, 'TEMP')
       // </editor-fold>
 
