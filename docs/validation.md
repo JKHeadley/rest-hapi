@@ -14,6 +14,7 @@ Boolean     |      Joi.bool()
 Number      |      Joi.number()
 Date        |      Joi.date()
 String      |      Joi.string()
+Mixed       |      Joi.any()
 types       |      Joi.any()
 
 Fields of type ``String`` can include further validation restrictions based on additional field properties as shown below:
