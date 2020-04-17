@@ -558,7 +558,7 @@ internals.generateJoiModelFromFieldType = function(field, logger) {
       model = internals.joiObjectId()
       break
     case 'Mixed':
-      model = Joi.object()
+      model = Joi.any()
       break
     case 'Boolean':
       model = Joi.bool()
