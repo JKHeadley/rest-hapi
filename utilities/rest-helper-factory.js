@@ -49,7 +49,9 @@ module.exports = function(logger, mongoose, server) {
         options = options || {}
 
         if (model.routeOptions.allowRead !== false) {
-          this.generateListEndpoint(server, model, options, Log)
+		  if (model.routeOptions.allowList !== false) {
+			  this.generateListEndpoint(server, model, options, Log)
+		  }
           this.generateFindEndpoint(server, model, options, Log)
         }
 

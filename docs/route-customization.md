@@ -65,6 +65,7 @@ You can prevent CRUD endpoints from generating by setting the correct property t
 
 Property | Effect when false
 --- | --- 
+allowList    |      omits ``GET /path`` endpoint
 allowRead    |      omits ``GET /path`` and ``GET /path/{_id}`` endpoints
 allowCreate  |      omits ``POST /path`` endpoint
 allowUpdate  |      omits ``PUT /path/{_id}`` endpoint
