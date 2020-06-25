@@ -6,7 +6,7 @@ sidebar_label: Assocations
 
 The rest-hapi framework supports model associations that mimic associations in a relational database.  This includes [one-one](#one-one), [one-many](#one-many-many-one), [many-one](#one-many-many-one), and [many-many](#many-many) relationships.  Associations are created by adding the relevant schema fields and populating the ``associations`` object within ``routeOptions``.  Associations exists as references to a document's ``_id`` field, and can be populated to return the associated object.  See [Querying](querying.md#populate-nested-associations) for more details on how to populate associations.
 
-## ONE_ONE
+## ONE_ONE 
 
 Below is an example of a one-one relationship between a ``user`` model and a ``dog`` model. Notice the ``dog`` and ``owner`` fields in the schemas.  A schema field is required for associations of type ``ONE_ONE`` or ``MANY_ONE``.  This field must match the association name, include a type of ``ObjectId``, and include a ``ref`` property with the associated model name.
 
