@@ -27,6 +27,14 @@ module.exports = {
   update: _update,
 
   updateHandler: _updateHandler,
+  
+  recoverOne: _recoverOne,
+
+  recoverOneHandler: _recoverOneHandler,
+
+  recoverMany: _recoverMany,
+
+  recoverManyHandler: _recoverManyHandler,
 
   deleteOne: _deleteOne,
 
@@ -740,6 +748,254 @@ async function _updateHandler(model, _id, request, Log) {
     } else {
       throw Boom.notFound('No resource was found with that id.')
     }
+  } catch (err) {
+    handleError(err, null, null, Log)
+  }
+}
+
+/**
+ * Recovers a model document.
+ * @param  {...any} args
+ * **Positional:**
+ * - function recoverOne(model, _id, Log)
+ *
+ * **Named:**
+ * - function deleteOne({
+ *      model,
+ *      _id,
+ *      Log = RestHapi.getLogger('deleteOne'),
+ *      restCall = false,
+ *      credentials
+ *   })
+ *
+ * **Params:**
+ * - model {object | string}: A mongoose model.
+ * - _id: The document id.
+ * - Log: A logging object.
+ * - restCall: If 'true', then will call DELETE /model/{_id}
+ * - credentials: Credentials for accessing the endpoint.
+ *
+ * @returns {object} A promise for the resulting model document.
+ */
+function _recoverOne(...args) {
+  if (args.length > 1) {
+    return _recoverOneV1(...args)
+  } else {
+    return _recoverOneV2(...args)
+  }
+}
+
+function _recoverOneV1(model, _id, Log) {
+  model = getModel(model)
+  const request = { params: { _id: _id } }
+  return _recoverOneHandler(model, _id, request, Log)
+}
+
+async function _recoverOneV2({
+  model,
+  _id,
+  Log,
+  restCall = false,
+  credentials
+}) {
+  model = getModel(model)
+  const RestHapi = require('../rest-hapi')
+  Log = Log || RestHapi.getLogger('recoverOne')
+
+  if (restCall) {
+    assertServer()
+    credentials = defaultCreds(credentials)
+
+    const request = {
+      method: 'Post',
+      url: `/${model.routeOptions.alias || model.modelName}/${_id}/recover`,
+      params: { _id },
+      credentials,
+      headers: { authorization: 'Bearer' }
+    }
+
+    const injectOptions = RestHapi.testHelper.mockInjection(request)
+    const { result } = await RestHapi.server.inject(injectOptions)
+    return result
+  } else {
+    return _recoverOneV1(model, _id, Log)
+  }
+}
+
+/**
+ * Recovers a model document
+ * @param model {object | string}: A mongoose model.
+ * @param _id: The document id.
+ * @param request: The Hapi request object.
+ * @param Log: A logging object.
+ * @returns {object} A promise returning true if the recover succeeds.
+ * @private
+ */
+async function _recoverOneHandler(model, _id, request, Log) {
+  try {
+    try {
+      if (
+        model.routeOptions &&
+        model.routeOptions.recover &&
+        model.routeOptions.recover.pre
+      ) {
+        await model.routeOptions.recover.pre(_id, request, Log)
+      }
+    } catch (err) {
+      handleError(
+        err,
+        'There was a preprocessing error recovering the resource.',
+        Boom.badRequest,
+        Log
+      )
+    }
+    let recovered
+
+    try {
+      const payload = { $set: {isDeleted: false}, $unset: {deletedAt: ""} }
+      recovered = await model.findByIdAndUpdate(_id, payload, {
+        new: true,
+        runValidators: config.enableMongooseRunValidators
+      })
+    } catch (err) {
+      handleError(
+        err,
+        'There was an error recovering the resource.',
+        Boom.badImplementation,
+        Log
+      )
+    }
+    // TODO: clean up associations/set rules for ON DELETE CASCADE/etc.
+    if (recovered) {
+      // TODO: add eventLogs
+
+      try {
+        if (
+          model.routeOptions &&
+          model.routeOptions.recover &&
+          model.routeOptions.recover.post
+        ) {
+          await model.routeOptions.recover.post(
+            recovered,
+            request,
+            Log
+          )
+        }
+      } catch (err) {
+        handleError(
+          err,
+          'There was a postprocessing error recovering the resource.',
+          Boom.badRequest,
+          Log
+        )
+      }
+      return true
+    } else {
+      throw Boom.notFound('No resource was found with that id.')
+    }
+  } catch (err) {
+    handleError(err, null, null, Log)
+  }
+}
+
+/**
+ * Recovers multiple documents.
+ * @param  {...any} args
+ * **Positional:**
+ * - function recoverMany(model, payload, Log)
+ *
+ * **Named:**
+ * - function recoverMany({
+ *      model,
+ *      payload,
+ *      Log = RestHapi.getLogger('delete'),
+ *      restCall = false,
+ *      credentials
+ *   })
+ *
+ * **Params:**
+ * - model {object | string}: A mongoose model.
+ * - payload: Either an array of ids or an array of objects containing an id.
+ * - Log: A logging object.
+ * - restCall: If 'true', then will call POST /model
+ * - credentials: Credentials for accessing the endpoint.
+ *
+ * @returns {object} A promise for the resulting model document.
+ */
+function _recoverMany(...args) {
+  if (args.length > 1) {
+    return _recoverManyV1(...args)
+  } else {
+    return _recoverManyV2(...args)
+  }
+}
+
+function _recoverManyV1(model, payload, Log) {
+  model = getModel(model)
+  const request = { payload: payload }
+  return _recoverManyHandler(model, request, Log)
+}
+
+async function _recoverManyV2({
+  model,
+  payload,
+  Log,
+  restCall = false,
+  credentials
+}) {
+  model = getModel(model)
+  const RestHapi = require('../rest-hapi')
+  Log = Log || RestHapi.getLogger('recoverOne')
+
+  if (restCall) {
+    assertServer()
+    credentials = defaultCreds(credentials)
+
+    const request = {
+      method: 'Post',
+      url: `/${model.routeOptions.alias || model.modelName}/recover`,
+      payload,
+      credentials,
+      headers: { authorization: 'Bearer' }
+    }
+
+    const injectOptions = RestHapi.testHelper.mockInjection(request)
+    const { result } = await RestHapi.server.inject(injectOptions)
+    return result
+  } else {
+    return _recoverManyV1(model, payload, Log)
+  }
+}
+
+/**
+ * Recovers multiple documents.
+ * @param model {object | string}: A mongoose model.
+ * @param request: The Hapi request object, or a container for the wrapper payload.
+ * @param Log: A logging object.
+ * @returns {object} A promise returning true if the recover succeeds.
+ * @private
+ */
+// TODO: prevent Promise.all from catching first error and returning early. Catch individual errors and return a list
+// TODO(cont) of ids that failed
+async function _recoverManyHandler(model, request, Log) {
+  try {
+    // EXPL: make a copy of the payload so that request.payload remains unchanged
+    const payload = request.payload.map(item => {
+      return _.isObject(item) ? _.assignIn({}, item) : item
+    })
+    const promises = []
+    for (const arg of payload) {
+      if (JoiMongooseHelper.isObjectId(arg)) {
+        promises.push(_recoverOneHandler(model, arg, request, Log))
+      } else {
+        promises.push(
+          _recoverOneHandler(model, arg._id, request, Log)
+        )
+      }
+    }
+
+    await Promise.all(promises)
+    return true
   } catch (err) {
     handleError(err, null, null, Log)
   }
