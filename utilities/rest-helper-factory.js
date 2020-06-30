@@ -60,6 +60,11 @@ module.exports = function(logger, mongoose, server) {
         if (model.routeOptions.allowUpdate !== false) {
           this.generateUpdateEndpoint(server, model, options, Log)
         }
+        
+        if (model.routeOptions.allowUpdate !== false && config.enableSoftDelete) {
+          this.generateRecoverOneEndpoint(server, model, options, Log)
+          this.generateRecoverManyEndpoint(server, model, options, Log)
+        }
 
         if (model.routeOptions.allowDelete !== false) {
           this.generateDeleteOneEndpoint(server, model, options, Log)
@@ -581,6 +586,285 @@ module.exports = function(logger, mongoose, server) {
           response: {
             failAction: config.enableResponseFail ? 'error' : 'log',
             schema: readModel
+          }
+        }
+      })
+    },
+    
+        /**
+     * Creates an endpoint for RECOVER /RESOURCE/{_id}/recover
+     * @param server: A Hapi server.
+     * @param model: A mongoose model.
+     * @param options: Options object.
+     * @param logger: A logging object.
+     */
+    generateRecoverOneEndpoint: function(server, model, options, logger) {
+      // This line must come first
+      validationHelper.validateModel(model, logger)
+      const Log = logger.bind(chalk.yellow('RecoverOne'))
+
+      const collectionName = model.collectionDisplayName || model.modelName
+      if (config.logRoutes) {
+        Log.note('Generating Recover One endpoint for ' + collectionName)
+      }
+
+      options = options || {}
+
+      let resourceAliasForRoute
+
+      if (model.routeOptions) {
+        resourceAliasForRoute = model.routeOptions.alias || model.modelName
+      } else {
+        resourceAliasForRoute = model.modelName
+      }
+
+      const handler = HandlerHelper.generateRecoverHandler(model, options, Log)
+
+      let payloadModel = null
+      /* if (config.enableSoftDelete) {
+        payloadModel = Joi.object({ hardDelete: Joi.bool() }).allow(null)
+
+        if (!config.enablePayloadValidation) {
+          payloadModel = Joi.alternatives().try(payloadModel, Joi.any())
+        }
+      } */
+
+      let auth = false
+      let recoverOneHeadersValidation = Object.assign(headersValidation, {})
+
+      if (config.authStrategy && model.routeOptions.recoverAuth !== false) {
+        auth = {
+          strategy: config.authStrategy
+        }
+
+        const scope = authHelper.generateScopeForEndpoint(model, 'recover', Log)
+
+        if (!_.isEmpty(scope)) {
+          auth.scope = scope
+          if (config.logScopes) {
+            Log.debug(
+              'Scope for PUT/' + resourceAliasForRoute + '/{_id}/recover' + ':',
+              scope
+            )
+          }
+        }
+      } else {
+        recoverOneHeadersValidation = null
+      }
+
+      let policies = []
+
+      if (model.routeOptions.policies && config.enablePolicies) {
+        policies = model.routeOptions.policies
+        policies = (policies.rootPolicies || []).concat(
+          policies.recoverPolicies || []
+        )
+      }
+
+      if (config.enableDocumentScopes && auth) {
+        policies.push(restHapiPolicies.enforceDocumentScopePre(model, Log))
+        policies.push(restHapiPolicies.enforceDocumentScopePost(model, Log))
+      }
+
+      if (config.enableAuditLog) {
+        policies.push(restHapiPolicies.logRecover(mongoose, model, Log))
+      }
+
+      server.route({
+        method: 'PUT',
+        path: '/' + resourceAliasForRoute + '/{_id}/recover',
+        config: {
+          handler: handler,
+          auth: auth,
+          cors: config.cors,
+          description: 'Recover a ' + collectionName,
+          tags: ['api', collectionName],
+          validate: {
+            params: {
+              _id: Joi.objectId().required()
+            },
+            payload: payloadModel,
+            headers: recoverOneHeadersValidation
+          },
+          plugins: {
+            model: model,
+            'hapi-swagger': {
+              responseMessages: [
+                {
+                  code: 204,
+                  message: 'The resource was recovered successfully.'
+                },
+                { code: 400, message: 'The request was malformed.' },
+                {
+                  code: 401,
+                  message:
+                    'The authentication header was missing/malformed, or the token has expired.'
+                },
+                {
+                  code: 404,
+                  message: 'There was no resource found with that ID.'
+                },
+                { code: 500, message: 'There was an unknown error.' },
+                {
+                  code: 503,
+                  message: 'There was a problem with the database.'
+                }
+              ]
+            },
+            policies: policies
+          },
+          response: {
+            // TODO: add a response schema if needed
+            // failAction: config.enableResponseFail ? 'error' : 'log',
+            // schema: model.readModel ? model.readModel : Joi.object().unknown().optional()
+          }
+        }
+      })
+    },
+
+    /**
+     * Creates an endpoint for DELETE /RESOURCE/
+     * @param server: A Hapi server.
+     * @param model: A mongoose model.
+     * @param options: Options object.
+     * @param logger: A logging object.
+     */
+    // TODO: handle partial recovers (return list of ids that failed/were not found)
+    generateRecoverManyEndpoint: function(server, model, options, logger) {
+      // This line must come first
+      validationHelper.validateModel(model, logger)
+      const Log = logger.bind(chalk.yellow('RecoverMany'))
+
+      const collectionName = model.collectionDisplayName || model.modelName
+      if (config.logRoutes) {
+        Log.note('Generating Recover Many endpoint for ' + collectionName)
+      }
+
+      options = options || {}
+
+      let resourceAliasForRoute
+
+      if (model.routeOptions) {
+        resourceAliasForRoute = model.routeOptions.alias || model.modelName
+      } else {
+        resourceAliasForRoute = model.modelName
+      }
+
+      const handler = HandlerHelper.generateRecoverHandler(model, options, Log)
+
+      let payloadModel = null
+      /* if (config.enableSoftDelete) {
+        payloadModel = Joi.alternatives().try(
+          Joi.array().items(
+            Joi.object({
+              _id: Joi.objectId()
+            })
+          ),
+          Joi.array().items(Joi.objectId())
+        )
+      } else {
+        payloadModel = Joi.array().items(Joi.objectId())
+      } */
+
+      payloadModel = Joi.alternatives().try(
+        Joi.array().items(
+          Joi.object({
+            _id: Joi.objectId()
+          })
+        ),
+        Joi.array().items(Joi.objectId())
+      )
+
+      if (!config.enablePayloadValidation) {
+        payloadModel = Joi.alternatives().try(payloadModel, Joi.any())
+      }
+
+      let auth = false
+      let recoverManyHeadersValidation = Object.assign(headersValidation, {})
+
+      if (config.authStrategy && model.routeOptions.recoverAuth !== false) {
+        auth = {
+          strategy: config.authStrategy
+        }
+
+        const scope = authHelper.generateScopeForEndpoint(model, 'recover', Log)
+
+        if (!_.isEmpty(scope)) {
+          auth.scope = scope
+          if (config.logScopes) {
+            Log.debug('Scope for PUT/' + resourceAliasForRoute + ':', scope)
+          }
+        }
+      } else {
+        recoverManyHeadersValidation = null
+      }
+
+      let policies = []
+
+      if (model.routeOptions.policies && config.enablePolicies) {
+        policies = model.routeOptions.policies
+        policies = (policies.rootPolicies || []).concat(
+          policies.recoverPolicies || []
+        )
+      }
+
+      if (config.enableDocumentScopes && auth) {
+        policies.push(restHapiPolicies.enforceDocumentScopePre(model, Log))
+        policies.push(restHapiPolicies.enforceDocumentScopePost(model, Log))
+      }
+
+      /* if (config.enableDeletedBy && config.enableSoftDelete) {
+        policies.push(restHapiPolicies.addDeletedBy(model, Log))
+      } */
+
+      if (config.enableAuditLog) {
+        policies.push(restHapiPolicies.logRecover(mongoose, model, Log))
+      }
+
+      server.route({
+        method: 'PUT',
+        path: '/' + resourceAliasForRoute + '/recover',
+        config: {
+          handler: handler,
+          auth: auth,
+          cors: config.cors,
+          description: 'Recover multiple ' + collectionName + 's',
+          tags: ['api', collectionName],
+          validate: {
+            payload: payloadModel,
+            headers: recoverManyHeadersValidation
+          },
+          plugins: {
+            model: model,
+            'hapi-swagger': {
+              responseMessages: [
+                {
+                  code: 204,
+                  message: 'The resource was recovered successfully.'
+                },
+                { code: 400, message: 'The request was malformed.' },
+                {
+                  code: 401,
+                  message:
+                    'The authentication header was missing/malformed, or the token has expired.'
+                },
+                {
+                  code: 404,
+                  message: 'There was no resource found with that ID.'
+                },
+                { code: 500, message: 'There was an unknown error.' },
+                {
+                  code: 503,
+                  message: 'There was a problem with the database.'
+                }
+              ]
+            },
+            policies: policies
+          },
+          response: {
+            // TODO: add a response schema if needed
+            // failAction: config.enableResponseFail ? 'error' : 'log',
+            // schema: model.readModel ? model.readModel : Joi.object().unknown().optional()
           }
         }
       })
