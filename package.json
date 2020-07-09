@@ -22,7 +22,7 @@
     "test-all": "tape ./tests/unit/*.tests.js && tape ./tests/e2e/*.tests.js",
     "test-unit": "tape ./tests/unit/*.tests.js",
     "test-e2e": "tape ./tests/e2e/*.tests.js",
-    "report-coverage": "codecov",
+    "report-coverage": "nyc report --reporter=text-lcov > coverage.lcov && codecov",
     "patch-release-git": "git add . && git commit -a -m 'patch release' && git push && npm version patch && npm publish",
     "patch-release": "npm version patch && npm publish",
     "lint": "eslint --fix **/*.js ./"
