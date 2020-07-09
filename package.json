@@ -14,7 +14,7 @@
     "test": "tests"
   },
   "scripts": {
-    "test": "nyc tape ./tests/unit/*.tests.js ./tests/e2e/*.tests.js",
+    "test": "nyc tape ./tests/unit/*.tests.js && nyc tape ./tests/e2e/*.tests.js",
     "posttest": "npm run report-coverage",
     "test-unit": "nyc tape ./tests/unit/*.tests.js",
     "test-e2e": "nyc tape ./tests/e2e/*.tests.js",
