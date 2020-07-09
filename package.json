@@ -18,11 +18,11 @@
     "posttest": "npm run report-coverage",
     "cover": "npm run cover:unit && npm run cover:e2e",
     "cover:unit": "nyc --reporter=lcov --silent npm run test-unit",
-    "cover:e2e": "nyc --reporter=lcov --silent --no-clean npm run test-e2e",
+    "cover:e2e": "nyc --reporter=lcov --silent --clean=false npm run test-e2e",
     "test-all": "tape ./tests/unit/*.tests.js && tape ./tests/e2e/*.tests.js",
     "test-unit": "tape ./tests/unit/*.tests.js",
     "test-e2e": "tape ./tests/e2e/*.tests.js",
-    "report-coverage": "nyc report --reporter=text-lcov > coverage.lcov && codecov",
+    "report-coverage": "nyc report --reporter=html --reporter=text-lcov > coverage.lcov && codecov",
     "patch-release-git": "git add . && git commit -a -m 'patch release' && git push && npm version patch && npm publish",
     "patch-release": "npm version patch && npm publish",
     "lint": "eslint --fix **/*.js ./"
