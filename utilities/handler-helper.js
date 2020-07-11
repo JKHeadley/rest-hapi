@@ -760,10 +760,10 @@ async function _updateHandler(model, _id, request, Log) {
  * - function recoverOne(model, _id, Log)
  *
  * **Named:**
- * - function deleteOne({
+ * - function recoverOne({
  *      model,
  *      _id,
- *      Log = RestHapi.getLogger('deleteOne'),
+ *      Log = RestHapi.getLogger('recoverOne'),
  *      restCall = false,
  *      credentials
  *   })
@@ -772,7 +772,7 @@ async function _updateHandler(model, _id, request, Log) {
  * - model {object | string}: A mongoose model.
  * - _id: The document id.
  * - Log: A logging object.
- * - restCall: If 'true', then will call DELETE /model/{_id}
+ * - restCall: If 'true', then will call PUT /model/{_id}/recover
  * - credentials: Credentials for accessing the endpoint.
  *
  * @returns {object} A promise for the resulting model document.
@@ -852,7 +852,7 @@ async function _recoverOneHandler(model, _id, request, Log) {
     let recovered
 
     try {
-      const payload = { $set: {isDeleted: false}, $unset: {deletedAt: ""} }
+      const payload = { $set: {isDeleted: false}, $unset: {deletedAt: "", deletedBy: ""} }
       recovered = await model.findByIdAndUpdate(_id, payload, {
         new: true,
         runValidators: config.enableMongooseRunValidators
@@ -917,7 +917,7 @@ async function _recoverOneHandler(model, _id, request, Log) {
  * - model {object | string}: A mongoose model.
  * - payload: Either an array of ids or an array of objects containing an id.
  * - Log: A logging object.
- * - restCall: If 'true', then will call POST /model
+ * - restCall: If 'true', then will call PUT /model/recover
  * - credentials: Credentials for accessing the endpoint.
  *
  * @returns {object} A promise for the resulting model document.
