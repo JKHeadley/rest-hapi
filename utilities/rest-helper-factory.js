@@ -621,14 +621,7 @@ module.exports = function(logger, mongoose, server) {
       const handler = HandlerHelper.generateRecoverHandler(model, options, Log)
 
       let payloadModel = null
-      /* if (config.enableSoftDelete) {
-        payloadModel = Joi.object({ hardDelete: Joi.bool() }).allow(null)
-
-        if (!config.enablePayloadValidation) {
-          payloadModel = Joi.alternatives().try(payloadModel, Joi.any())
-        }
-      } */
-
+      
       let auth = false
       let recoverOneHeadersValidation = Object.assign(headersValidation, {})
 
@@ -637,7 +630,7 @@ module.exports = function(logger, mongoose, server) {
           strategy: config.authStrategy
         }
 
-        const scope = authHelper.generateScopeForEndpoint(model, 'recover', Log)
+        const scope = authHelper.generateScopeForEndpoint(model, 'update', Log)
 
         if (!_.isEmpty(scope)) {
           auth.scope = scope
@@ -664,6 +657,10 @@ module.exports = function(logger, mongoose, server) {
       if (config.enableDocumentScopes && auth) {
         policies.push(restHapiPolicies.enforceDocumentScopePre(model, Log))
         policies.push(restHapiPolicies.enforceDocumentScopePost(model, Log))
+      }
+      
+      if (config.enableUpdatedBy) {
+        policies.push(restHapiPolicies.addUpdatedBy(model, Log))
       }
 
       if (config.enableAuditLog) {
@@ -723,7 +720,7 @@ module.exports = function(logger, mongoose, server) {
     },
 
     /**
-     * Creates an endpoint for DELETE /RESOURCE/
+     * Creates an endpoint for PUT /RESOURCE/recover
      * @param server: A Hapi server.
      * @param model: A mongoose model.
      * @param options: Options object.
@@ -753,19 +750,7 @@ module.exports = function(logger, mongoose, server) {
       const handler = HandlerHelper.generateRecoverHandler(model, options, Log)
 
       let payloadModel = null
-      /* if (config.enableSoftDelete) {
-        payloadModel = Joi.alternatives().try(
-          Joi.array().items(
-            Joi.object({
-              _id: Joi.objectId()
-            })
-          ),
-          Joi.array().items(Joi.objectId())
-        )
-      } else {
-        payloadModel = Joi.array().items(Joi.objectId())
-      } */
-
+      
       payloadModel = Joi.alternatives().try(
         Joi.array().items(
           Joi.object({
@@ -787,7 +772,7 @@ module.exports = function(logger, mongoose, server) {
           strategy: config.authStrategy
         }
 
-        const scope = authHelper.generateScopeForEndpoint(model, 'recover', Log)
+        const scope = authHelper.generateScopeForEndpoint(model, 'update', Log)
 
         if (!_.isEmpty(scope)) {
           auth.scope = scope
@@ -813,9 +798,9 @@ module.exports = function(logger, mongoose, server) {
         policies.push(restHapiPolicies.enforceDocumentScopePost(model, Log))
       }
 
-      /* if (config.enableDeletedBy && config.enableSoftDelete) {
-        policies.push(restHapiPolicies.addDeletedBy(model, Log))
-      } */
+      if (config.enableUpdatedBy) {
+        policies.push(restHapiPolicies.addUpdatedBy(model, Log))
+      }
 
       if (config.enableAuditLog) {
         policies.push(restHapiPolicies.logRecover(mongoose, model, Log))
