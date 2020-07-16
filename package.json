@@ -1,6 +1,6 @@
 {
   "name": "rest-hapi",
-  "version": "2.1.1",
+  "version": "2.2.0",
   "description": "A RESTful API generator for hapi",
   "main": "rest-hapi.js",
   "bin": {
@@ -14,11 +14,15 @@
     "test": "tests"
   },
   "scripts": {
-    "test": "nyc tape ./tests/unit/*.tests.js ./tests/e2e/*.tests.js",
+    "test": "npm run cover",
     "posttest": "npm run report-coverage",
-    "test-unit": "nyc tape ./tests/unit/*.tests.js",
-    "test-e2e": "nyc tape ./tests/e2e/*.tests.js",
-    "report-coverage": "nyc report --reporter=text-lcov > coverage.lcov && codecov",
+    "cover": "npm run cover:unit && npm run cover:e2e",
+    "cover:unit": "nyc --reporter=lcov --silent npm run test-unit",
+    "cover:e2e": "nyc --reporter=lcov --silent --clean=false npm run test-e2e",
+    "test-all": "tape ./tests/unit/*.tests.js && tape ./tests/e2e/*.tests.js",
+    "test-unit": "tape ./tests/unit/*.tests.js",
+    "test-e2e": "tape ./tests/e2e/*.tests.js",
+    "report-coverage": "nyc report --reporter=html --reporter=text-lcov > coverage.lcov && codecov",
     "patch-release-git": "git add . && git commit -a -m 'patch release' && git push && npm version patch && npm publish",
     "patch-release": "npm version patch && npm publish",
     "lint": "eslint --fix **/*.js ./"
@@ -75,7 +79,7 @@
   "devDependencies": {
     "babel-eslint": "^10.0.3",
     "clear-require": "^3.0.0",
-    "codecov": "^3.6.5",
+    "codecov": "^3.7.0",
     "decache": "4.5.1",
     "eslint": "^6.4.0",
     "eslint-config-prettier": "^6.3.0",

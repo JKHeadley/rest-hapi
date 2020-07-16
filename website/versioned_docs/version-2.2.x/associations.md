@@ -1,7 +1,8 @@
 ---
-id: associations
+id: version-2.2.x-associations
 title: Associations
 sidebar_label: Assocations
+original_id: associations
 ---
 
 The rest-hapi framework supports model associations that mimic associations in a relational database.  This includes [one-one](#one-one), [one-many](#one-many-many-one), [many-one](#one-many-many-one), and [many-many](#many-many) relationships.  Associations are created by adding the relevant schema fields and populating the ``associations`` object within ``routeOptions``.  Associations exists as references to a document's ``_id`` field, and can be populated to return the associated object.  See [Querying](querying.md#populate-nested-associations) for more details on how to populate associations.

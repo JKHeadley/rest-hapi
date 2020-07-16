@@ -11,8 +11,8 @@ const sinonTest = sinonTestFactory(sinon)
 const rewire = require('rewire')
 const proxyquire = require('proxyquire')
 const assert = require('assert')
-const mongoose = require('mongoose')
-const Types = mongoose.Schema.Types
+const Mongoose = require('mongoose')
+const Types = Mongoose.Schema.Types
 const logging = require('loggin')
 let Log = logging.getLogger('tests')
 Log.logLevel = 'DEBUG'
@@ -87,14 +87,14 @@ test('joi-mongoose-helper.generateJoiReadModel', function(t) {
         generateJoiFieldModel
       )
 
-      const userSchema = new mongoose.Schema({
+      const userSchema = new Mongoose.Schema({
         email: {
           type: Types.String
         }
       })
 
       userSchema.statics = { routeOptions: {} }
-      const userModel = mongoose.model('user', userSchema)
+      const userModel = Mongoose.model('user', userSchema)
 
       const emailField = userModel.schema.tree.email
       // </editor-fold>
@@ -122,8 +122,12 @@ test('joi-mongoose-helper.generateJoiReadModel', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Restore">
-      delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      Object.keys(Mongoose.models).forEach(function(key) {
+        delete Mongoose.models[key]
+      })
+      Object.keys(Mongoose.modelSchemas).forEach(function(key) {
+        delete Mongoose.modelSchemas[key]
+      })
       // </editor-fold>
     }
   )
@@ -143,7 +147,7 @@ test('joi-mongoose-helper.generateJoiReadModel', function(t) {
         generateJoiFieldModel
       )
 
-      const userSchema = new mongoose.Schema({
+      const userSchema = new Mongoose.Schema({
         email: {
           type: Types.String,
           readModel: Joi.string().valid('test')
@@ -151,7 +155,7 @@ test('joi-mongoose-helper.generateJoiReadModel', function(t) {
       })
 
       userSchema.statics = { routeOptions: {} }
-      const userModel = mongoose.model('user', userSchema)
+      const userModel = Mongoose.model('user', userSchema)
 
       const emailField = userModel.schema.tree.email
       // </editor-fold>
@@ -182,8 +186,12 @@ test('joi-mongoose-helper.generateJoiReadModel', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Restore">
-      delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      Object.keys(Mongoose.models).forEach(function(key) {
+        delete Mongoose.models[key]
+      })
+      Object.keys(Mongoose.modelSchemas).forEach(function(key) {
+        delete Mongoose.modelSchemas[key]
+      })
       // </editor-fold>
     }
   )
@@ -203,7 +211,7 @@ test('joi-mongoose-helper.generateJoiReadModel', function(t) {
         generateJoiFieldModel
       )
 
-      const userSchema = new mongoose.Schema({
+      const userSchema = new Mongoose.Schema({
         firstName: {
           type: Types.String,
           allowOnRead: false
@@ -215,7 +223,7 @@ test('joi-mongoose-helper.generateJoiReadModel', function(t) {
       })
 
       userSchema.statics = { routeOptions: {} }
-      const userModel = mongoose.model('user', userSchema)
+      const userModel = Mongoose.model('user', userSchema)
 
       const firstNameField = userModel.schema.tree.firstName
       const lastNameField = userModel.schema.tree.lastName
@@ -249,8 +257,12 @@ test('joi-mongoose-helper.generateJoiReadModel', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Restore">
-      delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      Object.keys(Mongoose.models).forEach(function(key) {
+        delete Mongoose.models[key]
+      })
+      Object.keys(Mongoose.modelSchemas).forEach(function(key) {
+        delete Mongoose.modelSchemas[key]
+      })
       // </editor-fold>
     }
   )
@@ -276,14 +288,14 @@ test('joi-mongoose-helper.generateJoiReadModel', function(t) {
         })
       )
 
-      const userSchema = new mongoose.Schema({
+      const userSchema = new Mongoose.Schema({
         firstName: {
           type: Types.String
         }
       })
 
       userSchema.statics = { routeOptions: {} }
-      const userModel = mongoose.model('user', userSchema)
+      const userModel = Mongoose.model('user', userSchema)
 
       const firstNameField = userModel.schema.tree.firstName
       // </editor-fold>
@@ -306,8 +318,12 @@ test('joi-mongoose-helper.generateJoiReadModel', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Restore">
-      delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      Object.keys(Mongoose.models).forEach(function(key) {
+        delete Mongoose.models[key]
+      })
+      Object.keys(Mongoose.modelSchemas).forEach(function(key) {
+        delete Mongoose.modelSchemas[key]
+      })
       // </editor-fold>
     }
   )
@@ -327,7 +343,7 @@ test('joi-mongoose-helper.generateJoiReadModel', function(t) {
         generateJoiFieldModel
       )
 
-      const userSchema = new mongoose.Schema({
+      const userSchema = new Mongoose.Schema({
         email: {
           type: Types.String
         },
@@ -342,7 +358,7 @@ test('joi-mongoose-helper.generateJoiReadModel', function(t) {
       })
 
       userSchema.statics = { routeOptions: {} }
-      const userModel = mongoose.model('user', userSchema)
+      const userModel = Mongoose.model('user', userSchema)
 
       // </editor-fold>
 
@@ -370,8 +386,12 @@ test('joi-mongoose-helper.generateJoiReadModel', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Restore">
-      delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      Object.keys(Mongoose.models).forEach(function(key) {
+        delete Mongoose.models[key]
+      })
+      Object.keys(Mongoose.modelSchemas).forEach(function(key) {
+        delete Mongoose.modelSchemas[key]
+      })
       // </editor-fold>
     }
   )
@@ -391,7 +411,7 @@ test('joi-mongoose-helper.generateJoiReadModel', function(t) {
         generateJoiFieldModel
       )
 
-      const userSchema = new mongoose.Schema({
+      const userSchema = new Mongoose.Schema({
         email: {
           type: Types.String,
           requireOnRead: true
@@ -399,7 +419,7 @@ test('joi-mongoose-helper.generateJoiReadModel', function(t) {
       })
 
       userSchema.statics = { routeOptions: {} }
-      const userModel = mongoose.model('user', userSchema)
+      const userModel = Mongoose.model('user', userSchema)
 
       // </editor-fold>
 
@@ -416,8 +436,12 @@ test('joi-mongoose-helper.generateJoiReadModel', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Restore">
-      delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      Object.keys(Mongoose.models).forEach(function(key) {
+        delete Mongoose.models[key]
+      })
+      Object.keys(Mongoose.modelSchemas).forEach(function(key) {
+        delete Mongoose.modelSchemas[key]
+      })
       // </editor-fold>
     }
   )
@@ -444,7 +468,7 @@ test('joi-mongoose-helper.generateJoiReadModel', function(t) {
         generateJoiReadModel
       )
 
-      const userSchema = new mongoose.Schema({})
+      const userSchema = new Mongoose.Schema({})
 
       userSchema.statics = {
         routeOptions: {
@@ -480,7 +504,7 @@ test('joi-mongoose-helper.generateJoiReadModel', function(t) {
         }
       }
 
-      const userModel = mongoose.model('user', userSchema)
+      const userModel = Mongoose.model('user', userSchema)
 
       // </editor-fold>
 
@@ -568,8 +592,12 @@ test('joi-mongoose-helper.generateJoiReadModel', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Restore">
-      delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      Object.keys(Mongoose.models).forEach(function(key) {
+        delete Mongoose.models[key]
+      })
+      Object.keys(Mongoose.modelSchemas).forEach(function(key) {
+        delete Mongoose.modelSchemas[key]
+      })
       // </editor-fold>
     }
   )
@@ -589,10 +617,10 @@ test('joi-mongoose-helper.generateJoiReadModel', function(t) {
         generateJoiFieldModel
       )
 
-      const userSchema = new mongoose.Schema({})
+      const userSchema = new Mongoose.Schema({})
 
       userSchema.statics = { routeOptions: {} }
-      const userModel = mongoose.model('user', userSchema)
+      const userModel = Mongoose.model('user', userSchema)
 
       // </editor-fold>
 
@@ -605,8 +633,12 @@ test('joi-mongoose-helper.generateJoiReadModel', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Restore">
-      delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      Object.keys(Mongoose.models).forEach(function(key) {
+        delete Mongoose.models[key]
+      })
+      Object.keys(Mongoose.modelSchemas).forEach(function(key) {
+        delete Mongoose.modelSchemas[key]
+      })
       // </editor-fold>
     }
   )
@@ -639,14 +671,14 @@ test('joi-mongoose-helper.generateJoiUpdateModel', function(t) {
         generateJoiFieldModel
       )
 
-      const userSchema = new mongoose.Schema({
+      const userSchema = new Mongoose.Schema({
         email: {
           type: Types.String
         }
       })
 
       userSchema.statics = { routeOptions: {} }
-      const userModel = mongoose.model('user', userSchema)
+      const userModel = Mongoose.model('user', userSchema)
 
       const emailField = userModel.schema.tree.email
       // </editor-fold>
@@ -676,8 +708,12 @@ test('joi-mongoose-helper.generateJoiUpdateModel', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Restore">
-      delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      Object.keys(Mongoose.models).forEach(function(key) {
+        delete Mongoose.models[key]
+      })
+      Object.keys(Mongoose.modelSchemas).forEach(function(key) {
+        delete Mongoose.modelSchemas[key]
+      })
       // </editor-fold>
     }
   )
@@ -697,7 +733,7 @@ test('joi-mongoose-helper.generateJoiUpdateModel', function(t) {
         generateJoiFieldModel
       )
 
-      const userSchema = new mongoose.Schema({
+      const userSchema = new Mongoose.Schema({
         email: {
           type: Types.String,
           updateModel: Joi.string().valid('test')
@@ -705,7 +741,7 @@ test('joi-mongoose-helper.generateJoiUpdateModel', function(t) {
       })
 
       userSchema.statics = { routeOptions: {} }
-      const userModel = mongoose.model('user', userSchema)
+      const userModel = Mongoose.model('user', userSchema)
 
       const emailField = userModel.schema.tree.email
       // </editor-fold>
@@ -739,8 +775,12 @@ test('joi-mongoose-helper.generateJoiUpdateModel', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Restore">
-      delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      Object.keys(Mongoose.models).forEach(function(key) {
+        delete Mongoose.models[key]
+      })
+      Object.keys(Mongoose.modelSchemas).forEach(function(key) {
+        delete Mongoose.modelSchemas[key]
+      })
       // </editor-fold>
     }
   )
@@ -760,7 +800,7 @@ test('joi-mongoose-helper.generateJoiUpdateModel', function(t) {
         generateJoiFieldModel
       )
 
-      const userSchema = new mongoose.Schema({
+      const userSchema = new Mongoose.Schema({
         firstName: {
           type: Types.String,
           allowOnUpdate: false
@@ -768,7 +808,7 @@ test('joi-mongoose-helper.generateJoiUpdateModel', function(t) {
       })
 
       userSchema.statics = { routeOptions: {} }
-      const userModel = mongoose.model('user', userSchema)
+      const userModel = Mongoose.model('user', userSchema)
 
       const firstNameField = userModel.schema.tree.firstName
       // </editor-fold>
@@ -794,8 +834,12 @@ test('joi-mongoose-helper.generateJoiUpdateModel', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Restore">
-      delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      Object.keys(Mongoose.models).forEach(function(key) {
+        delete Mongoose.models[key]
+      })
+      Object.keys(Mongoose.modelSchemas).forEach(function(key) {
+        delete Mongoose.modelSchemas[key]
+      })
       // </editor-fold>
     }
   )
@@ -815,7 +859,7 @@ test('joi-mongoose-helper.generateJoiUpdateModel', function(t) {
         generateJoiFieldModel
       )
 
-      const userSchema = new mongoose.Schema({
+      const userSchema = new Mongoose.Schema({
         email: {
           type: Types.String
         },
@@ -826,7 +870,7 @@ test('joi-mongoose-helper.generateJoiUpdateModel', function(t) {
       })
 
       userSchema.statics = { routeOptions: {} }
-      const userModel = mongoose.model('user', userSchema)
+      const userModel = Mongoose.model('user', userSchema)
 
       // </editor-fold>
 
@@ -853,8 +897,12 @@ test('joi-mongoose-helper.generateJoiUpdateModel', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Restore">
-      delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      Object.keys(Mongoose.models).forEach(function(key) {
+        delete Mongoose.models[key]
+      })
+      Object.keys(Mongoose.modelSchemas).forEach(function(key) {
+        delete Mongoose.modelSchemas[key]
+      })
       // </editor-fold>
     }
   )
@@ -874,7 +922,7 @@ test('joi-mongoose-helper.generateJoiUpdateModel', function(t) {
         generateJoiFieldModel
       )
 
-      const userSchema = new mongoose.Schema({
+      const userSchema = new Mongoose.Schema({
         email: {
           type: Types.String,
           requireOnUpdate: true
@@ -882,7 +930,7 @@ test('joi-mongoose-helper.generateJoiUpdateModel', function(t) {
       })
 
       userSchema.statics = { routeOptions: {} }
-      const userModel = mongoose.model('user', userSchema)
+      const userModel = Mongoose.model('user', userSchema)
 
       // </editor-fold>
 
@@ -902,8 +950,12 @@ test('joi-mongoose-helper.generateJoiUpdateModel', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Restore">
-      delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      Object.keys(Mongoose.models).forEach(function(key) {
+        delete Mongoose.models[key]
+      })
+      Object.keys(Mongoose.modelSchemas).forEach(function(key) {
+        delete Mongoose.modelSchemas[key]
+      })
       // </editor-fold>
     }
   )
@@ -923,7 +975,7 @@ test('joi-mongoose-helper.generateJoiUpdateModel', function(t) {
         generateJoiFieldModel
       )
 
-      const userSchema = new mongoose.Schema({
+      const userSchema = new Mongoose.Schema({
         title: {
           type: Types.ObjectId
         },
@@ -963,7 +1015,7 @@ test('joi-mongoose-helper.generateJoiUpdateModel', function(t) {
         }
       }
 
-      const userModel = mongoose.model('user', userSchema)
+      const userModel = Mongoose.model('user', userSchema)
 
       const titleField = userModel.schema.tree.title
       const profileImageField = userModel.schema.tree.profileImage
@@ -1034,8 +1086,12 @@ test('joi-mongoose-helper.generateJoiUpdateModel', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Restore">
-      delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      Object.keys(Mongoose.models).forEach(function(key) {
+        delete Mongoose.models[key]
+      })
+      Object.keys(Mongoose.modelSchemas).forEach(function(key) {
+        delete Mongoose.modelSchemas[key]
+      })
       // </editor-fold>
     }
   )
@@ -1055,10 +1111,10 @@ test('joi-mongoose-helper.generateJoiUpdateModel', function(t) {
         generateJoiFieldModel
       )
 
-      const userSchema = new mongoose.Schema({})
+      const userSchema = new Mongoose.Schema({})
 
       userSchema.statics = { routeOptions: {} }
-      const userModel = mongoose.model('user', userSchema)
+      const userModel = Mongoose.model('user', userSchema)
 
       // </editor-fold>
 
@@ -1074,8 +1130,12 @@ test('joi-mongoose-helper.generateJoiUpdateModel', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Restore">
-      delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      Object.keys(Mongoose.models).forEach(function(key) {
+        delete Mongoose.models[key]
+      })
+      Object.keys(Mongoose.modelSchemas).forEach(function(key) {
+        delete Mongoose.modelSchemas[key]
+      })
       // </editor-fold>
     }
   )
@@ -1108,14 +1168,14 @@ test('joi-mongoose-helper.generateJoiCreateModel', function(t) {
         generateJoiFieldModel
       )
 
-      const userSchema = new mongoose.Schema({
+      const userSchema = new Mongoose.Schema({
         email: {
           type: Types.String
         }
       })
 
       userSchema.statics = { routeOptions: {} }
-      const userModel = mongoose.model('user', userSchema)
+      const userModel = Mongoose.model('user', userSchema)
 
       const emailField = userModel.schema.tree.email
       // </editor-fold>
@@ -1145,8 +1205,12 @@ test('joi-mongoose-helper.generateJoiCreateModel', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Restore">
-      delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      Object.keys(Mongoose.models).forEach(function(key) {
+        delete Mongoose.models[key]
+      })
+      Object.keys(Mongoose.modelSchemas).forEach(function(key) {
+        delete Mongoose.modelSchemas[key]
+      })
       // </editor-fold>
     }
   )
@@ -1166,7 +1230,7 @@ test('joi-mongoose-helper.generateJoiCreateModel', function(t) {
         generateJoiFieldModel
       )
 
-      const userSchema = new mongoose.Schema({
+      const userSchema = new Mongoose.Schema({
         email: {
           type: Types.String,
           createModel: Joi.string().valid('test')
@@ -1174,7 +1238,7 @@ test('joi-mongoose-helper.generateJoiCreateModel', function(t) {
       })
 
       userSchema.statics = { routeOptions: {} }
-      const userModel = mongoose.model('user', userSchema)
+      const userModel = Mongoose.model('user', userSchema)
 
       const emailField = userModel.schema.tree.email
       // </editor-fold>
@@ -1208,8 +1272,12 @@ test('joi-mongoose-helper.generateJoiCreateModel', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Restore">
-      delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      Object.keys(Mongoose.models).forEach(function(key) {
+        delete Mongoose.models[key]
+      })
+      Object.keys(Mongoose.modelSchemas).forEach(function(key) {
+        delete Mongoose.modelSchemas[key]
+      })
       // </editor-fold>
     }
   )
@@ -1229,7 +1297,7 @@ test('joi-mongoose-helper.generateJoiCreateModel', function(t) {
         generateJoiFieldModel
       )
 
-      const userSchema = new mongoose.Schema({
+      const userSchema = new Mongoose.Schema({
         firstName: {
           type: Types.String,
           allowOnCreate: false
@@ -1237,7 +1305,7 @@ test('joi-mongoose-helper.generateJoiCreateModel', function(t) {
       })
 
       userSchema.statics = { routeOptions: {} }
-      const userModel = mongoose.model('user', userSchema)
+      const userModel = Mongoose.model('user', userSchema)
 
       const firstNameField = userModel.schema.tree.firstName
       // </editor-fold>
@@ -1263,8 +1331,12 @@ test('joi-mongoose-helper.generateJoiCreateModel', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Restore">
-      delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      Object.keys(Mongoose.models).forEach(function(key) {
+        delete Mongoose.models[key]
+      })
+      Object.keys(Mongoose.modelSchemas).forEach(function(key) {
+        delete Mongoose.modelSchemas[key]
+      })
       // </editor-fold>
     }
   )
@@ -1284,7 +1356,7 @@ test('joi-mongoose-helper.generateJoiCreateModel', function(t) {
         generateJoiFieldModel
       )
 
-      const userSchema = new mongoose.Schema({
+      const userSchema = new Mongoose.Schema({
         email: {
           type: Types.String
         },
@@ -1295,7 +1367,7 @@ test('joi-mongoose-helper.generateJoiCreateModel', function(t) {
       })
 
       userSchema.statics = { routeOptions: {} }
-      const userModel = mongoose.model('user', userSchema)
+      const userModel = Mongoose.model('user', userSchema)
 
       // </editor-fold>
 
@@ -1322,8 +1394,12 @@ test('joi-mongoose-helper.generateJoiCreateModel', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Restore">
-      delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      Object.keys(Mongoose.models).forEach(function(key) {
+        delete Mongoose.models[key]
+      })
+      Object.keys(Mongoose.modelSchemas).forEach(function(key) {
+        delete Mongoose.modelSchemas[key]
+      })
       // </editor-fold>
     }
   )
@@ -1343,7 +1419,7 @@ test('joi-mongoose-helper.generateJoiCreateModel', function(t) {
         generateJoiFieldModel
       )
 
-      const userSchema = new mongoose.Schema({
+      const userSchema = new Mongoose.Schema({
         email: {
           type: Types.String,
           required: true
@@ -1351,7 +1427,7 @@ test('joi-mongoose-helper.generateJoiCreateModel', function(t) {
       })
 
       userSchema.statics = { routeOptions: {} }
-      const userModel = mongoose.model('user', userSchema)
+      const userModel = Mongoose.model('user', userSchema)
 
       // </editor-fold>
 
@@ -1371,8 +1447,12 @@ test('joi-mongoose-helper.generateJoiCreateModel', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Restore">
-      delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      Object.keys(Mongoose.models).forEach(function(key) {
+        delete Mongoose.models[key]
+      })
+      Object.keys(Mongoose.modelSchemas).forEach(function(key) {
+        delete Mongoose.modelSchemas[key]
+      })
       // </editor-fold>
     }
   )
@@ -1392,7 +1472,7 @@ test('joi-mongoose-helper.generateJoiCreateModel', function(t) {
         generateJoiFieldModel
       )
 
-      const userSchema = new mongoose.Schema({
+      const userSchema = new Mongoose.Schema({
         title: {
           type: Types.ObjectId
         },
@@ -1432,7 +1512,7 @@ test('joi-mongoose-helper.generateJoiCreateModel', function(t) {
         }
       }
 
-      const userModel = mongoose.model('user', userSchema)
+      const userModel = Mongoose.model('user', userSchema)
 
       const titleField = userModel.schema.tree.title
       const profileImageField = userModel.schema.tree.profileImage
@@ -1509,8 +1589,12 @@ test('joi-mongoose-helper.generateJoiCreateModel', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Restore">
-      delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      Object.keys(Mongoose.models).forEach(function(key) {
+        delete Mongoose.models[key]
+      })
+      Object.keys(Mongoose.modelSchemas).forEach(function(key) {
+        delete Mongoose.modelSchemas[key]
+      })
       // </editor-fold>
     }
   )
@@ -1523,10 +1607,10 @@ test('joi-mongoose-helper.generateJoiCreateModel', function(t) {
 
       t.plan(1)
 
-      const userSchema = new mongoose.Schema({})
+      const userSchema = new Mongoose.Schema({})
 
       userSchema.statics = { routeOptions: {} }
-      const userModel = mongoose.model('user', userSchema)
+      const userModel = Mongoose.model('user', userSchema)
 
       // </editor-fold>
 
@@ -1542,8 +1626,12 @@ test('joi-mongoose-helper.generateJoiCreateModel', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Restore">
-      delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      Object.keys(Mongoose.models).forEach(function(key) {
+        delete Mongoose.models[key]
+      })
+      Object.keys(Mongoose.modelSchemas).forEach(function(key) {
+        delete Mongoose.modelSchemas[key]
+      })
       // </editor-fold>
     }
   )
@@ -1760,7 +1848,7 @@ test('joi-mongoose-helper.joiObjectId', function(t) {
         'idModel validates an _id as a string'
       )
       t.ok(
-        idModel.validate(mongoose.Types.ObjectId()).error === undefined,
+        idModel.validate(Mongoose.Types.ObjectId()).error === undefined,
         'idModel validates an _id object'
       )
       t.ok(
@@ -1836,7 +1924,7 @@ test('joi-mongoose-helper.isValidField', function(t) {
 
       // <editor-fold desc="Assert">
       t.ok(
-        isValidField('type', mongoose.Schema.Types.String, {}) === false,
+        isValidField('type', Mongoose.Schema.Types.String, {}) === false,
         'isValidField returns false for mongoose types'
       )
       t.ok(
@@ -1948,7 +2036,7 @@ test('joi-mongoose-helper.generateJoiFieldModel', function(t) {
         'internals.generateJoiFieldModel'
       )
 
-      const userSchema = new mongoose.Schema({
+      const userSchema = new Mongoose.Schema({
         name: {
           first: { type: Types.String },
           last: { type: Types.String }
@@ -1956,7 +2044,7 @@ test('joi-mongoose-helper.generateJoiFieldModel', function(t) {
       })
 
       userSchema.statics = { routeOptions: {} }
-      const userModel = mongoose.model('user', userSchema)
+      const userModel = Mongoose.model('user', userSchema)
 
       const nameField = userModel.schema.tree.name
       // </editor-fold>
@@ -1976,8 +2064,12 @@ test('joi-mongoose-helper.generateJoiFieldModel', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Restore">
-      delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      Object.keys(Mongoose.models).forEach(function(key) {
+        delete Mongoose.models[key]
+      })
+      Object.keys(Mongoose.modelSchemas).forEach(function(key) {
+        delete Mongoose.modelSchemas[key]
+      })
       // </editor-fold>
     }
   )
@@ -2000,7 +2092,7 @@ test('joi-mongoose-helper.generateJoiFieldModel', function(t) {
         'internals.generateJoiFieldModel'
       )
 
-      const userSchema = new mongoose.Schema({
+      const userSchema = new Mongoose.Schema({
         name: {
           first: { type: Types.String },
           last: { type: Types.String }
@@ -2008,7 +2100,7 @@ test('joi-mongoose-helper.generateJoiFieldModel', function(t) {
       })
 
       userSchema.statics = { routeOptions: {} }
-      const userModel = mongoose.model('user', userSchema)
+      const userModel = Mongoose.model('user', userSchema)
 
       const nameField = userModel.schema.tree.name
       // </editor-fold>
@@ -2028,8 +2120,12 @@ test('joi-mongoose-helper.generateJoiFieldModel', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Restore">
-      delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      Object.keys(Mongoose.models).forEach(function(key) {
+        delete Mongoose.models[key]
+      })
+      Object.keys(Mongoose.modelSchemas).forEach(function(key) {
+        delete Mongoose.modelSchemas[key]
+      })
       // </editor-fold>
     }
   )
@@ -2052,7 +2148,7 @@ test('joi-mongoose-helper.generateJoiFieldModel', function(t) {
         'internals.generateJoiFieldModel'
       )
 
-      const userSchema = new mongoose.Schema({
+      const userSchema = new Mongoose.Schema({
         name: {
           first: { type: Types.String },
           last: { type: Types.String }
@@ -2060,7 +2156,7 @@ test('joi-mongoose-helper.generateJoiFieldModel', function(t) {
       })
 
       userSchema.statics = { routeOptions: {} }
-      const userModel = mongoose.model('user', userSchema)
+      const userModel = Mongoose.model('user', userSchema)
 
       const nameField = userModel.schema.tree.name
       // </editor-fold>
@@ -2080,8 +2176,12 @@ test('joi-mongoose-helper.generateJoiFieldModel', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Restore">
-      delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      Object.keys(Mongoose.models).forEach(function(key) {
+        delete Mongoose.models[key]
+      })
+      Object.keys(Mongoose.modelSchemas).forEach(function(key) {
+        delete Mongoose.modelSchemas[key]
+      })
       // </editor-fold>
     }
   )
@@ -2104,7 +2204,7 @@ test('joi-mongoose-helper.generateJoiFieldModel', function(t) {
         'internals.generateJoiFieldModel'
       )
 
-      const userSchema = new mongoose.Schema({
+      const userSchema = new Mongoose.Schema({
         name: {
           first: { type: Types.String },
           last: { type: Types.String }
@@ -2112,7 +2212,7 @@ test('joi-mongoose-helper.generateJoiFieldModel', function(t) {
       })
 
       userSchema.statics = { routeOptions: {} }
-      const userModel = mongoose.model('user', userSchema)
+      const userModel = Mongoose.model('user', userSchema)
 
       const nameField = userModel.schema.tree.name
 
@@ -2142,8 +2242,12 @@ test('joi-mongoose-helper.generateJoiFieldModel', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Restore">
-      delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      Object.keys(Mongoose.models).forEach(function(key) {
+        delete Mongoose.models[key]
+      })
+      Object.keys(Mongoose.modelSchemas).forEach(function(key) {
+        delete Mongoose.modelSchemas[key]
+      })
       // </editor-fold>
     }
   )
@@ -2166,7 +2270,7 @@ test('joi-mongoose-helper.generateJoiFieldModel', function(t) {
         'internals.generateJoiFieldModel'
       )
 
-      const userSchema = new mongoose.Schema({
+      const userSchema = new Mongoose.Schema({
         name: {
           first: { type: Types.String },
           last: { type: Types.String },
@@ -2176,7 +2280,7 @@ test('joi-mongoose-helper.generateJoiFieldModel', function(t) {
       })
 
       userSchema.statics = { routeOptions: {} }
-      const userModel = mongoose.model('user', userSchema)
+      const userModel = Mongoose.model('user', userSchema)
 
       const nameField = userModel.schema.tree.name
       // </editor-fold>
@@ -2200,8 +2304,12 @@ test('joi-mongoose-helper.generateJoiFieldModel', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Restore">
-      delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      Object.keys(Mongoose.models).forEach(function(key) {
+        delete Mongoose.models[key]
+      })
+      Object.keys(Mongoose.modelSchemas).forEach(function(key) {
+        delete Mongoose.modelSchemas[key]
+      })
       // </editor-fold>
     }
   )
@@ -2224,7 +2332,7 @@ test('joi-mongoose-helper.generateJoiFieldModel', function(t) {
         'internals.generateJoiFieldModel'
       )
 
-      const userSchema = new mongoose.Schema({
+      const userSchema = new Mongoose.Schema({
         name: {
           first: { type: Types.String },
           last: { type: Types.String },
@@ -2234,7 +2342,7 @@ test('joi-mongoose-helper.generateJoiFieldModel', function(t) {
       })
 
       userSchema.statics = { routeOptions: {} }
-      const userModel = mongoose.model('user', userSchema)
+      const userModel = Mongoose.model('user', userSchema)
 
       const nameField = userModel.schema.tree.name
       // </editor-fold>
@@ -2258,8 +2366,12 @@ test('joi-mongoose-helper.generateJoiFieldModel', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Restore">
-      delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      Object.keys(Mongoose.models).forEach(function(key) {
+        delete Mongoose.models[key]
+      })
+      Object.keys(Mongoose.modelSchemas).forEach(function(key) {
+        delete Mongoose.modelSchemas[key]
+      })
       // </editor-fold>
     }
   )
@@ -2282,7 +2394,7 @@ test('joi-mongoose-helper.generateJoiFieldModel', function(t) {
         'internals.generateJoiFieldModel'
       )
 
-      const userSchema = new mongoose.Schema({
+      const userSchema = new Mongoose.Schema({
         name: {
           first: { type: Types.String },
           last: { type: Types.String },
@@ -2296,7 +2408,7 @@ test('joi-mongoose-helper.generateJoiFieldModel', function(t) {
       })
 
       userSchema.statics = { routeOptions: {} }
-      const userModel = mongoose.model('user', userSchema)
+      const userModel = Mongoose.model('user', userSchema)
 
       const nameField = userModel.schema.tree.name
       const photosField = userModel.schema.tree.photos
@@ -2325,8 +2437,12 @@ test('joi-mongoose-helper.generateJoiFieldModel', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Restore">
-      delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      Object.keys(Mongoose.models).forEach(function(key) {
+        delete Mongoose.models[key]
+      })
+      Object.keys(Mongoose.modelSchemas).forEach(function(key) {
+        delete Mongoose.modelSchemas[key]
+      })
       // </editor-fold>
     }
   )
@@ -2349,7 +2465,7 @@ test('joi-mongoose-helper.generateJoiFieldModel', function(t) {
         'internals.generateJoiFieldModel'
       )
 
-      const userSchema = new mongoose.Schema({
+      const userSchema = new Mongoose.Schema({
         name: {
           first: { type: Types.String },
           last: { type: Types.String },
@@ -2363,7 +2479,7 @@ test('joi-mongoose-helper.generateJoiFieldModel', function(t) {
       })
 
       userSchema.statics = { routeOptions: {} }
-      const userModel = mongoose.model('user', userSchema)
+      const userModel = Mongoose.model('user', userSchema)
 
       const nameField = userModel.schema.tree.name
       const photosField = userModel.schema.tree.photos
@@ -2415,8 +2531,12 @@ test('joi-mongoose-helper.generateJoiFieldModel', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Restore">
-      delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      Object.keys(Mongoose.models).forEach(function(key) {
+        delete Mongoose.models[key]
+      })
+      Object.keys(Mongoose.modelSchemas).forEach(function(key) {
+        delete Mongoose.modelSchemas[key]
+      })
       // </editor-fold>
     }
   )
@@ -2439,14 +2559,14 @@ test('joi-mongoose-helper.generateJoiFieldModel', function(t) {
         'internals.generateJoiFieldModel'
       )
 
-      const userSchema = new mongoose.Schema({
+      const userSchema = new Mongoose.Schema({
         name: {
           type: Types.String
         }
       })
 
       userSchema.statics = { routeOptions: {} }
-      const userModel = mongoose.model('user', userSchema)
+      const userModel = Mongoose.model('user', userSchema)
 
       const nameField = userModel.schema.tree.name
       // </editor-fold>
@@ -2469,8 +2589,12 @@ test('joi-mongoose-helper.generateJoiFieldModel', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Restore">
-      delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      Object.keys(Mongoose.models).forEach(function(key) {
+        delete Mongoose.models[key]
+      })
+      Object.keys(Mongoose.modelSchemas).forEach(function(key) {
+        delete Mongoose.modelSchemas[key]
+      })
       // </editor-fold>
     }
   )
@@ -2493,7 +2617,7 @@ test('joi-mongoose-helper.generateJoiFieldModel', function(t) {
         'internals.generateJoiFieldModel'
       )
 
-      const userSchema = new mongoose.Schema({
+      const userSchema = new Mongoose.Schema({
         test: {
           type: Types.Object,
           required: true
@@ -2501,7 +2625,7 @@ test('joi-mongoose-helper.generateJoiFieldModel', function(t) {
       })
 
       userSchema.statics = { routeOptions: {} }
-      const userModel = mongoose.model('user', userSchema)
+      const userModel = Mongoose.model('user', userSchema)
 
       const nameField = userModel.schema.tree.test
       // </editor-fold>
@@ -2524,8 +2648,12 @@ test('joi-mongoose-helper.generateJoiFieldModel', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Restore">
-      delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      Object.keys(Mongoose.models).forEach(function(key) {
+        delete Mongoose.models[key]
+      })
+      Object.keys(Mongoose.modelSchemas).forEach(function(key) {
+        delete Mongoose.modelSchemas[key]
+      })
       // </editor-fold>
     }
   )
@@ -2548,10 +2676,10 @@ test('joi-mongoose-helper.generateJoiListQueryModel', function(t) {
         }
       )
 
-      const userSchema = new mongoose.Schema({})
+      const userSchema = new Mongoose.Schema({})
       userSchema.statics = { routeOptions: {} }
 
-      const userModel = mongoose.model('user', userSchema)
+      const userModel = Mongoose.model('user', userSchema)
       // </editor-fold>
 
       // <editor-fold desc="Act">
@@ -2568,8 +2696,12 @@ test('joi-mongoose-helper.generateJoiListQueryModel', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Restore">
-      delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      Object.keys(Mongoose.models).forEach(function(key) {
+        delete Mongoose.models[key]
+      })
+      Object.keys(Mongoose.modelSchemas).forEach(function(key) {
+        delete Mongoose.modelSchemas[key]
+      })
       // </editor-fold>
     })
   )
@@ -2606,7 +2738,7 @@ test('joi-mongoose-helper.generateJoiListQueryModel', function(t) {
       joiMongooseHelper.__set__('queryHelper', queryHelperStub)
       joiMongooseHelper.__set__('config', { enableQueryValidation: true })
 
-      const userSchema = new mongoose.Schema({
+      const userSchema = new Mongoose.Schema({
         queryable: {
           type: Types.String
         },
@@ -2620,7 +2752,7 @@ test('joi-mongoose-helper.generateJoiListQueryModel', function(t) {
 
       userSchema.statics = { routeOptions: {} }
 
-      const userModel = mongoose.model('user', userSchema)
+      const userModel = Mongoose.model('user', userSchema)
 
       // </editor-fold>
 
@@ -2769,8 +2901,12 @@ test('joi-mongoose-helper.generateJoiListQueryModel', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Restore">
-      delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      Object.keys(Mongoose.models).forEach(function(key) {
+        delete Mongoose.models[key]
+      })
+      Object.keys(Mongoose.modelSchemas).forEach(function(key) {
+        delete Mongoose.modelSchemas[key]
+      })
       // </editor-fold>
     })
   )
@@ -2810,7 +2946,7 @@ test('joi-mongoose-helper.generateJoiListQueryModel', function(t) {
         enableWhereQueries: true
       })
 
-      const userSchema = new mongoose.Schema({
+      const userSchema = new Mongoose.Schema({
         queryable: {
           type: Types.String
         },
@@ -2824,7 +2960,7 @@ test('joi-mongoose-helper.generateJoiListQueryModel', function(t) {
 
       userSchema.statics = { routeOptions: {} }
 
-      const userModel = mongoose.model('user', userSchema)
+      const userModel = Mongoose.model('user', userSchema)
 
       // </editor-fold>
 
@@ -2843,8 +2979,12 @@ test('joi-mongoose-helper.generateJoiListQueryModel', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Restore">
-      delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      Object.keys(Mongoose.models).forEach(function(key) {
+        delete Mongoose.models[key]
+      })
+      Object.keys(Mongoose.modelSchemas).forEach(function(key) {
+        delete Mongoose.modelSchemas[key]
+      })
       // </editor-fold>
     })
   )
@@ -2881,7 +3021,7 @@ test('joi-mongoose-helper.generateJoiListQueryModel', function(t) {
       joiMongooseHelper.__set__('queryHelper', queryHelperStub)
       joiMongooseHelper.__set__('config', { enableQueryValidation: false })
 
-      const userSchema = new mongoose.Schema({
+      const userSchema = new Mongoose.Schema({
         queryable: {
           type: Types.String
         },
@@ -2895,7 +3035,7 @@ test('joi-mongoose-helper.generateJoiListQueryModel', function(t) {
 
       userSchema.statics = { routeOptions: {} }
 
-      const userModel = mongoose.model('user', userSchema)
+      const userModel = Mongoose.model('user', userSchema)
 
       // </editor-fold>
 
@@ -3034,8 +3174,12 @@ test('joi-mongoose-helper.generateJoiListQueryModel', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Restore">
-      delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      Object.keys(Mongoose.models).forEach(function(key) {
+        delete Mongoose.models[key]
+      })
+      Object.keys(Mongoose.modelSchemas).forEach(function(key) {
+        delete Mongoose.modelSchemas[key]
+      })
       // </editor-fold>
     })
   )
@@ -3072,7 +3216,7 @@ test('joi-mongoose-helper.generateJoiListQueryModel', function(t) {
       joiMongooseHelper.__set__('queryHelper', queryHelperStub)
       joiMongooseHelper.__set__('config', { enableQueryValidation: true })
 
-      const userSchema = new mongoose.Schema({
+      const userSchema = new Mongoose.Schema({
         queryable: {
           type: Types.String
         },
@@ -3086,7 +3230,7 @@ test('joi-mongoose-helper.generateJoiListQueryModel', function(t) {
 
       userSchema.statics = { routeOptions: { associations: {} } }
 
-      const userModel = mongoose.model('user', userSchema)
+      const userModel = Mongoose.model('user', userSchema)
 
       // </editor-fold>
 
@@ -3122,8 +3266,12 @@ test('joi-mongoose-helper.generateJoiListQueryModel', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Restore">
-      delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      Object.keys(Mongoose.models).forEach(function(key) {
+        delete Mongoose.models[key]
+      })
+      Object.keys(Mongoose.modelSchemas).forEach(function(key) {
+        delete Mongoose.modelSchemas[key]
+      })
       // </editor-fold>
     })
   )
@@ -3146,10 +3294,10 @@ test('joi-mongoose-helper.generateJoiFindQueryModel', function(t) {
         }
       )
 
-      const userSchema = new mongoose.Schema({})
+      const userSchema = new Mongoose.Schema({})
       userSchema.statics = { routeOptions: {} }
 
-      const userModel = mongoose.model('user', userSchema)
+      const userModel = Mongoose.model('user', userSchema)
       // </editor-fold>
 
       // <editor-fold desc="Act">
@@ -3161,8 +3309,12 @@ test('joi-mongoose-helper.generateJoiFindQueryModel', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Restore">
-      delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      Object.keys(Mongoose.models).forEach(function(key) {
+        delete Mongoose.models[key]
+      })
+      Object.keys(Mongoose.modelSchemas).forEach(function(key) {
+        delete Mongoose.modelSchemas[key]
+      })
       // </editor-fold>
     })
   )
@@ -3199,7 +3351,7 @@ test('joi-mongoose-helper.generateJoiFindQueryModel', function(t) {
       joiMongooseHelper.__set__('queryHelper', queryHelperStub)
       joiMongooseHelper.__set__('config', { enableQueryValidation: true })
 
-      const userSchema = new mongoose.Schema({
+      const userSchema = new Mongoose.Schema({
         queryable: {
           type: Types.String
         },
@@ -3213,7 +3365,7 @@ test('joi-mongoose-helper.generateJoiFindQueryModel', function(t) {
 
       userSchema.statics = { routeOptions: {} }
 
-      const userModel = mongoose.model('user', userSchema)
+      const userModel = Mongoose.model('user', userSchema)
 
       // </editor-fold>
 
@@ -3255,8 +3407,12 @@ test('joi-mongoose-helper.generateJoiFindQueryModel', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Restore">
-      delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      Object.keys(Mongoose.models).forEach(function(key) {
+        delete Mongoose.models[key]
+      })
+      Object.keys(Mongoose.modelSchemas).forEach(function(key) {
+        delete Mongoose.modelSchemas[key]
+      })
       // </editor-fold>
     })
   )
@@ -3293,7 +3449,7 @@ test('joi-mongoose-helper.generateJoiFindQueryModel', function(t) {
       joiMongooseHelper.__set__('queryHelper', queryHelperStub)
       joiMongooseHelper.__set__('config', { enableQueryValidation: false })
 
-      const userSchema = new mongoose.Schema({
+      const userSchema = new Mongoose.Schema({
         queryable: {
           type: Types.String
         },
@@ -3307,7 +3463,7 @@ test('joi-mongoose-helper.generateJoiFindQueryModel', function(t) {
 
       userSchema.statics = { routeOptions: {} }
 
-      const userModel = mongoose.model('user', userSchema)
+      const userModel = Mongoose.model('user', userSchema)
 
       // </editor-fold>
 
@@ -3339,8 +3495,12 @@ test('joi-mongoose-helper.generateJoiFindQueryModel', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Restore">
-      delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      Object.keys(Mongoose.models).forEach(function(key) {
+        delete Mongoose.models[key]
+      })
+      Object.keys(Mongoose.modelSchemas).forEach(function(key) {
+        delete Mongoose.modelSchemas[key]
+      })
       // </editor-fold>
     })
   )
@@ -3377,7 +3537,7 @@ test('joi-mongoose-helper.generateJoiFindQueryModel', function(t) {
       joiMongooseHelper.__set__('queryHelper', queryHelperStub)
       joiMongooseHelper.__set__('config', { enableQueryValidation: true })
 
-      const userSchema = new mongoose.Schema({
+      const userSchema = new Mongoose.Schema({
         queryable: {
           type: Types.String
         },
@@ -3391,7 +3551,7 @@ test('joi-mongoose-helper.generateJoiFindQueryModel', function(t) {
 
       userSchema.statics = { routeOptions: { associations: {} } }
 
-      const userModel = mongoose.model('user', userSchema)
+      const userModel = Mongoose.model('user', userSchema)
 
       // </editor-fold>
 
@@ -3427,8 +3587,12 @@ test('joi-mongoose-helper.generateJoiFindQueryModel', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Restore">
-      delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      Object.keys(Mongoose.models).forEach(function(key) {
+        delete Mongoose.models[key]
+      })
+      Object.keys(Mongoose.modelSchemas).forEach(function(key) {
+        delete Mongoose.modelSchemas[key]
+      })
       // </editor-fold>
     })
   )

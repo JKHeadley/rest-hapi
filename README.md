@@ -15,7 +15,7 @@
 
 <div align="center">
   <a href="https://travis-ci.org/JKHeadley/rest-hapi">
-    <img alt="TravisCI" src="https://img.shields.io/travis/JKHeadley/rest-hapi.svg?style=flat-square">
+    <img alt="TravisCI" src="https://img.shields.io/travis/JKHeadley/rest-hapi.svg?style=flat-square&branch=master">
   </a>
   <a href="https://codecov.io/gh/JKHeadley/rest-hapi">
     <img alt="Codecov" src="https://img.shields.io/codecov/c/github/JKHeadley/rest-hapi.svg?style=flat-square">
@@ -52,6 +52,12 @@ rest-hapi is a [hapi](https://hapijs.com/) plugin that generates RESTful API end
 * Mongoose [wrapper methods](https://jkheadley.github.io/rest-hapi/docs/mongoose-wrapper-methods.html)
 * ...and more!
 
+---
+
+<p align="center"><strong>rest-hapi</strong> is being sponsored by the following tool; please help to support us by taking a look and signing up to a free trial!</p>
+<p align="center"><a href="https://tracking.gitads.io/?repo=rest-hapi"><img src="https://images.gitads.io/rest-hapi" alt="GitAds"/></a></p>
+
+---
 ## Live demo
 
 ![rest-hapi-demo-optimized](https://user-images.githubusercontent.com/12631935/41813184-b31cac6a-76e5-11e8-84c3-881d98e6c65d.gif)
