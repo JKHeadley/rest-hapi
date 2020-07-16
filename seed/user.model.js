@@ -59,7 +59,7 @@ module.exports = function(mongoose) {
 
           const collectionName = model.collectionDisplayName || model.modelName
 
-          Log.note('Generating Password Update endpoint for ' + collectionName)
+          Log.info('Generating Password Update endpoint for ' + collectionName)
 
           const handler = async function(request, h) {
             try {
