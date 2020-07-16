@@ -159,7 +159,7 @@ async function _listHandler(model, request, Log) {
         Log
       ).lean()
       const result = await mongooseQuery.exec()
-      Log.info('Result: %s', JSON.stringify(result))
+      Log.note('Result: %s', JSON.stringify(result))
       return result
     }
 
@@ -218,7 +218,7 @@ async function _listHandler(model, request, Log) {
         }
       }
 
-      Log.info('Result: %s', JSON.stringify(result))
+      Log.note('Result: %s', JSON.stringify(result))
       return result
     })
 
@@ -404,7 +404,7 @@ async function _findHandler(model, _id, request, Log) {
         }
       }
 
-      Log.info('Result: %s', JSON.stringify(result))
+      Log.note('Result: %s', JSON.stringify(result))
 
       return result
     } else {

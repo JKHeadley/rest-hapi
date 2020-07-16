@@ -153,7 +153,7 @@ module.exports = function(logger, mongoose, server) {
       options = options || {}
 
       if (config.logRoutes) {
-        Log.note('Generating List endpoint for ' + collectionName)
+        Log.info('Generating List endpoint for ' + collectionName)
       }
 
       let resourceAliasForRoute
@@ -280,7 +280,7 @@ module.exports = function(logger, mongoose, server) {
 
       const collectionName = model.collectionDisplayName || model.modelName
       if (config.logRoutes) {
-        Log.note('Generating Find endpoint for ' + collectionName)
+        Log.info('Generating Find endpoint for ' + collectionName)
       }
 
       let resourceAliasForRoute
@@ -407,7 +407,7 @@ module.exports = function(logger, mongoose, server) {
 
       const collectionName = model.collectionDisplayName || model.modelName
       if (config.logRoutes) {
-        Log.note('Generating Create endpoint for ' + collectionName)
+        Log.info('Generating Create endpoint for ' + collectionName)
       }
 
       options = options || {}
@@ -602,7 +602,7 @@ module.exports = function(logger, mongoose, server) {
 
       const collectionName = model.collectionDisplayName || model.modelName
       if (config.logRoutes) {
-        Log.note('Generating Delete One endpoint for ' + collectionName)
+        Log.info('Generating Delete One endpoint for ' + collectionName)
       }
 
       options = options || {}
@@ -738,7 +738,7 @@ module.exports = function(logger, mongoose, server) {
 
       const collectionName = model.collectionDisplayName || model.modelName
       if (config.logRoutes) {
-        Log.note('Generating Delete Many endpoint for ' + collectionName)
+        Log.info('Generating Delete Many endpoint for ' + collectionName)
       }
 
       options = options || {}
@@ -877,7 +877,7 @@ module.exports = function(logger, mongoose, server) {
 
       const collectionName = model.collectionDisplayName || model.modelName
       if (config.logRoutes) {
-        Log.note('Generating Update endpoint for ' + collectionName)
+        Log.info('Generating Update endpoint for ' + collectionName)
       }
 
       options = options || {}
@@ -1052,7 +1052,7 @@ module.exports = function(logger, mongoose, server) {
         childModel.collectionDisplayName || childModel.modelName
 
       if (config.logRoutes) {
-        Log.note(
+        Log.info(
           'Generating addOne association endpoint for ' +
             ownerModelName +
             ' -> ' +
@@ -1263,7 +1263,7 @@ module.exports = function(logger, mongoose, server) {
         childModel.collectionDisplayName || childModel.modelName
 
       if (config.logRoutes) {
-        Log.note(
+        Log.info(
           'Generating removeOne association endpoint for ' +
             ownerModelName +
             ' -> ' +
@@ -1456,7 +1456,7 @@ module.exports = function(logger, mongoose, server) {
         childModel.collectionDisplayName || childModel.modelName
 
       if (config.logRoutes) {
-        Log.note(
+        Log.info(
           'Generating addMany association endpoint for ' +
             ownerModelName +
             ' -> ' +
@@ -1674,7 +1674,7 @@ module.exports = function(logger, mongoose, server) {
         childModel.collectionDisplayName || childModel.modelName
 
       if (config.logRoutes) {
-        Log.note(
+        Log.info(
           'Generating removeMany association endpoint for ' +
             ownerModelName +
             ' -> ' +
@@ -1870,7 +1870,7 @@ module.exports = function(logger, mongoose, server) {
         ownerModel.collectionDisplayName || ownerModel.modelName
 
       if (config.logRoutes) {
-        Log.note(
+        Log.info(
           'Generating list association endpoint for ' +
             ownerModelName +
             ' -> ' +
