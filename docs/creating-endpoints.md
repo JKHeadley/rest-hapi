@@ -146,7 +146,7 @@ module.exports = function (mongoose) {
 
           let collectionName = model.collectionDisplayName || model.modelName
 
-          Log.note("Generating Password Update endpoint for " + collectionName)
+          Log.info("Generating Password Update endpoint for " + collectionName)
 
           let handler = async function (request, h) {
             try {
