@@ -47,7 +47,7 @@ module.exports = function(mongoose, logger, config) {
         const ext = path.extname(file)
         if (ext === '.js') {
           const modelName = path.basename(file, '.js')
-          const schema = require(modelPath + '/' + modelName).default(mongoose)
+          const schema = require(modelPath + '/' + modelName)(mongoose)
 
           // EXPL: Add text index if enabled
           if (config.enableTextSearch) {
