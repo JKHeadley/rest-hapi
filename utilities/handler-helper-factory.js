@@ -138,7 +138,7 @@ function generateListHandler(model, options, logger) {
 
   return async function(request, h) {
     try {
-      Log.log(
+      Log.info(
         'params(%s), query(%s), payload(%s)',
         JSON.stringify(request.params),
         JSON.stringify(request.query),
@@ -167,7 +167,7 @@ function generateFindHandler(model, options, logger) {
 
   return async function(request, h) {
     try {
-      Log.log(
+      Log.info(
         'params(%s), query(%s), payload(%s)',
         JSON.stringify(request.params),
         JSON.stringify(request.query),
@@ -200,7 +200,7 @@ function generateCreateHandler(model, options, logger) {
 
   return async function(request, h) {
     try {
-      Log.log(
+      Log.info(
         'params(%s), query(%s), payload(%s)',
         JSON.stringify(request.params),
         JSON.stringify(request.query),
@@ -228,7 +228,7 @@ function generateUpdateHandler(model, options, logger) {
 
   return async function(request, h) {
     try {
-      Log.log(
+      Log.info(
         'params(%s), query(%s), payload(%s)',
         JSON.stringify(request.params),
         JSON.stringify(request.query),
@@ -261,7 +261,7 @@ function generateDeleteHandler(model, options, logger) {
 
   return async function(request, h) {
     try {
-      Log.log(
+      Log.info(
         'params(%s), query(%s), payload(%s)',
         JSON.stringify(request.params),
         JSON.stringify(request.query),
@@ -310,7 +310,7 @@ function generateAssociationAddOneHandler(
 
   return async function(request, h) {
     try {
-      Log.log(
+      Log.info(
         addMethodName + ' + params(%s), query(%s), payload(%s)',
         JSON.stringify(request.params),
         JSON.stringify(request.query),
@@ -357,7 +357,7 @@ function generateAssociationRemoveOneHandler(
 
   return async function(request, h) {
     try {
-      Log.log(
+      Log.info(
         removeMethodName + ' + params(%s), query(%s), payload(%s)',
         JSON.stringify(request.params),
         JSON.stringify(request.query),
@@ -402,7 +402,7 @@ function generateAssociationAddManyHandler(
 
   return async function(request, h) {
     try {
-      Log.log(
+      Log.info(
         addMethodName + ' + params(%s), query(%s), payload(%s)',
         JSON.stringify(request.params),
         JSON.stringify(request.query),
@@ -447,7 +447,7 @@ function generateAssociationRemoveManyHandler(
 
   return async function(request, h) {
     try {
-      Log.log(
+      Log.info(
         removeMethodName + ' + params(%s), query(%s), payload(%s)',
         JSON.stringify(request.params),
         JSON.stringify(request.query),
@@ -492,7 +492,7 @@ function generateAssociationGetAllHandler(
 
   return async function(request, h) {
     try {
-      Log.log(
+      Log.info(
         getAllMethodName + ' + params(%s), query(%s), payload(%s)',
         JSON.stringify(request.params),
         JSON.stringify(request.query),
