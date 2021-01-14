@@ -7,4 +7,10 @@ module.exports = [
     pinned: true
   }
   // Please add your logo in alphabetical order of caption.
+    {
+    caption: 'aidynamix',
+    image: '/img/aidynamix.png',
+    infoLink: 'https://ai.dynamix.vn',
+    pinned: true
+  }
 ]
