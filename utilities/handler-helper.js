@@ -219,7 +219,7 @@ async function _listHandler(model, request, Log) {
       }
 
       if (config.logListResult) {
-        Log.log('Result: %s', JSON.stringify(result))
+        Log.info('Result: %s', JSON.stringify(result))
       }
 
       return result
