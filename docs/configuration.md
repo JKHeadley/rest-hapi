@@ -438,6 +438,16 @@ config.logRoutes = false
 config.loglevel = 'NOTE'
 ```
 
+## logListResult
+```javascript
+/**
+ * If set to true, the results of each list call will be logged.
+ * default: false
+ * @type {boolean}
+ */
+config.logListResult = false
+```
+
 ## swaggerOptions
 ```javascript
 /**
