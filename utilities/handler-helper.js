@@ -218,7 +218,10 @@ async function _listHandler(model, request, Log) {
         }
       }
 
-      Log.log('Result: %s', JSON.stringify(result))
+      if (config.logListResult) {
+        Log.log('Result: %s', JSON.stringify(result))
+      }
+
       return result
     })
 

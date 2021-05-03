@@ -314,6 +314,13 @@ config.logRoutes = false
 config.loglevel = 'NOTE'
 
 /**
+ * If set to true, the results of each list call will be logged.
+ * default: false
+ * @type {boolean}
+ */
+config.logListResult = false
+
+/**
  * Set swagger options as per https://github.com/glennjones/hapi-swagger/blob/master/optionsreference.md
  * Options set here will override swagger config options below
  *
