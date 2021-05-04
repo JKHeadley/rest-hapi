@@ -486,3 +486,13 @@ config.enableSwaggerHttps = false
  */
 config.swaggerHost = undefined
 ```
+
+ ## esm
+```javascript
+/**
+ * If set to true, models will be loaded as esm modules (export default)
+ * - options: 'true', 'false' (default: 'false')
+ * @type {boolean}
+ */
+config.esm = false
+```
