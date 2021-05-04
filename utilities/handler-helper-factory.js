@@ -72,7 +72,16 @@ module.exports = function() {
      * @returns {Function} A handler function
      */
     generateUpdateHandler: generateUpdateHandler,
-
+    
+     /**
+     * Handles incoming RECOVER requests to /RESOURCE/{_id}/recover
+     * @param model: A mongoose model.
+     * @param options: Options object.
+     * @param logger: A logging object.
+     * @returns {Function} A handler function
+     */
+    generateRecoverHandler: generateRecoverHandler,
+    
     /**
      * Handles incoming PUT requests to /OWNER_RESOURCE/{ownerId}/CHILD_RESOURCE/{childId}
      * @param ownerModel: A mongoose model.
@@ -242,6 +251,44 @@ function generateUpdateHandler(model, options, logger) {
         Log
       )
       return h.response(result).code(200)
+    } catch (err) {
+      handleError(err, Log)
+    }
+  }
+}
+
+/**
+ * Handles incoming Recover requests to /RESOURCE/{_id}/recover or /RESOURCE/recover
+ * @param model: A mongoose model.
+ * @param options: Options object.
+ * @param logger: A logging object.
+ * @returns {Function} A handler function
+ */
+function generateRecoverHandler(model, options, logger) {
+  const Log = logger.bind()
+  options = options || {}
+
+  return async function(request, h) {
+    try {
+      Log.log(
+        'params(%s), query(%s), payload(%s)',
+        JSON.stringify(request.params),
+        JSON.stringify(request.query),
+        JSON.stringify(request.payload)
+      )
+
+      if (request.params._id) {
+        await handlerHelper.recoverOneHandler(
+          model,
+          request.params._id,
+          request,
+          Log
+        )
+      } else {
+        await handlerHelper.recoverManyHandler(model, request, Log)
+      }
+
+      return h.response().code(204)
     } catch (err) {
       handleError(err, Log)
     }
