@@ -63,7 +63,7 @@
     "@hapi/joi": "^17.1.1",
     "@hapi/vision": "^6.0.0",
     "blue-tape": "^1.0.0",
-    "chalk": "*",
+    "chalk": "^4.0.0",
     "extend": "^3.0.2",
     "fs-extra": "^8.1.0",
     "hapi-swagger": "^12.1.3",
