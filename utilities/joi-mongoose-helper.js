@@ -1,7 +1,6 @@
 'use strict'
 
 const Joi = require('joi')
-Joi.objectId = require('joi-objectid')(Joi)
 const _ = require('lodash')
 const validationHelper = require('./validation-helper')
 const queryHelper = require('./query-helper')
@@ -651,16 +650,15 @@ internals.generateJoiModelFromFieldType = function(field, logger) {
  * @returns {*|{type}}
  */
 internals.joiObjectId = function() {
-  // EXPL: Rather than converting all objectIds to string for response, we allow raw mongoose.Types.ObjectId objects
-  const objectIdModel = Joi.object({
-    _bsontype: Joi.any().required(),
-    id: Joi.any().required()
-  })
-  const model = Joi.alternatives().try(
-    Joi.objectId().description('ObjectId'),
-    objectIdModel
-  )
-  return model
+  const objectIdMethod = (value, helpers) => {
+    if (!mongoose.isValidObjectId(value)) {
+      throw new Error('invalid ObjectId')
+    }
+
+    return value
+  }
+
+  return Joi.any().custom(objectIdMethod, 'ObjectId')
 }
 
 /**
