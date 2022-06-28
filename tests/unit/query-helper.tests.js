@@ -108,7 +108,7 @@ test('query-helper.getQueryableFields', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      delete mongoose?.modelSchemas?.user
       // </editor-fold>
     }
   )
@@ -159,7 +159,7 @@ test('query-helper.getQueryableFields', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      delete mongoose?.modelSchemas?.user
       // </editor-fold>
     }
   )
@@ -212,7 +212,7 @@ test('query-helper.getQueryableFields', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      delete mongoose?.modelSchemas?.user
       // </editor-fold>
     }
   )
@@ -297,7 +297,7 @@ test('query-helper.getQueryableFields', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      delete mongoose?.modelSchemas?.user
       // </editor-fold>
     }
   )
@@ -361,7 +361,7 @@ test('query-helper.getReadableFields', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      delete mongoose?.modelSchemas?.user
       // </editor-fold>
     }
   )
@@ -414,7 +414,7 @@ test('query-helper.getReadableFields', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      delete mongoose?.modelSchemas?.user
       // </editor-fold>
     }
   )
@@ -461,7 +461,7 @@ test('query-helper.getSortableFields', function(t) {
     // <editor-fold desc="Restore">
     queryHelper.getReadableFields.restore()
     delete mongoose.models.user
-    delete mongoose.modelSchemas.user
+    delete mongoose?.modelSchemas?.user
     // </editor-fold>
   })
 
@@ -496,7 +496,7 @@ test('query-helper.getSortableFields', function(t) {
     // <editor-fold desc="Restore">
     queryHelper.getReadableFields.restore()
     delete mongoose.models.user
-    delete mongoose.modelSchemas.user
+    delete mongoose?.modelSchemas?.user
     // </editor-fold>
   })
 
@@ -1189,7 +1189,7 @@ test('query-helper.createAttributesFilter', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      delete mongoose?.modelSchemas?.user
       // </editor-fold>
     }
   )
@@ -1269,7 +1269,7 @@ test('query-helper.createAttributesFilter', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      delete mongoose?.modelSchemas?.user
       // </editor-fold>
     }
   )
@@ -1333,7 +1333,7 @@ test('query-helper.createAttributesFilter', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      delete mongoose?.modelSchemas?.user
       // </editor-fold>
     }
   )
@@ -1422,7 +1422,7 @@ test('query-helper.createMongooseQuery', function(t) {
     queryHelper.populateEmbeddedDocs.restore()
     queryHelper.setSort.restore()
     delete mongoose.models.user
-    delete mongoose.modelSchemas.user
+    delete mongoose?.modelSchemas?.user
     // </editor-fold>
   })
 
@@ -1488,7 +1488,7 @@ test('query-helper.createMongooseQuery', function(t) {
       queryHelper.populateEmbeddedDocs.restore()
       queryHelper.setSort.restore()
       delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      delete mongoose?.modelSchemas?.user
       // </editor-fold>
     }
   )
@@ -1570,7 +1570,7 @@ test('query-helper.createMongooseQuery', function(t) {
       queryHelper.populateEmbeddedDocs.restore()
       queryHelper.setSort.restore()
       delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      delete mongoose?.modelSchemas?.user
       // </editor-fold>
     }
   )
@@ -1642,7 +1642,7 @@ test('query-helper.paginate', function(t) {
     queryHelper.setSkip.restore()
     queryHelper.setPage.restore()
     delete mongoose.models.user
-    delete mongoose.modelSchemas.user
+    delete mongoose?.modelSchemas?.user
     // </editor-fold>
   })
 

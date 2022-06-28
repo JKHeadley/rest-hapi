@@ -115,7 +115,7 @@ test('handler-helper.listHandler', function(t) {
               .then(function() {
                 sandbox.restore()
                 delete mongoose.models.user
-                delete mongoose.modelSchemas.user
+                delete mongoose?.modelSchemas?.user
               })
           )
           // </editor-fold>
@@ -176,7 +176,7 @@ test('handler-helper.listHandler', function(t) {
                 .then(function() {
                   sandbox.restore()
                   delete mongoose.models.user
-                  delete mongoose.modelSchemas.user
+                  delete mongoose?.modelSchemas?.user
                 })
             )
             // </editor-fold>
@@ -238,7 +238,7 @@ test('handler-helper.listHandler', function(t) {
                 .then(function() {
                   sandbox.restore()
                   delete mongoose.models.user
-                  delete mongoose.modelSchemas.user
+                  delete mongoose?.modelSchemas?.user
                 })
             )
             // </editor-fold>
@@ -321,7 +321,7 @@ test('handler-helper.listHandler', function(t) {
                 .then(function() {
                   sandbox.restore()
                   delete mongoose.models.user
-                  delete mongoose.modelSchemas.user
+                  delete mongoose?.modelSchemas?.user
                   return Q.when()
                 })
             )
@@ -397,7 +397,7 @@ test('handler-helper.listHandler', function(t) {
                 .then(function() {
                   sandbox.restore()
                   delete mongoose.models.user
-                  delete mongoose.modelSchemas.user
+                  delete mongoose?.modelSchemas?.user
                   return Q.when()
                 })
             )
@@ -465,7 +465,7 @@ test('handler-helper.listHandler', function(t) {
                 .then(function() {
                   sandbox.restore()
                   delete mongoose.models.user
-                  delete mongoose.modelSchemas.user
+                  delete mongoose?.modelSchemas?.user
                 })
             )
             // </editor-fold>
@@ -551,7 +551,7 @@ test('handler-helper.listHandler', function(t) {
             // <editor-fold desc="Restore">
             sandbox.restore()
             delete mongoose.models.user
-            delete mongoose.modelSchemas.user
+            delete mongoose?.modelSchemas?.user
             // </editor-fold>
           }
         )
@@ -625,7 +625,7 @@ test('handler-helper.listHandler', function(t) {
             // <editor-fold desc="Restore">
             sandbox.restore()
             delete mongoose.models.user
-            delete mongoose.modelSchemas.user
+            delete mongoose?.modelSchemas?.user
             // </editor-fold>
           }
         )
@@ -727,7 +727,7 @@ test('handler-helper.listHandler', function(t) {
                 .then(function() {
                   sandbox.restore()
                   delete mongoose.models.user
-                  delete mongoose.modelSchemas.user
+                  delete mongoose?.modelSchemas?.user
                 })
             )
             // </editor-fold>
@@ -815,7 +815,7 @@ test('handler-helper.listHandler', function(t) {
                 .then(function() {
                   sandbox.restore()
                   delete mongoose.models.user
-                  delete mongoose.modelSchemas.user
+                  delete mongoose?.modelSchemas?.user
                 })
             )
             // </editor-fold>
@@ -906,7 +906,7 @@ test('handler-helper.listHandler', function(t) {
                 .then(function() {
                   sandbox.restore()
                   delete mongoose.models.user
-                  delete mongoose.modelSchemas.user
+                  delete mongoose?.modelSchemas?.user
                 })
             )
             // </editor-fold>
@@ -969,7 +969,7 @@ test('handler-helper.listHandler', function(t) {
                 .then(function() {
                   sandbox.restore()
                   delete mongoose.models.user
-                  delete mongoose.modelSchemas.user
+                  delete mongoose?.modelSchemas?.user
                 })
             )
             // </editor-fold>
@@ -1032,7 +1032,7 @@ test('handler-helper.listHandler', function(t) {
                 .then(function() {
                   sandbox.restore()
                   delete mongoose.models.user
-                  delete mongoose.modelSchemas.user
+                  delete mongoose?.modelSchemas?.user
                 })
             )
             // </editor-fold>
@@ -1100,7 +1100,7 @@ test('handler-helper.listHandler', function(t) {
                 .then(function() {
                   sandbox.restore()
                   delete mongoose.models.user
-                  delete mongoose.modelSchemas.user
+                  delete mongoose?.modelSchemas?.user
                 })
             )
             // </editor-fold>
@@ -1165,7 +1165,7 @@ test('handler-helper.findHandler', function(t) {
                 .then(function() {
                   sandbox.restore()
                   delete mongoose.models.user
-                  delete mongoose.modelSchemas.user
+                  delete mongoose?.modelSchemas?.user
                 })
             )
             // </editor-fold>
@@ -1231,7 +1231,7 @@ test('handler-helper.findHandler', function(t) {
                 .then(function() {
                   sandbox.restore()
                   delete mongoose.models.user
-                  delete mongoose.modelSchemas.user
+                  delete mongoose?.modelSchemas?.user
                 })
             )
             // </editor-fold>
@@ -1302,7 +1302,7 @@ test('handler-helper.findHandler', function(t) {
                 .then(function() {
                   sandbox.restore()
                   delete mongoose.models.user
-                  delete mongoose.modelSchemas.user
+                  delete mongoose?.modelSchemas?.user
                 })
             )
             // </editor-fold>
@@ -1382,7 +1382,7 @@ test('handler-helper.findHandler', function(t) {
                 .then(function() {
                   sandbox.restore()
                   delete mongoose.models.user
-                  delete mongoose.modelSchemas.user
+                  delete mongoose?.modelSchemas?.user
                 })
             )
             // </editor-fold>
@@ -1454,7 +1454,7 @@ test('handler-helper.findHandler', function(t) {
                 .then(function() {
                   sandbox.restore()
                   delete mongoose.models.user
-                  delete mongoose.modelSchemas.user
+                  delete mongoose?.modelSchemas?.user
                 })
             )
             // </editor-fold>
@@ -1541,7 +1541,7 @@ test('handler-helper.findHandler', function(t) {
                 .then(function() {
                   sandbox.restore()
                   delete mongoose.models.user
-                  delete mongoose.modelSchemas.user
+                  delete mongoose?.modelSchemas?.user
                 })
             )
             // </editor-fold>
@@ -1628,7 +1628,7 @@ test('handler-helper.findHandler', function(t) {
                 .then(function() {
                   sandbox.restore()
                   delete mongoose.models.user
-                  delete mongoose.modelSchemas.user
+                  delete mongoose?.modelSchemas?.user
                 })
             )
             // </editor-fold>
@@ -1702,7 +1702,7 @@ test('handler-helper.findHandler', function(t) {
                 .then(function() {
                   sandbox.restore()
                   delete mongoose.models.user
-                  delete mongoose.modelSchemas.user
+                  delete mongoose?.modelSchemas?.user
                 })
             )
             // </editor-fold>
@@ -1768,7 +1768,7 @@ test('handler-helper.findHandler', function(t) {
                 .then(function() {
                   sandbox.restore()
                   delete mongoose.models.user
-                  delete mongoose.modelSchemas.user
+                  delete mongoose?.modelSchemas?.user
                 })
             )
             // </editor-fold>
@@ -1834,7 +1834,7 @@ test('handler-helper.findHandler', function(t) {
                 .then(function() {
                   sandbox.restore()
                   delete mongoose.models.user
-                  delete mongoose.modelSchemas.user
+                  delete mongoose?.modelSchemas?.user
                 })
             )
             // </editor-fold>
@@ -1897,7 +1897,7 @@ test('handler-helper.findHandler', function(t) {
                 .then(function() {
                   sandbox.restore()
                   delete mongoose.models.user
-                  delete mongoose.modelSchemas.user
+                  delete mongoose?.modelSchemas?.user
                 })
             )
             // </editor-fold>
@@ -1968,7 +1968,7 @@ test('handler-helper.createHandler', function(t) {
                 .then(function() {
                   sandbox.restore()
                   delete mongoose.models.user
-                  delete mongoose.modelSchemas.user
+                  delete mongoose?.modelSchemas?.user
                 })
             )
             // </editor-fold>
@@ -2026,7 +2026,7 @@ test('handler-helper.createHandler', function(t) {
                 .then(function() {
                   sandbox.restore()
                   delete mongoose.models.user
-                  delete mongoose.modelSchemas.user
+                  delete mongoose?.modelSchemas?.user
                 })
             )
             // </editor-fold>
@@ -2089,7 +2089,7 @@ test('handler-helper.createHandler', function(t) {
                 .then(function() {
                   sandbox.restore()
                   delete mongoose.models.user
-                  delete mongoose.modelSchemas.user
+                  delete mongoose?.modelSchemas?.user
                 })
             )
             // </editor-fold>
@@ -2151,7 +2151,7 @@ test('handler-helper.createHandler', function(t) {
               .then(function() {
                 sandbox.restore()
                 delete mongoose.models.user
-                delete mongoose.modelSchemas.user
+                delete mongoose?.modelSchemas?.user
               })
           )
           // </editor-fold>
@@ -2241,7 +2241,7 @@ test('handler-helper.createHandler', function(t) {
                 .then(function() {
                   sandbox.restore()
                   delete mongoose.models.user
-                  delete mongoose.modelSchemas.user
+                  delete mongoose?.modelSchemas?.user
                 })
             )
             // </editor-fold>
@@ -2315,7 +2315,7 @@ test('handler-helper.createHandler', function(t) {
                 .then(function() {
                   sandbox.restore()
                   delete mongoose.models.user
-                  delete mongoose.modelSchemas.user
+                  delete mongoose?.modelSchemas?.user
                 })
             )
             // </editor-fold>
@@ -2389,7 +2389,7 @@ test('handler-helper.createHandler', function(t) {
                 .then(function() {
                   sandbox.restore()
                   delete mongoose.models.user
-                  delete mongoose.modelSchemas.user
+                  delete mongoose?.modelSchemas?.user
                 })
             )
             // </editor-fold>
@@ -2473,7 +2473,7 @@ test('handler-helper.createHandler', function(t) {
                 .then(function() {
                   sandbox.restore()
                   delete mongoose.models.user
-                  delete mongoose.modelSchemas.user
+                  delete mongoose?.modelSchemas?.user
                 })
             )
             // </editor-fold>
@@ -2557,7 +2557,7 @@ test('handler-helper.createHandler', function(t) {
                 .then(function() {
                   sandbox.restore()
                   delete mongoose.models.user
-                  delete mongoose.modelSchemas.user
+                  delete mongoose?.modelSchemas?.user
                 })
             )
             // </editor-fold>
@@ -2641,7 +2641,7 @@ test('handler-helper.createHandler', function(t) {
                 .then(function() {
                   sandbox.restore()
                   delete mongoose.models.user
-                  delete mongoose.modelSchemas.user
+                  delete mongoose?.modelSchemas?.user
                 })
             )
             // </editor-fold>
@@ -2705,7 +2705,7 @@ test('handler-helper.createHandler', function(t) {
                 .then(function() {
                   sandbox.restore()
                   delete mongoose.models.user
-                  delete mongoose.modelSchemas.user
+                  delete mongoose?.modelSchemas?.user
                 })
             )
             // </editor-fold>
@@ -2769,7 +2769,7 @@ test('handler-helper.createHandler', function(t) {
                 .then(function() {
                   sandbox.restore()
                   delete mongoose.models.user
-                  delete mongoose.modelSchemas.user
+                  delete mongoose?.modelSchemas?.user
                 })
             )
             // </editor-fold>
@@ -2829,7 +2829,7 @@ test('handler-helper.createHandler', function(t) {
                 .then(function() {
                   sandbox.restore()
                   delete mongoose.models.user
-                  delete mongoose.modelSchemas.user
+                  delete mongoose?.modelSchemas?.user
                 })
             )
             // </editor-fold>
@@ -2900,7 +2900,7 @@ test('handler-helper.updateHandler', function(t) {
                 .then(function() {
                   sandbox.restore()
                   delete mongoose.models.user
-                  delete mongoose.modelSchemas.user
+                  delete mongoose?.modelSchemas?.user
                 })
             )
             // </editor-fold>
@@ -2966,7 +2966,7 @@ test('handler-helper.updateHandler', function(t) {
                 .then(function() {
                   sandbox.restore()
                   delete mongoose.models.user
-                  delete mongoose.modelSchemas.user
+                  delete mongoose?.modelSchemas?.user
                 })
             )
             // </editor-fold>
@@ -3034,7 +3034,7 @@ test('handler-helper.updateHandler', function(t) {
                 .then(function() {
                   sandbox.restore()
                   delete mongoose.models.user
-                  delete mongoose.modelSchemas.user
+                  delete mongoose?.modelSchemas?.user
                 })
             )
             // </editor-fold>
@@ -3104,7 +3104,7 @@ test('handler-helper.updateHandler', function(t) {
                 .then(function() {
                   sandbox.restore()
                   delete mongoose.models.user
-                  delete mongoose.modelSchemas.user
+                  delete mongoose?.modelSchemas?.user
                 })
             )
             // </editor-fold>
@@ -3169,7 +3169,7 @@ test('handler-helper.updateHandler', function(t) {
                 .then(function() {
                   sandbox.restore()
                   delete mongoose.models.user
-                  delete mongoose.modelSchemas.user
+                  delete mongoose?.modelSchemas?.user
                 })
             )
             // </editor-fold>
@@ -3242,7 +3242,7 @@ test('handler-helper.updateHandler', function(t) {
                 .then(function() {
                   sandbox.restore()
                   delete mongoose.models.user
-                  delete mongoose.modelSchemas.user
+                  delete mongoose?.modelSchemas?.user
                 })
             )
             // </editor-fold>
@@ -3306,7 +3306,7 @@ test('handler-helper.updateHandler', function(t) {
               .then(function() {
                 sandbox.restore()
                 delete mongoose.models.user
-                delete mongoose.modelSchemas.user
+                delete mongoose?.modelSchemas?.user
               })
           )
           // </editor-fold>
@@ -3384,7 +3384,7 @@ test('handler-helper.updateHandler', function(t) {
                 .then(function() {
                   sandbox.restore()
                   delete mongoose.models.user
-                  delete mongoose.modelSchemas.user
+                  delete mongoose?.modelSchemas?.user
                 })
             )
             // </editor-fold>
@@ -3463,7 +3463,7 @@ test('handler-helper.updateHandler', function(t) {
                 .then(function() {
                   sandbox.restore()
                   delete mongoose.models.user
-                  delete mongoose.modelSchemas.user
+                  delete mongoose?.modelSchemas?.user
                 })
             )
             // </editor-fold>
@@ -3526,7 +3526,7 @@ test('handler-helper.updateHandler', function(t) {
                 .then(function() {
                   sandbox.restore()
                   delete mongoose.models.user
-                  delete mongoose.modelSchemas.user
+                  delete mongoose?.modelSchemas?.user
                 })
             )
             // </editor-fold>
@@ -3589,7 +3589,7 @@ test('handler-helper.updateHandler', function(t) {
                 .then(function() {
                   sandbox.restore()
                   delete mongoose.models.user
-                  delete mongoose.modelSchemas.user
+                  delete mongoose?.modelSchemas?.user
                 })
             )
             // </editor-fold>
@@ -3658,7 +3658,7 @@ test('handler-helper.updateHandler', function(t) {
                 .then(function() {
                   sandbox.restore()
                   delete mongoose.models.user
-                  delete mongoose.modelSchemas.user
+                  delete mongoose?.modelSchemas?.user
                 })
             )
             // </editor-fold>
@@ -3727,7 +3727,7 @@ test('handler-helper.updateHandler', function(t) {
                 .then(function() {
                   sandbox.restore()
                   delete mongoose.models.user
-                  delete mongoose.modelSchemas.user
+                  delete mongoose?.modelSchemas?.user
                 })
             )
             // </editor-fold>
@@ -3796,7 +3796,7 @@ test('handler-helper.updateHandler', function(t) {
                 .then(function() {
                   sandbox.restore()
                   delete mongoose.models.user
-                  delete mongoose.modelSchemas.user
+                  delete mongoose?.modelSchemas?.user
                 })
             )
             // </editor-fold>
@@ -3872,7 +3872,7 @@ test('handler-helper.deleteOneHandler', function(t) {
                 .then(function() {
                   sandbox.restore()
                   delete mongoose.models.user
-                  delete mongoose.modelSchemas.user
+                  delete mongoose?.modelSchemas?.user
                 })
             )
             // </editor-fold>
@@ -3931,7 +3931,7 @@ test('handler-helper.deleteOneHandler', function(t) {
                 .then(function() {
                   sandbox.restore()
                   delete mongoose.models.user
-                  delete mongoose.modelSchemas.user
+                  delete mongoose?.modelSchemas?.user
                 })
             )
             // </editor-fold>
@@ -3994,7 +3994,7 @@ test('handler-helper.deleteOneHandler', function(t) {
                 .then(function() {
                   sandbox.restore()
                   delete mongoose.models.user
-                  delete mongoose.modelSchemas.user
+                  delete mongoose?.modelSchemas?.user
                 })
             )
             // </editor-fold>
@@ -4063,7 +4063,7 @@ test('handler-helper.deleteOneHandler', function(t) {
                 .then(function() {
                   sandbox.restore()
                   delete mongoose.models.user
-                  delete mongoose.modelSchemas.user
+                  delete mongoose?.modelSchemas?.user
                 })
             )
             // </editor-fold>
@@ -4114,7 +4114,7 @@ test('handler-helper.deleteOneHandler', function(t) {
               .then(function() {
                 sandbox.restore()
                 delete mongoose.models.user
-                delete mongoose.modelSchemas.user
+                delete mongoose?.modelSchemas?.user
               })
           )
           // </editor-fold>
@@ -4181,7 +4181,7 @@ test('handler-helper.deleteOneHandler', function(t) {
                 .then(function() {
                   sandbox.restore()
                   delete mongoose.models.user
-                  delete mongoose.modelSchemas.user
+                  delete mongoose?.modelSchemas?.user
                 })
             )
             // </editor-fold>
@@ -4249,7 +4249,7 @@ test('handler-helper.deleteOneHandler', function(t) {
                 .then(function() {
                   sandbox.restore()
                   delete mongoose.models.user
-                  delete mongoose.modelSchemas.user
+                  delete mongoose?.modelSchemas?.user
                 })
             )
             // </editor-fold>
@@ -4308,7 +4308,7 @@ test('handler-helper.deleteOneHandler', function(t) {
                 .then(function() {
                   sandbox.restore()
                   delete mongoose.models.user
-                  delete mongoose.modelSchemas.user
+                  delete mongoose?.modelSchemas?.user
                 })
             )
             // </editor-fold>
@@ -4376,7 +4376,7 @@ test('handler-helper.deleteOneHandler', function(t) {
                 .then(function() {
                   sandbox.restore()
                   delete mongoose.models.user
-                  delete mongoose.modelSchemas.user
+                  delete mongoose?.modelSchemas?.user
                 })
             )
             // </editor-fold>
@@ -4444,7 +4444,7 @@ test('handler-helper.deleteOneHandler', function(t) {
                 .then(function() {
                   sandbox.restore()
                   delete mongoose.models.user
-                  delete mongoose.modelSchemas.user
+                  delete mongoose?.modelSchemas?.user
                 })
             )
             // </editor-fold>
@@ -4508,7 +4508,7 @@ test('handler-helper.deleteOneHandler', function(t) {
                 .then(function() {
                   sandbox.restore()
                   delete mongoose.models.user
-                  delete mongoose.modelSchemas.user
+                  delete mongoose?.modelSchemas?.user
                 })
             )
             // </editor-fold>
@@ -4559,9 +4559,9 @@ test('handler-helper.deleteOneHandler', function(t) {
 //       //<editor-fold desc="Restore">
 //       sandbox.restore();
 //       delete mongoose.models.user;
-//       delete mongoose.modelSchemas.user;
+//       delete mongoose?.modelSchemas?.user;
 //       delete mongoose.models.child;
-//       delete mongoose.modelSchemas.child;
+//       delete mongoose?.modelSchemas?.child;
 //       return Q.when();
 //       //</editor-fold>
 //     });
@@ -4610,9 +4610,9 @@ test('handler-helper.deleteOneHandler', function(t) {
 //       .then(function() {
 //         sandbox.restore();
 //         delete mongoose.models.user;
-//         delete mongoose.modelSchemas.user;
+//         delete mongoose?.modelSchemas?.user;
 //         delete mongoose.models.child;
-//         delete mongoose.modelSchemas.child;
+//         delete mongoose?.modelSchemas?.child;
 //       });
 //       //</editor-fold>
 //     });
@@ -4661,9 +4661,9 @@ test('handler-helper.deleteOneHandler', function(t) {
 //       .then(function() {
 //         sandbox.restore();
 //         delete mongoose.models.user;
-//         delete mongoose.modelSchemas.user;
+//         delete mongoose?.modelSchemas?.user;
 //         delete mongoose.models.child;
-//         delete mongoose.modelSchemas.child;
+//         delete mongoose?.modelSchemas?.child;
 //       });
 //       //</editor-fold>
 //     });
@@ -4714,9 +4714,9 @@ test('handler-helper.deleteOneHandler', function(t) {
 //       .then(function() {
 //         sandbox.restore();
 //         delete mongoose.models.user;
-//         delete mongoose.modelSchemas.user;
+//         delete mongoose?.modelSchemas?.user;
 //         delete mongoose.models.child;
-//         delete mongoose.modelSchemas.child;
+//         delete mongoose?.modelSchemas?.child;
 //       });
 //       //</editor-fold>
 //     });
@@ -4765,9 +4765,9 @@ test('handler-helper.deleteOneHandler', function(t) {
 //       .then(function() {
 //         sandbox.restore();
 //         delete mongoose.models.user;
-//         delete mongoose.modelSchemas.user;
+//         delete mongoose?.modelSchemas?.user;
 //         delete mongoose.models.child;
-//         delete mongoose.modelSchemas.child;
+//         delete mongoose?.modelSchemas?.child;
 //       });
 //       //</editor-fold>
 //     });
@@ -4816,9 +4816,9 @@ test('handler-helper.deleteOneHandler', function(t) {
 //       .then(function() {
 //         sandbox.restore();
 //         delete mongoose.models.user;
-//         delete mongoose.modelSchemas.user;
+//         delete mongoose?.modelSchemas?.user;
 //         delete mongoose.models.child;
-//         delete mongoose.modelSchemas.child;
+//         delete mongoose?.modelSchemas?.child;
 //       });
 //       //</editor-fold>
 //     });
@@ -4867,9 +4867,9 @@ test('handler-helper.deleteOneHandler', function(t) {
 //       //<editor-fold desc="Restore">
 //       sandbox.restore();
 //       delete mongoose.models.user;
-//       delete mongoose.modelSchemas.user;
+//       delete mongoose?.modelSchemas?.user;
 //       delete mongoose.models.child;
-//       delete mongoose.modelSchemas.child;
+//       delete mongoose?.modelSchemas?.child;
 //       return Q.when();
 //       //</editor-fold>
 //     });
@@ -4918,9 +4918,9 @@ test('handler-helper.deleteOneHandler', function(t) {
 //       .then(function() {
 //         sandbox.restore();
 //         delete mongoose.models.user;
-//         delete mongoose.modelSchemas.user;
+//         delete mongoose?.modelSchemas?.user;
 //         delete mongoose.models.child;
-//         delete mongoose.modelSchemas.child;
+//         delete mongoose?.modelSchemas?.child;
 //       });
 //       //</editor-fold>
 //     });
@@ -4969,9 +4969,9 @@ test('handler-helper.deleteOneHandler', function(t) {
 //       .then(function() {
 //         sandbox.restore();
 //         delete mongoose.models.user;
-//         delete mongoose.modelSchemas.user;
+//         delete mongoose?.modelSchemas?.user;
 //         delete mongoose.models.child;
-//         delete mongoose.modelSchemas.child;
+//         delete mongoose?.modelSchemas?.child;
 //       });
 //       //</editor-fold>
 //     });
@@ -5022,9 +5022,9 @@ test('handler-helper.deleteOneHandler', function(t) {
 //       .then(function() {
 //         sandbox.restore();
 //         delete mongoose.models.user;
-//         delete mongoose.modelSchemas.user;
+//         delete mongoose?.modelSchemas?.user;
 //         delete mongoose.models.child;
-//         delete mongoose.modelSchemas.child;
+//         delete mongoose?.modelSchemas?.child;
 //       });
 //       //</editor-fold>
 //     });
@@ -5073,9 +5073,9 @@ test('handler-helper.deleteOneHandler', function(t) {
 //       .then(function() {
 //         sandbox.restore();
 //         delete mongoose.models.user;
-//         delete mongoose.modelSchemas.user;
+//         delete mongoose?.modelSchemas?.user;
 //         delete mongoose.models.child;
-//         delete mongoose.modelSchemas.child;
+//         delete mongoose?.modelSchemas?.child;
 //       });
 //       //</editor-fold>
 //     });
@@ -5124,9 +5124,9 @@ test('handler-helper.deleteOneHandler', function(t) {
 //       .then(function() {
 //         sandbox.restore();
 //         delete mongoose.models.user;
-//         delete mongoose.modelSchemas.user;
+//         delete mongoose?.modelSchemas?.user;
 //         delete mongoose.models.child;
-//         delete mongoose.modelSchemas.child;
+//         delete mongoose?.modelSchemas?.child;
 //       });
 //       //</editor-fold>
 //     });
@@ -5175,9 +5175,9 @@ test('handler-helper.deleteOneHandler', function(t) {
 //       //<editor-fold desc="Restore">
 //       sandbox.restore();
 //       delete mongoose.models.user;
-//       delete mongoose.modelSchemas.user;
+//       delete mongoose?.modelSchemas?.user;
 //       delete mongoose.models.child;
-//       delete mongoose.modelSchemas.child;
+//       delete mongoose?.modelSchemas?.child;
 //       return Q.when();
 //       //</editor-fold>
 //     });
@@ -5228,9 +5228,9 @@ test('handler-helper.deleteOneHandler', function(t) {
 //       .then(function() {
 //         sandbox.restore();
 //         delete mongoose.models.user;
-//         delete mongoose.modelSchemas.user;
+//         delete mongoose?.modelSchemas?.user;
 //         delete mongoose.models.child;
-//         delete mongoose.modelSchemas.child;
+//         delete mongoose?.modelSchemas?.child;
 //       });
 //       //</editor-fold>
 //     });
@@ -5280,9 +5280,9 @@ test('handler-helper.deleteOneHandler', function(t) {
 //       .then(function() {
 //         sandbox.restore();
 //         delete mongoose.models.user;
-//         delete mongoose.modelSchemas.user;
+//         delete mongoose?.modelSchemas?.user;
 //         delete mongoose.models.child;
-//         delete mongoose.modelSchemas.child;
+//         delete mongoose?.modelSchemas?.child;
 //       });
 //       //</editor-fold>
 //     });
@@ -5334,9 +5334,9 @@ test('handler-helper.deleteOneHandler', function(t) {
 //       .then(function() {
 //         sandbox.restore();
 //         delete mongoose.models.user;
-//         delete mongoose.modelSchemas.user;
+//         delete mongoose?.modelSchemas?.user;
 //         delete mongoose.models.child;
-//         delete mongoose.modelSchemas.child;
+//         delete mongoose?.modelSchemas?.child;
 //       });
 //       //</editor-fold>
 //     });
@@ -5386,9 +5386,9 @@ test('handler-helper.deleteOneHandler', function(t) {
 //       .then(function() {
 //         sandbox.restore();
 //         delete mongoose.models.user;
-//         delete mongoose.modelSchemas.user;
+//         delete mongoose?.modelSchemas?.user;
 //         delete mongoose.models.child;
-//         delete mongoose.modelSchemas.child;
+//         delete mongoose?.modelSchemas?.child;
 //       });
 //       //</editor-fold>
 //     });
@@ -5438,9 +5438,9 @@ test('handler-helper.deleteOneHandler', function(t) {
 //       .then(function() {
 //         sandbox.restore();
 //         delete mongoose.models.user;
-//         delete mongoose.modelSchemas.user;
+//         delete mongoose?.modelSchemas?.user;
 //         delete mongoose.models.child;
-//         delete mongoose.modelSchemas.child;
+//         delete mongoose?.modelSchemas?.child;
 //       });
 //       //</editor-fold>
 //     });
@@ -5498,9 +5498,9 @@ test('handler-helper.deleteOneHandler', function(t) {
 //       //<editor-fold desc="Restore">
 //       sandbox.restore();
 //       delete mongoose.models.user;
-//       delete mongoose.modelSchemas.user;
+//       delete mongoose?.modelSchemas?.user;
 //       delete mongoose.models.child;
-//       delete mongoose.modelSchemas.child;
+//       delete mongoose?.modelSchemas?.child;
 //       return Q.when();
 //       //</editor-fold>
 //     });
@@ -5556,9 +5556,9 @@ test('handler-helper.deleteOneHandler', function(t) {
 //       //<editor-fold desc="Restore">
 //       sandbox.restore();
 //       delete mongoose.models.user;
-//       delete mongoose.modelSchemas.user;
+//       delete mongoose?.modelSchemas?.user;
 //       delete mongoose.models.child;
-//       delete mongoose.modelSchemas.child;
+//       delete mongoose?.modelSchemas?.child;
 //       return Q.when();
 //       //</editor-fold>
 //     });
@@ -5623,9 +5623,9 @@ test('handler-helper.deleteOneHandler', function(t) {
 //       .then(function() {
 //         sandbox.restore();
 //         delete mongoose.models.user;
-//         delete mongoose.modelSchemas.user;
+//         delete mongoose?.modelSchemas?.user;
 //         delete mongoose.models.child;
-//         delete mongoose.modelSchemas.child;
+//         delete mongoose?.modelSchemas?.child;
 //       })
 //       //</editor-fold>
 //     });
@@ -5699,9 +5699,9 @@ test('handler-helper.deleteOneHandler', function(t) {
 //       .then(function() {
 //         sandbox.restore();
 //         delete mongoose.models.user;
-//         delete mongoose.modelSchemas.user;
+//         delete mongoose?.modelSchemas?.user;
 //         delete mongoose.models.child;
-//         delete mongoose.modelSchemas.child;
+//         delete mongoose?.modelSchemas?.child;
 //       })
 //       //</editor-fold>
 //     });
@@ -5775,9 +5775,9 @@ test('handler-helper.deleteOneHandler', function(t) {
 //       .then(function() {
 //         sandbox.restore();
 //         delete mongoose.models.user;
-//         delete mongoose.modelSchemas.user;
+//         delete mongoose?.modelSchemas?.user;
 //         delete mongoose.models.child;
-//         delete mongoose.modelSchemas.child;
+//         delete mongoose?.modelSchemas?.child;
 //       })
 //       //</editor-fold>
 //     });
@@ -5836,9 +5836,9 @@ test('handler-helper.deleteOneHandler', function(t) {
 //       .then(function() {
 //         sandbox.restore();
 //         delete mongoose.models.user;
-//         delete mongoose.modelSchemas.user;
+//         delete mongoose?.modelSchemas?.user;
 //         delete mongoose.models.child;
-//         delete mongoose.modelSchemas.child;
+//         delete mongoose?.modelSchemas?.child;
 //       });
 //       //</editor-fold>
 //     });
@@ -5896,9 +5896,9 @@ test('handler-helper.deleteOneHandler', function(t) {
 //       .then(function() {
 //         sandbox.restore();
 //         delete mongoose.models.user;
-//         delete mongoose.modelSchemas.user;
+//         delete mongoose?.modelSchemas?.user;
 //         delete mongoose.models.child;
-//         delete mongoose.modelSchemas.child;
+//         delete mongoose?.modelSchemas?.child;
 //       })
 //       //</editor-fold>
 //     });
@@ -5969,9 +5969,9 @@ test('handler-helper.deleteOneHandler', function(t) {
 //       .then(function() {
 //         sandbox.restore();
 //         delete mongoose.models.user;
-//         delete mongoose.modelSchemas.user;
+//         delete mongoose?.modelSchemas?.user;
 //         delete mongoose.models.child;
-//         delete mongoose.modelSchemas.child;
+//         delete mongoose?.modelSchemas?.child;
 //       })
 //       //</editor-fold>
 //     });
@@ -6058,9 +6058,9 @@ test('handler-helper.deleteOneHandler', function(t) {
 //       .then(function() {
 //         sandbox.restore();
 //         delete mongoose.models.user;
-//         delete mongoose.modelSchemas.user;
+//         delete mongoose?.modelSchemas?.user;
 //         delete mongoose.models.child;
-//         delete mongoose.modelSchemas.child;
+//         delete mongoose?.modelSchemas?.child;
 //       })
 //       //</editor-fold>
 //     });
@@ -6147,9 +6147,9 @@ test('handler-helper.deleteOneHandler', function(t) {
 //       .then(function() {
 //         sandbox.restore();
 //         delete mongoose.models.user;
-//         delete mongoose.modelSchemas.user;
+//         delete mongoose?.modelSchemas?.user;
 //         delete mongoose.models.child;
-//         delete mongoose.modelSchemas.child;
+//         delete mongoose?.modelSchemas?.child;
 //       })
 //       //</editor-fold>
 //     });
@@ -6232,9 +6232,9 @@ test('handler-helper.deleteOneHandler', function(t) {
 //       .then(function() {
 //         sandbox.restore();
 //         delete mongoose.models.user;
-//         delete mongoose.modelSchemas.user;
+//         delete mongoose?.modelSchemas?.user;
 //         delete mongoose.models.child;
-//         delete mongoose.modelSchemas.child;
+//         delete mongoose?.modelSchemas?.child;
 //       })
 //       //</editor-fold>
 //     });
@@ -6317,9 +6317,9 @@ test('handler-helper.deleteOneHandler', function(t) {
 //       .then(function() {
 //         sandbox.restore();
 //         delete mongoose.models.user;
-//         delete mongoose.modelSchemas.user;
+//         delete mongoose?.modelSchemas?.user;
 //         delete mongoose.models.child;
-//         delete mongoose.modelSchemas.child;
+//         delete mongoose?.modelSchemas?.child;
 //       })
 //       //</editor-fold>
 //     });
@@ -6377,9 +6377,9 @@ test('handler-helper.deleteOneHandler', function(t) {
 //       .then(function() {
 //         sandbox.restore();
 //         delete mongoose.models.user;
-//         delete mongoose.modelSchemas.user;
+//         delete mongoose?.modelSchemas?.user;
 //         delete mongoose.models.child;
-//         delete mongoose.modelSchemas.child;
+//         delete mongoose?.modelSchemas?.child;
 //       })
 //       //</editor-fold>
 //     });
@@ -6461,9 +6461,9 @@ test('handler-helper.deleteOneHandler', function(t) {
 //       .then(function() {
 //         sandbox.restore();
 //         delete mongoose.models.user;
-//         delete mongoose.modelSchemas.user;
+//         delete mongoose?.modelSchemas?.user;
 //         delete mongoose.models.child;
-//         delete mongoose.modelSchemas.child;
+//         delete mongoose?.modelSchemas?.child;
 //       })
 //       //</editor-fold>
 //     });
@@ -6549,9 +6549,9 @@ test('handler-helper.deleteOneHandler', function(t) {
 //       .then(function() {
 //         sandbox.restore();
 //         delete mongoose.models.user;
-//         delete mongoose.modelSchemas.user;
+//         delete mongoose?.modelSchemas?.user;
 //         delete mongoose.models.child;
-//         delete mongoose.modelSchemas.child;
+//         delete mongoose?.modelSchemas?.child;
 //       })
 //       //</editor-fold>
 //     });
@@ -6634,9 +6634,9 @@ test('handler-helper.deleteOneHandler', function(t) {
 //       .then(function() {
 //         sandbox.restore();
 //         delete mongoose.models.user;
-//         delete mongoose.modelSchemas.user;
+//         delete mongoose?.modelSchemas?.user;
 //         delete mongoose.models.child;
-//         delete mongoose.modelSchemas.child;
+//         delete mongoose?.modelSchemas?.child;
 //       })
 //       //</editor-fold>
 //     });
@@ -6719,9 +6719,9 @@ test('handler-helper.deleteOneHandler', function(t) {
 //       .then(function() {
 //         sandbox.restore();
 //         delete mongoose.models.user;
-//         delete mongoose.modelSchemas.user;
+//         delete mongoose?.modelSchemas?.user;
 //         delete mongoose.models.child;
-//         delete mongoose.modelSchemas.child;
+//         delete mongoose?.modelSchemas?.child;
 //       })
 //       //</editor-fold>
 //     });

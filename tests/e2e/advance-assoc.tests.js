@@ -150,8 +150,10 @@ module.exports = (t, Mongoose, internals, Log) => {
                   Object.keys(Mongoose.models).forEach(function(key) {
                     delete Mongoose.models[key]
                   })
-                  Object.keys(Mongoose.modelSchemas).forEach(function(key) {
-                    delete Mongoose.modelSchemas[key]
+                  Object.keys(Mongoose.modelSchemas || []).forEach(function(
+                    key
+                  ) {
+                    delete Mongoose?.modelSchemas[key]
                   })
                 })
             )

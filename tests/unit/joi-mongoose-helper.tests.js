@@ -125,8 +125,8 @@ test('joi-mongoose-helper.generateJoiReadModel', function(t) {
       Object.keys(Mongoose.models).forEach(function(key) {
         delete Mongoose.models[key]
       })
-      Object.keys(Mongoose.modelSchemas).forEach(function(key) {
-        delete Mongoose.modelSchemas[key]
+      Object.keys(Mongoose.modelSchemas || []).forEach(function(key) {
+        delete Mongoose?.modelSchemas[key]
       })
       // </editor-fold>
     }
@@ -189,8 +189,8 @@ test('joi-mongoose-helper.generateJoiReadModel', function(t) {
       Object.keys(Mongoose.models).forEach(function(key) {
         delete Mongoose.models[key]
       })
-      Object.keys(Mongoose.modelSchemas).forEach(function(key) {
-        delete Mongoose.modelSchemas[key]
+      Object.keys(Mongoose.modelSchemas || []).forEach(function(key) {
+        delete Mongoose?.modelSchemas[key]
       })
       // </editor-fold>
     }
@@ -260,8 +260,8 @@ test('joi-mongoose-helper.generateJoiReadModel', function(t) {
       Object.keys(Mongoose.models).forEach(function(key) {
         delete Mongoose.models[key]
       })
-      Object.keys(Mongoose.modelSchemas).forEach(function(key) {
-        delete Mongoose.modelSchemas[key]
+      Object.keys(Mongoose.modelSchemas || []).forEach(function(key) {
+        delete Mongoose?.modelSchemas[key]
       })
       // </editor-fold>
     }
@@ -321,8 +321,8 @@ test('joi-mongoose-helper.generateJoiReadModel', function(t) {
       Object.keys(Mongoose.models).forEach(function(key) {
         delete Mongoose.models[key]
       })
-      Object.keys(Mongoose.modelSchemas).forEach(function(key) {
-        delete Mongoose.modelSchemas[key]
+      Object.keys(Mongoose.modelSchemas || []).forEach(function(key) {
+        delete Mongoose?.modelSchemas[key]
       })
       // </editor-fold>
     }
@@ -389,8 +389,8 @@ test('joi-mongoose-helper.generateJoiReadModel', function(t) {
       Object.keys(Mongoose.models).forEach(function(key) {
         delete Mongoose.models[key]
       })
-      Object.keys(Mongoose.modelSchemas).forEach(function(key) {
-        delete Mongoose.modelSchemas[key]
+      Object.keys(Mongoose.modelSchemas || []).forEach(function(key) {
+        delete Mongoose?.modelSchemas[key]
       })
       // </editor-fold>
     }
@@ -439,8 +439,8 @@ test('joi-mongoose-helper.generateJoiReadModel', function(t) {
       Object.keys(Mongoose.models).forEach(function(key) {
         delete Mongoose.models[key]
       })
-      Object.keys(Mongoose.modelSchemas).forEach(function(key) {
-        delete Mongoose.modelSchemas[key]
+      Object.keys(Mongoose.modelSchemas || []).forEach(function(key) {
+        delete Mongoose?.modelSchemas[key]
       })
       // </editor-fold>
     }
@@ -595,8 +595,8 @@ test('joi-mongoose-helper.generateJoiReadModel', function(t) {
       Object.keys(Mongoose.models).forEach(function(key) {
         delete Mongoose.models[key]
       })
-      Object.keys(Mongoose.modelSchemas).forEach(function(key) {
-        delete Mongoose.modelSchemas[key]
+      Object.keys(Mongoose.modelSchemas || []).forEach(function(key) {
+        delete Mongoose?.modelSchemas[key]
       })
       // </editor-fold>
     }
@@ -636,8 +636,8 @@ test('joi-mongoose-helper.generateJoiReadModel', function(t) {
       Object.keys(Mongoose.models).forEach(function(key) {
         delete Mongoose.models[key]
       })
-      Object.keys(Mongoose.modelSchemas).forEach(function(key) {
-        delete Mongoose.modelSchemas[key]
+      Object.keys(Mongoose.modelSchemas || []).forEach(function(key) {
+        delete Mongoose?.modelSchemas[key]
       })
       // </editor-fold>
     }
@@ -711,8 +711,8 @@ test('joi-mongoose-helper.generateJoiUpdateModel', function(t) {
       Object.keys(Mongoose.models).forEach(function(key) {
         delete Mongoose.models[key]
       })
-      Object.keys(Mongoose.modelSchemas).forEach(function(key) {
-        delete Mongoose.modelSchemas[key]
+      Object.keys(Mongoose.modelSchemas || []).forEach(function(key) {
+        delete Mongoose?.modelSchemas[key]
       })
       // </editor-fold>
     }
@@ -778,8 +778,8 @@ test('joi-mongoose-helper.generateJoiUpdateModel', function(t) {
       Object.keys(Mongoose.models).forEach(function(key) {
         delete Mongoose.models[key]
       })
-      Object.keys(Mongoose.modelSchemas).forEach(function(key) {
-        delete Mongoose.modelSchemas[key]
+      Object.keys(Mongoose.modelSchemas || []).forEach(function(key) {
+        delete Mongoose?.modelSchemas[key]
       })
       // </editor-fold>
     }
@@ -837,8 +837,8 @@ test('joi-mongoose-helper.generateJoiUpdateModel', function(t) {
       Object.keys(Mongoose.models).forEach(function(key) {
         delete Mongoose.models[key]
       })
-      Object.keys(Mongoose.modelSchemas).forEach(function(key) {
-        delete Mongoose.modelSchemas[key]
+      Object.keys(Mongoose.modelSchemas || []).forEach(function(key) {
+        delete Mongoose?.modelSchemas[key]
       })
       // </editor-fold>
     }
@@ -900,8 +900,8 @@ test('joi-mongoose-helper.generateJoiUpdateModel', function(t) {
       Object.keys(Mongoose.models).forEach(function(key) {
         delete Mongoose.models[key]
       })
-      Object.keys(Mongoose.modelSchemas).forEach(function(key) {
-        delete Mongoose.modelSchemas[key]
+      Object.keys(Mongoose.modelSchemas || []).forEach(function(key) {
+        delete Mongoose?.modelSchemas[key]
       })
       // </editor-fold>
     }
@@ -953,8 +953,8 @@ test('joi-mongoose-helper.generateJoiUpdateModel', function(t) {
       Object.keys(Mongoose.models).forEach(function(key) {
         delete Mongoose.models[key]
       })
-      Object.keys(Mongoose.modelSchemas).forEach(function(key) {
-        delete Mongoose.modelSchemas[key]
+      Object.keys(Mongoose.modelSchemas || []).forEach(function(key) {
+        delete Mongoose?.modelSchemas[key]
       })
       // </editor-fold>
     }
@@ -1089,8 +1089,8 @@ test('joi-mongoose-helper.generateJoiUpdateModel', function(t) {
       Object.keys(Mongoose.models).forEach(function(key) {
         delete Mongoose.models[key]
       })
-      Object.keys(Mongoose.modelSchemas).forEach(function(key) {
-        delete Mongoose.modelSchemas[key]
+      Object.keys(Mongoose.modelSchemas || []).forEach(function(key) {
+        delete Mongoose?.modelSchemas[key]
       })
       // </editor-fold>
     }
@@ -1133,8 +1133,8 @@ test('joi-mongoose-helper.generateJoiUpdateModel', function(t) {
       Object.keys(Mongoose.models).forEach(function(key) {
         delete Mongoose.models[key]
       })
-      Object.keys(Mongoose.modelSchemas).forEach(function(key) {
-        delete Mongoose.modelSchemas[key]
+      Object.keys(Mongoose.modelSchemas || []).forEach(function(key) {
+        delete Mongoose?.modelSchemas[key]
       })
       // </editor-fold>
     }
@@ -1208,8 +1208,8 @@ test('joi-mongoose-helper.generateJoiCreateModel', function(t) {
       Object.keys(Mongoose.models).forEach(function(key) {
         delete Mongoose.models[key]
       })
-      Object.keys(Mongoose.modelSchemas).forEach(function(key) {
-        delete Mongoose.modelSchemas[key]
+      Object.keys(Mongoose.modelSchemas || []).forEach(function(key) {
+        delete Mongoose?.modelSchemas[key]
       })
       // </editor-fold>
     }
@@ -1275,8 +1275,8 @@ test('joi-mongoose-helper.generateJoiCreateModel', function(t) {
       Object.keys(Mongoose.models).forEach(function(key) {
         delete Mongoose.models[key]
       })
-      Object.keys(Mongoose.modelSchemas).forEach(function(key) {
-        delete Mongoose.modelSchemas[key]
+      Object.keys(Mongoose.modelSchemas || []).forEach(function(key) {
+        delete Mongoose?.modelSchemas[key]
       })
       // </editor-fold>
     }
@@ -1334,8 +1334,8 @@ test('joi-mongoose-helper.generateJoiCreateModel', function(t) {
       Object.keys(Mongoose.models).forEach(function(key) {
         delete Mongoose.models[key]
       })
-      Object.keys(Mongoose.modelSchemas).forEach(function(key) {
-        delete Mongoose.modelSchemas[key]
+      Object.keys(Mongoose.modelSchemas || []).forEach(function(key) {
+        delete Mongoose?.modelSchemas[key]
       })
       // </editor-fold>
     }
@@ -1397,8 +1397,8 @@ test('joi-mongoose-helper.generateJoiCreateModel', function(t) {
       Object.keys(Mongoose.models).forEach(function(key) {
         delete Mongoose.models[key]
       })
-      Object.keys(Mongoose.modelSchemas).forEach(function(key) {
-        delete Mongoose.modelSchemas[key]
+      Object.keys(Mongoose.modelSchemas || []).forEach(function(key) {
+        delete Mongoose?.modelSchemas[key]
       })
       // </editor-fold>
     }
@@ -1450,8 +1450,8 @@ test('joi-mongoose-helper.generateJoiCreateModel', function(t) {
       Object.keys(Mongoose.models).forEach(function(key) {
         delete Mongoose.models[key]
       })
-      Object.keys(Mongoose.modelSchemas).forEach(function(key) {
-        delete Mongoose.modelSchemas[key]
+      Object.keys(Mongoose.modelSchemas || []).forEach(function(key) {
+        delete Mongoose?.modelSchemas[key]
       })
       // </editor-fold>
     }
@@ -1592,8 +1592,8 @@ test('joi-mongoose-helper.generateJoiCreateModel', function(t) {
       Object.keys(Mongoose.models).forEach(function(key) {
         delete Mongoose.models[key]
       })
-      Object.keys(Mongoose.modelSchemas).forEach(function(key) {
-        delete Mongoose.modelSchemas[key]
+      Object.keys(Mongoose.modelSchemas || []).forEach(function(key) {
+        delete Mongoose?.modelSchemas[key]
       })
       // </editor-fold>
     }
@@ -1629,8 +1629,8 @@ test('joi-mongoose-helper.generateJoiCreateModel', function(t) {
       Object.keys(Mongoose.models).forEach(function(key) {
         delete Mongoose.models[key]
       })
-      Object.keys(Mongoose.modelSchemas).forEach(function(key) {
-        delete Mongoose.modelSchemas[key]
+      Object.keys(Mongoose.modelSchemas || []).forEach(function(key) {
+        delete Mongoose?.modelSchemas[key]
       })
       // </editor-fold>
     }
@@ -2067,8 +2067,8 @@ test('joi-mongoose-helper.generateJoiFieldModel', function(t) {
       Object.keys(Mongoose.models).forEach(function(key) {
         delete Mongoose.models[key]
       })
-      Object.keys(Mongoose.modelSchemas).forEach(function(key) {
-        delete Mongoose.modelSchemas[key]
+      Object.keys(Mongoose.modelSchemas || []).forEach(function(key) {
+        delete Mongoose?.modelSchemas[key]
       })
       // </editor-fold>
     }
@@ -2123,8 +2123,8 @@ test('joi-mongoose-helper.generateJoiFieldModel', function(t) {
       Object.keys(Mongoose.models).forEach(function(key) {
         delete Mongoose.models[key]
       })
-      Object.keys(Mongoose.modelSchemas).forEach(function(key) {
-        delete Mongoose.modelSchemas[key]
+      Object.keys(Mongoose.modelSchemas || []).forEach(function(key) {
+        delete Mongoose?.modelSchemas[key]
       })
       // </editor-fold>
     }
@@ -2179,8 +2179,8 @@ test('joi-mongoose-helper.generateJoiFieldModel', function(t) {
       Object.keys(Mongoose.models).forEach(function(key) {
         delete Mongoose.models[key]
       })
-      Object.keys(Mongoose.modelSchemas).forEach(function(key) {
-        delete Mongoose.modelSchemas[key]
+      Object.keys(Mongoose.modelSchemas || []).forEach(function(key) {
+        delete Mongoose?.modelSchemas[key]
       })
       // </editor-fold>
     }
@@ -2245,8 +2245,8 @@ test('joi-mongoose-helper.generateJoiFieldModel', function(t) {
       Object.keys(Mongoose.models).forEach(function(key) {
         delete Mongoose.models[key]
       })
-      Object.keys(Mongoose.modelSchemas).forEach(function(key) {
-        delete Mongoose.modelSchemas[key]
+      Object.keys(Mongoose.modelSchemas || []).forEach(function(key) {
+        delete Mongoose?.modelSchemas[key]
       })
       // </editor-fold>
     }
@@ -2307,8 +2307,8 @@ test('joi-mongoose-helper.generateJoiFieldModel', function(t) {
       Object.keys(Mongoose.models).forEach(function(key) {
         delete Mongoose.models[key]
       })
-      Object.keys(Mongoose.modelSchemas).forEach(function(key) {
-        delete Mongoose.modelSchemas[key]
+      Object.keys(Mongoose.modelSchemas || []).forEach(function(key) {
+        delete Mongoose?.modelSchemas[key]
       })
       // </editor-fold>
     }
@@ -2369,8 +2369,8 @@ test('joi-mongoose-helper.generateJoiFieldModel', function(t) {
       Object.keys(Mongoose.models).forEach(function(key) {
         delete Mongoose.models[key]
       })
-      Object.keys(Mongoose.modelSchemas).forEach(function(key) {
-        delete Mongoose.modelSchemas[key]
+      Object.keys(Mongoose.modelSchemas || []).forEach(function(key) {
+        delete Mongoose?.modelSchemas[key]
       })
       // </editor-fold>
     }
@@ -2440,8 +2440,8 @@ test('joi-mongoose-helper.generateJoiFieldModel', function(t) {
       Object.keys(Mongoose.models).forEach(function(key) {
         delete Mongoose.models[key]
       })
-      Object.keys(Mongoose.modelSchemas).forEach(function(key) {
-        delete Mongoose.modelSchemas[key]
+      Object.keys(Mongoose.modelSchemas || []).forEach(function(key) {
+        delete Mongoose?.modelSchemas[key]
       })
       // </editor-fold>
     }
@@ -2534,8 +2534,8 @@ test('joi-mongoose-helper.generateJoiFieldModel', function(t) {
       Object.keys(Mongoose.models).forEach(function(key) {
         delete Mongoose.models[key]
       })
-      Object.keys(Mongoose.modelSchemas).forEach(function(key) {
-        delete Mongoose.modelSchemas[key]
+      Object.keys(Mongoose.modelSchemas || []).forEach(function(key) {
+        delete Mongoose?.modelSchemas[key]
       })
       // </editor-fold>
     }
@@ -2592,8 +2592,8 @@ test('joi-mongoose-helper.generateJoiFieldModel', function(t) {
       Object.keys(Mongoose.models).forEach(function(key) {
         delete Mongoose.models[key]
       })
-      Object.keys(Mongoose.modelSchemas).forEach(function(key) {
-        delete Mongoose.modelSchemas[key]
+      Object.keys(Mongoose.modelSchemas || []).forEach(function(key) {
+        delete Mongoose?.modelSchemas[key]
       })
       // </editor-fold>
     }
@@ -2651,8 +2651,8 @@ test('joi-mongoose-helper.generateJoiFieldModel', function(t) {
       Object.keys(Mongoose.models).forEach(function(key) {
         delete Mongoose.models[key]
       })
-      Object.keys(Mongoose.modelSchemas).forEach(function(key) {
-        delete Mongoose.modelSchemas[key]
+      Object.keys(Mongoose.modelSchemas || []).forEach(function(key) {
+        delete Mongoose?.modelSchemas[key]
       })
       // </editor-fold>
     }
@@ -2699,8 +2699,8 @@ test('joi-mongoose-helper.generateJoiListQueryModel', function(t) {
       Object.keys(Mongoose.models).forEach(function(key) {
         delete Mongoose.models[key]
       })
-      Object.keys(Mongoose.modelSchemas).forEach(function(key) {
-        delete Mongoose.modelSchemas[key]
+      Object.keys(Mongoose.modelSchemas || []).forEach(function(key) {
+        delete Mongoose?.modelSchemas[key]
       })
       // </editor-fold>
     })
@@ -2904,8 +2904,8 @@ test('joi-mongoose-helper.generateJoiListQueryModel', function(t) {
       Object.keys(Mongoose.models).forEach(function(key) {
         delete Mongoose.models[key]
       })
-      Object.keys(Mongoose.modelSchemas).forEach(function(key) {
-        delete Mongoose.modelSchemas[key]
+      Object.keys(Mongoose.modelSchemas || []).forEach(function(key) {
+        delete Mongoose?.modelSchemas[key]
       })
       // </editor-fold>
     })
@@ -2982,8 +2982,8 @@ test('joi-mongoose-helper.generateJoiListQueryModel', function(t) {
       Object.keys(Mongoose.models).forEach(function(key) {
         delete Mongoose.models[key]
       })
-      Object.keys(Mongoose.modelSchemas).forEach(function(key) {
-        delete Mongoose.modelSchemas[key]
+      Object.keys(Mongoose.modelSchemas || []).forEach(function(key) {
+        delete Mongoose?.modelSchemas[key]
       })
       // </editor-fold>
     })
@@ -3177,8 +3177,8 @@ test('joi-mongoose-helper.generateJoiListQueryModel', function(t) {
       Object.keys(Mongoose.models).forEach(function(key) {
         delete Mongoose.models[key]
       })
-      Object.keys(Mongoose.modelSchemas).forEach(function(key) {
-        delete Mongoose.modelSchemas[key]
+      Object.keys(Mongoose.modelSchemas || []).forEach(function(key) {
+        delete Mongoose?.modelSchemas[key]
       })
       // </editor-fold>
     })
@@ -3269,8 +3269,8 @@ test('joi-mongoose-helper.generateJoiListQueryModel', function(t) {
       Object.keys(Mongoose.models).forEach(function(key) {
         delete Mongoose.models[key]
       })
-      Object.keys(Mongoose.modelSchemas).forEach(function(key) {
-        delete Mongoose.modelSchemas[key]
+      Object.keys(Mongoose.modelSchemas || []).forEach(function(key) {
+        delete Mongoose?.modelSchemas[key]
       })
       // </editor-fold>
     })
@@ -3312,8 +3312,8 @@ test('joi-mongoose-helper.generateJoiFindQueryModel', function(t) {
       Object.keys(Mongoose.models).forEach(function(key) {
         delete Mongoose.models[key]
       })
-      Object.keys(Mongoose.modelSchemas).forEach(function(key) {
-        delete Mongoose.modelSchemas[key]
+      Object.keys(Mongoose.modelSchemas || []).forEach(function(key) {
+        delete Mongoose?.modelSchemas[key]
       })
       // </editor-fold>
     })
@@ -3410,8 +3410,8 @@ test('joi-mongoose-helper.generateJoiFindQueryModel', function(t) {
       Object.keys(Mongoose.models).forEach(function(key) {
         delete Mongoose.models[key]
       })
-      Object.keys(Mongoose.modelSchemas).forEach(function(key) {
-        delete Mongoose.modelSchemas[key]
+      Object.keys(Mongoose.modelSchemas || []).forEach(function(key) {
+        delete Mongoose?.modelSchemas[key]
       })
       // </editor-fold>
     })
@@ -3498,8 +3498,8 @@ test('joi-mongoose-helper.generateJoiFindQueryModel', function(t) {
       Object.keys(Mongoose.models).forEach(function(key) {
         delete Mongoose.models[key]
       })
-      Object.keys(Mongoose.modelSchemas).forEach(function(key) {
-        delete Mongoose.modelSchemas[key]
+      Object.keys(Mongoose.modelSchemas || []).forEach(function(key) {
+        delete Mongoose?.modelSchemas[key]
       })
       // </editor-fold>
     })
@@ -3590,8 +3590,8 @@ test('joi-mongoose-helper.generateJoiFindQueryModel', function(t) {
       Object.keys(Mongoose.models).forEach(function(key) {
         delete Mongoose.models[key]
       })
-      Object.keys(Mongoose.modelSchemas).forEach(function(key) {
-        delete Mongoose.modelSchemas[key]
+      Object.keys(Mongoose.modelSchemas || []).forEach(function(key) {
+        delete Mongoose?.modelSchemas[key]
       })
       // </editor-fold>
     })

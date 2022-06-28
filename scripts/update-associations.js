@@ -321,7 +321,7 @@ function removeEmbeddedAssociation(model, associationName, data, logger) {
   }
 
   delete mongoose.models[model.modelName]
-  delete mongoose.modelSchemas[model.modelName]
+  delete mongoose?.modelSchemas[model.modelName]
 
   const dummySchema = new mongoose.Schema(newField, {
     collection: model.modelName
