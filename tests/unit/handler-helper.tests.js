@@ -16,7 +16,7 @@ const logging = require('loggin')
 const logger = logging.getLogger('tests')
 logger.logLevel = 'FATAL'
 const testHelper = require('../../utilities/test-helper')
-const Joi = require('@hapi/joi')
+const Joi = require('joi')
 const Q = require('q')
 
 process.on('unhandledRejection', error => {

@@ -18,7 +18,7 @@ let Log = logging.getLogger('tests')
 Log.logLevel = 'ERROR'
 Log = Log.bind('rest-helper-factory')
 const testHelper = require('../../utilities/test-helper')
-const Joi = require('@hapi/joi')
+const Joi = require('joi')
 const fs = require('fs')
 
 sinon.test = sinonTest
@@ -2483,7 +2483,7 @@ test('rest-helper-factory.generateFindEndpoint', function(t) {
       ).callsFake(function() {
         return Joi.any()
       })
-      const joiStub = require('@hapi/joi')
+      const joiStub = require('joi')
       const joiObjectIdStub = function() {
         return function() {
           return {
@@ -4215,7 +4215,7 @@ test('rest-helper-factory.generateDeleteOneEndpoint', function(t) {
       ).callsFake(function() {
         return Joi.any()
       })
-      const joiStub = require('@hapi/joi')
+      const joiStub = require('joi')
 
       const joiObjectIdStub = function() {
         return function() {
@@ -5181,7 +5181,7 @@ test('rest-helper-factory.generateUpdateEndpoint', function(t) {
       joiMongooseHelperStub.generateJoiUpdateModel = this.spy(function() {
         return Joi.any()
       })
-      const joiStub = require('@hapi/joi')
+      const joiStub = require('joi')
 
       const joiObjectIdStub = function() {
         return function() {
@@ -6535,7 +6535,7 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
       ).callsFake(function() {
         return Joi.any()
       })
-      const joiStub = require('@hapi/joi')
+      const joiStub = require('joi')
       const joiObjectIdStub = function() {
         return function() {
           return {
@@ -7838,7 +7838,7 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
       ).callsFake(function() {
         return Joi.any()
       })
-      const joiStub = require('@hapi/joi')
+      const joiStub = require('joi')
       const joiObjectIdStub = function() {
         return function() {
           return {
@@ -9115,7 +9115,7 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
       joiMongooseHelperStub.generateJoiCreateModel = function() {
         return Joi.object({ test: 'test' }).unknown()
       }
-      const joiStub = require('@hapi/joi')
+      const joiStub = require('joi')
 
       const joiObjectIdStub = function() {
         return function() {
@@ -9251,7 +9251,7 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
       ).callsFake(function() {
         return Joi.any()
       })
-      const joiStub = require('@hapi/joi')
+      const joiStub = require('joi')
 
       const joiObjectIdStub = function() {
         return function() {
@@ -10687,7 +10687,7 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
       joiMongooseHelperStub.generateJoiListQueryModel = this.spy(function() {
         return queryModel
       })
-      const joiStub = require('@hapi/joi')
+      const joiStub = require('joi')
       const restHelperFactory = proxyquire(
         '../../utilities/rest-helper-factory',
         {
