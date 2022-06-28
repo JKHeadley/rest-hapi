@@ -197,10 +197,14 @@ test('handler-helper.listHandler', function(t) {
             const queryHelperStub = sandbox.stub(
               require('../../utilities/query-helper')
             )
+            const findFilter = { test: 'findTest' }
             queryHelperStub.createMongooseQuery = function() {
               return {
                 lean: function() {
-                  return { countDocuments: countSpy }
+                  return {
+                    countDocuments: countSpy,
+                    getFilter: () => findFilter
+                  }
                 }
               }
             }
@@ -218,6 +222,10 @@ test('handler-helper.listHandler', function(t) {
               return 'TEST'
             })
 
+            userModel.countDocuments = sandbox.spy(function() {
+              return 3
+            })
+
             const query = { test: {} }
             const request = { query: query }
             // </editor-fold>
@@ -230,7 +238,11 @@ test('handler-helper.listHandler', function(t) {
             return (
               promise
                 .catch(function() {
-                  t.ok(countSpy.called, 'count called')
+                  t.ok(userModel.countDocuments.called, 'count called')
+                  t.ok(
+                    userModel.countDocuments.calledWithExactly(findFilter),
+                    'count called with correct filter'
+                  )
                 })
                 // </editor-fold>
 
