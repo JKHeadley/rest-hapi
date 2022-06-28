@@ -94,6 +94,10 @@ test('joi-mongoose-helper.generateJoiReadModel', function(t) {
       })
 
       userSchema.statics = { routeOptions: {} }
+
+      delete Mongoose?.models?.user
+      delete Mongoose?.modelSchemas?.user
+
       const userModel = Mongoose.model('user', userSchema)
 
       const emailField = userModel.schema.tree.email
@@ -2668,7 +2672,12 @@ test('joi-mongoose-helper.generateJoiListQueryModel', function(t) {
       // <editor-fold desc="Arrange">
       t.plan(3)
 
-      const queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let queryHelperStub
+      try {
+        queryHelperStub = sinon.stub(require('../../utilities/query-helper'))
+      } catch (e) {
+        queryHelperStub = require('../../utilities/query-helper')
+      }
       const joiMongooseHelper = proxyquire(
         '../../utilities/joi-mongoose-helper',
         {
@@ -2712,7 +2721,12 @@ test('joi-mongoose-helper.generateJoiListQueryModel', function(t) {
       // <editor-fold desc="Arrange">
       t.plan(30)
 
-      const queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let queryHelperStub
+      try {
+        queryHelperStub = sinon.stub(require('../../utilities/query-helper'))
+      } catch (e) {
+        queryHelperStub = require('../../utilities/query-helper')
+      }
       queryHelperStub.getQueryableFields = this.spy(function() {
         return ['queryable']
       })
@@ -2917,7 +2931,12 @@ test('joi-mongoose-helper.generateJoiListQueryModel', function(t) {
       // <editor-fold desc="Arrange">
       t.plan(1)
 
-      const queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let queryHelperStub
+      try {
+        queryHelperStub = sinon.stub(require('../../utilities/query-helper'))
+      } catch (e) {
+        queryHelperStub = require('../../utilities/query-helper')
+      }
       queryHelperStub.getQueryableFields = this.spy(function() {
         return ['queryable']
       })
@@ -2995,7 +3014,12 @@ test('joi-mongoose-helper.generateJoiListQueryModel', function(t) {
       // <editor-fold desc="Arrange">
       t.plan(28)
 
-      const queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let queryHelperStub
+      try {
+        queryHelperStub = sinon.stub(require('../../utilities/query-helper'))
+      } catch (e) {
+        queryHelperStub = require('../../utilities/query-helper')
+      }
       queryHelperStub.getQueryableFields = this.spy(function() {
         return ['queryable']
       })
@@ -3190,7 +3214,12 @@ test('joi-mongoose-helper.generateJoiListQueryModel', function(t) {
       // <editor-fold desc="Arrange">
       t.plan(5)
 
-      const queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let queryHelperStub
+      try {
+        queryHelperStub = sinon.stub(require('../../utilities/query-helper'))
+      } catch (e) {
+        queryHelperStub = require('../../utilities/query-helper')
+      }
       queryHelperStub.getQueryableFields = this.spy(function() {
         return ['queryable']
       })
@@ -3286,7 +3315,12 @@ test('joi-mongoose-helper.generateJoiFindQueryModel', function(t) {
       // <editor-fold desc="Arrange">
       t.plan(1)
 
-      const queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let queryHelperStub
+      try {
+        queryHelperStub = sinon.stub(require('../../utilities/query-helper'))
+      } catch (e) {
+        queryHelperStub = require('../../utilities/query-helper')
+      }
       const joiMongooseHelper = proxyquire(
         '../../utilities/joi-mongoose-helper',
         {
@@ -3325,7 +3359,12 @@ test('joi-mongoose-helper.generateJoiFindQueryModel', function(t) {
       // <editor-fold desc="Arrange">
       t.plan(6)
 
-      const queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let queryHelperStub
+      try {
+        queryHelperStub = sinon.stub(require('../../utilities/query-helper'))
+      } catch (e) {
+        queryHelperStub = require('../../utilities/query-helper')
+      }
       queryHelperStub.getQueryableFields = this.spy(function() {
         return ['queryable']
       })
@@ -3423,7 +3462,12 @@ test('joi-mongoose-helper.generateJoiFindQueryModel', function(t) {
       // <editor-fold desc="Arrange">
       t.plan(4)
 
-      const queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let queryHelperStub
+      try {
+        queryHelperStub = sinon.stub(require('../../utilities/query-helper'))
+      } catch (e) {
+        queryHelperStub = require('../../utilities/query-helper')
+      }
       queryHelperStub.getQueryableFields = this.spy(function() {
         return ['queryable']
       })
@@ -3511,7 +3555,12 @@ test('joi-mongoose-helper.generateJoiFindQueryModel', function(t) {
       // <editor-fold desc="Arrange">
       t.plan(5)
 
-      const queryHelperStub = this.stub(require('../../utilities/query-helper'))
+      let queryHelperStub
+      try {
+        queryHelperStub = sinon.stub(require('../../utilities/query-helper'))
+      } catch (e) {
+        queryHelperStub = require('../../utilities/query-helper')
+      }
       queryHelperStub.getQueryableFields = this.spy(function() {
         return ['queryable']
       })

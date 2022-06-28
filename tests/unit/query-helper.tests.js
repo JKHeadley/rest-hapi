@@ -19,6 +19,15 @@ const testHelper = require('../../utilities/test-helper')
 // TODO: add tests for $exclude param
 // TODO: add tests for "getReference" code (implied associations)
 
+function clearRequireCache() {
+  Object.keys(require.cache).forEach(function(key) {
+    if (key.includes('rest-hapi/utilities')) {
+      console.log('CLEARING CACHE:', key)
+      delete require.cache[key]
+    }
+  })
+}
+
 test('query-helper exists and has expected members', function(t) {
   // <editor-fold desc="Arrange">
   const queryHelper = require('../../utilities/query-helper')
@@ -54,6 +63,7 @@ test('query-helper exists and has expected members', function(t) {
 })
 
 test('query-helper.getQueryableFields', function(t) {
+  clearRequireCache()
   const queryHelper = require('../../utilities/query-helper')
   testHelper.testModelParameter(
     t,
