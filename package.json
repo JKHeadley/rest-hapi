@@ -70,7 +70,7 @@
     "joi-objectid": "github:mkg20001/joi-objectid#chore/upgrade",
     "lodash": "~4.17.15",
     "loggin": "^3.0.2",
-    "mongoose": "^6.4.1",
+    "mongoose": "^6.4.6",
     "mrhorse": "^6.0.0",
     "prettier-config-standard": "^1.0.1",
     "query-string": "^6.8.3",
