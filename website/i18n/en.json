@@ -228,6 +228,26 @@
       "version-2.0.x/version-2.0.x-validation": {
         "title": "Validation",
         "sidebar_label": "Validation"
+      },
+      "version-2.2.x/version-2.2.x-associations": {
+        "title": "Associations",
+        "sidebar_label": "Assocations"
+      },
+      "version-2.2.x/version-2.2.x-configuration": {
+        "title": "Configuration",
+        "sidebar_label": "Configuration"
+      },
+      "version-2.2.x/version-2.2.x-route-customization": {
+        "title": "Route Customization",
+        "sidebar_label": "Route Customization"
+      },
+      "version-2.2.x/version-2.2.x-validation": {
+        "title": "Validation",
+        "sidebar_label": "Validation"
+      },
+      "version-2.3.x/version-2.3.x-configuration": {
+        "title": "Configuration",
+        "sidebar_label": "Configuration"
       }
     },
     "links": {
