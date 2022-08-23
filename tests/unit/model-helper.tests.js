@@ -3,6 +3,7 @@
 // Temporarily disabling this rule for tests
 /* eslint no-unused-vars: 0 */
 
+const fs = require('fs')
 const path = require('path')
 const test = require('tape')
 const _ = require('lodash')
@@ -340,7 +341,6 @@ test('model-helper.extendSchemaAssociations', function(t) {
 
       const fs = require('fs')
       const mkdirp = require('mkdirp')
-      const rmdir = require('rmdir')
       const linkingModelPath = path.join(
         __dirname,
         '/../models_test/linking-models/'
@@ -410,7 +410,8 @@ test('model-helper.extendSchemaAssociations', function(t) {
           // rmdir(path.join(__dirname, "/../models_test");
           // fs.unlinkSync(linkingModelPath);
           delete mongoose.models.test_linking
-          delete mongoose.modelSchemas.test_linking
+          // eslint-disable-next-line camelcase
+          delete mongoose?.modelSchemas?.test_linking
           // </editor-fold>
         })
       })
@@ -488,7 +489,8 @@ test('model-helper.extendSchemaAssociations', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user_group
-      delete mongoose.modelSchemas.user_group
+      // eslint-disable-next-line camelcase
+      delete mongoose?.modelSchemas?.user_group
       // </editor-fold>
     })
   )
@@ -553,8 +555,6 @@ test('model-helper.extendSchemaAssociations', function(t) {
       }
 
       userSchema.add = sinon.spy()
-
-      const rmdir = require('rmdir')
       // </editor-fold>
 
       // <editor-fold desc="Act">
@@ -584,9 +584,13 @@ test('model-helper.extendSchemaAssociations', function(t) {
       // </editor-fold>
 
       // <editor-fold desc="Restore">
-      rmdir(path.join(__dirname, '/../models_test'))
+      fs.rmSync(path.join(__dirname, '/../models_test'), {
+        recursive: true,
+        force: true
+      })
       delete mongoose.models.test_linking
-      delete mongoose.modelSchemas.test_linking
+      // eslint-disable-next-line camelcase
+      delete mongoose?.modelSchemas?.test_linking
       // </editor-fold>
     })
   )

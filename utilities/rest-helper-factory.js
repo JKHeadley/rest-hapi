@@ -1,6 +1,6 @@
 'use strict'
 
-const Joi = require('@hapi/joi')
+const Joi = require('joi')
 Joi.objectId = require('joi-objectid')(Joi)
 const _ = require('lodash')
 const assert = require('assert')

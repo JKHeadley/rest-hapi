@@ -18,7 +18,7 @@ let Log = logging.getLogger('tests')
 Log.logLevel = 'ERROR'
 Log = Log.bind('rest-helper-factory')
 const testHelper = require('../../utilities/test-helper')
-const Joi = require('@hapi/joi')
+const Joi = require('joi')
 const fs = require('fs')
 
 sinon.test = sinonTest
@@ -306,7 +306,7 @@ test('rest-helper-factory.generateRoutes', function(t) {
       restHelperFactory.generateDeleteOneEndpoint.restore()
       restHelperFactory.generateDeleteManyEndpoint.restore()
       delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      delete mongoose?.modelSchemas?.user
       // </editor-fold>
     }
   )
@@ -394,7 +394,7 @@ test('rest-helper-factory.generateRoutes', function(t) {
       restHelperFactory.generateDeleteOneEndpoint.restore()
       restHelperFactory.generateDeleteManyEndpoint.restore()
       delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      delete mongoose?.modelSchemas?.user
       // </editor-fold>
     }
   )
@@ -674,7 +674,7 @@ test('rest-helper-factory.generateRoutes', function(t) {
       restHelperFactory.generateAssociationRemoveManyEndpoint.restore()
       restHelperFactory.generateAssociationGetAllEndpoint.restore()
       delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      delete mongoose?.modelSchemas?.user
       // </editor-fold>
     }
   )
@@ -784,7 +784,7 @@ test('rest-helper-factory.generateRoutes', function(t) {
       restHelperFactory.generateAssociationRemoveManyEndpoint.restore()
       restHelperFactory.generateAssociationGetAllEndpoint.restore()
       delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      delete mongoose?.modelSchemas?.user
       // </editor-fold>
     }
   )
@@ -848,7 +848,7 @@ test('rest-helper-factory.generateRoutes', function(t) {
       restHelperFactory.generateDeleteOneEndpoint.restore()
       restHelperFactory.generateDeleteManyEndpoint.restore()
       delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      delete mongoose?.modelSchemas?.user
       // </editor-fold>
     }
   )
@@ -921,7 +921,7 @@ test('rest-helper-factory.generateListEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      delete mongoose?.modelSchemas?.user
       // </editor-fold>
     })
   )
@@ -983,7 +983,7 @@ test('rest-helper-factory.generateListEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      delete mongoose?.modelSchemas?.user
       // </editor-fold>
     })
   )
@@ -1035,7 +1035,7 @@ test('rest-helper-factory.generateListEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      delete mongoose?.modelSchemas?.user
       // </editor-fold>
     })
   )
@@ -1089,7 +1089,7 @@ test('rest-helper-factory.generateListEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      delete mongoose?.modelSchemas?.user
       // </editor-fold>
     })
   )
@@ -1154,9 +1154,9 @@ test('rest-helper-factory.generateListEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user1
-      delete mongoose.modelSchemas.user1
+      delete mongoose?.modelSchemas?.user1
       delete mongoose.models.user2
-      delete mongoose.modelSchemas.user2
+      delete mongoose?.modelSchemas?.user2
       // </editor-fold>
     })
   )
@@ -1213,7 +1213,7 @@ test('rest-helper-factory.generateListEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      delete mongoose?.modelSchemas?.user
       // </editor-fold>
     })
   )
@@ -1273,7 +1273,7 @@ test('rest-helper-factory.generateListEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      delete mongoose?.modelSchemas?.user
       // </editor-fold>
     })
   )
@@ -1329,7 +1329,7 @@ test('rest-helper-factory.generateListEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      delete mongoose?.modelSchemas?.user
       // </editor-fold>
     })
   )
@@ -1403,9 +1403,9 @@ test('rest-helper-factory.generateListEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user1
-      delete mongoose.modelSchemas.user1
+      delete mongoose?.modelSchemas?.user1
       delete mongoose.models.user2
-      delete mongoose.modelSchemas.user2
+      delete mongoose?.modelSchemas?.user2
       // </editor-fold>
     })
   )
@@ -1463,7 +1463,7 @@ test('rest-helper-factory.generateListEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      delete mongoose?.modelSchemas?.user
       // </editor-fold>
     })
   )
@@ -1524,7 +1524,7 @@ test('rest-helper-factory.generateListEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      delete mongoose?.modelSchemas?.user
       // </editor-fold>
     })
   )
@@ -1592,7 +1592,7 @@ test('rest-helper-factory.generateListEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      delete mongoose?.modelSchemas?.user
       // </editor-fold>
     })
   )
@@ -1650,7 +1650,7 @@ test('rest-helper-factory.generateListEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      delete mongoose?.modelSchemas?.user
       // </editor-fold>
     })
   )
@@ -1730,7 +1730,7 @@ test('rest-helper-factory.generateListEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      delete mongoose?.modelSchemas?.user
       // </editor-fold>
     })
   )
@@ -1803,7 +1803,7 @@ test('rest-helper-factory.generateFindEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      delete mongoose?.modelSchemas?.user
       // </editor-fold>
     })
   )
@@ -1855,7 +1855,7 @@ test('rest-helper-factory.generateFindEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      delete mongoose?.modelSchemas?.user
       // </editor-fold>
     })
   )
@@ -1917,7 +1917,7 @@ test('rest-helper-factory.generateFindEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      delete mongoose?.modelSchemas?.user
       // </editor-fold>
     })
   )
@@ -1969,7 +1969,7 @@ test('rest-helper-factory.generateFindEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      delete mongoose?.modelSchemas?.user
       // </editor-fold>
     })
   )
@@ -2023,7 +2023,7 @@ test('rest-helper-factory.generateFindEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      delete mongoose?.modelSchemas?.user
       // </editor-fold>
     })
   )
@@ -2088,9 +2088,9 @@ test('rest-helper-factory.generateFindEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user1
-      delete mongoose.modelSchemas.user1
+      delete mongoose?.modelSchemas?.user1
       delete mongoose.models.user2
-      delete mongoose.modelSchemas.user2
+      delete mongoose?.modelSchemas?.user2
       // </editor-fold>
     })
   )
@@ -2147,7 +2147,7 @@ test('rest-helper-factory.generateFindEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      delete mongoose?.modelSchemas?.user
       // </editor-fold>
     })
   )
@@ -2207,7 +2207,7 @@ test('rest-helper-factory.generateFindEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      delete mongoose?.modelSchemas?.user
       // </editor-fold>
     })
   )
@@ -2263,7 +2263,7 @@ test('rest-helper-factory.generateFindEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      delete mongoose?.modelSchemas?.user
       // </editor-fold>
     })
   )
@@ -2337,9 +2337,9 @@ test('rest-helper-factory.generateFindEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user1
-      delete mongoose.modelSchemas.user1
+      delete mongoose?.modelSchemas?.user1
       delete mongoose.models.user2
-      delete mongoose.modelSchemas.user2
+      delete mongoose?.modelSchemas?.user2
       // </editor-fold>
     })
   )
@@ -2397,7 +2397,7 @@ test('rest-helper-factory.generateFindEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      delete mongoose?.modelSchemas?.user
       // </editor-fold>
     })
   )
@@ -2458,7 +2458,7 @@ test('rest-helper-factory.generateFindEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      delete mongoose?.modelSchemas?.user
       // </editor-fold>
     })
   )
@@ -2483,7 +2483,7 @@ test('rest-helper-factory.generateFindEndpoint', function(t) {
       ).callsFake(function() {
         return Joi.any()
       })
-      const joiStub = require('@hapi/joi')
+      const joiStub = require('joi')
       const joiObjectIdStub = function() {
         return function() {
           return {
@@ -2532,7 +2532,7 @@ test('rest-helper-factory.generateFindEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      delete mongoose?.modelSchemas?.user
       // </editor-fold>
     })
   )
@@ -2596,7 +2596,7 @@ test('rest-helper-factory.generateFindEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      delete mongoose?.modelSchemas?.user
       // </editor-fold>
     })
   )
@@ -2650,7 +2650,7 @@ test('rest-helper-factory.generateFindEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      delete mongoose?.modelSchemas?.user
       // </editor-fold>
     })
   )
@@ -2711,7 +2711,7 @@ test('rest-helper-factory.generateFindEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      delete mongoose?.modelSchemas?.user
       // </editor-fold>
     })
   )
@@ -2785,7 +2785,7 @@ test('rest-helper-factory.generateCreateEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      delete mongoose?.modelSchemas?.user
       // </editor-fold>
     })
   )
@@ -2841,7 +2841,7 @@ test('rest-helper-factory.generateCreateEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      delete mongoose?.modelSchemas?.user
       // </editor-fold>
     })
   )
@@ -2897,7 +2897,7 @@ test('rest-helper-factory.generateCreateEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      delete mongoose?.modelSchemas?.user
       // </editor-fold>
     })
   )
@@ -2950,7 +2950,7 @@ test('rest-helper-factory.generateCreateEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      delete mongoose?.modelSchemas?.user
       // </editor-fold>
     })
   )
@@ -3005,7 +3005,7 @@ test('rest-helper-factory.generateCreateEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      delete mongoose?.modelSchemas?.user
       // </editor-fold>
     })
   )
@@ -3071,9 +3071,9 @@ test('rest-helper-factory.generateCreateEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user1
-      delete mongoose.modelSchemas.user1
+      delete mongoose?.modelSchemas?.user1
       delete mongoose.models.user2
-      delete mongoose.modelSchemas.user2
+      delete mongoose?.modelSchemas?.user2
       // </editor-fold>
     })
   )
@@ -3131,7 +3131,7 @@ test('rest-helper-factory.generateCreateEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      delete mongoose?.modelSchemas?.user
       // </editor-fold>
     })
   )
@@ -3192,7 +3192,7 @@ test('rest-helper-factory.generateCreateEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      delete mongoose?.modelSchemas?.user
       // </editor-fold>
     })
   )
@@ -3249,7 +3249,7 @@ test('rest-helper-factory.generateCreateEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      delete mongoose?.modelSchemas?.user
       // </editor-fold>
     })
   )
@@ -3324,9 +3324,9 @@ test('rest-helper-factory.generateCreateEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user1
-      delete mongoose.modelSchemas.user1
+      delete mongoose?.modelSchemas?.user1
       delete mongoose.models.user2
-      delete mongoose.modelSchemas.user2
+      delete mongoose?.modelSchemas?.user2
       // </editor-fold>
     })
   )
@@ -3385,7 +3385,7 @@ test('rest-helper-factory.generateCreateEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      delete mongoose?.modelSchemas?.user
       // </editor-fold>
     })
   )
@@ -3449,7 +3449,7 @@ test('rest-helper-factory.generateCreateEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      delete mongoose?.modelSchemas?.user
       // </editor-fold>
     })
   )
@@ -3514,7 +3514,7 @@ test('rest-helper-factory.generateCreateEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      delete mongoose?.modelSchemas?.user
       // </editor-fold>
     })
   )
@@ -3569,7 +3569,7 @@ test('rest-helper-factory.generateCreateEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      delete mongoose?.modelSchemas?.user
       // </editor-fold>
     })
   )
@@ -3637,7 +3637,7 @@ test('rest-helper-factory.generateCreateEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      delete mongoose?.modelSchemas?.user
       // </editor-fold>
     })
   )
@@ -3710,7 +3710,7 @@ test('rest-helper-factory.generateDeleteOneEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      delete mongoose?.modelSchemas?.user
       // </editor-fold>
     })
   )
@@ -3762,7 +3762,7 @@ test('rest-helper-factory.generateDeleteOneEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      delete mongoose?.modelSchemas?.user
       // </editor-fold>
     })
   )
@@ -3816,7 +3816,7 @@ test('rest-helper-factory.generateDeleteOneEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      delete mongoose?.modelSchemas?.user
       // </editor-fold>
     })
   )
@@ -3881,9 +3881,9 @@ test('rest-helper-factory.generateDeleteOneEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user1
-      delete mongoose.modelSchemas.user1
+      delete mongoose?.modelSchemas?.user1
       delete mongoose.models.user2
-      delete mongoose.modelSchemas.user2
+      delete mongoose?.modelSchemas?.user2
       // </editor-fold>
     })
   )
@@ -3940,7 +3940,7 @@ test('rest-helper-factory.generateDeleteOneEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      delete mongoose?.modelSchemas?.user
       // </editor-fold>
     })
   )
@@ -4000,7 +4000,7 @@ test('rest-helper-factory.generateDeleteOneEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      delete mongoose?.modelSchemas?.user
       // </editor-fold>
     })
   )
@@ -4056,7 +4056,7 @@ test('rest-helper-factory.generateDeleteOneEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      delete mongoose?.modelSchemas?.user
       // </editor-fold>
     })
   )
@@ -4130,9 +4130,9 @@ test('rest-helper-factory.generateDeleteOneEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user1
-      delete mongoose.modelSchemas.user1
+      delete mongoose?.modelSchemas?.user1
       delete mongoose.models.user2
-      delete mongoose.modelSchemas.user2
+      delete mongoose?.modelSchemas?.user2
       // </editor-fold>
     })
   )
@@ -4190,7 +4190,7 @@ test('rest-helper-factory.generateDeleteOneEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      delete mongoose?.modelSchemas?.user
       // </editor-fold>
     })
   )
@@ -4215,7 +4215,7 @@ test('rest-helper-factory.generateDeleteOneEndpoint', function(t) {
       ).callsFake(function() {
         return Joi.any()
       })
-      const joiStub = require('@hapi/joi')
+      const joiStub = require('joi')
 
       const joiObjectIdStub = function() {
         return function() {
@@ -4269,7 +4269,7 @@ test('rest-helper-factory.generateDeleteOneEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      delete mongoose?.modelSchemas?.user
       // </editor-fold>
     })
   )
@@ -4333,7 +4333,7 @@ test('rest-helper-factory.generateDeleteOneEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      delete mongoose?.modelSchemas?.user
       // </editor-fold>
     })
   )
@@ -4387,7 +4387,7 @@ test('rest-helper-factory.generateDeleteOneEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      delete mongoose?.modelSchemas?.user
       // </editor-fold>
     })
   )
@@ -4466,7 +4466,7 @@ test('rest-helper-factory.generateUpdateEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      delete mongoose?.modelSchemas?.user
       // </editor-fold>
     })
   )
@@ -4524,7 +4524,7 @@ test('rest-helper-factory.generateUpdateEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      delete mongoose?.modelSchemas?.user
       // </editor-fold>
     })
   )
@@ -4582,7 +4582,7 @@ test('rest-helper-factory.generateUpdateEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      delete mongoose?.modelSchemas?.user
       // </editor-fold>
     })
   )
@@ -4637,7 +4637,7 @@ test('rest-helper-factory.generateUpdateEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      delete mongoose?.modelSchemas?.user
       // </editor-fold>
     })
   )
@@ -4694,7 +4694,7 @@ test('rest-helper-factory.generateUpdateEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      delete mongoose?.modelSchemas?.user
       // </editor-fold>
     })
   )
@@ -4765,9 +4765,9 @@ test('rest-helper-factory.generateUpdateEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user1
-      delete mongoose.modelSchemas.user1
+      delete mongoose?.modelSchemas?.user1
       delete mongoose.models.user2
-      delete mongoose.modelSchemas.user2
+      delete mongoose?.modelSchemas?.user2
       // </editor-fold>
     })
   )
@@ -4827,7 +4827,7 @@ test('rest-helper-factory.generateUpdateEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      delete mongoose?.modelSchemas?.user
       // </editor-fold>
     })
   )
@@ -4890,7 +4890,7 @@ test('rest-helper-factory.generateUpdateEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      delete mongoose?.modelSchemas?.user
       // </editor-fold>
     })
   )
@@ -4949,7 +4949,7 @@ test('rest-helper-factory.generateUpdateEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      delete mongoose?.modelSchemas?.user
       // </editor-fold>
     })
   )
@@ -5026,9 +5026,9 @@ test('rest-helper-factory.generateUpdateEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user1
-      delete mongoose.modelSchemas.user1
+      delete mongoose?.modelSchemas?.user1
       delete mongoose.models.user2
-      delete mongoose.modelSchemas.user2
+      delete mongoose?.modelSchemas?.user2
       // </editor-fold>
     })
   )
@@ -5089,7 +5089,7 @@ test('rest-helper-factory.generateUpdateEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      delete mongoose?.modelSchemas?.user
       // </editor-fold>
     })
   )
@@ -5153,7 +5153,7 @@ test('rest-helper-factory.generateUpdateEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      delete mongoose?.modelSchemas?.user
       // </editor-fold>
     })
   )
@@ -5181,7 +5181,7 @@ test('rest-helper-factory.generateUpdateEndpoint', function(t) {
       joiMongooseHelperStub.generateJoiUpdateModel = this.spy(function() {
         return Joi.any()
       })
-      const joiStub = require('@hapi/joi')
+      const joiStub = require('joi')
 
       const joiObjectIdStub = function() {
         return function() {
@@ -5231,7 +5231,7 @@ test('rest-helper-factory.generateUpdateEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      delete mongoose?.modelSchemas?.user
       // </editor-fold>
     })
   )
@@ -5298,7 +5298,7 @@ test('rest-helper-factory.generateUpdateEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      delete mongoose?.modelSchemas?.user
       // </editor-fold>
     })
   )
@@ -5355,7 +5355,7 @@ test('rest-helper-factory.generateUpdateEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      delete mongoose?.modelSchemas?.user
       // </editor-fold>
     })
   )
@@ -5419,7 +5419,7 @@ test('rest-helper-factory.generateUpdateEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      delete mongoose?.modelSchemas?.user
       // </editor-fold>
     })
   )
@@ -5507,7 +5507,7 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      delete mongoose?.modelSchemas?.user
       // </editor-fold>
     })
   )
@@ -5579,7 +5579,7 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      delete mongoose?.modelSchemas?.user
       // </editor-fold>
     })
   )
@@ -5654,7 +5654,7 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      delete mongoose?.modelSchemas?.user
       Log.bind.restore()
       // </editor-fold>
     })
@@ -5727,7 +5727,7 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      delete mongoose?.modelSchemas?.user
       // </editor-fold>
     })
   )
@@ -5796,7 +5796,7 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      delete mongoose?.modelSchemas?.user
       // </editor-fold>
     })
   )
@@ -5867,7 +5867,7 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      delete mongoose?.modelSchemas?.user
       // </editor-fold>
     })
   )
@@ -5969,9 +5969,9 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user1
-      delete mongoose.modelSchemas.user1
+      delete mongoose?.modelSchemas?.user1
       delete mongoose.models.user2
-      delete mongoose.modelSchemas.user2
+      delete mongoose?.modelSchemas?.user2
       // </editor-fold>
     })
   )
@@ -6045,7 +6045,7 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      delete mongoose?.modelSchemas?.user
       // </editor-fold>
     })
   )
@@ -6122,7 +6122,7 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      delete mongoose?.modelSchemas?.user
       // </editor-fold>
     })
   )
@@ -6196,7 +6196,7 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      delete mongoose?.modelSchemas?.user
       // </editor-fold>
     })
   )
@@ -6318,13 +6318,13 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user1
-      delete mongoose.modelSchemas.user1
+      delete mongoose?.modelSchemas?.user1
       delete mongoose.models.user2
-      delete mongoose.modelSchemas.user2
+      delete mongoose?.modelSchemas?.user2
       delete mongoose.models.child1
-      delete mongoose.modelSchemas.child1
+      delete mongoose?.modelSchemas?.child1
       delete mongoose.models.child2
-      delete mongoose.modelSchemas.child2
+      delete mongoose?.modelSchemas?.child2
       // </editor-fold>
     })
   )
@@ -6399,7 +6399,7 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      delete mongoose?.modelSchemas?.user
       // </editor-fold>
     })
   )
@@ -6508,9 +6508,9 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user1
-      delete mongoose.modelSchemas.user1
+      delete mongoose?.modelSchemas?.user1
       delete mongoose.models.user2
-      delete mongoose.modelSchemas.user2
+      delete mongoose?.modelSchemas?.user2
       // </editor-fold>
     })
   )
@@ -6535,7 +6535,7 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
       ).callsFake(function() {
         return Joi.any()
       })
-      const joiStub = require('@hapi/joi')
+      const joiStub = require('joi')
       const joiObjectIdStub = function() {
         return function() {
           return {
@@ -6602,7 +6602,7 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      delete mongoose?.modelSchemas?.user
       // </editor-fold>
     })
   )
@@ -6683,7 +6683,7 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      delete mongoose?.modelSchemas?.user
       // </editor-fold>
     })
   )
@@ -6754,7 +6754,7 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      delete mongoose?.modelSchemas?.user
       // </editor-fold>
     })
   )
@@ -6831,7 +6831,7 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      delete mongoose?.modelSchemas?.user
       // </editor-fold>
     })
   )
@@ -6919,7 +6919,7 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      delete mongoose?.modelSchemas?.user
       // </editor-fold>
     })
   )
@@ -6991,7 +6991,7 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      delete mongoose?.modelSchemas?.user
       // </editor-fold>
     })
   )
@@ -7066,7 +7066,7 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      delete mongoose?.modelSchemas?.user
       Log.bind.restore()
       // </editor-fold>
     })
@@ -7139,7 +7139,7 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      delete mongoose?.modelSchemas?.user
       // </editor-fold>
     })
   )
@@ -7208,7 +7208,7 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      delete mongoose?.modelSchemas?.user
       // </editor-fold>
     })
   )
@@ -7279,7 +7279,7 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      delete mongoose?.modelSchemas?.user
       // </editor-fold>
     })
   )
@@ -7381,9 +7381,9 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user1
-      delete mongoose.modelSchemas.user1
+      delete mongoose?.modelSchemas?.user1
       delete mongoose.models.user2
-      delete mongoose.modelSchemas.user2
+      delete mongoose?.modelSchemas?.user2
       // </editor-fold>
     })
   )
@@ -7459,7 +7459,7 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      delete mongoose?.modelSchemas?.user
       // </editor-fold>
     })
   )
@@ -7536,7 +7536,7 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      delete mongoose?.modelSchemas?.user
       // </editor-fold>
     })
   )
@@ -7610,7 +7610,7 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      delete mongoose?.modelSchemas?.user
       // </editor-fold>
     })
   )
@@ -7732,13 +7732,13 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user1
-      delete mongoose.modelSchemas.user1
+      delete mongoose?.modelSchemas?.user1
       delete mongoose.models.user2
-      delete mongoose.modelSchemas.user2
+      delete mongoose?.modelSchemas?.user2
       delete mongoose.models.child1
-      delete mongoose.modelSchemas.child1
+      delete mongoose?.modelSchemas?.child1
       delete mongoose.models.child2
-      delete mongoose.modelSchemas.child2
+      delete mongoose?.modelSchemas?.child2
       // </editor-fold>
     })
   )
@@ -7813,7 +7813,7 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      delete mongoose?.modelSchemas?.user
       // </editor-fold>
     })
   )
@@ -7838,7 +7838,7 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
       ).callsFake(function() {
         return Joi.any()
       })
-      const joiStub = require('@hapi/joi')
+      const joiStub = require('joi')
       const joiObjectIdStub = function() {
         return function() {
           return {
@@ -7905,7 +7905,7 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      delete mongoose?.modelSchemas?.user
       // </editor-fold>
     })
   )
@@ -7986,7 +7986,7 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      delete mongoose?.modelSchemas?.user
       // </editor-fold>
     })
   )
@@ -8057,7 +8057,7 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      delete mongoose?.modelSchemas?.user
       // </editor-fold>
     })
   )
@@ -8134,7 +8134,7 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      delete mongoose?.modelSchemas?.user
       // </editor-fold>
     })
   )
@@ -8222,7 +8222,7 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      delete mongoose?.modelSchemas?.user
       // </editor-fold>
     })
   )
@@ -8294,7 +8294,7 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      delete mongoose?.modelSchemas?.user
       // </editor-fold>
     })
   )
@@ -8369,7 +8369,7 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      delete mongoose?.modelSchemas?.user
       Log.bind.restore()
       // </editor-fold>
     })
@@ -8442,7 +8442,7 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      delete mongoose?.modelSchemas?.user
       // </editor-fold>
     })
   )
@@ -8511,7 +8511,7 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      delete mongoose?.modelSchemas?.user
       // </editor-fold>
     })
   )
@@ -8582,7 +8582,7 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      delete mongoose?.modelSchemas?.user
       // </editor-fold>
     })
   )
@@ -8675,9 +8675,9 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user1
-      delete mongoose.modelSchemas.user1
+      delete mongoose?.modelSchemas?.user1
       delete mongoose.models.user2
-      delete mongoose.modelSchemas.user2
+      delete mongoose?.modelSchemas?.user2
       // </editor-fold>
     })
   )
@@ -8753,7 +8753,7 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      delete mongoose?.modelSchemas?.user
       // </editor-fold>
     })
   )
@@ -8830,7 +8830,7 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      delete mongoose?.modelSchemas?.user
       // </editor-fold>
     })
   )
@@ -8904,7 +8904,7 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      delete mongoose?.modelSchemas?.user
       // </editor-fold>
     })
   )
@@ -9010,9 +9010,9 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user1
-      delete mongoose.modelSchemas.user1
+      delete mongoose?.modelSchemas?.user1
       delete mongoose.models.user2
-      delete mongoose.modelSchemas.user2
+      delete mongoose?.modelSchemas?.user2
       // </editor-fold>
     })
   )
@@ -9087,7 +9087,7 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      delete mongoose?.modelSchemas?.user
       // </editor-fold>
     })
   )
@@ -9115,7 +9115,7 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
       joiMongooseHelperStub.generateJoiCreateModel = function() {
         return Joi.object({ test: 'test' }).unknown()
       }
-      const joiStub = require('@hapi/joi')
+      const joiStub = require('joi')
 
       const joiObjectIdStub = function() {
         return function() {
@@ -9224,9 +9224,9 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user1
-      delete mongoose.modelSchemas.user1
+      delete mongoose?.modelSchemas?.user1
       delete mongoose.models.user2
-      delete mongoose.modelSchemas.user2
+      delete mongoose?.modelSchemas?.user2
       // </editor-fold>
     })
   )
@@ -9251,7 +9251,7 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
       ).callsFake(function() {
         return Joi.any()
       })
-      const joiStub = require('@hapi/joi')
+      const joiStub = require('joi')
 
       const joiObjectIdStub = function() {
         return function() {
@@ -9320,7 +9320,7 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      delete mongoose?.modelSchemas?.user
       // </editor-fold>
     })
   )
@@ -9401,7 +9401,7 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      delete mongoose?.modelSchemas?.user
       // </editor-fold>
     })
   )
@@ -9472,7 +9472,7 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      delete mongoose?.modelSchemas?.user
       // </editor-fold>
     })
   )
@@ -9549,7 +9549,7 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      delete mongoose?.modelSchemas?.user
       // </editor-fold>
     })
   )
@@ -9637,7 +9637,7 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      delete mongoose?.modelSchemas?.user
       // </editor-fold>
     })
   )
@@ -9709,7 +9709,7 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      delete mongoose?.modelSchemas?.user
       // </editor-fold>
     })
   )
@@ -9785,7 +9785,7 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      delete mongoose?.modelSchemas?.user
       Log.bind.restore()
       // </editor-fold>
     })
@@ -9855,9 +9855,9 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      delete mongoose?.modelSchemas?.user
       delete mongoose.models.child
-      delete mongoose.modelSchemas.child
+      delete mongoose?.modelSchemas?.child
       // </editor-fold>
     })
   )
@@ -9928,9 +9928,9 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      delete mongoose?.modelSchemas?.user
       delete mongoose.models.child
-      delete mongoose.modelSchemas.child
+      delete mongoose?.modelSchemas?.child
       // </editor-fold>
     })
   )
@@ -9999,9 +9999,9 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      delete mongoose?.modelSchemas?.user
       delete mongoose.models.child
-      delete mongoose.modelSchemas.child
+      delete mongoose?.modelSchemas?.child
       // </editor-fold>
     })
   )
@@ -10067,9 +10067,9 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      delete mongoose?.modelSchemas?.user
       delete mongoose.models.child
-      delete mongoose.modelSchemas.child
+      delete mongoose?.modelSchemas?.child
       // </editor-fold>
     })
   )
@@ -10137,9 +10137,9 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      delete mongoose?.modelSchemas?.user
       delete mongoose.models.child
-      delete mongoose.modelSchemas.child
+      delete mongoose?.modelSchemas?.child
       // </editor-fold>
     })
   )
@@ -10235,10 +10235,10 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user1
-      delete mongoose.modelSchemas.user1
+      delete mongoose?.modelSchemas?.user1
       delete mongoose.models.child1
       delete mongoose.models.user2
-      delete mongoose.modelSchemas.user2
+      delete mongoose?.modelSchemas?.user2
       delete mongoose.models.child2
       // </editor-fold>
     })
@@ -10312,9 +10312,9 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      delete mongoose?.modelSchemas?.user
       delete mongoose.models.child
-      delete mongoose.modelSchemas.child
+      delete mongoose?.modelSchemas?.child
       // </editor-fold>
     })
   )
@@ -10388,9 +10388,9 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      delete mongoose?.modelSchemas?.user
       delete mongoose.models.child
-      delete mongoose.modelSchemas.child
+      delete mongoose?.modelSchemas?.child
       // </editor-fold>
     })
   )
@@ -10460,9 +10460,9 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      delete mongoose?.modelSchemas?.user
       delete mongoose.models.child
-      delete mongoose.modelSchemas.child
+      delete mongoose?.modelSchemas?.child
       // </editor-fold>
     })
   )
@@ -10569,10 +10569,10 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user1
-      delete mongoose.modelSchemas.user1
+      delete mongoose?.modelSchemas?.user1
       delete mongoose.models.child1
       delete mongoose.models.user2
-      delete mongoose.modelSchemas.user2
+      delete mongoose?.modelSchemas?.user2
       delete mongoose.models.child2
       // </editor-fold>
     })
@@ -10645,9 +10645,9 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      delete mongoose?.modelSchemas?.user
       delete mongoose.models.child
-      delete mongoose.modelSchemas.child
+      delete mongoose?.modelSchemas?.child
       // </editor-fold>
     })
   )
@@ -10687,7 +10687,7 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
       joiMongooseHelperStub.generateJoiListQueryModel = this.spy(function() {
         return queryModel
       })
-      const joiStub = require('@hapi/joi')
+      const joiStub = require('joi')
       const restHelperFactory = proxyquire(
         '../../utilities/rest-helper-factory',
         {
@@ -10735,9 +10735,9 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      delete mongoose?.modelSchemas?.user
       delete mongoose.models.child
-      delete mongoose.modelSchemas.child
+      delete mongoose?.modelSchemas?.child
       // </editor-fold>
     })
   )
@@ -10815,9 +10815,9 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      delete mongoose?.modelSchemas?.user
       delete mongoose.models.child
-      delete mongoose.modelSchemas.child
+      delete mongoose?.modelSchemas?.child
       // </editor-fold>
     })
   )
@@ -10885,9 +10885,9 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      delete mongoose?.modelSchemas?.user
       delete mongoose.models.child
-      delete mongoose.modelSchemas.child
+      delete mongoose?.modelSchemas?.child
       // </editor-fold>
     })
   )
@@ -10981,9 +10981,9 @@ test('rest-helper-factory.generateAssociationGetAllEndpoint', function(t) {
 
       // <editor-fold desc="Restore">
       delete mongoose.models.user
-      delete mongoose.modelSchemas.user
+      delete mongoose?.modelSchemas?.user
       delete mongoose.models.child
-      delete mongoose.modelSchemas.child
+      delete mongoose?.modelSchemas?.child
       // </editor-fold>
     })
   )

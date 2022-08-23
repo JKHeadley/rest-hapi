@@ -170,9 +170,10 @@ async function _listHandler(model, request, Log) {
       mongooseQuery,
       Log
     ).lean()
-    const count = await mongooseQuery.countDocuments()
+    const filter = mongooseQuery.getFilter()
+    const count = await model.countDocuments(filter)
     mongooseQuery = QueryHelper.paginate(query, mongooseQuery, Log)
-    let result = await mongooseQuery.exec('find')
+    let result = await mongooseQuery.exec()
 
     try {
       if (

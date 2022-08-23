@@ -15,7 +15,7 @@ const logging = require('loggin')
 const logger = logging.getLogger('tests')
 logger.logLevel = 'ERROR'
 const testHelper = require('../../utilities/test-helper')
-const Joi = require('@hapi/joi')
+const Joi = require('joi')
 const Q = require('q')
 
 // test('handler-helper-factory exists and has expected members', function (t) {
@@ -77,7 +77,7 @@ const Q = require('q')
 //       //<editor-fold desc="Restore">
 //       sandbox.restore();
 //       delete mongoose.models.user;
-//       delete mongoose.modelSchemas.user;
+//       delete mongoose?.modelSchemas?.user;
 //       return Q.when();
 //       //</editor-fold>
 //     });
@@ -118,7 +118,7 @@ const Q = require('q')
 //       //<editor-fold desc="Restore">
 //       sandbox.restore();
 //       delete mongoose.models.user;
-//       delete mongoose.modelSchemas.user;
+//       delete mongoose?.modelSchemas?.user;
 //       return Q.when();
 //       //</editor-fold>
 //     });
@@ -176,7 +176,7 @@ const Q = require('q')
 //       .then(function(){
 //         sandbox.restore();
 //         delete mongoose.models.user;
-//         delete mongoose.modelSchemas.user;
+//         delete mongoose?.modelSchemas?.user;
 //       });
 //       //</editor-fold>
 //     });
@@ -225,7 +225,7 @@ const Q = require('q')
 //       .then(function(){
 //         sandbox.restore();
 //         delete mongoose.models.user;
-//         delete mongoose.modelSchemas.user;
+//         delete mongoose?.modelSchemas?.user;
 //       });
 //       //</editor-fold>
 //     });
@@ -271,7 +271,7 @@ const Q = require('q')
 //       .then(function(){
 //         sandbox.restore();
 //         delete mongoose.models.user;
-//         delete mongoose.modelSchemas.user;
+//         delete mongoose?.modelSchemas?.user;
 //       });
 //       //</editor-fold>
 //     });
@@ -330,7 +330,7 @@ const Q = require('q')
 //       .then(function(){
 //         sandbox.restore();
 //         delete mongoose.models.user;
-//         delete mongoose.modelSchemas.user;
+//         delete mongoose?.modelSchemas?.user;
 //       });
 //       //</editor-fold>
 //     });
@@ -378,7 +378,7 @@ const Q = require('q')
 //       .then(function(){
 //         sandbox.restore();
 //         delete mongoose.models.user;
-//         delete mongoose.modelSchemas.user;
+//         delete mongoose?.modelSchemas?.user;
 //       });
 //       //</editor-fold>
 //     });
@@ -425,7 +425,7 @@ const Q = require('q')
 //       .then(function(){
 //         sandbox.restore();
 //         delete mongoose.models.user;
-//         delete mongoose.modelSchemas.user;
+//         delete mongoose?.modelSchemas?.user;
 //       });
 //       //</editor-fold>
 //     });
@@ -471,7 +471,7 @@ const Q = require('q')
 //       //<editor-fold desc="Restore">
 //       sandbox.restore();
 //       delete mongoose.models.user;
-//       delete mongoose.modelSchemas.user;
+//       delete mongoose?.modelSchemas?.user;
 //       return Q.when();
 //       //</editor-fold>
 //     });
@@ -512,7 +512,7 @@ const Q = require('q')
 //       //<editor-fold desc="Restore">
 //       sandbox.restore();
 //       delete mongoose.models.user;
-//       delete mongoose.modelSchemas.user;
+//       delete mongoose?.modelSchemas?.user;
 //       return Q.when();
 //       //</editor-fold>
 //     });
@@ -568,7 +568,7 @@ const Q = require('q')
 //       .then(function(){
 //         sandbox.restore();
 //         delete mongoose.models.user;
-//         delete mongoose.modelSchemas.user;
+//         delete mongoose?.modelSchemas?.user;
 //       });
 //       //</editor-fold>
 //     });
@@ -616,7 +616,7 @@ const Q = require('q')
 //       .then(function(){
 //         sandbox.restore();
 //         delete mongoose.models.user;
-//         delete mongoose.modelSchemas.user;
+//         delete mongoose?.modelSchemas?.user;
 //       });
 //       //</editor-fold>
 //     });
@@ -673,7 +673,7 @@ const Q = require('q')
 //       .then(function(){
 //         sandbox.restore();
 //         delete mongoose.models.user;
-//         delete mongoose.modelSchemas.user;
+//         delete mongoose?.modelSchemas?.user;
 //       });
 //       //</editor-fold>
 //     });
@@ -730,7 +730,7 @@ const Q = require('q')
 //       .then(function(){
 //         sandbox.restore();
 //         delete mongoose.models.user;
-//         delete mongoose.modelSchemas.user;
+//         delete mongoose?.modelSchemas?.user;
 //       });
 //       //</editor-fold>
 //     });
@@ -778,7 +778,7 @@ const Q = require('q')
 //       .then(function(){
 //         sandbox.restore();
 //         delete mongoose.models.user;
-//         delete mongoose.modelSchemas.user;
+//         delete mongoose?.modelSchemas?.user;
 //       });
 //       //</editor-fold>
 //     });
@@ -825,7 +825,7 @@ const Q = require('q')
 //       .then(function(){
 //         sandbox.restore();
 //         delete mongoose.models.user;
-//         delete mongoose.modelSchemas.user;
+//         delete mongoose?.modelSchemas?.user;
 //       });
 //       //</editor-fold>
 //     });
@@ -883,7 +883,7 @@ const Q = require('q')
 //       .then(function(){
 //         sandbox.restore();
 //         delete mongoose.models.user;
-//         delete mongoose.modelSchemas.user;
+//         delete mongoose?.modelSchemas?.user;
 //       });
 //       //</editor-fold>
 //     });
@@ -926,7 +926,7 @@ const Q = require('q')
 //       .then(function(){
 //         sandbox.restore();
 //         delete mongoose.models.user;
-//         delete mongoose.modelSchemas.user;
+//         delete mongoose?.modelSchemas?.user;
 //       });
 //       //</editor-fold>
 //     });
@@ -970,7 +970,7 @@ const Q = require('q')
 //       .then(function(){
 //         sandbox.restore();
 //         delete mongoose.models.user;
-//         delete mongoose.modelSchemas.user;
+//         delete mongoose?.modelSchemas?.user;
 //       });
 //       //</editor-fold>
 //     });
@@ -1015,7 +1015,7 @@ const Q = require('q')
 //       .then(function(){
 //         sandbox.restore();
 //         delete mongoose.models.user;
-//         delete mongoose.modelSchemas.user;
+//         delete mongoose?.modelSchemas?.user;
 //       });
 //       //</editor-fold>
 //     });
@@ -1068,7 +1068,7 @@ const Q = require('q')
 //       .then(function(){
 //         sandbox.restore();
 //         delete mongoose.models.user;
-//         delete mongoose.modelSchemas.user;
+//         delete mongoose?.modelSchemas?.user;
 //       });
 //       //</editor-fold>
 //     });
@@ -1113,7 +1113,7 @@ const Q = require('q')
 //       .then(function(){
 //         sandbox.restore();
 //         delete mongoose.models.user;
-//         delete mongoose.modelSchemas.user;
+//         delete mongoose?.modelSchemas?.user;
 //       });
 //       //</editor-fold>
 //     });
@@ -1167,7 +1167,7 @@ const Q = require('q')
 //       .then(function(){
 //         sandbox.restore();
 //         delete mongoose.models.user;
-//         delete mongoose.modelSchemas.user;
+//         delete mongoose?.modelSchemas?.user;
 //       });
 //       //</editor-fold>
 //     });
@@ -1220,7 +1220,7 @@ const Q = require('q')
 //       .then(function(){
 //         sandbox.restore();
 //         delete mongoose.models.user;
-//         delete mongoose.modelSchemas.user;
+//         delete mongoose?.modelSchemas?.user;
 //       });
 //       //</editor-fold>
 //     });
@@ -1272,7 +1272,7 @@ const Q = require('q')
 //       .then(function(){
 //         sandbox.restore();
 //         delete mongoose.models.user;
-//         delete mongoose.modelSchemas.user;
+//         delete mongoose?.modelSchemas?.user;
 //       });
 //       //</editor-fold>
 //     });
@@ -1324,7 +1324,7 @@ const Q = require('q')
 //       .then(function(){
 //         sandbox.restore();
 //         delete mongoose.models.user;
-//         delete mongoose.modelSchemas.user;
+//         delete mongoose?.modelSchemas?.user;
 //       });
 //       //</editor-fold>
 //     });
@@ -1380,7 +1380,7 @@ const Q = require('q')
 //       .then(function(){
 //         sandbox.restore();
 //         delete mongoose.models.user;
-//         delete mongoose.modelSchemas.user;
+//         delete mongoose?.modelSchemas?.user;
 //       });
 //       //</editor-fold>
 //     });
@@ -1421,7 +1421,7 @@ const Q = require('q')
 //       .then(function(){
 //         sandbox.restore();
 //         delete mongoose.models.user;
-//         delete mongoose.modelSchemas.user;
+//         delete mongoose?.modelSchemas?.user;
 //       });
 //       //</editor-fold>
 //     });
@@ -1470,7 +1470,7 @@ const Q = require('q')
 //       .then(function(){
 //         sandbox.restore();
 //         delete mongoose.models.user;
-//         delete mongoose.modelSchemas.user;
+//         delete mongoose?.modelSchemas?.user;
 //       });
 //       //</editor-fold>
 //     });
@@ -1511,7 +1511,7 @@ const Q = require('q')
 //       .then(function(){
 //         sandbox.restore();
 //         delete mongoose.models.user;
-//         delete mongoose.modelSchemas.user;
+//         delete mongoose?.modelSchemas?.user;
 //       });
 //       //</editor-fold>
 //     });
@@ -1561,7 +1561,7 @@ const Q = require('q')
 //       .then(function(){
 //         sandbox.restore();
 //         delete mongoose.models.user;
-//         delete mongoose.modelSchemas.user;
+//         delete mongoose?.modelSchemas?.user;
 //       });
 //       //</editor-fold>
 //     });
@@ -1604,7 +1604,7 @@ const Q = require('q')
 //       .then(function(){
 //         sandbox.restore();
 //         delete mongoose.models.user;
-//         delete mongoose.modelSchemas.user;
+//         delete mongoose?.modelSchemas?.user;
 //       });
 //       //</editor-fold>
 //     });
@@ -1656,7 +1656,7 @@ const Q = require('q')
 //       .then(function(){
 //         sandbox.restore();
 //         delete mongoose.models.user;
-//         delete mongoose.modelSchemas.user;
+//         delete mongoose?.modelSchemas?.user;
 //       });
 //       //</editor-fold>
 //     });
@@ -1708,7 +1708,7 @@ const Q = require('q')
 //       .then(function(){
 //         sandbox.restore();
 //         delete mongoose.models.user;
-//         delete mongoose.modelSchemas.user;
+//         delete mongoose?.modelSchemas?.user;
 //       });
 //       //</editor-fold>
 //     });
@@ -1766,7 +1766,7 @@ const Q = require('q')
 //       .then(function(){
 //         sandbox.restore();
 //         delete mongoose.models.user;
-//         delete mongoose.modelSchemas.user;
+//         delete mongoose?.modelSchemas?.user;
 //       });
 //       //</editor-fold>
 //     });
@@ -1809,7 +1809,7 @@ const Q = require('q')
 //       .then(function(){
 //         sandbox.restore();
 //         delete mongoose.models.user;
-//         delete mongoose.modelSchemas.user;
+//         delete mongoose?.modelSchemas?.user;
 //       });
 //       //</editor-fold>
 //     });
@@ -1853,7 +1853,7 @@ const Q = require('q')
 //       .then(function(){
 //         sandbox.restore();
 //         delete mongoose.models.user;
-//         delete mongoose.modelSchemas.user;
+//         delete mongoose?.modelSchemas?.user;
 //       });
 //       //</editor-fold>
 //     });
@@ -1898,7 +1898,7 @@ const Q = require('q')
 //       .then(function(){
 //         sandbox.restore();
 //         delete mongoose.models.user;
-//         delete mongoose.modelSchemas.user;
+//         delete mongoose?.modelSchemas?.user;
 //       });
 //       //</editor-fold>
 //     });
@@ -1951,7 +1951,7 @@ const Q = require('q')
 //       .then(function(){
 //         sandbox.restore();
 //         delete mongoose.models.user;
-//         delete mongoose.modelSchemas.user;
+//         delete mongoose?.modelSchemas?.user;
 //       });
 //       //</editor-fold>
 //     });
@@ -1996,7 +1996,7 @@ const Q = require('q')
 //       .then(function(){
 //         sandbox.restore();
 //         delete mongoose.models.user;
-//         delete mongoose.modelSchemas.user;
+//         delete mongoose?.modelSchemas?.user;
 //       });
 //       //</editor-fold>
 //     });
@@ -2050,7 +2050,7 @@ const Q = require('q')
 //       .then(function(){
 //         sandbox.restore();
 //         delete mongoose.models.user;
-//         delete mongoose.modelSchemas.user;
+//         delete mongoose?.modelSchemas?.user;
 //       });
 //       //</editor-fold>
 //     });
@@ -2096,7 +2096,7 @@ const Q = require('q')
 //       .then(function(){
 //         sandbox.restore();
 //         delete mongoose.models.user;
-//         delete mongoose.modelSchemas.user;
+//         delete mongoose?.modelSchemas?.user;
 //       });
 //       //</editor-fold>
 //     });
@@ -2142,7 +2142,7 @@ const Q = require('q')
 //       .then(function(){
 //         sandbox.restore();
 //         delete mongoose.models.user;
-//         delete mongoose.modelSchemas.user;
+//         delete mongoose?.modelSchemas?.user;
 //       });
 //       //</editor-fold>
 //     });
@@ -2194,7 +2194,7 @@ const Q = require('q')
 //       .then(function(){
 //         sandbox.restore();
 //         delete mongoose.models.user;
-//         delete mongoose.modelSchemas.user;
+//         delete mongoose?.modelSchemas?.user;
 //       });
 //       //</editor-fold>
 //     });
@@ -2246,7 +2246,7 @@ const Q = require('q')
 //       .then(function(){
 //         sandbox.restore();
 //         delete mongoose.models.user;
-//         delete mongoose.modelSchemas.user;
+//         delete mongoose?.modelSchemas?.user;
 //       });
 //       //</editor-fold>
 //     });
@@ -2295,9 +2295,9 @@ const Q = require('q')
 //       //<editor-fold desc="Restore">
 //       sandbox.restore();
 //       delete mongoose.models.user;
-//       delete mongoose.modelSchemas.user;
+//       delete mongoose?.modelSchemas?.user;
 //       delete mongoose.models.child;
-//       delete mongoose.modelSchemas.child;
+//       delete mongoose?.modelSchemas?.child;
 //       return Q.when();
 //       //</editor-fold>
 //     });
@@ -2346,9 +2346,9 @@ const Q = require('q')
 //       .then(function() {
 //         sandbox.restore();
 //         delete mongoose.models.user;
-//         delete mongoose.modelSchemas.user;
+//         delete mongoose?.modelSchemas?.user;
 //         delete mongoose.models.child;
-//         delete mongoose.modelSchemas.child;
+//         delete mongoose?.modelSchemas?.child;
 //       });
 //       //</editor-fold>
 //     });
@@ -2397,9 +2397,9 @@ const Q = require('q')
 //       .then(function() {
 //         sandbox.restore();
 //         delete mongoose.models.user;
-//         delete mongoose.modelSchemas.user;
+//         delete mongoose?.modelSchemas?.user;
 //         delete mongoose.models.child;
-//         delete mongoose.modelSchemas.child;
+//         delete mongoose?.modelSchemas?.child;
 //       });
 //       //</editor-fold>
 //     });
@@ -2450,9 +2450,9 @@ const Q = require('q')
 //       .then(function() {
 //         sandbox.restore();
 //         delete mongoose.models.user;
-//         delete mongoose.modelSchemas.user;
+//         delete mongoose?.modelSchemas?.user;
 //         delete mongoose.models.child;
-//         delete mongoose.modelSchemas.child;
+//         delete mongoose?.modelSchemas?.child;
 //       });
 //       //</editor-fold>
 //     });
@@ -2501,9 +2501,9 @@ const Q = require('q')
 //       .then(function() {
 //         sandbox.restore();
 //         delete mongoose.models.user;
-//         delete mongoose.modelSchemas.user;
+//         delete mongoose?.modelSchemas?.user;
 //         delete mongoose.models.child;
-//         delete mongoose.modelSchemas.child;
+//         delete mongoose?.modelSchemas?.child;
 //       });
 //       //</editor-fold>
 //     });
@@ -2552,9 +2552,9 @@ const Q = require('q')
 //       .then(function() {
 //         sandbox.restore();
 //         delete mongoose.models.user;
-//         delete mongoose.modelSchemas.user;
+//         delete mongoose?.modelSchemas?.user;
 //         delete mongoose.models.child;
-//         delete mongoose.modelSchemas.child;
+//         delete mongoose?.modelSchemas?.child;
 //       });
 //       //</editor-fold>
 //     });
@@ -2603,9 +2603,9 @@ const Q = require('q')
 //       //<editor-fold desc="Restore">
 //       sandbox.restore();
 //       delete mongoose.models.user;
-//       delete mongoose.modelSchemas.user;
+//       delete mongoose?.modelSchemas?.user;
 //       delete mongoose.models.child;
-//       delete mongoose.modelSchemas.child;
+//       delete mongoose?.modelSchemas?.child;
 //       return Q.when();
 //       //</editor-fold>
 //     });
@@ -2654,9 +2654,9 @@ const Q = require('q')
 //       .then(function() {
 //         sandbox.restore();
 //         delete mongoose.models.user;
-//         delete mongoose.modelSchemas.user;
+//         delete mongoose?.modelSchemas?.user;
 //         delete mongoose.models.child;
-//         delete mongoose.modelSchemas.child;
+//         delete mongoose?.modelSchemas?.child;
 //       });
 //       //</editor-fold>
 //     });
@@ -2705,9 +2705,9 @@ const Q = require('q')
 //       .then(function() {
 //         sandbox.restore();
 //         delete mongoose.models.user;
-//         delete mongoose.modelSchemas.user;
+//         delete mongoose?.modelSchemas?.user;
 //         delete mongoose.models.child;
-//         delete mongoose.modelSchemas.child;
+//         delete mongoose?.modelSchemas?.child;
 //       });
 //       //</editor-fold>
 //     });
@@ -2758,9 +2758,9 @@ const Q = require('q')
 //       .then(function() {
 //         sandbox.restore();
 //         delete mongoose.models.user;
-//         delete mongoose.modelSchemas.user;
+//         delete mongoose?.modelSchemas?.user;
 //         delete mongoose.models.child;
-//         delete mongoose.modelSchemas.child;
+//         delete mongoose?.modelSchemas?.child;
 //       });
 //       //</editor-fold>
 //     });
@@ -2809,9 +2809,9 @@ const Q = require('q')
 //       .then(function() {
 //         sandbox.restore();
 //         delete mongoose.models.user;
-//         delete mongoose.modelSchemas.user;
+//         delete mongoose?.modelSchemas?.user;
 //         delete mongoose.models.child;
-//         delete mongoose.modelSchemas.child;
+//         delete mongoose?.modelSchemas?.child;
 //       });
 //       //</editor-fold>
 //     });
@@ -2860,9 +2860,9 @@ const Q = require('q')
 //       .then(function() {
 //         sandbox.restore();
 //         delete mongoose.models.user;
-//         delete mongoose.modelSchemas.user;
+//         delete mongoose?.modelSchemas?.user;
 //         delete mongoose.models.child;
-//         delete mongoose.modelSchemas.child;
+//         delete mongoose?.modelSchemas?.child;
 //       });
 //       //</editor-fold>
 //     });
@@ -2911,9 +2911,9 @@ const Q = require('q')
 //       //<editor-fold desc="Restore">
 //       sandbox.restore();
 //       delete mongoose.models.user;
-//       delete mongoose.modelSchemas.user;
+//       delete mongoose?.modelSchemas?.user;
 //       delete mongoose.models.child;
-//       delete mongoose.modelSchemas.child;
+//       delete mongoose?.modelSchemas?.child;
 //       return Q.when();
 //       //</editor-fold>
 //     });
@@ -2964,9 +2964,9 @@ const Q = require('q')
 //       .then(function() {
 //         sandbox.restore();
 //         delete mongoose.models.user;
-//         delete mongoose.modelSchemas.user;
+//         delete mongoose?.modelSchemas?.user;
 //         delete mongoose.models.child;
-//         delete mongoose.modelSchemas.child;
+//         delete mongoose?.modelSchemas?.child;
 //       });
 //       //</editor-fold>
 //     });
@@ -3016,9 +3016,9 @@ const Q = require('q')
 //       .then(function() {
 //         sandbox.restore();
 //         delete mongoose.models.user;
-//         delete mongoose.modelSchemas.user;
+//         delete mongoose?.modelSchemas?.user;
 //         delete mongoose.models.child;
-//         delete mongoose.modelSchemas.child;
+//         delete mongoose?.modelSchemas?.child;
 //       });
 //       //</editor-fold>
 //     });
@@ -3070,9 +3070,9 @@ const Q = require('q')
 //       .then(function() {
 //         sandbox.restore();
 //         delete mongoose.models.user;
-//         delete mongoose.modelSchemas.user;
+//         delete mongoose?.modelSchemas?.user;
 //         delete mongoose.models.child;
-//         delete mongoose.modelSchemas.child;
+//         delete mongoose?.modelSchemas?.child;
 //       });
 //       //</editor-fold>
 //     });
@@ -3122,9 +3122,9 @@ const Q = require('q')
 //       .then(function() {
 //         sandbox.restore();
 //         delete mongoose.models.user;
-//         delete mongoose.modelSchemas.user;
+//         delete mongoose?.modelSchemas?.user;
 //         delete mongoose.models.child;
-//         delete mongoose.modelSchemas.child;
+//         delete mongoose?.modelSchemas?.child;
 //       });
 //       //</editor-fold>
 //     });
@@ -3174,9 +3174,9 @@ const Q = require('q')
 //       .then(function() {
 //         sandbox.restore();
 //         delete mongoose.models.user;
-//         delete mongoose.modelSchemas.user;
+//         delete mongoose?.modelSchemas?.user;
 //         delete mongoose.models.child;
-//         delete mongoose.modelSchemas.child;
+//         delete mongoose?.modelSchemas?.child;
 //       });
 //       //</editor-fold>
 //     });
@@ -3234,9 +3234,9 @@ const Q = require('q')
 //       //<editor-fold desc="Restore">
 //       sandbox.restore();
 //       delete mongoose.models.user;
-//       delete mongoose.modelSchemas.user;
+//       delete mongoose?.modelSchemas?.user;
 //       delete mongoose.models.child;
-//       delete mongoose.modelSchemas.child;
+//       delete mongoose?.modelSchemas?.child;
 //       return Q.when();
 //       //</editor-fold>
 //     });
@@ -3292,9 +3292,9 @@ const Q = require('q')
 //       //<editor-fold desc="Restore">
 //       sandbox.restore();
 //       delete mongoose.models.user;
-//       delete mongoose.modelSchemas.user;
+//       delete mongoose?.modelSchemas?.user;
 //       delete mongoose.models.child;
-//       delete mongoose.modelSchemas.child;
+//       delete mongoose?.modelSchemas?.child;
 //       return Q.when();
 //       //</editor-fold>
 //     });
@@ -3359,9 +3359,9 @@ const Q = require('q')
 //       .then(function() {
 //         sandbox.restore();
 //         delete mongoose.models.user;
-//         delete mongoose.modelSchemas.user;
+//         delete mongoose?.modelSchemas?.user;
 //         delete mongoose.models.child;
-//         delete mongoose.modelSchemas.child;
+//         delete mongoose?.modelSchemas?.child;
 //       })
 //       //</editor-fold>
 //     });
@@ -3435,9 +3435,9 @@ const Q = require('q')
 //       .then(function() {
 //         sandbox.restore();
 //         delete mongoose.models.user;
-//         delete mongoose.modelSchemas.user;
+//         delete mongoose?.modelSchemas?.user;
 //         delete mongoose.models.child;
-//         delete mongoose.modelSchemas.child;
+//         delete mongoose?.modelSchemas?.child;
 //       })
 //       //</editor-fold>
 //     });
@@ -3511,9 +3511,9 @@ const Q = require('q')
 //       .then(function() {
 //         sandbox.restore();
 //         delete mongoose.models.user;
-//         delete mongoose.modelSchemas.user;
+//         delete mongoose?.modelSchemas?.user;
 //         delete mongoose.models.child;
-//         delete mongoose.modelSchemas.child;
+//         delete mongoose?.modelSchemas?.child;
 //       })
 //       //</editor-fold>
 //     });
@@ -3572,9 +3572,9 @@ const Q = require('q')
 //       .then(function() {
 //         sandbox.restore();
 //         delete mongoose.models.user;
-//         delete mongoose.modelSchemas.user;
+//         delete mongoose?.modelSchemas?.user;
 //         delete mongoose.models.child;
-//         delete mongoose.modelSchemas.child;
+//         delete mongoose?.modelSchemas?.child;
 //       });
 //       //</editor-fold>
 //     });
@@ -3632,9 +3632,9 @@ const Q = require('q')
 //       .then(function() {
 //         sandbox.restore();
 //         delete mongoose.models.user;
-//         delete mongoose.modelSchemas.user;
+//         delete mongoose?.modelSchemas?.user;
 //         delete mongoose.models.child;
-//         delete mongoose.modelSchemas.child;
+//         delete mongoose?.modelSchemas?.child;
 //       })
 //       //</editor-fold>
 //     });
@@ -3705,9 +3705,9 @@ const Q = require('q')
 //       .then(function() {
 //         sandbox.restore();
 //         delete mongoose.models.user;
-//         delete mongoose.modelSchemas.user;
+//         delete mongoose?.modelSchemas?.user;
 //         delete mongoose.models.child;
-//         delete mongoose.modelSchemas.child;
+//         delete mongoose?.modelSchemas?.child;
 //       })
 //       //</editor-fold>
 //     });
@@ -3794,9 +3794,9 @@ const Q = require('q')
 //       .then(function() {
 //         sandbox.restore();
 //         delete mongoose.models.user;
-//         delete mongoose.modelSchemas.user;
+//         delete mongoose?.modelSchemas?.user;
 //         delete mongoose.models.child;
-//         delete mongoose.modelSchemas.child;
+//         delete mongoose?.modelSchemas?.child;
 //       })
 //       //</editor-fold>
 //     });
@@ -3883,9 +3883,9 @@ const Q = require('q')
 //       .then(function() {
 //         sandbox.restore();
 //         delete mongoose.models.user;
-//         delete mongoose.modelSchemas.user;
+//         delete mongoose?.modelSchemas?.user;
 //         delete mongoose.models.child;
-//         delete mongoose.modelSchemas.child;
+//         delete mongoose?.modelSchemas?.child;
 //       })
 //       //</editor-fold>
 //     });
@@ -3968,9 +3968,9 @@ const Q = require('q')
 //       .then(function() {
 //         sandbox.restore();
 //         delete mongoose.models.user;
-//         delete mongoose.modelSchemas.user;
+//         delete mongoose?.modelSchemas?.user;
 //         delete mongoose.models.child;
-//         delete mongoose.modelSchemas.child;
+//         delete mongoose?.modelSchemas?.child;
 //       })
 //       //</editor-fold>
 //     });
@@ -4053,9 +4053,9 @@ const Q = require('q')
 //       .then(function() {
 //         sandbox.restore();
 //         delete mongoose.models.user;
-//         delete mongoose.modelSchemas.user;
+//         delete mongoose?.modelSchemas?.user;
 //         delete mongoose.models.child;
-//         delete mongoose.modelSchemas.child;
+//         delete mongoose?.modelSchemas?.child;
 //       })
 //       //</editor-fold>
 //     });
@@ -4113,9 +4113,9 @@ const Q = require('q')
 //       .then(function() {
 //         sandbox.restore();
 //         delete mongoose.models.user;
-//         delete mongoose.modelSchemas.user;
+//         delete mongoose?.modelSchemas?.user;
 //         delete mongoose.models.child;
-//         delete mongoose.modelSchemas.child;
+//         delete mongoose?.modelSchemas?.child;
 //       })
 //       //</editor-fold>
 //     });
@@ -4197,9 +4197,9 @@ const Q = require('q')
 //       .then(function() {
 //         sandbox.restore();
 //         delete mongoose.models.user;
-//         delete mongoose.modelSchemas.user;
+//         delete mongoose?.modelSchemas?.user;
 //         delete mongoose.models.child;
-//         delete mongoose.modelSchemas.child;
+//         delete mongoose?.modelSchemas?.child;
 //       })
 //       //</editor-fold>
 //     });
@@ -4285,9 +4285,9 @@ const Q = require('q')
 //       .then(function() {
 //         sandbox.restore();
 //         delete mongoose.models.user;
-//         delete mongoose.modelSchemas.user;
+//         delete mongoose?.modelSchemas?.user;
 //         delete mongoose.models.child;
-//         delete mongoose.modelSchemas.child;
+//         delete mongoose?.modelSchemas?.child;
 //       })
 //       //</editor-fold>
 //     });
@@ -4370,9 +4370,9 @@ const Q = require('q')
 //       .then(function() {
 //         sandbox.restore();
 //         delete mongoose.models.user;
-//         delete mongoose.modelSchemas.user;
+//         delete mongoose?.modelSchemas?.user;
 //         delete mongoose.models.child;
-//         delete mongoose.modelSchemas.child;
+//         delete mongoose?.modelSchemas?.child;
 //       })
 //       //</editor-fold>
 //     });
@@ -4455,9 +4455,9 @@ const Q = require('q')
 //       .then(function() {
 //         sandbox.restore();
 //         delete mongoose.models.user;
-//         delete mongoose.modelSchemas.user;
+//         delete mongoose?.modelSchemas?.user;
 //         delete mongoose.models.child;
-//         delete mongoose.modelSchemas.child;
+//         delete mongoose?.modelSchemas?.child;
 //       })
 //       //</editor-fold>
 //     });

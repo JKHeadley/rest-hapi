@@ -109,7 +109,7 @@ If endpoints beyond the generated CRUD endpoints are needed for a model, they ca
 
 ```javascript
 // models/user.model.js
-let Joi = require('@hapi/joi')
+let Joi = require('joi')
 let bcrypt = require('bcrypt')
 let RestHapi = require('rest-hapi')
 

@@ -7,8 +7,8 @@
     "rest-hapi-cli": "./rest-hapi-cli.js"
   },
   "engines": {
-    "node": ">=12.14.1",
-    "npm": ">=4.0.0"
+    "node": ">=16.13.2",
+    "npm": ">=8.1.2"
   },
   "directories": {
     "test": "tests"
@@ -57,20 +57,20 @@
   "homepage": "https://github.com/JKHeadley/rest-hapi#readme",
   "dependencies": {
     "@hapi/boom": "^9.1.0",
-    "@hapi/hapi": "^19.1.1",
+    "@hapi/hapi": "^20.2.2",
     "@hapi/hoek": "^9.0.4",
     "@hapi/inert": "^6.0.1",
-    "@hapi/joi": "^17.1.1",
     "@hapi/vision": "^6.0.0",
     "blue-tape": "^1.0.0",
     "chalk": "^4.0.0",
     "extend": "^3.0.2",
     "fs-extra": "^8.1.0",
-    "hapi-swagger": "^12.1.3",
+    "hapi-swagger": "^14.5.5",
+    "joi": "^17.6.0",
     "joi-objectid": "github:mkg20001/joi-objectid#chore/upgrade",
     "lodash": "~4.17.15",
     "loggin": "^3.0.2",
-    "mongoose": "^5.9.6",
+    "mongoose": "^6.4.6",
     "mrhorse": "^6.0.0",
     "prettier-config-standard": "^1.0.1",
     "query-string": "^6.8.3",
@@ -99,8 +99,7 @@
     "prettier": "1.18.2",
     "proxyquire": "^2.1.3",
     "q": "^1.5.1",
-    "rewire": "^4.0.1",
-    "rmdir": "^1.2.0",
+    "rewire": "^6.0.0",
     "sinon": "^7.0.0",
     "sinon-test": "^2.3.0"
   },
