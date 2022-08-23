@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.3.0] - 2021-05-03
+### Added
+- [added option to disable/enable list log](https://github.com/JKHeadley/rest-hapi/pull/270)
+
 ## [2.2.0] - 2020-07-08
 ### Added
 - [allowList option to routeOptions](https://github.com/JKHeadley/rest-hapi/pull/244)
@@ -294,7 +298,7 @@ post(hardDelete, deleted, Log) | post(hardDelete, deleted, request, Log)
 
 
 
-[Unreleased]: https://github.com/jkheadley/rest-hapi/compare/v2.2.0...HEAD
+[Unreleased]: https://github.com/jkheadley/rest-hapi/compare/v2.3.0...HEAD
 [0.20.0]: https://github.com/jkheadley/rest-hapi/compare/v0.19.2...v0.20.0
 [0.20.2]: https://github.com/jkheadley/rest-hapi/compare/v0.20.0...v0.20.2
 [0.20.3]: https://github.com/jkheadley/rest-hapi/compare/v0.20.2...v0.20.3
@@ -333,5 +337,6 @@ post(hardDelete, deleted, Log) | post(hardDelete, deleted, request, Log)
 [2.0.0]: https://github.com/jkheadley/rest-hapi/compare/v1.9.0...v2.0.0
 [2.1.0]: https://github.com/jkheadley/rest-hapi/compare/v2.0.0...v2.1.0
 [2.2.0]: https://github.com/jkheadley/rest-hapi/compare/v2.1.0...v2.2.0
+[2.2.0]: https://github.com/jkheadley/rest-hapi/compare/v2.2.0...v2.3.0
 
 [BREAKING]: https://github.com/JKHeadley/rest-hapi/releases
