@@ -1,0 +1,23 @@
+{
+  "unversionedId": "version-1.6.x-support",
+  "id": "version-1.6.x/version-1.6.x-support",
+  "title": "Support",
+  "description": "Like this project? Please star it!",
+  "source": "@site/versioned_docs/version-1.6.x/support.md",
+  "sourceDirName": ".",
+  "slug": "/version-1.6.x-support",
+  "permalink": "/docs/1.6.x/version-1.6.x-support",
+  "draft": false,
+  "editUrl": "https://github.com/JKHeadley/rest-hapi/tree/master/docs/versioned_docs/version-1.6.x/support.md",
+  "tags": [],
+  "version": "1.6.x",
+  "lastUpdatedBy": "Author",
+  "lastUpdatedAt": 1539502055,
+  "formattedLastUpdatedAt": "Oct 14, 2018",
+  "frontMatter": {
+    "id": "version-1.6.x-support",
+    "title": "Support",
+    "sidebar_label": "Support",
+    "original_id": "support"
+  }
+}

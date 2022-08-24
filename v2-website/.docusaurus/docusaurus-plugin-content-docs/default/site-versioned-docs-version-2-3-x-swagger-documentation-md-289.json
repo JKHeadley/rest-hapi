@@ -1,0 +1,22 @@
+{
+  "unversionedId": "swagger-documentation",
+  "id": "version-2.3.x/swagger-documentation",
+  "title": "Swagger Documentation",
+  "description": "Swagger documentation (via hapi-swagger) is automatically generated for all endpoints and can be viewed by pointing a browser at the server URL. If you use the intro script this will be http8080/. The swagger docs provide quick access to testing your endpoints along with model schema descriptions and query options.",
+  "source": "@site/versioned_docs/version-2.3.x/swagger-documentation.md",
+  "sourceDirName": ".",
+  "slug": "/swagger-documentation",
+  "permalink": "/docs/swagger-documentation",
+  "draft": false,
+  "editUrl": "https://github.com/JKHeadley/rest-hapi/tree/master/docs/versioned_docs/version-2.3.x/swagger-documentation.md",
+  "tags": [],
+  "version": "2.3.x",
+  "lastUpdatedBy": "Author",
+  "lastUpdatedAt": 1539502055,
+  "formattedLastUpdatedAt": "Oct 14, 2018",
+  "frontMatter": {
+    "id": "swagger-documentation",
+    "title": "Swagger Documentation",
+    "sidebar_label": "Swagger Documentation"
+  }
+}

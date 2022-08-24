@@ -1,0 +1,31 @@
+{
+  "unversionedId": "metadata",
+  "id": "metadata",
+  "title": "Metadata",
+  "description": "Timestamps",
+  "source": "@site/../docs/metadata.md",
+  "sourceDirName": ".",
+  "slug": "/metadata",
+  "permalink": "/docs/next/metadata",
+  "draft": false,
+  "editUrl": "https://github.com/JKHeadley/rest-hapi/tree/master/docs/../docs/metadata.md",
+  "tags": [],
+  "version": "current",
+  "lastUpdatedBy": "Author",
+  "lastUpdatedAt": 1539502055,
+  "formattedLastUpdatedAt": "Oct 14, 2018",
+  "frontMatter": {
+    "id": "metadata",
+    "title": "Metadata",
+    "sidebar_label": "Metadata"
+  },
+  "sidebar": "docs",
+  "previous": {
+    "title": "Soft Delete",
+    "permalink": "/docs/next/soft-delete"
+  },
+  "next": {
+    "title": "Model Generation",
+    "permalink": "/docs/next/model-generation"
+  }
+}

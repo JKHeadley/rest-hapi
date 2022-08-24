@@ -1,0 +1,23 @@
+{
+  "unversionedId": "version-1.6.x-authorization",
+  "id": "version-1.6.x/version-1.6.x-authorization",
+  "title": "Authorization",
+  "description": "Route authorization",
+  "source": "@site/versioned_docs/version-1.6.x/authorization.md",
+  "sourceDirName": ".",
+  "slug": "/version-1.6.x-authorization",
+  "permalink": "/docs/1.6.x/version-1.6.x-authorization",
+  "draft": false,
+  "editUrl": "https://github.com/JKHeadley/rest-hapi/tree/master/docs/versioned_docs/version-1.6.x/authorization.md",
+  "tags": [],
+  "version": "1.6.x",
+  "lastUpdatedBy": "Author",
+  "lastUpdatedAt": 1539502055,
+  "formattedLastUpdatedAt": "Oct 14, 2018",
+  "frontMatter": {
+    "id": "version-1.6.x-authorization",
+    "title": "Authorization",
+    "sidebar_label": "Authorization",
+    "original_id": "authorization"
+  }
+}

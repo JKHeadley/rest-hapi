@@ -1,0 +1,22 @@
+{
+  "unversionedId": "testing",
+  "id": "version-2.3.x/testing",
+  "title": "Testing",
+  "description": "If you have downloaded the source you can run the tests with:",
+  "source": "@site/versioned_docs/version-2.3.x/testing.md",
+  "sourceDirName": ".",
+  "slug": "/testing",
+  "permalink": "/docs/testing",
+  "draft": false,
+  "editUrl": "https://github.com/JKHeadley/rest-hapi/tree/master/docs/versioned_docs/version-2.3.x/testing.md",
+  "tags": [],
+  "version": "2.3.x",
+  "lastUpdatedBy": "Author",
+  "lastUpdatedAt": 1539502055,
+  "formattedLastUpdatedAt": "Oct 14, 2018",
+  "frontMatter": {
+    "id": "testing",
+    "title": "Testing",
+    "sidebar_label": "Testing"
+  }
+}

@@ -10,5 +10,6 @@
   },
   "devDependencies": {
     "docusaurus": "^1.13.0"
-  }
+  },
+  "version": "3.0.0"
 }

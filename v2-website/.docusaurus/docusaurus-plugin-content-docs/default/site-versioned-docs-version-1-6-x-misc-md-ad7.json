@@ -1,0 +1,23 @@
+{
+  "unversionedId": "version-1.6.x-misc",
+  "id": "version-1.6.x/version-1.6.x-misc",
+  "title": "Miscellaneous",
+  "description": "Model generation",
+  "source": "@site/versioned_docs/version-1.6.x/misc.md",
+  "sourceDirName": ".",
+  "slug": "/version-1.6.x-misc",
+  "permalink": "/docs/1.6.x/version-1.6.x-misc",
+  "draft": false,
+  "editUrl": "https://github.com/JKHeadley/rest-hapi/tree/master/docs/versioned_docs/version-1.6.x/misc.md",
+  "tags": [],
+  "version": "1.6.x",
+  "lastUpdatedBy": "Author",
+  "lastUpdatedAt": 1539502055,
+  "formattedLastUpdatedAt": "Oct 14, 2018",
+  "frontMatter": {
+    "id": "version-1.6.x-misc",
+    "title": "Miscellaneous",
+    "sidebar_label": "Miscellaneous",
+    "original_id": "misc"
+  }
+}

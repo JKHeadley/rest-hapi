@@ -1,0 +1,22 @@
+{
+  "unversionedId": "mongoose-wrapper-methods",
+  "id": "version-2.3.x/mongoose-wrapper-methods",
+  "title": "Mongoose Wrapper Methods",
+  "description": "rest-hapi provides mongoose wrapper methods for the user to take advantage of in their server code. These methods provide several advantages including:",
+  "source": "@site/versioned_docs/version-2.3.x/mongoose-wrapper-methods.md",
+  "sourceDirName": ".",
+  "slug": "/mongoose-wrapper-methods",
+  "permalink": "/docs/mongoose-wrapper-methods",
+  "draft": false,
+  "editUrl": "https://github.com/JKHeadley/rest-hapi/tree/master/docs/versioned_docs/version-2.3.x/mongoose-wrapper-methods.md",
+  "tags": [],
+  "version": "2.3.x",
+  "lastUpdatedBy": "Author",
+  "lastUpdatedAt": 1539502055,
+  "formattedLastUpdatedAt": "Oct 14, 2018",
+  "frontMatter": {
+    "id": "mongoose-wrapper-methods",
+    "title": "Mongoose Wrapper Methods",
+    "sidebar_label": "Mongoose Wrapper Methods"
+  }
+}

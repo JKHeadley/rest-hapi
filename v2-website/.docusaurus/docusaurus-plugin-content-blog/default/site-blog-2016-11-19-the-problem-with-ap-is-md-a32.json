@@ -1,0 +1,27 @@
+{
+  "permalink": "/blog/2016/11/19/The-Problem-With-APIs",
+  "source": "@site/blog/2016-11-19-The-Problem-With-APIs.md",
+  "title": "The Problem With APIs",
+  "description": "Original post can be found here on Medium",
+  "date": "2016-11-19T00:00:00.000Z",
+  "formattedDate": "November 19, 2016",
+  "tags": [],
+  "readingTime": 3.38,
+  "hasTruncateMarker": true,
+  "authors": [
+    {
+      "name": "Justin Headley",
+      "url": "http://twitter.com/JKHeadley"
+    }
+  ],
+  "frontMatter": {
+    "title": "The Problem With APIs",
+    "author": "Justin Headley",
+    "authorURL": "http://twitter.com/JKHeadley",
+    "authorFBID": 27403843
+  },
+  "prevItem": {
+    "title": "The Problem With MongoDB",
+    "permalink": "/blog/2017/02/17/The-Problem-With-MongoDB"
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "unversionedId": "version-1.6.x-soft-delete",
+  "id": "version-1.6.x/version-1.6.x-soft-delete",
+  "title": "Soft Delete",
+  "description": "rest-hapi supports soft delete functionality for documents.  When the config.enableSoftDelete property is set to `true, documents will gain an isDeleted property when they are created that will be set to false.  Whenever that document is deleted (via a rest-hapi endpoint or method), the document will remain in the collection, its isDeleted property will be set to true, and the deletedAt and deletedBy` properties (if enabled) will be populated.",
+  "source": "@site/versioned_docs/version-1.6.x/soft-delete.md",
+  "sourceDirName": ".",
+  "slug": "/version-1.6.x-soft-delete",
+  "permalink": "/docs/1.6.x/version-1.6.x-soft-delete",
+  "draft": false,
+  "editUrl": "https://github.com/JKHeadley/rest-hapi/tree/master/docs/versioned_docs/version-1.6.x/soft-delete.md",
+  "tags": [],
+  "version": "1.6.x",
+  "lastUpdatedBy": "Author",
+  "lastUpdatedAt": 1539502055,
+  "formattedLastUpdatedAt": "Oct 14, 2018",
+  "frontMatter": {
+    "id": "version-1.6.x-soft-delete",
+    "title": "Soft Delete",
+    "sidebar_label": "Soft Delete",
+    "original_id": "soft-delete"
+  }
+}

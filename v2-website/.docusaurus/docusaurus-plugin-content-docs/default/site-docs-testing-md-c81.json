@@ -1,0 +1,31 @@
+{
+  "unversionedId": "testing",
+  "id": "testing",
+  "title": "Testing",
+  "description": "If you have downloaded the source you can run the tests with:",
+  "source": "@site/../docs/testing.md",
+  "sourceDirName": ".",
+  "slug": "/testing",
+  "permalink": "/docs/next/testing",
+  "draft": false,
+  "editUrl": "https://github.com/JKHeadley/rest-hapi/tree/master/docs/../docs/testing.md",
+  "tags": [],
+  "version": "current",
+  "lastUpdatedBy": "Author",
+  "lastUpdatedAt": 1539502055,
+  "formattedLastUpdatedAt": "Oct 14, 2018",
+  "frontMatter": {
+    "id": "testing",
+    "title": "Testing",
+    "sidebar_label": "Testing"
+  },
+  "sidebar": "docs",
+  "previous": {
+    "title": "Model Generation",
+    "permalink": "/docs/next/model-generation"
+  },
+  "next": {
+    "title": "Questions",
+    "permalink": "/docs/next/questions"
+  }
+}

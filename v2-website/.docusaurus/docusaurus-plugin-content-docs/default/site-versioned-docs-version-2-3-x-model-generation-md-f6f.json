@@ -1,0 +1,22 @@
+{
+  "unversionedId": "model-generation",
+  "id": "version-2.3.x/model-generation",
+  "title": "Model Generation",
+  "description": "In some situations models may be required before or without endpoint generation. For example some hapi plugins may require models to exist before the routes are registered. In these cases rest-hapi provides a `generateModels` function that can be called independently.",
+  "source": "@site/versioned_docs/version-2.3.x/model-generation.md",
+  "sourceDirName": ".",
+  "slug": "/model-generation",
+  "permalink": "/docs/model-generation",
+  "draft": false,
+  "editUrl": "https://github.com/JKHeadley/rest-hapi/tree/master/docs/versioned_docs/version-2.3.x/model-generation.md",
+  "tags": [],
+  "version": "2.3.x",
+  "lastUpdatedBy": "Author",
+  "lastUpdatedAt": 1539502055,
+  "formattedLastUpdatedAt": "Oct 14, 2018",
+  "frontMatter": {
+    "id": "model-generation",
+    "title": "Model Generation",
+    "sidebar_label": "Model Generation"
+  }
+}

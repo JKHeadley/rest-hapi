@@ -1,0 +1,31 @@
+{
+  "unversionedId": "mongoose-wrapper-methods",
+  "id": "mongoose-wrapper-methods",
+  "title": "Mongoose Wrapper Methods",
+  "description": "rest-hapi provides mongoose wrapper methods for the user to take advantage of in their server code. These methods provide several advantages including:",
+  "source": "@site/../docs/mongoose-wrapper-methods.md",
+  "sourceDirName": ".",
+  "slug": "/mongoose-wrapper-methods",
+  "permalink": "/docs/next/mongoose-wrapper-methods",
+  "draft": false,
+  "editUrl": "https://github.com/JKHeadley/rest-hapi/tree/master/docs/../docs/mongoose-wrapper-methods.md",
+  "tags": [],
+  "version": "current",
+  "lastUpdatedBy": "Author",
+  "lastUpdatedAt": 1539502055,
+  "formattedLastUpdatedAt": "Oct 14, 2018",
+  "frontMatter": {
+    "id": "mongoose-wrapper-methods",
+    "title": "Mongoose Wrapper Methods",
+    "sidebar_label": "Mongoose Wrapper Methods"
+  },
+  "sidebar": "docs",
+  "previous": {
+    "title": "Policies",
+    "permalink": "/docs/next/policies"
+  },
+  "next": {
+    "title": "Soft Delete",
+    "permalink": "/docs/next/soft-delete"
+  }
+}

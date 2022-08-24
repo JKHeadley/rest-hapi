@@ -1,0 +1,31 @@
+{
+  "unversionedId": "audit-logs",
+  "id": "audit-logs",
+  "title": "Audit Logs",
+  "description": "By default, rest-hapi records all document-modifiying activities that occur within the generated endpoints. Each event is stored as a document within the auditLog collection.  The audit log documents can be set to expire by providing a value for config.auditLogTTL.  The value can be specified in integer seconds or as a human-readable time period (Ex",
+  "source": "@site/../docs/audit-logs.md",
+  "sourceDirName": ".",
+  "slug": "/audit-logs",
+  "permalink": "/docs/next/audit-logs",
+  "draft": false,
+  "editUrl": "https://github.com/JKHeadley/rest-hapi/tree/master/docs/../docs/audit-logs.md",
+  "tags": [],
+  "version": "current",
+  "lastUpdatedBy": "Author",
+  "lastUpdatedAt": 1539502055,
+  "formattedLastUpdatedAt": "Oct 14, 2018",
+  "frontMatter": {
+    "id": "audit-logs",
+    "title": "Audit Logs",
+    "sidebar_label": "Audit Logs"
+  },
+  "sidebar": "docs",
+  "previous": {
+    "title": "Authorization",
+    "permalink": "/docs/next/authorization"
+  },
+  "next": {
+    "title": "Policies",
+    "permalink": "/docs/next/policies"
+  }
+}

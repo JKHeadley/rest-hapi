@@ -1,0 +1,27 @@
+{
+  "unversionedId": "quick-start",
+  "id": "quick-start",
+  "title": "Quick Start",
+  "description": "Requirements",
+  "source": "@site/../docs/quick-start.md",
+  "sourceDirName": ".",
+  "slug": "/quick-start",
+  "permalink": "/docs/next/quick-start",
+  "draft": false,
+  "editUrl": "https://github.com/JKHeadley/rest-hapi/tree/master/docs/../docs/quick-start.md",
+  "tags": [],
+  "version": "current",
+  "lastUpdatedBy": "Author",
+  "lastUpdatedAt": 1539502055,
+  "formattedLastUpdatedAt": "Oct 14, 2018",
+  "frontMatter": {
+    "id": "quick-start",
+    "title": "Quick Start",
+    "sidebar_label": "Quick Start"
+  },
+  "sidebar": "docs",
+  "next": {
+    "title": "Introduction",
+    "permalink": "/docs/next/introduction"
+  }
+}

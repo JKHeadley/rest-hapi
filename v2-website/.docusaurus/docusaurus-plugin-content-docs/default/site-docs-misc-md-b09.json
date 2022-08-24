@@ -1,0 +1,22 @@
+{
+  "unversionedId": "misc",
+  "id": "misc",
+  "title": "Miscellaneous",
+  "description": "Model generation",
+  "source": "@site/../docs/misc.md",
+  "sourceDirName": ".",
+  "slug": "/misc",
+  "permalink": "/docs/next/misc",
+  "draft": false,
+  "editUrl": "https://github.com/JKHeadley/rest-hapi/tree/master/docs/../docs/misc.md",
+  "tags": [],
+  "version": "current",
+  "lastUpdatedBy": "Author",
+  "lastUpdatedAt": 1539502055,
+  "formattedLastUpdatedAt": "Oct 14, 2018",
+  "frontMatter": {
+    "id": "misc",
+    "title": "Miscellaneous",
+    "sidebar_label": "Miscellaneous"
+  }
+}

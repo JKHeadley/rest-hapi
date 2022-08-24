@@ -1,0 +1,127 @@
+{
+  "pluginId": "default",
+  "version": "2.3.x",
+  "label": "2.3.x",
+  "banner": null,
+  "badge": true,
+  "className": "docs-version-2.3.x",
+  "isLast": true,
+  "docsSidebars": {},
+  "docs": {
+    "associations": {
+      "id": "associations",
+      "title": "Associations",
+      "description": "The rest-hapi framework supports model associations that mimic associations in a relational database.  This includes one-one, one-many, many-one, and many-many relationships.  Associations are created by adding the relevant schema fields and populating the `associations object within routeOptions.  Associations exists as references to a document's _id` field, and can be populated to return the associated object.  See Querying for more details on how to populate associations."
+    },
+    "audit-logs": {
+      "id": "audit-logs",
+      "title": "Audit Logs",
+      "description": "By default, rest-hapi records all document-modifiying activities that occur within the generated endpoints. Each event is stored as a document within the auditLog collection.  The audit log documents can be set to expire by providing a value for config.auditLogTTL.  The value can be specified in integer seconds or as a human-readable time period (Ex"
+    },
+    "authentication": {
+      "id": "authentication",
+      "title": "Authentication",
+      "description": "Route authentication"
+    },
+    "authorization": {
+      "id": "authorization",
+      "title": "Authorization",
+      "description": "Route authorization"
+    },
+    "creating-endpoints": {
+      "id": "creating-endpoints",
+      "title": "Creating Endpoints",
+      "description": "Creating endpoints with rest-hapi can be accomplished three different ways:"
+    },
+    "duplicate-fields": {
+      "id": "duplicate-fields",
+      "title": "Duplicate Fields",
+      "description": "\"Duplicate fields\" is a rest-hapi feature that allows fields from an associated document to exist in the parent document while maintaining the original field value. This can be accomplished by setting config.enableDuplicateFields to true and adding the duplicate property to an association definition."
+    },
+    "introduction": {
+      "id": "introduction",
+      "title": "Introduction",
+      "description": "Requirements"
+    },
+    "metadata": {
+      "id": "metadata",
+      "title": "Metadata",
+      "description": "Timestamps"
+    },
+    "middleware": {
+      "id": "middleware",
+      "title": "Middleware",
+      "description": "CRUD"
+    },
+    "misc": {
+      "id": "misc",
+      "title": "Miscellaneous",
+      "description": "Model generation"
+    },
+    "model-generation": {
+      "id": "model-generation",
+      "title": "Model Generation",
+      "description": "In some situations models may be required before or without endpoint generation. For example some hapi plugins may require models to exist before the routes are registered. In these cases rest-hapi provides a `generateModels` function that can be called independently."
+    },
+    "mongoose-wrapper-methods": {
+      "id": "mongoose-wrapper-methods",
+      "title": "Mongoose Wrapper Methods",
+      "description": "rest-hapi provides mongoose wrapper methods for the user to take advantage of in their server code. These methods provide several advantages including:"
+    },
+    "policies": {
+      "id": "policies",
+      "title": "Policies",
+      "description": "rest-hapi comes with built-in support for policies via the mrhorse plugin. Policies provide a powerful method of applying the same business logic to multiple routes declaratively. They can be inserted at any point in the hapi request lifecycle, allowing you to layer your business logic in a clean, organized, and centralized manner. We highly recommend you learn more about the details and benefits of policies in the mrhorse readme."
+    },
+    "querying": {
+      "id": "querying",
+      "title": "Querying",
+      "description": "Query parameters can be added to GET requests to filter responses.  These parameters"
+    },
+    "questions": {
+      "id": "questions",
+      "title": "Questions",
+      "description": "If you have any questions/issues/feature requests, please feel free to open an issue.  We'd love to hear from you!"
+    },
+    "quick-start": {
+      "id": "quick-start",
+      "title": "Quick Start",
+      "description": "Requirements"
+    },
+    "route-customization": {
+      "id": "route-customization",
+      "title": "Route Customization",
+      "description": "Custom path names"
+    },
+    "soft-delete": {
+      "id": "soft-delete",
+      "title": "Soft Delete",
+      "description": "rest-hapi supports soft delete functionality for documents.  When the config.enableSoftDelete property is set to `true, documents will gain an isDeleted property when they are created that will be set to false.  Whenever that document is deleted (via a rest-hapi endpoint or method), the document will remain in the collection, its isDeleted property will be set to true, and the deletedAt and deletedBy` properties (if enabled) will be populated."
+    },
+    "support": {
+      "id": "support",
+      "title": "Support",
+      "description": "Like this project? Please star it!"
+    },
+    "swagger-documentation": {
+      "id": "swagger-documentation",
+      "title": "Swagger Documentation",
+      "description": "Swagger documentation (via hapi-swagger) is automatically generated for all endpoints and can be viewed by pointing a browser at the server URL. If you use the intro script this will be http8080/. The swagger docs provide quick access to testing your endpoints along with model schema descriptions and query options."
+    },
+    "testing": {
+      "id": "testing",
+      "title": "Testing",
+      "description": "If you have downloaded the source you can run the tests with:"
+    },
+    "validation": {
+      "id": "validation",
+      "title": "Validation",
+      "description": "Route validation"
+    },
+    "version-2.3.x-configuration": {
+      "id": "version-2.3.x-configuration",
+      "title": "Configuration",
+      "description": "Configuration of rest-hapi is handled through the `RestHapi.config` object. See the introduction for an example.  Below is a description of the current configuration options/properties."
+    }
+  }
+}

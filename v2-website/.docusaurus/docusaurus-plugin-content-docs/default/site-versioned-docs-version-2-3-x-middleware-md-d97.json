@@ -1,0 +1,22 @@
+{
+  "unversionedId": "middleware",
+  "id": "version-2.3.x/middleware",
+  "title": "Middleware",
+  "description": "CRUD",
+  "source": "@site/versioned_docs/version-2.3.x/middleware.md",
+  "sourceDirName": ".",
+  "slug": "/middleware",
+  "permalink": "/docs/middleware",
+  "draft": false,
+  "editUrl": "https://github.com/JKHeadley/rest-hapi/tree/master/docs/versioned_docs/version-2.3.x/middleware.md",
+  "tags": [],
+  "version": "2.3.x",
+  "lastUpdatedBy": "Author",
+  "lastUpdatedAt": 1539502055,
+  "formattedLastUpdatedAt": "Oct 14, 2018",
+  "frontMatter": {
+    "id": "middleware",
+    "title": "Middleware",
+    "sidebar_label": "Middleware"
+  }
+}

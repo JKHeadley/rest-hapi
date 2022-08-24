@@ -1,0 +1,27 @@
+{
+  "pluginId": "default",
+  "version": "1.7.x",
+  "label": "1.7.x",
+  "banner": "unmaintained",
+  "badge": true,
+  "className": "docs-version-1.7.x",
+  "isLast": false,
+  "docsSidebars": {},
+  "docs": {
+    "version-1.7.x-mongoose-wrapper-methods": {
+      "id": "version-1.7.x-mongoose-wrapper-methods",
+      "title": "Mongoose Wrapper Methods",
+      "description": "rest-hapi provides mongoose wrapper methods for the user to take advantage of in their server code. These methods provide several advantages including:"
+    },
+    "version-1.7.x-policies": {
+      "id": "version-1.7.x-policies",
+      "title": "Policies",
+      "description": "rest-hapi comes with built-in support for policies via the mrhorse plugin. Policies provide a powerful method of applying the same business logic to multiple routes declaratively. They can be inserted at any point in the hapi request lifecycle, allowing you to layer your business logic in a clean, organized, and centralized manner. We highly recommend you learn more about the details and benefits of policies in the mrhorse readme."
+    },
+    "version-1.7.x-validation": {
+      "id": "version-1.7.x-validation",
+      "title": "Validation",
+      "description": "Route validation"
+    }
+  }
+}

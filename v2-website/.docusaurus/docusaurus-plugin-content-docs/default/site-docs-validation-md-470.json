@@ -1,0 +1,31 @@
+{
+  "unversionedId": "validation",
+  "id": "validation",
+  "title": "Validation",
+  "description": "Route validation",
+  "source": "@site/../docs/validation.md",
+  "sourceDirName": ".",
+  "slug": "/validation",
+  "permalink": "/docs/next/validation",
+  "draft": false,
+  "editUrl": "https://github.com/JKHeadley/rest-hapi/tree/master/docs/../docs/validation.md",
+  "tags": [],
+  "version": "current",
+  "lastUpdatedBy": "Author",
+  "lastUpdatedAt": 1539502055,
+  "formattedLastUpdatedAt": "Oct 14, 2018",
+  "frontMatter": {
+    "id": "validation",
+    "title": "Validation",
+    "sidebar_label": "Validation"
+  },
+  "sidebar": "docs",
+  "previous": {
+    "title": "Duplicate Fields",
+    "permalink": "/docs/next/duplicate-fields"
+  },
+  "next": {
+    "title": "Middleware",
+    "permalink": "/docs/next/middleware"
+  }
+}

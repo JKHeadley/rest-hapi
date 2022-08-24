@@ -1,0 +1,31 @@
+{
+  "unversionedId": "policies",
+  "id": "policies",
+  "title": "Policies",
+  "description": "rest-hapi comes with built-in support for policies via the mrhorse plugin. Policies provide a powerful method of applying the same business logic to multiple routes declaratively. They can be inserted at any point in the hapi request lifecycle, allowing you to layer your business logic in a clean, organized, and centralized manner. We highly recommend you learn more about the details and benefits of policies in the mrhorse readme.",
+  "source": "@site/../docs/policies.md",
+  "sourceDirName": ".",
+  "slug": "/policies",
+  "permalink": "/docs/next/policies",
+  "draft": false,
+  "editUrl": "https://github.com/JKHeadley/rest-hapi/tree/master/docs/../docs/policies.md",
+  "tags": [],
+  "version": "current",
+  "lastUpdatedBy": "Author",
+  "lastUpdatedAt": 1539502055,
+  "formattedLastUpdatedAt": "Oct 14, 2018",
+  "frontMatter": {
+    "id": "policies",
+    "title": "Policies",
+    "sidebar_label": "Policies"
+  },
+  "sidebar": "docs",
+  "previous": {
+    "title": "Audit Logs",
+    "permalink": "/docs/next/audit-logs"
+  },
+  "next": {
+    "title": "Mongoose Wrapper Methods",
+    "permalink": "/docs/next/mongoose-wrapper-methods"
+  }
+}

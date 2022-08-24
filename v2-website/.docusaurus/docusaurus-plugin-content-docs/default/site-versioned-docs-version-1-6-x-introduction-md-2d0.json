@@ -1,0 +1,23 @@
+{
+  "unversionedId": "version-1.6.x-introduction",
+  "id": "version-1.6.x/version-1.6.x-introduction",
+  "title": "Introduction",
+  "description": "Requirements",
+  "source": "@site/versioned_docs/version-1.6.x/introduction.md",
+  "sourceDirName": ".",
+  "slug": "/version-1.6.x-introduction",
+  "permalink": "/docs/1.6.x/version-1.6.x-introduction",
+  "draft": false,
+  "editUrl": "https://github.com/JKHeadley/rest-hapi/tree/master/docs/versioned_docs/version-1.6.x/introduction.md",
+  "tags": [],
+  "version": "1.6.x",
+  "lastUpdatedBy": "Author",
+  "lastUpdatedAt": 1539502055,
+  "formattedLastUpdatedAt": "Oct 14, 2018",
+  "frontMatter": {
+    "id": "version-1.6.x-introduction",
+    "title": "Introduction",
+    "sidebar_label": "Introduction",
+    "original_id": "introduction"
+  }
+}

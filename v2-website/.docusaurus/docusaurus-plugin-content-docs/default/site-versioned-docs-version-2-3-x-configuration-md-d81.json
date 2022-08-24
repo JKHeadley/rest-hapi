@@ -1,0 +1,23 @@
+{
+  "unversionedId": "version-2.3.x-configuration",
+  "id": "version-2.3.x/version-2.3.x-configuration",
+  "title": "Configuration",
+  "description": "Configuration of rest-hapi is handled through the `RestHapi.config` object. See the introduction for an example.  Below is a description of the current configuration options/properties.",
+  "source": "@site/versioned_docs/version-2.3.x/configuration.md",
+  "sourceDirName": ".",
+  "slug": "/version-2.3.x-configuration",
+  "permalink": "/docs/version-2.3.x-configuration",
+  "draft": false,
+  "editUrl": "https://github.com/JKHeadley/rest-hapi/tree/master/docs/versioned_docs/version-2.3.x/configuration.md",
+  "tags": [],
+  "version": "2.3.x",
+  "lastUpdatedBy": "Author",
+  "lastUpdatedAt": 1539502055,
+  "formattedLastUpdatedAt": "Oct 14, 2018",
+  "frontMatter": {
+    "id": "version-2.3.x-configuration",
+    "title": "Configuration",
+    "sidebar_label": "Configuration",
+    "original_id": "configuration"
+  }
+}

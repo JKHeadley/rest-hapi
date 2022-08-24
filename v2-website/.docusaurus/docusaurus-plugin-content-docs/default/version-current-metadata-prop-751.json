@@ -1,0 +1,308 @@
+{
+  "pluginId": "default",
+  "version": "current",
+  "label": "Next",
+  "banner": "unreleased",
+  "badge": true,
+  "className": "docs-version-current",
+  "isLast": false,
+  "docsSidebars": {
+    "docs": [
+      {
+        "type": "category",
+        "label": "Getting Started",
+        "items": [
+          {
+            "type": "link",
+            "label": "Quick Start",
+            "href": "/docs/next/quick-start",
+            "docId": "quick-start"
+          },
+          {
+            "type": "link",
+            "label": "Introduction",
+            "href": "/docs/next/introduction",
+            "docId": "introduction"
+          },
+          {
+            "type": "link",
+            "label": "Swagger Documentation",
+            "href": "/docs/next/swagger-documentation",
+            "docId": "swagger-documentation"
+          }
+        ],
+        "collapsed": true,
+        "collapsible": true
+      },
+      {
+        "type": "category",
+        "label": "Usage",
+        "items": [
+          {
+            "type": "link",
+            "label": "Configuration",
+            "href": "/docs/next/configuration",
+            "docId": "configuration"
+          },
+          {
+            "type": "link",
+            "label": "Creating Endpoints",
+            "href": "/docs/next/creating-endpoints",
+            "docId": "creating-endpoints"
+          },
+          {
+            "type": "link",
+            "label": "Assocations",
+            "href": "/docs/next/associations",
+            "docId": "associations"
+          },
+          {
+            "type": "link",
+            "label": "Route Customization",
+            "href": "/docs/next/route-customization",
+            "docId": "route-customization"
+          },
+          {
+            "type": "link",
+            "label": "Querying",
+            "href": "/docs/next/querying",
+            "docId": "querying"
+          },
+          {
+            "type": "link",
+            "label": "Duplicate Fields",
+            "href": "/docs/next/duplicate-fields",
+            "docId": "duplicate-fields"
+          },
+          {
+            "type": "link",
+            "label": "Validation",
+            "href": "/docs/next/validation",
+            "docId": "validation"
+          },
+          {
+            "type": "link",
+            "label": "Middleware",
+            "href": "/docs/next/middleware",
+            "docId": "middleware"
+          },
+          {
+            "type": "link",
+            "label": "Authentication",
+            "href": "/docs/next/authentication",
+            "docId": "authentication"
+          },
+          {
+            "type": "link",
+            "label": "Authorization",
+            "href": "/docs/next/authorization",
+            "docId": "authorization"
+          },
+          {
+            "type": "link",
+            "label": "Audit Logs",
+            "href": "/docs/next/audit-logs",
+            "docId": "audit-logs"
+          },
+          {
+            "type": "link",
+            "label": "Policies",
+            "href": "/docs/next/policies",
+            "docId": "policies"
+          },
+          {
+            "type": "link",
+            "label": "Mongoose Wrapper Methods",
+            "href": "/docs/next/mongoose-wrapper-methods",
+            "docId": "mongoose-wrapper-methods"
+          },
+          {
+            "type": "link",
+            "label": "Soft Delete",
+            "href": "/docs/next/soft-delete",
+            "docId": "soft-delete"
+          },
+          {
+            "type": "link",
+            "label": "Metadata",
+            "href": "/docs/next/metadata",
+            "docId": "metadata"
+          },
+          {
+            "type": "link",
+            "label": "Model Generation",
+            "href": "/docs/next/model-generation",
+            "docId": "model-generation"
+          }
+        ],
+        "collapsed": true,
+        "collapsible": true
+      },
+      {
+        "type": "category",
+        "label": "Other",
+        "items": [
+          {
+            "type": "link",
+            "label": "Testing",
+            "href": "/docs/next/testing",
+            "docId": "testing"
+          },
+          {
+            "type": "link",
+            "label": "Questions",
+            "href": "/docs/next/questions",
+            "docId": "questions"
+          },
+          {
+            "type": "link",
+            "label": "Support",
+            "href": "/docs/next/support",
+            "docId": "support"
+          }
+        ],
+        "collapsed": true,
+        "collapsible": true
+      }
+    ]
+  },
+  "docs": {
+    "associations": {
+      "id": "associations",
+      "title": "Associations",
+      "description": "The rest-hapi framework supports model associations that mimic associations in a relational database.  This includes one-one, one-many, many-one, and many-many relationships.  Associations are created by adding the relevant schema fields and populating the `associations object within routeOptions.  Associations exists as references to a document's _id` field, and can be populated to return the associated object.  See Querying for more details on how to populate associations.",
+      "sidebar": "docs"
+    },
+    "audit-logs": {
+      "id": "audit-logs",
+      "title": "Audit Logs",
+      "description": "By default, rest-hapi records all document-modifiying activities that occur within the generated endpoints. Each event is stored as a document within the auditLog collection.  The audit log documents can be set to expire by providing a value for config.auditLogTTL.  The value can be specified in integer seconds or as a human-readable time period (Ex",
+      "sidebar": "docs"
+    },
+    "authentication": {
+      "id": "authentication",
+      "title": "Authentication",
+      "description": "Route authentication",
+      "sidebar": "docs"
+    },
+    "authorization": {
+      "id": "authorization",
+      "title": "Authorization",
+      "description": "Route authorization",
+      "sidebar": "docs"
+    },
+    "configuration": {
+      "id": "configuration",
+      "title": "Configuration",
+      "description": "Configuration of rest-hapi is handled through the `RestHapi.config` object. See the introduction for an example.  Below is a description of the current configuration options/properties.",
+      "sidebar": "docs"
+    },
+    "creating-endpoints": {
+      "id": "creating-endpoints",
+      "title": "Creating Endpoints",
+      "description": "Creating endpoints with rest-hapi can be accomplished three different ways:",
+      "sidebar": "docs"
+    },
+    "duplicate-fields": {
+      "id": "duplicate-fields",
+      "title": "Duplicate Fields",
+      "description": "\"Duplicate fields\" is a rest-hapi feature that allows fields from an associated document to exist in the parent document while maintaining the original field value. This can be accomplished by setting config.enableDuplicateFields to true and adding the duplicate property to an association definition.",
+      "sidebar": "docs"
+    },
+    "introduction": {
+      "id": "introduction",
+      "title": "Introduction",
+      "description": "Requirements",
+      "sidebar": "docs"
+    },
+    "metadata": {
+      "id": "metadata",
+      "title": "Metadata",
+      "description": "Timestamps",
+      "sidebar": "docs"
+    },
+    "middleware": {
+      "id": "middleware",
+      "title": "Middleware",
+      "description": "CRUD",
+      "sidebar": "docs"
+    },
+    "misc": {
+      "id": "misc",
+      "title": "Miscellaneous",
+      "description": "Model generation"
+    },
+    "model-generation": {
+      "id": "model-generation",
+      "title": "Model Generation",
+      "description": "In some situations models may be required before or without endpoint generation. For example some hapi plugins may require models to exist before the routes are registered. In these cases rest-hapi provides a `generateModels` function that can be called independently.",
+      "sidebar": "docs"
+    },
+    "mongoose-wrapper-methods": {
+      "id": "mongoose-wrapper-methods",
+      "title": "Mongoose Wrapper Methods",
+      "description": "rest-hapi provides mongoose wrapper methods for the user to take advantage of in their server code. These methods provide several advantages including:",
+      "sidebar": "docs"
+    },
+    "policies": {
+      "id": "policies",
+      "title": "Policies",
+      "description": "rest-hapi comes with built-in support for policies via the mrhorse plugin. Policies provide a powerful method of applying the same business logic to multiple routes declaratively. They can be inserted at any point in the hapi request lifecycle, allowing you to layer your business logic in a clean, organized, and centralized manner. We highly recommend you learn more about the details and benefits of policies in the mrhorse readme.",
+      "sidebar": "docs"
+    },
+    "querying": {
+      "id": "querying",
+      "title": "Querying",
+      "description": "Query parameters can be added to GET requests to filter responses.  These parameters",
+      "sidebar": "docs"
+    },
+    "questions": {
+      "id": "questions",
+      "title": "Questions",
+      "description": "If you have any questions/issues/feature requests, please feel free to open an issue.  We'd love to hear from you!",
+      "sidebar": "docs"
+    },
+    "quick-start": {
+      "id": "quick-start",
+      "title": "Quick Start",
+      "description": "Requirements",
+      "sidebar": "docs"
+    },
+    "route-customization": {
+      "id": "route-customization",
+      "title": "Route Customization",
+      "description": "Custom path names",
+      "sidebar": "docs"
+    },
+    "soft-delete": {
+      "id": "soft-delete",
+      "title": "Soft Delete",
+      "description": "rest-hapi supports soft delete functionality for documents.  When the config.enableSoftDelete property is set to `true, documents will gain an isDeleted property when they are created that will be set to false.  Whenever that document is deleted (via a rest-hapi endpoint or method), the document will remain in the collection, its isDeleted property will be set to true, and the deletedAt and deletedBy` properties (if enabled) will be populated.",
+      "sidebar": "docs"
+    },
+    "support": {
+      "id": "support",
+      "title": "Support",
+      "description": "Like this project? Please star it!",
+      "sidebar": "docs"
+    },
+    "swagger-documentation": {
+      "id": "swagger-documentation",
+      "title": "Swagger Documentation",
+      "description": "Swagger documentation (via hapi-swagger) is automatically generated for all endpoints and can be viewed by pointing a browser at the server URL. If you use the intro script this will be http8080/. The swagger docs provide quick access to testing your endpoints along with model schema descriptions and query options.",
+      "sidebar": "docs"
+    },
+    "testing": {
+      "id": "testing",
+      "title": "Testing",
+      "description": "If you have downloaded the source you can run the tests with:",
+      "sidebar": "docs"
+    },
+    "validation": {
+      "id": "validation",
+      "title": "Validation",
+      "description": "Route validation",
+      "sidebar": "docs"
+    }
+  }
+}

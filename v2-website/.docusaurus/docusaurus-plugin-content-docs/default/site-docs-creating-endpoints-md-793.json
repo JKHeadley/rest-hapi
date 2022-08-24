@@ -1,0 +1,31 @@
+{
+  "unversionedId": "creating-endpoints",
+  "id": "creating-endpoints",
+  "title": "Creating Endpoints",
+  "description": "Creating endpoints with rest-hapi can be accomplished three different ways:",
+  "source": "@site/../docs/creating-endpoints.md",
+  "sourceDirName": ".",
+  "slug": "/creating-endpoints",
+  "permalink": "/docs/next/creating-endpoints",
+  "draft": false,
+  "editUrl": "https://github.com/JKHeadley/rest-hapi/tree/master/docs/../docs/creating-endpoints.md",
+  "tags": [],
+  "version": "current",
+  "lastUpdatedBy": "Author",
+  "lastUpdatedAt": 1539502055,
+  "formattedLastUpdatedAt": "Oct 14, 2018",
+  "frontMatter": {
+    "id": "creating-endpoints",
+    "title": "Creating Endpoints",
+    "sidebar_label": "Creating Endpoints"
+  },
+  "sidebar": "docs",
+  "previous": {
+    "title": "Configuration",
+    "permalink": "/docs/next/configuration"
+  },
+  "next": {
+    "title": "Assocations",
+    "permalink": "/docs/next/associations"
+  }
+}

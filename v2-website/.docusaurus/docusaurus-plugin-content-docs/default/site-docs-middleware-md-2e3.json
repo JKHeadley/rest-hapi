@@ -1,0 +1,31 @@
+{
+  "unversionedId": "middleware",
+  "id": "middleware",
+  "title": "Middleware",
+  "description": "CRUD",
+  "source": "@site/../docs/middleware.md",
+  "sourceDirName": ".",
+  "slug": "/middleware",
+  "permalink": "/docs/next/middleware",
+  "draft": false,
+  "editUrl": "https://github.com/JKHeadley/rest-hapi/tree/master/docs/../docs/middleware.md",
+  "tags": [],
+  "version": "current",
+  "lastUpdatedBy": "Author",
+  "lastUpdatedAt": 1539502055,
+  "formattedLastUpdatedAt": "Oct 14, 2018",
+  "frontMatter": {
+    "id": "middleware",
+    "title": "Middleware",
+    "sidebar_label": "Middleware"
+  },
+  "sidebar": "docs",
+  "previous": {
+    "title": "Validation",
+    "permalink": "/docs/next/validation"
+  },
+  "next": {
+    "title": "Authentication",
+    "permalink": "/docs/next/authentication"
+  }
+}

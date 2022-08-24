@@ -1,0 +1,23 @@
+{
+  "unversionedId": "version-1.6.x-authentication",
+  "id": "version-1.6.x/version-1.6.x-authentication",
+  "title": "Authentication",
+  "description": "Route authentication",
+  "source": "@site/versioned_docs/version-1.6.x/authentication.md",
+  "sourceDirName": ".",
+  "slug": "/version-1.6.x-authentication",
+  "permalink": "/docs/1.6.x/version-1.6.x-authentication",
+  "draft": false,
+  "editUrl": "https://github.com/JKHeadley/rest-hapi/tree/master/docs/versioned_docs/version-1.6.x/authentication.md",
+  "tags": [],
+  "version": "1.6.x",
+  "lastUpdatedBy": "Author",
+  "lastUpdatedAt": 1539502055,
+  "formattedLastUpdatedAt": "Oct 14, 2018",
+  "frontMatter": {
+    "id": "version-1.6.x-authentication",
+    "title": "Authentication",
+    "sidebar_label": "Authentication",
+    "original_id": "authentication"
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "unversionedId": "authorization",
+  "id": "authorization",
+  "title": "Authorization",
+  "description": "Route authorization",
+  "source": "@site/../docs/authorization.md",
+  "sourceDirName": ".",
+  "slug": "/authorization",
+  "permalink": "/docs/next/authorization",
+  "draft": false,
+  "editUrl": "https://github.com/JKHeadley/rest-hapi/tree/master/docs/../docs/authorization.md",
+  "tags": [],
+  "version": "current",
+  "lastUpdatedBy": "Author",
+  "lastUpdatedAt": 1539502055,
+  "formattedLastUpdatedAt": "Oct 14, 2018",
+  "frontMatter": {
+    "id": "authorization",
+    "title": "Authorization",
+    "sidebar_label": "Authorization"
+  },
+  "sidebar": "docs",
+  "previous": {
+    "title": "Authentication",
+    "permalink": "/docs/next/authentication"
+  },
+  "next": {
+    "title": "Audit Logs",
+    "permalink": "/docs/next/audit-logs"
+  }
+}

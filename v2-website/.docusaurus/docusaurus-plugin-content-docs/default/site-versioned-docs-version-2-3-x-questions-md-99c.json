@@ -1,0 +1,22 @@
+{
+  "unversionedId": "questions",
+  "id": "version-2.3.x/questions",
+  "title": "Questions",
+  "description": "If you have any questions/issues/feature requests, please feel free to open an issue.  We'd love to hear from you!",
+  "source": "@site/versioned_docs/version-2.3.x/questions.md",
+  "sourceDirName": ".",
+  "slug": "/questions",
+  "permalink": "/docs/questions",
+  "draft": false,
+  "editUrl": "https://github.com/JKHeadley/rest-hapi/tree/master/docs/versioned_docs/version-2.3.x/questions.md",
+  "tags": [],
+  "version": "2.3.x",
+  "lastUpdatedBy": "Author",
+  "lastUpdatedAt": 1539502055,
+  "formattedLastUpdatedAt": "Oct 14, 2018",
+  "frontMatter": {
+    "id": "questions",
+    "title": "Questions",
+    "sidebar_label": "Questions"
+  }
+}

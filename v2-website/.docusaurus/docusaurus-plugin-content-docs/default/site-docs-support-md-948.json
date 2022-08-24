@@ -1,0 +1,27 @@
+{
+  "unversionedId": "support",
+  "id": "support",
+  "title": "Support",
+  "description": "Like this project? Please star it!",
+  "source": "@site/../docs/support.md",
+  "sourceDirName": ".",
+  "slug": "/support",
+  "permalink": "/docs/next/support",
+  "draft": false,
+  "editUrl": "https://github.com/JKHeadley/rest-hapi/tree/master/docs/../docs/support.md",
+  "tags": [],
+  "version": "current",
+  "lastUpdatedBy": "Author",
+  "lastUpdatedAt": 1539502055,
+  "formattedLastUpdatedAt": "Oct 14, 2018",
+  "frontMatter": {
+    "id": "support",
+    "title": "Support",
+    "sidebar_label": "Support"
+  },
+  "sidebar": "docs",
+  "previous": {
+    "title": "Questions",
+    "permalink": "/docs/next/questions"
+  }
+}

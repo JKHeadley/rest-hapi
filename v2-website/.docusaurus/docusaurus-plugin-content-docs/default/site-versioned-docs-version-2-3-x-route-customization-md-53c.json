@@ -1,0 +1,22 @@
+{
+  "unversionedId": "route-customization",
+  "id": "version-2.3.x/route-customization",
+  "title": "Route Customization",
+  "description": "Custom path names",
+  "source": "@site/versioned_docs/version-2.3.x/route-customization.md",
+  "sourceDirName": ".",
+  "slug": "/route-customization",
+  "permalink": "/docs/route-customization",
+  "draft": false,
+  "editUrl": "https://github.com/JKHeadley/rest-hapi/tree/master/docs/versioned_docs/version-2.3.x/route-customization.md",
+  "tags": [],
+  "version": "2.3.x",
+  "lastUpdatedBy": "Author",
+  "lastUpdatedAt": 1539502055,
+  "formattedLastUpdatedAt": "Oct 14, 2018",
+  "frontMatter": {
+    "id": "route-customization",
+    "title": "Route Customization",
+    "sidebar_label": "Route Customization"
+  }
+}

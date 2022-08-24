@@ -1,0 +1,31 @@
+{
+  "unversionedId": "authentication",
+  "id": "authentication",
+  "title": "Authentication",
+  "description": "Route authentication",
+  "source": "@site/../docs/authentication.md",
+  "sourceDirName": ".",
+  "slug": "/authentication",
+  "permalink": "/docs/next/authentication",
+  "draft": false,
+  "editUrl": "https://github.com/JKHeadley/rest-hapi/tree/master/docs/../docs/authentication.md",
+  "tags": [],
+  "version": "current",
+  "lastUpdatedBy": "Author",
+  "lastUpdatedAt": 1539502055,
+  "formattedLastUpdatedAt": "Oct 14, 2018",
+  "frontMatter": {
+    "id": "authentication",
+    "title": "Authentication",
+    "sidebar_label": "Authentication"
+  },
+  "sidebar": "docs",
+  "previous": {
+    "title": "Middleware",
+    "permalink": "/docs/next/middleware"
+  },
+  "next": {
+    "title": "Authorization",
+    "permalink": "/docs/next/authorization"
+  }
+}
