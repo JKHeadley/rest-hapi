@@ -6,9 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
-## [3.0.0] - 2022-08-23
+## [3.0.0] - 2022-08-23 [BREAKING]
 ### Changed
 - [updated packages to remove vulnerabilities](https://github.com/JKHeadley/rest-hapi/pull/300)
+- [BREAKING] Dropped support for node < 14
 
 ## [2.3.0] - 2021-05-03
 ### Added
