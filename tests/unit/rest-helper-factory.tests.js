@@ -2485,22 +2485,20 @@ test('rest-helper-factory.generateFindEndpoint', function(t) {
       })
       const joiStub = require('joi')
       const joiObjectIdStub = function() {
-        return function() {
-          return {
-            required: function() {
-              return 'TEST'
-            }
+        return {
+          required: function() {
+            return 'TEST'
           }
         }
       }
+      joiMongooseHelperStub.joiObjectId = joiObjectIdStub
       const restHelperFactory = proxyquire(
         '../../utilities/rest-helper-factory',
         {
           './handler-helper-factory': handlerHelperStubWrapper,
           './query-helper': queryHelperStub,
           './joi-mongoose-helper': joiMongooseHelperStub,
-          joi: joiStub,
-          'joi-objectid': joiObjectIdStub
+          joi: joiStub
         }
       )(Log, mongoose, server)
 
@@ -4218,22 +4216,20 @@ test('rest-helper-factory.generateDeleteOneEndpoint', function(t) {
       const joiStub = require('joi')
 
       const joiObjectIdStub = function() {
-        return function() {
-          return {
-            required: function() {
-              return 'TEST'
-            }
+        return {
+          required: function() {
+            return 'TEST'
           }
         }
       }
+      joiMongooseHelperStub.joiObjectId = joiObjectIdStub
       const restHelperFactory = proxyquire(
         '../../utilities/rest-helper-factory',
         {
           './handler-helper-factory': handlerHelperStubWrapper,
           './query-helper': queryHelperStub,
           './joi-mongoose-helper': joiMongooseHelperStub,
-          joi: joiStub,
-          'joi-objectid': joiObjectIdStub
+          joi: joiStub
         }
       )(Log, mongoose, server)
 
@@ -5184,22 +5180,20 @@ test('rest-helper-factory.generateUpdateEndpoint', function(t) {
       const joiStub = require('joi')
 
       const joiObjectIdStub = function() {
-        return function() {
-          return {
-            required: function() {
-              return 'TEST'
-            }
+        return {
+          required: function() {
+            return 'TEST'
           }
         }
       }
+      joiMongooseHelperStub.joiObjectId = joiObjectIdStub
       const restHelperFactory = proxyquire(
         '../../utilities/rest-helper-factory',
         {
           './handler-helper-factory': handlerHelperStubWrapper,
           './query-helper': queryHelperStub,
           './joi-mongoose-helper': joiMongooseHelperStub,
-          joi: joiStub,
-          'joi-objectid': joiObjectIdStub
+          joi: joiStub
         }
       )(Log, mongoose, server)
 
@@ -6537,22 +6531,20 @@ test('rest-helper-factory.generateAssociationAddOneEndpoint', function(t) {
       })
       const joiStub = require('joi')
       const joiObjectIdStub = function() {
-        return function() {
-          return {
-            required: function() {
-              return 'TEST'
-            }
+        return {
+          required: function() {
+            return 'TEST'
           }
         }
       }
+      joiMongooseHelperStub.joiObjectId = joiObjectIdStub
       const restHelperFactory = proxyquire(
         '../../utilities/rest-helper-factory',
         {
           './handler-helper-factory': handlerHelperStubWrapper,
           './query-helper': queryHelperStub,
           './joi-mongoose-helper': joiMongooseHelperStub,
-          joi: joiStub,
-          'joi-objectid': joiObjectIdStub
+          joi: joiStub
         }
       )(Log, mongoose, server)
 
@@ -7840,22 +7832,20 @@ test('rest-helper-factory.generateAssociationRemoveOneEndpoint', function(t) {
       })
       const joiStub = require('joi')
       const joiObjectIdStub = function() {
-        return function() {
-          return {
-            required: function() {
-              return 'TEST'
-            }
+        return {
+          required: function() {
+            return 'TEST'
           }
         }
       }
+      joiMongooseHelperStub.joiObjectId = joiObjectIdStub
       const restHelperFactory = proxyquire(
         '../../utilities/rest-helper-factory',
         {
           './handler-helper-factory': handlerHelperStubWrapper,
           './query-helper': queryHelperStub,
           './joi-mongoose-helper': joiMongooseHelperStub,
-          joi: joiStub,
-          'joi-objectid': joiObjectIdStub
+          joi: joiStub
         }
       )(Log, mongoose, server)
 
@@ -9118,18 +9108,16 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
       const joiStub = require('joi')
 
       const joiObjectIdStub = function() {
-        return function() {
-          return Joi.string().valid('objectId')
-        }
+        return Joi.string().valid('objectId')
       }
+      joiMongooseHelperStub.joiObjectId = joiObjectIdStub
       const restHelperFactory = proxyquire(
         '../../utilities/rest-helper-factory',
         {
           './handler-helper-factory': handlerHelperStubWrapper,
           './query-helper': queryHelperStub,
           './joi-mongoose-helper': joiMongooseHelperStub,
-          joi: joiStub,
-          'joi-objectid': joiObjectIdStub
+          joi: joiStub
         }
       )(Log, mongoose, server)
 
@@ -9254,18 +9242,16 @@ test('rest-helper-factory.generateAssociationAddManyEndpoint', function(t) {
       const joiStub = require('joi')
 
       const joiObjectIdStub = function() {
-        return function() {
-          return Joi.string().valid('objectId')
-        }
+        return Joi.string().valid('objectId')
       }
+      joiMongooseHelperStub.joiObjectId = joiObjectIdStub
       const restHelperFactory = proxyquire(
         '../../utilities/rest-helper-factory',
         {
           './handler-helper-factory': handlerHelperStubWrapper,
           './query-helper': queryHelperStub,
           './joi-mongoose-helper': joiMongooseHelperStub,
-          joi: joiStub,
-          'joi-objectid': joiObjectIdStub
+          joi: joiStub
         }
       )(Log, mongoose, server)
 

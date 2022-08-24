@@ -1,10 +1,10 @@
 'use strict'
 
 const Joi = require('joi')
-Joi.objectId = require('joi-objectid')(Joi)
 const _ = require('lodash')
 const assert = require('assert')
 const joiMongooseHelper = require('./joi-mongoose-helper')
+Joi.objectId = joiMongooseHelper.joiObjectId
 const validationHelper = require('./validation-helper')
 const authHelper = require('./auth-helper')
 const chalk = require('chalk')
