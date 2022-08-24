@@ -49,14 +49,41 @@ on:
 #       - run: echo "machine github.com login ${GH_NAME} password ${GH_TOKEN}" > ~/.netrc
 #       - run: cd website && yarn install && GIT_USER="${GH_NAME}" yarn run publish-gh-pages
 
+# jobs:
+#   deploy:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - uses: actions/checkout@master
+#       - uses: redkubes/docusaurus-deploy-action@v1
+#         with:
+#           source-folder: website
+#           git-user: JKHeadley
+#           git-password: ${{ secrets.GITHUB_TOKEN }}
+#           deployment-branch: gh-pages
+
 jobs:
-  deploy:
+  publish:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@master
-      - uses: redkubes/docusaurus-deploy-action@v1
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - name: Check out repo
+        uses: actions/checkout@v2
+      # Node is required for npm
+      - name: Set up Node
+        uses: actions/setup-node@v2
         with:
-          source-folder: website
-          git-user: JKHeadley
-          git-password: ${{ secrets.GITHUB_TOKEN }}
-          deployment-branch: gh-pages
+          node-version: "12.14.1"
+      # Install and build Docusaurus website
+      - name: Build Docusaurus website
+        run: |
+          cd website
+          yarn install 
+          yarn run build
+      - name: Deploy to GitHub Pages
+        if: success()
+        uses: crazy-max/ghaction-github-pages@v2
+        with:
+          target_branch: gh-pages
+          build_dir: website/build
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
