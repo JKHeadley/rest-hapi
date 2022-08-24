@@ -37,6 +37,9 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 12.14.1
+      - uses: oleksiyrudenko/gha-git-credentials@v2-latest
+        with:
+          token: '${{ secrets.GITHUB_TOKEN }}'
       - run: echo "${GH_NAME}"
       - run: echo $GH_NAME
       - run: echo "${GH_EMAIL}"
