@@ -26,25 +26,37 @@ on:
         required: true
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
+# jobs:
+#   deploy-docs:
+
+#     runs-on: ubuntu-latest
+
+#     steps:
+#       - uses: actions/checkout@v3
+#       - name: Deploy docs
+#         uses: actions/setup-node@v3
+#         with:
+#           node-version: 12.14.1
+#       - uses: oleksiyrudenko/gha-git-credentials@v2-latest
+#         with:
+#           token: '${{ secrets.GITHUB_TOKEN }}'
+#       - run: echo "${GH_NAME}"
+#       - run: echo $GH_NAME
+#       - run: echo "${GH_EMAIL}"
+#       - run: echo $GH_EMAIL
+#       - run: git config --global user.name "${GH_NAME}"
+#       - run: git config --global user.email "${GH_EMAIL}"
+#       - run: echo "machine github.com login ${GH_NAME} password ${GH_TOKEN}" > ~/.netrc
+#       - run: cd website && yarn install && GIT_USER="${GH_NAME}" yarn run publish-gh-pages
+
 jobs:
-  deploy-docs:
-
+  deploy:
     runs-on: ubuntu-latest
-
     steps:
-      - uses: actions/checkout@v3
-      - name: Deploy docs
-        uses: actions/setup-node@v3
+      - uses: actions/checkout@master
+      - uses: redkubes/docusaurus-deploy-action@v1
         with:
-          node-version: 12.14.1
-      - uses: oleksiyrudenko/gha-git-credentials@v2-latest
-        with:
-          token: '${{ secrets.GITHUB_TOKEN }}'
-      - run: echo "${GH_NAME}"
-      - run: echo $GH_NAME
-      - run: echo "${GH_EMAIL}"
-      - run: echo $GH_EMAIL
-      - run: git config --global user.name "${GH_NAME}"
-      - run: git config --global user.email "${GH_EMAIL}"
-      - run: echo "machine github.com login ${GH_NAME} password ${GH_TOKEN}" > ~/.netrc
-      - run: cd website && yarn install && GIT_USER="${GH_NAME}" yarn run publish-gh-pages
+          source-folder: website
+          git-user: JKHeadley
+          git-password: ${{ secrets.GITHUB_TOKEN }}
+          deployment-branch: gh-pages
