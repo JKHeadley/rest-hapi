@@ -1,0 +1,246 @@
+<!DOCTYPE html><html lang="en"><head><meta charSet="utf-8"/><meta http-equiv="X-UA-Compatible" content="IE=edge"/><title>Authorization · rest-hapi</title><meta name="viewport" content="width=device-width, initial-scale=1.0"/><meta name="generator" content="Docusaurus"/><meta name="description" content="## Route authorization"/><meta name="docsearch:version" content="1.8.x"/><meta name="docsearch:language" content="en"/><meta property="og:title" content="Authorization · rest-hapi"/><meta property="og:type" content="website"/><meta property="og:url" content="https://resthapi.com/index.html"/><meta property="og:description" content="## Route authorization"/><meta property="og:image" content="https://resthapi.com/img/rest-hapi-logo-alt.png"/><meta name="twitter:card" content="summary"/><meta name="twitter:image" content="https://resthapi.com/img/rest-hapi-logo-alt.png"/><link rel="shortcut icon" href="/img/rest-hapi-logo-alt.png"/><link rel="stylesheet" href="https://cdn.jsdelivr.net/docsearch.js/1/docsearch.min.css"/><link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/atom-one-dark.min.css"/><link rel="alternate" type="application/atom+xml" href="https://resthapi.com/blog/atom.xml" title="rest-hapi Blog ATOM Feed"/><link rel="alternate" type="application/rss+xml" href="https://resthapi.com/blog/feed.xml" title="rest-hapi Blog RSS Feed"/><script>
+              (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+              (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+              m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+              })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+              ga('create', 'UA-120977991-1', 'auto');
+              ga('send', 'pageview');
+            </script><script type="text/javascript" src="https://buttons.github.io/buttons.js"></script><script src="https://unpkg.com/vanilla-back-to-top@7.1.14/dist/vanilla-back-to-top.min.js"></script><script>
+        document.addEventListener('DOMContentLoaded', function() {
+          addBackToTop(
+            {"zIndex":1000}
+          )
+        });
+        </script><script src="/js/scrollSpy.js"></script><link rel="stylesheet" href="/css/main.css"/><script src="/js/codetabs.js"></script></head><body class="sideNavVisible separateOnPageNav"><div class="fixedHeaderContainer"><div class="headerWrapper wrapper"><header><a href="/"><img class="logo" src="/img/rest-hapi-logo.png" alt="rest-hapi"/><h2 class="headerTitleWithLogo">rest-hapi</h2></a><a href="/versions.html"><h3>1.8.x</h3></a><div class="navigationWrapper navigationSlider"><nav class="slidingNav"><ul class="nav-site nav-site-internal"><li class="siteNavGroupActive"><a href="/docs/1.8.x/quick-start.html" target="_self">Docs</a></li><li class=""><a href="/help.html" target="_self">Help</a></li><li class=""><a href="/blog/" target="_self">Blog</a></li><li class=""><a href="/users.html" target="_self">Users</a></li><li class=""><a href="https://github.com/JKHeadley/rest-hapi" target="_self">GitHub</a></li><li class="navSearchWrapper reactNavSearchWrapper"><input type="text" id="search_input_react" placeholder="Search" title="Search"/></li></ul></nav></div></header></div></div><div class="navPusher"><div class="docMainWrapper wrapper"><div class="docsNavContainer" id="docsNav"><nav class="toc"><div class="toggleNav"><section class="navWrapper wrapper"><div class="navBreadcrumb wrapper"><div class="navToggle" id="navToggler"><div class="hamburger-menu"><div class="line1"></div><div class="line2"></div><div class="line3"></div></div></div><h2><i>›</i><span>Usage</span></h2><div class="tocToggler" id="tocToggler"><i class="icon-toc"></i></div></div><div class="navGroups"><div class="navGroup"><h3 class="navGroupCategoryTitle">Getting Started</h3><ul class=""><li class="navListItem"><a class="navItem" href="/docs/1.8.x/quick-start.html">Quick Start</a></li><li class="navListItem"><a class="navItem" href="/docs/1.8.x/introduction.html">Introduction</a></li><li class="navListItem"><a class="navItem" href="/docs/1.8.x/swagger-documentation.html">Swagger Documentation</a></li></ul></div><div class="navGroup"><h3 class="navGroupCategoryTitle">Usage</h3><ul class=""><li class="navListItem"><a class="navItem" href="/docs/1.8.x/configuration.html">Configuration</a></li><li class="navListItem"><a class="navItem" href="/docs/1.8.x/creating-endpoints.html">Creating Endpoints</a></li><li class="navListItem"><a class="navItem" href="/docs/1.8.x/associations.html">Assocations</a></li><li class="navListItem"><a class="navItem" href="/docs/1.8.x/route-customization.html">Route Customization</a></li><li class="navListItem"><a class="navItem" href="/docs/1.8.x/querying.html">Querying</a></li><li class="navListItem"><a class="navItem" href="/docs/1.8.x/duplicate-fields.html">Duplicate Fields</a></li><li class="navListItem"><a class="navItem" href="/docs/1.8.x/validation.html">Validation</a></li><li class="navListItem"><a class="navItem" href="/docs/1.8.x/middleware.html">Middleware</a></li><li class="navListItem"><a class="navItem" href="/docs/1.8.x/authentication.html">Authentication</a></li><li class="navListItem navListItemActive"><a class="navItem" href="/docs/1.8.x/authorization.html">Authorization</a></li><li class="navListItem"><a class="navItem" href="/docs/1.8.x/audit-logs.html">Audit Logs</a></li><li class="navListItem"><a class="navItem" href="/docs/1.8.x/policies.html">Policies</a></li><li class="navListItem"><a class="navItem" href="/docs/1.8.x/mongoose-wrapper-methods.html">Mongoose Wrapper Methods</a></li><li class="navListItem"><a class="navItem" href="/docs/1.8.x/soft-delete.html">Soft Delete</a></li><li class="navListItem"><a class="navItem" href="/docs/1.8.x/metadata.html">Metadata</a></li><li class="navListItem"><a class="navItem" href="/docs/1.8.x/model-generation.html">Model Generation</a></li></ul></div><div class="navGroup"><h3 class="navGroupCategoryTitle">Other</h3><ul class=""><li class="navListItem"><a class="navItem" href="/docs/1.8.x/testing.html">Testing</a></li><li class="navListItem"><a class="navItem" href="/docs/1.8.x/questions.html">Questions</a></li><li class="navListItem"><a class="navItem" href="/docs/1.8.x/support.html">Support</a></li></ul></div></div></section></div><script>
+            var coll = document.getElementsByClassName('collapsible');
+            var checkActiveCategory = true;
+            for (var i = 0; i < coll.length; i++) {
+              var links = coll[i].nextElementSibling.getElementsByTagName('*');
+              if (checkActiveCategory){
+                for (var j = 0; j < links.length; j++) {
+                  if (links[j].classList.contains('navListItemActive')){
+                    coll[i].nextElementSibling.classList.toggle('hide');
+                    coll[i].childNodes[1].classList.toggle('rotate');
+                    checkActiveCategory = false;
+                    break;
+                  }
+                }
+              }
+
+              coll[i].addEventListener('click', function() {
+                var arrow = this.childNodes[1];
+                arrow.classList.toggle('rotate');
+                var content = this.nextElementSibling;
+                content.classList.toggle('hide');
+              });
+            }
+
+            document.addEventListener('DOMContentLoaded', function() {
+              createToggler('#navToggler', '#docsNav', 'docsSliderActive');
+              createToggler('#tocToggler', 'body', 'tocActive');
+
+              var headings = document.querySelector('.toc-headings');
+              headings && headings.addEventListener('click', function(event) {
+                var el = event.target;
+                while(el !== headings){
+                  if (el.tagName === 'A') {
+                    document.body.classList.remove('tocActive');
+                    break;
+                  } else{
+                    el = el.parentNode;
+                  }
+                }
+              }, false);
+
+              function createToggler(togglerSelector, targetSelector, className) {
+                var toggler = document.querySelector(togglerSelector);
+                var target = document.querySelector(targetSelector);
+
+                if (!toggler) {
+                  return;
+                }
+
+                toggler.onclick = function(event) {
+                  event.preventDefault();
+
+                  target.classList.toggle(className);
+                };
+              }
+            });
+        </script></nav></div><div class="container mainContainer docsContainer"><div class="wrapper"><div class="post"><header class="postHeader"><a class="edit-page-link button" href="https://github.com/JKHeadley/rest-hapi/tree/master/docs/authorization.md" target="_blank" rel="noreferrer noopener">Edit</a><h1 id="__docusaurus" class="postHeaderTitle">Authorization</h1></header><article><div><span><h2><a class="anchor" aria-hidden="true" id="route-authorization"></a><a href="#route-authorization" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Route authorization</h2>
+<p>rest-hapi takes advantage of the <code>scope</code> property within the <code>auth</code> route config object of a hapi endpoint. When a request is made, an endpoint's scope (if it is populated) is compared to the user's scope (stored in <code>request.auth.credentials.scope</code>) to determine if the requesting user is authorized to access the endpoint. Below is an quote from the hapi docs describing scopes in more detail:</p>
+<blockquote>
+<p>scope - the application scope required to access the route. Value can be a scope string or an array of scope strings. The authenticated credentials object scope property must contain at least one of the scopes defined to access the route. If a scope string begins with a + character, that scope is required. If a scope string begins with a ! character, that scope is forbidden. For example, the scope ['!a', '+b', 'c', 'd'] means the incoming request credentials' scope must not include 'a', must include 'b', and must include one of 'c' or 'd'. You may also access properties on the request object (query and params) to populate a dynamic scope by using {} characters around the property name, such as 'user-{params.id}'. Defaults to false (no scope requirements).</p>
+</blockquote>
+<p>In rest-hapi, each generated endpoint has its <code>scope</code> property set based on model properties within the <code>routeOptions.routeScope</code> object. There are three types of scopes that can be set: a root scope property, action scope properties, and association scope properties. A description of these can be seen below.</p>
+<p>The first type of scope is a <code>rootScope</code> property that, when set, is applied to all generated endpoints for that model.</p>
+<p>The second is an action specific scope property that only applies to endpoints corresponding with the action. A list of these action scope properties can be seen below:</p>
+<ul>
+<li><code>createScope</code>: value is added to the scope of any endpoint that creates model documents</li>
+<li><code>readScope</code>: value is added to the scope of any endpoint that retrieves documents and can be queried against</li>
+<li><code>updateScope</code>: value is added to the scope of any endpoint that directly updates documents</li>
+<li><code>deleteScope</code>: value is added to the scope of any endpoint that deletes documents</li>
+<li><code>associateScope</code>: value is added to the scope of any endpoint that modifies an association</li>
+</ul>
+<p>The third type of scope is property that relates to a specific association action, with an action prefix of <code>add</code>, <code>remove</code>, or <code>get</code>.  These scope properties are specific to the associations defined in the model and take the form of:</p>
+<p>-{action}{modelName}{associationName}Scope</p>
+<p>In the example below, users with the <code>Admin</code> scope in their authentication credentials can access all of the generated endpoints for the user model, users with the <code>User</code> scope are granted read access for the user model, and users with the <code>Project Lead</code> scope are capable of adding group associations to a user document.</p>
+<pre><code class="hljs css language-javascript"><span class="hljs-comment">// models/user.model.js</span>
+<span class="hljs-built_in">module</span>.exports = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">mongoose</span>) </span>{
+  <span class="hljs-keyword">let</span> modelName = <span class="hljs-string">"user"</span>;
+  <span class="hljs-keyword">let</span> Types = mongoose.Schema.Types;
+  <span class="hljs-keyword">let</span> Schema = <span class="hljs-keyword">new</span> mongoose.Schema({
+    <span class="hljs-attr">email</span>: {
+      <span class="hljs-attr">type</span>: Types.String,
+      <span class="hljs-attr">required</span>: <span class="hljs-literal">true</span>,
+      <span class="hljs-attr">unique</span>: <span class="hljs-literal">true</span>
+    },
+    <span class="hljs-attr">password</span>: {
+      <span class="hljs-attr">type</span>: Types.String,
+      <span class="hljs-attr">required</span>: <span class="hljs-literal">true</span>,
+      <span class="hljs-attr">exclude</span>: <span class="hljs-literal">true</span>,
+      <span class="hljs-attr">allowOnUpdate</span>: <span class="hljs-literal">false</span>
+    }
+  });
+  
+  Schema.statics = {
+    <span class="hljs-attr">collectionName</span>: modelName
+    <span class="hljs-attr">routeOptions</span>: {
+      <span class="hljs-attr">routeScope</span>: {
+        <span class="hljs-attr">rootScope</span>: <span class="hljs-string">"Admin"</span>,
+        <span class="hljs-attr">readScope</span>: <span class="hljs-string">"User"</span>,
+        <span class="hljs-attr">addUserGroupsScope</span>: <span class="hljs-string">"Project Lead"</span>
+      },
+      <span class="hljs-attr">associations</span>: {
+        <span class="hljs-attr">groups</span>: {
+          <span class="hljs-attr">type</span>: <span class="hljs-string">"MANY_MANY"</span>,
+          <span class="hljs-attr">model</span>: <span class="hljs-string">"group"</span>,
+          <span class="hljs-attr">alias</span>: <span class="hljs-string">"team"</span>
+        }
+      }
+    }
+  };
+  
+  <span class="hljs-keyword">return</span> Schema;
+};r
+</code></pre>
+<blockquote>
+<p><strong>NOTE:</strong> Use of route scope properties requires that an authentication strategy be defined and implemented. If the <a href="/docs/1.8.x/configuration.html#authstrategy"><code>config.authStrategy</code></a> property is set to <code>false</code>, then no route scopes will be applied, even if they are defined in the model.  For an example of route scopes in action, check out <a href="https://github.com/JKHeadley/appy">appy</a>:</p>
+</blockquote>
+<h2><a class="anchor" aria-hidden="true" id="generating-route-scopes"></a><a href="#generating-route-scopes" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Generating route scopes</h2>
+<p>If the <a href="/docs/1.8.x/configuration.html#generateroutescopes"><code>config.generateRouteScopes</code></a> property is set to true, then generated endpoints will come pre-defined with scope values.  These values will exist in addition to any route scope values defined in the <code>routeOptions.routeScope</code> object. For instance, the tables below show two possibilities for the user model scope: the first is with no model route scope defined, and the second is with a model route scope defined as in the example above.</p>
+<h3><a class="anchor" aria-hidden="true" id="without-model-route-scope-defined"></a><a href="#without-model-route-scope-defined" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Without Model Route Scope Defined</h3>
+<table>
+<thead>
+<tr><th>Endpoint</th><th>Scope</th></tr>
+</thead>
+<tbody>
+<tr><td>DELETE /user</td><td>[ 'root', '!-root', 'user', '!-user', 'delete', '!-delete', 'deleteUser', '!-deleteUser' ]</td></tr>
+<tr><td>POST /user</td><td>[ 'root', '!-root', 'user', '!-user', 'create', '!-create', 'createUser', '!-createUser' ]</td></tr>
+<tr><td>GET /user</td><td>[ 'root', '!-root', 'user', '!-user', 'read', '!-read', 'readUser', !-'readUser' ]</td></tr>
+<tr><td>DELETE /user/{_id}</td><td>[ 'root', '!-root', 'user', '!-user', 'delete', '!-delete', 'deleteUser', '!-deleteUser' ]</td></tr>
+<tr><td>GET /user/{_id}</td><td>[ 'root', '!-root', 'user', '!-user', 'read', '!-read', 'readUser', '!-readUser' ]</td></tr>
+<tr><td>PUT /user/{_id}</td><td>[ 'root', '!-root', 'user', '!-user', 'update' '!-update', 'updateUser', '!-updateUser' ]</td></tr>
+<tr><td>GET /user/{ownerId}/group</td><td>[ 'root', '!-root', 'user', '!-user', 'read', '!-read', 'readUser', '!-readUser', 'getUserGroups', '!-getUserGroups' ]</td></tr>
+<tr><td>POST /user/{ownerId}/group</td><td>[ 'root', '!-root', 'user', '!-user', 'associate', '!-associate', 'associateUser', '!-associateUser', 'addUserGroups', '!-addUserGroups' ]</td></tr>
+<tr><td>DELETE /user/{ownerId}/group</td><td>[ 'root', '!-root', 'user', '!-user', 'associate', '!-associate', 'associateUser', '!-associateUser', 'removeUserGroups', '!-removeUserGroups' ]</td></tr>
+<tr><td>PUT /user/{ownerId}/group/{childId}</td><td>[ 'root', '!-root', 'user', '!-user', 'associate', '!-associate', 'associateUser', '!-associateUser', 'addUserGroups', '!-addUserGroups' ]</td></tr>
+<tr><td>DELETE /user/{ownerId}/group/{childId}</td><td>[ 'root', '!-root', 'user', '!-user', 'associate', '!-associate', 'associateUser', '!-associateUser', 'removeUserGroups', '!-removeUserGroups' ]</td></tr>
+</tbody>
+</table>
+<h3><a class="anchor" aria-hidden="true" id="with-model-route-scope-defined"></a><a href="#with-model-route-scope-defined" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>With Model Route Scope Defined</h3>
+<table>
+<thead>
+<tr><th>Endpoint</th><th>Scope</th></tr>
+</thead>
+<tbody>
+<tr><td>DELETE /user</td><td>[ 'Admin', 'root', '!-root', 'user', '!-user', 'delete', '!-delete', 'deleteUser', '!-deleteUser' ]</td></tr>
+<tr><td>POST /user</td><td>[ 'Admin', 'root', '!-root', 'user', '!-user', 'create', '!-create', 'createUser', '!-createUser' ]</td></tr>
+<tr><td>GET /user</td><td>[ 'Admin', 'User', 'root', '!-root', 'user', '!-user', 'read', '!-read', 'readUser', !-'readUser' ]</td></tr>
+<tr><td>DELETE /user/{_id}</td><td>[ 'Admin', 'root', '!-root', 'user', '!-user', 'delete', '!-delete', 'deleteUser', '!-deleteUser' ]</td></tr>
+<tr><td>GET /user/{_id}</td><td>[ 'Admin', 'User', 'root', '!-root', 'user', '!-user', 'read', '!-read', 'readUser', '!-readUser' ]</td></tr>
+<tr><td>PUT /user/{_id}</td><td>[ 'Admin', 'root', '!-root', 'user', '!-user', 'update' '!-update', 'updateUser', '!-updateUser' ]</td></tr>
+<tr><td>GET /user/{ownerId}/group</td><td>[ 'Admin', 'User', 'root', '!-root', 'user', '!-user', 'read', '!-read', 'readUser', '!-readUser', 'getUserGroups', '!-getUserGroups' ]</td></tr>
+<tr><td>POST /user/{ownerId}/group</td><td>[ 'Admin', 'Project Lead', 'root', '!-root', 'user', '!-user', 'associate', '!-associate', 'associateUser', '!-associateUser', 'addUserGroups', '!-addUserGroups' ]</td></tr>
+<tr><td>DELETE /user/{ownerId}/group</td><td>[ 'Admin', 'root', '!-root', 'user', '!-user', 'associate', '!-associate', 'associateUser', '!-associateUser', 'removeUserGroups', '!-removeUserGroups' ]</td></tr>
+<tr><td>PUT /user/{ownerId}/group/{childId}</td><td>[ 'Admin', 'Project Lead', 'root', '!-root', 'user', '!-user', 'associate', '!-associate', 'associateUser', '!-associateUser', 'addUserGroups', '!-addUserGroups' ]</td></tr>
+<tr><td>DELETE /user/{ownerId}/group/{childId}</td><td>[ 'Admin', 'root', '!-root', 'user', '!-user', 'associate', '!-associate', 'associateUser', '!-associateUser', 'removeUserGroups', '!-removeUserGroups' ]</td></tr>
+</tbody>
+</table>
+<h2><a class="anchor" aria-hidden="true" id="disabling-route-scopes"></a><a href="#disabling-route-scopes" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Disabling route scopes</h2>
+<p>Authentication (and as such Authorization) can be disabled for certain routes by adding a property under a model's <code>routeOptions</code> property with the value set to <code>false</code>.  Below is a list of options and their effects:</p>
+<table>
+<thead>
+<tr><th>Property</th><th>Effect</th></tr>
+</thead>
+<tbody>
+<tr><td>createAuth: false</td><td>auth is disabled for any endpoint that creates model documents</td></tr>
+<tr><td>readAuth: false</td><td>auth is disabled for any endpoint that retrieves documents and can be queried against</td></tr>
+<tr><td>updateAuth: false</td><td>auth is disabled for any endpoint that directly updates documents</td></tr>
+<tr><td>deleteAuth: false</td><td>auth is disabled for any endpoint that deletes documents</td></tr>
+<tr><td>associateAuth: false</td><td>auth is disabled for any endpoint that modifies an association</td></tr>
+</tbody>
+</table>
+<h2><a class="anchor" aria-hidden="true" id="document-authorization"></a><a href="#document-authorization" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Document authorization</h2>
+<p>In addition to route-level authorization, rest-hapi supports document-specific authorization. For consistency, document authorization is implemented through the use of scopes similar to the hapi scope system. To enable document scopes, <a href="/docs/1.8.x/configuration.html#enabledocumentscopes"><code>config.enableDocumentScopes</code></a> must be set to <code>true</code>. Once set, the <code>scope</code> field shown below will be added to the schema of every model:</p>
+<pre><code class="hljs css language-javascript">{
+   <span class="hljs-attr">scope</span>: {
+     <span class="hljs-attr">rootScope</span>: {
+       <span class="hljs-attr">type</span>: [Types.String]
+     },
+     <span class="hljs-attr">readScope</span>: {
+       <span class="hljs-attr">type</span>: [Types.String]
+     },
+     <span class="hljs-attr">updateScope</span>: {
+       <span class="hljs-attr">type</span>: [Types.String]
+     },
+     <span class="hljs-attr">deleteScope</span>: {
+       <span class="hljs-attr">type</span>: [Types.String]
+     },
+     <span class="hljs-attr">associateScope</span>: {
+       <span class="hljs-attr">type</span>: [Types.String]
+     },
+     <span class="hljs-attr">type</span>: Types.Object,
+     <span class="hljs-attr">allowOnUpdate</span>: <span class="hljs-literal">false</span>,
+     <span class="hljs-attr">allowOnCreate</span>: <span class="hljs-literal">false</span>
+   }
+};
+</code></pre>
+<p>If a document's <code>scope</code> property is populated with values, it will be compared to a requesting user's scope to determine whether the user is authorized to perform a certain action on the document. For example, if the document's <code>scope</code> property looked like the following:</p>
+<pre><code class="hljs css language-javascript">scope: {
+   <span class="hljs-attr">rootScope</span>: [<span class="hljs-string">'Admin'</span>]
+   <span class="hljs-attr">readScope</span>: [<span class="hljs-string">'User'</span>]
+}
+</code></pre>
+<p>Then users with the <code>Admin</code> scope value would have full access to the document while users with the <code>User</code> scope value would only have read access. Users without either scope value would have no access to the document.</p>
+<p>rest-hapi provides several options for populating a document's scope. One option is through the <code>routeOptions.documentScope</code> property. Any values added to this property will be copied over to a document's <code>scope</code> property upon its creation.</p>
+<p>Another option is to set <a href="/docs/1.8.x/configuration.html#authorizedocumentcreator"><code>config.authorizeDocumentCreator</code></a> to <code>true</code>. Setting this option will add the _id of the user who created the document to the document's <code>rootScope</code> property (in the form of <code>user-{_id}</code>, where <code>{_id}</code> is the _id of the user). Assuming <code>user-{_id}</code> is in the user's scope, this will grant the user full access to any document the user creates. Consider the example document below created by a user with an _id of <code>59d93c673401e16f0f66a5d4</code>:</p>
+<pre><code class="hljs css language-javascript">name: <span class="hljs-string">"Test doc"</span>,
+<span class="hljs-attr">scope</span>: {
+   <span class="hljs-attr">rootScope</span>: [<span class="hljs-string">'user-59d93c673401e16f0f66a5d4'</span>]
+}
+</code></pre>
+<p>This document scope will allow the user with <code>user-59d93c673401e16f0f66a5d4</code> in their scope full access while all other users will be denied.</p>
+<p>For more details and alternatives to this option see the <a href="/docs/1.8.x/configuration.html#authorizedocumentcreator">config docs</a>.</p>
+</span></div></article></div><div class="docs-prevnext"><a class="docs-prev button" href="/docs/1.8.x/authentication.html"><span class="arrow-prev">← </span><span>Authentication</span></a><a class="docs-next button" href="/docs/1.8.x/audit-logs.html"><span>Audit Logs</span><span class="arrow-next"> →</span></a></div></div></div><nav class="onPageNav"><ul class="toc-headings"><li><a href="#route-authorization">Route authorization</a></li><li><a href="#generating-route-scopes">Generating route scopes</a><ul class="toc-headings"><li><a href="#without-model-route-scope-defined">Without Model Route Scope Defined</a></li><li><a href="#with-model-route-scope-defined">With Model Route Scope Defined</a></li></ul></li><li><a href="#disabling-route-scopes">Disabling route scopes</a></li><li><a href="#document-authorization">Document authorization</a></li></ul></nav></div><footer class="nav-footer" id="footer"><section class="sitemap"><a href="/" class="nav-home"><img src="/img/rest-hapi-logo-alt.png" alt="rest-hapi" width="66" height="58"/></a><div><h5>Docs</h5><a href="/docs/quick-start.html">Getting Started</a><a href="/docs/configuration.html">Usage</a><a href="/docs/testing.html">Other</a></div><div><h5>Community</h5><a href="/en/users.html">User Showcase</a><a href="https://stackoverflow.com/search?q=rest-hapi" target="_blank" rel="noreferrer noopener">Stack Overflow</a><a href="https://gitter.im/rest-hapi">Project Chat</a><a href="https://opencollective.com/rest-hapi">Donate</a><a href="/blog">Blog</a></div><div><h5>Social</h5><div class="social"><a class="github-button" href="https://github.com/JKHeadley/rest-hapi" data-count-href="/JKHeadley/rest-hapi/stargazers" data-show-count="true" data-count-aria-label="# stargazers on GitHub" aria-label="Star this project on GitHub">rest-hapi</a></div><div class="social"><a href="https://twitter.com/intent/tweet?text=Generate%20RESTful%20API%20endpoints%20with%20rest-hapi!&amp;url=https://resthapi.com&amp;via=resthapi&amp;hashtags=mongoosejs,hapijs,nodejs,MongoDB"><img alt="rest-hapi tweet" src="https://img.shields.io/twitter/url/http/shields.io.svg?style=social"/></a></div><div class="social"><a href="https://twitter.com/resthapi" class="twitter-follow-button">Follow @resthapi</a></div><div class="social"><div class="fb-like" data-href="https://resthapi.com" data-layout="standard" data-share="true" data-width="225" data-show-faces="false"></div></div></div></section><section class="copyright">Copyright © 2022 Justin Headley</section></footer></div><script type="text/javascript" src="https://cdn.jsdelivr.net/docsearch.js/1/docsearch.min.js"></script><script>window.fbAsyncInit = function() {FB.init({appId:'2157963944448868',xfbml:true,version:'v2.7'});};(function(d, s, id){var js, fjs = d.getElementsByTagName(s)[0];if (d.getElementById(id)) {return;}js = d.createElement(s); js.id = id;js.src = '//connect.facebook.net/en_US/sdk.js';fjs.parentNode.insertBefore(js, fjs);}(document, 'script','facebook-jssdk'));
+                </script><script>window.twttr=(function(d,s, id){var js,fjs=d.getElementsByTagName(s)[0],t=window.twttr||{};if(d.getElementById(id))return t;js=d.createElement(s);js.id=id;js.src='https://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js, fjs);t._e = [];t.ready = function(f) {t._e.push(f);};return t;}(document, 'script', 'twitter-wjs'));</script><script>
+                document.addEventListener('keyup', function(e) {
+                  if (e.target !== document.body) {
+                    return;
+                  }
+                  // keyCode for '/' (slash)
+                  if (e.keyCode === 191) {
+                    const search = document.getElementById('search_input_react');
+                    search && search.focus();
+                  }
+                });
+              </script><script>
+              var search = docsearch({
+                
+                apiKey: '7457aa83151e8c66250259e3571ac308',
+                indexName: 'rest_hapi',
+                inputSelector: '#search_input_react',
+                algoliaOptions: {}
+              });
+            </script></body></html>

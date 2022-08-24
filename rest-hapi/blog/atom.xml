@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+    <id>https://resthapi.com/blog</id>
+    <title>rest-hapi Blog</title>
+    <updated>2018-06-26T06:00:00.000Z</updated>
+    <generator>https://github.com/jpmonette/feed</generator>
+    <link rel="alternate" href="https://resthapi.com/blog"/>
+    <subtitle>The best place to stay up-to-date with the latest rest-hapi news and events.</subtitle>
+    <logo>https://resthapi.com/img/rest-hapi-logo.png</logo>
+    <rights>Copyright © 2022 Justin Headley</rights>
+    <entry>
+        <title type="html"><![CDATA[How to build powerful REST APIs blazingly fast with Node.js]]></title>
+        <id>https://resthapi.com/blog/2018/06/26/How-To-Build-Powerful-APIs-Blazingly-Fast-With-Nodejs.html</id>
+        <link href="https://resthapi.com/blog/2018/06/26/How-To-Build-Powerful-APIs-Blazingly-Fast-With-Nodejs.html"/>
+        <updated>2018-06-26T06:00:00.000Z</updated>
+        <summary type="html"><![CDATA[<blockquote>
+<p>Original post can be found <a href="https://medium.com/@headley.justin/how-to-build-powerful-rest-apis-blazingly-fast-with-node-js-86d6e55a5b34">here on Medium</a></p>
+</blockquote>
+<p align="center"><img width="3888" height="2592" src="https://cdn-images-1.medium.com/max/2000/1*DYKqPVAB617KRYTMK7-34A.jpeg" alt="fast red car"></a></p>
+<hr>
+<p>Let’s face it, if you’re a web developer, you deal with APIs. Whether you write your own or use someone else’s, it’s just part of the job. REST APIs in particular are very common place. Unfortunately when it comes to the <a href="https://twitter.com/nodejs/status/915607972918603776">wild west world</a> of Javascript and Node.js, <a href="https://hackernoon.com/restful-api-designing-guidelines-the-best-practices-60e1d954e7c9">standards and good practice</a> in writing RESTful APIs can sometimes get thrown out the window.</p>
+]]></summary>
+        <author>
+            <name>Justin Headley</name>
+            <uri>http://twitter.com/JKHeadley</uri>
+        </author>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[The Problem With MongoDB]]></title>
+        <id>https://resthapi.com/blog/2017/02/17/The-Problem-With-MongoDB.html</id>
+        <link href="https://resthapi.com/blog/2017/02/17/The-Problem-With-MongoDB.html"/>
+        <updated>2017-02-17T06:00:00.000Z</updated>
+        <summary type="html"><![CDATA[<blockquote>
+<p>Original post can be found <a href="https://hackernoon.com/the-problem-with-mongodb-d255e897b4b">here on Medium</a></p>
+</blockquote>
+<p align="center"><img width="325" height="244" src="https://cdn-images-1.medium.com/max/600/1*KHIQHTqhFobGU_q0cL6orw.png" alt="mongodb image"></a></p>
+<hr>
+<p>When building a web app (or any app) that needs to store data, one of the biggest decisions to make is what database to use. In the world of start-ups, where MVP's and agile development reigns, NoSQL databases have grown in <a href="http://www.techrepublic.com/article/nosql-databases-eat-into-the-relational-database-market/">increasing popularity</a> due largely to their <a href="http://www.ibmbigdatahub.com/blog/rise-nosql-databases">flexible</a> nature and ease of use. Among them MongoDB stands out by far as the most <a href="http://db-engines.com/en/ranking">popular</a>. <a href="http://mongoosejs.com/">Mongoose</a>, a fantastic ODM for MongoDB in Nodejs, has also seen a rise in popularity, having almost <a href="https://npm-stat.com/charts.html?package=mongoose&amp;from=2012-01-01&amp;to=2016-12-31">doubled</a> in number of npm downloads from 2015 to 2016.
+For web apps using Nodejs/javascript, MongoDB is particularly nice since data is stored using JSON objects, making reading and writing data fluid and natural. However, despite all these great advantages, MongoDB still lacks one of the most useful features found in relational databases, namely…relationships.</p>
+]]></summary>
+        <author>
+            <name>Justin Headley</name>
+            <uri>http://twitter.com/JKHeadley</uri>
+        </author>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[The Problem With APIs]]></title>
+        <id>https://resthapi.com/blog/2016/11/19/The-Problem-With-APIs.html</id>
+        <link href="https://resthapi.com/blog/2016/11/19/The-Problem-With-APIs.html"/>
+        <updated>2016-11-19T06:00:00.000Z</updated>
+        <summary type="html"><![CDATA[<blockquote>
+<p>Original post can be found <a href="https://hackernoon.com/the-problem-with-apis-331f08f7a39c">here on Medium</a></p>
+</blockquote>
+<p align="center"><img width="525" height="525" src="https://cdn-images-1.medium.com/max/600/1*lAR9Uh_gJ7dp23e0vhy5Hg.png" alt="api image"></a></p>
+<p>These days, if you are a developer working on a web or mobile application, its likely you're going to need to communicate with a server for specific services or to access a database. This means implementing an API (usually a RESTful API) will be a critical part of developing your app. Unfortunately, RESTful APIs can take many different shapes and forms, even though most of them accomplish very similar functions. This is especially true in the world of javascript, where developers have free range to structure their code just about however they please. If you've worked on multiple API projects, its likely you've had the experience of writing the same API code a thousand different times and possibly a thousand different ways. There are some awesome tools out there that make this process a lot less painful, such as server frameworks like hapi and express or ODM/ORMs like mongoose and sequelize, however even with these tools there is a substantial amount of code involved with setting up even the most basic CRUD API endpoints specific to a project, especially if you plan on implementing standard features such as API documentation and validation. While all these tools, options, and features allow for great control over your API, they can become burdensome if not overwhelming, especially if you are trying to rapidly develop your API for a proof of concept/minimum viable product, and even more so if you are new to developing APIs.</p>
+]]></summary>
+        <author>
+            <name>Justin Headley</name>
+            <uri>http://twitter.com/JKHeadley</uri>
+        </author>
+    </entry>
+</feed>

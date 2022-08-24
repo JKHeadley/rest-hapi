@@ -1,0 +1,234 @@
+<!DOCTYPE html><html lang="en"><head><meta charSet="utf-8"/><meta http-equiv="X-UA-Compatible" content="IE=edge"/><title>Querying · rest-hapi</title><meta name="viewport" content="width=device-width, initial-scale=1.0"/><meta name="generator" content="Docusaurus"/><meta name="description" content="Query parameters can be added to GET requests to filter responses.  These parameters"/><meta name="docsearch:version" content="next"/><meta name="docsearch:language" content="en"/><meta property="og:title" content="Querying · rest-hapi"/><meta property="og:type" content="website"/><meta property="og:url" content="https://resthapi.com/index.html"/><meta property="og:description" content="Query parameters can be added to GET requests to filter responses.  These parameters"/><meta property="og:image" content="https://resthapi.com/img/rest-hapi-logo-alt.png"/><meta name="twitter:card" content="summary"/><meta name="twitter:image" content="https://resthapi.com/img/rest-hapi-logo-alt.png"/><link rel="shortcut icon" href="/img/rest-hapi-logo-alt.png"/><link rel="stylesheet" href="https://cdn.jsdelivr.net/docsearch.js/1/docsearch.min.css"/><link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/atom-one-dark.min.css"/><link rel="alternate" type="application/atom+xml" href="https://resthapi.com/blog/atom.xml" title="rest-hapi Blog ATOM Feed"/><link rel="alternate" type="application/rss+xml" href="https://resthapi.com/blog/feed.xml" title="rest-hapi Blog RSS Feed"/><script>
+              (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+              (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+              m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+              })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+              ga('create', 'UA-120977991-1', 'auto');
+              ga('send', 'pageview');
+            </script><script type="text/javascript" src="https://buttons.github.io/buttons.js"></script><script src="https://unpkg.com/vanilla-back-to-top@7.1.14/dist/vanilla-back-to-top.min.js"></script><script>
+        document.addEventListener('DOMContentLoaded', function() {
+          addBackToTop(
+            {"zIndex":1000}
+          )
+        });
+        </script><script src="/js/scrollSpy.js"></script><link rel="stylesheet" href="/css/main.css"/><script src="/js/codetabs.js"></script></head><body class="sideNavVisible separateOnPageNav"><div class="fixedHeaderContainer"><div class="headerWrapper wrapper"><header><a href="/"><img class="logo" src="/img/rest-hapi-logo.png" alt="rest-hapi"/><h2 class="headerTitleWithLogo">rest-hapi</h2></a><a href="/versions.html"><h3>next</h3></a><div class="navigationWrapper navigationSlider"><nav class="slidingNav"><ul class="nav-site nav-site-internal"><li class="siteNavGroupActive"><a href="/docs/next/quick-start.html" target="_self">Docs</a></li><li class=""><a href="/help.html" target="_self">Help</a></li><li class=""><a href="/blog/" target="_self">Blog</a></li><li class=""><a href="/users.html" target="_self">Users</a></li><li class=""><a href="https://github.com/JKHeadley/rest-hapi" target="_self">GitHub</a></li><li class="navSearchWrapper reactNavSearchWrapper"><input type="text" id="search_input_react" placeholder="Search" title="Search"/></li></ul></nav></div></header></div></div><div class="navPusher"><div class="docMainWrapper wrapper"><div class="docsNavContainer" id="docsNav"><nav class="toc"><div class="toggleNav"><section class="navWrapper wrapper"><div class="navBreadcrumb wrapper"><div class="navToggle" id="navToggler"><div class="hamburger-menu"><div class="line1"></div><div class="line2"></div><div class="line3"></div></div></div><h2><i>›</i><span>Usage</span></h2><div class="tocToggler" id="tocToggler"><i class="icon-toc"></i></div></div><div class="navGroups"><div class="navGroup"><h3 class="navGroupCategoryTitle">Getting Started</h3><ul class=""><li class="navListItem"><a class="navItem" href="/docs/next/quick-start.html">Quick Start</a></li><li class="navListItem"><a class="navItem" href="/docs/next/introduction.html">Introduction</a></li><li class="navListItem"><a class="navItem" href="/docs/next/swagger-documentation.html">Swagger Documentation</a></li></ul></div><div class="navGroup"><h3 class="navGroupCategoryTitle">Usage</h3><ul class=""><li class="navListItem"><a class="navItem" href="/docs/next/configuration.html">Configuration</a></li><li class="navListItem"><a class="navItem" href="/docs/next/creating-endpoints.html">Creating Endpoints</a></li><li class="navListItem"><a class="navItem" href="/docs/next/associations.html">Assocations</a></li><li class="navListItem"><a class="navItem" href="/docs/next/route-customization.html">Route Customization</a></li><li class="navListItem navListItemActive"><a class="navItem" href="/docs/next/querying.html">Querying</a></li><li class="navListItem"><a class="navItem" href="/docs/next/duplicate-fields.html">Duplicate Fields</a></li><li class="navListItem"><a class="navItem" href="/docs/next/validation.html">Validation</a></li><li class="navListItem"><a class="navItem" href="/docs/next/middleware.html">Middleware</a></li><li class="navListItem"><a class="navItem" href="/docs/next/authentication.html">Authentication</a></li><li class="navListItem"><a class="navItem" href="/docs/next/authorization.html">Authorization</a></li><li class="navListItem"><a class="navItem" href="/docs/next/audit-logs.html">Audit Logs</a></li><li class="navListItem"><a class="navItem" href="/docs/next/policies.html">Policies</a></li><li class="navListItem"><a class="navItem" href="/docs/next/mongoose-wrapper-methods.html">Mongoose Wrapper Methods</a></li><li class="navListItem"><a class="navItem" href="/docs/next/soft-delete.html">Soft Delete</a></li><li class="navListItem"><a class="navItem" href="/docs/next/metadata.html">Metadata</a></li><li class="navListItem"><a class="navItem" href="/docs/next/model-generation.html">Model Generation</a></li></ul></div><div class="navGroup"><h3 class="navGroupCategoryTitle">Other</h3><ul class=""><li class="navListItem"><a class="navItem" href="/docs/next/testing.html">Testing</a></li><li class="navListItem"><a class="navItem" href="/docs/next/questions.html">Questions</a></li><li class="navListItem"><a class="navItem" href="/docs/next/support.html">Support</a></li></ul></div></div></section></div><script>
+            var coll = document.getElementsByClassName('collapsible');
+            var checkActiveCategory = true;
+            for (var i = 0; i < coll.length; i++) {
+              var links = coll[i].nextElementSibling.getElementsByTagName('*');
+              if (checkActiveCategory){
+                for (var j = 0; j < links.length; j++) {
+                  if (links[j].classList.contains('navListItemActive')){
+                    coll[i].nextElementSibling.classList.toggle('hide');
+                    coll[i].childNodes[1].classList.toggle('rotate');
+                    checkActiveCategory = false;
+                    break;
+                  }
+                }
+              }
+
+              coll[i].addEventListener('click', function() {
+                var arrow = this.childNodes[1];
+                arrow.classList.toggle('rotate');
+                var content = this.nextElementSibling;
+                content.classList.toggle('hide');
+              });
+            }
+
+            document.addEventListener('DOMContentLoaded', function() {
+              createToggler('#navToggler', '#docsNav', 'docsSliderActive');
+              createToggler('#tocToggler', 'body', 'tocActive');
+
+              var headings = document.querySelector('.toc-headings');
+              headings && headings.addEventListener('click', function(event) {
+                var el = event.target;
+                while(el !== headings){
+                  if (el.tagName === 'A') {
+                    document.body.classList.remove('tocActive');
+                    break;
+                  } else{
+                    el = el.parentNode;
+                  }
+                }
+              }, false);
+
+              function createToggler(togglerSelector, targetSelector, className) {
+                var toggler = document.querySelector(togglerSelector);
+                var target = document.querySelector(targetSelector);
+
+                if (!toggler) {
+                  return;
+                }
+
+                toggler.onclick = function(event) {
+                  event.preventDefault();
+
+                  target.classList.toggle(className);
+                };
+              }
+            });
+        </script></nav></div><div class="container mainContainer docsContainer"><div class="wrapper"><div class="post"><header class="postHeader"><a class="edit-page-link button" href="https://github.com/JKHeadley/rest-hapi/tree/master/docs/querying.md" target="_blank" rel="noreferrer noopener">Edit</a><h1 id="__docusaurus" class="postHeaderTitle">Querying</h1></header><article><div><span><p>Query parameters can be added to GET requests to filter responses.  These parameters
+are structured and function similar to mongoose queries.  Below is a list of currently
+supported parameters:</p>
+<ul>
+<li><p>$skip</p>
+<ul>
+<li>The number of records to skip in the database. This is typically used in pagination.</li>
+</ul></li>
+<li><p>$page</p>
+<ul>
+<li>The number of records to skip based on the $limit parameter. This is typically used in pagination.</li>
+</ul></li>
+<li><p>$limit</p>
+<ul>
+<li>The maximum number of records to return. This is typically used in pagination.</li>
+</ul></li>
+<li><p>$select</p>
+<ul>
+<li>A list of basic fields to be included in each resource.</li>
+</ul></li>
+<li><p>$sort</p>
+<ul>
+<li>A set of fields to sort by. Including field name indicates it should be sorted ascending, while prepending '-' indicates descending. The default sort direction is 'ascending' (lowest value to highest value). Listing multiple fields prioritizes the sort starting with the first field listed.</li>
+</ul></li>
+<li><p>$text</p>
+<ul>
+<li>A full text search parameter. Takes advantage of indexes for efficient searching. Also implements stemming with   searches. Prefixing search terms with a &quot;-&quot; will exclude results that match that term.</li>
+</ul></li>
+<li><p>$term</p>
+<ul>
+<li>A regex search parameter. Slower than $text search but supports partial matches and doesn't require indexing. This can be refined using the $searchFields parameter.</li>
+</ul></li>
+<li><p>$searchFields</p>
+<ul>
+<li>A set of fields to apply the $term search parameter to. If this parameter is not included, the $term search parameter is applied to all searchable fields.</li>
+</ul></li>
+<li><p>$embed</p>
+<ul>
+<li>A set of associations to populate.</li>
+</ul></li>
+<li><p>$flatten</p>
+<ul>
+<li>Set to true to flatten embedded arrays, i.e. remove linking-model data.</li>
+</ul></li>
+<li><p>$count</p>
+<ul>
+<li>If set to true, only a count of the query results will be returned.</li>
+</ul></li>
+<li><p>$where</p>
+<ul>
+<li>An optional field for raw mongoose queries.</li>
+<li><strong>!!WARNING!!</strong>: This feature is meant for development ONLY and NOT in production as it
+provides direct query access to your database. See <a href="/docs/next/configuration.html#enablewherequeries">the config docs</a> to enable.</li>
+</ul></li>
+<li><p>(field &quot;where&quot; queries)</p>
+<ul>
+<li>Ex: <code>/user?email=test@user.com</code></li>
+</ul></li>
+</ul>
+<p>Query parameters can either be passed in as a single string, or an array of strings.</p>
+<h2><a class="anchor" aria-hidden="true" id="pagination"></a><a href="#pagination" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Pagination</h2>
+<p>For any GET query that returns multiple documents, pagination data is returned alongside the documents. The response object has the form:</p>
+<ul>
+<li>docs - an array of documents.</li>
+<li>pages - an object where:
+<ul>
+<li>current - a number indicating the current page.</li>
+<li>prev - a number indicating the previous page.</li>
+<li>hasPrev - a boolean indicating if there is a previous page.</li>
+<li>next - a number indicating the next page.</li>
+<li>hasNext - a boolean indicating if there is a next page.</li>
+<li>total - a number indicating the total number of pages.</li>
+</ul></li>
+<li>items - an object where:
+<ul>
+<li>limit - a number indicating the how many results should be returned.</li>
+<li>begin - a number indicating what item number the results begin with.</li>
+<li>end - a number indicating what item number the results end with.</li>
+<li>total - a number indicating the total number of matching results.</li>
+</ul></li>
+</ul>
+<blockquote>
+<p><strong>NOTE:</strong> Pagination format borrowed from mongo-models <a href="https://github.com/jedireza/mongo-models/blob/master/API.md#pagedfindfilter-fields-sort-limit-page-callback">pagedFind</a>.</p>
+</blockquote>
+<h2><a class="anchor" aria-hidden="true" id="populate-nested-associations"></a><a href="#populate-nested-associations" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Populate nested associations</h2>
+<p>Associations can be populated through the <code>$embed</code> parameter.  To populate nested associations,
+simply chain a parameter with <code>.</code>.  For example, consider the MANY_MANY group-user association
+from the example above.  If we populate the users of a group with <code>/group?$embed=users</code> we might get a
+response like so:</p>
+<pre><code class="hljs css language-json">{
+    <span class="hljs-attr">"_id"</span>: <span class="hljs-string">"58155f1a071468d3bda0fc6e"</span>,
+    <span class="hljs-attr">"name"</span>: <span class="hljs-string">"A-team"</span>,
+    <span class="hljs-attr">"users"</span>: [
+      {
+        <span class="hljs-attr">"user"</span>: {
+          <span class="hljs-attr">"_id"</span>: <span class="hljs-string">"580fc1a0e2d3308609470bc6"</span>,
+          <span class="hljs-attr">"email"</span>: <span class="hljs-string">"test@user.com"</span>,
+          <span class="hljs-attr">"title"</span>: <span class="hljs-string">"580fc1e2e2d3308609470bc8"</span>
+        },
+        <span class="hljs-attr">"_id"</span>: <span class="hljs-string">"58155f6a071468d3bda0fc6f"</span>
+      },
+      {
+        <span class="hljs-attr">"user"</span>: {
+          <span class="hljs-attr">"_id"</span>: <span class="hljs-string">"5813ad3d0d4e5c822d2f05bd"</span>,
+          <span class="hljs-attr">"email"</span>: <span class="hljs-string">"test2@user.com"</span>,
+          <span class="hljs-attr">"title"</span>: <span class="hljs-string">"580fc1eee2d3308609470bc9"</span>
+        },
+        <span class="hljs-attr">"_id"</span>: <span class="hljs-string">"58155f6a071468d3bda0fc71"</span>
+      }
+    ]
+}
+</code></pre>
+<p>However we can further populate each user's <code>title</code> field with a nested <code>$embed</code>
+parameter: <code>/group?$embed=users.title</code> which could result in the following response:</p>
+<pre><code class="hljs css language-json">{
+    <span class="hljs-attr">"_id"</span>: <span class="hljs-string">"58155f1a071468d3bda0fc6e"</span>,
+    <span class="hljs-attr">"name"</span>: <span class="hljs-string">"A-team"</span>,
+    <span class="hljs-attr">"users"</span>: [
+      {
+        <span class="hljs-attr">"user"</span>: {
+          <span class="hljs-attr">"_id"</span>: <span class="hljs-string">"580fc1a0e2d3308609470bc6"</span>,
+          <span class="hljs-attr">"email"</span>: <span class="hljs-string">"test@user.com"</span>,
+          <span class="hljs-attr">"title"</span>: {
+            <span class="hljs-attr">"_id"</span>: <span class="hljs-string">"580fc1e2e2d3308609470bc8"</span>,
+            <span class="hljs-attr">"name"</span>: <span class="hljs-string">"Admin"</span>
+          }
+        },
+        <span class="hljs-attr">"_id"</span>: <span class="hljs-string">"58155f6a071468d3bda0fc6f"</span>
+      },
+      {
+        <span class="hljs-attr">"user"</span>: {
+          <span class="hljs-attr">"_id"</span>: <span class="hljs-string">"5813ad3d0d4e5c822d2f05bd"</span>,
+          <span class="hljs-attr">"email"</span>: <span class="hljs-string">"test2@user.com"</span>,
+          <span class="hljs-attr">"title"</span>: {
+            <span class="hljs-attr">"_id"</span>: <span class="hljs-string">"580fc1eee2d3308609470bc9"</span>,
+            <span class="hljs-attr">"name"</span>: <span class="hljs-string">"SuperAdmin"</span>
+          }
+        },
+        <span class="hljs-attr">"_id"</span>: <span class="hljs-string">"58155f6a071468d3bda0fc71"</span>
+      }
+    ]
+}
+</code></pre>
+</span></div></article></div><div class="docs-prevnext"><a class="docs-prev button" href="/docs/next/route-customization.html"><span class="arrow-prev">← </span><span>Route Customization</span></a><a class="docs-next button" href="/docs/next/duplicate-fields.html"><span>Duplicate Fields</span><span class="arrow-next"> →</span></a></div></div></div><nav class="onPageNav"><ul class="toc-headings"><li><a href="#pagination">Pagination</a></li><li><a href="#populate-nested-associations">Populate nested associations</a></li></ul></nav></div><footer class="nav-footer" id="footer"><section class="sitemap"><a href="/" class="nav-home"><img src="/img/rest-hapi-logo-alt.png" alt="rest-hapi" width="66" height="58"/></a><div><h5>Docs</h5><a href="/docs/quick-start.html">Getting Started</a><a href="/docs/configuration.html">Usage</a><a href="/docs/testing.html">Other</a></div><div><h5>Community</h5><a href="/en/users.html">User Showcase</a><a href="https://stackoverflow.com/search?q=rest-hapi" target="_blank" rel="noreferrer noopener">Stack Overflow</a><a href="https://gitter.im/rest-hapi">Project Chat</a><a href="https://opencollective.com/rest-hapi">Donate</a><a href="/blog">Blog</a></div><div><h5>Social</h5><div class="social"><a class="github-button" href="https://github.com/JKHeadley/rest-hapi" data-count-href="/JKHeadley/rest-hapi/stargazers" data-show-count="true" data-count-aria-label="# stargazers on GitHub" aria-label="Star this project on GitHub">rest-hapi</a></div><div class="social"><a href="https://twitter.com/intent/tweet?text=Generate%20RESTful%20API%20endpoints%20with%20rest-hapi!&amp;url=https://resthapi.com&amp;via=resthapi&amp;hashtags=mongoosejs,hapijs,nodejs,MongoDB"><img alt="rest-hapi tweet" src="https://img.shields.io/twitter/url/http/shields.io.svg?style=social"/></a></div><div class="social"><a href="https://twitter.com/resthapi" class="twitter-follow-button">Follow @resthapi</a></div><div class="social"><div class="fb-like" data-href="https://resthapi.com" data-layout="standard" data-share="true" data-width="225" data-show-faces="false"></div></div></div></section><section class="copyright">Copyright © 2022 Justin Headley</section></footer></div><script type="text/javascript" src="https://cdn.jsdelivr.net/docsearch.js/1/docsearch.min.js"></script><script>window.fbAsyncInit = function() {FB.init({appId:'2157963944448868',xfbml:true,version:'v2.7'});};(function(d, s, id){var js, fjs = d.getElementsByTagName(s)[0];if (d.getElementById(id)) {return;}js = d.createElement(s); js.id = id;js.src = '//connect.facebook.net/en_US/sdk.js';fjs.parentNode.insertBefore(js, fjs);}(document, 'script','facebook-jssdk'));
+                </script><script>window.twttr=(function(d,s, id){var js,fjs=d.getElementsByTagName(s)[0],t=window.twttr||{};if(d.getElementById(id))return t;js=d.createElement(s);js.id=id;js.src='https://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js, fjs);t._e = [];t.ready = function(f) {t._e.push(f);};return t;}(document, 'script', 'twitter-wjs'));</script><script>
+                document.addEventListener('keyup', function(e) {
+                  if (e.target !== document.body) {
+                    return;
+                  }
+                  // keyCode for '/' (slash)
+                  if (e.keyCode === 191) {
+                    const search = document.getElementById('search_input_react');
+                    search && search.focus();
+                  }
+                });
+              </script><script>
+              var search = docsearch({
+                
+                apiKey: '7457aa83151e8c66250259e3571ac308',
+                indexName: 'rest_hapi',
+                inputSelector: '#search_input_react',
+                algoliaOptions: {}
+              });
+            </script></body></html>

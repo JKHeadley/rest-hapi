@@ -1,0 +1,241 @@
+<!DOCTYPE html><html lang="en"><head><meta charSet="utf-8"/><meta http-equiv="X-UA-Compatible" content="IE=edge"/><title>The Problem With MongoDB · rest-hapi</title><meta name="viewport" content="width=device-width, initial-scale=1.0"/><meta name="generator" content="Docusaurus"/><meta name="description" content="&gt; Original post can be found [here on Medium](https://hackernoon.com/the-problem-with-mongodb-d255e897b4b)"/><meta name="docsearch:language" content="en"/><meta property="og:title" content="The Problem With MongoDB · rest-hapi"/><meta property="og:type" content="website"/><meta property="og:url" content="https://resthapi.com/blog/2017/02/17/The-Problem-With-MongoDB.html"/><meta property="og:description" content="&gt; Original post can be found [here on Medium](https://hackernoon.com/the-problem-with-mongodb-d255e897b4b)"/><meta property="og:image" content="https://resthapi.com/img/rest-hapi-logo-alt.png"/><meta name="twitter:card" content="summary"/><meta name="twitter:image" content="https://resthapi.com/img/rest-hapi-logo-alt.png"/><link rel="shortcut icon" href="/img/rest-hapi-logo-alt.png"/><link rel="stylesheet" href="https://cdn.jsdelivr.net/docsearch.js/1/docsearch.min.css"/><link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/atom-one-dark.min.css"/><link rel="alternate" type="application/atom+xml" href="https://resthapi.com/blog/atom.xml" title="rest-hapi Blog ATOM Feed"/><link rel="alternate" type="application/rss+xml" href="https://resthapi.com/blog/feed.xml" title="rest-hapi Blog RSS Feed"/><script>
+              (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+              (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+              m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+              })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+              ga('create', 'UA-120977991-1', 'auto');
+              ga('send', 'pageview');
+            </script><script type="text/javascript" src="https://buttons.github.io/buttons.js"></script><script src="https://unpkg.com/vanilla-back-to-top@7.1.14/dist/vanilla-back-to-top.min.js"></script><script>
+        document.addEventListener('DOMContentLoaded', function() {
+          addBackToTop(
+            {"zIndex":1000}
+          )
+        });
+        </script><script src="/js/scrollSpy.js"></script><link rel="stylesheet" href="/css/main.css"/><script src="/js/codetabs.js"></script></head><body class="sideNavVisible separateOnPageNav"><div class="fixedHeaderContainer"><div class="headerWrapper wrapper"><header><a href="/"><img class="logo" src="/img/rest-hapi-logo.png" alt="rest-hapi"/><h2 class="headerTitleWithLogo">rest-hapi</h2></a><a href="/versions.html"><h3>3.0.x</h3></a><div class="navigationWrapper navigationSlider"><nav class="slidingNav"><ul class="nav-site nav-site-internal"><li class=""><a href="/docs/quick-start.html" target="_self">Docs</a></li><li class=""><a href="/help.html" target="_self">Help</a></li><li class="siteNavGroupActive"><a href="/blog/" target="_self">Blog</a></li><li class=""><a href="/users.html" target="_self">Users</a></li><li class=""><a href="https://github.com/JKHeadley/rest-hapi" target="_self">GitHub</a></li><li class="navSearchWrapper reactNavSearchWrapper"><input type="text" id="search_input_react" placeholder="Search" title="Search"/></li></ul></nav></div></header></div></div><div class="navPusher"><div class="docMainWrapper wrapper"><div class="docsNavContainer" id="docsNav"><nav class="toc"><div class="toggleNav"><section class="navWrapper wrapper"><div class="navBreadcrumb wrapper"><div class="navToggle" id="navToggler"><div class="hamburger-menu"><div class="line1"></div><div class="line2"></div><div class="line3"></div></div></div><h2><i>›</i><span>Recent Posts</span></h2><div class="tocToggler" id="tocToggler"><i class="icon-toc"></i></div></div><div class="navGroups"><div class="navGroup"><h3 class="navGroupCategoryTitle">Recent Posts</h3><ul class=""><li class="navListItem"><a class="navItem" href="/blog/2018/06/26/How-To-Build-Powerful-APIs-Blazingly-Fast-With-Nodejs.html">How to build powerful REST APIs blazingly fast with Node.js</a></li><li class="navListItem navListItemActive"><a class="navItem" href="/blog/2017/02/17/The-Problem-With-MongoDB.html">The Problem With MongoDB</a></li><li class="navListItem"><a class="navItem" href="/blog/2016/11/19/The-Problem-With-APIs.html">The Problem With APIs</a></li></ul></div></div></section></div><script>
+            var coll = document.getElementsByClassName('collapsible');
+            var checkActiveCategory = true;
+            for (var i = 0; i < coll.length; i++) {
+              var links = coll[i].nextElementSibling.getElementsByTagName('*');
+              if (checkActiveCategory){
+                for (var j = 0; j < links.length; j++) {
+                  if (links[j].classList.contains('navListItemActive')){
+                    coll[i].nextElementSibling.classList.toggle('hide');
+                    coll[i].childNodes[1].classList.toggle('rotate');
+                    checkActiveCategory = false;
+                    break;
+                  }
+                }
+              }
+
+              coll[i].addEventListener('click', function() {
+                var arrow = this.childNodes[1];
+                arrow.classList.toggle('rotate');
+                var content = this.nextElementSibling;
+                content.classList.toggle('hide');
+              });
+            }
+
+            document.addEventListener('DOMContentLoaded', function() {
+              createToggler('#navToggler', '#docsNav', 'docsSliderActive');
+              createToggler('#tocToggler', 'body', 'tocActive');
+
+              var headings = document.querySelector('.toc-headings');
+              headings && headings.addEventListener('click', function(event) {
+                var el = event.target;
+                while(el !== headings){
+                  if (el.tagName === 'A') {
+                    document.body.classList.remove('tocActive');
+                    break;
+                  } else{
+                    el = el.parentNode;
+                  }
+                }
+              }, false);
+
+              function createToggler(togglerSelector, targetSelector, className) {
+                var toggler = document.querySelector(togglerSelector);
+                var target = document.querySelector(targetSelector);
+
+                if (!toggler) {
+                  return;
+                }
+
+                toggler.onclick = function(event) {
+                  event.preventDefault();
+
+                  target.classList.toggle(className);
+                };
+              }
+            });
+        </script></nav></div><div class="container mainContainer postContainer blogContainer"><div class="wrapper"><div class="lonePost"><div class="post"><header class="postHeader"><h1 class="postHeaderTitle"><a href="/blog/2017/02/17/The-Problem-With-MongoDB.html">The Problem With MongoDB</a></h1><p class="post-meta">February 17, 2017</p><div class="authorBlock"><p class="post-authorName"><a href="http://twitter.com/JKHeadley" target="_blank" rel="noreferrer noopener">Justin Headley</a></p><div class="authorPhoto"><a href="http://twitter.com/JKHeadley" target="_blank" rel="noreferrer noopener"><img src="https://graph.facebook.com/27403843/picture/?height=200&amp;width=200" alt="Justin Headley"/></a></div></div></header><div><span><blockquote>
+<p>Original post can be found <a href="https://hackernoon.com/the-problem-with-mongodb-d255e897b4b">here on Medium</a></p>
+</blockquote>
+<p align="center"><img width="325" height="244" src="https://cdn-images-1.medium.com/max/600/1*KHIQHTqhFobGU_q0cL6orw.png" alt="mongodb image"></a></p>
+<hr>
+<p>When building a web app (or any app) that needs to store data, one of the biggest decisions to make is what database to use. In the world of start-ups, where MVP's and agile development reigns, NoSQL databases have grown in <a href="http://www.techrepublic.com/article/nosql-databases-eat-into-the-relational-database-market/">increasing popularity</a> due largely to their <a href="http://www.ibmbigdatahub.com/blog/rise-nosql-databases">flexible</a> nature and ease of use. Among them MongoDB stands out by far as the most <a href="http://db-engines.com/en/ranking">popular</a>. <a href="http://mongoosejs.com/">Mongoose</a>, a fantastic ODM for MongoDB in Nodejs, has also seen a rise in popularity, having almost <a href="https://npm-stat.com/charts.html?package=mongoose&amp;from=2012-01-01&amp;to=2016-12-31">doubled</a> in number of npm downloads from 2015 to 2016.
+For web apps using Nodejs/javascript, MongoDB is particularly nice since data is stored using JSON objects, making reading and writing data fluid and natural. However, despite all these great advantages, MongoDB still lacks one of the most useful features found in relational databases, namely…relationships.</p>
+<!--truncate-->
+<p align="center"><img width="541" height="709" src="https://cdn-images-1.medium.com/max/800/1*yX49yeWyB5nTg7eLTiroSA.jpeg" alt="comic image"></a></p>
+<blockquote>
+<p>Not how it works…</p>
+</blockquote>
+<p>For almost any app that stores data, its natural for different data entities to have relationships with each other. User's have roles, shopping carts have items, books have categories…you get the idea. These relationships generally take one of three different forms: one-to-one, one-to-many, and many-many. While MongoDB is not a relational database, there are actually two recommended approaches to representing relationships between entities. Lets take a look at each and see how they pan out.
+Note: if you feel like you are already familiar with this topic, or just want a solution, feel free to scroll down to the grumpy cat…(or just check out <a href="https://github.com/JKHeadley/rest-hapi">rest-hapi</a>)</p>
+<hr>
+<h2><a class="anchor" aria-hidden="true" id="method-1-embedding-documentshttpsdocsmongodbcomv30tutorialmodel-embedded-one-to-many-relationships-between-documents"></a><a href="#method-1-embedding-documentshttpsdocsmongodbcomv30tutorialmodel-embedded-one-to-many-relationships-between-documents" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Method 1: <a href="https://docs.mongodb.com/v3.0/tutorial/model-embedded-one-to-many-relationships-between-documents/">Embedding Documents</a></h2>
+<p>The most natural method for relating data (represented as <a href="https://docs.mongodb.com/v3.0/reference/glossary/#term-document">documents</a> in MongoDB is to embed them in one another. The advantage to this approach is that all the related data can be retrieved with just one query. This is very efficient and seems good at first. Sometimes this can be an appropriate approach, but relying on embedded relationships can come at a high cost down the road. Consider an example with users and roles, where users can belong to one role and roles can have many users. In this case we can either choose to embed user documents inside role documents, or vice versa. If we decide that users are the most important entity and that roles should be embedded within them, then we could end up with data that looks like this:</p>
+<p><code>Users:</code></p>
+<pre><code class="hljs css language-javascript">[
+   {
+      <span class="hljs-attr">_id</span>: <span class="hljs-number">1234</span>,
+      <span class="hljs-attr">email</span>: <span class="hljs-string">'bob@admin.com'</span>,
+      <span class="hljs-attr">role</span>: {
+         <span class="hljs-attr">name</span>: <span class="hljs-string">'Admin'</span>,
+         <span class="hljs-attr">description</span>: <span class="hljs-string">'A user with awesome powers.'</span>
+      }
+   },
+   {
+      <span class="hljs-attr">_id</span>: <span class="hljs-number">4321</span>,
+      <span class="hljs-attr">email</span>: <span class="hljs-string">'bill@admin.com'</span>,
+      <span class="hljs-attr">role</span>: {
+         <span class="hljs-attr">name</span>: <span class="hljs-string">'Admin'</span>,
+         <span class="hljs-attr">description</span>: <span class="hljs-string">'A user with awesome powers.'</span>
+      }
+   }
+]
+</code></pre>
+<p>The problem with his approach arises when we want to change the details of a role. If we update say, the description of the role for the first user, the role description for the second user stays the same. This is a problem if we want to stay consistent, which we almost always do. It may not seem like a big issue with only two users, but what about when there are hundreds of users? Finding and updating every embedded role does not sound fun.
+Realizing this, we may choose to embed users inside roles instead. This could result in data like so:</p>
+<p><code>Roles:</code></p>
+<pre><code class="hljs css language-javascript">[
+   {
+      <span class="hljs-attr">_id</span>: <span class="hljs-number">5678</span>,
+      <span class="hljs-attr">name</span>: <span class="hljs-string">'Admin'</span>,
+      <span class="hljs-attr">description</span>: <span class="hljs-string">'A user with awesome powers.'</span>,
+      <span class="hljs-attr">users</span>: [
+         {
+            <span class="hljs-attr">email</span>: <span class="hljs-string">'bob@admin.com'</span>
+         },
+         {
+            <span class="hljs-attr">email</span>: <span class="hljs-string">'bill@admin.com'</span>
+         }
+      ]
+   }
+]
+</code></pre>
+<p>Problem solved, right? Sure, if no other entities in our database have relationships with users…which is unlikely. If we have another entity, &quot;teams&quot;, that can relate to multiple users, then we're back at square one. Updating a user's email would have to be reflected in any role or team that the users existed in. As the number of entities and relationships grow, the consistency issues grow even faster. This usually results in code that is a nightmare of confusion. The efficiency that we had in the beginning is gone as well. So maybe there's a better way? Lets check out the next approach.</p>
+<h2><a class="anchor" aria-hidden="true" id="method-2-document-referenceshttpsdocsmongodbcomv30tutorialmodel-referenced-one-to-many-relationships-between-documents"></a><a href="#method-2-document-referenceshttpsdocsmongodbcomv30tutorialmodel-referenced-one-to-many-relationships-between-documents" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Method 2: <a href="https://docs.mongodb.com/v3.0/tutorial/model-referenced-one-to-many-relationships-between-documents/">Document References</a></h2>
+<p>Rather than embedding documents inside one another, we can give each document an id and store related document ids rather than the whole document. Lets look at the data from the previous example represented this way:</p>
+<p><code>Users:</code></p>
+<pre><code class="hljs css language-javascript">[
+   {
+      <span class="hljs-attr">_id</span>: <span class="hljs-number">1234</span>,
+      <span class="hljs-attr">email</span>: <span class="hljs-string">'bob@admin.com'</span>,
+      <span class="hljs-attr">role</span>: <span class="hljs-number">5678</span>
+   },
+   {
+      <span class="hljs-attr">_id</span>: <span class="hljs-number">4321</span>,
+      <span class="hljs-attr">email</span>: <span class="hljs-string">'bill@admin.com'</span>,
+      <span class="hljs-attr">role</span>: <span class="hljs-number">5678</span>
+   }
+]
+</code></pre>
+<p><code>Roles:</code></p>
+<pre><code class="hljs css language-javascript">[
+   {
+      <span class="hljs-attr">_id</span>: <span class="hljs-number">5678</span>,
+      <span class="hljs-attr">name</span>: <span class="hljs-string">'Admin'</span>,
+      <span class="hljs-attr">description</span>: <span class="hljs-string">'A user with awesome powers.'</span>,
+      <span class="hljs-attr">users</span>: [
+         <span class="hljs-number">1234</span>,
+         <span class="hljs-number">4321</span>
+      ]
+   }
+]
+</code></pre>
+<p>Now whenever a document is updated, no other actions are needed because the reference ids don't change. Consistency problem solved! However there is a tradeoff. In Method 1 only one query was needed to grab all the data related to a user (or a role). Now in order to get the data for a role AND its associated users, we must first perform a query for the role and then perform another query to look up the users based on the ids. This may not seem that bad, but it can quickly get out of hand as well. Lets bring in the teams entity and look at our data again:</p>
+<p><code>Users:</code></p>
+<pre><code class="hljs css language-javascript">[
+   {
+      <span class="hljs-attr">_id</span>: <span class="hljs-number">1234</span>,
+      <span class="hljs-attr">email</span>: <span class="hljs-string">'bob@admin.com'</span>,
+      <span class="hljs-attr">role</span>: <span class="hljs-number">5678</span>
+   },
+   {
+      <span class="hljs-attr">_id</span>: <span class="hljs-number">4321</span>,
+      <span class="hljs-attr">email</span>: <span class="hljs-string">'bill@admin.com'</span>,
+      <span class="hljs-attr">role</span>: <span class="hljs-number">5678</span>
+   }
+]
+</code></pre>
+<p><code>Roles:</code></p>
+<pre><code class="hljs css language-javascript">[
+   {
+      <span class="hljs-attr">_id</span>: <span class="hljs-number">5678</span>,
+      <span class="hljs-attr">name</span>: <span class="hljs-string">'Admin'</span>,
+      <span class="hljs-attr">description</span>: <span class="hljs-string">'A user with awesome powers.'</span>,
+      <span class="hljs-attr">users</span>: [
+         <span class="hljs-number">1234</span>,
+         <span class="hljs-number">4321</span>
+      ]
+   }
+]
+</code></pre>
+<p><code>Teams:</code></p>
+<pre><code class="hljs css language-javascript">[
+   {
+      <span class="hljs-attr">_id</span>: <span class="hljs-number">1357</span>,
+      <span class="hljs-attr">name</span>: <span class="hljs-string">'Managers'</span>,
+      <span class="hljs-attr">description</span>: <span class="hljs-string">'They manage things.'</span>,
+      <span class="hljs-attr">users</span>: [
+         <span class="hljs-number">1234</span>
+      ]
+   },
+   {
+      <span class="hljs-attr">_id</span>: <span class="hljs-number">9753</span>,
+      <span class="hljs-attr">name</span>: <span class="hljs-string">'Editors'</span>,
+      <span class="hljs-attr">description</span>: <span class="hljs-string">'They edit things.'</span>,
+      <span class="hljs-attr">users</span>: [
+         <span class="hljs-number">4321</span>
+      ]
+   }
+]
+</code></pre>
+<p>Now if we want to retrieve all the data contained in a role, we have to do the same two queries as before, along with a third more complex query to populate the team data for each user. As a developer you are now left with having to write complex query handlers for EVERY situation in which related data needs to be retrieved.
+This becomes even more difficult if you are trying to retrieve this data through a web api. The api would have to accept some sort of &quot;embed&quot; query parameter and each endpoint would need to support logic to populate nested data. On top of this more logic would be needed to support filtering queries based on referenced objects. This issue usually results in many overly-specific endpoints with custom logic for different &quot;types&quot; of queries tuned to individual entity structures. This approach can also quickly lead to hard to scale, hard to maintain code.</p>
+<p align="center"><img width="541" height="709" src="https://cdn-images-1.medium.com/max/800/1*f1Tsk-T8fVuXzPr0g1kTtg.jpeg" alt="grumpy cat image"></a></p>
+<blockquote>
+<p>In this case…yes</p>
+</blockquote>
+<p>So what now?</p>
+<p>So which approach should we take? Ideally you would want to use a mixture of embedded and referenced relationships that are optimized for your overall model structure. The problem is this is impossible to do from the start as the model structure is bound to change during development (i.e. agile development), and in general trying to &quot;optimize&quot; things from the start can be a <a href="http://seanhess.github.io/2011/12/15/optimization_is_like_firing_clay.html">misguided approach</a>.
+As an attempt to resolve some of these issues, I built a tool called <a href="https://github.com/JKHeadley/rest-hapi">rest-hapi</a>. In my previous post I discussed how rest-hapi works to simplify the development of APIs by encapsulating endpoint logic into <a href="https://github.com/JKHeadley/rest-hapi#creating-endpoints">model configuration</a>. Since then rest-hapi has been upgraded to be an <a href="https://www.npmjs.com/package/rest-hapi">npm module</a>/<a href="https://www.npmjs.com/package/rest-hapi">hapi plugin</a> and can also be used as a <a href="https://github.com/JKHeadley/rest-hapi/blob/master/README.md#mongoose-wrapper-methods">wrapper</a> for the mongoose ODM.
+With rest-hapi, <a href="https://github.com/JKHeadley/rest-hapi#associations">entity relationships</a> are defined as part of a model's configuration, and wrapper methods are provided that support adding, removing, populating, and querying relational data. It even supports an equivalent form of a <a href="https://github.com/JKHeadley/rest-hapi#many_many-linking-models">junction table</a> for many-to-many relationships that require data for a specific relationship instance. While this may not be an optimized solution, I believe it does support an optimal development environment. rest-hapi allows the developer to focus on developing apps in an agile manner and getting things up and running quickly. It combines the flexibility that MongoDB is famous for with the power of relational structure.</p>
+<p align="center"><img width="530" height="403" src="https://cdn-images-1.medium.com/max/800/1*kUWyDV-zOa36gotDryDV_A.jpeg" alt="grumpy cat image"></a></p>
+<blockquote>
+<p>Fast and Flexible</p>
+</blockquote>
+<p>My latest endeavor has been to develop a boilerplate user system (called <a href="https://github.com/JKHeadley/appy">appy</a>) that provides common user services while leveraging the power of rest-hapi to give a full-featured app bootstrapper. I just completed the first version and so far I feel that it exemplifies the usefulness of rest-hapi. The <a href="https://github.com/JKHeadley/appy/wiki/Authorization#appy-permission-system">permissions system</a> implemented in appy even takes advantage of the junction table support to allow for enabling/disabling of specific permission relationships.
+I hope you take some time to check out rest-hapi and appy. I feel like they can be a significant contribution to the developer community. If you have any feedback, feel free to leave a comment below or open an issue in <a href="https://github.com/JKHeadley/rest-hapi/issues">GitHub</a>. If you want to get in touch you can reach me at <a href="https://twitter.com/JKHeadley">Twitter</a>, <a href="https://www.facebook.com/justinkheadley">Facebook</a>, or <a href="https://www.linkedin.com/in/justinkheadley">LinkedIn</a>, or email me at <a href="mailto:headley.justin@gmail.com">headley.justin@gmail.com</a>. I hope you enjoyed this post, thanks for reading!</p>
+</span></div></div><div class="blogSocialSection"><div class="blogSocialSectionItem"><a href="https://twitter.com/share" class="twitter-share-button" data-text="The Problem With MongoDB" data-url="https://resthapi.com/blog/2017/02/17/The-Problem-With-MongoDB.html" data-related="true" data-show-count="false">Tweet</a></div><div class="blogSocialSectionItem"><div class="fb-like" data-href="https://resthapi.com/blog/2017/02/17/The-Problem-With-MongoDB.html" data-layout="standard" data-share="true" data-width="225" data-show-faces="false"></div></div><div class="blogSocialSectionItem"><div class="fb-comments" data-href="https://resthapi.com/blog/2017/02/17/The-Problem-With-MongoDB.html" data-width="100%" data-numposts="5" data-order-by="time"></div></div></div></div><div class="blog-recent"><a class="button" href="/blog/">Recent Posts</a></div></div></div><nav class="onPageNav"><ul class="toc-headings"><li><a href="#method-1-embedding-documentshttpsdocsmongodbcomv30tutorialmodel-embedded-one-to-many-relationships-between-documents">Method 1: <a href="https://docs.mongodb.com/v3.0/tutorial/model-embedded-one-to-many-relationships-between-documents/">Embedding Documents</a></a></li><li><a href="#method-2-document-referenceshttpsdocsmongodbcomv30tutorialmodel-referenced-one-to-many-relationships-between-documents">Method 2: <a href="https://docs.mongodb.com/v3.0/tutorial/model-referenced-one-to-many-relationships-between-documents/">Document References</a></a></li></ul></nav></div><footer class="nav-footer" id="footer"><section class="sitemap"><a href="/" class="nav-home"><img src="/img/rest-hapi-logo-alt.png" alt="rest-hapi" width="66" height="58"/></a><div><h5>Docs</h5><a href="/docs/quick-start.html">Getting Started</a><a href="/docs/configuration.html">Usage</a><a href="/docs/testing.html">Other</a></div><div><h5>Community</h5><a href="/en/users.html">User Showcase</a><a href="https://stackoverflow.com/search?q=rest-hapi" target="_blank" rel="noreferrer noopener">Stack Overflow</a><a href="https://gitter.im/rest-hapi">Project Chat</a><a href="https://opencollective.com/rest-hapi">Donate</a><a href="/blog">Blog</a></div><div><h5>Social</h5><div class="social"><a class="github-button" href="https://github.com/JKHeadley/rest-hapi" data-count-href="/JKHeadley/rest-hapi/stargazers" data-show-count="true" data-count-aria-label="# stargazers on GitHub" aria-label="Star this project on GitHub">rest-hapi</a></div><div class="social"><a href="https://twitter.com/intent/tweet?text=Generate%20RESTful%20API%20endpoints%20with%20rest-hapi!&amp;url=https://resthapi.com&amp;via=resthapi&amp;hashtags=mongoosejs,hapijs,nodejs,MongoDB"><img alt="rest-hapi tweet" src="https://img.shields.io/twitter/url/http/shields.io.svg?style=social"/></a></div><div class="social"><a href="https://twitter.com/resthapi" class="twitter-follow-button">Follow @resthapi</a></div><div class="social"><div class="fb-like" data-href="https://resthapi.com" data-layout="standard" data-share="true" data-width="225" data-show-faces="false"></div></div></div></section><section class="copyright">Copyright © 2022 Justin Headley</section></footer></div><script type="text/javascript" src="https://cdn.jsdelivr.net/docsearch.js/1/docsearch.min.js"></script><script>window.fbAsyncInit = function() {FB.init({appId:'2157963944448868',xfbml:true,version:'v2.7'});};(function(d, s, id){var js, fjs = d.getElementsByTagName(s)[0];if (d.getElementById(id)) {return;}js = d.createElement(s); js.id = id;js.src = '//connect.facebook.net/en_US/sdk.js';fjs.parentNode.insertBefore(js, fjs);}(document, 'script','facebook-jssdk'));
+                </script><script>window.twttr=(function(d,s, id){var js,fjs=d.getElementsByTagName(s)[0],t=window.twttr||{};if(d.getElementById(id))return t;js=d.createElement(s);js.id=id;js.src='https://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js, fjs);t._e = [];t.ready = function(f) {t._e.push(f);};return t;}(document, 'script', 'twitter-wjs'));</script><script>
+                document.addEventListener('keyup', function(e) {
+                  if (e.target !== document.body) {
+                    return;
+                  }
+                  // keyCode for '/' (slash)
+                  if (e.keyCode === 191) {
+                    const search = document.getElementById('search_input_react');
+                    search && search.focus();
+                  }
+                });
+              </script><script>
+              var search = docsearch({
+                
+                apiKey: '7457aa83151e8c66250259e3571ac308',
+                indexName: 'rest_hapi',
+                inputSelector: '#search_input_react',
+                algoliaOptions: {}
+              });
+            </script></body></html>

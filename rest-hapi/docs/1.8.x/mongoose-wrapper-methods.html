@@ -1,0 +1,498 @@
+<!DOCTYPE html><html lang="en"><head><meta charSet="utf-8"/><meta http-equiv="X-UA-Compatible" content="IE=edge"/><title>Mongoose Wrapper Methods · rest-hapi</title><meta name="viewport" content="width=device-width, initial-scale=1.0"/><meta name="generator" content="Docusaurus"/><meta name="description" content="rest-hapi provides mongoose wrapper methods for the user to take advantage of in their server code. These methods provide several advantages including:"/><meta name="docsearch:version" content="1.8.x"/><meta name="docsearch:language" content="en"/><meta property="og:title" content="Mongoose Wrapper Methods · rest-hapi"/><meta property="og:type" content="website"/><meta property="og:url" content="https://resthapi.com/index.html"/><meta property="og:description" content="rest-hapi provides mongoose wrapper methods for the user to take advantage of in their server code. These methods provide several advantages including:"/><meta property="og:image" content="https://resthapi.com/img/rest-hapi-logo-alt.png"/><meta name="twitter:card" content="summary"/><meta name="twitter:image" content="https://resthapi.com/img/rest-hapi-logo-alt.png"/><link rel="shortcut icon" href="/img/rest-hapi-logo-alt.png"/><link rel="stylesheet" href="https://cdn.jsdelivr.net/docsearch.js/1/docsearch.min.css"/><link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/atom-one-dark.min.css"/><link rel="alternate" type="application/atom+xml" href="https://resthapi.com/blog/atom.xml" title="rest-hapi Blog ATOM Feed"/><link rel="alternate" type="application/rss+xml" href="https://resthapi.com/blog/feed.xml" title="rest-hapi Blog RSS Feed"/><script>
+              (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+              (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+              m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+              })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+              ga('create', 'UA-120977991-1', 'auto');
+              ga('send', 'pageview');
+            </script><script type="text/javascript" src="https://buttons.github.io/buttons.js"></script><script src="https://unpkg.com/vanilla-back-to-top@7.1.14/dist/vanilla-back-to-top.min.js"></script><script>
+        document.addEventListener('DOMContentLoaded', function() {
+          addBackToTop(
+            {"zIndex":1000}
+          )
+        });
+        </script><script src="/js/scrollSpy.js"></script><link rel="stylesheet" href="/css/main.css"/><script src="/js/codetabs.js"></script></head><body class="sideNavVisible separateOnPageNav"><div class="fixedHeaderContainer"><div class="headerWrapper wrapper"><header><a href="/"><img class="logo" src="/img/rest-hapi-logo.png" alt="rest-hapi"/><h2 class="headerTitleWithLogo">rest-hapi</h2></a><a href="/versions.html"><h3>1.8.x</h3></a><div class="navigationWrapper navigationSlider"><nav class="slidingNav"><ul class="nav-site nav-site-internal"><li class="siteNavGroupActive"><a href="/docs/1.8.x/quick-start.html" target="_self">Docs</a></li><li class=""><a href="/help.html" target="_self">Help</a></li><li class=""><a href="/blog/" target="_self">Blog</a></li><li class=""><a href="/users.html" target="_self">Users</a></li><li class=""><a href="https://github.com/JKHeadley/rest-hapi" target="_self">GitHub</a></li><li class="navSearchWrapper reactNavSearchWrapper"><input type="text" id="search_input_react" placeholder="Search" title="Search"/></li></ul></nav></div></header></div></div><div class="navPusher"><div class="docMainWrapper wrapper"><div class="docsNavContainer" id="docsNav"><nav class="toc"><div class="toggleNav"><section class="navWrapper wrapper"><div class="navBreadcrumb wrapper"><div class="navToggle" id="navToggler"><div class="hamburger-menu"><div class="line1"></div><div class="line2"></div><div class="line3"></div></div></div><h2><i>›</i><span>Usage</span></h2><div class="tocToggler" id="tocToggler"><i class="icon-toc"></i></div></div><div class="navGroups"><div class="navGroup"><h3 class="navGroupCategoryTitle">Getting Started</h3><ul class=""><li class="navListItem"><a class="navItem" href="/docs/1.8.x/quick-start.html">Quick Start</a></li><li class="navListItem"><a class="navItem" href="/docs/1.8.x/introduction.html">Introduction</a></li><li class="navListItem"><a class="navItem" href="/docs/1.8.x/swagger-documentation.html">Swagger Documentation</a></li></ul></div><div class="navGroup"><h3 class="navGroupCategoryTitle">Usage</h3><ul class=""><li class="navListItem"><a class="navItem" href="/docs/1.8.x/configuration.html">Configuration</a></li><li class="navListItem"><a class="navItem" href="/docs/1.8.x/creating-endpoints.html">Creating Endpoints</a></li><li class="navListItem"><a class="navItem" href="/docs/1.8.x/associations.html">Assocations</a></li><li class="navListItem"><a class="navItem" href="/docs/1.8.x/route-customization.html">Route Customization</a></li><li class="navListItem"><a class="navItem" href="/docs/1.8.x/querying.html">Querying</a></li><li class="navListItem"><a class="navItem" href="/docs/1.8.x/duplicate-fields.html">Duplicate Fields</a></li><li class="navListItem"><a class="navItem" href="/docs/1.8.x/validation.html">Validation</a></li><li class="navListItem"><a class="navItem" href="/docs/1.8.x/middleware.html">Middleware</a></li><li class="navListItem"><a class="navItem" href="/docs/1.8.x/authentication.html">Authentication</a></li><li class="navListItem"><a class="navItem" href="/docs/1.8.x/authorization.html">Authorization</a></li><li class="navListItem"><a class="navItem" href="/docs/1.8.x/audit-logs.html">Audit Logs</a></li><li class="navListItem"><a class="navItem" href="/docs/1.8.x/policies.html">Policies</a></li><li class="navListItem navListItemActive"><a class="navItem" href="/docs/1.8.x/mongoose-wrapper-methods.html">Mongoose Wrapper Methods</a></li><li class="navListItem"><a class="navItem" href="/docs/1.8.x/soft-delete.html">Soft Delete</a></li><li class="navListItem"><a class="navItem" href="/docs/1.8.x/metadata.html">Metadata</a></li><li class="navListItem"><a class="navItem" href="/docs/1.8.x/model-generation.html">Model Generation</a></li></ul></div><div class="navGroup"><h3 class="navGroupCategoryTitle">Other</h3><ul class=""><li class="navListItem"><a class="navItem" href="/docs/1.8.x/testing.html">Testing</a></li><li class="navListItem"><a class="navItem" href="/docs/1.8.x/questions.html">Questions</a></li><li class="navListItem"><a class="navItem" href="/docs/1.8.x/support.html">Support</a></li></ul></div></div></section></div><script>
+            var coll = document.getElementsByClassName('collapsible');
+            var checkActiveCategory = true;
+            for (var i = 0; i < coll.length; i++) {
+              var links = coll[i].nextElementSibling.getElementsByTagName('*');
+              if (checkActiveCategory){
+                for (var j = 0; j < links.length; j++) {
+                  if (links[j].classList.contains('navListItemActive')){
+                    coll[i].nextElementSibling.classList.toggle('hide');
+                    coll[i].childNodes[1].classList.toggle('rotate');
+                    checkActiveCategory = false;
+                    break;
+                  }
+                }
+              }
+
+              coll[i].addEventListener('click', function() {
+                var arrow = this.childNodes[1];
+                arrow.classList.toggle('rotate');
+                var content = this.nextElementSibling;
+                content.classList.toggle('hide');
+              });
+            }
+
+            document.addEventListener('DOMContentLoaded', function() {
+              createToggler('#navToggler', '#docsNav', 'docsSliderActive');
+              createToggler('#tocToggler', 'body', 'tocActive');
+
+              var headings = document.querySelector('.toc-headings');
+              headings && headings.addEventListener('click', function(event) {
+                var el = event.target;
+                while(el !== headings){
+                  if (el.tagName === 'A') {
+                    document.body.classList.remove('tocActive');
+                    break;
+                  } else{
+                    el = el.parentNode;
+                  }
+                }
+              }, false);
+
+              function createToggler(togglerSelector, targetSelector, className) {
+                var toggler = document.querySelector(togglerSelector);
+                var target = document.querySelector(targetSelector);
+
+                if (!toggler) {
+                  return;
+                }
+
+                toggler.onclick = function(event) {
+                  event.preventDefault();
+
+                  target.classList.toggle(className);
+                };
+              }
+            });
+        </script></nav></div><div class="container mainContainer docsContainer"><div class="wrapper"><div class="post"><header class="postHeader"><a class="edit-page-link button" href="https://github.com/JKHeadley/rest-hapi/tree/master/docs/mongoose-wrapper-methods.md" target="_blank" rel="noreferrer noopener">Edit</a><h1 id="__docusaurus" class="postHeaderTitle">Mongoose Wrapper Methods</h1></header><article><div><span><p>rest-hapi provides mongoose wrapper methods for the user to take advantage of in their server code. These methods provide several advantages including:</p>
+<ul>
+<li><a href="/docs/1.8.x/middleware.html">middleware</a> functionality</li>
+<li><a href="/docs/1.8.x/metadata.html">metadata</a> support</li>
+<li><a href="/docs/1.8.x/soft-delete.html">soft delete</a> support</li>
+<li><a href="/docs/1.8.x/associations.html">association/relational</a> management</li>
+<li>rest-hapi <a href="/docs/1.8.x/querying.html">query</a> support</li>
+</ul>
+<p>The available methods are:</p>
+<ul>
+<li>list</li>
+<li>find</li>
+<li>create</li>
+<li>update</li>
+<li>deleteOne</li>
+<li>deleteMany</li>
+<li>addOne</li>
+<li>removeOne</li>
+<li>addMany</li>
+<li>removeMany</li>
+<li>getAll</li>
+</ul>
+<p>When used with the <a href="/docs/1.8.x/model-generation.html">model generating</a> function, these methods provide a quick and easy way to start adding rich, relational data to your db. Check out the <a href="https://github.com/JKHeadley/rest-hapi/blob/master/scripts/seed.js">seed script</a> for an example of these methods in action, or refer to the <a href="/docs/1.8.x/creating-endpoints.html#additional-endpoints">Additional endpoints</a> section example.</p>
+<h2><a class="anchor" aria-hidden="true" id="simulated-rest-calls"></a><a href="#simulated-rest-calls" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Simulated REST Calls</h2>
+<p>As of v1.7.x wrapper methods accept a <code>restCall</code> (named) parameter that, when <code>true</code>, simulates a full http REST call. This can be useful for programmatically testing your endpoints or for taking advantage of additional endpoint features such as <a href="/docs/1.8.x/validation.html">validation</a>, <a href="/docs/1.8.x/audit-logs.html">audit logs</a>, <a href="/docs/1.8.x/duplicate-fields.html">duplicate fields</a>, and <a href="/docs/1.8.x/policies.html">policies</a>.</p>
+<blockquote>
+<p><strong>NOTE:</strong> Simulated REST calls will only work after registering rest-hapi as a hapi plugin (i.e. endpoints have been generated). They can't be used if only the <a href="/docs/1.8.x/model-generation.html">models</a> have been generated.</p>
+</blockquote>
+<p>A more detailed description of each method can be found below:</p>
+<blockquote>
+<p><strong>NOTE:</strong> Each method supports both <code>positional</code> and <code>named</code> parameters, though it is recommended to use the <code>named</code> parameters since this format supports all current options (such as <code>restCall</code>) whereas <code>positional</code> does not.</p>
+</blockquote>
+<h2><a class="anchor" aria-hidden="true" id="list"></a><a href="#list" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>list</h2>
+<pre><code class="hljs css language-javascript"><span class="hljs-comment">/**
+ * Finds a list of model documents.
+ * **Positional:**
+ */</span>
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">list</span>(<span class="hljs-params">model, query, Log</span>) </span>{...}
+<span class="hljs-comment">/**
+ * **Named:**
+ */</span>
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">list</span>(<span class="hljs-params">{ 
+    model, 
+    query, 
+    Log = RestHapi.getLogger(<span class="hljs-string">'list'</span></span>),
+    <span class="hljs-title">restCall</span> = <span class="hljs-title">false</span>, 
+    <span class="hljs-title">credentials</span> 
+}) </span>{...}
+<span class="hljs-comment">/**
+ * **Params:**
+ * - model {object | string}: A mongoose model.
+ * - query: rest-hapi query parameters to be converted to a mongoose query.
+ * - Log: A logging object.
+ * - restCall: If 'true', then will call GET /model
+ * - credentials: Credentials for accessing the endpoint.
+ *
+ * <span class="hljs-doctag">@returns <span class="hljs-type">{object}</span> </span>A promise for the resulting model documents or the count of the query results.
+ */</span>
+</code></pre>
+<h2><a class="anchor" aria-hidden="true" id="find"></a><a href="#find" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>find</h2>
+<pre><code class="hljs css language-javascript"><span class="hljs-comment">/**
+ * Finds a model document.
+ * **Positional:**
+ */</span>
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">find</span>(<span class="hljs-params">model, _id, query, Log</span>) </span>{...}
+<span class="hljs-comment">/**
+ * **Named:**
+ */</span> 
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">find</span>(<span class="hljs-params">{
+    model,
+    _id,
+    query,
+    Log = RestHapi.getLogger(<span class="hljs-string">'find'</span></span>),
+    <span class="hljs-title">restCall</span> = <span class="hljs-title">false</span>,
+    <span class="hljs-title">credentials</span>
+}) </span>{...}
+<span class="hljs-comment">/**
+ * **Params:**
+ * - model {object | string}: A mongoose model.
+ * - _id: The document id.
+ * - query: rest-hapi query parameters to be converted to a mongoose query.
+ * - Log: A logging object.
+ * - restCall: If 'true', then will call GET /model/{_id}
+ * - credentials: Credentials for accessing the endpoint.
+ *
+ * <span class="hljs-doctag">@returns <span class="hljs-type">{object}</span> </span>A promise for the resulting model document.
+ */</span>
+</code></pre>
+<h2><a class="anchor" aria-hidden="true" id="create"></a><a href="#create" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>create</h2>
+<pre><code class="hljs css language-javascript"><span class="hljs-comment">/**
+ * Creates one or more model documents.
+ * **Positional:**
+ */</span> 
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">create</span>(<span class="hljs-params">model, payload, Log</span>) </span>{...}
+<span class="hljs-comment">/** 
+ * **Named:**
+ */</span> 
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">create</span>(<span class="hljs-params">{
+    model,
+    payload,
+    Log = RestHapi.getLogger(<span class="hljs-string">'create'</span></span>),
+    <span class="hljs-title">restCall</span> = <span class="hljs-title">false</span>,
+    <span class="hljs-title">credentials</span>
+}) </span>{...}
+<span class="hljs-comment">/**
+ * **Params:**
+ * - model {object | string}: A mongoose model.
+ * - payload: Data used to create the model document/s.
+ * - Log: A logging object.
+ * - restCall: If 'true', then will call POST /model
+ * - credentials: Credentials for accessing the endpoint.
+ *
+ * <span class="hljs-doctag">@returns <span class="hljs-type">{object}</span> </span>A promise for the resulting model document.
+ */</span>
+</code></pre>
+<h2><a class="anchor" aria-hidden="true" id="update"></a><a href="#update" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>update</h2>
+<pre><code class="hljs css language-javascript"><span class="hljs-comment">/**
+ * Updates a model document.
+ * **Positional:**
+ */</span> 
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">update</span>(<span class="hljs-params">model, _id, payload, Log</span>) </span>{...}
+<span class="hljs-comment">/**
+ * **Named:**
+ */</span> 
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">update</span>(<span class="hljs-params">{
+    model,
+    _id,
+    payload,
+    Log = RestHapi.getLogger(<span class="hljs-string">'update'</span></span>),
+    <span class="hljs-title">restCall</span> = <span class="hljs-title">false</span>,
+    <span class="hljs-title">credentials</span>
+}) </span>{...}
+<span class="hljs-comment">/**
+ * **Params:**
+ * - model {object | string}: A mongoose model.
+ * - _id: The document id.
+ * - payload: Data used to update the model document.
+ * - Log: A logging object.
+ * - restCall: If 'true', then will call PUT /model/{_id}
+ * - credentials: Credentials for accessing the endpoint.
+ *
+ * <span class="hljs-doctag">@returns <span class="hljs-type">{object}</span> </span>A promise for the resulting model document.
+ */</span>
+</code></pre>
+<h2><a class="anchor" aria-hidden="true" id="deleteone"></a><a href="#deleteone" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>deleteOne</h2>
+<pre><code class="hljs css language-javascript"><span class="hljs-comment">/**
+ * Deletes a model document.
+ * **Positional:**
+ */</span> 
+ <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">deleteOne</span>(<span class="hljs-params">model, _id, hardDelete = false, Log</span>) </span>{...}
+<span class="hljs-comment">/**
+ * **Named:**
+ */</span> 
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">deleteOne</span>(<span class="hljs-params">{
+    model,
+    _id,
+    hardDelete = false,
+    Log = RestHapi.getLogger(<span class="hljs-string">'deleteOne'</span></span>),
+    <span class="hljs-title">restCall</span> = <span class="hljs-title">false</span>,
+    <span class="hljs-title">credentials</span>
+}) </span>{...}
+<span class="hljs-comment">/**
+ * **Params:**
+ * - model {object | string}: A mongoose model.
+ * - _id: The document id.
+ * - hardDelete: Flag used to determine a soft or hard delete.
+ * - Log: A logging object.
+ * - restCall: If 'true', then will call PUT /model/{_id}
+ * - credentials: Credentials for accessing the endpoint.
+ *
+ * <span class="hljs-doctag">@returns <span class="hljs-type">{object}</span> </span>A promise for the resulting model document.
+ */</span>
+</code></pre>
+<h2><a class="anchor" aria-hidden="true" id="deletemany"></a><a href="#deletemany" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>deleteMany</h2>
+<pre><code class="hljs css language-javascript"><span class="hljs-comment">/**
+ * Deletes multiple documents.
+ * **Positional:**
+ */</span> 
+ <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">deleteMany</span>(<span class="hljs-params">model, payload, Log</span>) </span>{...}
+<span class="hljs-comment">/**
+ * **Named:**
+ */</span>
+ <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">deleteMany</span>(<span class="hljs-params">{
+    model,
+    payload,
+    Log = RestHapi.getLogger(<span class="hljs-string">'deleteMany'</span></span>),
+    <span class="hljs-title">restCall</span> = <span class="hljs-title">false</span>,
+    <span class="hljs-title">credentials</span>
+}) </span>{...}
+<span class="hljs-comment">/**
+ * **Params:**
+ * - model {object | string}: A mongoose model.
+ * - _id: The document id.
+ * - payload: Either an array of ids or an array of objects containing an id and a "hardDelete" flag.
+ * - Log: A logging object.
+ * - restCall: If 'true', then will call PUT /model/{_id}
+ * - credentials: Credentials for accessing the endpoint.
+ *
+ * <span class="hljs-doctag">@returns <span class="hljs-type">{object}</span> </span>A promise for the resulting model document.
+ */</span>
+</code></pre>
+<h2><a class="anchor" aria-hidden="true" id="addone"></a><a href="#addone" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>addOne</h2>
+<pre><code class="hljs css language-javascript"><span class="hljs-comment">/**
+ * Adds an association to a document
+ * **Positional:**
+ */</span>
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">addOne</span>(<span class="hljs-params">
+    ownerModel,
+    ownerId,
+    childModel,
+    childId,
+    associationName,
+    payload,
+    Log
+</span>) </span>{...}
+<span class="hljs-comment">/**
+ * **Named:**
+ */</span> 
+ <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">addOne</span>(<span class="hljs-params">{
+    ownerModel,
+    ownerId,
+    childModel,
+    childId,
+    associationName,
+    payload = {},
+    Log = RestHapi.getLogger(<span class="hljs-string">'addOne'</span></span>),
+    <span class="hljs-title">restCall</span> = <span class="hljs-title">false</span>,
+    <span class="hljs-title">credentials</span>
+}) </span>{...}
+<span class="hljs-comment">/**
+ * **Params:**
+ * - ownerModel {object | string}: The model that is being added to.
+ * - ownerId: The id of the owner document.
+ * - childModel {object | string}: The model that is being added.
+ * - childId: The id of the child document.
+ * - associationName: The name of the association from the ownerModel's perspective.
+ * - payload: An object containing an extra linking-model fields.
+ * - Log: A logging object
+ * - restCall: If 'true', then will call PUT /model/{_id}
+ * - credentials: Credentials for accessing the endpoint.
+ *
+ * <span class="hljs-doctag">@returns <span class="hljs-type">{object}</span> </span>A promise for the resulting model document.
+ */</span>
+</code></pre>
+<h2><a class="anchor" aria-hidden="true" id="removeone"></a><a href="#removeone" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>removeOne</h2>
+<pre><code class="hljs css language-javascript"><span class="hljs-comment">/**
+ * Removes an association to a document
+ * **Positional:**
+ */</span> 
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">removeOne</span>(<span class="hljs-params">
+    ownerModel,
+    ownerId,
+    childModel,
+    childId,
+    associationName,
+    payload,
+    Log
+</span>) </span>{...}
+<span class="hljs-comment">/**
+ * **Named:**
+ */</span> 
+ <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">removeOne</span>(<span class="hljs-params">{
+    ownerModel,
+    ownerId,
+    childModel,
+    childId,
+    associationName,
+    payload = {},
+    Log = RestHapi.getLogger(<span class="hljs-string">'removeOne'</span></span>),
+    <span class="hljs-title">restCall</span> = <span class="hljs-title">false</span>,
+    <span class="hljs-title">credentials</span>
+}) </span>{...}
+<span class="hljs-comment">/**
+ * **Params:**
+ * - ownerModel {object | string}: The model that is being removed from.
+ * - ownerId: The id of the owner document.
+ * - childModel {object | string}: The model that is being removed.
+ * - childId: The id of the child document.
+ * - associationName: The name of the association from the ownerModel's perspective.
+ * - payload: An object containing an extra linking-model fields.
+ * - Log: A logging object
+ * - restCall: If 'true', then will call PUT /model/{_id}
+ * - credentials: Credentials for accessing the endpoint.
+ *
+ * <span class="hljs-doctag">@returns <span class="hljs-type">{object}</span> </span>A promise for the resulting model document.
+ */</span>
+</code></pre>
+<h2><a class="anchor" aria-hidden="true" id="addmany"></a><a href="#addmany" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>addMany</h2>
+<pre><code class="hljs css language-javascript"><span class="hljs-comment">/**
+ * Adds multiple associations to a document.
+ * **Positional:**
+ */</span> 
+ <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">addMany</span>(<span class="hljs-params">
+    ownerModel,
+    ownerId,
+    childModel,
+    associationName,
+    payload,
+    Log
+</span>) </span>{...}
+<span class="hljs-comment">/**
+ * **Named:**
+ */</span> 
+ <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">addMany</span>(<span class="hljs-params">{
+    ownerModel,
+    ownerId,
+    childModel,
+    associationName,
+    payload = {},
+    Log = RestHapi.getLogger(<span class="hljs-string">'addMany'</span></span>),
+    <span class="hljs-title">restCall</span> = <span class="hljs-title">false</span>,
+    <span class="hljs-title">credentials</span>
+}) </span>{...}
+<span class="hljs-comment">/**
+ * **Params:**
+ * - ownerModel {object | string}: The model that is being added to.
+ * - ownerId: The id of the owner document.
+ * - childModel {object | string}: The model that is being added.
+ * - associationName: The name of the association from the ownerModel's perspective.
+ * - payload: Either a list of id's or a list of id's along with extra linking-model fields.
+ * - Log: A logging object
+ * - restCall: If 'true', then will call PUT /model/{_id}
+ * - credentials: Credentials for accessing the endpoint.
+ *
+ * <span class="hljs-doctag">@returns <span class="hljs-type">{object}</span> </span>A promise for the resulting model document.
+ */</span>
+</code></pre>
+<h2><a class="anchor" aria-hidden="true" id="removemany"></a><a href="#removemany" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>removeMany</h2>
+<pre><code class="hljs css language-javascript"><span class="hljs-comment">/**
+ * Removes multiple associations from a document
+ * **Positional:**
+ */</span> 
+ <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">removeMany</span>(<span class="hljs-params">
+    ownerModel,
+    ownerId,
+    childModel,
+    associationName,
+    payload,
+    Log
+</span>) </span>{...}
+<span class="hljs-comment">/**
+ * **Named:**
+ */</span> 
+ <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">removeMany</span>(<span class="hljs-params">{
+    ownerModel,
+    ownerId,
+    childModel,
+    associationName,
+    payload = {},
+    Log = RestHapi.getLogger(<span class="hljs-string">'removeMany'</span></span>),
+    <span class="hljs-title">restCall</span> = <span class="hljs-title">false</span>,
+    <span class="hljs-title">credentials</span>
+}) </span>{...}
+<span class="hljs-comment">/**
+ * **Params:**
+ * - ownerModel {object | string}: The model that is being added from.
+ * - ownerId: The id of the owner document.
+ * - childModel {object | string}: The model that is being removed.
+ * - associationName: The name of the association from the ownerModel's perspective.
+ * - payload: Either a list of id's or a list of id's along with extra linking-model fields.
+ * - Log: A logging object
+ * - restCall: If 'true', then will call PUT /model/{_id}
+ * - credentials: Credentials for accessing the endpoint.
+ *
+ * <span class="hljs-doctag">@returns <span class="hljs-type">{object}</span> </span>A promise for the resulting model document.
+ */</span>
+</code></pre>
+<h2><a class="anchor" aria-hidden="true" id="getall"></a><a href="#getall" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>getAll</h2>
+<pre><code class="hljs css language-javascript"><span class="hljs-comment">/**
+ * Get all of the associations for a document
+ * **Positional:**
+ */</span> 
+ <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">getAll</span>(<span class="hljs-params">
+    ownerModel,
+    ownerId,
+    childModel,
+    associationName,
+    query,
+    Log
+</span>) </span>{...}
+<span class="hljs-comment">/**
+ * **Named:**
+ */</span> 
+ <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">getAll</span>(<span class="hljs-params">{
+    ownerModel,
+    ownerId,
+    childModel,
+    associationName,
+    query,
+    Log = RestHapi.getLogger(<span class="hljs-string">'getAll'</span></span>),
+    <span class="hljs-title">restCall</span> = <span class="hljs-title">false</span>,
+    <span class="hljs-title">credentials</span>
+}) </span>{...}
+<span class="hljs-comment">/**
+ * **Params:**
+ * - ownerModel {object | string}: The model that is being added to.
+ * - ownerId: The id of the owner document.
+ * - childModel {object | string}: The model that is being added.
+ * - associationName: The name of the association from the ownerModel's perspective.
+ * - query: rest-hapi query parameters to be converted to a mongoose query.
+ * - Log: A logging object
+ * - restCall: If 'true', then will call PUT /model/{_id}
+ * - credentials: Credentials for accessing the endpoint.
+ *
+ * <span class="hljs-doctag">@returns <span class="hljs-type">{object}</span> </span>A promise for the resulting model document.
+ */</span>
+</code></pre>
+</span></div></article></div><div class="docs-prevnext"><a class="docs-prev button" href="/docs/1.8.x/policies.html"><span class="arrow-prev">← </span><span>Policies</span></a><a class="docs-next button" href="/docs/1.8.x/soft-delete.html"><span>Soft Delete</span><span class="arrow-next"> →</span></a></div></div></div><nav class="onPageNav"><ul class="toc-headings"><li><a href="#simulated-rest-calls">Simulated REST Calls</a></li><li><a href="#list">list</a></li><li><a href="#find">find</a></li><li><a href="#create">create</a></li><li><a href="#update">update</a></li><li><a href="#deleteone">deleteOne</a></li><li><a href="#deletemany">deleteMany</a></li><li><a href="#addone">addOne</a></li><li><a href="#removeone">removeOne</a></li><li><a href="#addmany">addMany</a></li><li><a href="#removemany">removeMany</a></li><li><a href="#getall">getAll</a></li></ul></nav></div><footer class="nav-footer" id="footer"><section class="sitemap"><a href="/" class="nav-home"><img src="/img/rest-hapi-logo-alt.png" alt="rest-hapi" width="66" height="58"/></a><div><h5>Docs</h5><a href="/docs/quick-start.html">Getting Started</a><a href="/docs/configuration.html">Usage</a><a href="/docs/testing.html">Other</a></div><div><h5>Community</h5><a href="/en/users.html">User Showcase</a><a href="https://stackoverflow.com/search?q=rest-hapi" target="_blank" rel="noreferrer noopener">Stack Overflow</a><a href="https://gitter.im/rest-hapi">Project Chat</a><a href="https://opencollective.com/rest-hapi">Donate</a><a href="/blog">Blog</a></div><div><h5>Social</h5><div class="social"><a class="github-button" href="https://github.com/JKHeadley/rest-hapi" data-count-href="/JKHeadley/rest-hapi/stargazers" data-show-count="true" data-count-aria-label="# stargazers on GitHub" aria-label="Star this project on GitHub">rest-hapi</a></div><div class="social"><a href="https://twitter.com/intent/tweet?text=Generate%20RESTful%20API%20endpoints%20with%20rest-hapi!&amp;url=https://resthapi.com&amp;via=resthapi&amp;hashtags=mongoosejs,hapijs,nodejs,MongoDB"><img alt="rest-hapi tweet" src="https://img.shields.io/twitter/url/http/shields.io.svg?style=social"/></a></div><div class="social"><a href="https://twitter.com/resthapi" class="twitter-follow-button">Follow @resthapi</a></div><div class="social"><div class="fb-like" data-href="https://resthapi.com" data-layout="standard" data-share="true" data-width="225" data-show-faces="false"></div></div></div></section><section class="copyright">Copyright © 2022 Justin Headley</section></footer></div><script type="text/javascript" src="https://cdn.jsdelivr.net/docsearch.js/1/docsearch.min.js"></script><script>window.fbAsyncInit = function() {FB.init({appId:'2157963944448868',xfbml:true,version:'v2.7'});};(function(d, s, id){var js, fjs = d.getElementsByTagName(s)[0];if (d.getElementById(id)) {return;}js = d.createElement(s); js.id = id;js.src = '//connect.facebook.net/en_US/sdk.js';fjs.parentNode.insertBefore(js, fjs);}(document, 'script','facebook-jssdk'));
+                </script><script>window.twttr=(function(d,s, id){var js,fjs=d.getElementsByTagName(s)[0],t=window.twttr||{};if(d.getElementById(id))return t;js=d.createElement(s);js.id=id;js.src='https://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js, fjs);t._e = [];t.ready = function(f) {t._e.push(f);};return t;}(document, 'script', 'twitter-wjs'));</script><script>
+                document.addEventListener('keyup', function(e) {
+                  if (e.target !== document.body) {
+                    return;
+                  }
+                  // keyCode for '/' (slash)
+                  if (e.keyCode === 191) {
+                    const search = document.getElementById('search_input_react');
+                    search && search.focus();
+                  }
+                });
+              </script><script>
+              var search = docsearch({
+                
+                apiKey: '7457aa83151e8c66250259e3571ac308',
+                indexName: 'rest_hapi',
+                inputSelector: '#search_input_react',
+                algoliaOptions: {}
+              });
+            </script></body></html>
