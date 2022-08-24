@@ -27,22 +27,19 @@ on:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job that can be modified on a branch to test behaviors
-  scratch-job:
-    # The type of runner that the job will run on
+  build:
+
     runs-on: ubuntu-latest
 
-    # Steps represent a sequence of tasks that will be executed as part of the job
+    strategy:
+      matrix:
+        node-version: [10.x, 12.x, 14.x, 15.x]
+
     steps:
-    # Runs a single command using the runners shell
-    - name: Send greeting
-      run: echo "Hello ${{ github.event.inputs.name }}"
-    - name: Exit if failed match
-      run:  |
-        echo $MATCH;
-        echo ${#MATCH};
-        if [[ -z "$MATCH" ]]; then
-            echo "this shouldn't print"
-        fi
-      env:
-        MATCH: "asdf123"
+      - uses: actions/checkout@v3
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+      - run: npm ci
+      - run: npm test
