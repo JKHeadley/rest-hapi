@@ -31,15 +31,13 @@ jobs:
 
     runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        node-version: [14.x, 15.x, 16.x]
-
     steps:
       - uses: actions/checkout@v3
-      - name: Use Node.js ${{ matrix.node-version }}
+      - name: Deploy docs
         uses: actions/setup-node@v3
         with:
-          node-version: ${{ matrix.node-version }}
-      - run: npm ci
-      - run: npm test
+          node-version: 12.14.1
+      - run: git config --global user.name "${GH_NAME}"
+      - run: git config --global user.email "${GH_EMAIL}"
+      - run: echo "machine github.com login ${GH_NAME} password ${GH_TOKEN}" > ~/.netrc
+      - run: cd website && yarn install && GIT_USER="${GH_NAME}" yarn run publish-gh-pages
