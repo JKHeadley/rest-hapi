@@ -37,7 +37,7 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: "12.14.1"
-      - run: cd website
+      - run: cd ./website
       - run: ls
       - run: npm ci
       - run: bash publish.sh
