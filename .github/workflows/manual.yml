@@ -36,6 +36,7 @@ jobs:
         
     env:
       GIT_USER: JKHeadley
+      GIT_EMAIL: headley.justin@gmail.com
 
     steps:
       - uses: actions/checkout@v3
@@ -47,5 +48,7 @@ jobs:
       - run: ls
       - run: npm ci
       - run: echo $GIT_USER
+      - run: git config --global user.name "${GIT_USER}"
+      - run: git config --global user.email "${GIT_EMAIL}"
       - run: echo "machine github.com login ${GIT_USER} password ${GITHUB_TOKEN}" > ~/.netrc
       - run: npm run publish-gh-pages
