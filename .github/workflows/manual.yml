@@ -39,6 +39,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+      - uses: fregante/setup-git-user@v1
       - name: deploy docs
         uses: actions/setup-node@v3
         with:
