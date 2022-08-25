@@ -42,4 +42,6 @@ jobs:
           node-version: "12.14.1"
       - run: ls
       - run: npm ci
-      - run: bash publish.sh
+      - run: GIT_USER=JKHeadley
+      - run: echo "machine github.com login ${GIT_USER} password ${GITHUB_TOKEN}" > ~/.netrc
+      - run: npm run publish-gh-pages
