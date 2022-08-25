@@ -1,0 +1,32 @@
+{
+  "version-3.0.x-docs": {
+    "Getting Started": [
+      "version-3.0.x-quick-start",
+      "version-3.0.x-introduction",
+      "version-3.0.x-swagger-documentation"
+    ],
+    "Usage": [
+      "version-3.0.x-configuration",
+      "version-3.0.x-creating-endpoints",
+      "version-3.0.x-associations",
+      "version-3.0.x-route-customization",
+      "version-3.0.x-querying",
+      "version-3.0.x-duplicate-fields",
+      "version-3.0.x-validation",
+      "version-3.0.x-middleware",
+      "version-3.0.x-authentication",
+      "version-3.0.x-authorization",
+      "version-3.0.x-audit-logs",
+      "version-3.0.x-policies",
+      "version-3.0.x-mongoose-wrapper-methods",
+      "version-3.0.x-soft-delete",
+      "version-3.0.x-metadata",
+      "version-3.0.x-model-generation"
+    ],
+    "Other": [
+      "version-3.0.x-testing",
+      "version-3.0.x-questions",
+      "version-3.0.x-support"
+    ]
+  }
+}
