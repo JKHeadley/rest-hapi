@@ -52,6 +52,7 @@ jobs:
         uses: JamesIves/github-pages-deploy-action@v4
         with:
           folder: website/build # The folder the action should deploy.
+          target-folder: ./
 
 
       # - uses: actions/checkout@v3
