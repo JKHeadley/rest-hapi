@@ -1,12 +1,16 @@
 name: test-on-pull
 
 on:
-  push:
   pull_request:
+    branches:
+      - main
     paths-ignore:
       - '**.md'
+  push:
     branches:
-      - master
+      - main
+    paths-ignore:
+      - '**.md'
 
 jobs:
   build:
