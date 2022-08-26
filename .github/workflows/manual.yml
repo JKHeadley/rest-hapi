@@ -34,21 +34,36 @@ jobs:
       run:
         working-directory: ./website 
         
-    env:
-      GIT_USER: JKHeadley
-      GIT_EMAIL: headley.justin@gmail.com
+    # env:
+    #   GIT_USER: JKHeadley
+    #   GIT_EMAIL: headley.justin@gmail.com
 
     steps:
-      - uses: actions/checkout@v3
-      - uses: fregante/setup-git-user@v1
-      - name: deploy docs
-        uses: actions/setup-node@v3
+
+      - name: Checkout 🛎️
+        uses: actions/checkout@v3
+
+      - name: Install and Build
+        run: |
+          npm ci
+          npm run build
+
+      - name: Deploy 🚀
+        uses: JamesIves/github-pages-deploy-action@v4
         with:
-          node-version: "12.14.1"
-      - run: ls
-      - run: npm ci
-      - run: echo $GIT_USER
-      - run: git config --global user.name "${GIT_USER}"
-      - run: git config --global user.email "${GIT_EMAIL}"
-      - run: echo "machine github.com login ${GIT_USER} password ${GITHUB_TOKEN}" > ~/.netrc
-      - run: npm run publish-gh-pages
+          folder: build # The folder the action should deploy.
+
+
+      # - uses: actions/checkout@v3
+      # - uses: fregante/setup-git-user@v1
+      # - name: deploy docs
+      #   uses: actions/setup-node@v3
+      #   with:
+      #     node-version: "12.14.1"
+      # - run: ls
+      # - run: npm ci
+      # - run: echo $GIT_USER
+      # - run: git config --global user.name "${GIT_USER}"
+      # - run: git config --global user.email "${GIT_EMAIL}"
+      # - run: echo "machine github.com login ${GIT_USER} password ${GITHUB_TOKEN}" > ~/.netrc
+      # - run: npm run publish-gh-pages
