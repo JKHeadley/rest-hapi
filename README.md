@@ -1,6 +1,6 @@
 <p align="center"><a href="https://resthapi.com" target="_blank" rel="noopener noreferrer"><img width="367" height="298" src="https://user-images.githubusercontent.com/12631935/41144156-931d244c-6ac1-11e8-86e5-24fd5fcda8ec.png" alt="rest-hapi logo"></a></p>
 
-<br />
+<br /> 
 
 
 <p align="center"><a href="https://jkheadley.github.io/rest-hapi/" target="_blank" rel="noopener noreferrer"><img width="150" height="46" src="https://user-images.githubusercontent.com/12631935/41491054-c208589a-70ab-11e8-9bac-b1ad47123a30.png" alt="rest-hapi title"></a></p>
