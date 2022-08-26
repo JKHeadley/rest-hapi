@@ -35,21 +35,21 @@
 </div>
 
 
-rest-hapi is a [hapi](https://hapijs.com/) plugin that generates RESTful API endpoints based on [mongoose](http://mongoosejs.com/) schemas. It provides a powerful combination of [relational](https://jkheadley.github.io/rest-hapi/docs/associations.html) structure with [NoSQL](https://jkheadley.github.io/rest-hapi/docs/creating-endpoints.html) flexibility.  You define your data models and the rest is done for you.  Have your API up and running in minutes!
+rest-hapi is a [hapi](https://hapijs.com/) plugin that generates RESTful API endpoints based on [mongoose](http://mongoosejs.com/) schemas. It provides a powerful combination of [relational](https://resthapi.com/docs/associations.html) structure with [NoSQL](https://resthapi.com/docs/creating-endpoints.html) flexibility.  You define your data models and the rest is done for you.  Have your API up and running in minutes!
 
 ## Features
 
-* Automatic generation of [CRUD](https://jkheadley.github.io/rest-hapi/docs/creating-endpoints.html) and [association](https://jkheadley.github.io/rest-hapi/docs/associations.html) endpoints with [middleware](https://jkheadley.github.io/rest-hapi/docs/middleware.html) support
-* [joi](https://github.com/hapijs/joi) [validation](https://jkheadley.github.io/rest-hapi/docs/validation.html)
-* Route-level and document-level [authorization](https://jkheadley.github.io/rest-hapi/docs/authorization.html)
-* [Swagger docs](https://jkheadley.github.io/rest-hapi/docs/swagger-documentation.html) for all generated endpoints
-* [Query parameter](https://jkheadley.github.io/rest-hapi/docs/querying.html) support for searching, sorting, filtering, pagination, and embedding of associated models
-* Endpoint activity history through [Audit Logs](https://jkheadley.github.io/rest-hapi/docs/audit-logs.html)
-* Support for [policies](https://jkheadley.github.io/rest-hapi/docs/policies.html) via [mrhorse](https://github.com/mark-bradshaw/mrhorse)
-* [Duplicate fields](https://jkheadley.github.io/rest-hapi/docs/duplicate-fields.html)
-* Support for ["soft" delete](https://jkheadley.github.io/rest-hapi/docs/soft-delete.html)
-* Optional [metadata](https://jkheadley.github.io/rest-hapi/docs/metadata.html) for documents
-* Mongoose [wrapper methods](https://jkheadley.github.io/rest-hapi/docs/mongoose-wrapper-methods.html)
+* Automatic generation of [CRUD](https://resthapi.com/docs/creating-endpoints.html) and [association](https://resthapi.com/docs/associations.html) endpoints with [middleware](https://resthapi.com/docs/middleware.html) support
+* [joi](https://github.com/hapijs/joi) [validation](https://resthapi.com/docs/validation.html)
+* Route-level and document-level [authorization](https://resthapi.com/docs/authorization.html)
+* [Swagger docs](https://resthapi.com/docs/swagger-documentation.html) for all generated endpoints
+* [Query parameter](https://resthapi.com/docs/querying.html) support for searching, sorting, filtering, pagination, and embedding of associated models
+* Endpoint activity history through [Audit Logs](https://resthapi.com/docs/audit-logs.html)
+* Support for [policies](https://resthapi.com/docs/policies.html) via [mrhorse](https://github.com/mark-bradshaw/mrhorse)
+* [Duplicate fields](https://resthapi.com/docs/duplicate-fields.html)
+* Support for ["soft" delete](https://resthapi.com/docs/soft-delete.html)
+* Optional [metadata](https://resthapi.com/docs/metadata.html) for documents
+* Mongoose [wrapper methods](https://resthapi.com/docs/mongoose-wrapper-methods.html)
 * ...and more!
 
 ---
@@ -68,7 +68,7 @@ https://api.appyapp.io
 
 ## Documentation
 
-Check out the docs on the [official site](https://jkheadley.github.io/rest-hapi)!
+Check out the docs on the [official site](https://resthapi.com)!
 
 ## Requirements
 
@@ -117,7 +117,7 @@ $ npm start
 We welcome contributions to rest-hapi! These are the many ways you can help:
 
 - Submit patches and features
-- Improve the [documentation and website](https://jkheadley.github.io/rest-hapi/)
+- Improve the [documentation and website](https://resthapi.com/)
 - Report bugs
 - Follow us on [Twitter](https://twitter.com/resthapi)
 - Participate in the [gitter community](https://gitter.im/rest-hapi/Lobby)
