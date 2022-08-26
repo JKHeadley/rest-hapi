@@ -72,7 +72,7 @@ class Versions extends React.Component {
                 </tr>
               </tbody>
             </table>
-            <p>Other text describing this section.</p>
+            <p>These are the docs for upcoming versions.</p>
             <h3 id="archive">Past Versions</h3>
             <table className="versions">
               <tbody>
@@ -96,7 +96,7 @@ class Versions extends React.Component {
               </tbody>
             </table>
             <p>
-              You can find past versions of this project <a href="https://github.com/">
+              You can find past versions of this project <a href="https://github.com/JKHeadley/rest-hapi">
                 {' '}
                 on GitHub{' '}
               </a>.

@@ -2499,7 +2499,7 @@
   "resolved" "https://registry.npmjs.org/discontinuous-range/-/discontinuous-range-1.0.0.tgz"
   "version" "1.0.0"
 
-"docusaurus@^1.13.0":
+"docusaurus@^1.14.7":
   "integrity" "sha512-UWqar4ZX0lEcpLc5Tg+MwZ2jhF/1n1toCQRSeoxDON/D+E9ToLr+vTRFVMP/Tk84NXSVjZFRlrjWwM2pXzvLsQ=="
   "resolved" "https://registry.npmjs.org/docusaurus/-/docusaurus-1.14.7.tgz"
   "version" "1.14.7"

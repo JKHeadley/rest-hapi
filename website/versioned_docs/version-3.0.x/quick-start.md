@@ -1,7 +1,8 @@
 ---
-id: quick-start
+id: version-3.0.x-quick-start
 title: Quick Start
 sidebar_label: Quick Start
+original_id: quick-start
 ---
 
 ## Requirements
