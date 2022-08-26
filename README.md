@@ -14,7 +14,7 @@
 <br />
 
 <div align="center">
-  <a href="https://travis-ci.org/JKHeadley/rest-hapi">
+  <a href="https://github.com/JKHeadley/rest-hapi">
     <img alt="Github Actions" src="https://img.shields.io/github/checks-status/JKHeadley/rest-hapi/master">
   </a>
   <a href="https://codecov.io/gh/JKHeadley/rest-hapi">
