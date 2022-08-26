@@ -93,17 +93,17 @@ The more it improved the more I felt we had really tapped into a goldmine for RE
 
 After nearly two years of hard work and development I’m excited to introduce [rest-hapi v1](https://github.com/JKHeadley/rest-hapi) to the web development community. We’ve been able to pack a lot of useful features into the tool so far including:
 
-- Automatic generation of [CRUD](https://jkheadley.github.io/rest-hapi/docs/creating-endpoints.html) and [association](https://jkheadley.github.io/rest-hapi/docs/associations.html) endpoints with [middleware](https://jkheadley.github.io/rest-hapi/docs/middleware.html) support
-- [joi](https://github.com/hapijs/joi) [validation](https://jkheadley.github.io/rest-hapi/docs/validation.html)
-- Route-level and document-level [authorization](https://jkheadley.github.io/rest-hapi/docs/authorization.html)
-- [Swagger docs](https://jkheadley.github.io/rest-hapi/docs/swagger-documentation.html) for all generated endpoints
-- [Query parameter](https://jkheadley.github.io/rest-hapi/docs/querying.html) support for searching, sorting, filtering, pagination, and embedding of associated models
-- Endpoint activity history through [Audit Logs](https://jkheadley.github.io/rest-hapi/docs/audit-logs.html)
-- Support for [policies](https://jkheadley.github.io/rest-hapi/docs/policies.html)
-- [Duplicate fields](https://jkheadley.github.io/rest-hapi/docs/duplicate-fields.html)
-- Support for [“soft” delete](https://jkheadley.github.io/rest-hapi/docs/soft-delete.html)
-- Optional [metadata](https://jkheadley.github.io/rest-hapi/docs/metadata.html) for documents
-- Mongoose [wrapper methods](https://jkheadley.github.io/rest-hapi/docs/mongoose-wrapper-methods.html)
+- Automatic generation of [CRUD](https://resthapi.com/docs/creating-endpoints.html) and [association](https://resthapi.com/docs/associations.html) endpoints with [middleware](https://resthapi.com/docs/middleware.html) support
+- [joi](https://github.com/hapijs/joi) [validation](https://resthapi.com/docs/validation.html)
+- Route-level and document-level [authorization](https://resthapi.com/docs/authorization.html)
+- [Swagger docs](https://resthapi.com/docs/swagger-documentation.html) for all generated endpoints
+- [Query parameter](https://resthapi.com/docs/querying.html) support for searching, sorting, filtering, pagination, and embedding of associated models
+- Endpoint activity history through [Audit Logs](https://resthapi.com/docs/audit-logs.html)
+- Support for [policies](https://resthapi.com/docs/policies.html)
+- [Duplicate fields](https://resthapi.com/docs/duplicate-fields.html)
+- Support for [“soft” delete](https://resthapi.com/docs/soft-delete.html)
+- Optional [metadata](https://resthapi.com/docs/metadata.html) for documents
+- Mongoose [wrapper methods](https://resthapi.com/docs/mongoose-wrapper-methods.html)
 - …and more!
 With just a few simple data models you can instantly generate hundreds of documented, robust endpoints. Check out these examples:
 

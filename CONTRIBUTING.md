@@ -31,7 +31,7 @@ Here is a quick guide to doing code contributions to the library.
 9. After all requests are complete, your pull request will be merged in.
 10. Celebrate! :tada:
 
-**NOTE**: Don't forget to [update the docs](https://jkheadley.github.io/rest-hapi/docs/quick-start.html)! 😉
+**NOTE**: Don't forget to [update the docs](https://resthapi.com/docs/quick-start.html)! 😉
 
 ### This is my first Pull Request, where can I learn how to contribute?
 
