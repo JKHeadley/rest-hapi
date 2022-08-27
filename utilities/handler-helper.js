@@ -809,6 +809,7 @@ async function _deleteOneV2({
       method: 'Delete',
       url: `/${model.routeOptions.alias || model.modelName}/${_id}`,
       params: { _id },
+      payload: { hardDelete },
       credentials,
       headers: { authorization: 'Bearer' }
     }
@@ -961,7 +962,7 @@ async function _deleteManyV2({
 }) {
   model = getModel(model)
   const RestHapi = require('../rest-hapi')
-  Log = Log || RestHapi.getLogger('deleteOne')
+  Log = Log || RestHapi.getLogger('deleteMany')
 
   if (restCall) {
     assertServer()
