@@ -1554,7 +1554,7 @@ async function _addManyHandler(
   try {
     // EXPL: make a copy of the payload so that request.payload remains unchanged
     let payload = request.payload.map(item => {
-      return _.isObject(item) ? _.assignIn({}, item) : item
+      return _.isObject(item) ? _.cloneDeep(item) : item
     })
     if (_.isEmpty(request.payload)) {
       throw Boom.badRequest('Payload is empty.')
@@ -1765,7 +1765,7 @@ async function _removeManyHandler(
   try {
     // EXPL: make a copy of the payload so that request.payload remains unchanged
     let payload = request.payload.map(item => {
-      return _.isObject(item) ? _.assignIn({}, item) : item
+      return _.isObject(item) ? _.cloneDeep(item) : item
     })
     if (_.isEmpty(request.payload)) {
       throw Boom.badRequest('Payload is empty.')
