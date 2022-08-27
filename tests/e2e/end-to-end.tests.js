@@ -8,7 +8,8 @@ const Decache = require('decache')
 // Import test groups
 const BasicCrudTests = require('./basic-crud.tests')
 const DocAuthTests = require('./doc-auth.tests')
-const BasicEmbedTests = require('./basic-embed.tests')
+const BasicEmbedRestTests = require('./basic-embed-rest.tests')
+const BasicEmbedWrapperTests = require('./basic-embed-wrapper.tests')
 const BasicNonEmbedTests = require('./basic-non-embed.tests')
 const AuditLogTests = require('./audit-log.tests')
 const AdvanceAssocTests = require('./advance-assoc.tests')
@@ -70,7 +71,10 @@ Test('end to end tests', function(t) {
       return DocAuthTests(t, Mongoose, internals, Log, restore)
     })
     .then(function() {
-      return BasicEmbedTests(t, Mongoose, internals, Log, restore)
+      return BasicEmbedRestTests(t, Mongoose, internals, Log, restore)
+    })
+    .then(function() {
+      return BasicEmbedWrapperTests(t, Mongoose, internals, Log, restore)
     })
     .then(function() {
       return BasicNonEmbedTests(t, Mongoose, internals, Log, restore)
