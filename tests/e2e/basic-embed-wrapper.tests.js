@@ -7,7 +7,7 @@ const Q = require('q')
 const Hapi = require('@hapi/hapi')
 
 module.exports = (t, Mongoose, internals, Log) => {
-  return t.test('basic embedded association tests', function(t) {
+  return t.test('basic embedded association tests (WRAPPER)', function(t) {
     let users = []
     const userProfiles = []
     let roles = []
@@ -17,6 +17,11 @@ module.exports = (t, Mongoose, internals, Log) => {
       Q.when()
         // ONE_ONE associations work
         .then(function() {
+          // For some reason the models don't always get deleted properly on the previous tests
+          Object.keys(Mongoose.models).forEach(function(key) {
+            delete Mongoose.models[key]
+          })
+
           return t.test('ONE_ONE associations work', function(t) {
             // <editor-fold desc="Arrange">
             const RestHapi = require('../../rest-hapi')
@@ -56,7 +61,7 @@ module.exports = (t, Mongoose, internals, Log) => {
                       email: 'test@user.com',
                       password: 'root'
                     },
-                    restCall: true
+                    restCall: false
                   })
                 })
                 .then(function(response) {
@@ -68,7 +73,7 @@ module.exports = (t, Mongoose, internals, Log) => {
                       status: 'Enabled',
                       user: user._id
                     },
-                    restCall: true
+                    restCall: false
                   })
                 })
                 .then(function(response) {
@@ -81,7 +86,7 @@ module.exports = (t, Mongoose, internals, Log) => {
                     payload: {
                       profile: userProfile._id
                     },
-                    restCall: true
+                    restCall: false
                   })
                 })
                 .then(function(response) {
@@ -91,7 +96,7 @@ module.exports = (t, Mongoose, internals, Log) => {
                   return RestHapi.list({
                     model: 'user',
                     query: { $embed: ['profile'] },
-                    restCall: true
+                    restCall: false
                   })
                 })
                 // </editor-fold>
@@ -178,7 +183,7 @@ module.exports = (t, Mongoose, internals, Log) => {
                     return RestHapi.create({
                       model: 'role',
                       payload,
-                      restCall: true
+                      restCall: false
                     })
                   })
                   .then(function(response) {
@@ -203,7 +208,7 @@ module.exports = (t, Mongoose, internals, Log) => {
                     return RestHapi.create({
                       model: 'user',
                       payload,
-                      restCall: true
+                      restCall: false
                     })
                   })
                   .then(function(response) {
@@ -215,7 +220,7 @@ module.exports = (t, Mongoose, internals, Log) => {
                       associationName: 'users',
                       ownerId: roles[0]._id,
                       childId: users[0]._id,
-                      restCall: true
+                      restCall: false
                     })
                   })
                   .then(function(response) {
@@ -227,7 +232,7 @@ module.exports = (t, Mongoose, internals, Log) => {
                       associationName: 'users',
                       ownerId: roles[0]._id,
                       payload,
-                      restCall: true
+                      restCall: false
                     })
                   })
                   .then(function(response) {
@@ -236,7 +241,7 @@ module.exports = (t, Mongoose, internals, Log) => {
                         model: 'role',
                         _id: roles[0]._id,
                         query: { $embed: ['users'] },
-                        restCall: true
+                        restCall: false
                       })
                     )
                   })
@@ -248,7 +253,7 @@ module.exports = (t, Mongoose, internals, Log) => {
                         associationName: 'users',
                         ownerId: roles[0]._id,
                         query: { $embed: ['title'] },
-                        restCall: true
+                        restCall: false
                       })
                     )
                   })
@@ -265,7 +270,7 @@ module.exports = (t, Mongoose, internals, Log) => {
                             users[2].email
                           ]
                         },
-                        restCall: true
+                        restCall: false
                       })
                     )
                   })
@@ -281,7 +286,7 @@ module.exports = (t, Mongoose, internals, Log) => {
                             users[2].email
                           ]
                         },
-                        restCall: true
+                        restCall: false
                       })
                     )
                   })
@@ -952,7 +957,7 @@ module.exports = (t, Mongoose, internals, Log) => {
                       childModel: 'user',
                       childId: users[0]._id,
                       associationName: 'users',
-                      restCall: true
+                      restCall: false
                     })
                   })
                   .then(function(response) {
@@ -968,7 +973,7 @@ module.exports = (t, Mongoose, internals, Log) => {
                       childModel: 'user',
                       associationName: 'users',
                       payload,
-                      restCall: true
+                      restCall: false
                     })
                   })
                   .then(function(response) {

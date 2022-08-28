@@ -281,9 +281,251 @@ module.exports = (t, Mongoose, internals, Log) =>
             // </editor-fold>
           })
         })
-        // basic "Soft Delete" works
+        // basic "Delete" works
         .then(function() {
           return t.test('basic "Delete" works', function(t) {
+            // <editor-fold desc="Arrange">
+            const RestHapi = require('../../rest-hapi')
+            const server = new Hapi.Server()
+
+            const config = {
+              loglevel: 'ERROR',
+              absoluteModelPath: true,
+              enableSoftDelete: false,
+
+              modelPath: path.join(
+                __dirname,
+                '/test-scenarios/scenario-1/models'
+              )
+            }
+
+            RestHapi.config = config
+
+            return (
+              server
+                .register({
+                  plugin: RestHapi,
+                  options: {
+                    mongoose: Mongoose,
+                    config: config
+                  }
+                })
+                .then(function(response) {
+                  server.start()
+
+                  return Mongoose.model('role').find()
+                })
+                .then(function(response) {
+                  internals.previous = response
+
+                  return RestHapi.deleteOne({
+                    model: Mongoose.model('role'),
+                    _id: internals.previous[0]._id,
+                    restCall: true
+                  })
+                })
+                // </editor-fold>
+
+                // <editor-fold desc="Assert">
+                .then(function(response) {
+                  return Mongoose.model('role')
+                    .find()
+                    .then(function(response) {
+                      t.deepEquals(
+                        internals.previous[0].name,
+                        'test_updated',
+                        'role previously existed'
+                      )
+                      t.deepEquals(response, [], 'role deleted')
+                    })
+                })
+                // </editor-fold>
+
+                // <editor-fold desc="Restore">
+                .then(function(response) {
+                  Decache('../../rest-hapi')
+
+                  Object.keys(Mongoose.models).forEach(function(key) {
+                    delete Mongoose.models[key]
+                  })
+                  Object.keys(Mongoose.modelSchemas || []).forEach(function(
+                    key
+                  ) {
+                    delete Mongoose?.modelSchemas[key]
+                  })
+
+                  return Mongoose.connection.db.dropDatabase()
+                })
+            )
+            // </editor-fold>
+          })
+        })
+        // basic "Soft Delete" works
+        .then(function() {
+          return t.test('basic "Soft Delete" works', function(t) {
+            // <editor-fold desc="Arrange">
+            const RestHapi = require('../../rest-hapi')
+            const server = new Hapi.Server()
+
+            const config = {
+              loglevel: 'ERROR',
+              absoluteModelPath: true,
+              enableSoftDelete: true,
+
+              modelPath: path.join(
+                __dirname,
+                '/test-scenarios/scenario-1/models'
+              )
+            }
+
+            RestHapi.config = config
+
+            return (
+              server
+                .register({
+                  plugin: RestHapi,
+                  options: {
+                    mongoose: Mongoose,
+                    config: config
+                  }
+                })
+                .then(function() {
+                  server.start()
+
+                  return RestHapi.create({
+                    model: Mongoose.model('role'),
+                    payload: { name: 'test' },
+                    restCall: true
+                  })
+                })
+                .then(function(response) {
+                  return RestHapi.deleteOne({
+                    model: Mongoose.model('role'),
+                    _id: response._id,
+                    restCall: true
+                  })
+                })
+                // </editor-fold>
+
+                // <editor-fold desc="Assert">
+                .then(function(response) {
+                  return Mongoose.model('role')
+                    .find()
+                    .then(function(response) {
+                      t.deepEquals(
+                        response[0].isDeleted,
+                        true,
+                        'role soft deleted'
+                      )
+                    })
+                })
+                // </editor-fold>
+
+                // <editor-fold desc="Restore">
+                .then(function(response) {
+                  Decache('../../rest-hapi')
+
+                  Object.keys(Mongoose.models).forEach(function(key) {
+                    delete Mongoose.models[key]
+                  })
+                  Object.keys(Mongoose.modelSchemas || []).forEach(function(
+                    key
+                  ) {
+                    delete Mongoose?.modelSchemas[key]
+                  })
+
+                  return Mongoose.connection.db.dropDatabase()
+                })
+            )
+            // </editor-fold>
+          })
+        })
+        // basic "Hard Delete" works
+        .then(function() {
+          return t.test('basic "Hard Delete" works', function(t) {
+            // <editor-fold desc="Arrange">
+            const RestHapi = require('../../rest-hapi')
+            const server = new Hapi.Server()
+
+            const config = {
+              loglevel: 'ERROR',
+              absoluteModelPath: true,
+              enableSoftDelete: true,
+
+              modelPath: path.join(
+                __dirname,
+                '/test-scenarios/scenario-1/models'
+              )
+            }
+
+            RestHapi.config = config
+
+            return (
+              server
+                .register({
+                  plugin: RestHapi,
+                  options: {
+                    mongoose: Mongoose,
+                    config: config
+                  }
+                })
+                .then(function() {
+                  server.start()
+
+                  return RestHapi.create({
+                    model: Mongoose.model('role'),
+                    payload: { name: 'test_hard' },
+                    restCall: true
+                  })
+                })
+                .then(function(response) {
+                  internals.previous = response
+                  return RestHapi.deleteOne({
+                    model: Mongoose.model('role'),
+                    _id: response._id,
+                    hardDelete: true,
+                    restCall: true
+                  })
+                })
+                // </editor-fold>
+
+                // <editor-fold desc="Assert">
+                .then(function() {
+                  return Mongoose.model('role')
+                    .find()
+                    .then(function(response) {
+                      t.deepEquals(
+                        internals.previous.name,
+                        'test_hard',
+                        'role previously existed'
+                      )
+                      t.deepEquals(response, [], 'role hard deleted')
+                    })
+                })
+                // </editor-fold>
+
+                // <editor-fold desc="Restore">
+                .then(function(response) {
+                  Decache('../../rest-hapi')
+
+                  Object.keys(Mongoose.models).forEach(function(key) {
+                    delete Mongoose.models[key]
+                  })
+                  Object.keys(Mongoose.modelSchemas || []).forEach(function(
+                    key
+                  ) {
+                    delete Mongoose?.modelSchemas[key]
+                  })
+
+                  return Mongoose.connection.db.dropDatabase()
+                })
+            )
+            // </editor-fold>
+          })
+        })
+        // create many works
+        .then(function() {
+          return t.test('create many works', function(t) {
             // <editor-fold desc="Arrange">
             const RestHapi = require('../../rest-hapi')
             const server = new Hapi.Server()
@@ -312,9 +554,109 @@ module.exports = (t, Mongoose, internals, Log) =>
                 .then(function() {
                   server.start()
 
-                  return RestHapi.deleteOne({
+                  return RestHapi.create({
                     model: Mongoose.model('role'),
-                    _id: internals.previous._id,
+                    payload: [
+                      { name: 'test1' },
+                      { name: 'test2' },
+                      { name: 'test3' }
+                    ],
+                    restCall: true
+                  })
+                })
+                // </editor-fold>
+
+                // <editor-fold desc="Assert">
+                .then(function(response) {
+                  internals.previous = response
+                  t.equals(
+                    response[0].name,
+                    'test1',
+                    'role with name "test1" created'
+                  )
+                  t.equals(
+                    response[1].name,
+                    'test2',
+                    'role with name "test2" created'
+                  )
+                  t.equals(
+                    response[2].name,
+                    'test3',
+                    'role with name "test3" created'
+                  )
+                })
+                // </editor-fold>
+
+                // <editor-fold desc="Restore">
+                .then(function(response) {
+                  Decache('../../rest-hapi')
+
+                  Object.keys(Mongoose.models).forEach(function(key) {
+                    delete Mongoose.models[key]
+                  })
+                  Object.keys(Mongoose.modelSchemas || []).forEach(function(
+                    key
+                  ) {
+                    delete Mongoose?.modelSchemas[key]
+                  })
+
+                  return Mongoose.connection.db.dropDatabase()
+                })
+            )
+            // </editor-fold>
+          })
+        })
+        // basic delete many works
+        .then(function() {
+          return t.test('basic delete many works', function(t) {
+            // <editor-fold desc="Arrange">
+            const RestHapi = require('../../rest-hapi')
+            const server = new Hapi.Server()
+
+            const config = {
+              loglevel: 'ERROR',
+              absoluteModelPath: true,
+              enableSoftDelete: true,
+
+              modelPath: path.join(
+                __dirname,
+                '/test-scenarios/scenario-1/models'
+              )
+            }
+
+            RestHapi.config = config
+
+            return (
+              server
+                .register({
+                  plugin: RestHapi,
+                  options: {
+                    mongoose: Mongoose,
+                    config: config
+                  }
+                })
+                .then(function() {
+                  server.start()
+
+                  return RestHapi.create({
+                    model: Mongoose.model('role'),
+                    payload: [
+                      { name: 'test1' },
+                      { name: 'test2' },
+                      { name: 'test3' }
+                    ],
+                    restCall: true
+                  })
+                })
+                .then(function(response) {
+                  return RestHapi.deleteMany({
+                    model: Mongoose.model('role'),
+                    payload: response
+                      .filter(obj => obj.name !== 'test1')
+                      .map(obj => ({
+                        _id: obj._id,
+                        hardDelete: true
+                      })),
                     restCall: true
                   })
                 })
@@ -325,7 +667,195 @@ module.exports = (t, Mongoose, internals, Log) =>
                   return Mongoose.model('role')
                     .find()
                     .then(function(response) {
-                      t.deepEquals(response, [], 'role deleted')
+                      t.deepEquals(
+                        response.length,
+                        1,
+                        'correct number of roles deleted'
+                      )
+                      t.deepEquals(
+                        response[0].name,
+                        'test1',
+                        'correct roles deleted'
+                      )
+                    })
+                })
+                // </editor-fold>
+
+                // <editor-fold desc="Restore">
+                .then(function(response) {
+                  Decache('../../rest-hapi')
+
+                  Object.keys(Mongoose.models).forEach(function(key) {
+                    delete Mongoose.models[key]
+                  })
+                  Object.keys(Mongoose.modelSchemas || []).forEach(function(
+                    key
+                  ) {
+                    delete Mongoose?.modelSchemas[key]
+                  })
+
+                  return Mongoose.connection.db.dropDatabase()
+                })
+            )
+            // </editor-fold>
+          })
+        })
+        // cant soft delete when disabled
+        .then(function() {
+          return t.test('cant soft delete when disabled', function(t) {
+            // <editor-fold desc="Arrange">
+            const RestHapi = require('../../rest-hapi')
+            const server = new Hapi.Server()
+
+            const config = {
+              loglevel: 'ERROR',
+              absoluteModelPath: true,
+              enableSoftDelete: false,
+
+              modelPath: path.join(
+                __dirname,
+                '/test-scenarios/scenario-1/models'
+              )
+            }
+
+            RestHapi.config = config
+
+            return (
+              server
+                .register({
+                  plugin: RestHapi,
+                  options: {
+                    mongoose: Mongoose,
+                    config: config
+                  }
+                })
+                .then(function() {
+                  server.start()
+
+                  return RestHapi.create({
+                    model: Mongoose.model('role'),
+                    payload: [
+                      { name: 'test1' },
+                      { name: 'test2' },
+                      { name: 'test3' }
+                    ],
+                    restCall: true
+                  })
+                })
+                .then(function(response) {
+                  return RestHapi.deleteMany({
+                    model: Mongoose.model('role'),
+                    payload: response
+                      .filter(obj => obj.name !== 'test1')
+                      .map(obj => ({
+                        _id: obj._id,
+                        hardDelete: true
+                      })),
+                    restCall: true
+                  })
+                })
+                // </editor-fold>
+
+                // <editor-fold desc="Assert">
+                .then(function(response) {
+                  t.deepEquals(
+                    response.message,
+                    'Invalid request payload input',
+                    'rejected soft delete'
+                  )
+                })
+                // </editor-fold>
+
+                // <editor-fold desc="Restore">
+                .then(function(response) {
+                  Decache('../../rest-hapi')
+
+                  Object.keys(Mongoose.models).forEach(function(key) {
+                    delete Mongoose.models[key]
+                  })
+                  Object.keys(Mongoose.modelSchemas || []).forEach(function(
+                    key
+                  ) {
+                    delete Mongoose?.modelSchemas[key]
+                  })
+
+                  return Mongoose.connection.db.dropDatabase()
+                })
+            )
+            // </editor-fold>
+          })
+        })
+        // delete many non-rest call handles objectIds
+        .then(function() {
+          return t.test('delete many non-rest call handles objectIds', function(t) {
+            // <editor-fold desc="Arrange">
+            const RestHapi = require('../../rest-hapi')
+            const server = new Hapi.Server()
+
+            const config = {
+              loglevel: 'ERROR',
+              absoluteModelPath: true,
+              enableSoftDelete: true,
+
+              modelPath: path.join(
+                __dirname,
+                '/test-scenarios/scenario-1/models'
+              )
+            }
+
+            RestHapi.config = config
+
+            return (
+              server
+                .register({
+                  plugin: RestHapi,
+                  options: {
+                    mongoose: Mongoose,
+                    config: config
+                  }
+                })
+                .then(function() {
+                  server.start()
+
+                  return RestHapi.create({
+                    model: Mongoose.model('role'),
+                    payload: [
+                      { name: 'test1' },
+                      { name: 'test2' },
+                      { name: 'test3' }
+                    ],
+                    restCall: true
+                  })
+                })
+                .then(function(response) {
+                  return RestHapi.deleteMany({
+                    model: Mongoose.model('role'),
+                    payload: response
+                      .filter(obj => obj.name !== 'test1')
+                      .map(obj => ({
+                        _id: obj._id,
+                        hardDelete: true
+                      })),
+                    restCall: false
+                  })
+                })
+                // </editor-fold>
+
+                // <editor-fold desc="Assert">
+                .then(function(response) {
+                  return Mongoose.model('role')
+                    .find()
+                    .then(function(response) {
+                      t.deepEquals(
+                        response.length,
+                        1,
+                        'correct number of roles deleted'
+                      )
+                      t.deepEquals(
+                        response[0].name,
+                        'test1',
+                        'correct roles deleted'
+                      )
                     })
                 })
                 // </editor-fold>
