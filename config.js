@@ -321,6 +321,20 @@ config.loglevel = 'NOTE'
 config.logListResult = false
 
 /**
+ * If set to true, string values will be truncated to `truncateStringLength` characters in the logs and array values will be trunctated to 30 elements.
+ * default: false
+ * @type {boolean}
+ */
+config.truncateLogs = false
+
+/**
+ * If `truncateLogStrings` is set to true, this is the maximum length of a string to be logged.
+ * default: 100
+ * @type {number}
+ */
+config.truncateStringLength = 100
+
+/**
  * Set swagger options as per https://github.com/glennjones/hapi-swagger/blob/master/optionsreference.md
  * Options set here will override swagger config options below
  *

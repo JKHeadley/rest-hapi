@@ -2,6 +2,8 @@
 
 const Boom = require('@hapi/boom')
 const handlerHelper = require('./handler-helper')
+const config = require('../config')
+const { truncatedStringify } = require('./log-util')
 
 // TODO: add bulk delete/delete many
 
@@ -138,12 +140,21 @@ function generateListHandler(model, options, logger) {
 
   return async function(request, h) {
     try {
-      Log.log(
-        'params(%s), query(%s), payload(%s)',
-        JSON.stringify(request.params),
-        JSON.stringify(request.query),
-        JSON.stringify(request.payload)
-      )
+      if (config.truncateLogs) {
+        Log.info(
+          'params(%s)\nquery(%s)\npayload(%s)\n',
+          truncatedStringify(request.params, config.truncateStringLength),
+          truncatedStringify(request.query, config.truncateStringLength),
+          truncatedStringify(request.payload, config.truncateStringLength)
+        )
+      } else {
+        Log.info(
+          'params(%s)\nquery(%s)\npayload(%s)\n',
+          JSON.stringify(request.params, null, 2),
+          JSON.stringify(request.query, null, 2),
+          JSON.stringify(request.payload, null, 2)
+        )
+      }
 
       const result = await handlerHelper.listHandler(model, request, Log)
       delete result.pageData
@@ -167,12 +178,21 @@ function generateFindHandler(model, options, logger) {
 
   return async function(request, h) {
     try {
-      Log.log(
-        'params(%s), query(%s), payload(%s)',
-        JSON.stringify(request.params),
-        JSON.stringify(request.query),
-        JSON.stringify(request.payload)
-      )
+      if (config.truncateLogs) {
+        Log.info(
+          'params(%s)\nquery(%s)\npayload(%s)\n',
+          truncatedStringify(request.params, config.truncateStringLength),
+          truncatedStringify(request.query, config.truncateStringLength),
+          truncatedStringify(request.payload, config.truncateStringLength)
+        )
+      } else {
+        Log.info(
+          'params(%s)\nquery(%s)\npayload(%s)\n',
+          JSON.stringify(request.params, null, 2),
+          JSON.stringify(request.query, null, 2),
+          JSON.stringify(request.payload, null, 2)
+        )
+      }
 
       const result = await handlerHelper.findHandler(
         model,
@@ -200,12 +220,21 @@ function generateCreateHandler(model, options, logger) {
 
   return async function(request, h) {
     try {
-      Log.log(
-        'params(%s), query(%s), payload(%s)',
-        JSON.stringify(request.params),
-        JSON.stringify(request.query),
-        JSON.stringify(request.payload)
-      )
+      if (config.truncateLogs) {
+        Log.info(
+          'params(%s)\nquery(%s)\npayload(%s)\n',
+          truncatedStringify(request.params, config.truncateStringLength),
+          truncatedStringify(request.query, config.truncateStringLength),
+          truncatedStringify(request.payload, config.truncateStringLength)
+        )
+      } else {
+        Log.info(
+          'params(%s)\nquery(%s)\npayload(%s)\n',
+          JSON.stringify(request.params, null, 2),
+          JSON.stringify(request.query, null, 2),
+          JSON.stringify(request.payload, null, 2)
+        )
+      }
 
       const result = await handlerHelper.createHandler(model, request, Log)
       return h.response(result).code(201)
@@ -228,12 +257,21 @@ function generateUpdateHandler(model, options, logger) {
 
   return async function(request, h) {
     try {
-      Log.log(
-        'params(%s), query(%s), payload(%s)',
-        JSON.stringify(request.params),
-        JSON.stringify(request.query),
-        JSON.stringify(request.payload)
-      )
+      if (config.truncateLogs) {
+        Log.info(
+          'params(%s)\nquery(%s)\npayload(%s)\n',
+          truncatedStringify(request.params, config.truncateStringLength),
+          truncatedStringify(request.query, config.truncateStringLength),
+          truncatedStringify(request.payload, config.truncateStringLength)
+        )
+      } else {
+        Log.info(
+          'params(%s)\nquery(%s)\npayload(%s)\n',
+          JSON.stringify(request.params, null, 2),
+          JSON.stringify(request.query, null, 2),
+          JSON.stringify(request.payload, null, 2)
+        )
+      }
 
       const result = await handlerHelper.updateHandler(
         model,
@@ -261,12 +299,21 @@ function generateDeleteHandler(model, options, logger) {
 
   return async function(request, h) {
     try {
-      Log.log(
-        'params(%s), query(%s), payload(%s)',
-        JSON.stringify(request.params),
-        JSON.stringify(request.query),
-        JSON.stringify(request.payload)
-      )
+      if (config.truncateLogs) {
+        Log.info(
+          'params(%s)\nquery(%s)\npayload(%s)\n',
+          truncatedStringify(request.params, config.truncateStringLength),
+          truncatedStringify(request.query, config.truncateStringLength),
+          truncatedStringify(request.payload, config.truncateStringLength)
+        )
+      } else {
+        Log.info(
+          'params(%s)\nquery(%s)\npayload(%s)\n',
+          JSON.stringify(request.params, null, 2),
+          JSON.stringify(request.query, null, 2),
+          JSON.stringify(request.payload, null, 2)
+        )
+      }
 
       if (request.params._id) {
         const hardDelete = request.payload ? request.payload.hardDelete : false
@@ -310,12 +357,21 @@ function generateAssociationAddOneHandler(
 
   return async function(request, h) {
     try {
-      Log.log(
-        addMethodName + ' + params(%s), query(%s), payload(%s)',
-        JSON.stringify(request.params),
-        JSON.stringify(request.query),
-        JSON.stringify(request.payload)
-      )
+      if (config.truncateLogs) {
+        Log.info(
+          addMethodName + ' + params(%s)\nquery(%s)\npayload(%s)\n',
+          truncatedStringify(request.params, config.truncateStringLength),
+          truncatedStringify(request.query, config.truncateStringLength),
+          truncatedStringify(request.payload, config.truncateStringLength)
+        )
+      } else {
+        Log.info(
+          addMethodName + ' + params(%s)\nquery(%s)\npayload(%s)\n',
+          JSON.stringify(request.params, null, 2),
+          JSON.stringify(request.query, null, 2),
+          JSON.stringify(request.payload, null, 2)
+        )
+      }
 
       await handlerHelper.addOneHandler(
         ownerModel,
@@ -357,12 +413,21 @@ function generateAssociationRemoveOneHandler(
 
   return async function(request, h) {
     try {
-      Log.log(
-        removeMethodName + ' + params(%s), query(%s), payload(%s)',
-        JSON.stringify(request.params),
-        JSON.stringify(request.query),
-        JSON.stringify(request.payload)
-      )
+      if (config.truncateLogs) {
+        Log.info(
+          removeMethodName + ' + params(%s)\nquery(%s)\npayload(%s)\n',
+          truncatedStringify(request.params, config.truncateStringLength),
+          truncatedStringify(request.query, config.truncateStringLength),
+          truncatedStringify(request.payload, config.truncateStringLength)
+        )
+      } else {
+        Log.info(
+          removeMethodName + ' + params(%s)\nquery(%s)\npayload(%s)\n',
+          JSON.stringify(request.params, null, 2),
+          JSON.stringify(request.query, null, 2),
+          JSON.stringify(request.payload, null, 2)
+        )
+      }
 
       await handlerHelper.removeOneHandler(
         ownerModel,
@@ -402,12 +467,21 @@ function generateAssociationAddManyHandler(
 
   return async function(request, h) {
     try {
-      Log.log(
-        addMethodName + ' + params(%s), query(%s), payload(%s)',
-        JSON.stringify(request.params),
-        JSON.stringify(request.query),
-        JSON.stringify(request.payload)
-      )
+      if (config.truncateLogs) {
+        Log.info(
+          addMethodName + ' + params(%s)\nquery(%s)\npayload(%s)\n',
+          truncatedStringify(request.params, config.truncateStringLength),
+          truncatedStringify(request.query, config.truncateStringLength),
+          truncatedStringify(request.payload, config.truncateStringLength)
+        )
+      } else {
+        Log.info(
+          addMethodName + ' + params(%s)\nquery(%s)\npayload(%s)\n',
+          JSON.stringify(request.params, null, 2),
+          JSON.stringify(request.query, null, 2),
+          JSON.stringify(request.payload, null, 2)
+        )
+      }
 
       await handlerHelper.addManyHandler(
         ownerModel,
@@ -447,12 +521,21 @@ function generateAssociationRemoveManyHandler(
 
   return async function(request, h) {
     try {
-      Log.log(
-        removeMethodName + ' + params(%s), query(%s), payload(%s)',
-        JSON.stringify(request.params),
-        JSON.stringify(request.query),
-        JSON.stringify(request.payload)
-      )
+      if (config.truncateLogs) {
+        Log.info(
+          removeMethodName + ' + params(%s)\nquery(%s)\npayload(%s)\n',
+          truncatedStringify(request.params, config.truncateStringLength),
+          truncatedStringify(request.query, config.truncateStringLength),
+          truncatedStringify(request.payload, config.truncateStringLength)
+        )
+      } else {
+        Log.info(
+          removeMethodName + ' + params(%s)\nquery(%s)\npayload(%s)\n',
+          JSON.stringify(request.params, null, 2),
+          JSON.stringify(request.query, null, 2),
+          JSON.stringify(request.payload, null, 2)
+        )
+      }
 
       await handlerHelper.removeManyHandler(
         ownerModel,
@@ -492,12 +575,21 @@ function generateAssociationGetAllHandler(
 
   return async function(request, h) {
     try {
-      Log.log(
-        getAllMethodName + ' + params(%s), query(%s), payload(%s)',
-        JSON.stringify(request.params),
-        JSON.stringify(request.query),
-        JSON.stringify(request.payload)
-      )
+      if (config.truncateLogs) {
+        Log.info(
+          getAllMethodName + ' + params(%s)\nquery(%s)\npayload(%s)\n',
+          truncatedStringify(request.params, config.truncateStringLength),
+          truncatedStringify(request.query, config.truncateStringLength),
+          truncatedStringify(request.payload, config.truncateStringLength)
+        )
+      } else {
+        Log.info(
+          getAllMethodName + ' + params(%s)\nquery(%s)\npayload(%s)\n',
+          JSON.stringify(request.params, null, 2),
+          JSON.stringify(request.query, null, 2),
+          JSON.stringify(request.payload, null, 2)
+        )
+      }
 
       const result = await handlerHelper.getAllHandler(
         ownerModel,

@@ -5,6 +5,7 @@ const QueryHelper = require('./query-helper')
 const JoiMongooseHelper = require('./joi-mongoose-helper')
 const config = require('../config')
 const _ = require('lodash')
+const { truncatedStringify } = require('./log-util')
 
 // TODO: add a "clean" method that clears out all soft-deleted docs
 // TODO: add an optional TTL config setting that determines how long soft-deleted docs remain in the system
@@ -159,7 +160,14 @@ async function _listHandler(model, request, Log) {
         Log
       ).lean()
       const result = await mongooseQuery.exec()
-      Log.log('Result: %s', JSON.stringify(result))
+      if (config.truncateLogs) {
+        Log.info(
+          'Result: %s',
+          truncatedStringify(result, config.truncateStringLength)
+        )
+      } else {
+        Log.info('Result: %s', JSON.stringify(result, null, 2))
+      }
       return result
     }
 
@@ -220,7 +228,14 @@ async function _listHandler(model, request, Log) {
       }
 
       if (config.logListResult) {
-        Log.info('Result: %s', JSON.stringify(result))
+        if (config.truncateLogs) {
+          Log.info(
+            'Result: %s',
+            truncatedStringify(result, config.truncateStringLength)
+          )
+        } else {
+          Log.info('Result: %s', JSON.stringify(result, null, 2))
+        }
       }
 
       return result
@@ -408,7 +423,14 @@ async function _findHandler(model, _id, request, Log) {
         }
       }
 
-      Log.log('Result: %s', JSON.stringify(result))
+      if (config.truncateLogs) {
+        Log.info(
+          'Result: %s',
+          truncatedStringify(result, config.truncateStringLength)
+        )
+      } else {
+        Log.info('Result: %s', JSON.stringify(result, null, 2))
+      }
 
       return result
     } else {
