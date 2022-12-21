@@ -8,7 +8,7 @@ function truncatedProps(obj, truncateLength = 100) {
   const result = {}
   if (!_.isObject(obj)) return truncateProp(obj, truncateLength)
   for (const key in obj) {
-    if (obj.hasOwnProperty(key)) {
+    if (Object.prototype.hasOwnProperty.call(obj, key)) {
       result[key] = truncateProp(obj[key], truncateLength)
     }
   }
