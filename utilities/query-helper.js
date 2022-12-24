@@ -443,6 +443,8 @@ module.exports = {
     return mongooseQuery
   },
 
+  // TODO: Support inverse selections
+
   /**
    * Create a list of selected fields to be returned based on the '$select' query property.
    * @param query: The incoming request query.
