@@ -448,6 +448,26 @@ config.loglevel = 'NOTE'
 config.logListResult = false
 ```
 
+## truncateLogs
+```javascript
+/**
+ * If set to true, string values will be truncated to `truncateStringLength` characters in the logs and array values will be trunctated to 30 elements.
+ * default: false
+ * @type {boolean}
+ */
+config.truncateLogs = false
+```
+
+## truncateStringLength
+```javascript
+/**
+ * If `truncateLogs` is set to true, this is the maximum length of a string to be logged.
+ * default: 100
+ * @type {number}
+ */
+config.truncateStringLength = 100
+```
+
 ## swaggerOptions
 ```javascript
 /**
