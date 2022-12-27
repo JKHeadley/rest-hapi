@@ -13,6 +13,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [3.1.0] - 2022-12-23
 ### Added
 - [added option to truncate logs](https://github.com/JKHeadley/rest-hapi/pull/312)
+### Fixed
+- [remove dep on joi-objectid package] (#303)
 
 ## [3.0.0] - 2022-08-23 [BREAKING]
 ### Changed
