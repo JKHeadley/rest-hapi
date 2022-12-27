@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [3.2.0] - 2022-12-27
+### Added
+- [added post middleware for add and remove associations](https://github.com/JKHeadley/rest-hapi/pull/313)
+
 ## [3.1.0] - 2022-12-23
 ### Added
 - [added option to truncate logs](https://github.com/JKHeadley/rest-hapi/pull/312)
@@ -307,7 +311,7 @@ post(hardDelete, deleted, Log) | post(hardDelete, deleted, request, Log)
 
 
 
-[Unreleased]: https://github.com/jkheadley/rest-hapi/compare/v3.1.0...HEAD
+[Unreleased]: https://github.com/jkheadley/rest-hapi/compare/v3.2.0...HEAD
 [0.20.0]: https://github.com/jkheadley/rest-hapi/compare/v0.19.2...v0.20.0
 [0.20.2]: https://github.com/jkheadley/rest-hapi/compare/v0.20.0...v0.20.2
 [0.20.3]: https://github.com/jkheadley/rest-hapi/compare/v0.20.2...v0.20.3
@@ -349,5 +353,6 @@ post(hardDelete, deleted, Log) | post(hardDelete, deleted, request, Log)
 [2.3.0]: https://github.com/jkheadley/rest-hapi/compare/v2.2.0...v2.3.0
 [3.0.0]: https://github.com/jkheadley/rest-hapi/compare/v2.3.0...v3.0.0
 [3.1.0]: https://github.com/jkheadley/rest-hapi/compare/v3.0.0...v3.1.0
+[3.2.0]: https://github.com/jkheadley/rest-hapi/compare/v3.1.0...v3.2.0
 
 [BREAKING]: https://github.com/JKHeadley/rest-hapi/releases
