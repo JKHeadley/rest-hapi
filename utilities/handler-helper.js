@@ -1236,6 +1236,29 @@ async function _addOneHandler(
           Log
         )
       }
+
+      try {
+        if (
+          ownerModel.routeOptions &&
+          ownerModel.routeOptions.add &&
+          ownerModel.routeOptions.add[associationName] &&
+          ownerModel.routeOptions.add[associationName].post
+        ) {
+          await ownerModel.routeOptions.add[associationName].post(
+            payload,
+            request,
+            Log
+          )
+        }
+      } catch (err) {
+        handleError(
+          err,
+          'There was a postprocessing error after setting the association.',
+          Boom.badRequest,
+          Log
+        )
+      }
+
       return true
     } else {
       throw Boom.notFound('No resource was found with that id.')
@@ -1432,6 +1455,29 @@ async function _removeOneHandler(
           Log
         )
       }
+
+      try {
+        if (
+          ownerModel.routeOptions &&
+          ownerModel.routeOptions.remove &&
+          ownerModel.routeOptions.remove[associationName] &&
+          ownerModel.routeOptions.remove[associationName].post
+        ) {
+          await ownerModel.routeOptions.remove[associationName].post(
+            {},
+            request,
+            Log
+          )
+        }
+      } catch (err) {
+        handleError(
+          err,
+          'There was a postprocessing error after removing the association.',
+          Boom.badRequest,
+          Log
+        )
+      }
+
       return true
     } else {
       throw Boom.notFound('No resource was found with that id.')
@@ -1643,6 +1689,29 @@ async function _addManyHandler(
           )
         }
       }
+
+      try {
+        if (
+          ownerModel.routeOptions &&
+          ownerModel.routeOptions.add &&
+          ownerModel.routeOptions.add[associationName] &&
+          ownerModel.routeOptions.add[associationName].post
+        ) {
+          await ownerModel.routeOptions.add[associationName].post(
+            payload,
+            request,
+            Log
+          )
+        }
+      } catch (err) {
+        handleError(
+          err,
+          'There was a postprocessing error after setting the associations.',
+          Boom.badRequest,
+          Log
+        )
+      }
+
       return true
     } else {
       throw Boom.notFound('No owner resource was found with that id.')
@@ -1812,7 +1881,7 @@ async function _removeManyHandler(
       } catch (err) {
         handleError(
           err,
-          'There was a preprocessing error while removing the association.',
+          'There was a preprocessing error while removing the associations.',
           Boom.badRequest,
           Log
         )
@@ -1837,6 +1906,29 @@ async function _removeManyHandler(
           )
         }
       }
+
+      try {
+        if (
+          ownerModel.routeOptions &&
+          ownerModel.routeOptions.remove &&
+          ownerModel.routeOptions.remove[associationName] &&
+          ownerModel.routeOptions.remove[associationName].post
+        ) {
+          await ownerModel.routeOptions.remove[associationName].post(
+            payload,
+            request,
+            Log
+          )
+        }
+      } catch (err) {
+        handleError(
+          err,
+          'There was a postprocessing error after removing the associations.',
+          Boom.badRequest,
+          Log
+        )
+      }
+
       return true
     } else {
       throw Boom.notFound('No owner resource was found with that id.')
