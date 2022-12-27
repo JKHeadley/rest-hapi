@@ -1,7 +1,8 @@
 ---
-id: middleware
+id: version-3.2.x-middleware
 title: Middleware
 sidebar_label: Middleware
+original_id: middleware
 ---
 
 ## CRUD
