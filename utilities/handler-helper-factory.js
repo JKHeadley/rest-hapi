@@ -435,6 +435,7 @@ function generateAssociationRemoveOneHandler(
         childModel,
         request.params.childId,
         associationName,
+        false,
         request,
         Log
       )
@@ -542,6 +543,7 @@ function generateAssociationRemoveManyHandler(
         request.params.ownerId,
         childModel,
         associationName,
+        false,
         request,
         Log
       )

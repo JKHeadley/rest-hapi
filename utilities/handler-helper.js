@@ -6,6 +6,7 @@ const JoiMongooseHelper = require('./joi-mongoose-helper')
 const config = require('../config')
 const _ = require('lodash')
 const { truncatedStringify } = require('./log-util')
+const globals = require('../globals')
 
 // TODO: add a "clean" method that clears out all soft-deleted docs
 // TODO: add an optional TTL config setting that determines how long soft-deleted docs remain in the system
@@ -856,7 +857,10 @@ async function _deleteOneV2({
  */
 // TODO: only update "deleteAt" the first time a document is deleted
 async function _deleteOneHandler(model, _id, hardDelete, request, Log) {
+  // const session = await globals.mongoose.startSession()
   try {
+    console.log('HERE delete 1')
+    // session.startTransaction()
     try {
       if (
         model.routeOptions &&
@@ -866,6 +870,7 @@ async function _deleteOneHandler(model, _id, hardDelete, request, Log) {
         await model.routeOptions.delete.pre(_id, hardDelete, request, Log)
       }
     } catch (err) {
+      // await session.abortTransaction()
       handleError(
         err,
         'There was a preprocessing error deleting the resource.',
@@ -877,6 +882,10 @@ async function _deleteOneHandler(model, _id, hardDelete, request, Log) {
 
     try {
       if (config.enableSoftDelete && !hardDelete) {
+        console.log('HERE delete 2')
+        // First handle referential actions (i.e. onDelete)
+        await onDelete(model, _id, false, request, Log)
+        console.log('HERE delete 3')
         const payload = { isDeleted: true }
         if (config.enableDeletedAt) {
           payload.deletedAt = new Date()
@@ -888,14 +897,26 @@ async function _deleteOneHandler(model, _id, hardDelete, request, Log) {
             payload.deletedBy = deletedBy
           }
         }
+
+        // console.log('HERE delete 4')
         deleted = await model.findByIdAndUpdate(_id, payload, {
           new: true,
           runValidators: config.enableMongooseRunValidators
         })
+
+        // console.log('HERE delete 5')
       } else {
+        console.log('HERE delete 4')
+        // First handle referential actions (i.e. onDelete)
+        await onDelete(model, _id, true, request, Log)
+        console.log('HERE delete 5')
+
+        // console.log('HERE delete 6')
         deleted = await model.findByIdAndRemove(_id)
+        // console.log('HERE delete 7')
       }
     } catch (err) {
+      // await session.abortTransaction()
       handleError(
         err,
         'There was an error deleting the resource.',
@@ -921,6 +942,7 @@ async function _deleteOneHandler(model, _id, hardDelete, request, Log) {
           )
         }
       } catch (err) {
+        // await session.abortTransaction()
         handleError(
           err,
           'There was a postprocessing error deleting the resource.',
@@ -928,11 +950,18 @@ async function _deleteOneHandler(model, _id, hardDelete, request, Log) {
           Log
         )
       }
+      // console.log('HERE COMMIT')
+      // await session.commitTransaction()
+      // console.log('HERE DONE')
       return true
     } else {
+      // await session.abortTransaction()
       throw Boom.notFound('No resource was found with that id.')
     }
   } catch (err) {
+    // console.log('HERE ERROR 1')
+    // await session.abortTransaction()
+    // console.log('HERE ERROR 2')
     handleError(err, null, null, Log)
   }
 }
@@ -1337,6 +1366,7 @@ function _removeOneV1(
     childModel,
     childId,
     associationName,
+    false,
     request,
     Log
   )
@@ -1408,6 +1438,7 @@ async function _removeOneHandler(
   childModel,
   childId,
   associationName,
+  setNull,
   request,
   Log
 ) {
@@ -1445,6 +1476,7 @@ async function _removeOneHandler(
           childModel,
           childId,
           associationName,
+          setNull,
           Log
         )
       } catch (err) {
@@ -1782,6 +1814,7 @@ function _removeManyV1(
     ownerId,
     childModel,
     associationName,
+    false,
     request,
     Log
   )
@@ -1850,6 +1883,7 @@ async function _removeManyHandler(
   ownerId,
   childModel,
   associationName,
+  setNull,
   request,
   Log
 ) {
@@ -1895,6 +1929,7 @@ async function _removeManyHandler(
             childModel,
             childId,
             associationName,
+            setNull,
             Log
           )
         } catch (err) {
@@ -2409,6 +2444,7 @@ async function _removeAssociation(
   childModel,
   childId,
   associationName,
+  setNull,
   Log
 ) {
   const childObject = await childModel.findOne({ _id: childId })
@@ -2424,7 +2460,7 @@ async function _removeAssociation(
         childObject[association.foreignField].toString() ===
           ownerObject._id.toString()
       ) {
-        childObject[association.foreignField] = undefined
+        childObject[association.foreignField] = setNull ? null : undefined
       }
       await childObject.save()
     } else if (associationType === 'MANY_MANY') {
@@ -2515,6 +2551,218 @@ async function _removeAssociation(
     }
   } else {
     throw Boom.notFound('Child object not found.')
+  }
+}
+
+async function onDelete(model, _id, hardDelete, request, Log) {
+  // First check if there are any restrictions, i.e. any associations that have onDelete: 'RESTRICT'
+  await verifyNoRestrictions(model, _id, Log)
+
+  // Next handle any associations that have onDelete: 'SET_NULL'
+  await setNullReferences(model, _id, Log)
+
+  // Finally handle any associations that have onDelete: 'CASCADE'
+  await cascadeDelete(model, _id, hardDelete, request, Log)
+}
+
+async function cascadeDelete(model, _id, hardDelete, request, Log) {
+  const associations = getAssociations(model)
+
+  const cascades = getCascades(model)
+
+  // For each cascade delete, user the deleteOneHandler to delete the associated document
+  const promises = []
+  _.forEach(cascades, async function(cascade) {
+    const associationModel = globals.mongoose.model(associations[cascade].model)
+    const references = await _getAll(
+      model,
+      _id,
+      associationModel,
+      cascade,
+      { $select: ['_id'] },
+      Log
+    )
+    const referenceIds = references.map(reference => reference._id)
+    // If the model is MANY_MANY, then we use removeManyHandler
+    if (associations[cascade].type === 'MANY_MANY') {
+      // No action taken for soft delete
+      if (hardDelete) {
+        promises.push(
+          _removeManyHandler(
+            model,
+            _id,
+            associationModel,
+            false,
+            { payload: referenceIds },
+            Log
+          )
+        )
+      }
+    } else {
+      // Otherwise, we use deleteOneHandler
+      for (const referenceId of referenceIds) {
+        promises.push(
+          _deleteOneHandler(
+            associationModel,
+            referenceId,
+            hardDelete,
+            request,
+            Log
+          )
+        )
+      }
+    }
+  })
+
+  await Promise.all(promises)
+}
+
+async function setNullReferences(model, _id, Log) {
+  const setNulls = getSetNulls(model)
+
+  const associations = getAssociations(model)
+
+  // TODO: handle MANY_MANY vs ONE_MANY
+
+  // For each setNull, use removeManyHandler to remove the reference to the document being deleted (either by setting the foreignField to null or by removing the document from the association collection)
+  const promises = []
+  _.forEach(setNulls, async function(setNull) {
+    const associationModel = globals.mongoose.model(associations[setNull].model)
+
+    const references = await _getAll(
+      model,
+      _id,
+      associationModel,
+      setNull,
+      { $select: ['_id'] },
+      Log
+    )
+    const referenceIds = references.map(reference => reference._id)
+
+    promises.push(
+      _removeManyHandler(
+        model,
+        _id,
+        associationModel,
+        true,
+        { payload: referenceIds },
+        Log
+      )
+    )
+  })
+
+  await Promise.all(promises)
+}
+
+async function verifyNoRestrictions(model, _id, Log) {
+  Log = Log.bind('verifyNoRestrictions')
+  const restrictions = getRestrictions(model, _id, Log)
+
+  const associations = getAssociations(model)
+
+  console.log('verifyNoRestrictions: ', restrictions, associations)
+
+  // For each restriction, use mongoose to check if there are any documents that reference the document being deleted
+  const promises = []
+  for (const restriction of restrictions) {
+    const query = {}
+    const restrictionModel = globals.mongoose.model(
+      associations[restriction].model
+    )
+    console.log('restrictionModel: ', restrictionModel)
+    query[associations[restriction].foreignField] = _id
+    promises.push(restrictionModel.findOne(query))
+  }
+
+  let restrictionResults
+  try {
+    restrictionResults = await Promise.all(promises)
+  } catch (error) {
+    Log.error('There was an error checking for delete restrictions.')
+    throw Boom.badImplementation(error)
+  }
+
+  console.log('restrintionResults:', restrictionResults)
+
+  // If there are any restrictions, throw an error
+  if (_.some(restrictionResults)) {
+    throw Boom.badRequest(
+      'Cannot delete document due to referrential restrictions.'
+    )
+  }
+}
+
+// TODO: for default check if the foriegnField is required
+function getRestrictions(model, _id, Log) {
+  const associations = getAssociations(model)
+  console.log('getRestrictions associations:', associations)
+  const associationNames = Object.keys(associations)
+  console.log('getRestrictions associationNames:', associationNames)
+  const restrictions = []
+
+  _.forEach(associationNames, function(associationName) {
+    const onDelete = getOnDelete(model, associationName)
+    console.log('getRestrictions onDelete:', onDelete)
+
+    // if onDelete is not set or is set to RESTRICT, add to restrictions
+    if (!onDelete || onDelete === 'RESTRICT') {
+      restrictions.push(associationName)
+    }
+  })
+
+  console.log('getRestrictions restrictions:', restrictions)
+  return restrictions
+}
+
+function getCascades(model, _id, Log) {
+  const associations = getAssociations(model)
+  const associationNames = Object.keys(associations)
+  const cascades = []
+
+  _.forEach(associationNames, function(associationName) {
+    const onDelete = getOnDelete(model, associationName)
+
+    if (onDelete === 'CASCADE') {
+      cascades.push(associationName)
+    }
+  })
+
+  return cascades
+}
+
+// TODO: for default check if the foriegnField is optional/not required
+function getSetNulls(model, _id, Log) {
+  const associations = getAssociations(model)
+  const associationNames = Object.keys(associations)
+  const setNulls = []
+
+  _.forEach(associationNames, function(associationName) {
+    const onDelete = getOnDelete(model, associationName)
+
+    if (onDelete === 'SET_NULL') {
+      setNulls.push(associationName)
+    }
+  })
+
+  return setNulls
+}
+
+function getAssociations(model) {
+  console.log('getAssociations model.routeOptions:', model.routeOptions)
+  return model.routeOptions.associations || {}
+}
+
+function getAssociation(model, associationName) {
+  return model.routeOptions.associations[associationName]
+}
+
+function getOnDelete(model, associationName) {
+  const association = getAssociation(model, associationName)
+  if (association.type === 'MANY_ONE') {
+    // If the association is MANY_ONE, the onDelete is always NO_ACTION
+    return 'NO_ACTION'
+  } else {
+    return association.onDelete
   }
 }
 
@@ -2643,6 +2891,7 @@ function handleError(err, message, boomFunction, Log) {
     Log.error(err)
     throw boomFunction(message)
   } else {
+    Log.error(err)
     throw err
   }
 }

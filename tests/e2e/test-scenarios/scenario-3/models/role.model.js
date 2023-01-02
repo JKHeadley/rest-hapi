@@ -37,6 +37,7 @@ module.exports = function(mongoose) {
           type: 'ONE_MANY',
           alias: 'people',
           foreignField: 'title',
+          onDelete: 'NO_ACTION',
           model: 'user'
         },
         permissions: {
