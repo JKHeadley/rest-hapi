@@ -2779,12 +2779,9 @@ function getRestrictions(model, _id, Log) {
     const onDelete = getOnDelete(model, associationName)
     console.log('getRestrictions onDelete:', onDelete)
 
-    // if onDelete is not set, check for a required foreignField
+    // if onDelete is not set, determine default behavior based on assoctiation type
     if (!onDelete) {
       const association = getAssociation(model, associationName)
-      if (association.type === 'MANY_ONE') {
-        return []
-      }
       const foreignField = association.foreignField
       if (foreignField) {
         const associationModel = globals.mongoose.model(association.model)
@@ -2798,10 +2795,8 @@ function getRestrictions(model, _id, Log) {
         if (isRequired) {
           restrictions.push(associationName)
         }
-      }
-
-      // if the association is ONE_ONE, add it to the restrictions if the reference is required
-      if (association.type === 'ONE_ONE') {
+      } else if (association.type === 'ONE_ONE') {
+        // if the association is ONE_ONE, add it to the restrictions if the reference is required
         const associationModel = globals.mongoose.model(association.model)
         const associationAssociations = getAssociations(associationModel)
 
@@ -2816,24 +2811,6 @@ function getRestrictions(model, _id, Log) {
             associationAssociation.model === model.modelName &&
             associationAssociation.type === 'ONE_ONE'
           ) {
-            // console.log(
-            //   'associationAssociationModel',
-            //   associationAssociationModel.schema.paths,
-            //   associationAssociationName
-            // )
-
-            // console.log(
-            //   'SCHEMA PATHS:',
-            //   associationModel.schema.paths,
-            //   associationAssociationName
-            // )
-            // console.log(
-            //   'SCHEMA PATHS 2:',
-            //   associationModel.schema.paths[associationAssociationName].path,
-            //   associationModel.schema.paths[associationAssociationName]
-            //     .isRequired,
-            //   associationModel.schema.paths[associationAssociationName].ObjectId
-            // )
             const isRequired =
               associationModel.schema.paths[associationAssociationName]
                 .isRequired
@@ -2845,6 +2822,8 @@ function getRestrictions(model, _id, Log) {
             }
           }
         }
+      } else {
+        continue
       }
     }
 
@@ -2889,9 +2868,6 @@ function getSetNulls(model, _id, Log) {
     // if onDelete is not set, determine default behavior based on assoctiation type
     if (!onDelete) {
       const association = getAssociation(model, associationName)
-      if (association.type === 'MANY_ONE') {
-        return []
-      }
       const foreignField = association.foreignField
       if (foreignField) {
         const associationModel = globals.mongoose.model(association.model)
@@ -2905,10 +2881,8 @@ function getSetNulls(model, _id, Log) {
         if (!isRequired) {
           setNulls.push(associationName)
         }
-      }
-
-      // if the association is ONE_ONE, add it to the restrictions if the reference is required
-      if (association.type === 'ONE_ONE') {
+      } else if (association.type === 'ONE_ONE') {
+        // if the association is ONE_ONE, add it to the restrictions if the reference is required
         const associationModel = globals.mongoose.model(association.model)
         const associationAssociations = getAssociations(associationModel)
 
@@ -2952,10 +2926,10 @@ function getSetNulls(model, _id, Log) {
             }
           }
         }
-      }
-
-      if (association.type === 'MANY_MANY') {
+      } else if (association.type === 'MANY_MANY') {
         setNulls.push(associationName)
+      } else {
+        continue
       }
     }
 
