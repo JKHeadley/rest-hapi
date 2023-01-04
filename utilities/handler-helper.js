@@ -1873,6 +1873,7 @@ async function _removeManyV2({
  * @param ownerId: The id of the owner document.
  * @param childModel {object | string}: The model that is being removed.
  * @param associationName: The name of the association from the ownerModel's perspective.
+ * @param setNull: If true, then the association will be set to null instead of removed.
  * @param request: The Hapi request object, or a container for the wrapper payload.
  * @param Log: A logging object
  * @returns {object} A promise returning true if the remove succeeds.
@@ -2156,6 +2157,8 @@ async function _getAllHandler(
         return object[association.model]._id
       })
       manyMany = true
+    } else if (association.type === 'ONE_ONE') {
+      childIds = [result._id]
     } else {
       childIds = result.map(object => {
         return object._id
@@ -2451,7 +2454,20 @@ async function _removeAssociation(
   if (childObject) {
     const association = ownerModel.routeOptions.associations[associationName]
     const associationType = association.type
-    if (associationType === 'ONE_MANY') {
+    if (associationType === 'ONE_ONE') {
+      console.log(
+        'ARGS:',
+        ownerModel,
+        ownerObject,
+        childModel,
+        childId,
+        associationName,
+        setNull
+      )
+      childObject[associationName] = setNull ? null : undefined
+      console.log('CHILDOBJECT:', childObject)
+      await childObject.save()
+    } else if (associationType === 'ONE_MANY') {
       // EXPL: one-many associations are virtual, so only update the child reference
       // childObject[association.foreignField] = null; //TODO: set reference to null instead of deleting it?
       // EXPL: only delete the reference if the ids match
@@ -2561,6 +2577,8 @@ async function onDelete(model, _id, hardDelete, request, Log) {
   // Next handle any associations that have onDelete: 'SET_NULL'
   await setNullReferences(model, _id, Log)
 
+  console.log('FINISHED SENTULL')
+
   // Finally handle any associations that have onDelete: 'CASCADE'
   await cascadeDelete(model, _id, hardDelete, request, Log)
 }
@@ -2572,7 +2590,7 @@ async function cascadeDelete(model, _id, hardDelete, request, Log) {
 
   // For each cascade delete, user the deleteOneHandler to delete the associated document
   const promises = []
-  _.forEach(cascades, async function(cascade) {
+  for (const cascade in cascades) {
     const associationModel = globals.mongoose.model(associations[cascade].model)
     const references = await _getAll(
       model,
@@ -2582,7 +2600,8 @@ async function cascadeDelete(model, _id, hardDelete, request, Log) {
       { $select: ['_id'] },
       Log
     )
-    const referenceIds = references.map(reference => reference._id)
+    console.log('REFERENCES in CASCADE:', references)
+    const referenceIds = references.docs.map(reference => reference._id)
     // If the model is MANY_MANY, then we use removeManyHandler
     if (associations[cascade].type === 'MANY_MANY') {
       // No action taken for soft delete
@@ -2592,6 +2611,7 @@ async function cascadeDelete(model, _id, hardDelete, request, Log) {
             model,
             _id,
             associationModel,
+            cascade,
             false,
             { payload: referenceIds },
             Log
@@ -2612,13 +2632,16 @@ async function cascadeDelete(model, _id, hardDelete, request, Log) {
         )
       }
     }
-  })
+  }
 
   await Promise.all(promises)
 }
 
 async function setNullReferences(model, _id, Log) {
+  Log = Log.bind('setNullReferences')
   const setNulls = getSetNulls(model)
+
+  console.log('SETNULLS:', setNulls, 'MODEL:', model.modelName, 'ID:', _id)
 
   const associations = getAssociations(model)
 
@@ -2626,32 +2649,80 @@ async function setNullReferences(model, _id, Log) {
 
   // For each setNull, use removeManyHandler to remove the reference to the document being deleted (either by setting the foreignField to null or by removing the document from the association collection)
   const promises = []
-  _.forEach(setNulls, async function(setNull) {
+  for (const setNull of setNulls) {
     const associationModel = globals.mongoose.model(associations[setNull].model)
+
+    console.log('ARGS:', model, _id, associationModel, setNull, {
+      $select: ['_id']
+    })
 
     const references = await _getAll(
       model,
       _id,
       associationModel,
       setNull,
-      { $select: ['_id'] },
+      // { $select: ['_id'] },
+      {},
       Log
     )
-    const referenceIds = references.map(reference => reference._id)
+    const referenceIds = references.docs.map(reference => reference._id)
+    console.log('SETNULL REFERENCES:', references, referenceIds)
 
-    promises.push(
-      _removeManyHandler(
-        model,
-        _id,
-        associationModel,
-        true,
-        { payload: referenceIds },
-        Log
-      )
-    )
-  })
+    if (referenceIds.length > 0) {
+      // If the assocation is ONE_ONE
+      if (associations[setNull].type === 'ONE_ONE') {
+        // Use mongoose to get all the associationModel docs for the referenceIds
+        const docs = await associationModel.find({
+          _id: { $in: referenceIds }
+        })
 
-  await Promise.all(promises)
+        // Loop through each ONE_ONE association and remove the reference
+        const associationAssociations = getAssociations(associationModel)
+        for (const associationAssociationName in associationAssociations) {
+          const associationAssociation =
+            associationAssociations[associationAssociationName]
+          if (
+            associationAssociation.type === 'ONE_ONE' &&
+            associationAssociation.model === model.modelName
+          ) {
+            console.log(
+              'REMOVING REFERENCES FOR ONE_ONE',
+              associationAssociationName,
+              associationAssociation
+            )
+
+            // Loop through each doc and set the associationAssociationName field to null if the field matches the _id of the document being deleted
+            for (const doc of docs) {
+              const associationField = doc[associationAssociationName]
+              if (associationField?.toString() === _id.toString()) {
+                doc[associationAssociationName] = null
+                await doc.save()
+              }
+            }
+          }
+        }
+      } else {
+        promises.push(
+          _removeManyHandler(
+            model,
+            _id,
+            associationModel,
+            setNull,
+            true,
+            { payload: referenceIds },
+            Log
+          )
+        )
+      }
+    }
+  }
+
+  try {
+    await Promise.all(promises)
+  } catch (err) {
+    Log.error('There was an error setting the null references.')
+    throw Boom.badImplementation(err)
+  }
 }
 
 async function verifyNoRestrictions(model, _id, Log) {
@@ -2660,7 +2731,7 @@ async function verifyNoRestrictions(model, _id, Log) {
 
   const associations = getAssociations(model)
 
-  console.log('verifyNoRestrictions: ', restrictions, associations)
+  // console.log('verifyNoRestrictions: ', restrictions, associations)
 
   // For each restriction, use mongoose to check if there are any documents that reference the document being deleted
   const promises = []
@@ -2669,8 +2740,11 @@ async function verifyNoRestrictions(model, _id, Log) {
     const restrictionModel = globals.mongoose.model(
       associations[restriction].model
     )
-    console.log('restrictionModel: ', restrictionModel)
+    // console.log('restrictionModel: ', restrictionModel)
     query[associations[restriction].foreignField] = _id
+    // console.log("QUERY:", query)
+    // const restrictionModelDocs = await restrictionModel.find().populate("title")
+    // console.log('restrictionModelDocs: ', restrictionModelDocs)
     promises.push(restrictionModel.findOne(query))
   }
 
@@ -2682,7 +2756,7 @@ async function verifyNoRestrictions(model, _id, Log) {
     throw Boom.badImplementation(error)
   }
 
-  console.log('restrintionResults:', restrictionResults)
+  // console.log('restrintionResults:', restrictionResults)
 
   // If there are any restrictions, throw an error
   if (_.some(restrictionResults)) {
@@ -2692,7 +2766,8 @@ async function verifyNoRestrictions(model, _id, Log) {
   }
 }
 
-// TODO: for default check if the foriegnField is required
+//TODO: throw error on startup if onDelete doesn't match one of the allowed values
+
 function getRestrictions(model, _id, Log) {
   const associations = getAssociations(model)
   console.log('getRestrictions associations:', associations)
@@ -2700,18 +2775,90 @@ function getRestrictions(model, _id, Log) {
   console.log('getRestrictions associationNames:', associationNames)
   const restrictions = []
 
-  _.forEach(associationNames, function(associationName) {
+  for (const associationName of associationNames) {
     const onDelete = getOnDelete(model, associationName)
     console.log('getRestrictions onDelete:', onDelete)
 
-    // if onDelete is not set or is set to RESTRICT, add to restrictions
-    if (!onDelete || onDelete === 'RESTRICT') {
+    // if onDelete is not set, check for a required foreignField
+    if (!onDelete) {
+      const association = getAssociation(model, associationName)
+      if (association.type === 'MANY_ONE') {
+        return []
+      }
+      const foreignField = association.foreignField
+      if (foreignField) {
+        const associationModel = globals.mongoose.model(association.model)
+        // console.log("SCHEMA PATHS:", associationModel.schema.paths)
+        const isRequired =
+          associationModel.schema.paths[foreignField].isRequired
+
+        console.log('isRequired: ', isRequired)
+
+        // if the foreignField is required, add the association to the restrictions
+        if (isRequired) {
+          restrictions.push(associationName)
+        }
+      }
+
+      // if the association is ONE_ONE, add it to the restrictions if the reference is required
+      if (association.type === 'ONE_ONE') {
+        const associationModel = globals.mongoose.model(association.model)
+        const associationAssociations = getAssociations(associationModel)
+
+        console.log('associationModel', associationModel.modelName)
+
+        // We check if the reference is required by finding a corresponding ONE_ONE association in the referenced model and checking if it is required
+        for (const associationAssociationName in associationAssociations) {
+          const associationAssociation =
+            associationAssociations[associationAssociationName]
+
+          if (
+            associationAssociation.model === model.modelName &&
+            associationAssociation.type === 'ONE_ONE'
+          ) {
+            // console.log(
+            //   'associationAssociationModel',
+            //   associationAssociationModel.schema.paths,
+            //   associationAssociationName
+            // )
+
+            // console.log(
+            //   'SCHEMA PATHS:',
+            //   associationModel.schema.paths,
+            //   associationAssociationName
+            // )
+            // console.log(
+            //   'SCHEMA PATHS 2:',
+            //   associationModel.schema.paths[associationAssociationName].path,
+            //   associationModel.schema.paths[associationAssociationName]
+            //     .isRequired,
+            //   associationModel.schema.paths[associationAssociationName].ObjectId
+            // )
+            const isRequired =
+              associationModel.schema.paths[associationAssociationName]
+                .isRequired
+
+            console.log('ONE_ONE REQUIRED:', isRequired)
+
+            if (isRequired) {
+              restrictions.push(associationName)
+            }
+          }
+        }
+      }
+    }
+
+    if (onDelete === 'RESTRICT') {
       restrictions.push(associationName)
     }
-  })
+  }
+
+  // TODO: throw error if foreignField does not exist for ONE_ONE or ONE_MANY associations
 
   console.log('getRestrictions restrictions:', restrictions)
-  return restrictions
+
+  // Remove duplicates
+  return _.uniq(restrictions)
 }
 
 function getCascades(model, _id, Log) {
@@ -2719,13 +2866,13 @@ function getCascades(model, _id, Log) {
   const associationNames = Object.keys(associations)
   const cascades = []
 
-  _.forEach(associationNames, function(associationName) {
+  for (const associationName of associationNames) {
     const onDelete = getOnDelete(model, associationName)
 
     if (onDelete === 'CASCADE') {
       cascades.push(associationName)
     }
-  })
+  }
 
   return cascades
 }
@@ -2736,19 +2883,95 @@ function getSetNulls(model, _id, Log) {
   const associationNames = Object.keys(associations)
   const setNulls = []
 
-  _.forEach(associationNames, function(associationName) {
+  for (const associationName of associationNames) {
     const onDelete = getOnDelete(model, associationName)
+
+    // if onDelete is not set, determine default behavior based on assoctiation type
+    if (!onDelete) {
+      const association = getAssociation(model, associationName)
+      if (association.type === 'MANY_ONE') {
+        return []
+      }
+      const foreignField = association.foreignField
+      if (foreignField) {
+        const associationModel = globals.mongoose.model(association.model)
+        // console.log("SCHEMA PATHS:", associationModel.schema.paths)
+        const isRequired =
+          associationModel.schema.paths[foreignField].isRequired
+
+        console.log('isRequired: ', isRequired)
+
+        // if the foreignField is optional, add the association to the setNulls
+        if (!isRequired) {
+          setNulls.push(associationName)
+        }
+      }
+
+      // if the association is ONE_ONE, add it to the restrictions if the reference is required
+      if (association.type === 'ONE_ONE') {
+        const associationModel = globals.mongoose.model(association.model)
+        const associationAssociations = getAssociations(associationModel)
+
+        console.log('associationModel', associationModel.modelName)
+
+        // We check if the reference is required by finding a corresponding ONE_ONE association in the referenced model and checking if it is required
+        for (const associationAssociationName in associationAssociations) {
+          const associationAssociation =
+            associationAssociations[associationAssociationName]
+
+          if (
+            associationAssociation.model === model.modelName &&
+            associationAssociation.type === 'ONE_ONE'
+          ) {
+            // console.log(
+            //   'associationAssociationModel',
+            //   associationAssociationModel.schema.paths,
+            //   associationAssociationName
+            // )
+
+            // console.log(
+            //   'SCHEMA PATHS:',
+            //   associationModel.schema.paths,
+            //   associationAssociationName
+            // )
+            // console.log(
+            //   'SCHEMA PATHS 2:',
+            //   associationModel.schema.paths[associationAssociationName].path,
+            //   associationModel.schema.paths[associationAssociationName]
+            //     .isRequired,
+            //   associationModel.schema.paths[associationAssociationName].ObjectId
+            // )
+            const isRequired =
+              associationModel.schema.paths[associationAssociationName]
+                .isRequired
+
+            console.log('ONE_ONE REQUIRED:', isRequired)
+
+            if (!isRequired) {
+              setNulls.push(associationName)
+            }
+          }
+        }
+      }
+
+      if (association.type === 'MANY_MANY') {
+        setNulls.push(associationName)
+      }
+    }
 
     if (onDelete === 'SET_NULL') {
       setNulls.push(associationName)
     }
-  })
+  }
 
-  return setNulls
+  // Remove duplicates
+  return _.uniq(setNulls)
 }
 
+// TODO: test non-embedded associations for onDelete
+
 function getAssociations(model) {
-  console.log('getAssociations model.routeOptions:', model.routeOptions)
+  // console.log('getAssociations model.routeOptions:', model.routeOptions)
   return model.routeOptions.associations || {}
 }
 
@@ -2891,7 +3114,7 @@ function handleError(err, message, boomFunction, Log) {
     Log.error(err)
     throw boomFunction(message)
   } else {
-    Log.error(err)
+    // Log.error(err)
     throw err
   }
 }

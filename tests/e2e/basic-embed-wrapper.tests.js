@@ -1375,7 +1375,693 @@ module.exports = (t, Mongoose, internals, Log) => {
                       delete Mongoose?.modelSchemas[key]
                     })
 
-                    return Mongoose.connection.db.dropDatabase()
+                    // return Mongoose.connection.db.dropDatabase()
+                  })
+              )
+              // </editor-fold>
+            }
+          )
+        })
+        // onDelete defaults to 'RESTRICT' for required ONE_MANY foreign keys
+        .then(function() {
+          return t.test(
+            'onDelete defaults to "RESTRICT" for required ONE_MANY foreign keys',
+            function(t) {
+              // <editor-fold desc="Arrange">
+              const RestHapi = require('../../rest-hapi')
+              const server = new Hapi.Server()
+
+              const config = {
+                loglevel: 'ERROR',
+                absoluteModelPath: true,
+
+                modelPath: path.join(
+                  __dirname,
+                  '/test-scenarios/scenario-7/models'
+                ),
+                embedAssociations: true
+              }
+
+              RestHapi.config = config
+
+              return (
+                server
+                  .register({
+                    plugin: RestHapi,
+                    options: {
+                      mongoose: Mongoose,
+                      config: config
+                    }
+                  })
+                  .then(function(response) {
+                    const request = {
+                      method: 'PUT',
+                      url: '/role/{ownerId}/people/{childId}',
+                      params: {
+                        ownerId: roles[0]._id,
+                        childId: users[0]._id
+                      },
+                      query: {},
+                      payload: {},
+                      credentials: {},
+                      headers: {}
+                    }
+
+                    const injectOptions = TestHelper.mockInjection(request)
+
+                    return server.inject(injectOptions)
+                  })
+                  .then(function(response) {
+                    const request = {
+                      method: 'DELETE',
+                      url: '/role/{_id}',
+                      params: {
+                        _id: roles[0]._id
+                      },
+                      query: {},
+                      payload: {},
+                      credentials: {},
+                      headers: {}
+                    }
+
+                    const injectOptions = TestHelper.mockInjection(request)
+
+                    return server.inject(injectOptions)
+                  })
+                  .then(function(response) {
+                    t.deepEquals(response.result, {
+                      statusCode: 400,
+                      error: 'Bad Request',
+                      message:
+                        'Cannot delete document due to referrential restrictions.'
+                    })
+                  })
+                  // </editor-fold>
+
+                  // <editor-fold desc="Restore">
+                  .then(function() {
+                    Decache('../../rest-hapi')
+
+                    Decache('../config')
+                    Object.keys(Mongoose.models).forEach(function(key) {
+                      delete Mongoose.models[key]
+                    })
+                    Object.keys(Mongoose.modelSchemas || []).forEach(function(
+                      key
+                    ) {
+                      delete Mongoose?.modelSchemas[key]
+                    })
+                  })
+              )
+              // </editor-fold>
+            }
+          )
+        })
+        // onDelete defaults to 'SET_NULL' for optional ONE_MANY foreign keys
+        .then(function() {
+          return t.test(
+            'onDelete defaults to "SET_NULL" for optional ONE_MANY foreign keys',
+            function(t) {
+              // <editor-fold desc="Arrange">
+              const RestHapi = require('../../rest-hapi')
+              const server = new Hapi.Server()
+
+              const config = {
+                loglevel: 'ERROR',
+                absoluteModelPath: true,
+
+                modelPath: path.join(
+                  __dirname,
+                  '/test-scenarios/scenario-3/models'
+                ),
+                embedAssociations: true
+              }
+
+              RestHapi.config = config
+
+              return (
+                server
+                  .register({
+                    plugin: RestHapi,
+                    options: {
+                      mongoose: Mongoose,
+                      config: config
+                    }
+                  })
+                  .then(function(response) {
+                    const request = {
+                      method: 'GET',
+                      url: '/role',
+                      params: {
+                        // _id: roles[0]._id
+                      },
+                      query: {},
+                      payload: {},
+                      credentials: {},
+                      headers: {}
+                    }
+
+                    const injectOptions = TestHelper.mockInjection(request)
+
+                    return server.inject(injectOptions)
+                  })
+                  .then(function(response) {
+                    const request = {
+                      method: 'DELETE',
+                      url: '/role/{_id}',
+                      params: {
+                        _id: roles[0]._id
+                      },
+                      query: {},
+                      payload: {},
+                      credentials: {},
+                      headers: {}
+                    }
+
+                    const injectOptions = TestHelper.mockInjection(request)
+
+                    return server.inject(injectOptions)
+                  })
+                  .then(function(response) {
+                    const request = {
+                      method: 'GET',
+                      url: '/user/{_id}',
+                      params: {
+                        _id: users[0]._id
+                      },
+                      query: {},
+                      payload: {},
+                      credentials: {},
+                      headers: {}
+                    }
+
+                    const injectOptions = TestHelper.mockInjection(request)
+
+                    return server.inject(injectOptions)
+                  })
+                  .then(function(response) {
+                    console.log('RESULT', response.result)
+                    t.deepEquals(response.result.title, null)
+                  })
+                  // </editor-fold>
+
+                  // <editor-fold desc="Restore">
+                  .then(function() {
+                    Decache('../../rest-hapi')
+
+                    Decache('../config')
+                    Object.keys(Mongoose.models).forEach(function(key) {
+                      delete Mongoose.models[key]
+                    })
+                    Object.keys(Mongoose.modelSchemas || []).forEach(function(
+                      key
+                    ) {
+                      delete Mongoose?.modelSchemas[key]
+                    })
+                  })
+              )
+              // </editor-fold>
+            }
+          )
+        })
+        // onDelete defaults to 'RESTRICT' for required ONE_ONE references
+        .then(function() {
+          return t.test(
+            'onDelete defaults to "RESTRICT" for required ONE_ONE references',
+            function(t) {
+              // <editor-fold desc="Arrange">
+              const RestHapi = require('../../rest-hapi')
+              const server = new Hapi.Server()
+
+              const config = {
+                loglevel: 'ERROR',
+                absoluteModelPath: true,
+
+                modelPath: path.join(
+                  __dirname,
+                  '/test-scenarios/scenario-7/models'
+                ),
+                embedAssociations: true
+              }
+
+              RestHapi.config = config
+
+              return (
+                server
+                  .register({
+                    plugin: RestHapi,
+                    options: {
+                      mongoose: Mongoose,
+                      config: config
+                    }
+                  })
+                  .then(function(response) {
+                    const secondProfile = {
+                      status: 'foo',
+                      user: users[0]._id
+                    }
+                    const request = {
+                      method: 'POST',
+                      url: '/user-profile',
+                      params: {},
+                      query: {},
+                      payload: { ...secondProfile },
+                      credentials: {},
+                      headers: {}
+                    }
+
+                    const injectOptions = TestHelper.mockInjection(request)
+
+                    return server.inject(injectOptions)
+                  })
+                  .then(function(response) {
+                    const request = {
+                      method: 'GET',
+                      url: '/user/{_id}',
+                      params: { _id: users[0]._id },
+                      query: {},
+                      payload: {},
+                      credentials: {},
+                      headers: {}
+                    }
+
+                    const injectOptions = TestHelper.mockInjection(request)
+
+                    return server.inject(injectOptions)
+                  })
+                  .then(function(response) {
+                    // console.log('USER RESULT', users[0]._id, response.result)
+                    // console.log('USER PROFILES:')
+
+                    const request = {
+                      method: 'DELETE',
+                      url: '/user/{_id}',
+                      params: { _id: users[0]._id },
+                      query: {},
+                      payload: {},
+                      credentials: {},
+                      headers: {}
+                    }
+
+                    const injectOptions = TestHelper.mockInjection(request)
+
+                    return server.inject(injectOptions)
+                  })
+                  .then(function(response) {
+                    t.deepEquals(response.result, {
+                      statusCode: 400,
+                      error: 'Bad Request',
+                      message:
+                        'Cannot delete document due to referrential restrictions.'
+                    })
+                  })
+                  // </editor-fold>
+
+                  // <editor-fold desc="Restore">
+                  .then(function() {
+                    Decache('../../rest-hapi')
+
+                    Decache('../config')
+                    Object.keys(Mongoose.models).forEach(function(key) {
+                      delete Mongoose.models[key]
+                    })
+                    Object.keys(Mongoose.modelSchemas || []).forEach(function(
+                      key
+                    ) {
+                      delete Mongoose?.modelSchemas[key]
+                    })
+                  })
+              )
+              // </editor-fold>
+            }
+          )
+        })
+        // onDelete defaults to 'SET_NULL' for optional ONE_ONE references
+        .then(function() {
+          return t.test(
+            'onDelete defaults to "SET_NULL" for optional ONE_ONE references',
+            function(t) {
+              // <editor-fold desc="Arrange">
+              const RestHapi = require('../../rest-hapi')
+              const server = new Hapi.Server()
+
+              const config = {
+                loglevel: 'ERROR',
+                absoluteModelPath: true,
+
+                modelPath: path.join(
+                  __dirname,
+                  '/test-scenarios/scenario-7/models'
+                ),
+                embedAssociations: true
+              }
+
+              RestHapi.config = config
+
+              let userProfile
+
+              return (
+                server
+                  .register({
+                    plugin: RestHapi,
+                    options: {
+                      mongoose: Mongoose,
+                      config: config
+                    }
+                  })
+                  .then(function(response) {
+                    const request = {
+                      method: 'GET',
+                      url: '/user-profile',
+                      params: {},
+                      query: { status: 'foo' },
+                      payload: {},
+                      credentials: {},
+                      headers: {}
+                    }
+
+                    const injectOptions = TestHelper.mockInjection(request)
+
+                    return server.inject(injectOptions)
+                  })
+                  .then(function(response) {
+                    userProfile = response.result.docs[0]
+
+                    // NOTE: We add a title here as well since it is required in this scenario
+
+                    const request = {
+                      method: 'PUT',
+                      url: '/user/{_id}',
+                      params: { _id: users[0]._id },
+                      query: {},
+                      payload: {
+                        title: roles[1]._id,
+                        secondProfile: userProfile._id
+                      },
+                      credentials: {},
+                      headers: {}
+                    }
+
+                    const injectOptions = TestHelper.mockInjection(request)
+
+                    return server.inject(injectOptions)
+                  })
+                  .then(function(response) {
+                    const request = {
+                      method: 'DELETE',
+                      url: '/user-profile/{_id}',
+                      params: { _id: userProfile._id },
+                      query: {},
+                      payload: {},
+                      credentials: {},
+                      headers: {}
+                    }
+
+                    const injectOptions = TestHelper.mockInjection(request)
+
+                    return server.inject(injectOptions)
+                  })
+                  .then(function(response) {
+                    const request = {
+                      method: 'GET',
+                      url: '/user/{_id}',
+                      params: { _id: users[0]._id },
+                      query: {},
+                      payload: {},
+                      credentials: {},
+                      headers: {}
+                    }
+
+                    const injectOptions = TestHelper.mockInjection(request)
+
+                    return server.inject(injectOptions)
+                  })
+                  .then(function(response) {
+                    console.log('RESPONSE:', response.result)
+                    t.deepEquals(response.result.secondProfile, null)
+                  })
+                  // </editor-fold>
+
+                  // <editor-fold desc="Restore">
+                  .then(function() {
+                    Decache('../../rest-hapi')
+
+                    Decache('../config')
+                    Object.keys(Mongoose.models).forEach(function(key) {
+                      delete Mongoose.models[key]
+                    })
+                    Object.keys(Mongoose.modelSchemas || []).forEach(function(
+                      key
+                    ) {
+                      delete Mongoose?.modelSchemas[key]
+                    })
+                  })
+              )
+              // </editor-fold>
+            }
+          )
+        })
+        // onDelete defaults to 'SET_NULL' for MANY_MANY references
+        .then(function() {
+          return t.test(
+            'onDelete defaults to "SET_NULL" for MANY_MANY references',
+            function(t) {
+              // <editor-fold desc="Arrange">
+              const RestHapi = require('../../rest-hapi')
+              const server = new Hapi.Server()
+
+              const config = {
+                loglevel: 'ERROR',
+                absoluteModelPath: true,
+
+                modelPath: path.join(
+                  __dirname,
+                  '/test-scenarios/scenario-7/models'
+                ),
+                embedAssociations: true
+              }
+
+              RestHapi.config = config
+
+              let rawPermissions = []
+              let rawRoles = []
+
+              return (
+                server
+                  .register({
+                    plugin: RestHapi,
+                    options: {
+                      mongoose: Mongoose,
+                      config: config
+                    }
+                  })
+                  .then(function(response) {
+                    const request = {
+                      method: 'POST',
+                      url: '/role/{ownerId}/permission',
+                      params: { ownerId: roles[2]._id },
+                      query: {},
+                      payload: [
+                        permissions[0]._id.toString(),
+                        permissions[1]._id.toString(),
+                        permissions[2]._id.toString(),
+                        permissions[3]._id.toString(),
+                        permissions[4]._id.toString(),
+                        permissions[5]._id.toString(),
+                        permissions[6]._id.toString()
+                      ],
+                      credentials: {},
+                      headers: {}
+                    }
+
+                    const injectOptions = TestHelper.mockInjection(request)
+
+                    return server.inject(injectOptions)
+                  })
+                  .then(function(response) {
+                    console.log('ROLES:', roles)
+                    console.log('PERMISSIONS:', permissions)
+                    console.log('RESPONSE:', response.result)
+                    const request = {
+                      method: 'POST',
+                      url: '/role/{ownerId}/permission',
+                      params: { ownerId: roles[1]._id },
+                      query: {},
+                      payload: [
+                        permissions[0]._id.toString(),
+                        permissions[1]._id.toString(),
+                        permissions[2]._id.toString(),
+                        permissions[3]._id.toString()
+                      ],
+                      credentials: {},
+                      headers: {}
+                    }
+
+                    const injectOptions = TestHelper.mockInjection(request)
+
+                    return server.inject(injectOptions)
+                  })
+                  .then(function(response) {
+                    console.log('RESPONSE:', response.result)
+                    const request = {
+                      method: 'GET',
+                      url: '/role',
+                      params: {},
+                      query: { $embed: ['permissions', 'users'] },
+                      payload: {},
+                      credentials: {},
+                      headers: {}
+                    }
+
+                    const injectOptions = TestHelper.mockInjection(request)
+
+                    return server.inject(injectOptions)
+                  })
+                  .then(function(response) {
+                    roles = response.result.docs
+                    console.log('ROLES:', roles)
+                    const request = {
+                      method: 'GET',
+                      url: '/permission',
+                      params: {},
+                      query: { $embed: ['roles'] },
+                      payload: {},
+                      credentials: {},
+                      headers: {}
+                    }
+
+                    const injectOptions = TestHelper.mockInjection(request)
+
+                    return server.inject(injectOptions)
+                  })
+                  .then(function(response) {
+                    permissions = response.result.docs
+                    const Permission = Mongoose.model('permission')
+
+                    return Permission.find({}).lean()
+                  })
+                  .then(function(response) {
+                    rawPermissions = response
+                    console.log('raw permissions:', rawPermissions)
+                    const Permission = Mongoose.model('role')
+
+                    return Permission.find({}).lean()
+                  })
+                  .then(function(response) {
+                    rawRoles = response
+                    console.log('raw roles:', rawRoles)
+                    // assert that at least 4 permissions have more than 1 role
+                    let count = 0
+                    permissions.forEach(function(permission) {
+                      if (permission.roles.length > 1) {
+                        count++
+                      }
+                    })
+                    t.ok(count >= 4)
+                    // assert that at least 4 raw permissions have more than 1 role
+                    count = 0
+                    rawPermissions.forEach(function(permission) {
+                      if (permission.roles.length > 1) {
+                        count++
+                      }
+                    })
+                    t.ok(count >= 4)
+                    // assert that at least 1 raw role has more than 4 permissions
+                    count = 0
+                    rawRoles.forEach(function(role) {
+                      if (role.permissions.length > 4) {
+                        count++
+                      }
+                    })
+                    t.ok(count >= 1)
+                  })
+                  .then(function() {
+                    const request = {
+                      method: 'DELETE',
+                      url: '/role/{_id}',
+                      params: { _id: roles[1]._id },
+                      query: {},
+                      payload: {},
+                      credentials: {},
+                      headers: {}
+                    }
+
+                    const injectOptions = TestHelper.mockInjection(request)
+
+                    return server.inject(injectOptions)
+                  })
+                  .then(function(response) {
+                    console.log('RESPONSE:', response.result)
+                    const request = {
+                      method: 'GET',
+                      url: '/permission',
+                      params: {},
+                      query: { $embed: ['roles'] },
+                      payload: {},
+                      credentials: {},
+                      headers: {}
+                    }
+
+                    const injectOptions = TestHelper.mockInjection(request)
+
+                    return server.inject(injectOptions)
+                  })
+                  .then(function(response) {
+                    permissions = response.result.docs
+                    const Permission = Mongoose.model('permission')
+
+                    return Permission.find({}).lean()
+                  })
+                  .then(function(response) {
+                    rawPermissions = response
+                    console.log('raw permissions2:', rawPermissions)
+                    const Permission = Mongoose.model('role')
+
+                    return Permission.find({}).lean()
+                  })
+                  .then(function(response) {
+                    rawRoles = response
+                    console.log('raw roles2:', rawRoles)
+                    // assert that no permissions have more than 1 role
+                    let count = 0
+                    permissions.forEach(function(permission) {
+                      if (permission.roles.length > 1) {
+                        count++
+                      }
+                    })
+                    t.ok(count === 0)
+                    // assert that no raw permissions have more than 1 role
+                    count = 0
+                    rawPermissions.forEach(function(permission) {
+                      if (permission.roles.length > 1) {
+                        count++
+                      }
+                    })
+                    t.ok(count === 0)
+                    // assert that no raw role has more than 4 permissions
+                    count = 0
+                    rawRoles.forEach(function(role) {
+                      if (role.permissions.length > 4) {
+                        count++
+                      }
+                    })
+                    t.ok(count === 0)
+                  })
+                  // </editor-fold>
+
+                  // <editor-fold desc="Restore">
+                  .then(function() {
+                    Decache('../../rest-hapi')
+
+                    Decache('../config')
+                    Object.keys(Mongoose.models).forEach(function(key) {
+                      delete Mongoose.models[key]
+                    })
+                    Object.keys(Mongoose.modelSchemas || []).forEach(function(
+                      key
+                    ) {
+                      delete Mongoose?.modelSchemas[key]
+                    })
                   })
               )
               // </editor-fold>
