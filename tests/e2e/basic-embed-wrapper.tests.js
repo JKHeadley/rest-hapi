@@ -5,11 +5,12 @@ const TestHelper = require('../../utilities/test-helper')
 const Decache = require('decache')
 const Q = require('q')
 const Hapi = require('@hapi/hapi')
+const { enableSoftDelete } = require('../../config')
 
 module.exports = (t, Mongoose, internals, Log) => {
   return t.test('basic embedded association tests (WRAPPER)', function(t) {
     let users = []
-    const userProfiles = []
+    let userProfiles = []
     let roles = []
     let permissions = []
     let hashtags = []
@@ -1560,7 +1561,6 @@ module.exports = (t, Mongoose, internals, Log) => {
                     return server.inject(injectOptions)
                   })
                   .then(function(response) {
-                    console.log('RESULT', response.result)
                     t.deepEquals(response.result.title, null)
                   })
                   // </editor-fold>
@@ -1650,9 +1650,6 @@ module.exports = (t, Mongoose, internals, Log) => {
                     return server.inject(injectOptions)
                   })
                   .then(function(response) {
-                    // console.log('USER RESULT', users[0]._id, response.result)
-                    // console.log('USER PROFILES:')
-
                     const request = {
                       method: 'DELETE',
                       url: '/user/{_id}',
@@ -1797,7 +1794,6 @@ module.exports = (t, Mongoose, internals, Log) => {
                     return server.inject(injectOptions)
                   })
                   .then(function(response) {
-                    console.log('RESPONSE:', response.result)
                     t.deepEquals(response.result.secondProfile, null)
                   })
                   // </editor-fold>
@@ -1821,10 +1817,10 @@ module.exports = (t, Mongoose, internals, Log) => {
             }
           )
         })
-        // onDelete defaults to 'SET_NULL' for MANY_MANY references
+        // onDelete 'CASCADE' for ONE_ONE references deletes the referrent document (soft delete)
         .then(function() {
           return t.test(
-            'onDelete defaults to "SET_NULL" for MANY_MANY references',
+            'onDelete "CASCADE" for ONE_ONE references deletes the referrent document (soft delete)',
             function(t) {
               // <editor-fold desc="Arrange">
               const RestHapi = require('../../rest-hapi')
@@ -1836,15 +1832,13 @@ module.exports = (t, Mongoose, internals, Log) => {
 
                 modelPath: path.join(
                   __dirname,
-                  '/test-scenarios/scenario-7/models'
+                  '/test-scenarios/scenario-8/models'
                 ),
-                embedAssociations: true
+                embedAssociations: true,
+                enableSoftDelete: true
               }
 
               RestHapi.config = config
-
-              let rawPermissions = []
-              let rawRoles = []
 
               return (
                 server
@@ -1857,57 +1851,16 @@ module.exports = (t, Mongoose, internals, Log) => {
                   })
                   .then(function(response) {
                     const request = {
-                      method: 'POST',
-                      url: '/role/{ownerId}/permission',
-                      params: { ownerId: roles[2]._id },
-                      query: {},
-                      payload: [
-                        permissions[0]._id.toString(),
-                        permissions[1]._id.toString(),
-                        permissions[2]._id.toString(),
-                        permissions[3]._id.toString(),
-                        permissions[4]._id.toString(),
-                        permissions[5]._id.toString(),
-                        permissions[6]._id.toString()
-                      ],
-                      credentials: {},
-                      headers: {}
-                    }
-
-                    const injectOptions = TestHelper.mockInjection(request)
-
-                    return server.inject(injectOptions)
-                  })
-                  .then(function(response) {
-                    console.log('ROLES:', roles)
-                    console.log('PERMISSIONS:', permissions)
-                    console.log('RESPONSE:', response.result)
-                    const request = {
-                      method: 'POST',
-                      url: '/role/{ownerId}/permission',
-                      params: { ownerId: roles[1]._id },
-                      query: {},
-                      payload: [
-                        permissions[0]._id.toString(),
-                        permissions[1]._id.toString(),
-                        permissions[2]._id.toString(),
-                        permissions[3]._id.toString()
-                      ],
-                      credentials: {},
-                      headers: {}
-                    }
-
-                    const injectOptions = TestHelper.mockInjection(request)
-
-                    return server.inject(injectOptions)
-                  })
-                  .then(function(response) {
-                    console.log('RESPONSE:', response.result)
-                    const request = {
                       method: 'GET',
-                      url: '/role',
+                      url: '/user',
                       params: {},
-                      query: { $embed: ['permissions', 'users'] },
+                      query: {
+                        $embed: [
+                          'firstProfile',
+                          'secondProfile',
+                          'thirdProfile'
+                        ]
+                      },
                       payload: {},
                       credentials: {},
                       headers: {}
@@ -1918,13 +1871,41 @@ module.exports = (t, Mongoose, internals, Log) => {
                     return server.inject(injectOptions)
                   })
                   .then(function(response) {
-                    roles = response.result.docs
-                    console.log('ROLES:', roles)
+                    users = response.result.docs
+
+                    const request = {
+                      method: 'POST',
+                      url: '/user-profile',
+                      params: {},
+                      query: {},
+                      payload: [
+                        {
+                          status: 'foo',
+                          user: users[0]._id
+                        },
+                        {
+                          status: 'bar',
+                          user: users[0]._id
+                        },
+                        {
+                          status: 'baz',
+                          user: users[1]._id
+                        }
+                      ],
+                      credentials: {},
+                      headers: {}
+                    }
+
+                    const injectOptions = TestHelper.mockInjection(request)
+
+                    return server.inject(injectOptions)
+                  })
+                  .then(function(response) {
                     const request = {
                       method: 'GET',
-                      url: '/permission',
+                      url: '/user-profile',
                       params: {},
-                      query: { $embed: ['roles'] },
+                      query: {},
                       payload: {},
                       credentials: {},
                       headers: {}
@@ -1935,51 +1916,51 @@ module.exports = (t, Mongoose, internals, Log) => {
                     return server.inject(injectOptions)
                   })
                   .then(function(response) {
-                    permissions = response.result.docs
-                    const Permission = Mongoose.model('permission')
-
-                    return Permission.find({}).lean()
+                    userProfiles = response.result.docs
+                    // assert that 4 user profiles exist
+                    t.equals(response.result.docs.length, 4)
                   })
                   .then(function(response) {
-                    rawPermissions = response
-                    console.log('raw permissions:', rawPermissions)
-                    const Permission = Mongoose.model('role')
+                    const request = {
+                      method: 'PUT',
+                      url: '/user/{_id}',
+                      params: { _id: users[0]._id },
+                      query: {},
+                      payload: {
+                        firstProfile: userProfiles[0]._id,
+                        secondProfile: userProfiles[1]._id,
+                        thirdProfile: userProfiles[2]._id
+                      },
+                      credentials: {},
+                      headers: {}
+                    }
 
-                    return Permission.find({}).lean()
+                    const injectOptions = TestHelper.mockInjection(request)
+
+                    return server.inject(injectOptions)
                   })
                   .then(function(response) {
-                    rawRoles = response
-                    console.log('raw roles:', rawRoles)
-                    // assert that at least 4 permissions have more than 1 role
-                    let count = 0
-                    permissions.forEach(function(permission) {
-                      if (permission.roles.length > 1) {
-                        count++
-                      }
-                    })
-                    t.ok(count >= 4)
-                    // assert that at least 4 raw permissions have more than 1 role
-                    count = 0
-                    rawPermissions.forEach(function(permission) {
-                      if (permission.roles.length > 1) {
-                        count++
-                      }
-                    })
-                    t.ok(count >= 4)
-                    // assert that at least 1 raw role has more than 4 permissions
-                    count = 0
-                    rawRoles.forEach(function(role) {
-                      if (role.permissions.length > 4) {
-                        count++
-                      }
-                    })
-                    t.ok(count >= 1)
+                    const request = {
+                      method: 'PUT',
+                      url: '/user/{_id}',
+                      params: { _id: users[1]._id },
+                      query: {},
+                      payload: {
+                        firstProfile: userProfiles[3]._id
+                      },
+                      credentials: {},
+                      headers: {}
+                    }
+
+                    const injectOptions = TestHelper.mockInjection(request)
+
+                    return server.inject(injectOptions)
                   })
-                  .then(function() {
+                  .then(function(response) {
                     const request = {
                       method: 'DELETE',
-                      url: '/role/{_id}',
-                      params: { _id: roles[1]._id },
+                      url: '/user/{_id}',
+                      params: { _id: users[0]._id },
                       query: {},
                       payload: {},
                       credentials: {},
@@ -1991,12 +1972,11 @@ module.exports = (t, Mongoose, internals, Log) => {
                     return server.inject(injectOptions)
                   })
                   .then(function(response) {
-                    console.log('RESPONSE:', response.result)
                     const request = {
                       method: 'GET',
-                      url: '/permission',
+                      url: '/user-profile',
                       params: {},
-                      query: { $embed: ['roles'] },
+                      query: {},
                       payload: {},
                       credentials: {},
                       headers: {}
@@ -2007,45 +1987,154 @@ module.exports = (t, Mongoose, internals, Log) => {
                     return server.inject(injectOptions)
                   })
                   .then(function(response) {
-                    permissions = response.result.docs
-                    const Permission = Mongoose.model('permission')
+                    userProfiles = response.result.docs
+                    // assert that at least 1 user profile has been soft deleted
+                    t.ok(userProfiles.some(x => x.isDeleted))
+                  })
+                  // </editor-fold>
 
-                    return Permission.find({}).lean()
+                  // <editor-fold desc="Restore">
+                  .then(function() {
+                    Decache('../../rest-hapi')
+
+                    Decache('../config')
+                    Object.keys(Mongoose.models).forEach(function(key) {
+                      delete Mongoose.models[key]
+                    })
+                    Object.keys(Mongoose.modelSchemas || []).forEach(function(
+                      key
+                    ) {
+                      delete Mongoose?.modelSchemas[key]
+                    })
+                  })
+              )
+              // </editor-fold>
+            }
+          )
+        })
+        // onDelete 'CASCADE' for ONE_ONE references deletes the referrent document (hard delete)
+        .then(function() {
+          return t.test(
+            'onDelete "CASCADE" for ONE_ONE references deletes the referrent document (hard delete)',
+            function(t) {
+              // <editor-fold desc="Arrange">
+              const RestHapi = require('../../rest-hapi')
+              const server = new Hapi.Server()
+
+              const config = {
+                loglevel: 'ERROR',
+                absoluteModelPath: true,
+
+                modelPath: path.join(
+                  __dirname,
+                  '/test-scenarios/scenario-8/models'
+                ),
+                embedAssociations: true,
+                enableSoftDelete: false
+              }
+
+              RestHapi.config = config
+
+              return (
+                server
+                  .register({
+                    plugin: RestHapi,
+                    options: {
+                      mongoose: Mongoose,
+                      config: config
+                    }
                   })
                   .then(function(response) {
-                    rawPermissions = response
-                    console.log('raw permissions2:', rawPermissions)
-                    const Permission = Mongoose.model('role')
+                    const request = {
+                      method: 'GET',
+                      url: '/user',
+                      params: {},
+                      query: {
+                        $embed: [
+                          'firstProfile',
+                          'secondProfile',
+                          'thirdProfile'
+                        ]
+                      },
+                      payload: {},
+                      credentials: {},
+                      headers: {}
+                    }
 
-                    return Permission.find({}).lean()
+                    const injectOptions = TestHelper.mockInjection(request)
+
+                    return server.inject(injectOptions)
                   })
                   .then(function(response) {
-                    rawRoles = response
-                    console.log('raw roles2:', rawRoles)
-                    // assert that no permissions have more than 1 role
-                    let count = 0
-                    permissions.forEach(function(permission) {
-                      if (permission.roles.length > 1) {
-                        count++
-                      }
-                    })
-                    t.ok(count === 0)
-                    // assert that no raw permissions have more than 1 role
-                    count = 0
-                    rawPermissions.forEach(function(permission) {
-                      if (permission.roles.length > 1) {
-                        count++
-                      }
-                    })
-                    t.ok(count === 0)
-                    // assert that no raw role has more than 4 permissions
-                    count = 0
-                    rawRoles.forEach(function(role) {
-                      if (role.permissions.length > 4) {
-                        count++
-                      }
-                    })
-                    t.ok(count === 0)
+                    users = response.result.docs
+                    const request = {
+                      method: 'GET',
+                      url: '/user-profile',
+                      params: {},
+                      query: {},
+                      payload: {},
+                      credentials: {},
+                      headers: {}
+                    }
+
+                    const injectOptions = TestHelper.mockInjection(request)
+
+                    return server.inject(injectOptions)
+                  })
+                  .then(function(response) {
+                    userProfiles = response.result.docs
+                    // assert that 4 user profiles exist
+                    t.equals(response.result.docs.length, 4)
+                  })
+                  .then(function(response) {
+                    const request = {
+                      method: 'PUT',
+                      url: '/user/{_id}',
+                      params: { _id: users[0]._id },
+                      query: {},
+                      payload: { firstProfile: userProfiles[0]._id },
+                      credentials: {},
+                      headers: {}
+                    }
+
+                    const injectOptions = TestHelper.mockInjection(request)
+
+                    return server.inject(injectOptions)
+                  })
+                  .then(function(response) {
+                    const request = {
+                      method: 'DELETE',
+                      url: '/user/{_id}',
+                      params: { _id: users[0]._id },
+                      query: {},
+                      payload: {},
+                      credentials: {},
+                      headers: {}
+                    }
+
+                    const injectOptions = TestHelper.mockInjection(request)
+
+                    return server.inject(injectOptions)
+                  })
+                  .then(function(response) {
+                    const request = {
+                      method: 'GET',
+                      url: '/user-profile',
+                      params: {},
+                      query: {},
+                      payload: {},
+                      credentials: {},
+                      headers: {}
+                    }
+
+                    const injectOptions = TestHelper.mockInjection(request)
+
+                    return server.inject(injectOptions)
+                  })
+                  .then(function(response) {
+                    userProfiles = response.result.docs
+                    // assert that only 3 user profiles exist
+                    t.equals(response.result.docs.length, 3)
                   })
                   // </editor-fold>
 

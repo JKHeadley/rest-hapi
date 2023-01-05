@@ -2158,7 +2158,7 @@ async function _getAllHandler(
       })
       manyMany = true
     } else if (association.type === 'ONE_ONE') {
-      childIds = [result._id]
+      childIds = [result?._id]
     } else {
       childIds = result.map(object => {
         return object._id
@@ -2588,10 +2588,16 @@ async function cascadeDelete(model, _id, hardDelete, request, Log) {
 
   const cascades = getCascades(model)
 
+  console.log('CASCADES:', cascades)
+  console.log('ASSOCIATIONS:', associations)
+
   // For each cascade delete, user the deleteOneHandler to delete the associated document
   const promises = []
-  for (const cascade in cascades) {
+  for (const cascade of cascades) {
     const associationModel = globals.mongoose.model(associations[cascade].model)
+    console.log('ARGS', model, _id, associationModel, cascade, {
+      $select: ['_id']
+    })
     const references = await _getAll(
       model,
       _id,

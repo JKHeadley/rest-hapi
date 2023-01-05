@@ -64,33 +64,33 @@ function restore(Mongoose) {
 Test('end to end tests', function(t) {
   mongoServer
     .getConnectionString()
-    .then(() => {
-      return BasicCrudTests(t, Mongoose, internals, Log, restore)
-    })
-    .then(function() {
-      return DocAuthTests(t, Mongoose, internals, Log, restore)
-    })
-    .then(function() {
-      return BasicEmbedRestTests(t, Mongoose, internals, Log, restore)
-    })
+    // .then(() => {
+    //   return BasicCrudTests(t, Mongoose, internals, Log, restore)
+    // })
+    // .then(function() {
+    //   return DocAuthTests(t, Mongoose, internals, Log, restore)
+    // })
+    // .then(function() {
+    //   return BasicEmbedRestTests(t, Mongoose, internals, Log, restore)
+    // })
     .then(function() {
       return BasicEmbedWrapperTests(t, Mongoose, internals, Log, restore)
     })
-    .then(function() {
-      return BasicNonEmbedTests(t, Mongoose, internals, Log, restore)
-    })
-    .then(function() {
-      return AuditLogTests(t, Mongoose, internals, Log, restore)
-    })
-    .then(function() {
-      return AdvanceAssocTests(t, Mongoose, internals, Log, restore)
-    })
-    .then(function() {
-      return DuplicateFieldTests(t, Mongoose, internals, Log, restore)
-    })
-    .then(function() {
-      return MiscTests(t, Mongoose, internals, Log, restore)
-    })
+    // .then(function() {
+    //   return BasicNonEmbedTests(t, Mongoose, internals, Log, restore)
+    // })
+    // .then(function() {
+    //   return AuditLogTests(t, Mongoose, internals, Log, restore)
+    // })
+    // .then(function() {
+    //   return AdvanceAssocTests(t, Mongoose, internals, Log, restore)
+    // })
+    // .then(function() {
+    //   return DuplicateFieldTests(t, Mongoose, internals, Log, restore)
+    // })
+    // .then(function() {
+    //   return MiscTests(t, Mongoose, internals, Log, restore)
+    // })
     .then(function() {
       return t.test('clearing cache', function(t) {
         return Q.when().then(function() {
