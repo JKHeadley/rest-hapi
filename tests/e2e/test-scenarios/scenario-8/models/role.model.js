@@ -37,11 +37,14 @@ module.exports = function(mongoose) {
           type: 'ONE_MANY',
           alias: 'people',
           foreignField: 'title',
-          model: 'user'
+          model: 'user',
+          onDelete: 'CASCADE'
         },
         permissions: {
           type: 'MANY_MANY',
-          model: 'permission'
+          model: 'permission',
+          onDelete: 'CASCADE',
+          linkingModel: 'role_permission'
         }
       }
     }

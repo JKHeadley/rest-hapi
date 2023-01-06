@@ -28,7 +28,8 @@ module.exports = function(mongoose) {
         roles: {
           type: 'MANY_MANY',
           alias: 'role',
-          model: 'role'
+          model: 'role',
+          linkingModel: 'role_permission'
         }
       }
     }

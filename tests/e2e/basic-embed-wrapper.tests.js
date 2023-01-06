@@ -2151,6 +2151,1070 @@ module.exports = (t, Mongoose, internals, Log) => {
                     ) {
                       delete Mongoose?.modelSchemas[key]
                     })
+
+                    return Mongoose.connection.db.dropDatabase()
+                  })
+              )
+              // </editor-fold>
+            }
+          )
+        })
+        // onDelete 'CASCADE' for ONE_MANY references deletes the referrent documents and any cascading documents (soft delete)
+        .then(function() {
+          return t.test(
+            'onDelete "CASCADE" for ONE_MANY references deletes the referrent documents and any cascading documents (soft delete)',
+            function(t) {
+              // <editor-fold desc="Arrange">
+              const RestHapi = require('../../rest-hapi')
+              const server = new Hapi.Server()
+
+              const config = {
+                loglevel: 'ERROR',
+                absoluteModelPath: true,
+
+                modelPath: path.join(
+                  __dirname,
+                  '/test-scenarios/scenario-8/models'
+                ),
+                embedAssociations: true,
+                enableSoftDelete: true
+              }
+
+              RestHapi.config = config
+
+              let users, roles, profiles
+
+              return (
+                server
+                  .register({
+                    plugin: RestHapi,
+                    options: {
+                      mongoose: Mongoose,
+                      config: config
+                    }
+                  })
+                  .then(function(response) {
+                    const payload = [
+                      {
+                        name: 'User',
+                        description: 'A standard user account.'
+                      },
+                      {
+                        name: 'Admin',
+                        description: 'A user with advanced permissions.'
+                      },
+                      {
+                        name: 'SuperAdmin',
+                        description: 'A user with full permissions.'
+                      }
+                    ]
+
+                    return RestHapi.create({
+                      model: 'role',
+                      payload,
+                      restCall: false
+                    })
+                  })
+                  .then(function(response) {
+                    roles = response
+
+                    const payload = [
+                      {
+                        email: 'test@user2.com',
+                        password: 'root',
+                        title: roles[0]._id
+                      },
+                      {
+                        email: 'test@user3.com',
+                        password: 'root',
+                        title: roles[0]._id
+                      },
+                      {
+                        email: 'test@admin.com',
+                        password: 'root',
+                        title: roles[1]._id
+                      }
+                    ]
+
+                    return RestHapi.create({
+                      model: 'user',
+                      payload,
+                      restCall: false
+                    })
+                  })
+
+                  .then(function(response) {
+                    users = response
+                    console.log('users', users)
+                    const payload = [
+                      {
+                        status: 'foo',
+                        user: users[0]._id
+                      }
+                    ]
+
+                    return RestHapi.create({
+                      model: 'userProfile',
+                      payload,
+                      restCall: false
+                    })
+                  })
+                  .then(function(response) {
+                    const profiles = response
+                    const payload = {
+                      firstProfile: profiles[0]._id
+                    }
+
+                    return RestHapi.update({
+                      model: 'user',
+                      _id: users[0]._id,
+                      payload,
+                      restCall: false
+                    })
+                  })
+                  .then(function(response) {
+                    const payload = [
+                      {
+                        name: 'root',
+                        description: 'Access to all endpoints'
+                      },
+                      {
+                        name: 'create',
+                        description: 'Access to all create endpoints'
+                      },
+                      {
+                        name: 'read',
+                        description: 'Access to all read endpoints'
+                      },
+                      {
+                        name: 'update',
+                        description: 'Access to all update endpoints'
+                      },
+                      {
+                        name: 'delete',
+                        description: 'Access to all delete endpoints'
+                      },
+                      {
+                        name: 'associate',
+                        description: 'Access to all association endpoints'
+                      },
+                      {
+                        name: 'nothing',
+                        description: 'Permission with no use.'
+                      }
+                    ]
+
+                    const request = {
+                      method: 'POST',
+                      url: '/permission',
+                      params: {},
+                      query: {},
+                      payload: payload,
+                      credentials: {},
+                      headers: {}
+                    }
+
+                    const injectOptions = TestHelper.mockInjection(request)
+
+                    return server.inject(injectOptions)
+                  })
+                  .then(function(response) {
+                    permissions = response.result
+
+                    const payload = [
+                      {
+                        childId: permissions[0]._id,
+                        enabled: true
+                      },
+                      {
+                        childId: permissions[1]._id,
+                        enabled: false
+                      },
+                      {
+                        childId: permissions[2]._id,
+                        enabled: true
+                      }
+                    ]
+
+                    return RestHapi.addMany({
+                      ownerModel: 'role',
+                      childModel: 'permission',
+                      associationName: 'permissions',
+                      ownerId: roles[0]._id,
+                      payload,
+                      restCall: false
+                    })
+                  })
+                  .then(function(response) {
+                    const request = {
+                      method: 'GET',
+                      url: '/role',
+                      params: {},
+                      query: { $embed: ['permissions', 'users.firstProfile'] },
+                      payload: {},
+                      credentials: {},
+                      headers: {}
+                    }
+
+                    const injectOptions = TestHelper.mockInjection(request)
+
+                    return server.inject(injectOptions)
+                  })
+                  .then(function(response) {
+                    roles = response.result.docs
+                    console.log('ROLES: ', roles)
+                  })
+                  .then(function(response) {
+                    const Role = Mongoose.model('role')
+                    return Role.findById(roles[0]._id)
+                  })
+                  .then(function(rawRole) {
+                    console.log('ROLE: ', rawRole)
+                    // assert that the role has 3 permissions
+                    t.equals(rawRole.permissions.length, 3)
+                  })
+                  .then(function(response) {
+                    const Permission = Mongoose.model('permission')
+                    return Permission.find()
+                  })
+                  .then(function(response) {
+                    const request = {
+                      method: 'DELETE',
+                      url: '/role/{_id}',
+                      params: {
+                        _id: roles[0]._id
+                      },
+                      query: {},
+                      payload: {},
+                      credentials: {},
+                      headers: {}
+                    }
+
+                    const injectOptions = TestHelper.mockInjection(request)
+
+                    return server.inject(injectOptions)
+                  })
+                  .then(function(response) {
+                    const User = Mongoose.model('user')
+                    return User.find()
+                  })
+                  .then(function(rawUsers) {
+                    console.log('rawUsers: ', rawUsers)
+                    // assert that at least 2 users have isDeleted = true
+                    t.ok(rawUsers.filter(u => u.isDeleted === true).length >= 2)
+                  })
+                  .then(function(response) {
+                    const UserProfile = Mongoose.model('userProfile')
+                    return UserProfile.find()
+                  })
+                  .then(function(rawUserProfiles) {
+                    console.log('rawUserProfiles: ', rawUserProfiles)
+                    // assert that at least 1 user profile has isDeleted = true
+                    t.ok(
+                      rawUserProfiles.filter(up => up.isDeleted === true)
+                        .length >= 1
+                    )
+                  })
+                  // </editor-fold>
+
+                  // <editor-fold desc="Restore">
+                  .then(function() {
+                    Decache('../../rest-hapi')
+
+                    Decache('../config')
+                    Object.keys(Mongoose.models).forEach(function(key) {
+                      delete Mongoose.models[key]
+                    })
+                    Object.keys(Mongoose.modelSchemas || []).forEach(function(
+                      key
+                    ) {
+                      delete Mongoose?.modelSchemas[key]
+                    })
+
+                    return Mongoose.connection.db.dropDatabase()
+                  })
+              )
+              // </editor-fold>
+            }
+          )
+        })
+        // onDelete 'CASCADE' for ONE_MANY references deletes the referrent documents and any cascading documents (hard delete)
+        .then(function() {
+          return t.test(
+            'onDelete "CASCADE" for ONE_MANY references deletes the referrent documents and any cascading documents (hard delete)',
+            function(t) {
+              // <editor-fold desc="Arrange">
+              const RestHapi = require('../../rest-hapi')
+              const server = new Hapi.Server()
+
+              const config = {
+                loglevel: 'ERROR',
+                absoluteModelPath: true,
+
+                modelPath: path.join(
+                  __dirname,
+                  '/test-scenarios/scenario-8/models'
+                ),
+                embedAssociations: true,
+                enableSoftDelete: false
+              }
+
+              let users, roles, permissions, profiles
+
+              RestHapi.config = config
+
+              return (
+                server
+                  .register({
+                    plugin: RestHapi,
+                    options: {
+                      mongoose: Mongoose,
+                      config: config
+                    }
+                  })
+                  .then(function(response) {
+                    const payload = [
+                      {
+                        name: 'User',
+                        description: 'A standard user account.'
+                      },
+                      {
+                        name: 'Admin',
+                        description: 'A user with advanced permissions.'
+                      },
+                      {
+                        name: 'SuperAdmin',
+                        description: 'A user with full permissions.'
+                      }
+                    ]
+
+                    return RestHapi.create({
+                      model: 'role',
+                      payload,
+                      restCall: false
+                    })
+                  })
+                  .then(function(response) {
+                    roles = response
+
+                    const payload = [
+                      {
+                        email: 'test@user2.com',
+                        password: 'root',
+                        title: roles[0]._id
+                      },
+                      {
+                        email: 'test@user3.com',
+                        password: 'root',
+                        title: roles[0]._id
+                      },
+                      {
+                        email: 'test@admin.com',
+                        password: 'root',
+                        title: roles[1]._id
+                      }
+                    ]
+
+                    return RestHapi.create({
+                      model: 'user',
+                      payload,
+                      restCall: false
+                    })
+                  })
+                  .then(function(response) {
+                    users = response
+                    console.log('users', users)
+                    const payload = [
+                      {
+                        status: 'foo',
+                        user: users[0]._id
+                      }
+                    ]
+
+                    return RestHapi.create({
+                      model: 'userProfile',
+                      payload,
+                      restCall: false
+                    })
+                  })
+                  .then(function(response) {
+                    const profiles = response
+                    const payload = {
+                      firstProfile: profiles[0]._id
+                    }
+
+                    return RestHapi.update({
+                      model: 'user',
+                      _id: users[0]._id,
+                      payload,
+                      restCall: false
+                    })
+                  })
+
+                  .then(function() {
+                    const payload = [
+                      {
+                        name: 'root',
+                        description: 'Access to all endpoints'
+                      },
+                      {
+                        name: 'create',
+                        description: 'Access to all create endpoints'
+                      },
+                      {
+                        name: 'read',
+                        description: 'Access to all read endpoints'
+                      },
+                      {
+                        name: 'update',
+                        description: 'Access to all update endpoints'
+                      },
+                      {
+                        name: 'delete',
+                        description: 'Access to all delete endpoints'
+                      },
+                      {
+                        name: 'associate',
+                        description: 'Access to all association endpoints'
+                      },
+                      {
+                        name: 'nothing',
+                        description: 'Permission with no use.'
+                      }
+                    ]
+
+                    const request = {
+                      method: 'POST',
+                      url: '/permission',
+                      params: {},
+                      query: {},
+                      payload: payload,
+                      credentials: {},
+                      headers: {}
+                    }
+
+                    const injectOptions = TestHelper.mockInjection(request)
+
+                    return server.inject(injectOptions)
+                  })
+                  .then(function(response) {
+                    permissions = response.result
+
+                    const payload = [
+                      {
+                        childId: permissions[0]._id,
+                        enabled: true
+                      },
+                      {
+                        childId: permissions[1]._id,
+                        enabled: false
+                      },
+                      {
+                        childId: permissions[2]._id,
+                        enabled: true
+                      }
+                    ]
+
+                    return RestHapi.addMany({
+                      ownerModel: 'role',
+                      childModel: 'permission',
+                      associationName: 'permissions',
+                      ownerId: roles[0]._id,
+                      payload,
+                      restCall: false
+                    })
+                  })
+                  .then(function(response) {
+                    const request = {
+                      method: 'GET',
+                      url: '/role',
+                      params: {},
+                      query: { $embed: ['permissions', 'users.firstProfile'] },
+                      payload: {},
+                      credentials: {},
+                      headers: {}
+                    }
+
+                    const injectOptions = TestHelper.mockInjection(request)
+
+                    return server.inject(injectOptions)
+                  })
+                  .then(function(response) {
+                    roles = response.result.docs
+                    console.log('ROLES: ', roles)
+                  })
+                  .then(function(response) {
+                    const Role = Mongoose.model('role')
+                    return Role.findById(roles[0]._id)
+                  })
+                  .then(function(rawRole) {
+                    console.log('ROLE: ', rawRole)
+                    // assert that the role has 3 permissions
+                    t.equals(rawRole.permissions.length, 3)
+                  })
+                  .then(function(response) {
+                    const Permission = Mongoose.model('permission')
+                    return Permission.find()
+                  })
+                  .then(function(rawPermissions) {
+                    console.log('PERMISSIONS: ', rawPermissions)
+                    // assert that at least 3 permissions have roles
+                    t.ok(
+                      rawPermissions.filter(p => p.roles.length > 0).length >= 3
+                    )
+                  })
+                  .then(function(response) {
+                    const request = {
+                      method: 'DELETE',
+                      url: '/role/{_id}',
+                      params: {
+                        _id: roles[0]._id
+                      },
+                      query: {},
+                      payload: {},
+                      credentials: {},
+                      headers: {}
+                    }
+
+                    const injectOptions = TestHelper.mockInjection(request)
+
+                    return server.inject(injectOptions)
+                  })
+                  .then(function(response) {
+                    const User = Mongoose.model('user')
+                    return User.find()
+                  })
+                  .then(function(rawUsers) {
+                    console.log('rawUsers: ', rawUsers)
+                    // assert that only 1 user is left
+                    t.equals(rawUsers.length, 1)
+                  })
+                  .then(function(response) {
+                    const UserProfile = Mongoose.model('userProfile')
+                    return UserProfile.find()
+                  })
+                  .then(function(rawUserProfiles) {
+                    console.log('rawUserProfiles: ', rawUserProfiles)
+                    // assert that no profiles exist
+                    t.equals(rawUserProfiles.length, 0)
+                  })
+                  // .then(function(response) {
+                  //   const request = {
+                  //     method: 'GET',
+                  //     url: '/role',
+                  //     params: {},
+                  //     query: { $embed: ['permissions', 'users.firstProfile'] },
+                  //     payload: {},
+                  //     credentials: {},
+                  //     headers: {}
+                  //   }
+
+                  //   const injectOptions = TestHelper.mockInjection(request)
+
+                  //   return server.inject(injectOptions)
+                  // })
+                  // .then(function(response) {
+                  //   roles = response.result.docs
+                  //   console.log('ROLES: ', roles)
+                  //   // assert that at least 1 role has isDeleted = true
+                  //   t.ok(roles.filter(r => r.isDeleted === true).length >= 1)
+                  //   // assert that no roles have permissions
+                  //   t.ok(
+                  //     roles.filter(r => r.permissions.length > 0).length === 0
+                  //   )
+                  // })
+                  // .then(function(response) {
+                  //   const Permission = Mongoose.model('permission')
+                  //   return Permission.find()
+                  // })
+                  // .then(function(rawPermissions) {
+                  //   console.log('PERMISSIONS: ', rawPermissions)
+                  //   // assert that no permissions have roles
+                  //   t.ok(
+                  //     rawPermissions.filter(p => p.roles.length > 0).length ===
+                  //       0
+                  //   )
+                  // })
+                  // </editor-fold>
+
+                  // <editor-fold desc="Restore">
+                  .then(function() {
+                    Decache('../../rest-hapi')
+
+                    Decache('../config')
+                    Object.keys(Mongoose.models).forEach(function(key) {
+                      delete Mongoose.models[key]
+                    })
+                    Object.keys(Mongoose.modelSchemas || []).forEach(function(
+                      key
+                    ) {
+                      delete Mongoose?.modelSchemas[key]
+                    })
+
+                    return Mongoose.connection.db.dropDatabase()
+                  })
+              )
+              // </editor-fold>
+            }
+          )
+        })
+        // onDelete 'CASCADE' for MANY_MANY references results in no action (soft delete)
+        .then(function() {
+          return t.test(
+            'onDelete "CASCADE" for MANY_MANY references results in no action (soft delete)',
+            function(t) {
+              // <editor-fold desc="Arrange">
+              const RestHapi = require('../../rest-hapi')
+              const server = new Hapi.Server()
+
+              const config = {
+                loglevel: 'ERROR',
+                absoluteModelPath: true,
+
+                modelPath: path.join(
+                  __dirname,
+                  '/test-scenarios/scenario-8/models'
+                ),
+                embedAssociations: true,
+                enableSoftDelete: true
+              }
+
+              RestHapi.config = config
+
+              let users, roles, profiles
+
+              return (
+                server
+                  .register({
+                    plugin: RestHapi,
+                    options: {
+                      mongoose: Mongoose,
+                      config: config
+                    }
+                  })
+                  .then(function(response) {
+                    const payload = [
+                      {
+                        name: 'User',
+                        description: 'A standard user account.'
+                      },
+                      {
+                        name: 'Admin',
+                        description: 'A user with advanced permissions.'
+                      },
+                      {
+                        name: 'SuperAdmin',
+                        description: 'A user with full permissions.'
+                      }
+                    ]
+
+                    return RestHapi.create({
+                      model: 'role',
+                      payload,
+                      restCall: false
+                    })
+                  })
+                  .then(function(response) {
+                    roles = response
+                  })
+                  .then(function(response) {
+                    const payload = [
+                      {
+                        name: 'root',
+                        description: 'Access to all endpoints'
+                      },
+                      {
+                        name: 'create',
+                        description: 'Access to all create endpoints'
+                      },
+                      {
+                        name: 'read',
+                        description: 'Access to all read endpoints'
+                      },
+                      {
+                        name: 'update',
+                        description: 'Access to all update endpoints'
+                      },
+                      {
+                        name: 'delete',
+                        description: 'Access to all delete endpoints'
+                      },
+                      {
+                        name: 'associate',
+                        description: 'Access to all association endpoints'
+                      },
+                      {
+                        name: 'nothing',
+                        description: 'Permission with no use.'
+                      }
+                    ]
+
+                    const request = {
+                      method: 'POST',
+                      url: '/permission',
+                      params: {},
+                      query: {},
+                      payload: payload,
+                      credentials: {},
+                      headers: {}
+                    }
+
+                    const injectOptions = TestHelper.mockInjection(request)
+
+                    return server.inject(injectOptions)
+                  })
+                  .then(function(response) {
+                    permissions = response.result
+
+                    const payload = [
+                      {
+                        childId: permissions[0]._id,
+                        enabled: true
+                      },
+                      {
+                        childId: permissions[1]._id,
+                        enabled: false
+                      },
+                      {
+                        childId: permissions[2]._id,
+                        enabled: true
+                      }
+                    ]
+
+                    return RestHapi.addMany({
+                      ownerModel: 'role',
+                      childModel: 'permission',
+                      associationName: 'permissions',
+                      ownerId: roles[0]._id,
+                      payload,
+                      restCall: false
+                    })
+                  })
+                  .then(function(response) {
+                    const request = {
+                      method: 'GET',
+                      url: '/role',
+                      params: {},
+                      query: { $embed: ['permissions', 'users.firstProfile'] },
+                      payload: {},
+                      credentials: {},
+                      headers: {}
+                    }
+
+                    const injectOptions = TestHelper.mockInjection(request)
+
+                    return server.inject(injectOptions)
+                  })
+                  .then(function(response) {
+                    roles = response.result.docs
+                    console.log('ROLES: ', roles)
+                  })
+                  .then(function(response) {
+                    const Role = Mongoose.model('role')
+                    return Role.findById(roles[0]._id)
+                  })
+                  .then(function(rawRole) {
+                    console.log('ROLE: ', rawRole)
+                    // assert that the role has 3 permissions
+                    t.equals(rawRole.permissions.length, 3)
+                  })
+                  .then(function(response) {
+                    const Permission = Mongoose.model('permission')
+                    return Permission.find()
+                  })
+                  .then(function(rawPermissions) {
+                    // assert that at least 3 permissions have one role
+                    t.ok(
+                      rawPermissions.filter(p => p.roles.length >= 1).length >=
+                        3
+                    )
+                  })
+                  .then(function(response) {
+                    const request = {
+                      method: 'DELETE',
+                      url: '/role/{_id}',
+                      params: {
+                        _id: roles[0]._id
+                      },
+                      query: {},
+                      payload: {},
+                      credentials: {},
+                      headers: {}
+                    }
+
+                    const injectOptions = TestHelper.mockInjection(request)
+
+                    return server.inject(injectOptions)
+                  })
+                  .then(function(response) {
+                    const Role = Mongoose.model('role')
+                    return Role.findById(roles[0]._id)
+                  })
+                  .then(function(rawRole) {
+                    console.log('ROLE: ', rawRole)
+                    // assert that role has isDeleted set to true
+                    t.ok(rawRole.isDeleted)
+                    // assert that the role has 3 permissions
+                    t.equals(rawRole.permissions.length, 3)
+                  })
+                  .then(function(response) {
+                    const Permission = Mongoose.model('permission')
+                    return Permission.find()
+                  })
+                  .then(function(rawPermissions) {
+                    // assert that at least 3 permissions have one role
+                    t.ok(
+                      rawPermissions.filter(p => p.roles.length >= 1).length >=
+                        3
+                    )
+                  })
+                  // </editor-fold>
+
+                  // <editor-fold desc="Restore">
+                  .then(function() {
+                    Decache('../../rest-hapi')
+
+                    Decache('../config')
+                    Object.keys(Mongoose.models).forEach(function(key) {
+                      delete Mongoose.models[key]
+                    })
+                    Object.keys(Mongoose.modelSchemas || []).forEach(function(
+                      key
+                    ) {
+                      delete Mongoose?.modelSchemas[key]
+                    })
+
+                    return Mongoose.connection.db.dropDatabase()
+                  })
+              )
+              // </editor-fold>
+            }
+          )
+        })
+        // onDelete 'CASCADE' for MANY_MANY references deletes the referrent embedded docs (hard delete)
+        .then(function() {
+          return t.test(
+            'onDelete "CASCADE" for MANY_MANY references deletes the referrent embedded docs (hard delete)',
+            function(t) {
+              // <editor-fold desc="Arrange">
+              const RestHapi = require('../../rest-hapi')
+              const server = new Hapi.Server()
+
+              const config = {
+                loglevel: 'ERROR',
+                absoluteModelPath: true,
+
+                modelPath: path.join(
+                  __dirname,
+                  '/test-scenarios/scenario-8/models'
+                ),
+                embedAssociations: true,
+                enableSoftDelete: false
+              }
+
+              RestHapi.config = config
+
+              let users, roles, profiles
+
+              return (
+                server
+                  .register({
+                    plugin: RestHapi,
+                    options: {
+                      mongoose: Mongoose,
+                      config: config
+                    }
+                  })
+                  .then(function(response) {
+                    const payload = [
+                      {
+                        name: 'User',
+                        description: 'A standard user account.'
+                      },
+                      {
+                        name: 'Admin',
+                        description: 'A user with advanced permissions.'
+                      },
+                      {
+                        name: 'SuperAdmin',
+                        description: 'A user with full permissions.'
+                      }
+                    ]
+
+                    return RestHapi.create({
+                      model: 'role',
+                      payload,
+                      restCall: false
+                    })
+                  })
+                  .then(function(response) {
+                    roles = response
+                  })
+                  .then(function(response) {
+                    const payload = [
+                      {
+                        name: 'root',
+                        description: 'Access to all endpoints'
+                      },
+                      {
+                        name: 'create',
+                        description: 'Access to all create endpoints'
+                      },
+                      {
+                        name: 'read',
+                        description: 'Access to all read endpoints'
+                      },
+                      {
+                        name: 'update',
+                        description: 'Access to all update endpoints'
+                      },
+                      {
+                        name: 'delete',
+                        description: 'Access to all delete endpoints'
+                      },
+                      {
+                        name: 'associate',
+                        description: 'Access to all association endpoints'
+                      },
+                      {
+                        name: 'nothing',
+                        description: 'Permission with no use.'
+                      }
+                    ]
+
+                    const request = {
+                      method: 'POST',
+                      url: '/permission',
+                      params: {},
+                      query: {},
+                      payload: payload,
+                      credentials: {},
+                      headers: {}
+                    }
+
+                    const injectOptions = TestHelper.mockInjection(request)
+
+                    return server.inject(injectOptions)
+                  })
+                  .then(function(response) {
+                    permissions = response.result
+
+                    const payload = [
+                      {
+                        childId: permissions[0]._id,
+                        enabled: true
+                      },
+                      {
+                        childId: permissions[1]._id,
+                        enabled: false
+                      },
+                      {
+                        childId: permissions[2]._id,
+                        enabled: true
+                      }
+                    ]
+
+                    return RestHapi.addMany({
+                      ownerModel: 'role',
+                      childModel: 'permission',
+                      associationName: 'permissions',
+                      ownerId: roles[0]._id,
+                      payload,
+                      restCall: false
+                    })
+                  })
+                  .then(function(response) {
+                    const request = {
+                      method: 'GET',
+                      url: '/role',
+                      params: {},
+                      query: { $embed: ['permissions', 'users.firstProfile'] },
+                      payload: {},
+                      credentials: {},
+                      headers: {}
+                    }
+
+                    const injectOptions = TestHelper.mockInjection(request)
+
+                    return server.inject(injectOptions)
+                  })
+                  .then(function(response) {
+                    roles = response.result.docs
+                    console.log('ROLES: ', roles)
+                  })
+                  .then(function(response) {
+                    const Role = Mongoose.model('role')
+                    return Role.findById(roles[0]._id)
+                  })
+                  .then(function(rawRole) {
+                    console.log('ROLE: ', rawRole)
+                    // assert that the role has 3 permissions
+                    t.equals(rawRole.permissions.length, 3)
+                  })
+                  .then(function(response) {
+                    const Permission = Mongoose.model('permission')
+                    return Permission.find()
+                  })
+                  .then(function(rawPermissions) {
+                    // assert that at least 3 permissions have one role
+                    t.ok(
+                      rawPermissions.filter(p => p.roles.length >= 1).length >=
+                        3
+                    )
+                  })
+                  .then(function(response) {
+                    const request = {
+                      method: 'DELETE',
+                      url: '/role/{_id}',
+                      params: {
+                        _id: roles[0]._id
+                      },
+                      query: {},
+                      payload: {},
+                      credentials: {},
+                      headers: {}
+                    }
+
+                    const injectOptions = TestHelper.mockInjection(request)
+
+                    return server.inject(injectOptions)
+                  })
+                  .then(function(response) {
+                    const Role = Mongoose.model('role')
+                    return Role.findById(roles[0]._id)
+                  })
+                  .then(function(rawRole) {
+                    // assert that role was not found
+                    t.equals(rawRole, null)
+                  })
+                  .then(function(response) {
+                    const Permission = Mongoose.model('permission')
+                    return Permission.find()
+                  })
+                  .then(function(rawPermissions) {
+                    // assert that no permissions have a role
+                    t.ok(
+                      rawPermissions.filter(p => p.roles.length >= 1).length ===
+                        0
+                    )
+                  })
+                  // </editor-fold>
+
+                  // <editor-fold desc="Restore">
+                  .then(function() {
+                    Decache('../../rest-hapi')
+
+                    Decache('../config')
+                    Object.keys(Mongoose.models).forEach(function(key) {
+                      delete Mongoose.models[key]
+                    })
+                    Object.keys(Mongoose.modelSchemas || []).forEach(function(
+                      key
+                    ) {
+                      delete Mongoose?.modelSchemas[key]
+                    })
+
+                    return Mongoose.connection.db.dropDatabase()
                   })
               )
               // </editor-fold>
