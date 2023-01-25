@@ -5,7 +5,6 @@ const TestHelper = require('../../utilities/test-helper')
 const Decache = require('decache')
 const Q = require('q')
 const Hapi = require('@hapi/hapi')
-const { enableSoftDelete } = require('../../config')
 
 module.exports = (t, Mongoose, internals, Log) => {
   return t.test('basic embedded association tests (WRAPPER)', function(t) {
@@ -3221,6 +3220,362 @@ module.exports = (t, Mongoose, internals, Log) => {
                       rawPermissions.filter(p => p.roles.length >= 1).length ===
                         0,
                       'no permissions have a role'
+                    )
+                  })
+                  // </editor-fold>
+
+                  // <editor-fold desc="Restore">
+                  .then(function() {
+                    Decache('../../rest-hapi')
+
+                    Decache('../config')
+                    Object.keys(Mongoose.models).forEach(function(key) {
+                      delete Mongoose.models[key]
+                    })
+                    Object.keys(Mongoose.modelSchemas || []).forEach(function(
+                      key
+                    ) {
+                      delete Mongoose?.modelSchemas[key]
+                    })
+
+                    return Mongoose.connection.db.dropDatabase()
+                  })
+              )
+              // </editor-fold>
+            }
+          )
+        })
+        // onDelete 'SET_NULL' for ONE_ONE references sets the referrent document to null
+        .then(function() {
+          return t.test(
+            'onDelete "SET_NULL" for ONE_ONE references sets the referrent document to null',
+            function(t) {
+              // <editor-fold desc="Arrange">
+              const RestHapi = require('../../rest-hapi')
+              const server = new Hapi.Server()
+
+              const config = {
+                loglevel: 'ERROR',
+                absoluteModelPath: true,
+
+                modelPath: path.join(
+                  __dirname,
+                  '/test-scenarios/scenario-8/models'
+                ),
+                embedAssociations: true,
+                enableSoftDelete: true
+              }
+
+              RestHapi.config = config
+
+              let users, roles, profiles, roleId, userId, permissionId
+
+              return (
+                server
+                  .register({
+                    plugin: RestHapi,
+                    options: {
+                      mongoose: Mongoose,
+                      config: config
+                    }
+                  })
+                  .then(function(response) {
+                    const payload = [
+                      {
+                        name: 'User',
+                        description: 'A standard user account.'
+                      },
+                      {
+                        name: 'Admin',
+                        description: 'A user with advanced permissions.'
+                      },
+                      {
+                        name: 'SuperAdmin',
+                        description: 'A user with full permissions.'
+                      }
+                    ]
+
+                    return RestHapi.create({
+                      model: 'role',
+                      payload,
+                      restCall: false
+                    })
+                  })
+                  .then(function(response) {
+                    roles = response
+                  })
+                  .then(function(response) {
+                    const payload = [
+                      {
+                        email: 'test@user2.com',
+                        password: 'root',
+                        title: roles[0]._id
+                      },
+                      {
+                        email: 'test@user3.com',
+                        password: 'root',
+                        title: roles[0]._id
+                      },
+                      {
+                        email: 'test@admin.com',
+                        password: 'root',
+                        title: roles[1]._id
+                      }
+                    ]
+
+                    return RestHapi.create({
+                      model: 'user',
+                      payload,
+                      restCall: false
+                    })
+                  })
+                  .then(function(response) {
+                    users = response
+
+                    const payload = [
+                      {
+                        status: 'foo',
+                        user: users[0]._id
+                      },
+                      {
+                        status: 'bar',
+                        user: users[0]._id
+                      },
+                      {
+                        status: 'baz',
+                        user: users[0]._id
+                      }
+                    ]
+
+                    return RestHapi.create({
+                      model: 'userProfile',
+                      payload,
+                      Log,
+                      restCall: false
+                    })
+                  })
+                  .then(function(response) {
+                    profiles = response
+
+                    const payload = {
+                      firstProfile: profiles[0]._id,
+                      secondProfile: profiles[1]._id,
+                      thirdProfile: profiles[2]._id
+                    }
+
+                    const request = {
+                      method: 'PUT',
+                      url: '/user/{_id}',
+                      params: {
+                        _id: users[0]._id
+                      },
+                      query: {},
+                      payload,
+                      credentials: {},
+                      headers: {}
+                    }
+
+                    const injectOptions = TestHelper.mockInjection(request)
+
+                    return server.inject(injectOptions)
+                  })
+                  .then(function(response) {
+                    // Fetch user profiles using mongoose
+                    const UserProfile = Mongoose.model('userProfile')
+                    return UserProfile.find()
+                  })
+                  .then(function(rawProfiles) {
+                    // assert all profiles have users
+                    t.ok(
+                      rawProfiles.filter(p => p.user).length === 3,
+                      'all profiles have users'
+                    )
+                  })
+                  .then(function(response) {
+                    const request = {
+                      method: 'DELETE',
+                      url: '/user/{_id}',
+                      params: { _id: users[0]._id },
+                      query: {},
+                      payload: {},
+                      credentials: {},
+                      headers: {}
+                    }
+
+                    const injectOptions = TestHelper.mockInjection(request)
+
+                    return server.inject(injectOptions)
+                  })
+                  .then(function(response) {
+                    // Fetch user profiles using mongoose
+                    const UserProfile = Mongoose.model('userProfile')
+                    return UserProfile.find({ _id: profiles[1]._id })
+                  })
+                  .then(function(rawProfile) {
+                    // assert profile has null user
+                    t.ok(rawProfile[0].user === null, 'profile has null user')
+                  })
+                  // </editor-fold>
+
+                  // <editor-fold desc="Restore">
+                  .then(function() {
+                    Decache('../../rest-hapi')
+
+                    Decache('../config')
+                    Object.keys(Mongoose.models).forEach(function(key) {
+                      delete Mongoose.models[key]
+                    })
+                    Object.keys(Mongoose.modelSchemas || []).forEach(function(
+                      key
+                    ) {
+                      delete Mongoose?.modelSchemas[key]
+                    })
+                  })
+              )
+              // </editor-fold>
+            }
+          )
+        })
+        // onDelete "SET_NULL" for ONE_MANY references sets all references to null
+        .then(function() {
+          return t.test(
+            'onDelete "SET_NULL" for ONE_MANY references sets all references to null',
+            function(t) {
+              // <editor-fold desc="Arrange">
+              const RestHapi = require('../../rest-hapi')
+              const server = new Hapi.Server()
+
+              const config = {
+                loglevel: 'ERROR',
+                absoluteModelPath: true,
+
+                modelPath: path.join(
+                  __dirname,
+                  '/test-scenarios/scenario-8/models'
+                ),
+                embedAssociations: true,
+                enableSoftDelete: false
+              }
+
+              let users,
+                roles,
+                profiles,
+                roleId,
+                userId,
+                permissionId,
+                businesses
+
+              RestHapi.config = config
+
+              return (
+                server
+                  .register({
+                    plugin: RestHapi,
+                    options: {
+                      mongoose: Mongoose,
+                      config: config
+                    }
+                  })
+                  .then(function(response) {
+                    const payload = [
+                      {
+                        name: 'User',
+                        description: 'A standard user account.'
+                      },
+                      {
+                        name: 'Admin',
+                        description: 'A user with advanced permissions.'
+                      },
+                      {
+                        name: 'SuperAdmin',
+                        description: 'A user with full permissions.'
+                      }
+                    ]
+
+                    return RestHapi.create({
+                      model: 'role',
+                      payload,
+                      restCall: false
+                    })
+                  })
+                  .then(function(response) {
+                    roles = response
+
+                    const payload = {
+                      name: 'testBiz'
+                    }
+
+                    return RestHapi.create({
+                      model: 'business',
+                      payload,
+                      restCall: false
+                    })
+                  })
+                  .then(function(response) {
+                    businesses = [response]
+
+                    const payload = [roles[0]._id, roles[1]._id, roles[2]._id]
+
+                    return RestHapi.addMany({
+                      ownerModel: 'business',
+                      ownerId: businesses[0]._id,
+                      childModel: 'role',
+                      associationName: 'roles',
+                      payload
+                    })
+                  })
+
+                  .then(function(response) {
+                    const request = {
+                      method: 'GET',
+                      url: '/role',
+                      params: {},
+                      query: {},
+                      payload: {},
+                      credentials: {},
+                      headers: {}
+                    }
+
+                    const injectOptions = TestHelper.mockInjection(request)
+
+                    return server.inject(injectOptions)
+                  })
+                  .then(function(response) {
+                    roles = response.result.docs
+                  })
+                  .then(function(response) {
+                    // assert that each role has a 'company' reference
+                    t.ok(
+                      roles.filter(r => r.company).length === 3,
+                      'each role has a company reference'
+                    )
+                  })
+                  .then(function(response) {
+                    const request = {
+                      method: 'DELETE',
+                      url: '/business/{_id}',
+                      params: {
+                        _id: businesses[0]._id
+                      },
+                      query: {},
+                      payload: {},
+                      credentials: {},
+                      headers: {}
+                    }
+
+                    const injectOptions = TestHelper.mockInjection(request)
+
+                    return server.inject(injectOptions)
+                  })
+                  .then(function(response) {
+                    const Role = Mongoose.model('role')
+                    return Role.find()
+                  })
+                  .then(function(rawRoles) {
+                    // assert that each user has a null 'company' reference
+                    t.ok(
+                      rawRoles.filter(r => r.company === null).length === 3,
+                      'each role has a null company reference'
                     )
                   })
                   // </editor-fold>

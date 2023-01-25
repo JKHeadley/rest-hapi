@@ -24,7 +24,8 @@ module.exports = function(mongoose) {
           type: 'ONE_MANY',
           alias: 'role',
           foreignField: 'company',
-          model: 'role'
+          model: 'role',
+          onDelete: 'SET_NULL'
         }
       }
     }
