@@ -1898,7 +1898,7 @@ async function _removeManyHandler(
     }
     const ownerObject = await ownerModel
       .findOne({ _id: ownerId })
-      .select(associationName)
+      .select(`${associationName} isDeleted`)
     if (ownerObject) {
       try {
         if (
@@ -2575,7 +2575,7 @@ async function onDelete(model, _id, hardDelete, request, Log) {
   await verifyNoRestrictions(model, _id, Log)
 
   // Next handle any associations that have onDelete: 'SET_NULL'
-  await setNullReferences(model, _id, Log)
+  await setNullReferences(model, _id, hardDelete, request, Log)
 
   // console.log('FINISHED SENTULL')
 
@@ -2584,9 +2584,10 @@ async function onDelete(model, _id, hardDelete, request, Log) {
 }
 
 async function cascadeDelete(model, _id, hardDelete, request, Log) {
-  const associations = getAssociations(model)
-
+  Log = Log.bind('cascadeDelete')
   const cascades = getCascades(model)
+
+  const associations = getAssociations(model)
 
   // console.log('CASCADES:', cascades)
   // console.log('ASSOCIATIONS:', associations)
@@ -2608,46 +2609,56 @@ async function cascadeDelete(model, _id, hardDelete, request, Log) {
     )
     // console.log('REFERENCES in CASCADE:', references)
     const referenceIds = references.docs.map(reference => reference._id)
-    // If the model is MANY_MANY, then we use removeManyHandler
-    if (associations[cascade].type === 'MANY_MANY') {
-      // No action taken for soft delete
-      if (hardDelete) {
-        promises.push(
-          _removeManyHandler(
-            model,
-            _id,
-            associationModel,
-            cascade,
-            false,
-            { payload: referenceIds },
-            Log
+
+    if (referenceIds.length > 0) {
+      // If the model is MANY_MANY, then we use removeManyHandler
+      if (associations[cascade].type === 'MANY_MANY') {
+        // No action taken for soft delete
+        if (hardDelete) {
+          promises.push(
+            _removeManyHandler(
+              model,
+              _id,
+              associationModel,
+              cascade,
+              false,
+              { payload: referenceIds },
+              Log
+            )
           )
-        )
-      }
-    } else {
-      // Otherwise, we use deleteOneHandler
-      for (const referenceId of referenceIds) {
-        promises.push(
-          _deleteOneHandler(
-            associationModel,
-            referenceId,
-            hardDelete,
-            request,
-            Log
+        }
+      } else {
+        // Otherwise, we use deleteOneHandler
+        for (const referenceId of referenceIds) {
+          promises.push(
+            _deleteOneHandler(
+              associationModel,
+              referenceId,
+              hardDelete,
+              request,
+              Log
+            )
           )
-        )
+        }
       }
     }
   }
 
-  await Promise.all(promises)
+  try {
+    await Promise.all(promises)
+  } catch (err) {
+    handleError(
+      err,
+      'There was an error cascading the delete.',
+      Boom.badRequest,
+      Log
+    )
+  }
 }
 
-async function setNullReferences(model, _id, Log) {
+async function setNullReferences(model, _id, hardDelete, request, Log) {
   Log = Log.bind('setNullReferences')
   const setNulls = getSetNulls(model)
-
-  // console.log('SETNULLS:', setNulls, 'MODEL:', model.modelName, 'ID:', _id)
 
   const associations = getAssociations(model)
 
@@ -2671,7 +2682,11 @@ async function setNullReferences(model, _id, Log) {
       {},
       Log
     )
-    const referenceIds = references.docs.map(reference => reference._id)
+
+    // soft deleted references should not be modified
+    const referenceIds = references.docs
+      .filter(r => !r.isDeleted)
+      .map(reference => reference._id)
     // console.log('SETNULL REFERENCES:', references, referenceIds)
 
     if (referenceIds.length > 0) {
@@ -2708,17 +2723,20 @@ async function setNullReferences(model, _id, Log) {
           }
         }
       } else {
-        promises.push(
-          _removeManyHandler(
-            model,
-            _id,
-            associationModel,
-            setNull,
-            true,
-            { payload: referenceIds },
-            Log
+        // No action taken for soft delete on MANY_MANY
+        if (hardDelete || associations[setNull].type === 'ONE_MANY') {
+          promises.push(
+            _removeManyHandler(
+              model,
+              _id,
+              associationModel,
+              setNull,
+              true,
+              { payload: referenceIds },
+              Log
+            )
           )
-        )
+        }
       }
     }
   }
@@ -2726,8 +2744,15 @@ async function setNullReferences(model, _id, Log) {
   try {
     await Promise.all(promises)
   } catch (err) {
-    Log.error('There was an error setting the null references.')
-    throw Boom.badImplementation(err)
+    handleError(
+      err,
+      'There was an error setting the null references.',
+      Boom.badRequest,
+      Log
+    )
+
+    // Log.error('There was an error setting the null references.')
+    // throw Boom.badImplementation(err)
   }
 }
 
@@ -2969,6 +2994,8 @@ function getOnDelete(model, associationName) {
   }
 }
 
+// TODO: replace the below functionality with: https://mongoosejs.com/docs/populate.html#match (i.e. add the filter for 'isDeleted' inside of the populate command)
+
 /**
  * This function is called after embedded associations have been populated so that any associations
  * that have been soft deleted are removed.
@@ -3090,11 +3117,27 @@ function getModel(model) {
 function handleError(err, message, boomFunction, Log) {
   message = message || 'There was an error processing the request.'
   boomFunction = boomFunction || Boom.badImplementation
+  err = handleMongooseError(err)
   if (!err.isBoom) {
     Log.error(err)
     throw boomFunction(message)
   } else {
-    // Log.error(err)
+    Log.error(message)
     throw err
   }
+}
+
+function handleMongooseError(err) {
+  if (err.name === 'ValidationError') {
+    return Boom.badRequest(err.message)
+  } else if (err.name === 'CastError') {
+    return Boom.badRequest(err.message)
+  } else if (err.name === 'MongoError') {
+    if (err.code === 11000) {
+      return Boom.badRequest(err.message)
+    } else {
+      return Boom.badImplementation(err.message)
+    }
+  }
+  return err
 }

@@ -613,6 +613,7 @@ function handleError(err, logger) {
     logger.error(err)
     throw Boom.badImplementation('There was an error processing the request.')
   } else {
+    logger.error(err)
     throw err
   }
 }
