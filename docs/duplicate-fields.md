@@ -4,7 +4,7 @@ title: Duplicate Fields
 sidebar_label: Duplicate Fields
 ---
 
-"Duplicate fields" is a rest-hapi feature that allows fields from an associated document to exist in the parent document while maintaining the original field value. This can be accomplished by setting [`config.enableDuplicateFields`](configuration.md#enableduplicatefields) to `true` and adding the `duplicate` property to an association definition. 
+"Duplicate fields" (i.e. [denormalization](https://www.mongodb.com/blog/post/6-rules-of-thumb-for-mongodb-schema-design)) is a rest-hapi feature that allows fields from an associated document to exist in the parent document while maintaining the original field value. This can be accomplished by setting [`config.enableDuplicateFields`](configuration.md#enableduplicatefields) to `true` and adding the `duplicate` property to an association definition. 
 
 ## Basic example
 In the code below, the `name` field of the role model will be duplicated in the user model:
