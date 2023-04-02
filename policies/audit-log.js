@@ -174,6 +174,65 @@ module.exports = {
 }
 
 /**
+ * Policy to log recover actions.
+ * @param model
+ * @param logger
+ * @returns {logRecoverForModel}
+ */
+internals.logRecover = function(mongoose, model, logger) {
+  const logRecoverForModel = async function logRecoverForModel(request, h) {
+    const Log = logger.bind('logRecover')
+    try {
+      const AuditLog = mongoose.model('auditLog')
+
+      const ipAddress = internals.getIP(request)
+      const userId = _.get(request.auth.credentials, config.userIdKey)
+      let documents = request.params._id || request.payload
+      if (_.isArray(documents) && documents[0]._id) {
+        documents = documents.map(function(doc) {
+          return doc._id
+        })
+      } else if (!_.isArray(documents)) {
+        documents = [documents]
+      }
+
+      await AuditLog.create({
+        method: 'POST',
+        action: 'Recover',
+        endpoint: request.path,
+        user: userId || null,
+        collectionName: model.collectionName,
+        childCollectionName: null,
+        associationType: null,
+        documents: documents || null,
+        payload: _.isEmpty(request.payload) ? null : request.payload,
+        params: _.isEmpty(request.params) ? null : request.params,
+        result: request.response.source || null,
+        isError: _.isError(request.response),
+        statusCode:
+          request.response.statusCode || request.response.output.statusCode,
+        responseMessage: request.response.output
+          ? request.response.output.payload.message
+          : null,
+        ipAddress
+      })
+      return h.continue
+    } catch (err) {
+      Log.error(err)
+      return h.continue
+    }
+  }
+
+  logRecoverForModel.applyPoint = 'onPreResponse'
+  return logRecoverForModel
+}
+internals.logRecover.applyPoint = 'onPreResponse'
+
+module.exports = {
+  logRecover: internals.logRecover
+}
+
+/**
  * Policy to log add actions.
  * @param model
  * @param logger
